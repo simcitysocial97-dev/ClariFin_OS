@@ -1,0 +1,156 @@
+{
+  "Axis_Apr.pdf": {
+    "bankName": "Axis Bank",
+    "cardNumber": "440006******3625",
+    "totalAmountDue": 612,
+    "minimumAmountDue": 0,
+    "creditLimit": 55000,
+    "dueDate": "05/05/2025",
+    "openingBalance": 19688,
+    "billCycleStart": "17/03/2025",
+    "billCycleEnd": "15/04/2025",
+    "transactionCount": 3,
+    "validation": {
+      "isValid": true,
+      "message": "✅ VALIDATION SUCCESS: Calculated total matches stated total.",
+      "calculatedTotal": "612.00",
+      "statedTotal": "612.00",
+      "openingBalance": "19688.00",
+      "totalDebits": "382.00",
+      "totalCredits": "20682.00",
+      "discrepancy": "0.00"
+    }
+  },
+  "Indusind_jun.pdf": {
+    "bankName": "IndusInd Bank",
+    "cardNumber": "4689XXXXXXXX1665",
+    "totalAmountDue": 13983.4,
+    "minimumAmountDue": 13958.59,
+    "creditLimit": 158000,
+    "dueDate": "05/07/2025",
+    "openingBalance": 13983.4,
+    "billCycleStart": "16/05/2025",
+    "billCycleEnd": "15/06/2025",
+    "transactionCount": 7,
+    "validation": {
+      "isValid": false,
+      "message": "⚠️ DISCREPANCY: Calculated total (₹13958.99) does not match stated total (₹13983.40).",
+      "calculatedTotal": "13958.99",
+      "statedTotal": "13983.40",
+      "openingBalance": "13983.40",
+      "totalDebits": "13958.59",
+      "totalCredits": "13983.00",
+      "discrepancy": "24.41"
+    }
+  },
+  "hdfc_Apr.pdf": {
+    "bankName": "HDFC Bank",
+    "cardNumber": "6529 25XX XXXX 2421",
+    "totalAmountDue": 9382,
+    "minimumAmountDue": 470,
+    "creditLimit": 63000,
+    "dueDate": "21/05/2025",
+    "openingBalance": 19498.52,
+    "billCycleStart": "02/04/2025",
+    "billCycleEnd": "01/05/2025",
+    "transactionCount": 82,
+    "validation": {
+      "isValid": true,
+      "message": "✅ VALIDATION SUCCESS: Calculated total matches stated total.",
+      "calculatedTotal": "9381.94",
+      "statedTotal": "9382.00",
+      "openingBalance": "19498.52",
+      "totalDebits": "9382.42",
+      "totalCredits": "19499.00",
+      "discrepancy": "0.06"
+    }
+  },
+  "icici_feb.pdf": {
+    "bankName": "ICICI Bank",
+    "cardNumber": "4315XXXXXXXX8000",
+    "totalAmountDue": 19312.3,
+    "minimumAmountDue": 17280,
+    "creditLimit": 460000,
+    "dueDate": "February 18, 2025",
+    "openingBalance": 1868.31,
+    "billCycleStart": "20/01/2025",
+    "billCycleEnd": "18/02/2025",
+    "transactionCount": 7,
+    "validation": {
+      "isValid": true,
+      "message": "✅ VALIDATION SUCCESS: Calculated total matches stated total.",
+      "calculatedTotal": "19312.30",
+      "statedTotal": "19312.30",
+      "openingBalance": "1868.31",
+      "totalDebits": "19738.30",
+      "totalCredits": "2294.31",
+      "discrepancy": "0.00"
+    }
+  },
+  "idfc2_jul.pdf": {
+    "bankName": "IDFC First Bank",
+    "cardNumber": "XX5045",
+    "totalAmountDue": 1000,
+    "minimumAmountDue": 100,
+    "creditLimit": 150000,
+    "dueDate": "08/Aug/2025",
+    "openingBalance": 6350.72,
+    "billCycleStart": "25/Jun/2025",
+    "billCycleEnd": "24/Jul/2025",
+    "transactionCount": 2,
+    "validation": {
+      "isValid": true,
+      "message": "✅ VALIDATION SUCCESS: Calculated total matches stated total.",
+      "calculatedTotal": "1000.00",
+      "statedTotal": "1000.00",
+      "openingBalance": "6350.72",
+      "totalDebits": "1000.00",
+      "totalCredits": "6350.72",
+      "discrepancy": "0.00"
+    }
+  },
+  "idfc_Aug.pdf": {
+    "bankName": "IDFC First Bank",
+    "cardNumber": "XX7832",
+    "totalAmountDue": 78928.88,
+    "minimumAmountDue": 2052,
+    "creditLimit": 0,
+    "dueDate": "03/Sep/2025",
+    "openingBalance": 7574.45,
+    "billCycleStart": "20/Jul/2025",
+    "billCycleEnd": "19/Aug/2025",
+    "transactionCount": 65,
+    "validation": {
+      "isValid": true,
+      "message": "✅ VALIDATION SUCCESS: Calculated total matches stated total.",
+      "calculatedTotal": "78928.88",
+      "statedTotal": "78928.88",
+      "openingBalance": "7574.45",
+      "totalDebits": "78928.88",
+      "totalCredits": "7574.45",
+      "discrepancy": "0.00"
+    }
+  },
+  "sbi_oct.pdf": {
+    "bankName": "SBI Card",
+    "cardNumber": "XXXX XXXX XXXX XX47",
+    "totalAmountDue": 37085,
+    "minimumAmountDue": 6863,
+    "creditLimit": 173000,
+    "dueDate": "06 Nov 2025",
+    "openingBalance": 6863,
+    "billCycleStart": "18 Sep 25",
+    "billCycleEnd": "17 Oct 25",
+    "transactionCount": 10,
+    "validation": {
+      "isValid": false,
+      "message": "⚠️ DISCREPANCY: Calculated total (₹26870.23) does not match stated total (₹37085.00).",
+      "calculatedTotal": "26870.23",
+      "statedTotal": "37085.00",
+      "openingBalance": "6863.00",
+      "totalDebits": "63495.74",
+      "totalCredits": "43488.51",
+      "discrepancy": "10214.77"
+    }
+  }
+}

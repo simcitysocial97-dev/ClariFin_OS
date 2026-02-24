@@ -1,0 +1,304 @@
+{
+  "timestamp": "2026-02-08T17:02:35.220Z",
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "results": [
+    {
+      "file": "Axis_Apr.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "Axis Bank",
+          "actual": "Axis Bank",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "440006******3625",
+          "actual": "440006******3625",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 612,
+          "actual": 612,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 0,
+          "actual": 0,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 55000,
+          "actual": 55000,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "05/05/2025",
+          "actual": "05/05/2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 19688,
+          "actual": 19688,
+          "match": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "file": "Indusind_jun.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "IndusInd Bank",
+          "actual": "IndusInd Bank",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "4689XXXXXXXX1665",
+          "actual": "4689XXXXXXXX1665",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 13983.4,
+          "actual": 13983.4,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 13958.59,
+          "actual": 13958.59,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 158000,
+          "actual": 158000,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "05/07/2025",
+          "actual": "05/07/2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 13983.4,
+          "actual": 13983.4,
+          "match": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "file": "hdfc_Apr.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "HDFC Bank",
+          "actual": "HDFC Bank",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "6529 25XX XXXX 2421",
+          "actual": "6529 25XX XXXX 2421",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 9382,
+          "actual": 9382,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 470,
+          "actual": 470,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 63000,
+          "actual": 63000,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "21/05/2025",
+          "actual": "21/05/2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 19498.52,
+          "actual": 19498.52,
+          "match": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "file": "icici_feb.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "ICICI Bank",
+          "actual": "ICICI Bank",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "4315XXXXXXXX8000",
+          "actual": "4315XXXXXXXX8000",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 19312.3,
+          "actual": 19312.3,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 17280,
+          "actual": 17280,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 460000,
+          "actual": 460000,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "February 18, 2025",
+          "actual": "February 18, 2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 1868.31,
+          "actual": 1868.31,
+          "match": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "file": "idfc2_jul.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "IDFC First Bank",
+          "actual": "IDFC First Bank",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "XX5045",
+          "actual": "XX5045",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 1000,
+          "actual": 1000,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 100,
+          "actual": 100,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 150000,
+          "actual": 150000,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "08/Aug/2025",
+          "actual": "08/Aug/2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 6350.72,
+          "actual": 6350.72,
+          "match": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "file": "idfc_Aug.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "IDFC First Bank",
+          "actual": "IDFC First Bank",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "XX7832",
+          "actual": "XX7832",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 78928.88,
+          "actual": 78928.88,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 2052,
+          "actual": 2052,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 0,
+          "actual": 0,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "03/Sep/2025",
+          "actual": "03/Sep/2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 7574.45,
+          "actual": 7574.45,
+          "match": true
+        }
+      },
+      "errors": []
+    },
+    {
+      "file": "sbi_oct.pdf",
+      "passed": true,
+      "fields": {
+        "bankName": {
+          "expected": "SBI Card",
+          "actual": "SBI Card",
+          "match": true
+        },
+        "cardNumber": {
+          "expected": "XXXX XXXX XXXX XX47",
+          "actual": "XXXX XXXX XXXX XX47",
+          "match": true
+        },
+        "totalAmountDue": {
+          "expected": 37085,
+          "actual": 37085,
+          "match": true
+        },
+        "minimumAmountDue": {
+          "expected": 6863,
+          "actual": 6863,
+          "match": true
+        },
+        "creditLimit": {
+          "expected": 173000,
+          "actual": 173000,
+          "match": true
+        },
+        "dueDate": {
+          "expected": "06 Nov 2025",
+          "actual": "06 Nov 2025",
+          "match": true
+        },
+        "openingBalance": {
+          "expected": 6863,
+          "actual": 6863,
+          "match": true
+        }
+      },
+      "errors": []
+    }
+  ]
+}

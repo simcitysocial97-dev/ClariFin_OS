@@ -1,0 +1,58 @@
+[
+  {
+    "date": "19/01/2025",
+    "description": "BBPS Payment received",
+    "amount": 1868.31,
+    "type": "credit",
+    "category": "Bill Payment",
+    "bank": "ICICI Bank"
+  },
+  {
+    "date": "28/01/2025",
+    "description": "IND*AMAZON HTTP://WWW.AM IN",
+    "amount": 1824.00,
+    "type": "debit",
+    "category": "Shopping",
+    "bank": "ICICI Bank"
+  },
+  {
+    "date": "31/01/2025",
+    "description": "IND*AMAZON RECHARGES HTTPS://WWW.A IN",
+    "amount": 319.00,
+    "type": "debit",
+    "category": "Recharge",
+    "bank": "ICICI Bank"
+  },
+  {
+    "date": "03/02/2025",
+    "description": "Interest Amount Amortization - <8/24>",
+    "amount": 2464.53,
+    "type": "debit",
+    "category": "Finance/EMI",
+    "bank": "ICICI Bank"
+  },
+  {
+    "date": "03/02/2025",
+    "description": "IGST-CI@18%",
+    "amount": 443.62,
+    "type": "debit",
+    "category": "Tax",
+    "bank": "ICICI Bank"
+  },
+  {
+    "date": "03/02/2025",
+    "description": "Principal Amount Amortization - <8/24>",
+    "amount": 14687.15,
+    "type": "debit",
+    "category": "Finance/EMI",
+    "bank": "ICICI Bank"
+  },
+  {
+    "date": "04/02/2025",
+    "description": "IND*AMAZON HTTP://WWW.AM IN",
+    "amount": 426.00,
+    "type": "credit",
+    "category": "Refund/Shopping",
+    "bank": "ICICI Bank"
+  }
+]

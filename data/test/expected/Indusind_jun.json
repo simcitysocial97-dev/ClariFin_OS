@@ -1,0 +1,9 @@
+[
+  { "date": "03/06/2025", "description": "BBPS PAYMENT", "amount": 13983.00, "type": "credit", "category": "Bill Payment", "bank": "IndusInd Bank" },
+  { "date": "15/06/2025", "description": "GST @ 18%", "amount": 213.31, "type": "debit", "category": "Tax", "bank": "IndusInd Bank" },
+  { "date": "15/06/2025", "description": "GST @ 18%", "amount": 66.24, "type": "debit", "category": "Tax", "bank": "IndusInd Bank" },
+  { "date": "15/06/2025", "description": "EMI INT- (003/006)", "amount": 367.98, "type": "debit", "category": "Finance/EMI", "bank": "IndusInd Bank" },
+  { "date": "15/06/2025", "description": "EMI INT-CLOP - PF 0% CREDITAS (003/024)", "amount": 1185.08, "type": "debit", "category": "Finance/EMI", "bank": "IndusInd Bank" },
+  { "date": "15/06/2025", "description": "EMI PRIN FOR CLOP - PF 0% CRE (003/024)", "amount": 3770.69, "type": "debit", "category": "Finance/EMI", "bank": "IndusInd Bank" },
+  { "date": "15/06/2025", "description": "EMI PRIN FOR (003/006)", "amount": 8355.29, "type": "debit", "category": "Finance/EMI", "bank": "IndusInd Bank" }
+]

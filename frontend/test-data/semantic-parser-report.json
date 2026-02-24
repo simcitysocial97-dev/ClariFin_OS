@@ -1,0 +1,144 @@
+{
+  "timestamp": "2026-02-09T16:39:05.029Z",
+  "summary": {
+    "total": 7,
+    "passed": 0,
+    "partial": 3,
+    "failed": 4
+  },
+  "results": [
+    {
+      "file": "Axis_Apr.pdf",
+      "bank": "Axis Bank",
+      "transactionCount": {
+        "expected": 3,
+        "actual": 3,
+        "match": true
+      },
+      "metadata": {
+        "cardNumber": true,
+        "totalDue": true,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 19688
+      },
+      "status": "PARTIAL"
+    },
+    {
+      "file": "Indusind_jun.pdf",
+      "bank": "IndusInd Bank",
+      "transactionCount": {
+        "expected": 7,
+        "actual": 7,
+        "match": true
+      },
+      "metadata": {
+        "cardNumber": true,
+        "totalDue": false,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 24.409999999999854
+      },
+      "status": "PARTIAL"
+    },
+    {
+      "file": "hdfc_Apr.pdf",
+      "bank": "HDFC Bank",
+      "transactionCount": {
+        "expected": 82,
+        "actual": 83,
+        "match": false
+      },
+      "metadata": {
+        "cardNumber": false,
+        "totalDue": false,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 9646.58
+      },
+      "status": "FAIL"
+    },
+    {
+      "file": "icici_feb.pdf",
+      "bank": "ICICI Bank",
+      "transactionCount": {
+        "expected": 7,
+        "actual": 8,
+        "match": false
+      },
+      "metadata": {
+        "cardNumber": true,
+        "totalDue": false,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 385443.99000000005
+      },
+      "status": "FAIL"
+    },
+    {
+      "file": "idfc2_jul.pdf",
+      "bank": "IDFC First Bank",
+      "transactionCount": {
+        "expected": 2,
+        "actual": 2,
+        "match": true
+      },
+      "metadata": {
+        "cardNumber": false,
+        "totalDue": false,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 5350.72
+      },
+      "status": "PARTIAL"
+    },
+    {
+      "file": "idfc_Aug.pdf",
+      "bank": "IDFC First Bank",
+      "transactionCount": {
+        "expected": 65,
+        "actual": 64,
+        "match": false
+      },
+      "metadata": {
+        "cardNumber": false,
+        "totalDue": false,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 70854.43000000002
+      },
+      "status": "FAIL"
+    },
+    {
+      "file": "sbi_oct.pdf",
+      "bank": "SBI Card",
+      "transactionCount": {
+        "expected": 10,
+        "actual": 9,
+        "match": false
+      },
+      "metadata": {
+        "cardNumber": false,
+        "totalDue": false,
+        "minDue": true
+      },
+      "validation": {
+        "isValid": false,
+        "difference": 19668.999999999993
+      },
+      "status": "FAIL"
+    }
+  ]
+}
