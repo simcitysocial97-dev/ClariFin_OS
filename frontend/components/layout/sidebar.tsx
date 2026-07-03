@@ -2,174 +2,197 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAppStore } from '@/lib/store/use-app-store';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import {
-  LayoutDashboard,
-  CreditCard,
-  BarChart3,
-  Wallet,
-  Settings,
-  Menu,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  FileSpreadsheet,
-  PieChart,
-  Building2
-} from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
-import { MemberSelector } from '@/components/members/MemberSelector';
+import { formatINRCompact } from '@/lib/format';
+import { useNetWorth } from '@/lib/hooks/use-finance-data';
+import {
+  LayoutDashboard,
+  ArrowLeftRight,
+  Building2,
+  CreditCard,
+  Landmark,
+  TrendingUp,
+  Settings,
+  Menu,
+  ChevronLeft,
+  ChevronRight,
+  Wallet,
+} from 'lucide-react';
 
-const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-  { name: 'Transactions', href: '/transactions', icon: CreditCard },
-  { name: 'Accounts', href: '/accounts', icon: Building2 },
-  { name: 'Categories', href: '/categories', icon: PieChart },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Cards', href: '/cards', icon: Wallet },
-  { name: 'Import', href: '/import', icon: FileSpreadsheet },
-  { name: 'Settings', href: '/settings', icon: Settings },
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+interface NavSection {
+  section: string;
+  items: NavItem[];
+}
+
+const NAV_ITEMS: NavSection[] = [
+  {
+    section: 'OVERVIEW',
+    items: [{ label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }],
+  },
+  {
+    section: 'MANAGE',
+    items: [
+      { label: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
+      { label: 'Accounts', href: '/accounts', icon: Building2 },
+      { label: 'Credit Cards', href: '/cards', icon: CreditCard },
+      { label: 'Loans', href: '/loans', icon: Landmark },
+      { label: 'Investments', href: '/investments', icon: TrendingUp },
+    ],
+  },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  sidebarCollapsed?: boolean;
+  toggleSidebar?: () => void;
+}
+
+export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProps) {
   const pathname = usePathname();
-  const { cards, sidebarCollapsed, toggleSidebar, selectedCardId, selectCard } = useAppStore();
+  const { data: netWorthData } = useNetWorth();
+  const netWorthPaise = netWorthData?.net_worth_paise ?? 0;
+  const netWorthDisplay = formatINRCompact(netWorthPaise);
+  const isPositive = netWorthPaise >= 0;
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex h-16 items-center justify-between px-4 border-b">
-        <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-          <span className="text-2xl">💳</span>
-          {!sidebarCollapsed && <span>FinTrack</span>}
+      <div className="flex h-14 items-center border-b px-4">
+        <Link href="/" className="flex items-center gap-2">
+          <Wallet className="h-5 w-5" />
+          {!sidebarCollapsed && <span className="font-semibold">ClariFin</span>}
         </Link>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleSidebar}
-          className="hidden lg:flex"
-        >
-          {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
       </div>
 
-      {/* Upload Button */}
-      <div className="p-4">
-        <Link href="/?upload=true">
-          <Button className="w-full" size={sidebarCollapsed ? 'icon' : 'default'}>
-            <Plus className="h-4 w-4" />
-            {!sidebarCollapsed && <span className="ml-2">Upload Statement</span>}
-          </Button>
-        </Link>
+      {/* Net Worth Chip */}
+      <div className="px-3 py-4 border-b">
+        <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-3 py-2">
+          <Wallet className="h-4 w-4 text-muted-foreground" />
+          {!sidebarCollapsed ? (
+            <div className="flex flex-col">
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Net Worth
+              </span>
+              <span className={cn('text-sm font-semibold', isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
+                {netWorthDisplay}
+              </span>
+            </div>
+          ) : (
+            <span className={cn('text-sm font-semibold', isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
+              {netWorthDisplay}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Navigation */}
       <ScrollArea className="flex-1 px-3">
-        <nav className="flex flex-col gap-1">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                )}
-              >
-                <item.icon className="h-4 w-4 flex-shrink-0" />
-                {!sidebarCollapsed && <span>{item.name}</span>}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Cards Section */}
-        {!sidebarCollapsed && cards.length > 0 && (
-          <div className="mt-6">
-            <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              My Cards
-            </h3>
-            <div className="mt-2 space-y-1">
-              {cards.map((card) => (
-                <button
-                  key={card.id}
-                  onClick={() => selectCard(card.id)}
-                  className={cn(
-                    'w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors text-left',
-                    selectedCardId === card.id
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  )}
-                >
-                  <span className="text-lg">
-                    {getCardStatusIcon(card.dueDate)}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{card.bankName}</p>
-                    <p className="text-xs text-muted-foreground">
-                      •••• {card.cardNumber.slice(-4)}
-                    </p>
-                  </div>
-                </button>
-              ))}
+        <nav className="flex flex-col gap-5">
+          {NAV_ITEMS.map((section) => (
+            <div key={section.section} className="flex flex-col gap-1">
+              {!sidebarCollapsed && (
+                <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  {section.section}
+                </p>
+              )}
+              <div className="flex flex-col gap-0.5">
+                {section.items.map((item) => {
+                  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                  return (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                        isActive
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                    >
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!sidebarCollapsed && <span>{item.label}</span>}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Member Selector */}
-        {!sidebarCollapsed && (
-          <div className="mt-6 px-3">
-            <MemberSelector showLabel={true} />
-          </div>
-        )}
+          ))}
+        </nav>
       </ScrollArea>
+
+      {/* Footer */}
+      <div className="border-t p-3">
+        <div className="flex flex-col gap-2">
+          {toggleSidebar && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleSidebar}
+              className="hidden lg:flex justify-start gap-2"
+            >
+              {sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              {!sidebarCollapsed && <span>Collapse</span>}
+            </Button>
+          )}
+          <Link
+            href="/settings"
+            className={cn(
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              pathname === '/settings'
+                ? 'bg-primary/10 text-primary'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+            )}
+          >
+            <Settings className="h-4 w-4 flex-shrink-0" />
+            {!sidebarCollapsed && <span>Settings</span>}
+          </Link>
+          <div className="flex items-center justify-between rounded-lg px-3 py-2">
+            {!sidebarCollapsed && (
+              <span className="text-sm text-muted-foreground">Theme</span>
+            )}
+            <ThemeToggle />
+          </div>
+        </div>
+      </div>
     </div>
   );
 
   return (
     <>
-      {/* Mobile Sidebar */}
+      {/* Mobile */}
       <Sheet>
         <SheetTrigger asChild className="lg:hidden">
           <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50">
             <Menu className="h-5 w-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
+        <SheetContent side="left" className="w-72 p-0">
           <VisuallyHidden>
-            <SheetTitle>Navigation Menu</SheetTitle>
+            <SheetTitle>Navigation</SheetTitle>
           </VisuallyHidden>
           <SidebarContent />
         </SheetContent>
       </Sheet>
 
-      {/* Desktop Sidebar */}
+      {/* Desktop */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-40 h-screen border-r bg-background transition-all duration-300 hidden lg:block',
-          sidebarCollapsed ? 'w-16' : 'w-64'
+          'fixed left-0 top-0 z-40 hidden h-screen border-r bg-background transition-all duration-300 lg:flex lg:flex-col',
+          sidebarCollapsed ? 'w-14' : 'w-56'
         )}
       >
         <SidebarContent />
       </aside>
     </>
   );
-}
-
-function getCardStatusIcon(dueDate: string): string {
-  if (!dueDate) return '⚪';
-  const due = new Date(dueDate);
-  const today = new Date();
-  const daysDiff = Math.ceil((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  
-  if (daysDiff < 0) return '🔴';
-  if (daysDiff <= 3) return '🟡';
-  return '🟢';
 }
