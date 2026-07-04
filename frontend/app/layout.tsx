@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/error-boundary';
+import { QueryProvider } from '@/components/query-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -43,12 +44,14 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <MemberProvider>
-            <ErrorBoundary>
-              <MainLayout>{children}</MainLayout>
-            </ErrorBoundary>
-            <Toaster />
-          </MemberProvider>
+          <QueryProvider>
+            <MemberProvider>
+              <ErrorBoundary>
+                <MainLayout>{children}</MainLayout>
+              </ErrorBoundary>
+              <Toaster />
+            </MemberProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

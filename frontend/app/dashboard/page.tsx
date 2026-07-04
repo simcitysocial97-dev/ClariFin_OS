@@ -14,46 +14,14 @@
  * Backend is sole source of truth.
  */
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
+import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
+import { ErrorFallback } from "@/components/error-boundary";
+import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
+import { formatRupees, formatPercentage } from "@/lib/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
-// ============================================================
-// Types
-// ============================================================
-
-interface DashboardData {
-  net_cash_flow: number;
-  savings_rate: number;
-  emi_ratio: number;
-  buffer_days: number;
-  financial_health_score: number;
-  seven_day_trend: number;
-  category_drift_alert: string | null;
-  recent_transactions: any[];
-}
-
-// ============================================================
-// Utility Functions
-// ============================================================
-
-function formatINR(amount: number): string {
-  if (amount === 0) return "₹0";
-  const negative = amount < 0;
-  const absAmount = Math.abs(amount);
-  const formatted = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(absAmount);
-  return negative ? `-${formatted}` : formatted;
-}
-
-function formatPercent(value: number): string {
-  return `${(value * 100).toFixed(0)}%`;
-}
 
 // ============================================================
 // Components
@@ -74,7 +42,7 @@ function NetCashFlowCard({ amount }: { amount: number }) {
             <TrendingDown className="h-8 w-8 text-red-600" />
           )}
           <span className={`text-3xl font-bold ${isPositive ? "text-green-600" : "text-red-600"}`}>
-            {formatINR(amount)}
+            {formatRupees(amount)}
           </span>
         </div>
         <p className="text-xs text-gray-500 mt-2">
@@ -98,7 +66,7 @@ function SavingsRateCard({ rate }: { rate: number }) {
       <CardContent>
         <div className="flex items-baseline gap-2">
           <span className={`text-3xl font-bold ${isGood ? "text-green-600" : "text-amber-600"}`}>
-            {formatPercent(rate)}
+            {formatPercentage(rate)}
           </span>
         </div>
         <p className="text-xs text-gray-500 mt-2">
@@ -122,7 +90,7 @@ function EMIRatioCard({ ratio }: { ratio: number }) {
       <CardContent>
         <div className="flex items-baseline gap-2">
           <span className={`text-3xl font-bold ${isHigh ? "text-red-600" : "text-gray-900"}`}>
-            {formatPercent(ratio)}
+            {formatPercentage(ratio)}
           </span>
         </div>
         <p className="text-xs text-gray-500 mt-2">
@@ -225,63 +193,22 @@ function HealthScoreFooter({ score }: { score: number }) {
 // ============================================================
 
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:8000/api/dashboard/summary");
-        if (!response.ok) {
-          throw new Error("Failed to fetch dashboard data");
-        }
-        const dashboardData = await response.json();
-        setData(dashboardData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
+  const { data, loading, error, refetch } = useDashboardMetrics();
 
   // Loading state
   if (loading) {
     return (
       <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32" />
-          ))}
-        </div>
-        <Skeleton className="h-48" />
+        <DashboardSkeleton />
       </div>
     );
   }
 
-  // Error state - BLOCKING (no fallback)
+  // Error state
   if (error) {
     return (
       <div className="container mx-auto py-6">
-        <Alert variant="destructive" className="mb-4">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Unable to Load Dashboard</AlertTitle>
-          <AlertDescription>
-            {error}. Please ensure the backend server is running at http://localhost:8000
-          </AlertDescription>
-        </Alert>
-        <Card className="p-6 text-center">
-          <p className="text-gray-600 mb-4">
-            The dashboard requires a connection to the backend server.
-          </p>
-          <p className="text-sm text-gray-500">
-            Start the backend with: <code className="bg-gray-100 px-2 py-1 rounded">cd backend && uvicorn src.api:app --reload --port 8000</code>
-          </p>
-        </Card>
+        <ErrorFallback error={error} resetErrorBoundary={refetch} />
       </div>
     );
   }
