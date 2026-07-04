@@ -13,20 +13,15 @@ interface ChartData {
   income: number;
 }
 
-interface MonthlyCashflowItem {
-  month: string;
-  income_paise: number;
-}
-
 export function IncomeTrendChart({ className }: { className?: string }) {
   const { data, loading, error, refetch } = useMonthlyCashflow();
 
   const chartData: ChartData[] = useMemo(() => {
     if (!data?.months) return [];
     return data.months
-      .map((m: MonthlyCashflowItem) => ({
+      .map((m: { month: string; total_income_paise: number }) => ({
         month: m.month?.slice(0, 7),
-        income: m.income_paise || 0,
+        income: m.total_income_paise || 0,
       }))
       .sort((a: ChartData, b: ChartData) => new Date(a.month).getTime() - new Date(b.month).getTime());
   }, [data]);

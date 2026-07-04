@@ -71,22 +71,6 @@ const NATURE_COLORS: Record<string, string> = {
 
 const QUICK_FILTERS = ['All', 'Income', 'Expenses', 'Recycling', 'Unknown', 'This Month', 'Last Month'];
 
-// CSV helper
-function serializeToCSV(transactions: ApiTransaction[]): string {
-  if (!transactions.length) return '';
-  const headers = ['Date', 'Description', 'Amount', 'Nature', 'Category', 'Account'];
-  const rows = transactions.map((tx) => [
-    tx.date,
-    tx.description,
-    tx.amount_paise ?? 0,
-    tx.nature ?? '',
-    tx.category ?? '',
-    tx.account_name ?? '',
-  ]);
-  const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','));
-  return csv.join('\n');
-}
-
 // ============================================================
 // Main
 // ============================================================
@@ -107,25 +91,36 @@ export default function TransactionsPage() {
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
 
   const { transactions, loading, error, refetch } = useTransactions();
-
   const { accounts } = useAccounts();
   const { categories } = useCategories();
   const { data: importHistory } = useV2Imports();
   const updateCategoryMutation = useUpdateCategory();
 
+  // Enrich transactions with account_name (client-side join)
+  const enrichedTransactions = useMemo(() => {
+    return transactions.map((tx) => ({
+      ...tx,
+      account_name: accounts?.find((acc: any) => acc.id === tx.account_id)?.name || '—',
+    }));
+  }, [transactions, accounts]);
 
   // Summary derived from filtered set
   const summary = useMemo(() => {
     let credits = 0;
     let debits = 0;
-    transactions.forEach((tx) => {
+    enrichedTransactions.forEach((tx) => {
       if ((tx.amount_paise ?? 0) >= 0) credits += tx.amount_paise ?? 0;
       else debits += tx.amount_paise ?? 0;
     });
-    return { credits, debits, net: credits + debits, count: transactions.length };
-  }, [transactions]);
+    return { credits, debits, net: credits + debits, count: enrichedTransactions.length };
+  }, [enrichedTransactions]);
+
+  // Total count for pagination
+  const totalCount = enrichedTransactions.length;
 
   const handleExportCSV = async () => {
+    const csv = serializeToCSV(transactions);
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -133,6 +128,22 @@ export default function TransactionsPage() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  // CSV helper
+  function serializeToCSV(transactions: ApiTransaction[]): string {
+    if (!transactions.length) return '';
+    const headers = ['Date', 'Description', 'Amount', 'Nature', 'Category', 'Account'];
+    const rows = transactions.map((tx) => [
+      tx.date,
+      tx.description,
+      tx.amount_paise ?? 0,
+      tx.nature ?? '',
+      tx.category ?? '',
+      tx.account_name ?? '',
+    ]);
+    const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','));
+    return csv.join('\n');
+  }
 
   const clearFilters = () => {
     setSearch('');
@@ -388,14 +399,14 @@ export default function TransactionsPage() {
                     {error.message}
                   </td>
                 </tr>
-              ) : transactions.length === 0 ? (
+              ) : enrichedTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
                     No transactions match your filters.
                   </td>
                 </tr>
               ) : (
-                transactions.map((tx) => (
+                enrichedTransactions.map((tx) => (
                   <tr
                     key={tx.id}
                     className="border-b last:border-0 hover:bg-muted/40 transition-colors"

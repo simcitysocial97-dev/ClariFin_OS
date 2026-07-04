@@ -32,6 +32,8 @@ export interface Transaction {
   statement_file?: string;
   statement_period_from?: string | null;
   statement_period_to?: string | null;
+  account_id?: number;
+  nature?: string;         // Transaction nature (real_income, real_expense, etc.)
 
   // ===== Computed Display Fields (from API) =====
   parsed_date?: string;

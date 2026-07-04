@@ -57,17 +57,17 @@ export function WhatIfSimulator() {
       "Current Path": data.baseline[i]?.projected_net_worth_paise || 0,
       "Modified Path": data.modified[i]?.projected_net_worth_paise || 0,
     }));
-  }, [result]);
+  }, [data]);
 
   const comparisonData = useMemo(() => {
     if (!data) return null;
 
     const getValueAtYear = (
-      data: typeof data.baseline,
+      projectionData: typeof data.baseline,
       year: number
     ): number => {
       const index = year * 12 - 1;
-      return data[index]?.projected_net_worth_paise || 0;
+      return projectionData[index]?.projected_net_worth_paise || 0;
     };
 
     return {
@@ -88,7 +88,7 @@ export function WhatIfSimulator() {
       },
       improvement: data.percentage_improvement_5y,
     };
-  }, [result]);
+  }, [data]);
 
   if (loansLoading) {
     return (

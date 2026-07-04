@@ -104,8 +104,10 @@ export function MonthlyComparisonTable({ className }: MonthlyComparisonTableProp
   const previousMonth = monthly[monthly.length - 2];
 
   // Get expense categories from both months
-  const currentCategories = currentMonth?.by_category || {};
-  const previousCategories = previousMonth?.by_category || {};
+  // Note: MonthlyCashflow doesn't have by_category, we need to use a different approach
+  // For now, use empty objects since the API doesn't provide this in monthly data
+  const currentCategories: Record<string, { paise?: number }> = {};
+  const previousCategories: Record<string, { paise?: number }> = {};
 
   // Build comparison data
   const allCategories = new Set([

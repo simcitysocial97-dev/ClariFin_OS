@@ -110,11 +110,11 @@ export function NetWorthHistoryChart({
 
   // Transform data for the chart
   const chartData: ChartDataPoint[] = (trend || [])
-    .map((item: { month: string; assets_paise: number; liabilities_paise: number }) => ({
+    .map((item: { month: string; total_assets_paise: number; total_liabilities_paise: number }) => ({
       month: item.month,
-      assets: item.assets_paise || 0,
-      liabilities: item.liabilities_paise || 0,
-      netWorth: (item.assets_paise || 0) - (item.liabilities_paise || 0),
+      assets: item.total_assets_paise || 0,
+      liabilities: item.total_liabilities_paise || 0,
+      netWorth: (item.total_assets_paise || 0) - (item.total_liabilities_paise || 0),
     }))
     .sort(
       (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime()

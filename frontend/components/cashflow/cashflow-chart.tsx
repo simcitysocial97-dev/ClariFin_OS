@@ -142,18 +142,18 @@ export function CashflowChart({
 
   // Transform data for chart
   const chartData: ChartDataPoint[] = monthly.map(
-    (m: { month: string; income_paise: number; expense_paise: number }) => ({
+    (m: { month: string; total_income_paise: number; total_expense_paise: number }) => ({
       month: m.month?.slice(0, 7),
-      income: m.income_paise || 0,
-      expense: m.expense_paise || 0,
-      net: (m.income_paise || 0) - (m.expense_paise || 0),
+      income: m.total_income_paise || 0,
+      expense: m.total_expense_paise || 0,
+      net: (m.total_income_paise || 0) - (m.total_expense_paise || 0),
     })
   );
 
   const currentMonth = monthly[monthly.length - 1];
-  const incomeBySource = breakdown?.by_source || currentMonth?.by_source || {};
+  const incomeBySource = breakdown?.income_by_source || {};
   const expenseByCategory =
-    breakdown?.by_category || currentMonth?.by_category || {};
+    breakdown?.expense_by_category || {};
 
   return (
     <Card className={cn("h-[450px]", className)}>
