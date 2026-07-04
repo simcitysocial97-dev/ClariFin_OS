@@ -10,19 +10,8 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
 import { formatINRCompact } from '@/lib/format';
 import { useNetWorth } from '@/lib/hooks/use-finance-data';
-import {
-  LayoutDashboard,
-  ArrowLeftRight,
-  Building2,
-  CreditCard,
-  Landmark,
-  TrendingUp,
-  Settings,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  Wallet,
-} from 'lucide-react';
+import { Settings, Menu, ChevronLeft, ChevronRight, Wallet } from 'lucide-react';
+import { CORE_NAV_SECTIONS } from '@/lib/config/navigation';
 
 interface NavItem {
   label: string;
@@ -35,22 +24,15 @@ interface NavSection {
   items: NavItem[];
 }
 
-const NAV_ITEMS: NavSection[] = [
-  {
-    section: 'OVERVIEW',
-    items: [{ label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard }],
-  },
-  {
-    section: 'MANAGE',
-    items: [
-      { label: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
-      { label: 'Accounts', href: '/accounts', icon: Building2 },
-      { label: 'Credit Cards', href: '/cards', icon: CreditCard },
-      { label: 'Loans', href: '/loans', icon: Landmark },
-      { label: 'Investments', href: '/investments', icon: TrendingUp },
-    ],
-  },
-];
+// Convert centralized config to sidebar format
+const NAV_ITEMS: NavSection[] = CORE_NAV_SECTIONS.map(section => ({
+  section: section.title.toUpperCase(),
+  items: section.items.map(item => ({
+    label: item.name,
+    href: item.href,
+    icon: item.icon,
+  })),
+}));
 
 interface SidebarProps {
   sidebarCollapsed?: boolean;

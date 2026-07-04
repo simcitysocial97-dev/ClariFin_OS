@@ -20,7 +20,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
-
 // ============================================================
 // Types
 // ============================================================
@@ -43,12 +42,12 @@ interface DashboardData {
 function formatINR(amount: number): string {
   if (amount === 0) return "₹0";
   const negative = amount < 0;
-  amount = Math.abs(amount);
+  const absAmount = Math.abs(amount);
   const formatted = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(absAmount);
   return negative ? `-${formatted}` : formatted;
 }
 

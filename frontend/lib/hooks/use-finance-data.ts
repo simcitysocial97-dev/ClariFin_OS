@@ -17,12 +17,14 @@ import {
   updateTransactionCategory,
   deleteStatement,
   exportCSV,
+  fetchNetWorth,
   type Transaction,
   type OverviewData,
   type Statement,
   type CategorySummary,
   type Member,
   type UploadResult,
+  type NetWorth,
 } from '@/lib/api/client';
 import type {
   CategoriesResponse,
@@ -286,6 +288,35 @@ export function useMembers(): HookState<Member[]> {
     try {
       const result = await fetchMembers();
       setData(result.members);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
+}
+
+// ============================================================================
+// useNetWorth
+// ============================================================================
+
+export function useNetWorth(): HookState<NetWorth> {
+  const [data, setData] = useState<NetWorth | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await fetchNetWorth();
+      setData(result);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Unknown error'));
     } finally {

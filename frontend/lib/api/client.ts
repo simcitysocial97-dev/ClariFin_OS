@@ -11,10 +11,33 @@ import type {
   MonthlyBreakdown,
   UncategorizedPattern,
 } from '@/types/api';
+import type {
+  NetWorth,
+  NetWorthTrendResponse,
+  MonthlyCashflowResponse,
+  CashflowBreakdown,
+  BehaviorScore,
+} from '@/types/financial';
+import type {
+  AssetAllocationResponse,
+  InvestmentSummary,
+} from '@/types/investment';
+import type {
+  LoansResponse,
+} from '@/types/loan';
+import type {
+  RecurringTransactionsResponse,
+} from '@/types/recurring';
+import type { ImportListResponse } from '@/types/v2';
 
 // Re-export Transaction for convenience
 export type { Transaction } from '@/types/transaction';
 export type { CategorySummary, MonthlyBreakdown, UncategorizedPattern } from '@/types/api';
+export type { NetWorth, NetWorthTrendResponse, MonthlyCashflowResponse, CashflowBreakdown, BehaviorScore } from '@/types/financial';
+export type { AssetAllocationResponse, InvestmentSummary } from '@/types/investment';
+export type { LoansResponse } from '@/types/loan';
+export type { RecurringTransactionsResponse } from '@/types/recurring';
+export type { ImportListResponse } from '@/types/v2';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -282,6 +305,142 @@ export async function exportCSV(params?: {
   const res = await fetch(`${API_BASE}/api/export/csv?${query}`);
   if (!res.ok) throw new Error(`Export error: ${res.status}`);
   return res.blob();
+}
+
+// ============================================================================
+// NET WORTH API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch net worth data
+ */
+export async function fetchNetWorth(): Promise<NetWorth> {
+  const res = await fetch(`${API_BASE}/api/networth`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Fetch net worth trend
+ */
+export async function fetchNetWorthTrend(months?: number): Promise<NetWorthTrendResponse> {
+  const query = new URLSearchParams();
+  if (months) query.set('months', String(months));
+  const res = await fetch(`${API_BASE}/api/networth/trend?${query}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ============================================================================
+// CASHFLOW API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch monthly cashflow data
+ */
+export async function fetchMonthlyCashflow(months?: number): Promise<MonthlyCashflowResponse> {
+  const query = new URLSearchParams();
+  if (months) query.set('months', String(months));
+  const res = await fetch(`${API_BASE}/api/cashflow/monthly?${query}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Fetch cashflow breakdown for a specific month
+ */
+export async function fetchCashflowBreakdown(month?: string): Promise<CashflowBreakdown> {
+  const query = new URLSearchParams();
+  if (month) query.set('month', month);
+  const res = await fetch(`${API_BASE}/api/cashflow/breakdown?${query}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ============================================================================
+// INVESTMENT API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch asset allocation
+ */
+export async function fetchAssetAllocation(): Promise<AssetAllocationResponse> {
+  const res = await fetch(`${API_BASE}/api/investments/allocation`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+/**
+ * Fetch investment summary
+ */
+export async function fetchInvestmentSummary(): Promise<InvestmentSummary> {
+  const res = await fetch(`${API_BASE}/api/investments/summary`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ============================================================================
+// LOAN API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch loans
+ */
+export async function fetchLoans(status?: string): Promise<LoansResponse> {
+  const query = new URLSearchParams();
+  if (status) query.set('status', status);
+  const res = await fetch(`${API_BASE}/api/loans?${query}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ============================================================================
+// RECURRING API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch recurring transactions
+ */
+export async function fetchRecurringTransactions(activeOnly?: boolean): Promise<RecurringTransactionsResponse> {
+  const query = new URLSearchParams();
+  if (activeOnly !== undefined) query.set('active_only', String(activeOnly));
+  const res = await fetch(`${API_BASE}/api/recurring?${query}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ============================================================================
+// BEHAVIOR API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch behavior score
+ */
+export async function fetchBehaviorScore(): Promise<BehaviorScore> {
+  const res = await fetch(`${API_BASE}/api/behavior/score`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// ============================================================================
+// V2 IMPORT API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch V2 imports list
+ */
+export async function fetchV2Imports(params?: {
+  status?: string;
+  page?: number;
+  per_page?: number;
+}): Promise<ImportListResponse> {
+  const query = new URLSearchParams();
+  if (params?.status) query.set('status', params.status);
+  if (params?.page) query.set('page', String(params.page));
+  if (params?.per_page) query.set('per_page', String(params.per_page));
+  const res = await fetch(`${API_BASE}/api/v2/imports?${query}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
 }
 
 // ============================================================================

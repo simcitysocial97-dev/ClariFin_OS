@@ -9,11 +9,27 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useImportsQuery } from "@/lib/hooks/use-queries";
-import { ListWidgetSkeleton } from "./skeletons";
+import { useImportsQuery } from "@/lib/hooks/use-query-finance";
+import { Skeleton } from "@/components/ui/skeleton";
 import { WidgetErrorFallback } from "./widget-error-fallback";
 import { LayoutTemplate, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Local skeleton component for this widget
+function ListWidgetSkeleton() {
+  return (
+    <Card className="h-[320px]">
+      <CardHeader className="pb-2">
+        <Skeleton className="h-5 w-32" />
+      </CardHeader>
+      <CardContent className="flex flex-col items-center justify-center h-[250px]">
+        <Skeleton className="h-12 w-12 rounded-full mb-3" />
+        <Skeleton className="h-4 w-24 mb-2" />
+        <Skeleton className="h-3 w-32" />
+      </CardContent>
+    </Card>
+  );
+}
 
 interface TemplateCoverageWidgetProps {
   mode?: "personal" | "family";
@@ -21,7 +37,7 @@ interface TemplateCoverageWidgetProps {
 
 export function TemplateCoverageWidget({ mode = "personal" }: TemplateCoverageWidgetProps) {
   // Get more imports for better coverage stats (last 20)
-  const { data, isLoading: loading, error, refetch } = useImportsQuery({ page: 1, per_page: 20 });
+  const { data, loading, error, refetch } = useImportsQuery({ page: 1, per_page: 20 });
 
   if (loading) {
     return <ListWidgetSkeleton />;
@@ -37,7 +53,7 @@ export function TemplateCoverageWidget({ mode = "personal" }: TemplateCoverageWi
     );
   }
 
-  const imports = data?.items || [];
+  const imports = data?.imports || [];
 
   // Calculate template coverage
   // template_id !== null means a template was applied

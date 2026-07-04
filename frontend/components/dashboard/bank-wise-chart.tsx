@@ -6,13 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // Dynamically import recharts to avoid SSR issues
 import dynamic from 'next/dynamic';
 
-const BarChart = dynamic(() => import('recharts').then((mod) => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false });
-const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false });
-const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const BarChart = dynamic(() => import('recharts').then((mod) => mod.BarChart), { ssr: false, loading: () => null });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false, loading: () => null });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false, loading: () => null });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false, loading: () => null });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false, loading: () => null });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false, loading: () => null });
+// @ts-ignore - recharts types are incompatible with next/dynamic
+const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false, loading: () => null });
 
 interface BankChartItem {
   bank: string;
