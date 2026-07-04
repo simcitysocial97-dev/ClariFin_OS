@@ -1,8 +1,17 @@
-# ClariFin OS
+# ClariFin_OS
 
-![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
-![Node.js 20+](https://img.shields.io/badge/node.js-20%2B-green)
-![License: MIT](https://img.shields.io/badge/license-MIT-yellow)
+[![Backend Tests](https://github.com/simcitysocial97-dev/ClariFin_OS/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/simcitysocial97-dev/ClariFin_OS/actions/workflows/backend-tests.yml)
+[![Frontend Build](https://github.com/simcitysocial97-dev/ClariFin_OS/actions/workflows/frontend-build.yml/badge.svg)](https://github.com/simcitysocial97-dev/ClariFin_OS/actions/workflows/frontend-build.yml)
+[![Full Stack Validation](https://github.com/simcitysocial97-dev/ClariFin_OS/actions/workflows/full-validation.yml/badge.svg)](https://github.com/simcitysocial97-dev/ClariFin_OS/actions/workflows/full-validation.yml)
+
+> Personal Financial Management System with automated statement processing and intelligent categorization
+
+## Status
+- ✅ Backend: 10/10 tests passing, 95.5% classification coverage
+- ✅ Frontend: Build passing, 0 TypeScript errors
+- ✅ Database: SQLite with proper paise handling and immutability triggers
+
+## What Is This
 
 ![ClariFin OS Screenshot](docs/screenshot.png)
 
@@ -131,6 +140,34 @@ For detailed audit report, see [PROJECT_AUDIT_REPORT.md](PROJECT_AUDIT_REPORT.md
 | **Testing** | pytest, Playwright |
 
 ## Quick Start
+
+### Backend
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Architecture
+Backend: FastAPI + SQLAlchemy + SQLite
+Frontend: Next.js 16 (App Router) + React Query + Tailwind + shadcn/ui
+Testing: pytest (backend) + TypeScript strict mode (frontend)
+
+## Development
+All pushes to main automatically run:
+
+- Backend pytest suite
+- Frontend TypeScript checks and build validation
+- Bundle size analysis
 
 ### Prerequisites
 - Python 3.10+
