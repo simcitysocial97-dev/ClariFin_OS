@@ -1,0 +1,116 @@
+name: Health Check and Monitoring
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'backend/src/startup_checks.py'
+      - 'backend/src/maintenance.py'
+      - 'backend/src/health.py'
+      - '.github/workflows/health-check.yml'
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: clarinfin_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+        pip install psycopg2-binary
+
+    - name: Run startup checks
+      run: |
+        cd backend
+        python -c "
+        import os
+        os.environ['DATABASE_URL'] = 'postgresql://postgres:postgres@localhost:5432/clarinfin_test'
+        from src.startup_checks import run_startup_checks
+        run_startup_checks()
+        "
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/clarinfin_test
+
+    - name: Run maintenance checks
+      run: |
+        cd backend
+        python -c "
+        import os
+        os.environ['DATABASE_URL'] = 'postgresql://postgres:postgres@localhost:5432/clarinfin_test'
+        from src.maintenance import run_maintenance_checks
+        run_maintenance_checks()
+        "
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/clarinfin_test
+
+    - name: Check database health
+      run: |
+        cd backend
+        python -c "
+        import psycopg2
+        import os
+        try:
+            conn = psycopg2.connect(
+                host='localhost',
+                database='clarinfin_test',
+                user='postgres',
+                password='postgres'
+            )
+            cursor = conn.cursor()
+            cursor.execute('SELECT 1')
+            result = cursor.fetchone()
+            if result[0] == 1:
+                print('Database health check passed')
+            else:
+                print('Database health check failed')
+                exit(1)
+        except Exception as e:
+            print(f'Database connection failed: {e}')
+            exit(1)
+        "
+
+    - name: Run health check API tests
+      run: |
+        cd backend
+        python -c "
+        import os
+        os.environ['DATABASE_URL'] = 'postgresql://postgres:postgres@localhost:5432/clarinfin_test'
+        # Test health check endpoint
+        from fastapi.testclient import TestClient
+        from src.main import app
+        client = TestClient(app)
+        response = client.get('/health')
+        if response.status_code != 200:
+            print(f'Health check failed: {response.status_code}')
+            exit(1)
+        print('Health check API test passed')
+        "
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/clarinfin_test

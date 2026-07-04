@@ -1,0 +1,228 @@
+app/accounts/page.tsx(134,9): error TS2451: Cannot redeclare block-scoped variable 'accounts'.
+app/accounts/page.tsx(134,19): error TS6133: 'isLoading' is declared but its value is never read.
+app/accounts/page.tsx(134,30): error TS6133: 'error' is declared but its value is never read.
+app/accounts/page.tsx(134,37): error TS2339: Property 'refetch' does not exist on type '{ accounts: never[]; isLoading: false; error: Error | null; }'.
+app/accounts/page.tsx(135,11): error TS2339: Property 'createAccount' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+app/accounts/page.tsx(136,11): error TS2339: Property 'updateAccount' does not exist on type 'UseMutationResult<{}, Error, { id: string; accountData: any; }, unknown>'.
+app/accounts/page.tsx(137,11): error TS2339: Property 'deleteAccount' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+app/accounts/page.tsx(142,9): error TS2451: Cannot redeclare block-scoped variable 'accounts'.
+app/accounts/page.tsx(142,21): error TS2304: Cannot find name 'data'.
+app/accounts/page.tsx(142,51): error TS7006: Parameter 'a' implicitly has an 'any' type.
+app/accounts/page.tsx(144,66): error TS2339: Property 'balance_paise' does not exist on type 'never'.
+app/accounts/page.tsx(201,88): error TS2339: Property 'updated_at' does not exist on type 'never'.
+app/accounts/page.tsx(215,31): error TS2339: Property 'id' does not exist on type 'never'.
+app/accounts/page.tsx(218,88): error TS2339: Property 'color' does not exist on type 'never'.
+app/accounts/page.tsx(219,76): error TS2339: Property 'color' does not exist on type 'never'.
+app/accounts/page.tsx(222,58): error TS2339: Property 'name' does not exist on type 'never'.
+app/accounts/page.tsx(223,75): error TS2339: Property 'bank_name' does not exist on type 'never'.
+app/accounts/page.tsx(224,103): error TS2339: Property 'account_type' does not exist on type 'never'.
+app/accounts/page.tsx(224,147): error TS2339: Property 'account_type' does not exist on type 'never'.
+app/accounts/page.tsx(229,91): error TS2339: Property 'id' does not exist on type 'never'.
+app/accounts/page.tsx(235,74): error TS2339: Property 'balance_paise' does not exist on type 'never'.
+app/accounts/page.tsx(237,96): error TS2339: Property 'updated_at' does not exist on type 'never'.
+app/analytics/page.tsx(49,11): error TS2339: Property 'data' does not exist on type '{ analytics: {}; isLoading: false; error: Error | null; }'.
+app/analytics/page.tsx(49,28): error TS2339: Property 'loading' does not exist on type '{ analytics: {}; isLoading: false; error: Error | null; }'.
+app/cards/page.tsx(139,11): error TS2339: Property 'data' does not exist on type '{ cards: never[]; isLoading: false; error: Error | null; }'.
+app/cards/page.tsx(139,17): error TS2339: Property 'refetch' does not exist on type '{ cards: never[]; isLoading: false; error: Error | null; }'.
+app/cards/page.tsx(140,11): error TS2339: Property 'createCard' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+app/cards/page.tsx(141,11): error TS2339: Property 'updateCard' does not exist on type 'UseMutationResult<{}, Error, { id: string; cardData: any; }, unknown>'.
+app/cards/page.tsx(142,11): error TS2339: Property 'deleteCard' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+app/cards/page.tsx(147,45): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/cards/page.tsx(148,51): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/cards/page.tsx(150,42): error TS7006: Parameter 's' implicitly has an 'any' type.
+app/cards/page.tsx(150,45): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/cards/page.tsx(151,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+app/cards/page.tsx(151,39): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/cards/page.tsx(235,72): error TS7006: Parameter 's' implicitly has an 'any' type.
+app/cards/page.tsx(235,75): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/cards/page.tsx(240,21): error TS7006: Parameter 'card' implicitly has an 'any' type.
+app/cards/page.tsx(250,31): error TS7006: Parameter 'card' implicitly has an 'any' type.
+app/categories/page.tsx(89,11): error TS2339: Property 'data' does not exist on type '{ categories: never[]; isLoading: false; error: Error | null; }'.
+app/categories/page.tsx(89,33): error TS2339: Property 'loading' does not exist on type '{ categories: never[]; isLoading: false; error: Error | null; }'.
+app/categories/page.tsx(89,66): error TS2554: Expected 0 arguments, but got 1.
+app/categories/page.tsx(211,41): error TS7006: Parameter 'entry' implicitly has an 'any' type.
+app/categories/page.tsx(211,48): error TS7006: Parameter 'index' implicitly has an 'any' type.
+app/categories/page.tsx(297,45): error TS7006: Parameter 'category' implicitly has an 'any' type.
+app/dashboard/page.tsx(87,11): error TS2339: Property 'data' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+app/dashboard/page.tsx(87,27): error TS2339: Property 'loading' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+app/dashboard/page.tsx(88,11): error TS2339: Property 'data' does not exist on type '{ cards: never[]; isLoading: false; error: Error | null; }'.
+app/dashboard/page.tsx(88,24): error TS2339: Property 'loading' does not exist on type '{ cards: never[]; isLoading: false; error: Error | null; }'.
+app/dashboard/page.tsx(89,11): error TS2339: Property 'data' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+app/dashboard/page.tsx(89,24): error TS2339: Property 'loading' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+app/investments/page.tsx(95,11): error TS2339: Property 'data' does not exist on type '{ investments: never[]; isLoading: false; error: Error | null; }'.
+app/investments/page.tsx(95,17): error TS2339: Property 'refetch' does not exist on type '{ investments: never[]; isLoading: false; error: Error | null; }'.
+app/investments/page.tsx(96,11): error TS2339: Property 'createInvestment' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+app/loans/page.tsx(45,11): error TS2339: Property 'data' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+app/loans/page.tsx(45,28): error TS2339: Property 'refetch' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+app/loans/page.tsx(46,11): error TS2339: Property 'createLoan' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+app/loans/page.tsx(47,11): error TS2339: Property 'deleteLoan' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+app/loans/page.tsx(47,23): error TS2339: Property 'deleting' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+app/loans/page.tsx(48,11): error TS2339: Property 'simulatePrepayment' does not exist on type 'UseMutationResult<{}, Error, { loanId: string; prepaymentData: any; }, unknown>'.
+app/loans/page.tsx(48,31): error TS2339: Property 'simulating' does not exist on type 'UseMutationResult<{}, Error, { loanId: string; prepaymentData: any; }, unknown>'.
+app/loans/page.tsx(58,11): error TS2339: Property 'data' does not exist on type '{ schedule: never[]; isLoading: false; error: Error | null; }'.
+app/loans/page.tsx(58,35): error TS2339: Property 'loading' does not exist on type '{ schedule: never[]; isLoading: false; error: Error | null; }'.
+app/loans/page.tsx(58,92): error TS2554: Expected 0 arguments, but got 1.
+app/loans/page.tsx(60,36): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(63,14): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(64,14): error TS7006: Parameter 's' implicitly has an 'any' type.
+app/loans/page.tsx(64,17): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(67,14): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(68,14): error TS7006: Parameter 's' implicitly has an 'any' type.
+app/loans/page.tsx(68,17): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(71,14): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(72,11): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(136,34): error TS7006: Parameter 'l' implicitly has an 'any' type.
+app/loans/page.tsx(195,23): error TS7006: Parameter 'loan' implicitly has an 'any' type.
+app/settings/page.tsx(99,11): error TS2339: Property 'data' does not exist on type '{ categories: never[]; isLoading: false; error: Error | null; }'.
+app/settings/page.tsx(108,20): error TS7006: Parameter 'c' implicitly has an 'any' type.
+app/transactions/page.tsx(109,11): error TS2339: Property 'data' does not exist on type '{ transactions: never[]; isLoading: false; error: Error | null; }'.
+app/transactions/page.tsx(109,25): error TS2339: Property 'loading' does not exist on type '{ transactions: never[]; isLoading: false; error: Error | null; }'.
+app/transactions/page.tsx(109,41): error TS2339: Property 'refetch' does not exist on type '{ transactions: never[]; isLoading: false; error: Error | null; }'.
+app/transactions/page.tsx(109,69): error TS2554: Expected 0 arguments, but got 1.
+app/transactions/page.tsx(117,11): error TS2339: Property 'data' does not exist on type '{ accounts: never[]; isLoading: false; error: Error | null; }'.
+app/transactions/page.tsx(118,11): error TS2339: Property 'data' does not exist on type '{ categories: never[]; isLoading: false; error: Error | null; }'.
+app/transactions/page.tsx(119,11): error TS2339: Property 'data' does not exist on type '{ imports: never[]; isLoading: false; error: Error | null; }'.
+app/transactions/page.tsx(167,34): error TS2339: Property 'update' does not exist on type 'UseMutationResult<{}, Error, { id: string; categoryData: any; }, unknown>'.
+  Property 'update' does not exist on type 'Override<MutationObserverIdleResult<{}, Error, { id: string; categoryData: any; }, unknown>, { mutate: UseMutateFunction<{}, Error, { id: string; categoryData: any; }, unknown>; }> & { ...; }'.
+app/transactions/page.tsx(556,51): error TS7006: Parameter 'cat' implicitly has an 'any' type.
+app/transactions/page.tsx(565,79): error TS2339: Property 'updating' does not exist on type 'UseMutationResult<{}, Error, { id: string; categoryData: any; }, unknown>'.
+  Property 'updating' does not exist on type 'Override<MutationObserverIdleResult<{}, Error, { id: string; categoryData: any; }, unknown>, { mutate: UseMutateFunction<{}, Error, { id: string; categoryData: any; }, unknown>; }> & { ...; }'.
+app/transactions/page.tsx(566,41): error TS2339: Property 'updating' does not exist on type 'UseMutationResult<{}, Error, { id: string; categoryData: any; }, unknown>'.
+  Property 'updating' does not exist on type 'Override<MutationObserverIdleResult<{}, Error, { id: string; categoryData: any; }, unknown>, { mutate: UseMutateFunction<{}, Error, { id: string; categoryData: any; }, unknown>; }> & { ...; }'.
+components/cashflow/cashflow-chart.tsx(107,11): error TS2339: Property 'data' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/cashflow-chart.tsx(107,17): error TS2339: Property 'loading' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/cashflow-chart.tsx(107,33): error TS2339: Property 'refetch' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/cashflow-chart.tsx(107,64): error TS2554: Expected 0 arguments, but got 1.
+components/cashflow/cashflow-chart.tsx(111,11): error TS2339: Property 'data' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/cashflow-chart.tsx(112,5): error TS2554: Expected 0 arguments, but got 1.
+components/cashflow/monthly-comparison-table.tsx(32,11): error TS2339: Property 'data' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/monthly-comparison-table.tsx(32,31): error TS2339: Property 'loading' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/monthly-comparison-table.tsx(32,47): error TS2339: Property 'refetch' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/cashflow/monthly-comparison-table.tsx(32,78): error TS2554: Expected 0 arguments, but got 1.
+components/cashflow/monthly-comparison-table.tsx(33,11): error TS2339: Property 'data' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/import/import-history-list.tsx(78,11): error TS2339: Property 'data' does not exist on type '{ statements: never[]; isLoading: false; error: Error | null; }'.
+components/import/import-history-list.tsx(78,17): error TS2339: Property 'loading' does not exist on type '{ statements: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-streams-table.tsx(109,11): error TS2339: Property 'data' does not exist on type '{ incomeStreams: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-streams-table.tsx(109,17): error TS2339: Property 'loading' does not exist on type '{ incomeStreams: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-streams-table.tsx(109,33): error TS2339: Property 'refetch' does not exist on type '{ incomeStreams: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-streams-table.tsx(112,11): error TS2339: Property 'createIncomeSource' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+components/income/income-streams-table.tsx(112,31): error TS2339: Property 'creating' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+components/income/income-streams-table.tsx(113,11): error TS2339: Property 'updateIncomeSource' does not exist on type 'UseMutationResult<{}, Error, { id: string; incomeData: any; }, unknown>'.
+components/income/income-streams-table.tsx(113,31): error TS2339: Property 'updating' does not exist on type 'UseMutationResult<{}, Error, { id: string; incomeData: any; }, unknown>'.
+components/income/income-streams-table.tsx(114,11): error TS2339: Property 'deleteIncomeSource' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+components/income/income-streams-table.tsx(114,31): error TS2339: Property 'deleting' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+components/income/income-summary-cards.tsx(12,11): error TS2339: Property 'data' does not exist on type '{ incomeStreams: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-summary-cards.tsx(12,17): error TS2339: Property 'loading' does not exist on type '{ incomeStreams: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-summary-cards.tsx(12,33): error TS2339: Property 'refetch' does not exist on type '{ incomeStreams: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-trend-chart.tsx(22,11): error TS2339: Property 'data' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-trend-chart.tsx(22,17): error TS2339: Property 'loading' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-trend-chart.tsx(22,33): error TS2339: Property 'refetch' does not exist on type '{ cashflow: never[]; isLoading: false; error: Error | null; }'.
+components/income/income-trend-chart.tsx(22,64): error TS2554: Expected 0 arguments, but got 1.
+components/investments/investment-form.tsx(54,11): error TS2339: Property 'data' does not exist on type '{ accounts: never[]; isLoading: false; error: Error | null; }'.
+components/investments/investment-form.tsx(211,30): error TS7006: Parameter 'account' implicitly has an 'any' type.
+components/loans/loan-form.tsx(60,11): error TS2339: Property 'data' does not exist on type '{ accounts: never[]; isLoading: false; error: Error | null; }'.
+components/loans/loan-form.tsx(253,30): error TS7006: Parameter 'account' implicitly has an 'any' type.
+components/networth/assets-liabilities-columns.tsx(160,11): error TS2339: Property 'data' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/assets-liabilities-columns.tsx(160,17): error TS2339: Property 'loading' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/assets-liabilities-columns.tsx(160,33): error TS2339: Property 'refetch' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-header.tsx(22,11): error TS2339: Property 'data' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-header.tsx(22,27): error TS2339: Property 'loading' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-header.tsx(22,43): error TS2339: Property 'refetch' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-header.tsx(23,11): error TS2339: Property 'data' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-header.tsx(23,44): error TS2554: Expected 0 arguments, but got 1.
+components/networth/networth-history-chart.tsx(82,11): error TS2339: Property 'data' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-history-chart.tsx(82,17): error TS2339: Property 'loading' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-history-chart.tsx(82,33): error TS2339: Property 'refetch' does not exist on type '{ netWorth: number; assets: number; liabilities: number; currency: string; isLoading: false; error: Error | null; }'.
+components/networth/networth-history-chart.tsx(82,62): error TS2554: Expected 0 arguments, but got 1.
+components/networth/networth-history-chart.tsx(120,8): error TS7006: Parameter 'a' implicitly has an 'any' type.
+components/networth/networth-history-chart.tsx(120,11): error TS7006: Parameter 'b' implicitly has an 'any' type.
+components/projections/goal-planner.tsx(85,26): error TS2339: Property 'calculating' does not exist on type '{ calculateGoal: { futureValue: number; totalContributions: number; growth: number; }; isLoading: false; error: Error | null; }'.
+components/projections/goal-planner.tsx(85,39): error TS2339: Property 'result' does not exist on type '{ calculateGoal: { futureValue: number; totalContributions: number; growth: number; }; isLoading: false; error: Error | null; }'.
+components/projections/goal-planner.tsx(92,11): error TS2349: This expression is not callable.
+  Type '{ futureValue: number; totalContributions: number; growth: number; }' has no call signatures.
+components/projections/networth-forecast.tsx(27,11): error TS2339: Property 'data' does not exist on type '{ forecast: never[]; isLoading: false; error: Error | null; }'.
+components/projections/networth-forecast.tsx(27,17): error TS2339: Property 'loading' does not exist on type '{ forecast: never[]; isLoading: false; error: Error | null; }'.
+components/projections/networth-forecast.tsx(27,58): error TS2554: Expected 0 arguments, but got 1.
+components/projections/networth-forecast.tsx(31,34): error TS7006: Parameter 'p' implicitly has an 'any' type.
+components/projections/networth-forecast.tsx(42,40): error TS7006: Parameter 'p' implicitly has an 'any' type.
+components/projections/whatif-simulator.tsx(40,28): error TS2339: Property 'calculating' does not exist on type '{ calculateWhatIf: {}; isLoading: false; error: Error | null; }'.
+components/projections/whatif-simulator.tsx(40,41): error TS2339: Property 'result' does not exist on type '{ calculateWhatIf: {}; isLoading: false; error: Error | null; }'.
+components/projections/whatif-simulator.tsx(41,11): error TS2339: Property 'data' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+components/projections/whatif-simulator.tsx(41,28): error TS2339: Property 'loading' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+components/projections/whatif-simulator.tsx(46,11): error TS2349: This expression is not callable.
+  Type '{}' has no call signatures.
+components/projections/whatif-simulator.tsx(178,31): error TS7006: Parameter 'loan' implicitly has an 'any' type.
+components/recurring/monthly-obligations-summary.tsx(13,11): error TS2339: Property 'data' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/monthly-obligations-summary.tsx(13,32): error TS2339: Property 'loading' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/monthly-obligations-summary.tsx(13,48): error TS2339: Property 'refetch' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/monthly-obligations-summary.tsx(14,11): error TS2339: Property 'data' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/subscriptions-table.tsx(43,11): error TS2339: Property 'data' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/subscriptions-table.tsx(43,17): error TS2339: Property 'loading' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/subscriptions-table.tsx(43,33): error TS2339: Property 'refetch' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/subscriptions-table.tsx(44,11): error TS2339: Property 'createRecurringTransaction' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+components/recurring/subscriptions-table.tsx(44,39): error TS2339: Property 'creating' does not exist on type 'UseMutationResult<{}, Error, any, unknown>'.
+components/recurring/subscriptions-table.tsx(45,11): error TS2339: Property 'updateRecurringTransaction' does not exist on type 'UseMutationResult<{}, Error, { id: string; transactionData: any; }, unknown>'.
+components/recurring/subscriptions-table.tsx(45,39): error TS2339: Property 'updating' does not exist on type 'UseMutationResult<{}, Error, { id: string; transactionData: any; }, unknown>'.
+components/recurring/subscriptions-table.tsx(46,11): error TS2339: Property 'deleteRecurringTransaction' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+components/recurring/subscriptions-table.tsx(46,39): error TS2339: Property 'deleting' does not exist on type 'UseMutationResult<{}, Error, string, unknown>'.
+components/recurring/upcoming-bills-timeline.tsx(15,11): error TS2339: Property 'data' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/upcoming-bills-timeline.tsx(15,32): error TS2339: Property 'loading' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/upcoming-bills-timeline.tsx(15,48): error TS2339: Property 'refetch' does not exist on type '{ recurringTransactions: never[]; isLoading: false; error: Error | null; }'.
+components/recurring/upcoming-bills-timeline.tsx(16,11): error TS2339: Property 'data' does not exist on type '{ loans: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-history-table.tsx(19,11): error TS2339: Property 'data' does not exist on type '{ snapshots: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-history-table.tsx(19,17): error TS2339: Property 'loading' does not exist on type '{ snapshots: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-history-table.tsx(19,33): error TS2339: Property 'refetch' does not exist on type '{ snapshots: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-history-table.tsx(19,58): error TS2554: Expected 0 arguments, but got 1.
+components/snapshots/snapshot-trigger-card.tsx(13,11): error TS2339: Property 'data' does not exist on type '{ snapshots: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-trigger-card.tsx(13,28): error TS2339: Property 'loading' does not exist on type '{ snapshots: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-trigger-card.tsx(13,44): error TS2339: Property 'refetch' does not exist on type '{ snapshots: never[]; isLoading: false; error: Error | null; }'.
+components/snapshots/snapshot-trigger-card.tsx(13,69): error TS2554: Expected 0 arguments, but got 1.
+components/snapshots/snapshot-trigger-card.tsx(14,11): error TS2339: Property 'generating' does not exist on type 'UseMutationResult<{}, Error, void, unknown>'.
+components/snapshots/snapshot-trigger-card.tsx(14,23): error TS2339: Property 'generateSnapshot' does not exist on type 'UseMutationResult<{}, Error, void, unknown>'.
+components/snapshots/snapshot-trigger-card.tsx(15,11): error TS2339: Property 'backfilling' does not exist on type 'UseMutationResult<{}, Error, { start: string; end: string; }, unknown>'.
+components/snapshots/snapshot-trigger-card.tsx(15,24): error TS2339: Property 'backfillSnapshots' does not exist on type 'UseMutationResult<{}, Error, { start: string; end: string; }, unknown>'.
+components/upload/upload-modal.tsx(11,10): error TS2305: Module '"@/lib/hooks/use-finance-data"' has no exported member 'useUpload'.
+components/upload/upload-modal.tsx(11,21): error TS2305: Module '"@/lib/hooks/use-finance-data"' has no exported member 'useOverview'.
+components/upload/upload-modal.tsx(37,11): error TS2339: Property 'refetch' does not exist on type '{ statements: never[]; isLoading: false; error: Error | null; }'.
+components/upload/upload-modal.tsx(38,11): error TS2339: Property 'refetch' does not exist on type '{ transactions: never[]; isLoading: false; error: Error | null; }'.
+lib/hooks/use-finance-data.ts(65,24): error TS6133: 'accountData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(81,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(97,24): error TS6133: 'id' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(153,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(209,24): error TS6133: 'loanData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(225,24): error TS6133: 'id' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(261,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(317,24): error TS6133: 'chargeData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(333,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(349,24): error TS6133: 'id' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(401,24): error TS6133: 'dateRange' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(417,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(options: DefinedInitialDataOptions<{ futureValue: number; totalContributions: number; growth: number; }, Error, { futureValue: number; totalContributions: number; growth: number; }, string[]>, queryClient?: QueryClient | undefined): DefinedUseQueryResult<...>', gave the following error.
+    Type '(params: { targetAmount: number; monthlyContribution: number; years: number; }) => Promise<{ futureValue: number; totalContributions: number; growth: number; }>' is not assignable to type 'QueryFunction<{ futureValue: number; totalContributions: number; growth: number; }, string[]>'.
+      Types of parameters 'params' and 'context' are incompatible.
+        Type '{ client: QueryClient; queryKey: string[]; signal: AbortSignal; meta: Record<string, unknown> | undefined; pageParam?: unknown; direction?: unknown; }' is missing the following properties from type '{ targetAmount: number; monthlyContribution: number; years: number; }': targetAmount, monthlyContribution, years
+  Overload 2 of 3, '(options: UndefinedInitialDataOptions<{ futureValue: number; totalContributions: number; growth: number; }, Error, { futureValue: number; totalContributions: number; growth: number; }, string[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '(params: { targetAmount: number; monthlyContribution: number; years: number; }) => Promise<{ futureValue: number; totalContributions: number; growth: number; }>' is not assignable to type 'unique symbol | QueryFunction<{ futureValue: number; totalContributions: number; growth: number; }, string[], never> | undefined'.
+      Type '(params: { targetAmount: number; monthlyContribution: number; years: number; }) => Promise<{ futureValue: number; totalContributions: number; growth: number; }>' is not assignable to type 'QueryFunction<{ futureValue: number; totalContributions: number; growth: number; }, string[], never>'.
+        Types of parameters 'params' and 'context' are incompatible.
+          Type '{ client: QueryClient; queryKey: string[]; signal: AbortSignal; meta: Record<string, unknown> | undefined; pageParam?: unknown; direction?: unknown; }' is missing the following properties from type '{ targetAmount: number; monthlyContribution: number; years: number; }': targetAmount, monthlyContribution, years
+  Overload 3 of 3, '(options: UseQueryOptions<{ futureValue: number; totalContributions: number; growth: number; }, Error, { futureValue: number; totalContributions: number; growth: number; }, string[]>, queryClient?: QueryClient | undefined): UseQueryResult<...>', gave the following error.
+    Type '(params: { targetAmount: number; monthlyContribution: number; years: number; }) => Promise<{ futureValue: number; totalContributions: number; growth: number; }>' is not assignable to type 'unique symbol | QueryFunction<{ futureValue: number; totalContributions: number; growth: number; }, string[], never> | undefined'.
+      Type '(params: { targetAmount: number; monthlyContribution: number; years: number; }) => Promise<{ futureValue: number; totalContributions: number; growth: number; }>' is not assignable to type 'QueryFunction<{ futureValue: number; totalContributions: number; growth: number; }, string[], never>'.
+        Types of parameters 'params' and 'context' are incompatible.
+          Type '{ client: QueryClient; queryKey: string[]; signal: AbortSignal; meta: Record<string, unknown> | undefined; pageParam?: unknown; direction?: unknown; }' is missing the following properties from type '{ targetAmount: number; monthlyContribution: number; years: number; }': targetAmount, monthlyContribution, years
+lib/hooks/use-finance-data.ts(417,21): error TS6133: 'params' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(445,21): error TS6133: 'params' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(485,24): error TS6133: 'transactionData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(501,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(517,24): error TS6133: 'id' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(533,21): error TS6133: 'params' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(593,24): error TS6133: 'investmentData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(609,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(625,24): error TS6133: 'id' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(702,24): error TS6133: 'incomeData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(718,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(734,24): error TS6133: 'id' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(770,24): error TS6133: 'cardData' is declared but its value is never read.
+lib/hooks/use-finance-data.ts(786,24): error TS6198: All destructured elements are unused.
+lib/hooks/use-finance-data.ts(802,24): error TS6133: 'id' is declared but its value is never read.

@@ -10,23 +10,15 @@ Phase 3: Part of the Advanced Behavioral Intelligence Layer.
 
 from typing import Dict, List, Any
 
+from src.logger import log
+
 
 def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Generate structured behavioral insights from behavior profile.
-    
-    Insights must:
-    - Include quantitative evidence
-    - Avoid generic motivational text
-    - Reference computed metrics
-    - Be deterministic
-    
-    Returns list of insight dicts with:
-    - type: "warning" | "positive" | "info"
-    - title: Short title
-    - message: Detailed insight with numbers
-    - metric: The key metric referenced
     """
+    log.info("Generating behavioral insights")
+    
     insights = []
     
     if not profile:

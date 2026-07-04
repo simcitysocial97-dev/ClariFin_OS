@@ -57,6 +57,7 @@ export function MemberSelector({ showLabel = true, className }: MemberSelectorPr
 
     setAdding(true);
     try {
+      if (!newMemberName.trim() || !selectedColor) return;
       await addMember(newMemberName.trim(), selectedColor);
       toast({
         title: 'Member added',
@@ -81,7 +82,7 @@ export function MemberSelector({ showLabel = true, className }: MemberSelectorPr
       {showLabel && (
         <label className="text-sm font-medium text-muted-foreground">Viewing as</label>
       )}
-      <Select value={member} onValueChange={setMember}>
+      <Select value={member || "All"} onValueChange={setMember}>
         <SelectTrigger>
           <SelectValue placeholder="Select member" />
         </SelectTrigger>

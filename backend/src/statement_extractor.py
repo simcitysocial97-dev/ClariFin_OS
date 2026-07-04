@@ -25,8 +25,30 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-import camelot
-import pdfplumber
+
+def _require_pdfplumber():
+    """Lazy import pdfplumber with helpful error message if not installed."""
+    try:
+        import pdfplumber
+        return pdfplumber
+    except ImportError as e:
+        raise RuntimeError(
+            "pdfplumber is required for PDF text extraction.\n"
+            "Install with: pip install pdfplumber"
+        ) from e
+
+
+def _require_camelot():
+    """Lazy import camelot with helpful error message if not installed."""
+    try:
+        import camelot
+        return camelot
+    except ImportError as e:
+        raise RuntimeError(
+            "Camelot is required for PDF table extraction.\n"
+            "Install with: pip install camelot-py[cv]\n"
+            "Ensure Ghostscript is installed on the system."
+        ) from e
 
 
 # ============================================================
@@ -176,6 +198,7 @@ class StatementExtractor:
         """Scan first 2 pages for bank name keywords."""
         text = ""
         try:
+            pdfplumber = _require_pdfplumber()
             with pdfplumber.open(self.pdf_path) as pdf:
                 self._num_pages = len(pdf.pages)
                 for page in pdf.pages[:2]:
@@ -212,6 +235,7 @@ class StatementExtractor:
 
         # Try lattice first
         lattice_usable = False
+        camelot = _require_camelot()
         try:
             tables = camelot.read_pdf(
                 self.pdf_path,
@@ -350,6 +374,7 @@ class StatementExtractor:
         Raises ExtractionError if no table scores above threshold.
         """
         if self._num_pages == 0:
+            pdfplumber = _require_pdfplumber()
             with pdfplumber.open(self.pdf_path) as pdf:
                 self._num_pages = len(pdf.pages)
 
@@ -985,6 +1010,7 @@ class StatementExtractor:
 
             for flavor in (strategy, "stream" if strategy == "lattice" else "lattice"):
                 try:
+                    camelot = _require_camelot()
                     tables = camelot.read_pdf(
                         self.pdf_path,
                         pages=page_str,
@@ -1052,6 +1078,7 @@ class StatementExtractor:
 
             for flavor in (strategy, "stream" if strategy == "lattice" else "lattice"):
                 try:
+                    camelot = _require_camelot()
                     tables = camelot.read_pdf(
                         self.pdf_path,
                         pages=page_str,
@@ -1115,6 +1142,7 @@ class StatementExtractor:
         transactions = []
 
         try:
+            pdfplumber = _require_pdfplumber()
             with pdfplumber.open(self.pdf_path) as pdf:
                 for page in pdf.pages:
                     text = page.extract_text() or ""

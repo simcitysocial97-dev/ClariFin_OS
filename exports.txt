@@ -1,0 +1,307 @@
+=== EXPORTED FROM lib/ ===
+export function cn(...inputs: ClassValue[]) {
+export function formatAccountType(type: string): string {
+export function formatCardType(type: string): string {
+export function formatDate(isoString: string | null | undefined): string {
+export function formatINRCompact(paise: number | null | undefined): string {
+export function formatINR(paise: number | null | undefined): string {
+export function formatMonth(month: string | null | undefined): string {
+export function formatMonths(months: number | null | undefined): string {
+export function formatPaiseCompact(paise: number | null | undefined): string {
+export function formatPaise(paise: number | null | undefined): string {
+export function formatPercent(value: number | null | undefined): string {
+export function formatRelativeTime(isoString: string | null | undefined): string {
+export function formatRupees(rupees: number | null | undefined): string {
+export function formatTenure(months: number | null | undefined): string {
+export function getAccountTypeColor(type: string): string {
+export function paiseToRupees(paise: number): number {
+export function rupeesToPaise(rupees: number): number {
+
+=== EXPORTED FROM lib/hooks/ ===
+export const queryKeys = {
+export const __test = {
+export const __test = { useAsyncMutation };
+export const useAssetAllocationQuery = createFinanceQuery<AssetAllocationResponse>(() => {
+export const useBehaviorScoreQuery = createFinanceQuery<BehaviorScore>(() => {
+export const useCashflowBreakdownQuery = createFinanceQuery<CashflowBreakdown>(() => {
+export const useImportsQuery = createFinanceQuery<ImportListResponse, [{ status?: string; page?: number; per_page?: number }]>((params = {}) => {
+export const useInvestmentSummaryQuery = createFinanceQuery<InvestmentSummary>(() => {
+export const useLoansQuery = createFinanceQuery<LoansResponse>(() => {
+export const useMonthlyCashflowQuery = createFinanceQuery<MonthlyCashflowResponse>(() => {
+export const useNetWorthQuery = createFinanceQuery<NetWorth>(() => {
+export const useNetWorthTrendQuery = createFinanceQuery<NetWorthTrendResponse, [number]>((months: number) => {
+export const useOverviewQuery = createFinanceQuery<OverviewData>(() => {
+export const useRecurringTransactionsQuery = createFinanceQuery<RecurringTransactionsResponse>(() => {
+export function normalizeError(error: unknown): Error {
+export function useAccount(id: number | null): HookState<Account> {
+export function useAccounts() {
+export function useAccounts(): HookState<{ accounts: Account[]; total: number }> {
+export function useAmortizationSchedule() {
+export function useAnalytics() {
+export function useApiCall<TArgs extends unknown[], TReturn>(
+export function useApiError() {
+export function useAsyncMutation<TData, TVariables>(options: {
+export function useAsyncQuery<T>(key: readonly unknown[], fetcher: () => Promise<T>, staleTimeMs = 5 * 60 * 1000): HookState<T> {
+export function useBackfillSnapshots() {
+export function useCalculateGoal() {
+export function useCalculateWhatIf() {
+export function useCard(id: number | null): HookState<Card> {
+export function useCards() {
+export function useCards(accountId?: number): HookState<{ cards: Card[]; total: number }> {
+export function useCashflow() {
+export function useCashflowBreakdown() {
+export function useCashflowSummary() {
+export function useCategories() {
+export function useCreateAccount() {
+export function useCreateAccount(): {
+export function useCreateCard() {
+export function useCreateCard(): {
+export function useCreateIncomeSource() {
+export function useCreateIncomeStream() {
+export function useCreateInvestment() {
+export function useCreateLoan() {
+export function useCreateRecurringCharge() {
+export function useCreateRecurringTransaction() {
+export function useDeleteAccount() {
+export function useDeleteAccount(): {
+export function useDeleteCard() {
+export function useDeleteCard(): {
+export function useDeleteIncomeSource() {
+export function useDeleteIncomeStream() {
+export function useDeleteInvestment() {
+export function useDeleteLoan() {
+export function useDeleteRecurringCharge() {
+export function useDeleteRecurringTransaction() {
+export function useGenerateSnapshot() {
+export function useImportsQuery(params?: UseImportsQueryParams): UseImportsQueryResult {
+export function useIncomeSources() {
+export function useIncomeStreams() {
+export function useInvestments() {
+export function useLoans() {
+export function useMonthlyCashflow() {
+export function useNetWorth() {
+export function useNetWorthForecast() {
+export function useNetWorthProjection() {
+export function useNetWorthTrend() {
+export function useOverviewQuery(): UseOverviewQueryResult {
+export function useRecurringCharges() {
+export function useRecurringTransactions() {
+export function useSimulatePrepayment() {
+export function useSnapshots() {
+export function useStatements() {
+export function useTransactions() {
+export function useUpdateAccount() {
+export function useUpdateAccount(): {
+export function useUpdateCard() {
+export function useUpdateCard(): {
+export function useUpdateCategory() {
+export function useUpdateIncomeSource() {
+export function useUpdateIncomeStream() {
+export function useUpdateInvestment() {
+export function useUpdateRecurringCharge() {
+export function useUpdateRecurringTransaction() {
+export function useV2Imports() {
+export function useWhatIfSimulation() {
+export interface ApiErrorState {
+export interface HookState<T> {
+export interface MutationState<TData, TVariables> {
+
+=== EXPORTED FROM components/ ===
+export {
+export { ActiveLoansWidget } from "./active-loans-widget";
+export { Alert, AlertTitle, AlertDescription }
+export { AssetAllocationWidget } from "./asset-allocation-widget";
+export { AssetsLiabilitiesColumns } from "./assets-liabilities-columns";
+export { Badge, badgeVariants }
+export { BentoGridLayout, BentoGridItem } from "./bento-grid-layout";
+export { Button, buttonVariants }
+export { Calendar, CalendarDayButton }
+export { CashflowChart } from "./cashflow-chart";
+export { CashflowChartWidget } from "./cashflow-chart-widget";
+export { CashflowSankeyView } from "./cashflow-sankey-view";
+export { Checkbox }
+export const AreaChart = dyn(() => import('recharts').then((mod) => mod.AreaChart));
+export const Area = dyn(() => import('recharts').then((mod) => mod.Area));
+export const BarChart = dyn(() => import('recharts').then((mod) => mod.BarChart));
+export const Bar = dyn(() => import('recharts').then((mod) => mod.Bar));
+export const CartesianGrid = dyn(() => import('recharts').then((mod) => mod.CartesianGrid));
+export const Cell = dyn(() => import('recharts').then((mod) => mod.Cell));
+export const ComposedChart = dyn(() => import('recharts').then((mod) => mod.ComposedChart));
+export const Legend = dyn(() => import('recharts').then((mod) => mod.Legend));
+export const LineChart = dyn(() => import('recharts').then((mod) => mod.LineChart));
+export const Line = dyn(() => import('recharts').then((mod) => mod.Line));
+export const LOAN_STATUS = [
+export const LOAN_TYPES = [
+export const PieChart = dyn(() => import('recharts').then((mod) => mod.PieChart));
+export const Pie = dyn(() => import('recharts').then((mod) => mod.Pie));
+export const ResponsiveContainer = dyn(() => import('recharts').then((mod) => mod.ResponsiveContainer));
+export const Tooltip = dyn(() => import('recharts').then((mod) => mod.Tooltip));
+export const XAxis = dyn(() => import('recharts').then((mod) => mod.XAxis));
+export const YAxis = dyn(() => import('recharts').then((mod) => mod.YAxis));
+export function ActiveLoansWidget({ mode = "personal" }: ActiveLoansWidgetProps) {
+export function AlertsCenterWidget({ mode = "personal" }: AlertsCenterWidgetProps) {
+export function AllocationChart({ allocation }: AllocationChartProps) {
+export function AmortizationChart({ schedule }: AmortizationChartProps) {
+export function AmortizationTable({ schedule }: AmortizationTableProps) {
+export function AreaChartSkeleton() {
+export function AssetAllocationSkeleton() {
+export function AssetAllocationWidget({ mode = "personal" }: AssetAllocationWidgetProps) {
+export function AssetsLiabilitiesColumns({ className }: AssetsLiabilitiesColumnsProps) {
+export function AssetsLiabilitiesSkeleton() {
+export function BankWiseChart({ bankChart }: BankWiseChartProps) {
+export function BentoGridItem({ 
+export function BentoGridLayout({ children, className }: BentoGridLayoutProps) {
+export function BestWorstMonthSkeleton() {
+export function CashflowChart({
+export function CashflowChartSkeleton() {
+export function CashflowChartWidget({ mode = "personal" }: CashflowChartWidgetProps) {
+export function CashflowSankeyView({ className }: CashflowSankeyViewProps) {
+export function CashflowSummarySkeleton() {
+export function CategoryBudgetList() {
+export function ChartWidgetSkeleton() {
+export function ColumnMapper({ detectResult, onMappingChange }: ColumnMapperProps) {
+export function CreditCard3D({ card, status, onClick }: CreditCard3DProps) {
+export function DashboardSkeleton() {
+export function DonutChartSkeleton() {
+export function EmptyState({ 
+export function GoalPlanner() {
+export function HealthScoreSkeleton() {
+export function HealthScoreWidget({ mode = "personal" }: HealthScoreWidgetProps) {
+export function ImportHistoryList({ maxItems = 10 }: ImportHistoryListProps) {
+export function ImportPreview({ detectResult, mapping }: ImportPreviewProps) {
+export function ImportsAttentionWidget({ mode = "personal" }: ImportsAttentionWidgetProps) {
+export function IncomeSourceDialog({
+export function IncomeStreamsSkeleton() {
+export function IncomeStreamsTable({ className }: { className?: string }) {
+export function IncomeSummaryCards({ className }: { className?: string }) {
+export function IncomeSummarySkeleton() {
+export function IncomeTrendChart({ className }: { className?: string }) {
+export function IncomeTrendSkeleton() {
+export function InsightCards({ insights }: InsightCardsProps) {
+export function InvestmentForm({ initialData, onSubmit, onCancel }: InvestmentFormProps) {
+export function InvestmentsWidget({ mode = "personal" }: InvestmentsWidgetProps) {
+export function KpiCard({
+export function ListWidgetSkeleton() {
+export function LoanDetail({
+export function LoanForm({ initialData, onSubmit, onCancel }: LoanFormProps) {
+export function LoanList({ loans, onLoanClick, onEdit, onDelete }: LoanListProps) {
+export function LoanSummaryBar({ loans }: LoanSummaryBarProps) {
+export function MainLayout({ children }: { children: React.ReactNode }) {
+export function MemberSelector({ showLabel = true, className }: MemberSelectorProps) {
+export function MerchantRulesTable() {
+export function MetricCardSkeleton() {
+export function MetricsRow({ mode = "personal" }: MetricsRowProps) {
+export function MetricsRowSkeleton() {
+export function MoneySnapshotWidget({ mode = "personal" }: MoneySnapshotWidgetProps) {
+export function MonthlyBreakdownSkeleton() {
+export function MonthlyComparisonSkeleton() {
+export function MonthlyComparisonTable({ className }: MonthlyComparisonTableProps) {
+export function MonthlyObligationsSummary({ className }: { className?: string }) {
+export function NetWorthForecast() {
+export function NetWorthHeader({ className }: NetWorthHeaderProps) {
+export function NetWorthHeaderSkeleton() {
+export function NetWorthHistoryChart({
+export function NetWorthHistorySkeleton() {
+export function NetWorthTrendWidget({ mode = "personal" }: NetWorthTrendWidgetProps) {
+export function NetWorthWidget({ mode = "personal" }: NetWorthWidgetProps) {
+export function ObligationsSummarySkeleton() {
+export function PageShell({ title, subtitle, actions, children }: PageShellProps) {
+export function ParserConfiguration({
+export function PaymentHistory({ payments, onRecordPayment }: PaymentHistoryProps) {
+export function PdfPreviewWithOverlay({
+export function PortfolioSummary({ summary }: PortfolioSummaryProps) {
+export function PrepaymentSimulator({
+export function ProjectionChart({
+export function QuickStats({ 
+export function RecentImportsWidget({ mode = "personal" }: RecentImportsWidgetProps) {
+export function RecentTransactionsTable({
+export function RecentTransactions({ transactions }: RecentTransactionsProps) {
+export function RecurringTransactionDialog({
+export function ResetTutorial() {
+export function SectionCard({
+export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProps) {
+export function SnapshotHistorySkeleton() {
+export function SnapshotHistoryTable({ className }: { className?: string }) {
+export function SnapshotTriggerCard({ className }: { className?: string }) {
+export function SnapshotTriggerSkeleton() {
+export function Sparkline({
+export function SpendingOverview({ categoryChart }: SpendingOverviewProps) {
+export function SubscriptionsTable({ className }: { className?: string }) {
+export function SubscriptionsTableSkeleton() {
+export function TemplateCoverageWidget({ mode = "personal" }: TemplateCoverageWidgetProps) {
+export function TimelineSkeleton() {
+export function Toaster() {
+export function TransactionFilterBar({
+export function TransactionsTableSkeleton() {
+export function TransactionSummaryCards({ transactions, totalCount }: TransactionSummaryCardsProps) {
+export function Tutorial({ onComplete, onSkip }: TutorialProps) {
+export function UpcomingBillsTimeline({ className }: { className?: string }) {
+export function UpcomingObligationsWidget({ mode = "personal" }: UpcomingObligationsWidgetProps) {
+export function UpcomingPaymentsWidget({ mode = "personal" }: UpcomingPaymentsWidgetProps) {
+export function UploadDropzoneCard({ onDrop, loading = false, disabled = false }: UploadDropzoneCardProps) {
+export function UploadModal({ open, onOpenChange }: UploadModalProps) {
+export function V2ImportStatus({
+export function WhatIfSimulator() {
+export function WidgetErrorFallback({ 
+export { IncomeSourceDialog } from "./income-source-dialog";
+export { IncomeStreamsTable } from "./income-streams-table";
+export { IncomeSummaryCards } from "./income-summary-cards";
+export { IncomeTrendChart } from "./income-trend-chart";
+export { Input }
+export { InsightCards } from "./insight-cards";
+export interface InvestmentFormData {
+export interface LoanFormData {
+export { InvestmentsWidget } from "./investments-widget";
+export { Label }
+export { MetricsRow } from "./metrics-row";
+export { MonthlyComparisonTable } from "./monthly-comparison-table";
+export { MonthlyObligationsSummary } from "./monthly-obligations-summary";
+export { NetWorthHeader } from "./networth-header";
+export { NetWorthHistoryChart } from "./networth-history-chart";
+export { NetWorthTrendWidget } from "./networth-trend-widget";
+export { Progress }
+export { QuickStats } from "./quick-stats";
+export { RadioGroup, RadioGroupItem }
+export { RecentTransactions } from "./recent-transactions";
+export { RecurringTransactionDialog } from "./recurring-transaction-dialog";
+export { ScrollArea, ScrollBar }
+export { Separator }
+export { Skeleton }
+export { Slider }
+export { SnapshotHistoryTable } from "./snapshot-history-table";
+export { SnapshotTriggerCard } from "./snapshot-trigger-card";
+export { SpendingOverview } from "./spending-overview";
+export { SubscriptionsTable } from "./subscriptions-table";
+export { Switch }
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+export { Textarea }
+export type BankFormat = typeof BANK_FORMATS[number]['value'];
+export type ChartConfig = {
+export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>
+export { UpcomingBillsTimeline } from "./upcoming-bills-timeline";
+export { UpcomingPaymentsWidget } from "./upcoming-payments-widget";
+export { WidgetErrorFallback } from "./widget-error-fallback";
+
+=== EXPORTED FROM app/ ===
+export default function AccountsPage() {
+export default function AnalyticsPage() {
+export default function AuditPage() {
+export default function BehaviorPage() {
+export default function CardsPage() {
+export default function CashflowPage() {
+export default function CategoriesPage() {
+export default function DashboardPage() {
+export default function ExportPage() {
+export default function ImportPage() {
+export default function ImportsPage() {
+export default function IncomePage() {
+export default function InvestmentsPage() {
+export default function LoansPage() {
+export default function NetWorthPage() {
+export default function ProjectionsPage() {
+export default function ReconciliationPage() {
+export default function RecurringPage() {
+export default function SettingsPage() {
+export default function SnapshotsPage() {
+export default function StatementsPage() {
+export default function TransactionsPage() {

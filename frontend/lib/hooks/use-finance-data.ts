@@ -1,426 +1,1074 @@
-/**
- * React Hooks for Finance Data
- * Wraps the API client with useState/useEffect for data fetching
- */
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+
+// API function imports
 import {
+  fetchAccounts,
+  fetchCards,
   fetchOverview,
+  fetchV2Imports,
   fetchTransactions,
-  fetchStatements,
   fetchCategories,
   fetchAnalytics,
-  fetchBanks,
-  fetchCategoryList,
-  fetchMembers,
+  fetchLoans,
+  fetchInvestments,
+  fetchMonthlyCashflow,
+  fetchCashflowSummary,
+  fetchCashflowBreakdown,
+  fetchNetWorth,
+  fetchNetWorthTrend,
+  fetchIncomeSources,
+  fetchRecurringTransactions,
+  fetchStatements,
+  fetchSnapshots,
+  generateSnapshot,
+  backfillSnapshots,
   uploadStatement,
+  createAccount,
+  updateAccount,
+  deleteAccount,
+  createCard,
+  updateCard,
+  deleteCard,
+  createLoan,
+  deleteLoan,
+  simulatePrepayment,
+  createInvestment,
+  updateInvestment,
+  deleteInvestment,
+  createIncomeSource,
+  updateIncomeSource,
+  deleteIncomeSource,
+  createRecurringTransaction,
+  updateRecurringTransaction,
+  deleteRecurringTransaction,
   updateTransactionCategory,
-  deleteStatement,
-  exportCSV,
-  type Transaction,
-  type OverviewData,
-  type Statement,
-  type CategorySummary,
-  type Member,
-  type UploadResult,
 } from '@/lib/api/client';
-import type {
-  CategoriesResponse,
-  AnalyticsData,
-  MonthlyBreakdown,
-  UncategorizedPattern,
-} from '@/types/api';
+
+// Type imports
+import type { Account, AccountCreateInput, AccountUpdateInput, Card, Statement } from '@/lib/api/client';
+import type { Transaction } from '@/types/transaction';
+import type { CategoriesResponse, AnalyticsData } from '@/types/api';
+import type { InvestmentsResponse, Investment, InvestmentCreate, InvestmentUpdate } from '@/types/investment';
+import type { MonthlySnapshot, NetWorthProjectionResponse, MonthlyCashflowResponse, CashflowBreakdown, CashflowSummary, NetWorth, NetWorthTrendResponse, GoalProjection, WhatIfResult, SnapshotBackfillResponse } from '@/types/financial';
+import type { IncomeSourcesResponse, IncomeSource, IncomeSourceCreate, IncomeSourceUpdate } from '@/types/income';
+import type { RecurringTransactionsResponse, RecurringTransaction, RecurringTransactionCreate, RecurringTransactionUpdate } from '@/types/recurring';
+import type { ImportItem } from '@/types/v2';
+import type { OverviewData } from '@/lib/api/client';
+import type { AmortizationSchedule, PrepaymentResult, Loan, LoanCreate, LoansResponse, PrepaymentSimulationRequest } from '@/types/loan';
 
 // ============================================================================
-// HOOK RETURN TYPES
+// INPUT TYPES FOR MUTATIONS
 // ============================================================================
 
-interface HookState<T> {
+// Note: AccountCreateInput, AccountUpdateInput, and PrepaymentSimulationRequest
+// are imported from their respective type files above
+
+// ============================================================================
+// HOOK STATE INTERFACE
+// ============================================================================
+
+export interface HookState<T> {
   data: T | null;
   loading: boolean;
   error: Error | null;
-  refetch: () => void;
+  isFetching: boolean;
+  hasLoaded: boolean;
+  refetch: () => Promise<void>;
 }
 
 // ============================================================================
-// useOverview
+// UPLOAD HOOK
 // ============================================================================
 
-export function useOverview(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): HookState<OverviewData> {
-  const [data, setData] = useState<OverviewData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchOverview(params);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [params?.exclude_transfers, params?.member]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
+export interface UploadResult {
+  success: boolean;
+  bank: string;
+  transaction_count: number;
+  validation_status: string;
+  log: string[];
 }
 
-// ============================================================================
-// useTransactions
-// ============================================================================
-
-export function useTransactions(params?: {
-  search?: string;
-  bank?: string;
-  category?: string;
-  type?: string;
-  member?: string;
-  limit?: number;
-  offset?: number;
-}): HookState<{ transactions: Transaction[]; total: number }> {
-  const [data, setData] = useState<{ transactions: Transaction[]; total: number } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchTransactions(params);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [
-    params?.search,
-    params?.bank,
-    params?.category,
-    params?.type,
-    params?.member,
-    params?.limit,
-    params?.offset,
-  ]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useStatements
-// ============================================================================
-
-export function useStatements(): HookState<Statement[]> {
-  const [data, setData] = useState<Statement[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchStatements();
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useCategories
-// ============================================================================
-
-export function useCategories(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-  drill_category?: string;
-}): HookState<CategoriesResponse> {
-  const [data, setData] = useState<CategoriesResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchCategories(params);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [params?.exclude_transfers, params?.member, params?.drill_category]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useAnalytics
-// ============================================================================
-
-export function useAnalytics(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): HookState<AnalyticsData> {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchAnalytics(params);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [params?.exclude_transfers, params?.member]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useBanks
-// ============================================================================
-
-export function useBanks(): HookState<string[]> {
-  const [data, setData] = useState<string[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchBanks();
-      setData(result.banks);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useCategoryList
-// ============================================================================
-
-export function useCategoryList(): HookState<string[]> {
-  const [data, setData] = useState<string[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchCategoryList();
-      setData(result.categories);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useMembers
-// ============================================================================
-
-export function useMembers(): HookState<Member[]> {
-  const [data, setData] = useState<Member[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchMembers();
-      setData(result.members);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useUpload
-// ============================================================================
-
-interface UploadState {
-  uploading: boolean;
-  error: Error | null;
-  result: UploadResult | null;
-  upload: (file: File, member?: string) => Promise<void>;
-}
-
-export function useUpload(): UploadState {
+export function useUpload() {
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<UploadResult | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  const upload = useCallback(async (file: File, member: string = 'Self') => {
+  const upload = async (file: File, member: string = 'Self') => {
     setUploading(true);
     setError(null);
-    setResult(null);
     try {
       const uploadResult = await uploadStatement(file, member);
       setResult(uploadResult);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Upload failed'));
-      throw err;
+    } catch (e) {
+      setError(e instanceof Error ? e : new Error('Upload failed'));
     } finally {
       setUploading(false);
     }
-  }, []);
+  };
 
-  return { uploading, error, result, upload };
+  return { upload, result, error, uploading };
 }
 
 // ============================================================================
-// useUpdateCategory
+// OVERVIEW HOOK
 // ============================================================================
 
-interface UpdateCategoryState {
-  updating: boolean;
-  error: Error | null;
-  update: (id: number, category: string, subcategory?: string) => Promise<void>;
+export function useOverview() {
+  const queryClient = useQueryClient();
+  const result = useQuery<OverviewData, Error>({
+    queryKey: ['overview'],
+    queryFn: fetchOverview,
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['overview'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+  };
 }
 
-export function useUpdateCategory(): UpdateCategoryState {
-  const [updating, setUpdating] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+// ============================================================================
+// NET WORTH HOOKS
+// ============================================================================
 
-  const update = useCallback(async (id: number, category: string, subcategory?: string) => {
-    setUpdating(true);
-    setError(null);
-    try {
-      await updateTransactionCategory(id, category, subcategory);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Update failed'));
-      throw err;
-    } finally {
-      setUpdating(false);
+export function useNetWorth() {
+  const queryClient = useQueryClient();
+  const result = useQuery<NetWorth, Error>({
+    queryKey: ['netWorth'],
+    queryFn: fetchNetWorth,
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['netWorth'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    // Convenience properties
+    netWorth: result.data?.net_worth_paise ?? 0,
+    assets: result.data?.total_assets_paise ?? 0,
+    liabilities: result.data?.total_liabilities_paise ?? 0,
+    currency: 'INR',
+  };
+}
+
+export function useNetWorthTrend() {
+  const queryClient = useQueryClient();
+  const result = useQuery<NetWorthTrendResponse, Error>({
+    queryKey: ['netWorthTrend'],
+    queryFn: () => fetchNetWorthTrend(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['netWorthTrend'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    trend: result.data?.trend ?? [],
+  };
+}
+
+// ============================================================================
+// ACCOUNTS HOOKS
+// ============================================================================
+
+export function useAccounts() {
+  const queryClient = useQueryClient();
+  const result = useQuery<Account[], Error>({
+    queryKey: ['accounts'],
+    queryFn: async () => {
+      const res = await fetchAccounts();
+      return res.accounts;
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['accounts'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    accounts: result.data ?? [],
+  };
+}
+
+export function useCreateAccount() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Account, Error, AccountCreateInput>({
+    mutationFn: createAccount,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
     }
-  }, []);
+  });
 
-  return { updating, error, update };
+  return {
+    ...result,
+    createAccount: result.mutate,
+    creating: result.isPending,
+  };
 }
 
-// ============================================================================
-// useDeleteStatement
-// ============================================================================
-
-interface DeleteStatementState {
-  deleting: boolean;
-  error: Error | null;
-  deleteStatement: (id: number) => Promise<void>;
-}
-
-export function useDeleteStatement(): DeleteStatementState {
-  const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const deleteStmt = useCallback(async (id: number) => {
-    setDeleting(true);
-    setError(null);
-    try {
-      await deleteStatement(id);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Delete failed'));
-      throw err;
-    } finally {
-      setDeleting(false);
+export function useUpdateAccount() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Account, Error, { id: number; account: AccountUpdateInput }>({
+    mutationFn: ({ id, account }) => updateAccount(id, account),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
     }
-  }, []);
+  });
 
-  return { deleting, error, deleteStatement: deleteStmt };
+  return {
+    ...result,
+    updateAccount: result.mutate,
+    updating: result.isPending,
+  };
 }
 
-// ============================================================================
-// useExportCSV
-// ============================================================================
-
-interface ExportCSVState {
-  exporting: boolean;
-  error: Error | null;
-  exportCSV: (params?: Parameters<typeof exportCSV>[0]) => Promise<Blob | null>;
-}
-
-export function useExportCSV(): ExportCSVState {
-  const [exporting, setExporting] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const exportData = useCallback(async (params?: Parameters<typeof exportCSV>[0]) => {
-    setExporting(true);
-    setError(null);
-    try {
-      const blob = await exportCSV(params);
-      return blob;
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Export failed'));
-      return null;
-    } finally {
-      setExporting(false);
+export function useDeleteAccount() {
+  const queryClient = useQueryClient();
+  const result = useMutation<{ success: boolean; message: string }, Error, number>({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['accounts'] });
     }
-  }, []);
+  });
 
-  return { exporting, error, exportCSV: exportData };
+  return {
+    ...result,
+    deleteAccount: result.mutate,
+    deleting: result.isPending,
+  };
 }
+
+// ============================================================================
+// CARDS HOOKS
+// ============================================================================
+
+export function useCards() {
+  const queryClient = useQueryClient();
+  const result = useQuery<Card[], Error>({
+    queryKey: ['cards'],
+    queryFn: async () => {
+      const res = await fetchCards();
+      return res.cards;
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['cards'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    cards: result.data ?? [],
+  };
+}
+
+export function useCreateCard() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Card, Error, Omit<Card, 'id' | 'created_at' | 'updated_at' | 'credit_limit_display' | 'is_active'>>({
+    mutationFn: createCard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cards'] });
+    }
+  });
+
+  return {
+    ...result,
+    createCard: result.mutate,
+    creating: result.isPending,
+  };
+}
+
+export function useUpdateCard() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Card, Error, { id: number; card: Partial<Card> }>({
+    mutationFn: ({ id, card }) => updateCard(id, card),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cards'] });
+    }
+  });
+
+  return {
+    ...result,
+    updateCard: result.mutate,
+    updating: result.isPending,
+  };
+}
+
+export function useDeleteCard() {
+  const queryClient = useQueryClient();
+  const result = useMutation<{ success: boolean; message: string }, Error, number>({
+    mutationFn: deleteCard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cards'] });
+    }
+  });
+
+  return {
+    ...result,
+    deleteCard: result.mutate,
+    deleting: result.isPending,
+  };
+}
+
+// ============================================================================
+// LOANS HOOKS
+// ============================================================================
+
+export function useLoans() {
+  const queryClient = useQueryClient();
+  const result = useQuery<LoansResponse, Error>({
+    queryKey: ['loans'],
+    queryFn: () => fetchLoans(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['loans'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    loans: result.data?.loans ?? [],
+  };
+}
+
+export function useCreateLoan() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Loan, Error, LoanCreate>({
+    mutationFn: createLoan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+    }
+  });
+
+  return {
+    ...result,
+    createLoan: result.mutate,
+    creating: result.isPending,
+  };
+}
+
+export function useDeleteLoan() {
+  const queryClient = useQueryClient();
+  const result = useMutation<void, Error, number>({
+    mutationFn: deleteLoan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+    }
+  });
+
+  return {
+    ...result,
+    deleteLoan: result.mutate,
+    deleting: result.isPending,
+  };
+}
+
+export function useAmortizationSchedule() {
+  const queryClient = useQueryClient();
+  const result = useQuery<AmortizationSchedule, Error>({
+    queryKey: ['amortizationSchedule'],
+    queryFn: async () => {
+      // This would need a loanId parameter in a real implementation
+      return {
+        loan_id: 0,
+        emi_paise: 0,
+        total_periods: 0,
+        total_interest_paise: 0,
+        schedule: []
+      };
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['amortizationSchedule'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    schedule: result.data?.schedule ?? [],
+  };
+}
+
+export function useSimulatePrepayment() {
+  const queryClient = useQueryClient();
+  const result = useMutation<PrepaymentResult, Error, { loanId: number; data: PrepaymentSimulationRequest }>({
+    mutationFn: ({ loanId, data }) => simulatePrepayment(loanId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+    }
+  });
+
+  return {
+    ...result,
+    simulatePrepayment: result.mutate,
+    simulating: result.isPending,
+  };
+}
+
+// ============================================================================
+// TRANSACTIONS HOOKS
+// ============================================================================
+
+export function useTransactions() {
+  const queryClient = useQueryClient();
+  const result = useQuery<Transaction[], Error>({
+    queryKey: ['transactions'],
+    queryFn: async () => {
+      const res = await fetchTransactions();
+      return res.transactions;
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['transactions'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    transactions: result.data ?? [],
+  };
+}
+
+// ============================================================================
+// CATEGORIES HOOKS
+// ============================================================================
+
+export function useCategories() {
+  const queryClient = useQueryClient();
+  const result = useQuery<CategoriesResponse, Error>({
+    queryKey: ['categories'],
+    queryFn: () => fetchCategories(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['categories'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    categories: result.data?.summary ?? [],
+  };
+}
+
+export function useUpdateCategory() {
+  const queryClient = useQueryClient();
+  const result = useMutation<void, Error, { id: number; category: string; subcategory?: string }>({
+    mutationFn: ({ id, category, subcategory }) => updateTransactionCategory(id, category, subcategory),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    }
+  });
+
+  return {
+    ...result,
+    update: result.mutate,
+    updating: result.isPending,
+  };
+}
+
+// ============================================================================
+// INVESTMENTS HOOKS
+// ============================================================================
+
+export function useInvestments() {
+  const queryClient = useQueryClient();
+  const result = useQuery<InvestmentsResponse, Error>({
+    queryKey: ['investments'],
+    queryFn: () => fetchInvestments(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['investments'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    investments: result.data?.investments ?? [],
+  };
+}
+
+export function useCreateInvestment() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Investment, Error, InvestmentCreate>({
+    mutationFn: createInvestment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['investments'] });
+    }
+  });
+
+  return {
+    ...result,
+    createInvestment: result.mutate,
+    creating: result.isPending,
+  };
+}
+
+export function useUpdateInvestment() {
+  const queryClient = useQueryClient();
+  const result = useMutation<Investment, Error, { id: number; investment: InvestmentUpdate }>({
+    mutationFn: ({ id, investment }) => updateInvestment(id, investment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['investments'] });
+    }
+  });
+
+  return {
+    ...result,
+    updateInvestment: result.mutate,
+    updating: result.isPending,
+  };
+}
+
+export function useDeleteInvestment() {
+  const queryClient = useQueryClient();
+  const result = useMutation<{ success: boolean; message: string }, Error, number>({
+    mutationFn: deleteInvestment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['investments'] });
+    }
+  });
+
+  return {
+    ...result,
+    deleteInvestment: result.mutate,
+    deleting: result.isPending,
+  };
+}
+
+// ============================================================================
+// CASHFLOW HOOKS
+// ============================================================================
+
+export function useCashflow() {
+  const queryClient = useQueryClient();
+  const result = useQuery<MonthlyCashflowResponse, Error>({
+    queryKey: ['cashflow'],
+    queryFn: () => fetchMonthlyCashflow(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['cashflow'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    cashflow: result.data?.months ?? [],
+  };
+}
+
+export function useMonthlyCashflow() {
+  return useCashflow();
+}
+
+export function useCashflowSummary() {
+  const queryClient = useQueryClient();
+  const result = useQuery<CashflowSummary, Error>({
+    queryKey: ['cashflowSummary'],
+    queryFn: fetchCashflowSummary,
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['cashflowSummary'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+  };
+}
+
+export function useCashflowBreakdown() {
+  const queryClient = useQueryClient();
+  const result = useQuery<CashflowBreakdown, Error>({
+    queryKey: ['cashflowBreakdown'],
+    queryFn: () => fetchCashflowBreakdown(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['cashflowBreakdown'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    breakdown: result.data ?? null,
+  };
+}
+
+// ============================================================================
+// ANALYTICS HOOKS
+// ============================================================================
+
+export function useAnalytics() {
+  const queryClient = useQueryClient();
+  const result = useQuery<AnalyticsData, Error>({
+    queryKey: ['analytics'],
+    queryFn: fetchAnalytics,
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['analytics'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    analytics: result.data ?? null,
+  };
+}
+
+// ============================================================================
+// SNAPSHOTS HOOKS
+// ============================================================================
+
+export function useSnapshots() {
+  const queryClient = useQueryClient();
+  const result = useQuery<MonthlySnapshot[], Error>({
+    queryKey: ['snapshots'],
+    queryFn: async () => {
+      const res = await fetchSnapshots();
+      return res.snapshots;
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['snapshots'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    snapshots: result.data ?? [],
+  };
+}
+
+export function useGenerateSnapshot() {
+  const queryClient = useQueryClient();
+  const result = useMutation<MonthlySnapshot, Error, string | undefined>({
+    mutationFn: (month) => generateSnapshot(month),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['snapshots'] });
+    }
+  });
+
+  return {
+    ...result,
+    generateSnapshot: result.mutate,
+    generating: result.isPending,
+  };
+}
+
+export function useBackfillSnapshots() {
+  const queryClient = useQueryClient();
+  const result = useMutation<SnapshotBackfillResponse, Error, { start: string; end: string }>({
+    mutationFn: backfillSnapshots,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['snapshots'] });
+    }
+  });
+
+  return {
+    ...result,
+    backfillSnapshots: result.mutate,
+    backfilling: result.isPending,
+  };
+}
+
+// ============================================================================
+// INCOME HOOKS
+// ============================================================================
+
+export function useIncomeStreams() {
+  const queryClient = useQueryClient();
+  const result = useQuery<IncomeSourcesResponse, Error>({
+    queryKey: ['incomeStreams'],
+    queryFn: () => fetchIncomeSources(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['incomeStreams'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    incomeStreams: result.data?.sources ?? [],
+  };
+}
+
+export function useIncomeSources() {
+  return useIncomeStreams();
+}
+
+export function useCreateIncomeSource() {
+  const queryClient = useQueryClient();
+  const result = useMutation<IncomeSource, Error, IncomeSourceCreate>({
+    mutationFn: createIncomeSource,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incomeStreams'] });
+    }
+  });
+
+  return {
+    ...result,
+    createIncomeSource: result.mutate,
+    creating: result.isPending,
+  };
+}
+
+export function useUpdateIncomeSource() {
+  const queryClient = useQueryClient();
+  const result = useMutation<IncomeSource, Error, { id: number; source: IncomeSourceUpdate }>({
+    mutationFn: ({ id, source }) => updateIncomeSource(id, source),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incomeStreams'] });
+    }
+  });
+
+  return {
+    ...result,
+    updateIncomeSource: result.mutate,
+    updating: result.isPending,
+  };
+}
+
+export function useDeleteIncomeSource() {
+  const queryClient = useQueryClient();
+  const result = useMutation<{ success: boolean; message: string }, Error, number>({
+    mutationFn: deleteIncomeSource,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incomeStreams'] });
+    }
+  });
+
+  return {
+    ...result,
+    deleteIncomeSource: result.mutate,
+    deleting: result.isPending,
+  };
+}
+
+// ============================================================================
+// RECURRING TRANSACTIONS HOOKS
+// ============================================================================
+
+export function useRecurringTransactions() {
+  const queryClient = useQueryClient();
+  const result = useQuery<RecurringTransactionsResponse, Error>({
+    queryKey: ['recurringTransactions'],
+    queryFn: () => fetchRecurringTransactions(),
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['recurringTransactions'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    recurringTransactions: result.data?.recurring ?? [],
+  };
+}
+
+export function useCreateRecurringTransaction() {
+  const queryClient = useQueryClient();
+  const result = useMutation<RecurringTransaction, Error, RecurringTransactionCreate>({
+    mutationFn: createRecurringTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recurringTransactions'] });
+    }
+  });
+
+  return {
+    ...result,
+    createRecurringTransaction: result.mutate,
+    creating: result.isPending,
+  };
+}
+
+export function useUpdateRecurringTransaction() {
+  const queryClient = useQueryClient();
+  const result = useMutation<RecurringTransaction, Error, { id: number; transaction: RecurringTransactionUpdate }>({
+    mutationFn: ({ id, transaction }) => updateRecurringTransaction(id, transaction),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recurringTransactions'] });
+    }
+  });
+
+  return {
+    ...result,
+    updateRecurringTransaction: result.mutate,
+    updating: result.isPending,
+  };
+}
+
+export function useDeleteRecurringTransaction() {
+  const queryClient = useQueryClient();
+  const result = useMutation<{ success: boolean; message: string }, Error, number>({
+    mutationFn: deleteRecurringTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recurringTransactions'] });
+    }
+  });
+
+  return {
+    ...result,
+    deleteRecurringTransaction: result.mutate,
+    deleting: result.isPending,
+  };
+}
+
+// ============================================================================
+// PROJECTION HOOKS
+// ============================================================================
+
+export function useNetWorthProjection() {
+  const queryClient = useQueryClient();
+  const result = useQuery<NetWorthProjectionResponse, Error>({
+    queryKey: ['netWorthProjection'],
+    queryFn: async () => {
+      // This would need parameters in a real implementation
+      return {
+        projections: [],
+        assumptions: {
+          equity_return_percent: 0,
+          debt_return_percent: 0,
+          savings_basis: '',
+          monthly_compounding: false,
+          loan_interest_calculation: '',
+          months_projected: 0
+        },
+        summary: { starting_net_worth_paise: 0, ending_net_worth_paise: 0, net_worth_change_paise: 0 }
+      };
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['netWorthProjection'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    forecast: result.data?.projections ?? [],
+  };
+}
+
+export function useNetWorthForecast() {
+  return useNetWorthProjection();
+}
+
+export function useCalculateGoal() {
+  const queryClient = useQueryClient();
+  const result = useQuery<GoalProjection, Error>({
+    queryKey: ['calculateGoal'],
+    queryFn: async () => {
+      // This would need parameters in a real implementation
+      return { months_needed: null, projected_date: null, total_contributed_paise: 0, total_returns_paise: 0, target_achievable: false };
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['calculateGoal'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    calculateGoal: result.data ?? null,
+  };
+}
+
+export function useCalculateWhatIf() {
+  const queryClient = useQueryClient();
+  const result = useQuery<WhatIfResult, Error>({
+    queryKey: ['whatIfSimulation'],
+    queryFn: async () => {
+      // This would need parameters in a real implementation
+      return {
+        baseline: [],
+        modified: [],
+        difference_at_1y_paise: 0,
+        difference_at_3y_paise: 0,
+        difference_at_5y_paise: 0,
+        percentage_improvement_5y: 0,
+        baseline_summary: { starting_net_worth_paise: 0, ending_net_worth_paise: 0, net_worth_change_paise: 0 },
+        modified_summary: { starting_net_worth_paise: 0, ending_net_worth_paise: 0, net_worth_change_paise: 0 },
+        assumptions: { equity_return_percent: 0, debt_return_percent: 0, savings_basis: '', monthly_compounding: false, loan_interest_calculation: '', months_projected: 0 }
+      };
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['whatIfSimulation'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    calculateWhatIf: result.data ?? null,
+  };
+}
+
+// ============================================================================
+// STATEMENTS HOOK
+// ============================================================================
+
+export function useStatements() {
+  const queryClient = useQueryClient();
+  const result = useQuery<Statement[], Error>({
+    queryKey: ['statements'],
+    queryFn: async () => {
+      const res = await fetchStatements();
+      return res.statements;
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['statements'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    statements: result.data ?? [],
+  };
+}
+
+// ============================================================================
+// V2 IMPORTS HOOK
+// ============================================================================
+
+export function useV2Imports() {
+  const queryClient = useQueryClient();
+  const result = useQuery<ImportItem[], Error>({
+    queryKey: ['v2Imports'],
+    queryFn: async () => {
+      const res = await fetchV2Imports();
+      return res.items;
+    },
+  });
+
+  const refetch = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['v2Imports'] });
+  };
+
+  return {
+    data: result.data ?? null,
+    loading: result.isLoading,
+    error: result.error ?? null,
+    isFetching: result.isFetching,
+    hasLoaded: result.isFetching || result.data !== undefined,
+    refetch,
+    imports: result.data ?? [],
+  };
+}
+
+// ============================================================================
+// TYPE ALIASES FOR CONVENIENCE
+// ============================================================================
+
+export type { Account, Card, Transaction, CategoriesResponse, InvestmentsResponse, LoansResponse, MonthlySnapshot, NetWorth, OverviewData };

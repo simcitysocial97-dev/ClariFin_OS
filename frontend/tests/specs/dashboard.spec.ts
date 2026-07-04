@@ -11,7 +11,6 @@
  */
 
 import { test, expect } from '../fixtures/test-fixtures';
-import { validateElementVisibility, validateGridCardHeights } from '../utils/css-helpers';
 
 // ============================================================================
 // Dashboard Loading Tests
@@ -64,8 +63,7 @@ test.describe('Dashboard Loading', () => {
     // Navigate and immediately check for loading state
     const loadPromise = page.goto('/');
     
-    // Check for skeleton or loading indicator
-    const hasSkeleton = await page.locator('[class*="skeleton"], [class*="loading"]').count() > 0;
+    // Loading state check - skeleton elements
     
     await loadPromise;
     

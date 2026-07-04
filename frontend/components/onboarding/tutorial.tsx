@@ -94,14 +94,14 @@ export function Tutorial({ onComplete, onSkip }: TutorialProps) {
 
         <CardHeader className="text-center pb-4">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 text-primary">
-            {step.icon}
+            {step?.icon}
           </div>
-          <CardTitle className="text-xl">{step.title}</CardTitle>
+          <CardTitle className="text-xl">{step?.title}</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-6">
           <p className="text-muted-foreground text-center">
-            {step.description}
+            {step?.description}
           </p>
 
           {/* Progress dots */}

@@ -34,7 +34,7 @@ def create_test_db():
     return db_path
 
 
-def populate_test_data(db_path: str):
+def populate_test_data(db_path: str) -> FinanceDB:
     """Populate test database with sample transactions."""
     db = FinanceDB(db_path)
     
@@ -74,11 +74,11 @@ def test_replay_stability():
     
     db_path = create_test_db()
     try:
-        populate_test_data(db_path)
+        db = populate_test_data(db_path)
         
         # Run balance computation twice
-        result1 = compute_running_balance(db_path, "TestBank")
-        result2 = compute_running_balance(db_path, "TestBank")
+        result1 = compute_running_balance(db, "TestBank")
+        result2 = compute_running_balance(db, "TestBank")
         
         # Compare results
         assert len(result1) == len(result2), "Result counts differ"
@@ -128,7 +128,7 @@ def test_insert_order_independence():
         db.insert_transactions(stmt_id, transactions)
         
         # Get running balance
-        result = compute_running_balance(db_path, "OrderTest")
+        result = compute_running_balance(db, "OrderTest")
         
         # Verify order is chronological (by date_iso)
         dates = [r["date_iso"] for r in result]
@@ -177,11 +177,10 @@ def test_duplicate_prevention():
         count2 = db.insert_transactions(stmt_id, [txn])
         assert count2 == 0, f"Second insert should be rejected: {count2}"
         
-        # Verify only one transaction exists
-        conn = sqlite3.connect(db_path)
-        cur = conn.execute("SELECT COUNT(*) FROM transactions WHERE statement_id = ?", (stmt_id,))
-        count = cur.fetchone()[0]
-        conn.close()
+        # Verify only one transaction exists using FinanceDB
+        with db.connection() as conn:
+            cur = conn.execute("SELECT COUNT(*) FROM transactions WHERE statement_id = ?", (stmt_id,))
+            count = cur.fetchone()[0]
         
         assert count == 1, f"Should have exactly 1 transaction: {count}"
         
@@ -207,21 +206,18 @@ def test_update_prevention():
     
     db_path = create_test_db()
     try:
-        populate_test_data(db_path)
+        db = populate_test_data(db_path)
         
-        conn = sqlite3.connect(db_path)
-        
-        # Try to update a transaction
-        blocked = False
-        error_msg = ""
-        try:
-            conn.execute("UPDATE transactions SET amount = 999 WHERE id = 1")
-            conn.commit()
-        except Exception as e:
-            blocked = True
-            error_msg = str(e).lower()
-        
-        conn.close()
+        with db.connection() as conn:
+            # Try to update a transaction
+            blocked = False
+            error_msg = ""
+            try:
+                conn.execute("UPDATE transactions SET amount = 999 WHERE id = 1")
+                conn.commit()
+            except Exception as e:
+                blocked = True
+                error_msg = str(e).lower()
         
         if blocked and ("immutable" in error_msg or "cannot" in error_msg):
             print("✅ PASS: UPDATE blocked by trigger")
@@ -251,21 +247,18 @@ def test_delete_prevention():
     
     db_path = create_test_db()
     try:
-        populate_test_data(db_path)
+        db = populate_test_data(db_path)
         
-        conn = sqlite3.connect(db_path)
-        
-        # Try to delete a transaction
-        blocked = False
-        error_msg = ""
-        try:
-            conn.execute("DELETE FROM transactions WHERE id = 1")
-            conn.commit()
-        except Exception as e:
-            blocked = True
-            error_msg = str(e).lower()
-        
-        conn.close()
+        with db.connection() as conn:
+            # Try to delete a transaction
+            blocked = False
+            error_msg = ""
+            try:
+                conn.execute("DELETE FROM transactions WHERE id = 1")
+                conn.commit()
+            except Exception as e:
+                blocked = True
+                error_msg = str(e).lower()
         
         if blocked and ("immutable" in error_msg or "cannot" in error_msg):
             print("✅ PASS: DELETE blocked by trigger")
@@ -312,12 +305,11 @@ def test_date_iso_migration():
         
         db.insert_transactions(stmt_id, transactions)
         
-        # Check date_iso values
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT date, date_iso, description FROM transactions WHERE statement_id = ?", (stmt_id,))
-        rows = [dict(r) for r in cur.fetchall()]
-        conn.close()
+        # Check date_iso values using FinanceDB
+        with db.connection() as conn:
+            conn.row_factory = sqlite3.Row
+            cur = conn.execute("SELECT date, date_iso, description FROM transactions WHERE statement_id = ?", (stmt_id,))
+            rows = [dict(r) for r in cur.fetchall()]
         
         for row in rows:
             assert row["date_iso"] == "2025-01-15", f"Wrong ISO date for {row['description']}: {row['date_iso']}"
@@ -377,44 +369,42 @@ def test_account_scoped_determinism():
         db.insert_transactions(stmt_id2, txns2)
         db.insert_transactions(stmt_id3, txns3)
         
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        
-        # Verify account_id is populated for all transactions
-        cur = conn.execute("SELECT id, account_id, description FROM transactions")
-        rows = [dict(r) for r in cur.fetchall()]
-        
-        for row in rows:
-            assert row["account_id"] is not None and row["account_id"] != "", f"Missing account_id for {row['description']}"
-        
-        # Verify account_id matches bank
-        cur = conn.execute("""
-            SELECT t.id, t.account_id, s.bank 
-            FROM transactions t 
-            JOIN statements s ON t.statement_id = s.id
-        """)
-        for row in cur.fetchall():
-            assert row["account_id"] == row["bank"], f"account_id mismatch: {row['account_id']} != {row['bank']}"
+        with db.connection() as conn:
+            conn.row_factory = sqlite3.Row
+            
+            # Verify account_id is populated for all transactions
+            cur = conn.execute("SELECT id, account_id, description FROM transactions")
+            rows = [dict(r) for r in cur.fetchall()]
+            
+            for row in rows:
+                assert row["account_id"] is not None and row["account_id"] != "", f"Missing account_id for {row['description']}"
+            
+            # Verify account_id matches bank
+            cur = conn.execute("""
+                SELECT t.id, t.account_id, s.bank 
+                FROM transactions t 
+                JOIN statements s ON t.statement_id = s.id
+            """)
+            for row in cur.fetchall():
+                assert row["account_id"] == row["bank"], f"account_id mismatch: {row['account_id']} != {row['bank']}"
+            
+            # Verify index exists and is account-scoped
+            cur = conn.execute("SELECT sql FROM sqlite_master WHERE type='index' AND name='idx_account_date_iso'")
+            index_sql = cur.fetchone()
+            if index_sql:
+                assert "account_id" in index_sql[0], f"Index not account-scoped: {index_sql[0]}"
         
         # Verify balance engine returns correct transactions for AccountA
-        result_a = compute_running_balance(db_path, "AccountA")
+        result_a = compute_running_balance(db, "AccountA")
         descriptions_a = [r["description"] for r in result_a]
         
         assert len(result_a) == 3, f"Expected 3 transactions for AccountA, got {len(result_a)}"
         assert "B-Txn1" not in descriptions_a, "AccountB transaction leaked into AccountA results"
         
         # Verify balance engine returns correct transactions for AccountB
-        result_b = compute_running_balance(db_path, "AccountB")
+        result_b = compute_running_balance(db, "AccountB")
         assert len(result_b) == 1, f"Expected 1 transaction for AccountB, got {len(result_b)}"
         assert result_b[0]["description"] == "B-Txn1"
-        
-        # Verify index exists and is account-scoped
-        cur = conn.execute("SELECT sql FROM sqlite_master WHERE type='index' AND name='idx_account_date_iso'")
-        index_sql = cur.fetchone()
-        if index_sql:
-            assert "account_id" in index_sql[0], f"Index not account-scoped: {index_sql[0]}"
-        
-        conn.close()
         
         print("✅ PASS: Account-scoped determinism verified")
         print(f"   AccountA: {len(result_a)} transactions")
@@ -434,33 +424,31 @@ def test_hash_signature_uniqueness():
     Test that hash signatures are computed and unique.
     """
     print("\n" + "=" * 60)
-    print("TEST 7: Hash Signature Uniqueness")
+    print("TEST 8: Hash Signature Uniqueness")
     print("=" * 60)
     
     db_path = create_test_db()
     try:
-        populate_test_data(db_path)
+        db = populate_test_data(db_path)
         
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        
-        # Check all transactions have hash signatures
-        cur = conn.execute("SELECT id, hash_signature FROM transactions WHERE hash_signature IS NOT NULL")
-        rows = cur.fetchall()
-        
-        assert len(rows) > 0, "No hash signatures found"
-        
-        # Check uniqueness
-        hashes = [r["hash_signature"] for r in rows]
-        unique_hashes = set(hashes)
-        
-        assert len(hashes) == len(unique_hashes), f"Duplicate hashes found: {len(hashes)} total, {len(unique_hashes)} unique"
-        
-        print("✅ PASS: All hash signatures are unique")
-        print(f"   Total transactions: {len(rows)}")
-        print(f"   Unique hashes: {len(unique_hashes)}")
-        
-        conn.close()
+        with db.connection() as conn:
+            conn.row_factory = sqlite3.Row
+            
+            # Check all transactions have hash signatures
+            cur = conn.execute("SELECT id, hash_signature FROM transactions WHERE hash_signature IS NOT NULL")
+            rows = cur.fetchall()
+            
+            assert len(rows) > 0, "No hash signatures found"
+            
+            # Check uniqueness
+            hashes = [r["hash_signature"] for r in rows]
+            unique_hashes = set(hashes)
+            
+            assert len(hashes) == len(unique_hashes), f"Duplicate hashes found: {len(hashes)} total, {len(unique_hashes)} unique"
+            
+            print("✅ PASS: All hash signatures are unique")
+            print(f"   Total transactions: {len(rows)}")
+            print(f"   Unique hashes: {len(unique_hashes)}")
         
     finally:
         os.unlink(db_path)

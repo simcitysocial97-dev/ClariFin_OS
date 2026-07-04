@@ -1,419 +1,384 @@
 'use client';
 
-import { useStatements, useDeleteStatement } from '@/lib/hooks/use-finance-data';
-import { useAppStore } from '@/lib/store/use-app-store';
-import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CreditCard, Trash2, Eye, Plus, CheckCircle, XCircle, AlertCircle, Calendar, IndianRupee, FileText } from 'lucide-react';
-import Link from 'next/link';
-import { EmptyState } from '@/components/ui/empty-state';
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import type { Statement } from '@/lib/api/client';
+import { PageShell } from '@/components/layout/page-shell';
+import { KpiCard } from '@/components/ui/kpi-card';
+import { useCards, useCreateCard, useUpdateCard, useDeleteCard } from '@/lib/hooks/use-finance-data';
+import { formatINR, formatDate, formatPercent, formatCardType } from '@/lib/format';
+import { Plus, Pencil, Trash2, Eye } from 'lucide-react';
+import type { Card as CardType } from '@/lib/api/client';
 
-// Map validation status to badge variant
-function getValidationBadgeVariant(validationStatus: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-  switch (validationStatus) {
-    case 'exact_match':
-      return 'default'; // Green
-    case 'close_match':
-      return 'secondary'; // Amber/Yellow
-    case 'mismatch':
-      return 'destructive'; // Red
-    case 'emi_exception':
-      return 'default'; // Blue (using default with custom styling)
-    case 'credit_balance':
-      return 'outline'; // Gray
-    default:
-      return 'outline';
-  }
+const CARD_TYPES = [
+  { value: 'visa', label: 'Visa' },
+  { value: 'mastercard', label: 'Mastercard' },
+  { value: 'rupay', label: 'RuPay' },
+  { value: 'amex', label: 'American Express' },
+  { value: 'diners', label: 'Diners Club' },
+] as const;
+
+const CARD_GRADIENTS = [
+  { name: 'Midnight', value: 'from-slate-700 to-slate-900' },
+  { name: 'Ocean', value: 'from-blue-700 to-indigo-900' },
+  { name: 'Amethyst', value: 'from-purple-700 to-indigo-900' },
+  { name: 'Ember', value: 'from-red-700 to-orange-900' },
+  { name: 'Forest', value: 'from-emerald-700 to-teal-900' },
+  { name: 'Gold', value: 'from-amber-600 to-yellow-800' },
+];
+
+// ============================================================
+// Types
+// ============================================================
+
+interface CardFormData {
+  card_name: string;
+  card_type: typeof CARD_TYPES[number]['value'];
+  issuer: string;
+  last_four: string;
+  cardholder_name: string;
+  credit_limit_rupees: string;
+  outstanding_rupees: string;
+  billing_date: string;
+  payment_due_date: string;
+  apr: string;
+  reward_type: string;
+  linked_account_id: string;
+  card_gradient: string;
+  is_active: boolean;
 }
 
-// Get custom badge class for validation status
-function getValidationBadgeClass(validationStatus: string): string {
-  switch (validationStatus) {
-    case 'exact_match':
-      return 'bg-green-500 hover:bg-green-600';
-    case 'close_match':
-      return 'bg-amber-500 hover:bg-amber-600';
-    case 'mismatch':
-      return 'bg-red-500 hover:bg-red-600';
-    case 'emi_exception':
-      return 'bg-blue-500 hover:bg-blue-600';
-    case 'credit_balance':
-      return 'bg-gray-500 hover:bg-gray-600';
-    default:
-      return '';
-  }
-}
+// ============================================================
+// Card Visual
+// ============================================================
 
-export default function CardsPage() {
-  const { data: statements, loading, error, refetch } = useStatements();
-  const { cards: localCards } = useAppStore();
-  const { toast } = useToast();
-  const { deleteStatement: deleteStatementApi, deleting } = useDeleteStatement();
-  const [paidBills, setPaidBills] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [statementToDelete, setStatementToDelete] = useState<Statement | null>(null);
-
-  // Show error toast
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error loading statements',
-        description: `${error.message}. Falling back to local data.`,
-        variant: 'destructive',
-      });
-    }
-  }, [error, toast]);
-
-  // Fallback to local cards if API fails
-  const hasApiData = statements && statements.length > 0;
-  const hasLocalData = localCards.length > 0;
-  const useLocalData = error && hasLocalData && !hasApiData;
-
-  // Map local cards to statement format
-  const localStatements: Statement[] = useLocalData
-    ? localCards.map((card: any) => ({
-        id: card.id,
-        bank: card.bankName,
-        file_name: '',
-        card_last4: card.cardNumber.slice(-4),
-        card_display: `•••• ${card.cardNumber.slice(-4)}`,
-        period_from: card.billCycleStart || '',
-        period_to: card.billCycleEnd || '',
-        period_display: card.billCycleStart && card.billCycleEnd 
-          ? `${new Date(card.billCycleStart).toLocaleDateString('en-IN', { month: 'short' })} - ${new Date(card.billCycleEnd).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`
-          : 'Unknown period',
-        transaction_count: 0,
-        total_debit: 0,
-        total_credit: 0,
-        total_debit_display: '₹0',
-        total_credit_display: '₹0',
-        total_due: card.totalAmountDue || 0,
-        total_due_display: `₹${card.totalAmountDue?.toLocaleString('en-IN') || '0'}`,
-        extracted_net_display: '₹0',
-        min_due_display: card.minimumAmountDue ? `₹${card.minimumAmountDue.toLocaleString('en-IN')}` : '₹0',
-        due_date: card.dueDate || '',
-        validation_status: 'unknown',
-        validation_difference: 0,
-        badge_text: 'Unknown',
-        badge_color: 'gray',
-      }))
-    : [];
-
-  const displayStatements = useLocalData ? localStatements : (statements || []);
-
-  const handleDeleteClick = (statement: Statement) => {
-    setStatementToDelete(statement);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!statementToDelete) return;
-
-    try {
-      await deleteStatementApi(statementToDelete.id);
-      toast({
-        title: 'Statement deleted',
-        description: `${statementToDelete.bank} statement has been deleted successfully.`,
-      });
-      refetch();
-    } catch (err) {
-      toast({
-        title: 'Delete failed',
-        description: err instanceof Error ? err.message : 'Failed to delete statement',
-        variant: 'destructive',
-      });
-    } finally {
-      setDeleteDialogOpen(false);
-      setStatementToDelete(null);
-    }
-  };
-
-  const handleMarkAsPaid = (id: string, bankName: string) => {
-    setPaidBills([...paidBills, id]);
-    toast({
-      title: 'Bill marked as paid',
-      description: `${bankName} bill has been marked as paid.`,
-    });
-  };
-
-  const handleMarkAsUnpaid = (id: string, bankName: string) => {
-    setPaidBills(paidBills.filter((billId: string) => billId !== id));
-    toast({
-      title: 'Bill marked as unpaid',
-      description: `${bankName} bill has been marked as unpaid.`,
-    });
-  };
-
-  const isBillPaid = (id: string) => paidBills.includes(id);
-
-  // Loading state
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <Skeleton className="h-10 w-48" />
-            <Skeleton className="h-4 w-64 mt-2" />
-          </div>
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-6 w-32" />
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-1/2" />
-                <div className="flex gap-2 pt-4">
-                  <Skeleton className="h-10 flex-1" />
-                  <Skeleton className="h-10 flex-1" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  // Error state with no data
-  if (error && !statements && !useLocalData) {
-    return (
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Credit Cards</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your cards and view details
-            </p>
-          </div>
-          <Link href="/?upload=true">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Card
-            </Button>
-          </Link>
-        </div>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error loading statements</AlertTitle>
-          <AlertDescription>
-            {error.message}. Please ensure the API server is running at http://localhost:8000
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  const hasData = displayStatements.length > 0;
+function CardVisual({ card, onEdit, onDelete, onViewTx }: { card: CardType; onEdit: (c: CardType) => void; onDelete: (id: number) => void; onViewTx: (c: CardType) => void }) {
+  const utilization = card.credit_limit_paise && card.credit_limit_paise > 0 ? (card.outstanding_paise / card.credit_limit_paise) * 100 : 0;
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Credit Cards</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your cards and view details {useLocalData && '(from local storage)'}
-          </p>
+    <div className="rounded-xl border bg-card p-4 space-y-3">
+      {/* Visual */}
+      <div className={`relative w-full aspect-[1.586] rounded-xl overflow-hidden bg-gradient-to-br ${typeof card.card_gradient === 'string' ? card.card_gradient : CARD_GRADIENTS[0]!.value}`}>
+        <div className="relative z-10 p-5 flex flex-col justify-between h-full text-white">
+          <div className="flex justify-between items-start">
+            <span className="text-sm font-semibold">{card.issuer}</span>
+            <span className="text-xs font-medium uppercase">{formatCardType(card.card_type)}</span>
+          </div>
+          <div className="font-mono text-lg tracking-[0.2em] mt-3">•••• •••• •••• {card.last_four}</div>
+          <div className="flex justify-between items-end mt-3">
+            <div>
+              <p className="text-[10px] opacity-70 uppercase tracking-wider">Card Holder</p>
+              <p className="text-xs font-medium uppercase">{card.cardholder_name || 'YOUR NAME'}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] opacity-70 uppercase tracking-wider">Limit</p>
+              <p className="text-xs font-medium">{formatINR(card.credit_limit_paise)}</p>
+            </div>
+          </div>
         </div>
-        <Link href="/?upload=true">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Card
-          </Button>
-        </Link>
+        {/* Utilization bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-black/20">
+          <div
+            className="h-full"
+            style={{
+              width: `${Math.min(utilization, 100)}%`,
+              backgroundColor: utilization > 70 ? '#ef4444' : utilization > 30 ? '#f59e0b' : '#22c55e'
+            }}
+          />
+        </div>
       </div>
 
-      {!hasData ? (
-        <EmptyState
-          icon={<CreditCard className="h-10 w-10" />}
-          title="No cards yet"
-          description="Upload your first bank statement to see your credit cards here. We'll automatically extract and display your card information."
-          action={{
-            label: "Upload Statement",
-            href: "/?upload=true"
-          }}
-        />
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {displayStatements.map((statement: Statement) => {
-            const paid = isBillPaid(String(statement.id));
-            const badgeVariant = getValidationBadgeVariant(statement.validation_status);
-            const badgeClass = getValidationBadgeClass(statement.validation_status);
-            
-            return (
-              <Card key={statement.id} className="flex flex-col">
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{statement.bank}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{statement.card_display}</p>
-                    </div>
-                    <Badge variant={badgeVariant} className={cn(badgeClass, 'text-white')}>
-                      {statement.badge_text || statement.validation_status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="flex-1 space-y-4">
-                  {/* Statement Period */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Period:</span>
-                    <span>{statement.period_display}</span>
-                  </div>
-
-                  {/* Transaction Count */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Transactions:</span>
-                    <span>{statement.transaction_count}</span>
-                  </div>
-
-                  {/* Total Debits / Credits */}
-                  <div className="grid grid-cols-2 gap-4 py-2 border-y">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Total Debits</p>
-                      <p className="text-sm font-medium text-red-600">{statement.total_debit_display}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Total Credits</p>
-                      <p className="text-sm font-medium text-green-600">{statement.total_credit_display}</p>
-                    </div>
-                  </div>
-
-                  {/* Validation Section */}
-                  <div className="space-y-2 bg-muted/50 rounded-lg p-3">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Validation</p>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Statement Total Due:</span>
-                      <span className="font-medium">{statement.total_due_display}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Extracted Net:</span>
-                      <span className="font-medium">{statement.extracted_net_display}</span>
-                    </div>
-                    
-                    {statement.validation_difference !== 0 && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Difference:</span>
-                        <span className={cn(
-                          'font-medium',
-                          statement.validation_difference > 0 ? 'text-red-600' : 'text-amber-600'
-                        )}>
-                          ₹{Math.abs(statement.validation_difference).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Due Date & Minimum Due */}
-                  {statement.due_date && (
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Due:</span>
-                      </div>
-                      <span>{new Date(statement.due_date).toLocaleDateString('en-IN')}</span>
-                    </div>
-                  )}
-                  
-                  {statement.min_due_display && statement.min_due_display !== '₹0.00' && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Minimum Due:</span>
-                      <span>{statement.min_due_display}</span>
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 pt-2">
-                    <Link href={`/transactions?cardId=${statement.id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full">
-                        <Eye className="mr-2 h-4 w-4" />
-                        View
-                      </Button>
-                    </Link>
-                    
-                    {!paid && statement.due_date && new Date(statement.due_date) > new Date() && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
-                        onClick={() => handleMarkAsPaid(String(statement.id), statement.bank)}
-                      >
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Mark Paid
-                      </Button>
-                    )}
-                    
-                    {paid && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handleMarkAsUnpaid(String(statement.id), statement.bank)}
-                      >
-                        <XCircle className="mr-2 h-4 w-4" />
-                        Mark Unpaid
-                      </Button>
-                    )}
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 hover:bg-red-50 hover:text-red-700 hover:border-red-200"
-                      onClick={() => handleDeleteClick(statement)}
-                      disabled={deleting}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+      {/* Meta */}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm">{card.card_name}</h3>
+          <Badge variant="secondary" className="text-[10px]">{formatCardType(card.card_type)}</Badge>
         </div>
-      )}
+        <div className="grid grid-cols-2 gap-1 text-xs">
+          <div>
+            <span className="text-muted-foreground">Card:</span>
+            <span className="ml-1 font-medium">{card.card_name}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Type:</span>
+            <span className="ml-1 font-medium">{formatCardType(card.card_type)}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Issuer:</span>
+            <span className="ml-1 font-medium">{card.issuer}</span>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Limit:</span>
+            <span className="ml-1 font-medium">{formatINR(card.credit_limit_paise)}</span>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground">Updated: {formatDate(card.updated_at)}</p>
+      </div>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Statement</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete the statement from {statementToDelete?.bank}?
-              This will also delete all {statementToDelete?.transaction_count} associated transactions.
-              This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleConfirmDelete}
-              disabled={deleting}
-            >
-              {deleting ? 'Deleting...' : 'Delete'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Actions */}
+      <div className="flex gap-2 pt-1">
+        <Button variant="outline" size="sm" className="flex-1" onClick={() => onViewTx(card)}>
+          <Eye className="h-3.5 w-3.5 mr-1.5" /> Transactions
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => onEdit(card)}><Pencil className="h-4 w-4" /></Button>
+        <Button variant="ghost" size="icon" onClick={() => onDelete(card.id)}><Trash2 className="h-4 w-4 text-red-500" /></Button>
+      </div>
     </div>
+  );
+}
+
+// ============================================================
+// Main
+// ============================================================
+
+export default function CardsPage() {
+  const { cards } = useCards();
+  const { createCard } = useCreateCard();
+  const { updateCard } = useUpdateCard();
+  const { deleteCard } = useDeleteCard();
+  
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingCard, setEditingCard] = useState<CardType | null>(null);
+
+  const activeCards = (cards ?? []).filter((c) => c.is_active);
+  const closedCards = (cards ?? []).filter((c) => !c.is_active);
+
+  const totalOutstanding = activeCards.reduce((s, c) => s + (c.outstanding_paise || 0), 0);
+  const totalLimit = activeCards.reduce((s, c) => s + (c.credit_limit_paise || 0), 0);
+  const totalUtilization = totalLimit > 0 ? (totalOutstanding / totalLimit) * 100 : 0;
+
+  const handleCreate = (form: CardFormData) => {
+    createCard({
+      account_id: null,
+      card_name: form.card_name,
+      card_type: form.card_type,
+      issuer: form.issuer,
+      last_four: form.last_four,
+      cardholder_name: form.cardholder_name,
+      credit_limit_paise: Math.round((parseFloat(form.credit_limit_rupees) || 0) * 100),
+      outstanding_paise: Math.round((parseFloat(form.outstanding_rupees) || 0) * 100),
+      minimum_due_paise: 0,
+      billing_date: parseInt(form.billing_date) || 1,
+      payment_due_date: parseInt(form.payment_due_date) || 5,
+      apr: parseFloat(form.apr) || 0,
+      reward_type: form.reward_type,
+      linked_account_id: form.linked_account_id ? parseInt(form.linked_account_id) : null,
+      card_color: '',
+      card_gradient: form.card_gradient,
+    });
+    setDialogOpen(false);
+  };
+
+  const handleUpdate = (form: CardFormData) => {
+    if (!editingCard) return;
+    updateCard({
+      id: editingCard.id,
+      card: {
+        account_id: editingCard.account_id,
+        card_name: form.card_name,
+        card_type: form.card_type,
+        issuer: form.issuer,
+        last_four: form.last_four,
+        cardholder_name: form.cardholder_name,
+        credit_limit_paise: Math.round((parseFloat(form.credit_limit_rupees) || 0) * 100),
+        outstanding_paise: Math.round((parseFloat(form.outstanding_rupees) || 0) * 100),
+        minimum_due_paise: editingCard.minimum_due_paise,
+        billing_date: parseInt(form.billing_date) || 1,
+        payment_due_date: parseInt(form.payment_due_date) || 5,
+        apr: parseFloat(form.apr) || 0,
+        reward_type: form.reward_type,
+        linked_account_id: form.linked_account_id ? parseInt(form.linked_account_id) : null,
+        card_color: editingCard.card_color,
+        card_gradient: form.card_gradient,
+      },
+    });
+    setEditingCard(null);
+    setDialogOpen(false);
+  };
+
+  const handleDelete = (id: number) => {
+    if (!confirm('Delete this card?')) return;
+    deleteCard(id);
+  };
+
+  const viewTransactions = (card: CardType) => {
+    window.open(`/transactions?cardId=${card.id}`, '_blank');
+  };
+
+  const openEdit = (card: CardType) => {
+    setEditingCard(card);
+    setDialogOpen(true);
+  };
+
+  return (
+    <PageShell
+      title="Credit Cards"
+      subtitle={`${activeCards.length} active`}
+      actions={
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button><Plus className="h-4 w-4 mr-2" />Add Card</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>{editingCard ? 'Edit Card' : 'Add Card'}</DialogTitle></DialogHeader>
+            <CardForm initialData={editingCard ?? undefined} onSubmit={editingCard ? handleUpdate : handleCreate} onCancel={() => { setEditingCard(null); setDialogOpen(false); }} />
+          </DialogContent>
+        </Dialog>
+      }
+    >
+      {/* Summary KPI */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <KpiCard title="Total Outstanding" value={formatINR(totalOutstanding)} subtext="Active cards" variant="danger" />
+        <KpiCard title="Total Limit" value={formatINR(totalLimit)} subtext="Credit limit" />
+        <KpiCard title="Utilization" value={formatPercent(totalUtilization)} subtext="Used / limit" variant={totalUtilization > 70 ? 'danger' : totalUtilization > 30 ? 'warning' : 'success'} />
+        <KpiCard title="Min Due (est.)" value={formatINR(activeCards.reduce((s, c) => s + (c.minimum_due_paise || 0), 0))} subtext="This cycle" />
+      </div>
+
+      {/* Active Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {activeCards.map((card) => (
+          <CardVisual key={card.id} card={card} onEdit={openEdit} onDelete={handleDelete} onViewTx={viewTransactions} />
+        ))}
+      </div>
+
+      {/* Closed Cards */}
+      {closedCards.length > 0 && (
+        <details className="rounded-xl border bg-card">
+          <summary className="px-5 py-3 text-sm font-semibold cursor-pointer">Closed Cards ({closedCards.length})</summary>
+          <div className="px-5 pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 opacity-60">
+            {closedCards.map((card) => (
+              <CardVisual key={card.id} card={card} onEdit={openEdit} onDelete={handleDelete} onViewTx={viewTransactions} />
+            ))}
+          </div>
+        </details>
+      )}
+    </PageShell>
+  );
+}
+
+// ============================================================
+// Card Form
+// ============================================================
+
+function CardForm({ initialData, onSubmit, onCancel }: { initialData?: CardType; onSubmit: (data: CardFormData) => void; onCancel: () => void }) {
+  const [formData, setFormData] = useState<CardFormData>(() => {
+    const c = initialData;
+    return {
+      card_name: c?.card_name || '',
+      card_type: (c?.card_type as typeof CARD_TYPES[number]['value']) || 'visa',
+      issuer: c?.issuer || '',
+      last_four: c?.last_four || '',
+      cardholder_name: c?.cardholder_name || '',
+      credit_limit_rupees: c?.credit_limit_paise ? String(c.credit_limit_paise / 100) : '',
+      outstanding_rupees: c?.outstanding_paise ? String(c.outstanding_paise / 100) : '',
+      billing_date: c?.billing_date ? String(c.billing_date) : '1',
+      payment_due_date: c?.payment_due_date ? String(c.payment_due_date) : '5',
+      apr: c?.apr ? String(c.apr) : '',
+      reward_type: c?.reward_type || 'None',
+      linked_account_id: c?.linked_account_id ? String(c.linked_account_id) : '',
+      card_gradient: c ? c.card_gradient : 'from-slate-700 to-slate-900',
+      is_active: c?.is_active ?? true,
+    };
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="card_name">Card Name</Label>
+          <Input id="card_name" value={formData.card_name} onChange={(e) => setFormData({ ...formData, card_name: e.target.value })} required />
+        </div>
+        <div>
+          <Label htmlFor="issuer">Bank / Issuer</Label>
+          <Input id="issuer" value={formData.issuer} onChange={(e) => setFormData({ ...formData, issuer: e.target.value })} required />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="last_four">Last 4 Digits</Label>
+          <Input id="last_four" value={formData.last_four} onChange={(e) => setFormData({ ...formData, last_four: e.target.value })} maxLength={4} required />
+        </div>
+        <div>
+          <Label htmlFor="cardholder_name">Cardholder Name</Label>
+          <Input id="cardholder_name" value={formData.cardholder_name} onChange={(e) => setFormData({ ...formData, cardholder_name: e.target.value })} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="credit_limit_rupees">Credit Limit (₹)</Label>
+          <Input id="credit_limit_rupees" type="number" value={formData.credit_limit_rupees} onChange={(e) => setFormData({ ...formData, credit_limit_rupees: e.target.value })} required />
+        </div>
+        <div>
+          <Label htmlFor="outstanding_rupees">Current Outstanding (₹)</Label>
+          <Input id="outstanding_rupees" type="number" value={formData.outstanding_rupees} onChange={(e) => setFormData({ ...formData, outstanding_rupees: e.target.value })} required />
+        </div>
+      </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="billing_date">Statement Date (Day)</Label>
+            <Input id="billing_date" type="number" min="1" max="31" value={formData.billing_date} onChange={(e) => setFormData({ ...formData, billing_date: e.target.value })} required />
+          </div>
+          <div>
+            <Label htmlFor="payment_due_date">Payment Due Date (Day)</Label>
+            <Input id="payment_due_date" type="number" min="1" max="31" value={formData.payment_due_date} onChange={(e) => setFormData({ ...formData, payment_due_date: e.target.value })} required />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="linked_account_id">Linked Account (optional)</Label>
+            <Input id="linked_account_id" type="number" value={formData.linked_account_id} onChange={(e) => setFormData({ ...formData, linked_account_id: e.target.value })} placeholder="Account ID" />
+          </div>
+          <div>
+            <Label>Card Design</Label>
+            <div className="flex flex-wrap gap-2">
+              {CARD_GRADIENTS.map((grad) => (
+                <button key={grad.value} type="button" className={`w-10 h-10 rounded-full bg-gradient-to-br ${grad.value} border-2 transition-all ${formData.card_gradient === grad.value ? 'border-foreground scale-110 shadow-md' : 'border-transparent'}`} onClick={() => setFormData({ ...formData, card_gradient: grad.value })} title={grad.name} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="apr">APR / Interest Rate (%)</Label>
+          <Input id="apr" type="number" step="0.01" value={formData.apr} onChange={(e) => setFormData({ ...formData, apr: e.target.value })} placeholder="e.g., 24.5" />
+        </div>
+        <div>
+          <Label htmlFor="reward_type">Reward Type</Label>
+          <Select value={formData.reward_type} onValueChange={(v) => setFormData({ ...formData, reward_type: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="None">None</SelectItem>
+              <SelectItem value="Cashback">Cashback</SelectItem>
+              <SelectItem value="Points">Points</SelectItem>
+              <SelectItem value="Miles">Miles</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+        <div className="flex items-center gap-2">
+          <input id="is_active" type="checkbox" checked={formData.is_active} onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })} className="rounded" />
+          <Label htmlFor="is_active">Active</Label>
+        </div>
+
+      <div className="flex justify-end gap-2 pt-2">
+        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button type="submit">{initialData ? 'Update Card' : 'Add Card'}</Button>
+      </div>
+    </form>
   );
 }

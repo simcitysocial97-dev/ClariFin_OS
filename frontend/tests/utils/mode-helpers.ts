@@ -131,7 +131,7 @@ export async function captureModeState(page: Page): Promise<ModeState> {
  * Verify mode isolation - ensure no data leakage between modes
  */
 export async function verifyModeIsolation(
-  page: Page,
+  _page: Page,
   personalState: ModeState,
   familyState: ModeState
 ): Promise<{ isolated: boolean; issues: string[] }> {

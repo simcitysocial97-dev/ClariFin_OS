@@ -10,20 +10,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { TrendingUp, BarChart3, Zap, Store, AlertCircle, Repeat, ArrowUpRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-
-// Dynamically import recharts to avoid SSR issues
-const BarChart = dynamic(() => import('recharts').then((mod) => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false });
-const AreaChart = dynamic(() => import('recharts').then((mod) => mod.AreaChart), { ssr: false });
-const Area = dynamic(() => import('recharts').then((mod) => mod.Area), { ssr: false });
-const Line = dynamic(() => import('recharts').then((mod) => mod.Line), { ssr: false });
-const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false });
-const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false });
-const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false });
-const ComposedChart = dynamic(() => import('recharts').then((mod) => mod.ComposedChart), { ssr: false });
+import {
+  BarChart,
+  Bar,
+  Area,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ComposedChart,
+} from '@/components/ui/recharts';
 
 interface StatCardProps {
   title: string;
@@ -188,9 +186,9 @@ export default function AnalyticsPage() {
           <CardTitle className="text-lg font-semibold">Spending Trend</CardTitle>
           <p className="text-sm text-muted-foreground">Monthly spend over time with average reference</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="min-h-[320px]">
           {mounted && spendingTrend.length > 0 ? (
-            <div className="h-[280px]">
+            <div className="h-[280px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={spendingTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.2)" vertical={false} />
@@ -204,7 +202,7 @@ export default function AnalyticsPage() {
                     tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                     axisLine={false}
                     tickLine={false}
-                    tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
+                    tickFormatter={(value: number) => `₹${(value / 1000).toFixed(0)}K`}
                   />
                   <Tooltip 
                     contentStyle={{
@@ -214,7 +212,7 @@ export default function AnalyticsPage() {
                       color: 'hsl(var(--popover-foreground))',
                       fontSize: '12px',
                     }}
-                    formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
+                    formatter={(value: number) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
                   />
                   <Area
                     type="monotone"
@@ -251,9 +249,9 @@ export default function AnalyticsPage() {
             <CardTitle className="text-lg font-semibold">Day of Week Pattern</CardTitle>
             <p className="text-sm text-muted-foreground">Total spend by weekday</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[260px]">
             {mounted && dayOfWeekData.length > 0 ? (
-              <div className="h-[220px]">
+              <div className="h-[220px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={dayOfWeekData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.2)" horizontal={false} />
@@ -267,7 +265,7 @@ export default function AnalyticsPage() {
                       tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                       axisLine={false}
                       tickLine={false}
-                      tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
+                      tickFormatter={(value: number) => `₹${(value / 1000).toFixed(0)}K`}
                     />
                     <Tooltip 
                       contentStyle={{
@@ -277,19 +275,19 @@ export default function AnalyticsPage() {
                         color: 'hsl(var(--popover-foreground))',
                         fontSize: '12px',
                       }}
-                      formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
+                      formatter={(value: number) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
                     />
                     <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-            ) : (
-              <div className="h-[220px] flex items-center justify-center text-muted-foreground">
-                No day of week data available
-              </div>
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          ) : (
+            <div className="h-[220px] flex items-center justify-center text-muted-foreground">
+              No day of week data available
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
         {/* Top Merchants Table */}
         <Card>
@@ -297,7 +295,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-lg font-semibold">Top Merchants</CardTitle>
             <p className="text-sm text-muted-foreground">By total spend</p>
           </CardHeader>
-          <CardContent>
+          <CardContent className="min-h-[260px]">
             {topMerchants.length > 0 ? (
               <Table>
                 <TableHeader>
@@ -332,100 +330,96 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* Recurring Charges Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Repeat className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg font-semibold">Recurring Charges</CardTitle>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Transactions appearing 2+ times with consistent amounts (within 20% variance)
-          </p>
-        </CardHeader>
-        <CardContent>
-          {recurringCharges.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="w-[80px] text-center">Freq</TableHead>
-                  <TableHead className="w-[100px] text-right">Avg</TableHead>
-                  <TableHead className="w-[100px] text-right">Annual</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {recurringCharges.map((charge: RecurringCharge, index: number) => (
-                  <TableRow key={`recurring-${index}-${charge.description}`} className="hover:bg-muted/50">
-                    <TableCell className="text-sm">{charge.description}</TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant="secondary" className="text-xs bg-indigo-100 text-indigo-800">
-                        {charge.frequency_display || `${charge.frequency}x`}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums text-sm">
-                      {charge.avg_display || `₹${charge.avg_amount.toLocaleString('en-IN')}`}
-                    </TableCell>
-                    <TableCell className="text-right font-mono tabular-nums text-sm font-medium">
-                      {charge.annual_display || `₹${(charge.avg_amount * charge.frequency).toLocaleString('en-IN')}`}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground text-sm">
-              No recurring charges detected
+      {/* Side by Side: Recurring Charges & Largest Transactions */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Recurring Charges Table */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Repeat className="h-5 w-5 text-primary" />
+              <CardTitle className="text-lg font-semibold">Recurring Charges</CardTitle>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-xs text-muted-foreground">
+              Transactions appearing 2+ times with consistent amounts
+            </p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="max-h-[300px] overflow-auto">
+              {recurringCharges.length > 0 ? (
+                <Table>
+                  <TableHeader className="sticky top-0 bg-background z-10">
+                    <TableRow>
+                      <TableHead>Description</TableHead>
+                      <TableHead className="w-[60px] text-center">Freq</TableHead>
+                      <TableHead className="w-[90px] text-right">Avg</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recurringCharges.slice(0, 10).map((charge: RecurringCharge, index: number) => (
+                      <TableRow key={`recurring-${index}-${charge.description}`} className="hover:bg-muted/50">
+                        <TableCell className="text-sm truncate max-w-[150px]">{charge.description}</TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant="secondary" className="text-xs bg-indigo-100 text-indigo-800">
+                            {charge.frequency_display || `${charge.frequency}x`}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-mono tabular-nums text-sm">
+                          {charge.avg_display || `₹${charge.avg_amount.toLocaleString('en-IN')}`}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  No recurring charges detected
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Largest Transactions Table */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <ArrowUpRight className="h-5 w-5 text-red-500" />
-            <CardTitle className="text-lg font-semibold">Largest Transactions</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {largestTransactions.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]">#</TableHead>
-                  <TableHead className="w-[100px]">Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="w-[100px] text-right">Amount</TableHead>
-                  <TableHead className="w-[100px]">Bank</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {largestTransactions.map((txn: LargestTransaction) => (
-                  <TableRow key={txn.rank} className="hover:bg-muted/50">
-                    <TableCell className="text-sm text-muted-foreground">{txn.rank}</TableCell>
-                    <TableCell className="text-sm">{txn.date_display || txn.date}</TableCell>
-                    <TableCell className="text-sm">{txn.description_display || txn.description}</TableCell>
-                    <TableCell className="text-right font-mono tabular-nums text-sm font-bold">
-                      {txn.amount_display || `₹${txn.amount.toLocaleString('en-IN')}`}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {txn.bank}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground text-sm">
-              No transactions available
+        {/* Largest Transactions Table */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <ArrowUpRight className="h-5 w-5 text-red-500" />
+              <CardTitle className="text-lg font-semibold">Largest Transactions</CardTitle>
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <p className="text-xs text-muted-foreground">Top expenses by amount</p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="max-h-[300px] overflow-auto">
+              {largestTransactions.length > 0 ? (
+                <Table>
+                  <TableHeader className="sticky top-0 bg-background z-10">
+                    <TableRow>
+                      <TableHead className="w-[40px]">#</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead className="w-[100px] text-right">Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {largestTransactions.slice(0, 10).map((txn: LargestTransaction) => (
+                      <TableRow key={txn.rank} className="hover:bg-muted/50">
+                        <TableCell className="text-sm text-muted-foreground">{txn.rank}</TableCell>
+                        <TableCell className="text-sm truncate max-w-[180px]">{txn.description_display || txn.description}</TableCell>
+                        <TableCell className="text-right font-mono tabular-nums text-sm font-bold">
+                          {txn.amount_display || `₹${txn.amount.toLocaleString('en-IN')}`}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground text-sm">
+                  No transactions available
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

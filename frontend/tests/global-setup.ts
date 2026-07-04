@@ -9,7 +9,7 @@
  */
 
 import { FullConfig, request } from '@playwright/test';
-import { spawn, execSync } from 'child_process';
+import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
@@ -37,7 +37,7 @@ async function checkBackendHealth(): Promise<boolean> {
 async function isPortInUse(port: number): Promise<boolean> {
   try {
     const context = await request.newContext();
-    const response = await context.get(`http://localhost:${port}`, { timeout: 1000 });
+    await context.get(`http://localhost:${port}`, { timeout: 1000 });
     await context.dispose();
     return true;
   } catch {
@@ -103,7 +103,7 @@ async function startBackend(): Promise<boolean> {
   }
 }
 
-async function globalSetup(config: FullConfig) {
+async function globalSetup(_config: FullConfig) {
   console.log('🔧 Running global setup...');
 
   // Check if backend port is available

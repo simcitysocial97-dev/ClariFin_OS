@@ -2,10 +2,11 @@
 PURE TABLE EXTRACTION - NO REGEX ALLOWED
 Extract tables from PDF using pdfplumber's table detection
 """
-import pdfplumber
-import pandas as pd
 from typing import List, Dict, Optional
 from pathlib import Path
+
+# Import pandas for type hints
+import pandas as pd
 
 
 class TableExtractor:
@@ -45,21 +46,31 @@ class TableExtractor:
     def __init__(self, pdf_path: str):
         self.pdf_path = pdf_path
     
-    def extract_all_tables(self) -> List[pd.DataFrame]:
+    def extract_all_tables(self) -> List["pd.DataFrame"]:
         """
         Extract ALL tables from PDF.
         Returns list of DataFrames, one per table found.
         """
+        # Lazy import - only load when needed
+        try:
+            import pdfplumber
+            import pandas as pd
+        except ImportError as e:
+            raise ImportError(
+                "pdfplumber is required for table extraction. "
+                "Install with: pip install pdfplumber pandas"
+            ) from e
+        
         all_tables = []
         
         with pdfplumber.open(self.pdf_path) as pdf:
             for page_num, page in enumerate(pdf.pages, 1):
-                page_tables = self._extract_page_tables(page, page_num)
+                page_tables = self._extract_page_tables(page, page_num, pdfplumber, pd)
                 all_tables.extend(page_tables)
         
         return all_tables
     
-    def _extract_page_tables(self, page, page_num: int) -> List[pd.DataFrame]:
+    def _extract_page_tables(self, page, page_num: int, pdfplumber, pd) -> List["pd.DataFrame"]:
         """Extract tables from a single page using multiple strategies"""
         
         dfs = []
@@ -72,15 +83,15 @@ class TableExtractor:
                     continue
                 
                 # Convert to DataFrame with first row as headers
-                df = self._table_to_dataframe(table, page_num)
+                df = self._table_to_dataframe(table, page_num, pd)
                 
                 if df is not None and not df.empty:
                     dfs.append(df)
         
         # Remove duplicates (same table detected by multiple strategies)
-        return self._deduplicate_tables(dfs)
+        return self._deduplicate_tables(dfs, pd)
     
-    def _table_to_dataframe(self, table: List, page_num: int) -> Optional[pd.DataFrame]:
+    def _table_to_dataframe(self, table: List, page_num: int, pd) -> Optional["pd.DataFrame"]:
         """Convert raw table data to DataFrame"""
         
         if not table or len(table) < 1:
@@ -109,7 +120,7 @@ class TableExtractor:
         
         return df
     
-    def _deduplicate_tables(self, dfs: List[pd.DataFrame]) -> List[pd.DataFrame]:
+    def _deduplicate_tables(self, dfs: List, pd) -> List:
         """Remove duplicate tables (same content, different strategies)"""
         
         if not dfs:
@@ -132,11 +143,20 @@ class TableExtractor:
         
         return unique
     
-    def find_transaction_tables(self) -> List[pd.DataFrame]:
+    def find_transaction_tables(self) -> List["pd.DataFrame"]:
         """
         Find tables that look like transaction tables.
         A transaction table has date and amount columns.
         """
+        # Lazy import
+        try:
+            import pandas as pd
+        except ImportError as e:
+            raise ImportError(
+                "pandas is required for table extraction. "
+                "Install with: pip install pandas"
+            ) from e
+        
         all_tables = self.extract_all_tables()
         transaction_tables = []
         
@@ -145,14 +165,14 @@ class TableExtractor:
                 transaction_tables.append(df)
         
         # Also try to merge single-row tables (ICICI style)
-        merged = self._merge_single_row_tables(all_tables)
+        merged = self._merge_single_row_tables(all_tables, pd)
         if merged is not None and not merged.empty:
             if self._is_transaction_table(merged):
                 transaction_tables.append(merged)
         
         return transaction_tables
     
-    def _merge_single_row_tables(self, tables: List[pd.DataFrame]) -> Optional[pd.DataFrame]:
+    def _merge_single_row_tables(self, tables: List, pd) -> Optional["pd.DataFrame"]:
         """
         Merge tables that have similar column structure.
         This handles cases like ICICI where each row is a separate table.
@@ -263,6 +283,14 @@ class TableExtractor:
     
     def debug_tables(self, output_dir: str = 'debug'):
         """Save visual debug images showing detected tables"""
+        # Lazy import
+        try:
+            import pdfplumber
+        except ImportError as e:
+            raise ImportError(
+                "pdfplumber is required for table debug. "
+                "Install with: pip install pdfplumber"
+            ) from e
         
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         

@@ -6,6 +6,101 @@
 
 import type { Transaction } from './transaction';
 
+// Re-export all new types for convenience
+export type {
+  // Loan types
+  Loan,
+  LoanCreate,
+  LoanUpdate,
+  LoanPayment,
+  LoanPaymentCreate,
+  AmortizationEntry,
+  AmortizationSchedule,
+  LoanSummary,
+  PrepaymentSimulationRequest,
+  PrepaymentResult,
+  LoansResponse,
+  LoanPaymentsResponse,
+} from './loan';
+
+export type {
+  // Investment types
+  Investment,
+  InvestmentCreate,
+  InvestmentUpdate,
+  InvestmentSummary,
+  AssetAllocation,
+  AssetAllocationResponse,
+  InvestmentsResponse,
+} from './investment';
+
+export type {
+  // Income source types
+  IncomeSource,
+  IncomeSourceCreate,
+  IncomeSourceUpdate,
+  IncomeSourcesResponse,
+} from './income';
+
+export type {
+  // Recurring transaction types
+  RecurringTransaction,
+  RecurringTransactionCreate,
+  RecurringTransactionUpdate,
+  DetectedRecurring,
+  RecurringDetectionResponse,
+  RecurringTransactionsResponse,
+} from './recurring';
+
+export type {
+  // Financial engine types
+  MonthlyCashflow,
+  CategoryBreakdown,
+  AccountBreakdown,
+  CashflowBreakdown,
+  MonthInfo,
+  CashflowSummary,
+  AssetBreakdown,
+  LiabilityBreakdown,
+  NetWorth,
+  NetWorthTrend,
+  MonthlySnapshot,
+  SnapshotData,
+  ProjectionAssetBreakdown,
+  NetWorthProjection,
+  ProjectionAssumptions,
+  ProjectionSummary,
+  NetWorthProjectionResponse,
+  GoalProjection,
+  GoalProjectionRequest,
+  WhatIfResult,
+  WhatIfScenarioRequest,
+  LoanPayoffProjection,
+  MonthlyCashflowResponse,
+  NetWorthTrendResponse,
+  SnapshotsResponse,
+  SnapshotBackfillResponse,
+} from './financial';
+
+// ===== Pagination Types =====
+
+export interface Pagination {
+  page: number;
+  per_page: number;
+  total: number;
+  has_next: boolean;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  pagination: Pagination;
+}
+
+export interface PaginatedTransactionsResponse {
+  transactions: Transaction[];
+  pagination: Pagination;
+}
+
 // ===== Category Types =====
 
 export interface CategorySummary {

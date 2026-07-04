@@ -56,9 +56,9 @@ def temp_db():
     yield db, db_path
     
     # Cleanup - ensure connection is closed
-    if db._conn:
-        db._conn.close()
-        db._conn = None
+    if hasattr(db, "_local") and hasattr(db._local, "conn") and db._local.conn:
+        db._local.conn.close()
+        db._local.conn = None
     os.unlink(db_path)
 
 
@@ -103,7 +103,7 @@ def test_exact_match_detection(populated_db):
     """Test that exact matches (same amount, same date, different accounts) are detected."""
     db, db_path = populated_db
     
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches(db)
     
     # Should find exact match: 1000 debit on 2025-01-01 in A matches 1000 credit on 2025-01-01 in B
     exact_matches = [m for m in matches if m["match_type"] == "exact"]
@@ -124,7 +124,7 @@ def test_date_window_detection(populated_db):
     """Test that date window matches (same amount, within 3 days) are detected."""
     db, db_path = populated_db
     
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches(db)
     
     # Should find date window match: 2000 debit on 2025-01-05 matches 2000 credit on 2025-01-07 (2 days apart)
     window_matches = [m for m in matches if m["match_type"] == "window"]
@@ -145,7 +145,7 @@ def test_no_false_positives_different_amounts(populated_db):
     """Test that transactions with different amounts are NOT matched."""
     db, db_path = populated_db
     
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches(db)
     
     # All matches should have matching amounts (debit == credit in paise)
     for m in matches:
@@ -166,7 +166,7 @@ def test_no_same_account_matches(populated_db):
     """Test that transactions in the same account are NOT matched."""
     db, db_path = populated_db
     
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches(db)
     
     # All matches should be between different accounts
     for m in matches:

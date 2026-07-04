@@ -16,9 +16,11 @@
     "test:metadata:generate": "node scripts/generate-expected-metadata.js",
     "test:metadata": "npx tsx scripts/test-metadata.ts",
     "test:metadata:fix": "npx tsx scripts/auto-fix-metadata.ts",
-    "test:metadata:all": "npm run test:metadata:generate && npm run test:metadata"
+    "test:metadata:all": "npm run test:metadata:generate && npm run test:metadata",
+    "validate": "cd ../backend && ./venv/bin/python -m src.validate_pipeline"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.21",
     "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -33,7 +35,7 @@
     "react-day-picker": "^9.13.0",
     "react-dom": "19.2.3",
     "react-dropzone": "^14.4.0",
-    "recharts": "^3.7.0",
+    "recharts": "^2.15.4",
     "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.11"
   },

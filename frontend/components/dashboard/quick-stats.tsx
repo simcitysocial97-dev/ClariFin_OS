@@ -38,7 +38,6 @@ export function QuickStats({
   }, [monthlyChart]);
 
   // Parse month change for trend indicator
-  const changeValue = parseFloat(monthChange?.replace(/[^0-9.-]/g, '') || '0');
   const isPositiveChange = monthChange?.includes('+');
   const isNegativeChange = monthChange?.includes('-');
 
@@ -73,7 +72,7 @@ export function QuickStats({
     },
     {
       title: 'Transactions',
-      value: transactionCount.toString(),
+      value: transactionCount?.toString() ?? '0',
       icon: Wallet,
       description: 'Total recorded',
       trend: 'neutral' as const,
@@ -82,11 +81,11 @@ export function QuickStats({
     },
     {
       title: 'Cards',
-      value: cardCount.toString(),
+      value: cardCount?.toString() ?? '0',
       icon: CreditCard,
       description: monthlyAverage ? `Avg: ${monthlyAverage}/mo` : 'Active statements',
       trend: 'neutral' as const,
-      sparklineData: sparklineData.slice(-cardCount),
+      sparklineData: sparklineData.slice(-(cardCount ?? 0)),
       sparklineColor: 'hsl(var(--warning))',
     },
   ];

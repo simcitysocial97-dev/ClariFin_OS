@@ -29,13 +29,28 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import pandas as pd
-except ImportError:
-    print("Error: pandas is required. Install with: pip install pandas openpyxl")
-    sys.exit(1)
+
+from src.utils import parse_amount_to_float
+
+# pandas is lazy-loaded in methods that need it
+_pandas_imported = False
+pd = None
+
+def _ensure_pandas():
+    """Lazy import pandas."""
+    global _pandas_imported, pd
+    if not _pandas_imported:
+        try:
+            import pandas as pd_module
+            pd = pd_module
+            _pandas_imported = True
+        except ImportError:
+            print("Error: pandas is required. Install with: pip install pandas openpyxl")
+            sys.exit(1)
 
 
 # ============================================================
@@ -112,10 +127,12 @@ class CSVImporter:
     def __init__(self, file_path: str, debug: bool = False):
         self.file_path = Path(file_path)
         self.debug = debug
-        self._df: Optional[pd.DataFrame] = None
+        self._df = None
         self._detected_format: Optional[Dict] = None
 
-    def _read_file(self, skip_rows: int = 0) -> pd.DataFrame:
+    def _read_file(self, skip_rows: int = 0):
+        """Read the file into a pandas DataFrame."""
+        _ensure_pandas()
         """Read the file into a pandas DataFrame."""
         suffix = self.file_path.suffix.lower()
         
@@ -140,7 +157,9 @@ class CSVImporter:
         else:
             raise ValueError(f"Unsupported file format: {suffix}")
 
-    def _detect_skip_rows(self, df: pd.DataFrame) -> int:
+    def _detect_skip_rows(self, df) -> int:
+        """Detect how many rows to skip before the header."""
+        _ensure_pandas()
         """Detect how many rows to skip before the header."""
         # Check if first row looks like headers
         if df.empty:
@@ -182,6 +201,7 @@ class CSVImporter:
 
     def _is_date_value(self, value) -> bool:
         """Check if a value looks like a date."""
+        _ensure_pandas()
         if pd.isna(value):
             return False
         
@@ -210,11 +230,14 @@ class CSVImporter:
         return False
 
     def _is_numeric_value(self, value) -> bool:
-        """Check if a value is numeric (after cleaning)."""
+        """Check if a value is numeric (after cleaning).
+        
+        Note: Float rejection is handled by parse_amount_to_paise().
+        """
+        _ensure_pandas()
         if pd.isna(value):
             return False
         
-        # Already a number
         if isinstance(value, (int, float)):
             return True
         
@@ -222,40 +245,27 @@ class CSVImporter:
         if not value_str:
             return False
         
-        # Clean the value
         cleaned = value_str.replace(",", "").replace("₹", "").replace("Rs.", "").replace("Rs", "").replace("INR", "").strip()
         
         try:
-            float(cleaned)
+            Decimal(cleaned)
             return True
-        except ValueError:
+        except Exception:
             return False
 
-    def _parse_amount(self, value) -> Optional[float]:
-        """Parse an amount value to float."""
+    def _parse_amount(self, value) -> Optional[int]:
+        """Parse an amount value to integer paise.
+        
+        Float rejection is handled by parse_amount_to_paise().
+        """
         if pd.isna(value):
             return None
         
-        if isinstance(value, (int, float)):
-            return float(value)
-        
-        value_str = str(value).strip()
-        if not value_str:
-            return None
-        
-        # Clean the value
-        cleaned = value_str.replace(",", "").replace("₹", "").replace("Rs.", "").replace("Rs", "").replace("INR", "").strip()
-        
-        # Handle negative values in parentheses (accounting format)
-        if cleaned.startswith("(") and cleaned.endswith(")"):
-            cleaned = "-" + cleaned[1:-1]
-        
-        try:
-            return float(cleaned)
-        except ValueError:
-            return None
+        # Use utils.parse_amount_to_paise for consistent parsing (handles float rejection)
+        result = parse_amount_to_paise(value)
+        return result if result != 0 else None
 
-    def _detect_date_column(self, df: pd.DataFrame) -> Optional[str]:
+    def _detect_date_column(self, df) -> Optional[str]:
         """Detect which column contains dates."""
         columns = df.columns.tolist()
         
@@ -276,7 +286,7 @@ class CSVImporter:
         
         return None
 
-    def _detect_description_column(self, df: pd.DataFrame, exclude_cols: List[str]) -> Optional[str]:
+    def _detect_description_column(self, df, exclude_cols: List[str]) -> Optional[str]:
         """Detect which column contains descriptions."""
         columns = [c for c in df.columns.tolist() if c not in exclude_cols]
         
@@ -307,7 +317,7 @@ class CSVImporter:
         
         return best_col
 
-    def _detect_amount_column(self, df: pd.DataFrame, exclude_cols: List[str]) -> Optional[str]:
+    def _detect_amount_column(self, df, exclude_cols: List[str]) -> Optional[str]:
         """Detect which column contains amounts."""
         columns = [c for c in df.columns.tolist() if c not in exclude_cols]
         
@@ -328,7 +338,7 @@ class CSVImporter:
         
         return None
 
-    def _detect_type_column(self, df: pd.DataFrame, exclude_cols: List[str]) -> Optional[str]:
+    def _detect_type_column(self, df, exclude_cols: List[str]) -> Optional[str]:
         """Detect which column contains transaction type (DR/CR)."""
         columns = [c for c in df.columns.tolist() if c not in exclude_cols]
         
@@ -352,7 +362,7 @@ class CSVImporter:
         
         return None
 
-    def _detect_debit_credit_columns(self, df: pd.DataFrame, exclude_cols: List[str]) -> Tuple[Optional[str], Optional[str]]:
+    def _detect_debit_credit_columns(self, df, exclude_cols: List[str]) -> Tuple[Optional[str], Optional[str]]:
         """Detect separate debit and credit columns.
         
         Only returns columns if BOTH debit and credit columns exist and are DIFFERENT.
@@ -369,7 +379,7 @@ class CSVImporter:
         
         return None, None
 
-    def _detect_date_format(self, df: pd.DataFrame, date_col: str) -> str:
+    def _detect_date_format(self, df, date_col: str) -> str:
         """Detect the date format used in the date column."""
         values = df[date_col].dropna().head(20)
         

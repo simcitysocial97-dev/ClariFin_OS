@@ -12,15 +12,12 @@
 
 import { test, expect } from '../fixtures/test-fixtures';
 import {
-  validateElementVisibility,
   detectHorizontalOverflow,
   validateSidebarDimensions,
-  validateGridCardHeights,
   detectZeroDimensionElements,
   validateDarkModeConsistency,
   validateTableResponsiveness,
   BREAKPOINTS,
-  SIDEBAR_WIDTHS,
 } from '../utils/css-helpers';
 
 // ============================================================================

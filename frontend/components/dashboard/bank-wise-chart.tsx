@@ -1,16 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 // Dynamically import recharts to avoid SSR issues
 import dynamic from 'next/dynamic';
 
 const BarChart = dynamic(() => import('recharts').then((mod) => mod.BarChart), { ssr: false });
+// @ts-expect-error - Recharts dynamic import type mismatch
 const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false });
+// @ts-expect-error - Recharts dynamic import type mismatch
 const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false });
+// @ts-expect-error - Recharts dynamic import type mismatch
 const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false });
 const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false });
+// @ts-expect-error - Recharts dynamic import type mismatch
 const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false });
 const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false });
 

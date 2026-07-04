@@ -11,11 +11,16 @@ All calculations are deterministic and reproducible.
 No ML models. No randomness. Overlay-only on immutable ledger.
 """
 
-import sqlite3
 from datetime import datetime, timedelta
-from typing import Dict, List, Any, Tuple, Optional
+from typing import Dict, List, Any, Tuple, Optional, TYPE_CHECKING
 from collections import defaultdict
 import math
+
+from src.logger import log
+from src.utils import parse_date_to_iso
+
+if TYPE_CHECKING:
+    from db import FinanceDB
 
 
 # ============================================================
@@ -26,16 +31,13 @@ def _parse_date(date_str: str) -> Optional[datetime]:
     """Parse various date formats to datetime."""
     if not date_str:
         return None
-    formats = [
-        "%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
-        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
-    ]
-    s = date_str.strip()
-    for fmt in formats:
+    # Use utils.parse_date_to_iso for consistent parsing
+    iso_date = parse_date_to_iso(date_str)
+    if iso_date:
         try:
-            return datetime.strptime(s, fmt)
+            return datetime.strptime(iso_date, "%Y-%m-%d")
         except ValueError:
-            continue
+            pass
     return None
 
 
@@ -75,43 +77,37 @@ def _moving_average(values: List[float], window: int = 7) -> List[float]:
 # Data Extraction
 # ============================================================
 
-def _get_transactions_90_days(db_path: str) -> List[Dict]:
+def _get_transactions_90_days(db: "FinanceDB") -> List[Dict]:
     """Get transactions from last 90 days."""
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    
     # Get date 90 days ago
     cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     
-    cur = conn.execute("""
-        SELECT 
-            t.id, t.date, t.date_iso, t.description, t.amount,
-            t.type, t.category, t.debit, t.credit, t.account_id
-        FROM transactions t
-        WHERE t.date_iso >= ?
-        ORDER BY t.date_iso ASC
-    """, (cutoff,))
-    
-    rows = [dict(row) for row in cur.fetchall()]
-    conn.close()
+    with db.connection() as conn:
+        cur = conn.execute("""
+            SELECT 
+                t.id, t.date, t.date_iso, t.description, t.amount,
+                t.type, t.category, t.debit, t.credit, t.account_id
+            FROM transactions t
+            WHERE t.date_iso >= ?
+            ORDER BY t.date_iso ASC
+        """, (cutoff,))
+        
+        rows = [dict(row) for row in cur.fetchall()]
     return rows
 
 
-def _get_all_transactions(db_path: str) -> List[Dict]:
+def _get_all_transactions(db: "FinanceDB") -> List[Dict]:
     """Get all transactions for historical baseline."""
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    
-    cur = conn.execute("""
-        SELECT 
-            t.id, t.date, t.date_iso, t.description, t.amount,
-            t.type, t.category, t.debit, t.credit, t.account_id
-        FROM transactions t
-        ORDER BY t.date_iso ASC
-    """)
-    
-    rows = [dict(row) for row in cur.fetchall()]
-    conn.close()
+    with db.connection() as conn:
+        cur = conn.execute("""
+            SELECT 
+                t.id, t.date, t.date_iso, t.description, t.amount,
+                t.type, t.category, t.debit, t.credit, t.account_id
+            FROM transactions t
+            ORDER BY t.date_iso ASC
+        """)
+        
+        rows = [dict(row) for row in cur.fetchall()]
     return rows
 
 
@@ -720,7 +716,7 @@ def detect_india_risk_patterns(transactions: List[Dict]) -> Dict[str, Any]:
 # Main Entry Point
 # ============================================================
 
-def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
+def compute_behavior_profile(db: "FinanceDB") -> Dict[str, Any]:
     """
     Compute comprehensive behavioral profile.
     
@@ -733,12 +729,17 @@ def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
             "financial_health_score": float (0–100)
         }
     """
+    log.info("Computing behavior profile")
+    
     # Get transactions
-    transactions_90d = _get_transactions_90_days(db_path)
-    all_transactions = _get_all_transactions(db_path)
+    transactions_90d = _get_transactions_90_days(db)
+    all_transactions = _get_all_transactions(db)
     
     # Use 90-day window for calculations, fall back to all if needed
     txn_set = transactions_90d if len(transactions_90d) >= 30 else all_transactions
+    
+    if not txn_set:
+        log.warning("No transactions found for behavior analysis")
     
     # Compute temporal patterns
     temporal = _compute_temporal_patterns(txn_set)

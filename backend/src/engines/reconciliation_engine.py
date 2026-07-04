@@ -24,13 +24,17 @@ Confidence Calculation:
 
 Usage:
     from engines.reconciliation_engine import find_potential_matches
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches(db)
 """
 
-import sqlite3
+from collections import defaultdict
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
+
+from src.logger import log
+
+if TYPE_CHECKING:
+    from src.db import FinanceDB
 
 
 # ============================================================
@@ -243,14 +247,15 @@ def _generate_explanation(debit_txn: Dict, credit_txn: Dict, amount_paise: int, 
 # Core Matching Functions
 # ============================================================
 
-def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> List[Dict]:
+def find_potential_matches(db: "FinanceDB", max_date_window_days: int = 3) -> List[Dict]:
     """
     Find potential transfer matches across accounts.
     
     Phase 2B.1: Deterministic matching only. No ML, no fuzzy scoring.
+    Uses O(n log n) hash-bucket approach for efficiency.
     
     Args:
-        db_path: Path to SQLite database
+        db: FinanceDB instance
         max_date_window_days: Maximum days between dates for window rule
     
     Returns:
@@ -266,138 +271,164 @@ def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> List[
             - deterministic_key: str
             - explanation: str (human-readable)
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    log.info("Scanning for reconciliation matches")
     
-    # Get all transactions with debit/credit and account info
-    # Ordered deterministically: amount ASC, date_iso ASC, id ASC
-    cur = conn.execute("""
-        SELECT 
-            id, date_iso, description, debit, credit, account_id
-        FROM transactions
-        WHERE account_id IS NOT NULL AND account_id != ''
-          AND (debit > 0 OR credit > 0)
-          AND date_iso IS NOT NULL AND date_iso != ''
-        ORDER BY 
-            (debit + credit) ASC,
-            date_iso ASC,
-            id ASC
-    """)
+    with db.connection() as conn:
+        # Get all transactions with debit/credit and account info
+        # Ordered deterministically: amount ASC, date_iso ASC, id ASC
+        cur = conn.execute("""
+            SELECT 
+                id, date_iso, description, debit, credit, account_id
+            FROM transactions
+            WHERE account_id IS NOT NULL AND account_id != ''
+              AND (debit > 0 OR credit > 0)
+              AND date_iso IS NOT NULL AND date_iso != ''
+            ORDER BY 
+                (debit + credit) ASC,
+                date_iso ASC,
+                id ASC
+        """)
+        
+        transactions = [dict(row) for row in cur.fetchall()]
     
-    transactions = [dict(row) for row in cur.fetchall()]
-    conn.close()
+    # Edge case: no transactions
+    if not transactions:
+        return []
     
+    # Step 1: Bucket by amount - O(n)
+    debit_by_amount: Dict[int, List[Dict]] = defaultdict(list)
+    credit_by_amount: Dict[int, List[Dict]] = defaultdict(list)
+    
+    for txn in transactions:
+        debit = txn.get("debit") or 0
+        credit = txn.get("credit") or 0
+        
+        if debit > 0:
+            debit_by_amount[debit].append(txn)
+        if credit > 0:
+            credit_by_amount[credit].append(txn)
+    
+    # Step 2: Match within buckets - O(m) where m = matches
     matches = []
-    seen_keys = set()
+    seen_pairs: set[tuple[int, int]] = set()
     
-    # Compare all pairs
-    for i, txn_a in enumerate(transactions):
-        for txn_b in transactions[i+1:]:
-            # Check for match
-            match = _check_match(txn_a, txn_b, max_date_window_days)
-            
-            if match:
-                key = match["deterministic_key"]
-                if key not in seen_keys:
-                    seen_keys.add(key)
+    for amount, debits in debit_by_amount.items():
+        credits = credit_by_amount.get(amount)
+        if not credits:
+            continue  # No matching credits for this amount
+        
+        for debit_txn in debits:
+            for credit_txn in credits:
+                # Create deterministic pair key to avoid duplicates
+                pair_key = (min(debit_txn["id"], credit_txn["id"]), 
+                           max(debit_txn["id"], credit_txn["id"]))
+                
+                if pair_key in seen_pairs:
+                    continue
+                
+                # Check match using existing function
+                match = _check_match(debit_txn, credit_txn, max_date_window_days)
+                
+                if match:
+                    seen_pairs.add(pair_key)
                     matches.append(match)
+    
+    # Step 3: Sort deterministically by confidence descending, then key ascending
+    matches.sort(key=lambda m: (-m["match_confidence"], m["deterministic_key"]))
     
     return matches
 
 
-def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days: int = 3) -> List[Dict]:
+def find_matches_for_transaction(db: "FinanceDB", txn_id: int, max_date_window_days: int = 3) -> List[Dict]:
     """
     Find potential matches for a specific transaction.
-    
+
     Args:
-        db_path: Path to SQLite database
+        db: FinanceDB instance
         txn_id: Transaction ID to find matches for
         max_date_window_days: Maximum days between dates for window rule
-    
+
     Returns:
         List of potential matches
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    
-    # Get the target transaction
-    cur = conn.execute("""
-        SELECT 
-            id, date_iso, description, debit, credit, account_id
-        FROM transactions
-        WHERE id = ?
-    """, (txn_id,))
-    
-    target = cur.fetchone()
-    if not target:
-        conn.close()
-        return []
-    
-    target_dict = dict(target)
-    target_debit = target_dict.get("debit") or 0
-    target_credit = target_dict.get("credit") or 0
-    
-    # Find potential matching transactions
-    # Must be opposite type with same amount
-    if target_debit > 0:
-        amount_to_match = target_debit
-        match_condition = "credit = ?"
-    elif target_credit > 0:
-        amount_to_match = target_credit
-        match_condition = "debit = ?"
-    else:
-        conn.close()
-        return []
-    
-    cur = conn.execute(f"""
-        SELECT 
-            id, date_iso, description, debit, credit, account_id
-        FROM transactions
-        WHERE id != ?
-          AND account_id != ?
-          AND account_id IS NOT NULL AND account_id != ''
-          AND {match_condition}
-          AND date_iso IS NOT NULL AND date_iso != ''
-        ORDER BY date_iso ASC, id ASC
-    """, (txn_id, target_dict["account_id"], amount_to_match))
-    
-    candidates = [dict(row) for row in cur.fetchall()]
-    conn.close()
-    
+    with db.connection() as conn:
+        # Get the target transaction
+        cur = conn.execute("""
+            SELECT 
+                id, date_iso, description, debit, credit, account_id
+            FROM transactions
+            WHERE id = ?
+        """, (txn_id,))
+
+        target = cur.fetchone()
+        if not target:
+            return []
+
+        target_dict = dict(target)
+        target_debit = target_dict.get("debit") or 0
+        target_credit = target_dict.get("credit") or 0
+
+        # Find potential matching transactions
+        # Must be opposite type with same amount
+        if target_debit > 0:
+            amount_to_match = target_debit
+            match_condition = "credit = ?"
+        elif target_credit > 0:
+            amount_to_match = target_credit
+            match_condition = "debit = ?"
+        else:
+            return []
+
+        cur = conn.execute(f"""
+            SELECT 
+                id, date_iso, description, debit, credit, account_id
+            FROM transactions
+            WHERE id != ?
+              AND account_id != ?
+              AND account_id IS NOT NULL AND account_id != ''
+              AND {match_condition}
+              AND date_iso IS NOT NULL AND date_iso != ''
+            ORDER BY date_iso ASC, id ASC
+        """, (txn_id, target_dict["account_id"], amount_to_match))
+
+        candidates = [dict(row) for row in cur.fetchall()]
+
     matches = []
-    
+
     for candidate in candidates:
         match = _check_match(target_dict, candidate, max_date_window_days)
         if match:
             matches.append(match)
-    
+
     return matches
 
+def find_unmatched_transactions(db: "FinanceDB") -> List[Dict]:
+    """
+    Find transactions that are not yet reconciled (unmatched).
 
-# ============================================================
-# CLI Test
-# ============================================================
+    Returns:
+        List of unmatched transactions with their details.
+    """
+    log.info("Finding unmatched transactions")
 
-if __name__ == "__main__":
-    import sys
-    
-    db_path = str(Path(__file__).parent.parent / "data" / "finance.db")
-    
-    print("=" * 60)
-    print("Reconciliation Engine Test")
-    print("=" * 60)
-    print(f"Database: {db_path}")
-    print()
-    
-    matches = find_potential_matches(db_path)
-    
-    if matches:
-        print(f"Found {len(matches)} potential matches:")
-        for m in matches[:10]:
-            print(f"  [{m['match_type']}] {m['deterministic_key']}")
-            print(f"    Confidence: {m['match_confidence']:.2%}")
-            print(f"    {m['explanation']}")
-        if len(matches) > 10:
-            print(f"  ... and {len(matches) - 10} more matches")
-    else:
-        print("No potential matches found.")
+    with db.connection() as conn:
+        # Get all transactions that are not yet reconciled
+        # A transaction is considered unmatched if it's not in any reconciliation record
+        cur = conn.execute("""
+            SELECT
+                t.id, t.date_iso, t.description, t.debit, t.credit, t.account_id
+            FROM transactions t
+            WHERE t.account_id IS NOT NULL AND t.account_id != ''
+              AND (t.debit > 0 OR t.credit > 0)
+              AND t.date_iso IS NOT NULL AND t.date_iso != ''
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM reconciliations r
+                  WHERE r.debit_txn_id = t.id OR r.credit_txn_id = t.id
+              )
+            ORDER BY t.date_iso DESC, t.id DESC
+        """)
+
+        unmatched = [dict(row) for row in cur.fetchall()]
+
+    return unmatched

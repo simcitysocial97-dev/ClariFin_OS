@@ -104,27 +104,38 @@ export function formatPercentage(value: number, decimals: number = 1): string {
 export function formatDateDisplay(dateStr: string | null | undefined): string {
   if (!dateStr) return '';
   
-  // Try parsing various formats
-  const formats = [
-    /^(\d{4})-(\d{2})-(\d{2})$/,           // YYYY-MM-DD
-    /^(\d{2})\/(\d{2})\/(\d{4})$/,         // DD/MM/YYYY
-    /^(\d{2})-(\d{2})-(\d{4})$/,           // DD-MM-YYYY
-  ];
+  // Define regex patterns with non-null assertion (they are literal patterns)
+  const format1 = /^(\d{4})-(\d{2})-(\d{2})$/;           // YYYY-MM-DD
+  const format2 = /^(\d{2})\/(\d{2})\/(\d{4})$/;         // DD/MM/YYYY
+  const format3 = /^(\d{2})-(\d{2})-(\d{4})$/;           // DD-MM-YYYY
   
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
   // Try YYYY-MM-DD
-  const match1 = dateStr.match(formats[0]);
+  const match1 = dateStr.match(format1);
   if (match1) {
-    const [, year, month, day] = match1;
+    const year = match1[1]!;
+    const month = match1[2]!;
+    const day = match1[3]!;
     return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
   }
   
-  // Try DD/MM/YYYY or DD-MM-YYYY
-  const match2 = dateStr.match(formats[1]) || dateStr.match(formats[2]);
+  // Try DD/MM/YYYY
+  const match2 = dateStr.match(format2);
   if (match2) {
-    const [, day, month, year] = match2;
+    const day = match2[1]!;
+    const month = match2[2]!;
+    const year = match2[3]!;
+    return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+  }
+  
+  // Try DD-MM-YYYY
+  const match3 = dateStr.match(format3);
+  if (match3) {
+    const day = match3[1]!;
+    const month = match3[2]!;
+    const year = match3[3]!;
     return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
   }
   
@@ -143,4 +154,130 @@ export function truncateText(text: string | null | undefined, maxLength: number 
   if (!text) return '';
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + '...';
+}
+
+/**
+ * Format paise to INR compact format (₹1.2K, ₹3.5L).
+ * 
+ * @param paise - Amount in paise
+ * @returns Compact formatted string like "₹1.2K" or "₹3.5L"
+ */
+export function formatINRCompact(paise: number | null | undefined): string {
+  if (paise === null || paise === undefined) return '—';
+  const rupees = paise / 100;
+  if (Math.abs(rupees) >= 100000) {
+    return `₹${(rupees / 100000).toFixed(1)}L`;
+  }
+  if (Math.abs(rupees) >= 1000) {
+    return `₹${(rupees / 1000).toFixed(1)}K`;
+  }
+  return formatINR(paise);
+}
+
+/**
+ * Format paise to Indian Rupee string.
+ * 
+ * @param paise - Amount in paise
+ * @returns Formatted string like "₹1,234" or "₹1,00,000"
+ */
+export function formatINR(paise: number | null | undefined): string {
+  if (paise === null || paise === undefined) return '—';
+  const rupees = paise / 100;
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(rupees);
+}
+
+/**
+ * Format percentage value with sign.
+ * 
+ * @param value - Percentage value
+ * @returns Formatted string like "+5.2%" or "-10.0%"
+ */
+export function formatPercent(value: number | null | undefined): string {
+  if (value === null || value === undefined) return '—';
+  return `${value > 0 ? '+' : ''}${value.toFixed(1)}%`;
+}
+
+/**
+ * Format months to human-readable string.
+ * 
+ * @param months - Number of months
+ * @returns Formatted string like "2y 6m" or "3m"
+ */
+export function formatMonths(months: number | null | undefined): string {
+  if (months === null || months === undefined) return '—';
+  if (months >= 12) return `${Math.floor(months / 12)}y ${months % 12}m`;
+  return `${months}m`;
+}
+
+/**
+ * Format date to display format.
+ * 
+ * @param dateStr - Date string or Date object
+ * @returns Formatted date like "15 Jun 2025"
+ */
+export function formatDate(dateStr: string | Date | null | undefined): string {
+  if (!dateStr) return '';
+  const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
+  return date.toLocaleDateString('en-IN', { 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+}
+
+/**
+ * Format account type for display.
+ * 
+ * @param type - Account type string
+ * @returns Formatted account type
+ */
+export function formatAccountType(type: string): string {
+  const types: Record<string, string> = {
+    savings: 'Savings',
+    current: 'Current',
+    fd: 'Fixed Deposit',
+    rd: 'Recurring Deposit',
+    wallet: 'Wallet',
+    credit_card: 'Credit Card',
+  };
+  return types[type] || type;
+}
+
+/**
+ * Get color class for account type.
+ * 
+ * @param type - Account type string
+ * @returns Tailwind color classes
+ */
+export function getAccountTypeColor(type: string): string {
+  const colors: Record<string, string> = {
+    savings: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
+    current: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300',
+    fd: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300',
+    rd: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
+    wallet: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-300',
+    credit_card: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300',
+  };
+  return colors[type] || 'bg-gray-100 text-gray-800 dark:bg-gray-900/40 dark:text-gray-300';
+}
+
+/**
+ * Format card type for display.
+ * 
+ * @param type - Card type string
+ * @returns Formatted card type
+ */
+export function formatCardType(type: string): string {
+  const types: Record<string, string> = {
+    visa: 'Visa',
+    mastercard: 'Mastercard',
+    rupay: 'RuPay',
+    amex: 'American Express',
+    diners: 'Diners Club',
+  };
+  return types[type] || type;
 }

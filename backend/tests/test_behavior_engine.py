@@ -25,6 +25,7 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from db import FinanceDB
 from engines.behavior_engine import (
     compute_behavior_profile,
     detect_india_risk_patterns,
@@ -59,29 +60,16 @@ def temp_db():
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
     
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+    # Create FinanceDB instance (tables are created automatically)
+    db = FinanceDB(db_path)
     
-    # Create tables
-    cur.execute("""
-        CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            statement_id INTEGER,
-            date TEXT,
-            date_iso TEXT,
-            description TEXT,
-            amount REAL,
-            type TEXT,
-            category TEXT,
-            subcategory TEXT,
-            member TEXT,
-            account_id TEXT,
-            debit REAL,
-            credit REAL,
-            balance REAL,
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    # Create a statement record
+    with db.transaction() as conn:
+        cur = conn.execute(
+            "INSERT INTO statements (bank, file_name) VALUES (?, ?)",
+            ("TestBank", "test_statement.pdf")
         )
-    """)
+        statement_id = cur.lastrowid
     
     # Generate 90 days of test transactions
     base_date = datetime.now() - timedelta(days=90)
@@ -95,56 +83,65 @@ def temp_db():
         
         # Daily expenses (groceries, food)
         if day % 2 == 0:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "GROCERY STORE", 500.0, "debit",
-                "Groceries", None, "Self", "ACC001", 500.0, None, None
-            ))
+            transactions.append({
+                "date": date_iso,
+                "description": "GROCERY STORE",
+                "amount": 500.0,
+                "type": "debit",
+                "category": "Groceries",
+            })
             txn_id += 1
         
         if day % 3 == 0:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "RESTAURANT", 800.0, "debit",
-                "Food & Dining", None, "Self", "ACC001", 800.0, None, None
-            ))
+            transactions.append({
+                "date": date_iso,
+                "description": "RESTAURANT",
+                "amount": 800.0,
+                "type": "debit",
+                "category": "Food & Dining",
+            })
             txn_id += 1
         
         # Monthly salary (1st of each month)
         if date.day == 1:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "SALARY CREDIT", 50000.0, "credit",
-                "Income", None, "Self", "ACC001", None, 50000.0, None
-            ))
+            transactions.append({
+                "date": date_iso,
+                "description": "SALARY CREDIT",
+                "amount": 50000.0,
+                "type": "credit",
+                "category": "Income",
+            })
             txn_id += 1
         
         # Monthly EMI (5th of each month)
         if date.day == 5:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "EMI LOAN REPAYMENT", 15000.0, "debit",
-                "EMI", None, "Self", "ACC001", 15000.0, None, None
-            ))
+            transactions.append({
+                "date": date_iso,
+                "description": "EMI LOAN REPAYMENT",
+                "amount": 15000.0,
+                "type": "debit",
+                "category": "EMI",
+            })
             txn_id += 1
         
         # Micro transactions (UPI)
         if day % 1 == 0:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "UPI-PAYMENT", 150.0, "debit",
-                "Food & Dining", None, "Self", "ACC001", 150.0, None, None
-            ))
+            transactions.append({
+                "date": date_iso,
+                "description": "UPI-PAYMENT",
+                "amount": 150.0,
+                "type": "debit",
+                "category": "Food & Dining",
+            })
             txn_id += 1
     
-    cur.executemany("""
-        INSERT INTO transactions (
-            id, statement_id, date, date_iso, description, amount, type,
-            category, subcategory, member, account_id, debit, credit, balance
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, transactions)
+    # Insert transactions using FinanceDB
+    db.insert_transactions(statement_id, transactions)
     
-    conn.commit()
-    conn.close()
-    
-    yield db_path
+    yield db
     
     # Cleanup
+    db.close()
     os.unlink(db_path)
 
 
@@ -154,50 +151,33 @@ def minimal_db():
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
     
-    conn = sqlite3.connect(db_path)
-    cur = conn.cursor()
+    # Create FinanceDB instance (tables are created automatically)
+    db = FinanceDB(db_path)
     
-    cur.execute("""
-        CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            statement_id INTEGER,
-            date TEXT,
-            date_iso TEXT,
-            description TEXT,
-            amount REAL,
-            type TEXT,
-            category TEXT,
-            subcategory TEXT,
-            member TEXT,
-            account_id TEXT,
-            debit REAL,
-            credit REAL,
-            balance REAL,
-            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    # Create a statement record
+    with db.transaction() as conn:
+        cur = conn.execute(
+            "INSERT INTO statements (bank, file_name) VALUES (?, ?)",
+            ("TestBank", "minimal_statement.pdf")
         )
-    """)
+        statement_id = cur.lastrowid
     
     # Just 5 transactions
     transactions = [
-        (1, 1, "2025-01-01", "2025-01-01", "TEST DEBIT", 100.0, "debit", "Test", None, "Self", "ACC001", 100.0, None, None),
-        (2, 1, "2025-01-02", "2025-01-02", "TEST DEBIT", 200.0, "debit", "Test", None, "Self", "ACC001", 200.0, None, None),
-        (3, 1, "2025-01-03", "2025-01-03", "TEST CREDIT", 1000.0, "credit", "Income", None, "Self", "ACC001", None, 1000.0, None),
-        (4, 1, "2025-01-04", "2025-01-04", "TEST DEBIT", 150.0, "debit", "Test", None, "Self", "ACC001", 150.0, None, None),
-        (5, 1, "2025-01-05", "2025-01-05", "TEST DEBIT", 300.0, "debit", "Test", None, "Self", "ACC001", 300.0, None, None),
+        {"date": "2025-01-01", "description": "TEST DEBIT", "amount": 100.0, "type": "debit", "category": "Test"},
+        {"date": "2025-01-02", "description": "TEST DEBIT", "amount": 200.0, "type": "debit", "category": "Test"},
+        {"date": "2025-01-03", "description": "TEST CREDIT", "amount": 1000.0, "type": "credit", "category": "Income"},
+        {"date": "2025-01-04", "description": "TEST DEBIT", "amount": 150.0, "type": "debit", "category": "Test"},
+        {"date": "2025-01-05", "description": "TEST DEBIT", "amount": 300.0, "type": "debit", "category": "Test"},
     ]
     
-    cur.executemany("""
-        INSERT INTO transactions (
-            id, statement_id, date, date_iso, description, amount, type,
-            category, subcategory, member, account_id, debit, credit, balance
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, transactions)
+    # Insert transactions using FinanceDB
+    db.insert_transactions(statement_id, transactions)
     
-    conn.commit()
-    conn.close()
+    yield db
     
-    yield db_path
-    
+    # Cleanup
+    db.close()
     os.unlink(db_path)
 
 
@@ -414,45 +394,33 @@ class TestNoMutation:
 
     def test_no_new_tables(self, temp_db):
         """Test that no new tables are created."""
-        conn = sqlite3.connect(temp_db)
-        cur = conn.cursor()
-        
-        # Get tables before
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tables_before = set(row[0] for row in cur.fetchall())
-        conn.close()
+        with temp_db.connection() as conn:
+            cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables_before = set(row[0] for row in cur.fetchall())
         
         # Run profile
         compute_behavior_profile(temp_db)
         
         # Get tables after
-        conn = sqlite3.connect(temp_db)
-        cur = conn.cursor()
-        cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tables_after = set(row[0] for row in cur.fetchall())
-        conn.close()
+        with temp_db.connection() as conn:
+            cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            tables_after = set(row[0] for row in cur.fetchall())
         
         assert tables_before == tables_after
         
     def test_no_new_rows(self, temp_db):
         """Test that no new rows are added."""
-        conn = sqlite3.connect(temp_db)
-        cur = conn.cursor()
-        
-        # Get count before
-        cur.execute("SELECT COUNT(*) FROM transactions")
-        count_before = cur.fetchone()[0]
-        conn.close()
+        with temp_db.connection() as conn:
+            cur = conn.execute("SELECT COUNT(*) FROM transactions")
+            count_before = cur.fetchone()[0]
         
         # Run profile
         compute_behavior_profile(temp_db)
         
         # Get count after
-        conn = sqlite3.connect(temp_db)
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM transactions")
-        count_after = cur.fetchone()[0]
-        conn.close()
+        with temp_db.connection() as conn:
+            cur = conn.execute("SELECT COUNT(*) FROM transactions")
+            count_after = cur.fetchone()[0]
         
         assert count_before == count_after
 
@@ -469,34 +437,19 @@ class TestEdgeCases:
         fd, db_path = tempfile.mkstemp(suffix=".db")
         os.close(fd)
         
-        conn = sqlite3.connect(db_path)
-        cur = conn.cursor()
-        # Include all required columns for behavior engine
-        cur.execute("""
-            CREATE TABLE transactions (
-                id INTEGER PRIMARY KEY,
-                date TEXT,
-                date_iso TEXT,
-                description TEXT,
-                amount REAL,
-                type TEXT,
-                category TEXT,
-                debit REAL DEFAULT 0,
-                credit REAL DEFAULT 0,
-                account_id TEXT
-            )
-        """)
-        conn.commit()
-        conn.close()
+        # Use FinanceDB - tables are created automatically
+        db = FinanceDB(db_path)
         
+        # Database is empty (no transactions)
         try:
-            profile = compute_behavior_profile(db_path)
+            profile = compute_behavior_profile(db)
             
             # Should return valid structure with defaults
             assert "financial_health_score" in profile
             assert 0 <= profile["financial_health_score"] <= 100
             assert profile["confidence"] >= 0
         finally:
+            db.close()
             os.unlink(db_path)
             
     def test_minimal_data(self, minimal_db):
@@ -512,36 +465,29 @@ class TestEdgeCases:
         fd, db_path = tempfile.mkstemp(suffix=".db")
         os.close(fd)
         
-        conn = sqlite3.connect(db_path)
-        cur = conn.cursor()
-        # Include all required columns
-        cur.execute("""
-            CREATE TABLE transactions (
-                id INTEGER PRIMARY KEY,
-                date TEXT,
-                date_iso TEXT,
-                description TEXT,
-                amount REAL,
-                type TEXT,
-                category TEXT,
-                debit REAL DEFAULT 0,
-                credit REAL DEFAULT 0,
-                account_id TEXT
+        # Use FinanceDB - tables are created automatically
+        db = FinanceDB(db_path)
+        
+        # Create a statement record
+        with db.transaction() as conn:
+            cur = conn.execute(
+                "INSERT INTO statements (bank, file_name) VALUES (?, ?)",
+                ("TestBank", "all_credits.pdf")
             )
-        """)
+            statement_id = cur.lastrowid
         
         # Only credits
-        cur.execute("""
-            INSERT INTO transactions (date, date_iso, description, amount, type, category, debit, credit, account_id)
-            VALUES ('2025-01-01', '2025-01-01', 'INCOME', 10000, 'credit', 'Income', 0, 1000000, 'ACC001')
-        """)
-        conn.commit()
-        conn.close()
+        transactions = [
+            {"date": "2025-01-01", "description": "INCOME", "amount": 10000, "type": "credit", "category": "Income"},
+        ]
+        
+        db.insert_transactions(statement_id, transactions)
         
         try:
-            profile = compute_behavior_profile(db_path)
+            profile = compute_behavior_profile(db)
             assert 0 <= profile["financial_health_score"] <= 100
         finally:
+            db.close()
             os.unlink(db_path)
             
     def test_all_debits(self):
@@ -549,37 +495,36 @@ class TestEdgeCases:
         fd, db_path = tempfile.mkstemp(suffix=".db")
         os.close(fd)
         
-        conn = sqlite3.connect(db_path)
-        cur = conn.cursor()
-        # Include all required columns
-        cur.execute("""
-            CREATE TABLE transactions (
-                id INTEGER PRIMARY KEY,
-                date TEXT,
-                date_iso TEXT,
-                description TEXT,
-                amount REAL,
-                type TEXT,
-                category TEXT,
-                debit REAL DEFAULT 0,
-                credit REAL DEFAULT 0,
-                account_id TEXT
+        # Use FinanceDB - tables are created automatically
+        db = FinanceDB(db_path)
+        
+        # Create a statement record
+        with db.transaction() as conn:
+            cur = conn.execute(
+                "INSERT INTO statements (bank, file_name) VALUES (?, ?)",
+                ("TestBank", "all_debits.pdf")
             )
-        """)
+            statement_id = cur.lastrowid
         
         # Only debits
+        transactions = []
         for i in range(10):
-            cur.execute("""
-                INSERT INTO transactions (date, date_iso, description, amount, type, category, debit, credit, account_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (f"2025-01-{i+1:02d}", f"2025-01-{i+1:02d}", "EXPENSE", 1000, "debit", "Test", 100000, 0, "ACC001"))
-        conn.commit()
-        conn.close()
+            date = f"2025-01-{i+1:02d}"
+            transactions.append({
+                "date": date,
+                "description": "EXPENSE",
+                "amount": 1000,
+                "type": "debit",
+                "category": "Test"
+            })
+        
+        db.insert_transactions(statement_id, transactions)
         
         try:
-            profile = compute_behavior_profile(db_path)
+            profile = compute_behavior_profile(db)
             assert 0 <= profile["financial_health_score"] <= 100
         finally:
+            db.close()
             os.unlink(db_path)
 
 

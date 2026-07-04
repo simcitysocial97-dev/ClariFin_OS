@@ -1,0 +1,128 @@
+'use client';
+
+import { Edit2 } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { formatPaise } from '@/lib/format';
+import { cn } from '@/lib/utils';
+import type { Transaction } from '@/types/transaction';
+
+const categoryColors: Record<string, string> = {
+  'Food & Dining': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
+  'Shopping': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+  'Transportation': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+  'Bills & Utilities': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+  'Entertainment': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+  'Healthcare': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
+  'Education': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+  'Groceries': 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300',
+  'Travel': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
+  'Other': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+  'Transfer': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+  'Uncategorized': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+};
+
+interface RecentTransactionsTableProps {
+  transactions: Transaction[];
+  onEdit?: (transaction: Transaction) => void;
+}
+
+export function RecentTransactionsTable({
+  transactions,
+  onEdit,
+}: RecentTransactionsTableProps) {
+  return (
+    <Card>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Date</TableHead>
+              <TableHead className="w-[120px]">Bank</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="w-[120px]">Category</TableHead>
+              <TableHead className="w-[80px]">Type</TableHead>
+              <TableHead className="w-[120px] text-right">Amount</TableHead>
+              <TableHead className="w-[80px] text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {transactions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  No transactions found. Try adjusting your filters.
+                </TableCell>
+              </TableRow>
+            ) : (
+              transactions.map((transaction) => (
+                <TableRow 
+                  key={transaction.id}
+                  className="hover:bg-muted/50 transition-colors"
+                >
+                  <TableCell className="text-sm">{transaction.date_display || transaction.date}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-xs">
+                      {transaction.bank}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="max-w-[300px] truncate text-sm">
+                    {transaction.description_display || transaction.description}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="secondary"
+                      className={cn(
+                        "text-xs",
+                        categoryColors[transaction.category] || categoryColors['Other']
+                      )}
+                    >
+                      {transaction.category}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant="outline"
+                      className={cn(
+                        "text-xs",
+                        transaction.type === 'credit' 
+                          ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300' 
+                          : 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                      )}
+                    >
+                      {transaction.type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      "text-right font-mono tabular-nums text-sm",
+                      transaction.type === 'debit' ? 'text-rose-600' : 'text-emerald-600',
+                      transaction.is_large && "font-bold text-amber-600"
+                    )}
+                  >
+                    {transaction.amount_display || formatPaise(transaction.amount_paise || 0)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {onEdit && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => onEdit(transaction)}
+                        title="Re-categorize transaction"
+                        aria-label={`Re-categorize transaction: ${transaction.description}`}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}

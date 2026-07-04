@@ -9,6 +9,11 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -36,7 +41,10 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts",
     "dist/types/**/*.ts",
-    "dist/dev/types/**/*.ts"
+    "dist/dev/types/**/*.ts",
+    "out/types/**/*.ts",
+    "out/dev/types/**/*.ts",
+    "types/**/*.d.ts"
   ],
   "exclude": [
     "node_modules"

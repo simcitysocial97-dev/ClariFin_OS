@@ -1,540 +1,565 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useTransactions, useBanks, useCategoryList, useExportCSV } from '@/lib/hooks/use-finance-data';
-import { useAppStore } from '@/lib/store/use-app-store';
-import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Edit2, Trash2, Download, Search, AlertCircle, Filter } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PageShell } from '@/components/layout/page-shell';
+import {
+  useTransactions,
+  useAccounts,
+  useV2Imports,
+  useUpdateCategory,
+} from '@/lib/hooks/use-finance-data';
+import { useCategories } from '@/lib/hooks/use-finance-data';
+import { formatINR, formatDate } from '@/lib/format';
+import {
+  Download,
+  Upload,
+  Search,
+  X,
+  ChevronDown,
+  CheckCircle2,
+  Clock,
+  Edit3,
+  MoreHorizontal,
+} from 'lucide-react';
+import type { Transaction } from '@/types/transaction';
 
-const categoryColors: Record<string, string> = {
-  'Food & Dining': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-  'Shopping': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-  'Transportation': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  'Bills & Utilities': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
-  'Entertainment': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-  'Healthcare': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
-  'Education': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-  'Groceries': 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300',
-  'Travel': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-  'Other': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
-  'Transfer': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
-  'Uncategorized': 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300',
+// API returns extended transaction objects with nature and account_name
+interface ApiTransaction extends Transaction {
+  nature?: string;
+  account_name?: string;
+  total_pages?: number;
+  raw_text?: string;
+}
+
+// Types
+type NatureType = 'all' | 'real_income' | 'real_expense' | 'recycling_in' | 'recycling_out' | 'interest_charge' | 'inter_account' | 'unknown';
+
+const NATURE_OPTIONS: { value: NatureType; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'real_income', label: 'Income' },
+  { value: 'real_expense', label: 'Expenses' },
+  { value: 'recycling_in', label: 'Recycling In' },
+  { value: 'recycling_out', label: 'Recycling Out' },
+  { value: 'interest_charge', label: 'Interest Charge' },
+  { value: 'inter_account', label: 'Inter-Account' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
+const NATURE_COLORS: Record<string, string> = {
+  real_income: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
+  real_expense: 'bg-muted text-muted-foreground',
+  recycling_in: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+  recycling_out: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
+  interest_charge: 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
+  inter_account: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+  unknown: 'bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300',
 };
 
+const QUICK_FILTERS = ['All', 'Income', 'Expenses', 'Recycling', 'Unknown', 'This Month', 'Last Month'];
+
+// CSV helper
+function serializeToCSV(transactions: ApiTransaction[]): string {
+  if (!transactions.length) return '';
+  const headers = ['Date', 'Description', 'Amount', 'Nature', 'Category', 'Account'];
+  const rows = transactions.map((tx) => [
+    tx.date,
+    tx.description,
+    tx.amount_paise ?? 0,
+    tx.nature ?? '',
+    tx.category ?? '',
+    tx.account_name ?? '',
+  ]);
+  const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','));
+  return csv.join('\n');
+}
+
+// ============================================================
+// Main
+// ============================================================
+
 export default function TransactionsPage() {
-  const { toast } = useToast();
-  const { transactions: localTransactions } = useAppStore();
-  
-  // Filter states
   const [search, setSearch] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [bankFilter, setBankFilter] = useState('All');
-  const [minAmount, setMinAmount] = useState<number | null>(null);
-  const [editingTransaction, setEditingTransaction] = useState<any>(null);
-  
-  // Fetch data from API
-  const { data: txData, loading: txLoading, error: txError } = useTransactions({
-    search: search || undefined,
-    bank: bankFilter !== 'All' ? bankFilter : undefined,
-    category: categoryFilter !== 'All' ? categoryFilter : undefined,
-    type: typeFilter !== 'all' ? typeFilter : undefined,
-    limit: 100,
-    offset: 0,
-  });
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
+  const [natureFilter, setNatureFilter] = useState<NatureType>('all');
+  const [minAmount, setMinAmount] = useState('');
+  const [maxAmount, setMaxAmount] = useState('');
+  const [page, setPage] = useState(1);
+  const [selectedTx, setSelectedTx] = useState<ApiTransaction | null>(null);
+  const [importDrawerOpen, setImportDrawerOpen] = useState(false);
+  const [editCategoryId, setEditCategoryId] = useState<string | number | null>(null);
+  const [editCategoryValue, setEditCategoryValue] = useState('');
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
 
-  const { data: banks, loading: banksLoading } = useBanks();
-  const { data: categories, loading: categoriesLoading } = useCategoryList();
-  const { exportCSV, exporting } = useExportCSV();
+  const { transactions, loading, error, refetch } = useTransactions();
 
-  // Show error toast
-  useEffect(() => {
-    if (txError) {
-      toast({
-        title: 'Error loading transactions',
-        description: `${txError.message}. Falling back to local data.`,
-        variant: 'destructive',
-      });
-    }
-  }, [txError, toast]);
+  const { accounts } = useAccounts();
+  const { categories } = useCategories();
+  const { data: importHistory } = useV2Imports();
+  const updateCategoryMutation = useUpdateCategory();
 
-  // Fallback to local data if API fails
-  const hasApiData = txData && txData.transactions.length > 0;
-  const hasLocalData = localTransactions.length > 0;
-  const useLocalData = txError && hasLocalData && !hasApiData;
 
-  // Filter local transactions if using fallback
-  const filteredLocalTransactions = useLocalData
-    ? localTransactions.filter((t: any) => {
-        const matchesSearch = search === '' || t.description.toLowerCase().includes(search.toLowerCase());
-        const matchesCategory = categoryFilter === 'All' || t.category === categoryFilter;
-        const matchesType = typeFilter === 'all' || t.type === typeFilter;
-        const matchesBank = bankFilter === 'All' || t.bank === bankFilter;
-        const matchesMinAmount = minAmount === null || t.amount >= minAmount;
-        return matchesSearch && matchesCategory && matchesType && matchesBank && matchesMinAmount;
-      })
-    : [];
+  // Summary derived from filtered set
+  const summary = useMemo(() => {
+    let credits = 0;
+    let debits = 0;
+    transactions.forEach((tx) => {
+      if ((tx.amount_paise ?? 0) >= 0) credits += tx.amount_paise ?? 0;
+      else debits += tx.amount_paise ?? 0;
+    });
+    return { credits, debits, net: credits + debits, count: transactions.length };
+  }, [transactions]);
 
-  const transactions = useLocalData ? filteredLocalTransactions : (txData?.transactions || []);
-  const totalCount = useLocalData ? filteredLocalTransactions.length : (txData?.total || 0);
-
-  // Quick filter handlers
-  const handleLargeFilter = () => {
-    setMinAmount(5000);
-    setSearch('');
-    toast({ title: 'Filter applied', description: 'Showing transactions > ₹5,000' });
-  };
-
-  const handleRecurringFilter = () => {
-    setSearch('');
-    toast({ title: 'Filter applied', description: 'Showing recurring transactions' });
-  };
-
-  const handleUncategorizedFilter = () => {
-    setCategoryFilter('Uncategorized');
-    setSearch('');
-    toast({ title: 'Filter applied', description: 'Showing uncategorized transactions' });
+  const handleExportCSV = async () => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const clearFilters = () => {
     setSearch('');
-    setCategoryFilter('All');
-    setTypeFilter('all');
-    setBankFilter('All');
-    setMinAmount(null);
+    setStartDate('');
+    setEndDate('');
+    setSelectedAccounts([]);
+    setNatureFilter('all');
+    setMinAmount('');
+    setMaxAmount('');
+    setPage(1);
   };
 
-  const hasActiveFilters = search || categoryFilter !== 'All' || typeFilter !== 'all' || bankFilter !== 'All' || minAmount !== null;
+  const hasFilters = search || startDate || endDate || selectedAccounts.length > 0 || natureFilter !== 'all' || minAmount || maxAmount;
 
-  const handleExportCSV = async () => {
-    if (useLocalData) {
-      // Export local data
-      const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
-      const rows = transactions.map((t: any) => [
-        t.date,
-        t.description,
-        t.category,
-        t.type,
-        t.amount,
-      ]);
-      const csv = [headers.join(','), ...rows.map((r: any[]) => r.join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast({ title: 'Export successful', description: `${transactions.length} transactions exported.` });
-      return;
-    }
-
-    const blob = await exportCSV({
-      search: search || undefined,
-      bank: bankFilter !== 'All' ? bankFilter : undefined,
-      category: categoryFilter !== 'All' ? categoryFilter : undefined,
-      type: typeFilter !== 'all' ? typeFilter : undefined,
-    });
-    
-    if (blob) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      toast({
-        title: 'Export successful',
-        description: `${totalCount} transactions exported.`,
-      });
-    }
+  const openCategoryEditor = (tx: Transaction) => {
+    setEditCategoryId(tx.id);
+    setEditCategoryValue(tx.category || '');
+    setCategoryDialogOpen(true);
   };
 
-  const handleDelete = (id: string | number) => {
-    toast({
-      title: 'Delete not implemented',
-      description: 'Delete functionality will be added soon.',
-    });
+  const saveCategory = async () => {
+    if (!editCategoryId) return;
+    await updateCategoryMutation.update({ id: Number(editCategoryId), category: editCategoryValue, subcategory: undefined });
+    setCategoryDialogOpen(false);
+    setEditCategoryId(null);
+    refetch();
   };
-
-  const handleEdit = (transaction: any) => {
-    setEditingTransaction(transaction);
-  };
-
-  const handleSaveEdit = () => {
-    setEditingTransaction(null);
-    toast({
-      title: 'Update not implemented',
-      description: 'Update functionality will be added soon.',
-    });
-  };
-
-  // Loading state
-  if (txLoading) {
-    return (
-      <div className="space-y-6 p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-32 mt-2" />
-          </div>
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Skeleton className="h-10 flex-1" />
-              <Skeleton className="h-10 w-[180px]" />
-              <Skeleton className="h-10 w-[150px]" />
-              <Skeleton className="h-10 w-[180px]" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-0">
-            <div className="space-y-2 p-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Error state with no data
-  if (txError && !txData && !useLocalData) {
-    return (
-      <div className="space-y-6 p-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            View and manage your transactions
-          </p>
-        </div>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error loading transactions</AlertTitle>
-          <AlertDescription>
-            {txError.message}. Please ensure the API server is running at http://localhost:8000
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  // Calculate totals
-  const totalDebits = transactions
-    .filter((t: any) => t.type === 'debit')
-    .reduce((sum: number, t: any) => sum + t.amount, 0);
-  const totalCredits = transactions
-    .filter((t: any) => t.type === 'credit')
-    .reduce((sum: number, t: any) => sum + t.amount, 0);
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Transactions</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {totalCount} transactions found {useLocalData && '(from local storage)'}
-          </p>
+    <PageShell
+      title="Transactions"
+      subtitle={`${totalCount} transactions found`}
+      actions={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleExportCSV}>
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Sheet open={importDrawerOpen} onOpenChange={setImportDrawerOpen}>
+            <SheetTrigger asChild>
+              <Button>
+                <Upload className="h-4 w-4 mr-2" />
+                Import Statement
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-lg">
+              <SheetHeader>
+                <SheetTitle>Import Statement</SheetTitle>
+              </SheetHeader>
+              <div className="mt-4 space-y-4">
+                <Card className="border-muted-foreground/20 border-dashed">
+                  <div className="p-6 text-center text-sm text-muted-foreground">
+                    Drag-and-drop PDF dropzone placeholder
+                  </div>
+                </Card>
+                <div>
+                  <h4 className="text-sm font-semibold mb-2">Recent Imports</h4>
+                  <div className="space-y-2">
+                    {(Array.isArray(importHistory) ? importHistory : []).slice(0, 5).map((imp: any) => (
+                      <div key={imp.id} className="flex items-center justify-between text-sm border rounded-lg px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          {imp.status === 'completed' ? (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                          ) : (
+                            <Clock className="h-4 w-4 text-amber-600" />
+                          )}
+                          <span className="truncate">{imp.file_name}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">{formatDate(imp.created_at)}</span>
+                      </div>
+                    ))}
+                    {(!Array.isArray(importHistory) || importHistory.length === 0) && (
+                      <p className="text-xs text-muted-foreground">No recent imports.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
-        <Button onClick={handleExportCSV} variant="outline" disabled={exporting}>
-          <Download className="mr-2 h-4 w-4" />
-          {exporting ? 'Exporting...' : 'Export CSV'}
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search transactions..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Select value={bankFilter} onValueChange={setBankFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Bank" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Banks</SelectItem>
-                {banks?.map((bank: string) => (
-                  <SelectItem key={bank} value={bank}>
-                    {bank}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Categories</SelectItem>
-                {categories?.map((cat: string) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="debit">Debits</SelectItem>
-                <SelectItem value="credit">Credits</SelectItem>
-              </SelectContent>
-            </Select>
+      }
+    >
+      {/* Filter bar */}
+      <Card className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div className="md:col-span-3 relative">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search description"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        </CardContent>
+          <div className="md:col-span-2">
+            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          </div>
+          <div className="md:col-span-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span className="truncate">
+                    {selectedAccounts.length === 0
+                      ? 'All Accounts'
+                      : `${selectedAccounts.length} selected`}
+                  </span>
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel>Accounts</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {(accounts ?? []).map((acc: any) => (
+                  <DropdownMenuCheckboxItem
+                    key={acc.id}
+                    checked={selectedAccounts.includes(acc.id.toString())}
+                    onCheckedChange={(checked) => {
+                      setSelectedAccounts((prev) =>
+                        checked
+                          ? [...prev, acc.id.toString()]
+                          : prev.filter((id) => id !== acc.id.toString())
+                      );
+                    }}
+                  >
+                    {acc.name}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="md:col-span-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span className="truncate">
+                    {natureFilter === 'all' ? 'All Natures' : natureFilter.replace('_', ' ')}
+                  </span>
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuLabel>Nature</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {NATURE_OPTIONS.map((opt) => (
+                  <DropdownMenuCheckboxItem
+                    key={opt.value}
+                    checked={natureFilter === opt.value}
+                    onCheckedChange={() => setNatureFilter(opt.value)}
+                  >
+                    {opt.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="md:col-span-1 flex">
+            {hasFilters && (
+              <Button variant="ghost" size="icon" onClick={clearFilters} className="shrink-0">
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Amount range */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 mt-3">
+          <div className="md:col-span-5">
+            <Input
+              placeholder="Min amount (₹)"
+              value={minAmount}
+              onChange={(e) => setMinAmount(e.target.value)}
+              type="number"
+            />
+          </div>
+          <div className="md:col-span-5">
+            <Input
+              placeholder="Max amount (₹)"
+              value={maxAmount}
+              onChange={(e) => setMaxAmount(e.target.value)}
+              type="number"
+            />
+          </div>
+        </div>
       </Card>
 
-      {/* Quick Filter Pills */}
+      {/* Quick filters */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm text-muted-foreground flex items-center gap-1">
-          <Filter className="h-4 w-4" />
-          Quick filters:
-        </span>
-        <Button 
-          variant={minAmount === 5000 ? "default" : "outline"} 
-          size="sm"
-          onClick={minAmount === 5000 ? clearFilters : handleLargeFilter}
-        >
-          Large (&gt;₹5K)
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={handleRecurringFilter}
-        >
-          Recurring
-        </Button>
-        <Button 
-          variant={categoryFilter === 'Uncategorized' ? "default" : "outline"} 
-          size="sm"
-          onClick={categoryFilter === 'Uncategorized' ? clearFilters : handleUncategorizedFilter}
-        >
-          Uncategorized
-        </Button>
-        {hasActiveFilters && (
-          <Button 
-            variant="ghost" 
+        {QUICK_FILTERS.map((q) => (
+          <Button
+            key={q}
+            variant="outline"
             size="sm"
-            onClick={clearFilters}
-            className="text-muted-foreground"
+            onClick={() => {
+              if (q === 'All') clearFilters();
+              else if (q === 'Income') setNatureFilter('real_income');
+              else if (q === 'Expenses') setNatureFilter('real_expense');
+              else if (q === 'Recycling') setNatureFilter('recycling_out');
+              else if (q === 'Unknown') setNatureFilter('unknown');
+              else if (q === 'This Month') {
+                const now = new Date();
+                setStartDate(new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0] ?? '');
+                setEndDate(new Date().toISOString().split('T')[0] ?? '');
+              } else if (q === 'Last Month') {
+                const now = new Date();
+                const first = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                const last = new Date(now.getFullYear(), now.getMonth(), 0);
+                setStartDate(first.toISOString().split('T')[0] ?? '');
+                setEndDate(last.toISOString().split('T')[0] ?? '');
+              }
+            }}
           >
-            Clear all
+            {q}
           </Button>
-        )}
+        ))}
       </div>
 
-      {/* Filtered Totals Summary */}
-      {transactions.length > 0 && (
-        <Card className="bg-primary/5 border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h3 className="font-semibold text-lg">Filtered Summary</h3>
-                <p className="text-sm text-muted-foreground">
-                  Showing {transactions.length} of {totalCount} transactions
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <div className="text-right">
-                  <p className="text-muted-foreground">Total Debits</p>
-                  <p className="font-semibold text-red-600 font-mono tabular-nums">
-                    ₹{totalDebits.toLocaleString('en-IN')}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-muted-foreground">Total Credits</p>
-                  <p className="font-semibold text-green-600 font-mono tabular-nums">
-                    ₹{totalCredits.toLocaleString('en-IN')}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-muted-foreground">Net Amount</p>
-                  <p className="font-semibold font-mono tabular-nums">
-                    ₹{Math.abs(totalDebits - totalCredits).toLocaleString('en-IN')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Summary row */}
+      <div className="flex flex-wrap items-center gap-4 text-sm">
+        <span className="text-emerald-700 dark:text-emerald-400">Credits: {formatINR(summary.credits)}</span>
+        <span className="text-red-700 dark:text-red-400">Debits: {formatINR(summary.debits)}</span>
+        <span className="font-medium">Net: {formatINR(summary.net)}</span>
+        <span className="text-muted-foreground">Count: {summary.count}</span>
+      </div>
 
-      {/* Transactions Table */}
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Date</TableHead>
-                <TableHead className="w-[120px]">Bank</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="w-[120px]">Category</TableHead>
-                <TableHead className="w-[80px]">Type</TableHead>
-                <TableHead className="w-[120px] text-right">Amount</TableHead>
-                <TableHead className="w-[80px] text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transactions.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No transactions found. Try adjusting your filters.
-                  </TableCell>
-                </TableRow>
+      {/* Table */}
+      <Card className="overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/40">
+                <th className="text-left px-4 py-3 w-28">Date</th>
+                <th className="text-left px-4 py-3">Description</th>
+                <th className="text-left px-4 py-3 w-36">Account</th>
+                <th className="text-left px-4 py-3 w-32">Category</th>
+                <th className="text-left px-4 py-3 w-40">Nature</th>
+                <th className="text-right px-4 py-3 w-28">Amount</th>
+                <th className="text-right px-4 py-3 w-20">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                    Loading transactions…
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-8 text-center text-red-600">
+                    {error.message}
+                  </td>
+                </tr>
+              ) : transactions.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                    No transactions match your filters.
+                  </td>
+                </tr>
               ) : (
-                transactions.map((transaction: any, index: number) => (
-                  <TableRow 
-                    key={transaction.id}
-                    className="hover:bg-muted/50 transition-colors"
+                transactions.map((tx) => (
+                  <tr
+                    key={tx.id}
+                    className="border-b last:border-0 hover:bg-muted/40 transition-colors"
+                    onClick={() => setSelectedTx(tx)}
                   >
-                    <TableCell className="text-sm">{transaction.date_display || transaction.date}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {transaction.bank}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-[300px] truncate text-sm">
-                      {transaction.description_display || transaction.description}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={cn(
-                          "text-xs",
-                          categoryColors[transaction.category] || categoryColors['Other']
-                        )}
+                    <td className="px-4 py-3 whitespace-nowrap">{formatDate(tx.date)}</td>
+                    <td className="px-4 py-3">
+                      <span className="truncate block max-w-[320px]" title={tx.description}>
+                        {tx.description}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">{tx.account_name ?? '—'}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openCategoryEditor(tx);
+                        }}
                       >
-                        {transaction.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant="outline"
-                        className={cn(
-                          "text-xs",
-                          transaction.type === 'credit' 
-                            ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300' 
-                            : 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300'
-                        )}
-                      >
-                        {transaction.type}
-                      </Badge>
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        "text-right font-mono tabular-nums text-sm",
-                        transaction.type === 'debit' ? 'text-red-600' : 'text-green-600',
-                        transaction.is_large && "font-bold text-amber-600"
+                        {tx.category || 'Uncategorized'}
+                        <Edit3 className="h-3 w-3 ml-1" />
+                      </Button>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      {tx.nature ? (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${NATURE_COLORS[tx.nature] || NATURE_COLORS.unknown}`}>
+                          {tx.nature.replace('_', ' ')}
+                        </span>
+                      ) : (
+                        '—'
                       )}
-                    >
-                      {transaction.amount_display || `${transaction.type === 'debit' ? '-' : '+'}₹${transaction.amount.toLocaleString('en-IN')}`}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(transaction)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:text-red-600"
-                          onClick={() => handleDelete(transaction.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                    <td className={`px-4 py-3 text-right whitespace-nowrap font-medium ${(tx.amount_paise ?? 0) >= 0 ? 'text-emerald-700' : 'text-red-700'}`}>
+                      {formatINR(tx.amount_paise)}
+                    </td>
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTx(tx);
+                        }}
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </td>
+                  </tr>
                 ))
               )}
-            </TableBody>
-          </Table>
-        </CardContent>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {totalCount > 50 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </Button>
+            <span className="text-xs text-muted-foreground">
+              Page {page}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page * 50 >= totalCount}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </Card>
 
-      {/* Edit Dialog */}
-      <Dialog open={!!editingTransaction} onOpenChange={() => setEditingTransaction(null)}>
-        <DialogContent>
+      {/* Transaction detail + category editor */}
+      <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Edit Transaction</DialogTitle>
+            <DialogTitle>Transaction Detail</DialogTitle>
           </DialogHeader>
-          {editingTransaction && (
-            <div className="space-y-4 pt-4">
+          {selectedTx && (
+            <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium">Description</label>
-                <Input
-                  value={editingTransaction.description}
-                  onChange={(e) =>
-                    setEditingTransaction({ ...editingTransaction, description: e.target.value })
-                  }
-                />
+                <p className="text-xs text-muted-foreground">Description</p>
+                <p className="text-sm font-medium">{selectedTx.description}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <p className="text-xs text-muted-foreground">Date</p>
+                  <p className="font-medium">{formatDate(selectedTx.date)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Amount</p>
+                  <p className="font-medium">{formatINR(selectedTx.amount_paise)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Account</p>
+                  <p className="font-medium">{selectedTx.account_name ?? '—'}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Category</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openCategoryEditor(selectedTx)}
+                  >
+                    {selectedTx.category || 'Set category'}
+                  </Button>
+                </div>
               </div>
               <div>
-                <label className="text-sm font-medium">Category</label>
-                <Select
-                  value={editingTransaction.category}
-                  onValueChange={(value) =>
-                    setEditingTransaction({ ...editingTransaction, category: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.filter((c: string) => c !== 'All').map((cat: string) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <p className="text-xs text-muted-foreground">Nature</p>
+                <span className={`inline-block text-[10px] px-1.5 py-0.5 rounded ${NATURE_COLORS[selectedTx.nature || 'unknown'] || NATURE_COLORS.unknown}`}>
+                  {selectedTx.nature?.replace('_', ' ') || 'unknown'}
+                </span>
               </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setEditingTransaction(null)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSaveEdit}>Save Changes</Button>
-              </div>
+              {selectedTx.raw_text && (
+                <div>
+                  <p className="text-xs text-muted-foreground">Raw</p>
+                  <p className="text-xs bg-muted rounded p-2 max-h-24 overflow-auto">{selectedTx.raw_text}</p>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
-    </div>
+
+      {/* Category editor */}
+      <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Category</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Select value={editCategoryValue} onValueChange={setEditCategoryValue}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {(categories ?? []).map((cat) => (
+                  <SelectItem key={cat.category} value={cat.category}>
+                    {cat.category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setCategoryDialogOpen(false)}>Cancel</Button>
+              <Button onClick={saveCategory} disabled={updateCategoryMutation.updating}>
+                {updateCategoryMutation.updating ? 'Saving…' : 'Save'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </PageShell>
   );
 }

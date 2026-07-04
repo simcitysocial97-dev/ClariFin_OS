@@ -1,29 +1,53 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Suspense, useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Loader2, Upload, Sparkles } from 'lucide-react';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { ErrorBoundary } from '@/components/error-boundary';
 import { detectImportColumns, executeImport, type ImportDetectResult, type ImportMapping, type ImportExecuteResult } from '@/lib/api/client';
 import { ColumnMapper } from '@/components/import/ColumnMapper';
 import { ImportPreview } from '@/components/import/ImportPreview';
-import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import { UploadDropzoneCard } from '@/components/import/upload-dropzone-card';
+import { ImportHistoryList } from '@/components/import/import-history-list';
+import { V2ImportStatus } from '@/components/import/v2-import-status';
 
-type Step = 'upload' | 'map' | 'preview' | 'done';
+type Step = 'upload' | 'map' | 'preview' | 'done' | 'v2-import';
 
 const STEPS = [
   { id: 'upload', label: 'Upload', icon: Upload },
-  { id: 'map', label: 'Map Columns', icon: FileSpreadsheet },
+  { id: 'map', label: 'Map Columns', icon: Upload },
   { id: 'preview', label: 'Preview', icon: CheckCircle },
   { id: 'done', label: 'Done', icon: CheckCircle },
 ];
 
-export default function ImportPage() {
+const V2_STEPS = [
+  { id: 'upload', label: 'Upload', icon: Upload },
+  { id: 'v2-import', label: 'Processing', icon: Sparkles },
+  { id: 'done', label: 'Done', icon: CheckCircle },
+];
+
+// Widget Error Fallback
+function WidgetErrorFallback() {
+  return (
+    <Alert variant="destructive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>Component Error</AlertTitle>
+      <AlertDescription>
+        Failed to load import component. Please try refreshing.
+      </AlertDescription>
+    </Alert>
+  );
+}
+
+function ImportContent() {
   const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState<Step>('upload');
   const [file, setFile] = useState<File | null>(null);
@@ -32,35 +56,45 @@ export default function ImportPage() {
   const [executeResult, setExecuteResult] = useState<ImportExecuteResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [useV2Import, setUseV2Import] = useState(false);
+
+  const isPdfFile = (f: File | null): boolean => {
+    if (!f) return false;
+    return f.name.toLowerCase().endsWith('.pdf');
+  };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
     const uploadedFile = acceptedFiles[0];
+    if (!uploadedFile) return;
     
     // Validate file type
-    const validTypes = [
-      'text/csv',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ];
-    const validExtensions = ['.csv', '.xlsx', '.xls'];
+    const validExtensions = ['.csv', '.xlsx', '.xls', '.pdf'];
     const hasValidExtension = validExtensions.some((ext) => 
       uploadedFile.name.toLowerCase().endsWith(ext)
     );
     
-    if (!validTypes.includes(uploadedFile.type) && !hasValidExtension) {
+    if (!hasValidExtension) {
       toast({
         title: 'Invalid file type',
-        description: 'Please upload a CSV or Excel file (.csv, .xlsx, .xls)',
+        description: 'Please upload a CSV, Excel, or PDF file',
         variant: 'destructive',
       });
       return;
     }
 
     setFile(uploadedFile);
-    setLoading(true);
     setError(null);
+
+    // Route to V2 import for PDFs when toggle is enabled
+    if (useV2Import && isPdfFile(uploadedFile)) {
+      setCurrentStep('v2-import');
+      return;
+    }
+
+    // Legacy flow for CSV/Excel
+    setLoading(true);
 
     try {
       const result = await detectImportColumns(uploadedFile);
@@ -80,18 +114,7 @@ export default function ImportPage() {
     } finally {
       setLoading(false);
     }
-  }, [toast]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'text/csv': ['.csv'],
-      'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
-    },
-    maxFiles: 1,
-    disabled: loading,
-  });
+  }, [toast, useV2Import]);
 
   const handleMappingChange = useCallback((newMapping: ImportMapping) => {
     setMapping(newMapping);
@@ -112,7 +135,7 @@ export default function ImportPage() {
   };
 
   const handleBack = () => {
-    if (currentStep === 'map') {
+    if (currentStep === 'map' || currentStep === 'v2-import') {
       setCurrentStep('upload');
       setFile(null);
       setDetectResult(null);
@@ -166,22 +189,49 @@ export default function ImportPage() {
     setError(null);
   };
 
-  const currentStepIndex = STEPS.findIndex((s) => s.id === currentStep);
+  const handleV2Complete = () => {
+    toast({
+      title: 'V2 Import complete',
+      description: 'Your PDF has been processed',
+    });
+  };
+
+  // Determine which steps to show based on flow type
+  const activeSteps = (useV2Import && file && isPdfFile(file)) ? V2_STEPS : STEPS;
+  const currentStepIndex = activeSteps.findIndex((s) => s.id === currentStep);
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Import Transactions</h1>
-        <p className="text-muted-foreground mt-1">
-          Import transactions from CSV or Excel files
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Import Transactions</h1>
+          <p className="text-muted-foreground mt-1">
+            Import transactions from CSV, Excel, or PDF bank statements
+          </p>
+        </div>
+        {/* V2 Import Toggle */}
+        <div className="flex items-center gap-3 bg-muted/50 rounded-lg px-4 py-2">
+          <div className="flex flex-col">
+            <Label htmlFor="v2-toggle" className="text-sm font-medium cursor-pointer flex items-center gap-1">
+              <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+              Use V2 Import
+            </Label>
+            <span className="text-xs text-muted-foreground">
+              For PDFs with staging & validation
+            </span>
+          </div>
+          <Switch
+            id="v2-toggle"
+            checked={useV2Import}
+            onCheckedChange={setUseV2Import}
+          />
+        </div>
       </div>
 
       {/* Step Indicator */}
       <div className="flex items-center justify-center gap-2">
-        {STEPS.map((step, index) => {
-          const StepIcon = step.icon;
+        {activeSteps.map((step, index) => {
           const isActive = index === currentStepIndex;
           const isCompleted = index < currentStepIndex;
           
@@ -210,7 +260,7 @@ export default function ImportPage() {
                 </div>
                 <span className="hidden sm:inline">{step.label}</span>
               </div>
-              {index < STEPS.length - 1 && (
+              {index < activeSteps.length - 1 && (
                 <div
                   className={cn(
                     'w-8 h-0.5 mx-1',
@@ -223,192 +273,211 @@ export default function ImportPage() {
         })}
       </div>
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto">
-        {/* Step 1: Upload */}
-        {currentStep === 'upload' && (
-          <Card>
-            <CardContent className="p-8">
-              <div
-                {...getRootProps()}
-                className={cn(
-                  'flex flex-col items-center justify-center gap-4 text-center cursor-pointer border-2 border-dashed rounded-lg p-12 transition-colors',
-                  isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50',
-                  loading && 'pointer-events-none opacity-50'
-                )}
-              >
-                <input {...getInputProps()} />
+      {/* Main Content Grid */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Left Column - Main Import Flow */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Step 1: Upload */}
+          {currentStep === 'upload' && (
+            <ErrorBoundary fallback={<WidgetErrorFallback />}>
+              <Suspense fallback={<Skeleton className="h-[300px]" />}>
+                <UploadDropzoneCard onDrop={onDrop} loading={loading} />
                 
-                {loading ? (
-                  <>
-                    <Loader2 className="h-12 w-12 text-primary animate-spin" />
-                    <div className="space-y-2">
-                      <p className="font-medium">Analyzing file...</p>
-                      <p className="text-sm text-muted-foreground">
-                        Detecting columns and data types
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-                      <FileSpreadsheet className="h-8 w-8 text-primary" />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-lg font-medium">
-                        {isDragActive
-                          ? 'Drop your file here'
-                          : 'Upload CSV or Excel file'}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Drag and drop a file, or click to browse
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Supported formats: .csv, .xlsx, .xls
-                      </p>
-                    </div>
-                    <Button variant="outline">
-                      Select File
-                    </Button>
-                  </>
+                {error && (
+                  <Alert variant="destructive" className="mt-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
                 )}
-              </div>
+              </Suspense>
+            </ErrorBoundary>
+          )}
 
-              {error && (
-                <Alert variant="destructive" className="mt-4">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Step 2: Column Mapping */}
-        {currentStep === 'map' && detectResult && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{file?.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {detectResult.row_count} rows detected
-                </p>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleBack}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-            </div>
-
-            <ColumnMapper
-              detectResult={detectResult}
-              onMappingChange={handleMappingChange}
-            />
-
-            <div className="flex justify-end">
-              <Button onClick={handleNext}>
-                Continue to Preview
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 3: Preview */}
-        {currentStep === 'preview' && detectResult && mapping && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Preview Import</p>
-                <p className="text-sm text-muted-foreground">
-                  Review before importing
-                </p>
-              </div>
-              <Button variant="outline" size="sm" onClick={handleBack}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Mapping
-              </Button>
-            </div>
-
-            <ImportPreview detectResult={detectResult} mapping={mapping} />
-
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={handleBack}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-              </Button>
-              <Button onClick={handleExecute} disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Importing...
-                  </>
-                ) : (
-                  <>
-                    Import {detectResult.row_count} Transactions
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Done */}
-        {currentStep === 'done' && executeResult && (
-          <Card>
-            <CardContent className="p-8 text-center">
-              {executeResult.success ? (
-                <>
-                  <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-2">Import Complete!</h2>
-                  <p className="text-muted-foreground mb-6">
-                    Successfully imported {executeResult.imported} transactions
-                    {executeResult.skipped > 0 && ` (${executeResult.skipped} skipped)`}
+          {/* Step 2: Column Mapping */}
+          {currentStep === 'map' && detectResult && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">{file?.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {detectResult.row_count} rows detected
                   </p>
-                  
-                  <div className="flex justify-center gap-4">
-                    <Link href="/transactions">
-                      <Button>
-                        View Transactions
-                      </Button>
-                    </Link>
-                    <Button variant="outline" onClick={handleReset}>
-                      Import Another
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="h-16 w-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mx-auto mb-4">
-                    <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-2">Import Failed</h2>
-                  <p className="text-muted-foreground mb-2">
-                    {executeResult.imported} transactions imported before failure
+                </div>
+                <Button variant="outline" size="sm" onClick={handleBack}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+              </div>
+
+              <ErrorBoundary fallback={<WidgetErrorFallback />}>
+                <Suspense fallback={<Skeleton className="h-[400px]" />}>
+                  <ColumnMapper
+                    detectResult={detectResult}
+                    onMappingChange={handleMappingChange}
+                  />
+                </Suspense>
+              </ErrorBoundary>
+
+              <div className="flex justify-end">
+                <Button onClick={handleNext}>
+                  Continue to Preview
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Preview */}
+          {currentStep === 'preview' && detectResult && mapping && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium">Preview Import</p>
+                  <p className="text-sm text-muted-foreground">
+                    Review before importing
                   </p>
-                  {executeResult.errors.length > 0 && (
-                    <div className="text-left bg-muted rounded-lg p-4 mb-6 max-h-32 overflow-y-auto">
-                      {executeResult.errors.map((err, i) => (
-                        <p key={i} className="text-sm text-destructive">{err}</p>
-                      ))}
-                    </div>
+                </div>
+                <Button variant="outline" size="sm" onClick={handleBack}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Mapping
+                </Button>
+              </div>
+
+              <ErrorBoundary fallback={<WidgetErrorFallback />}>
+                <Suspense fallback={<Skeleton className="h-[400px]" />}>
+                  <ImportPreview detectResult={detectResult} mapping={mapping} />
+                </Suspense>
+              </ErrorBoundary>
+
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={handleBack}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back
+                </Button>
+                <Button onClick={handleExecute} disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Importing...
+                    </>
+                  ) : (
+                    <>
+                      Import {detectResult.row_count} Transactions
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
                   )}
-                  
-                  <div className="flex justify-center gap-4">
-                    <Button variant="outline" onClick={handleReset}>
-                      Try Again
-                    </Button>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* V2 Import Step */}
+          {currentStep === 'v2-import' && file && (
+            <ErrorBoundary fallback={<WidgetErrorFallback />}>
+              <Suspense fallback={<Skeleton className="h-[400px]" />}>
+                <V2ImportStatus
+                  file={file}
+                  member="Self"
+                  autoCommit={true}
+                  onComplete={handleV2Complete}
+                  onReset={handleReset}
+                />
+              </Suspense>
+            </ErrorBoundary>
+          )}
+
+          {/* Step 4: Done */}
+          {currentStep === 'done' && executeResult && (
+            <Card>
+              <CardContent className="p-8 text-center">
+                {executeResult.success ? (
+                  <>
+                    <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">Import Complete!</h2>
+                    <p className="text-muted-foreground mb-6">
+                      Successfully imported {executeResult.imported} transactions
+                      {executeResult.skipped > 0 && ` (${executeResult.skipped} skipped)`}
+                    </p>
+                    
+                    <div className="flex justify-center gap-4">
+                      <Link href="/transactions">
+                        <Button>
+                          View Transactions
+                        </Button>
+                      </Link>
+                      <Button variant="outline" onClick={handleReset}>
+                        Import Another
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="h-16 w-16 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mx-auto mb-4">
+                      <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+                    </div>
+                    <h2 className="text-2xl font-bold mb-2">Import Failed</h2>
+                    <p className="text-muted-foreground mb-2">
+                      {executeResult.imported} transactions imported before failure
+                    </p>
+                    {executeResult.errors.length > 0 && (
+                      <div className="text-left bg-muted rounded-lg p-4 mb-6 max-h-32 overflow-y-auto">
+                        {executeResult.errors.map((err, i) => (
+                          <p key={i} className="text-sm text-destructive">{err}</p>
+                        ))}
+                      </div>
+                    )}
+                    
+                    <div className="flex justify-center gap-4">
+                      <Button variant="outline" onClick={handleReset}>
+                        Try Again
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Right Column - Import History */}
+        <div className="space-y-6">
+          {/* Import History */}
+          <ErrorBoundary fallback={<WidgetErrorFallback />}>
+            <Suspense fallback={<Skeleton className="h-[300px]" />}>
+              <ImportHistoryList />
+            </Suspense>
+          </ErrorBoundary>
+        </div>
       </div>
+    </div>
+  );
+}
+
+export default function ImportPage() {
+  return (
+    <div className="space-y-6 p-6">
+      <ErrorBoundary fallback={
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Page Error</AlertTitle>
+          <AlertDescription>
+            Failed to load import page. Please try refreshing.
+          </AlertDescription>
+        </Alert>
+      }>
+        <Suspense fallback={
+          <div className="space-y-6">
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-[400px]" />
+          </div>
+        }>
+          <ImportContent />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }

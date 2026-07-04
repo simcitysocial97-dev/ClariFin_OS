@@ -1,0 +1,21 @@
+components/layout/page-shell.tsx(1,1): error TS6133: 'cn' is declared but its value is never read.
+components/layout/sidebar.tsx(5,1): error TS6192: All imports in import declaration are unused.
+components/theme-toggle.tsx(16,28): error TS6133: 'resolvedTheme' is declared but its value is never read.
+lib/hooks/use-accounts.ts(31,22): error TS4104: The type 'readonly ["overview"]' is 'readonly' and cannot be assigned to the mutable type 'unknown[]'.
+lib/hooks/use-accounts.ts(48,22): error TS4104: The type 'readonly ["overview"]' is 'readonly' and cannot be assigned to the mutable type 'unknown[]'.
+lib/hooks/use-accounts.ts(65,22): error TS4104: The type 'readonly ["overview"]' is 'readonly' and cannot be assigned to the mutable type 'unknown[]'.
+lib/hooks/use-accounts.ts(69,5): error TS2322: Type '(variables: number) => Promise<{ success: boolean; message: string; } | null>' is not assignable to type '(id: number) => Promise<boolean>'.
+  Type 'Promise<{ success: boolean; message: string; } | null>' is not assignable to type 'Promise<boolean>'.
+    Type '{ success: boolean; message: string; } | null' is not assignable to type 'boolean'.
+      Type 'null' is not assignable to type 'boolean'.
+lib/hooks/use-async-mutation.ts(39,5): error TS2322: Type 'UseMutateFunction<TData, Error, TVariables, unknown>' is not assignable to type '(variables: TVariables) => Promise<TData | null>'.
+  Type 'void' is not assignable to type 'Promise<TData | null>'.
+lib/hooks/use-async-query.ts(2,1): error TS6133: 'UseQueryResult' is declared but its value is never read.
+lib/hooks/use-cards.ts(30,22): error TS4104: The type 'readonly ["overview"]' is 'readonly' and cannot be assigned to the mutable type 'unknown[]'.
+lib/hooks/use-cards.ts(47,22): error TS4104: The type 'readonly ["overview"]' is 'readonly' and cannot be assigned to the mutable type 'unknown[]'.
+lib/hooks/use-cards.ts(64,22): error TS4104: The type 'readonly ["overview"]' is 'readonly' and cannot be assigned to the mutable type 'unknown[]'.
+lib/hooks/use-cards.ts(68,5): error TS2322: Type '(variables: number) => Promise<{ success: boolean; message: string; } | null>' is not assignable to type '(id: number) => Promise<boolean>'.
+  Type 'Promise<{ success: boolean; message: string; } | null>' is not assignable to type 'Promise<boolean>'.
+    Type '{ success: boolean; message: string; } | null' is not assignable to type 'boolean'.
+      Type 'null' is not assignable to type 'boolean'.
+tests/specs/health-check.spec.ts(12,16): error TS6133: 'captureConsoleErrors' is declared but its value is never read.

@@ -5,6 +5,8 @@ import json
 from typing import List, Dict
 from pathlib import Path
 
+from src.utils import parse_date_to_iso
+
 
 class TransactionValidator:
     """Compare extracted transactions with ground truth"""
@@ -93,25 +95,19 @@ class TransactionValidator:
         if not date_str:
             return ''
 
-        date_str = str(date_str).strip()
+        # Use utils.parse_date_to_iso for consistent parsing, then convert to DD/MM/YYYY
+        iso_date = parse_date_to_iso(date_str)
+        if iso_date:
+            # Convert YYYY-MM-DD to DD/MM/YYYY
+            try:
+                from datetime import datetime
+                dt = datetime.strptime(iso_date, "%Y-%m-%d")
+                return dt.strftime("%d/%m/%Y")
+            except ValueError:
+                pass
 
-        # If already in DD/MM/YYYY format
-        if len(date_str) == 10 and date_str.count('/') == 2:
-            return date_str
-
-        # Handle DD/MM/YY -> DD/MM/YYYY
-        parts = date_str.split('/')
-        if len(parts) == 3:
-            day, month, year = parts
-            if len(year) == 2:
-                year_int = int(year)
-                if year_int < 50:
-                    year = '20' + year
-                else:
-                    year = '19' + year
-            return f"{day}/{month}/{year}"
-
-        return date_str
+        # Fallback to original string if parsing fails
+        return str(date_str).strip()
 
     @staticmethod
     def print_report(results: Dict, bank_name: str = ""):

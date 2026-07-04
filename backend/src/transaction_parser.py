@@ -2,9 +2,13 @@
 Parse transactions from table rows.
 ONLY regex allowed: Date parsing (DD/MM/YYYY)
 """
-import pandas as pd
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, TYPE_CHECKING
 import re  # ONLY for date validation
+
+from src.utils import parse_date_to_iso, parse_amount_to_paise
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 
 class TransactionParser:
@@ -17,8 +21,17 @@ class TransactionParser:
         self.mapping = column_mapping
         self.bank_name = bank_name
     
-    def parse_dataframe(self, df: pd.DataFrame) -> List[Dict]:
+    def parse_dataframe(self, df: "pd.DataFrame") -> List[Dict]:
         """Parse all rows in DataFrame"""
+        # Lazy import pandas
+        try:
+            import pandas as pd
+        except ImportError as e:
+            raise ImportError(
+                "pandas is required for transaction parsing. "
+                "Install with: pip install pandas"
+            ) from e
+        
         transactions = []
         
         for idx, row in df.iterrows():
@@ -28,7 +41,7 @@ class TransactionParser:
         
         return transactions
     
-    def parse_row(self, row: pd.Series) -> Optional[Dict]:
+    def parse_row(self, row: "pd.Series") -> Optional[Dict]:
         """Parse a single row into transaction dict"""
         
         # Get date
@@ -106,32 +119,22 @@ class TransactionParser:
         
         return f"{day.zfill(2)}/{month.zfill(2)}/{year}"
     
-    def _parse_amount(self, value) -> float:
+    def _parse_amount(self, value) -> int:
         """
-        Parse amount from cell value.
-        NO REGEX - just clean and convert.
+        Parse amount from cell value to integer paise.
+        Delegates to src.utils.parse_amount_to_paise.
         """
-        if pd.isna(value):
-            return 0.0
-        
-        # Convert to string
-        amount_str = str(value)
-        
-        # Remove common characters (NO REGEX - simple string operations)
-        for char in ['₹', ',', ' ', 'Rs.', 'Rs', 'INR', 'inr']:
-            amount_str = amount_str.replace(char, '')
-        
-        # Handle Cr/Dr suffix (NO REGEX)
-        amount_str = amount_str.replace('Cr', '').replace('Dr', '')
-        amount_str = amount_str.replace('cr', '').replace('dr', '')
-        amount_str = amount_str.strip()
-        
-        # Handle negative
-        is_negative = '-' in amount_str
-        amount_str = amount_str.replace('-', '')
-        
+        # Lazy import pandas for isna check
         try:
-            amount = float(amount_str)
-            return abs(amount)
-        except ValueError:
-            return 0.0
+            import pandas as pd
+        except ImportError:
+            # If pandas is not available, treat None as NaN
+            if value is None:
+                return 0
+            return abs(parse_amount_to_paise(value))
+        
+        if pd.isna(value):
+            return 0
+        
+        # Use utils.parse_amount_to_paise for consistent parsing
+        return abs(parse_amount_to_paise(value))

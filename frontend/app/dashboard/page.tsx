@@ -1,340 +1,404 @@
-"use client";
+'use client';
 
-/**
- * Dashboard Page - Personal Finance MVP v1.0.0
- * =================================================
- * 
- * Simplified single-mode dashboard answering 4 questions:
- * 1. Net Cash Flow
- * 2. Savings Rate %
- * 3. EMI Ratio %
- * 4. Buffer Days
- * 
- * No mode system. No localStorage fallback.
- * Backend is sole source of truth.
- */
+import { useMemo, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  User,
+  Users,
+  Wallet,
+  TrendingUp,
+  Landmark,
+  CreditCard,
+  Info,
+} from 'lucide-react';
+import { PageShell } from '@/components/layout/page-shell';
+import { KpiCard } from '@/components/ui/kpi-card';
+import { SectionCard } from '@/components/ui/section-card';
+import {
+  useOverviewQuery,
+  useMonthlyCashflowQuery,
+} from '@/lib/hooks/use-query-finance';
+import {
+  useCards,
+  useLoans,
+  useNetWorth,
+} from '@/lib/hooks/use-finance-data';
+import {
+  formatINR,
+  formatINRCompact,
+  formatPercent,
+} from '@/lib/format';
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
-import { RecentTransactions } from "@/components/dashboard/recent-transactions";
-
-// ============================================================
-// Types
-// ============================================================
-
-interface DashboardData {
-  net_cash_flow: number;
-  savings_rate: number;
-  emi_ratio: number;
-  buffer_days: number;
-  financial_health_score: number;
-  seven_day_trend: number;
-  category_drift_alert: string | null;
-  recent_transactions: any[];
-}
-
-// ============================================================
-// Utility Functions
-// ============================================================
-
-function formatINR(amount: number): string {
-  if (amount === 0) return "₹0";
-  const negative = amount < 0;
-  amount = Math.abs(amount);
-  const formatted = new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-  return negative ? `-${formatted}` : formatted;
-}
-
-function formatPercent(value: number): string {
-  return `${(value * 100).toFixed(0)}%`;
-}
+const CHART_COLORS = {
+  income: 'hsl(217, 91%, 60%)',
+  expense: 'hsl(25, 95%, 53%)',
+  trueNet: 'hsl(142, 71%, 45%)',
+  trueNetNeg: 'hsl(0, 84%, 60%)',
+  recycling: 'hsl(45, 93%, 47%)',
+  debt: 'hsl(0, 84%, 60%)',
+  neutral: 'hsl(220, 9%, 46%)',
+};
 
 // ============================================================
-// Components
+// Mode Toggle
 // ============================================================
 
-function NetCashFlowCard({ amount }: { amount: number }) {
-  const isPositive = amount >= 0;
+function ModeToggle({
+  mode,
+  onModeChange,
+}: {
+  mode: 'personal' | 'family';
+  onModeChange: (mode: 'personal' | 'family') => void;
+}) {
   return (
-    <Card className={`${isPositive ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">Net Cash Flow</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-3">
-          {isPositive ? (
-            <TrendingUp className="h-8 w-8 text-green-600" />
-          ) : (
-            <TrendingDown className="h-8 w-8 text-red-600" />
-          )}
-          <span className={`text-3xl font-bold ${isPositive ? "text-green-600" : "text-red-600"}`}>
-            {formatINR(amount)}
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          {isPositive ? "Income exceeds expenses" : "Expenses exceed income"}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function SavingsRateCard({ rate }: { rate: number }) {
-  const isGood = rate >= 0.2;
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <PiggyBank className="h-4 w-4" />
-          Savings Rate
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${isGood ? "text-green-600" : "text-amber-600"}`}>
-            {formatPercent(rate)}
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          Target: 20% or higher
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function EMIRatioCard({ ratio }: { ratio: number }) {
-  const isHigh = ratio > 0.4;
-  return (
-    <Card className={isHigh ? "bg-red-50 border-red-200" : ""}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <Home className="h-4 w-4" />
-          EMI Ratio
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${isHigh ? "text-red-600" : "text-gray-900"}`}>
-            {formatPercent(ratio)}
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          {isHigh ? "High EMI burden - consider reducing" : "Healthy EMI level"}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function BufferDaysCard({ days }: { days: number }) {
-  const isHealthy = days >= 30;
-  const isAdequate = days >= 14;
-  return (
-    <Card className={isHealthy ? "bg-green-50 border-green-200" : isAdequate ? "bg-amber-50 border-amber-200" : "bg-red-50 border-red-200"}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-          <Shield className="h-4 w-4" />
-          Buffer Days
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${isHealthy ? "text-green-600" : isAdequate ? "text-amber-600" : "text-red-600"}`}>
-            {days.toFixed(0)}
-          </span>
-          <span className="text-sm text-gray-500">days</span>
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          Target: 30+ days emergency fund
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function SevenDayTrend({ trend }: { trend: number }) {
-  const isUp = trend > 0;
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">7-Day Spend Trend</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-2">
-          {isUp ? (
-            <TrendingUp className="h-5 w-5 text-red-500" />
-          ) : (
-            <TrendingDown className="h-5 w-5 text-green-500" />
-          )}
-          <span className={`text-xl font-bold ${isUp ? "text-red-600" : "text-green-600"}`}>
-            {isUp ? "+" : ""}{(trend * 100).toFixed(0)}%
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          {isUp ? "Spending increasing" : "Spending decreasing"}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function CategoryDriftAlert({ alert }: { alert: string | null }) {
-  if (!alert) return null;
-  return (
-    <Alert className="bg-amber-50 border-amber-200">
-      <AlertTriangle className="h-4 w-4 text-amber-600" />
-      <AlertTitle className="text-amber-800">Spending Alert</AlertTitle>
-      <AlertDescription className="text-amber-700">{alert}</AlertDescription>
-    </Alert>
-  );
-}
-
-function HealthScoreFooter({ score }: { score: number }) {
-  const getColor = (s: number) => {
-    if (s >= 70) return "text-green-600";
-    if (s >= 40) return "text-amber-600";
-    return "text-red-600";
-  };
-  
-  return (
-    <Card className="bg-gray-50 border-gray-200">
-      <CardContent className="py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-600">Financial Health Score</span>
-          </div>
-          <span className={`text-lg font-bold ${getColor(score)}`}>
-            {score.toFixed(0)}/100
-          </span>
-        </div>
-      </CardContent>
-    </Card>
+    <Tabs value={mode} onValueChange={(v) => onModeChange(v as 'personal' | 'family')}>
+      <TabsList className="h-8" aria-label="Dashboard mode selection">
+        <TabsTrigger value="personal" className="text-xs px-3" aria-label="Personal">
+          <User className="h-3 w-3 mr-1" aria-hidden="true" />
+          Personal
+        </TabsTrigger>
+        <TabsTrigger value="family" className="text-xs px-3" aria-label="Family">
+          <Users className="h-3 w-3 mr-1" aria-hidden="true" />
+          Family
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
   );
 }
 
 // ============================================================
-// Main Page Component
+// Dashboard Page
 // ============================================================
 
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [mode, setMode] = useState<'personal' | 'family'>('personal');
+  const { loading: overviewLoading } = useOverviewQuery();
+  const { data: netWorth, loading: netWorthLoading } = useNetWorth();
+  const { cards, loading: cardsLoading } = useCards();
+  const { loans, loading: loansLoading } = useLoans();
+  const { data: monthlyCashflow, loading: cashflowLoading } = useMonthlyCashflowQuery();
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:8000/api/dashboard/summary");
-        if (!response.ok) {
-          throw new Error("Failed to fetch dashboard data");
-        }
-        const dashboardData = await response.json();
-        setData(dashboardData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
+  const currentMonth = new Date().toISOString().slice(0, 7);
+
+  // Compute debt totals
+  const totalCardOutstanding = useMemo(
+    () => (cards ?? []).reduce((sum: number, c: any) => sum + (c.outstanding_paise ?? 0), 0),
+    [cards]
+  );
+  const totalLoanOutstanding = useMemo(
+    () => (loans ?? []).reduce((sum: number, l: any) => sum + (l.outstanding_paise ?? 0), 0),
+    [loans]
+  );
+  const totalDebt = totalCardOutstanding + totalLoanOutstanding;
+
+  // Net worth color
+  const netWorthPaise = netWorth?.net_worth_paise ?? 0;
+  const isNetWorthPositive = netWorthPaise >= 0;
+
+  // Executive summary text
+  const latestMonthly = (monthlyCashflow?.months?.[0] ?? {}) as Record<string, number | undefined>;
+  const trueNetIncomePaise = latestMonthly.net_cashflow_paise ?? 0;
+  const trueNetIncomePositive = trueNetIncomePaise >= 0;
+  const executiveSummary = useMemo(() => {
+    const income = formatINR(trueNetIncomePaise);
+    return `${currentMonth} — Your true net income is ${income}.`;
+  }, [latestMonthly, currentMonth]);
+
+  const [chartType, setChartType] = useState<'cashflow' | 'networth'>('cashflow');
+
+  const chartData = useMemo(() => {
+    if (chartType === 'cashflow') {
+      return (monthlyCashflow?.months ?? []).map((m: any) => ({
+        label: m.month,
+        income: m.real_income_paise ?? 0,
+        expense: m.real_expense_paise ?? 0,
+        net: (m.real_income_paise ?? 0) - (m.real_expense_paise ?? 0),
+      }));
     }
+    return []; // networth chart would need separate hook
+  }, [chartType, monthlyCashflow]);
 
-    fetchData();
-  }, []);
+  // Upcoming obligations
+  const upcoming = useMemo(() => {
+    const items: { date: Date; amountPaise: number; label: string; type: 'emi' | 'bill' }[] = [];
+    const today = new Date();
+    const thirtyDays = new Date(today);
+    thirtyDays.setDate(thirtyDays.getDate() + 30);
 
-  // Loading state
-  if (loading) {
+    // Loans EMI
+    (loans ?? []).forEach((loan: any) => {
+      if (loan.status !== 'active') return;
+      const emiDate = new Date(loan.next_emi_date ?? loan.start_date);
+      if (emiDate >= today && emiDate <= thirtyDays) {
+        items.push({
+          date: emiDate,
+          amountPaise: loan.emi_paise ?? 0,
+          label: `${loan.name} EMI`,
+          type: 'emi',
+        });
+      }
+    });
+
+    // Cards billing date approximation (use statement date as proxy for due)
+    (cards ?? []).forEach((card: any) => {
+      if (!card.is_active) return;
+      const day = card.billing_date ?? card.statement_date ?? 1;
+      const due = new Date(today.getFullYear(), today.getMonth(), day);
+      if (due < today) due.setMonth(due.getMonth() + 1);
+      if (due >= today && due <= thirtyDays) {
+        items.push({
+          date: due,
+          amountPaise: card.minimum_due_paise ?? 0,
+          label: `${card.card_name} due`,
+          type: 'bill',
+        });
+      }
+    });
+
+    return items.sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [loans, cards]);
+
+  // Health indicators
+  const monthlyIncomePaise = latestMonthly.total_income_paise ?? 0;
+  const debtToIncome = monthlyIncomePaise > 0 ? (totalDebt / monthlyIncomePaise) * 100 : 0;
+  const ccLimitTotal = (cards ?? []).reduce((sum: number, c: any) => sum + (c.credit_limit_paise ?? 0), 0);
+  const creditUtilization = ccLimitTotal > 0 ? (totalCardOutstanding / ccLimitTotal) * 100 : 0;
+  const recyclingFreq = 0;
+  const interestPaise = 0;
+  const interestBurden = monthlyIncomePaise > 0 ? (interestPaise / monthlyIncomePaise) * 100 : 0;
+
+  const healthMetrics = [
+    {
+      label: 'Debt-to-Income',
+      value: formatPercent(debtToIncome),
+      status: debtToIncome > 500 ? 'bad' : debtToIncome > 300 ? 'warn' : 'good',
+      hint: '<300% good, >500% bad',
+    },
+    {
+      label: 'Credit Utilization',
+      value: formatPercent(creditUtilization),
+      status: creditUtilization > 80 ? 'bad' : creditUtilization > 30 ? 'warn' : 'good',
+      hint: '<30% good, >80% bad',
+    },
+    {
+      label: 'Recycling Frequency',
+      value: `${recyclingFreq} this month`,
+      status: recyclingFreq > 3 ? 'bad' : recyclingFreq > 1 ? 'warn' : 'good',
+      hint: '0 good, >3 bad',
+    },
+    {
+      label: 'Interest Burden',
+      value: formatPercent(interestBurden),
+      status: interestBurden > 15 ? 'bad' : interestBurden > 5 ? 'warn' : 'good',
+      hint: '<5% good, >15% bad',
+    },
+  ];
+
+  const statusDot = (status: string) => {
+    if (status === 'good') return 'bg-emerald-500';
+    if (status === 'warn') return 'bg-amber-500';
+    return 'bg-red-500';
+  };
+
+  const isLoading = overviewLoading || cashflowLoading || netWorthLoading || cardsLoading || loansLoading;
+
+  if (isLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-8 w-48" />
+      <PageShell title="Dashboard" subtitle={`${currentMonth} — Financial health snapshot`} actions={<ModeToggle mode={mode} onModeChange={setMode} />}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32" />
-          ))}
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
         </div>
-        <Skeleton className="h-48" />
-      </div>
-    );
-  }
-
-  // Error state - BLOCKING (no fallback)
-  if (error) {
-    return (
-      <div className="container mx-auto py-6">
-        <Alert variant="destructive" className="mb-4">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Unable to Load Dashboard</AlertTitle>
-          <AlertDescription>
-            {error}. Please ensure the backend server is running at http://localhost:8000
-          </AlertDescription>
-        </Alert>
-        <Card className="p-6 text-center">
-          <p className="text-gray-600 mb-4">
-            The dashboard requires a connection to the backend server.
-          </p>
-          <p className="text-sm text-gray-500">
-            Start the backend with: <code className="bg-gray-100 px-2 py-1 rounded">cd backend && uvicorn src.api:app --reload --port 8000</code>
-          </p>
-        </Card>
-      </div>
-    );
-  }
-
-  // No data state
-  if (!data) {
-    return (
-      <div className="container mx-auto py-6">
-        <Alert>
-          <AlertTitle>No Data Available</AlertTitle>
-          <AlertDescription>
-            Upload bank statements to see your financial dashboard.
-          </AlertDescription>
-        </Alert>
-      </div>
+        <Skeleton className="h-[320px] w-full" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <Skeleton className="h-40" />
+          <Skeleton className="h-40" />
+          <Skeleton className="h-40" />
+        </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Financial Dashboard</h1>
-        <p className="text-gray-500 text-sm">Your personal finance overview</p>
+    <PageShell
+      title="Dashboard"
+      subtitle={`${currentMonth} — Financial health snapshot`}
+      actions={<ModeToggle mode={mode} onModeChange={setMode} />}
+    >
+      {/* Row 1 — Executive Summary Bar */}
+      <div
+        className={`rounded-lg border p-4 ${
+          trueNetIncomePositive
+            ? 'border-emerald-200 bg-emerald-50/60 dark:border-emerald-900 dark:bg-emerald-950/30'
+            : 'border-amber-200 bg-amber-50/60 dark:border-amber-900 dark:bg-amber-950/30'
+        }`}
+      >
+        <div className="flex items-start gap-3">
+          <Info className="h-4 w-4 mt-0.5 text-muted-foreground" />
+          <p className="text-sm leading-relaxed">{executiveSummary}</p>
+        </div>
       </div>
 
-      {/* Primary Metrics - 4 Key Numbers */}
+      {/* Row 2 — 4 KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <NetCashFlowCard amount={data.net_cash_flow} />
-        <SavingsRateCard rate={data.savings_rate} />
-        <EMIRatioCard ratio={data.emi_ratio} />
-        <BufferDaysCard days={data.buffer_days} />
+        <KpiCard
+          title="True Net Income"
+          value={formatINR(trueNetIncomePaise)}
+          subtext="This month"
+          variant={trueNetIncomePositive ? 'success' : 'danger'}
+          icon={<Wallet className="h-5 w-5" />}
+        />
+        <KpiCard
+          title="Net Worth"
+          value={formatINR(netWorthPaise)}
+          subtext="Today"
+          variant={isNetWorthPositive ? 'success' : 'danger'}
+          icon={<TrendingUp className="h-5 w-5" />}
+        />
+        <KpiCard
+          title="Total Debt"
+          value={formatINR(totalDebt)}
+          subtext="Cards + Loans"
+          variant="danger"
+          icon={<Landmark className="h-5 w-5" />}
+        />
+        <KpiCard
+          title="Recycling Cost"
+          value={formatINR(0)}
+          subtext="This month"
+          icon={<CreditCard className="h-5 w-5" />}
+        />
       </div>
 
-      {/* Secondary Row - Trend & Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SevenDayTrend trend={data.seven_day_trend} />
-        <CategoryDriftAlert alert={data.category_drift_alert} />
+      {/* Row 3 — Trend Chart */}
+      <SectionCard
+        title="Cashflow Trend"
+        subtitle="Last 6 months"
+        action={
+          <Tabs value={chartType} onValueChange={(v) => setChartType(v as 'cashflow' | 'networth')}>
+            <TabsList className="h-8">
+              <TabsTrigger value="cashflow" className="text-xs">Cashflow</TabsTrigger>
+              <TabsTrigger value="networth" className="text-xs">Net Worth</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        }
+      >
+        <div className="h-[280px] w-full">
+          {chartData.length === 0 ? (
+            <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No data</div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+                <YAxis tickFormatter={(v: number) => formatINRCompact(v)} tick={{ fontSize: 11 }} width={60} />
+                <Tooltip
+                  formatter={(value: number) => formatINR(value)}
+                  labelFormatter={(label) => label}
+                />
+                <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="income" name="Real Income" fill={CHART_COLORS.income} radius={[3, 3, 0, 0]} />
+                <Bar dataKey="expense" name="Real Expense" fill={CHART_COLORS.expense} radius={[3, 3, 0, 0]} />
+                <Line
+                  type="monotone"
+                  dataKey="net"
+                  name="True Net"
+                  stroke={(chartData[chartData.length - 1]?.net ?? 0) >= 0 ? CHART_COLORS.trueNet : CHART_COLORS.trueNetNeg}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </SectionCard>
+
+      {/* Row 4 — 3 Panels */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Debt Breakdown */}
+        <SectionCard title="Debt Breakdown" subtitle="Outstanding by liability">
+          <div className="space-y-3">
+            {(cards ?? []).filter((c: any) => c.is_active).length === 0 &&
+            (loans ?? []).filter((l: any) => l.status === 'active').length === 0 ? (
+              <p className="text-sm text-muted-foreground">No active debt.</p>
+            ) : (
+              <>
+                {(cards ?? [])
+                  .filter((c: any) => c.is_active)
+                  .map((card: any) => (
+                    <div key={card.id} className="flex items-center justify-between text-sm">
+                      <span className="truncate mr-2">{card.card_name}</span>
+                      <span className="font-medium">{formatINR(card.outstanding_paise)}</span>
+                    </div>
+                  ))}
+                {(loans ?? [])
+                  .filter((l: any) => l.status === 'active')
+                  .map((loan: any) => (
+                    <div key={loan.id} className="flex items-center justify-between text-sm">
+                      <span className="truncate mr-2">{loan.name}</span>
+                      <span className="font-medium">{formatINR(loan.outstanding_paise)}</span>
+                    </div>
+                  ))}
+                <div className="flex items-center justify-between border-t pt-2 text-sm font-semibold">
+                  <span>Total</span>
+                  <span>{formatINR(totalDebt)}</span>
+                </div>
+              </>
+            )}
+          </div>
+        </SectionCard>
+
+        {/* Upcoming Obligations */}
+        <SectionCard title="Upcoming Obligations" subtitle="Next 30 days">
+          <div className="space-y-2">
+            {upcoming.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No upcoming dues.</p>
+            ) : (
+              upcoming.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between gap-2 text-sm border-b last:border-0 pb-2 last:pb-0"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate">{item.label}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {item.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                    </p>
+                  </div>
+                  <span className="text-sm font-medium">{formatINR(item.amountPaise)}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </SectionCard>
       </div>
 
-      {/* Recent Transactions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
-        </CardContent>
-      </Card>
-
-      {/* Footer - Health Score */}
-      <HealthScoreFooter score={data.financial_health_score} />
-    </div>
+      {/* Row 5 — Health Indicators */}
+      <SectionCard title="Financial Health Indicators" subtitle="Key ratios for this month">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {healthMetrics.map((m) => (
+            <div key={m.label} className="flex items-center justify-between rounded-lg border bg-muted/40 px-3 py-2">
+              <div>
+                <p className="text-xs text-muted-foreground">{m.label}</p>
+                <p className="text-sm font-semibold">{m.value}</p>
+              </div>
+              <span className={`h-2.5 w-2.5 rounded-full ${statusDot(m.status)}`} title={m.hint} />
+            </div>
+          ))}
+        </div>
+      </SectionCard>
+    </PageShell>
   );
 }

@@ -1,0 +1,3 @@
+app/categories/page.tsx(91,4): error TS1128: Declaration or statement expected.
+app/categories/page.tsx(484,1): error TS1128: Declaration or statement expected.
+app/transactions/page.tsx(564,2): error TS1005: ')' expected.

@@ -31,9 +31,9 @@ export function assertLedgerIntegrity(
     }
     
     if (txn.type === 'credit') {
-      calculatedBalances[txn.accountId] += txn.amount;
+      calculatedBalances[txn.accountId]! += txn.amount;
     } else {
-      calculatedBalances[txn.accountId] -= txn.amount;
+      calculatedBalances[txn.accountId]! -= txn.amount;
     }
   }
   
@@ -241,9 +241,9 @@ export function assertRiskScoreDeterminism(
 ): void {
   expect(scores.length).toBeGreaterThan(1);
   
-  const firstScore = scores[0];
+  const firstScore = scores[0]!;
   for (let i = 1; i < scores.length; i++) {
-    expect(Math.abs(scores[i] - firstScore)).toBeLessThanOrEqual(tolerance);
+    expect(Math.abs(scores[i]! - firstScore)).toBeLessThanOrEqual(tolerance);
   }
 }
 

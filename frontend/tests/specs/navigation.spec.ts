@@ -25,6 +25,7 @@ const ROUTES = [
   { path: '/analytics', name: 'Analytics', title: 'Analytics' },
   { path: '/cards', name: 'Cards', title: 'Cards' },
   { path: '/import', name: 'Import', title: 'Import' },
+  { path: '/quarantine', name: 'Quarantine', title: 'Quarantine' },
   { path: '/settings', name: 'Settings', title: 'Settings' },
   { path: '/behavior', name: 'Behavior', title: 'Dashboard' }, // Behavior page shows dashboard
   { path: '/reconciliation', name: 'Reconciliation', title: 'Reconciliation' },

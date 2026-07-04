@@ -16,21 +16,15 @@ Based on behavioral economics principles:
 
 from typing import Dict, List, Any
 
+from src.logger import log
+
 
 def generate_nudges(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Generate behavioral nudges based on profile.
-    
-    Rules-based deterministic suggestions.
-    No push notifications - return JSON only.
-    
-    Returns list of nudge dicts with:
-    - type: "habit" | "friction" | "goal" | "awareness"
-    - priority: 1 (high) | 2 (medium) | 3 (low)
-    - title: Short title
-    - message: Actionable suggestion
-    - trigger: The condition that triggered this nudge
     """
+    log.info("Generating financial nudges")
+    
     nudges = []
     
     if not profile:

@@ -76,7 +76,7 @@ def test_integrity_passes_on_clean_db(populated_db):
     """Test that ledger integrity passes on a clean database."""
     db, db_path = populated_db
     
-    result = validate_ledger_integrity(db_path)
+    result = validate_ledger_integrity(db)
     
     assert result["status"] == "PASS", f"Expected PASS, got {result}"
     assert result["violation_count"] == 0
@@ -87,7 +87,7 @@ def test_hash_verification_passes_on_clean_db(populated_db):
     """Test that hash verification passes on a clean database."""
     db, db_path = populated_db
     
-    result = verify_hash_signatures(db_path)
+    result = verify_hash_signatures(db)
     
     assert result["status"] == "PASS", f"Expected PASS, got {result}"
     assert result["tampered_count"] == 0
@@ -98,7 +98,7 @@ def test_full_audit_passes_on_clean_db(populated_db):
     """Test that full audit passes on a clean database."""
     db, db_path = populated_db
     
-    result = run_full_audit(db_path)
+    result = run_full_audit(db)
     
     assert result["overall_status"] == "PASS"
     assert result["ledger_integrity"]["status"] == "PASS"
@@ -160,77 +160,56 @@ def test_delete_prevented_by_trigger(populated_db):
 # Test 3: Tampering detection (via direct DB manipulation without triggers)
 # ============================================================
 
-def test_tampered_hash_detected_via_recompute(populated_db):
+def test_tampered_hash_detected_via_recompute():
     """Test that hash verification can detect tampering.
     
     Since triggers prevent UPDATE, we test by:
-    1. Creating a new database without triggers
-    2. Inserting data
-    3. Manually modifying hash
-    4. Verifying detection
+    1. Creating a new database with FinanceDB
+    2. Inserting data using FinanceDB methods
+    3. Temporarily disabling the immutability trigger
+    4. Manually modifying hash
+    5. Verifying detection
     """
-    # Create a temporary database WITHOUT triggers
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    # Create an in-memory database using FinanceDB
+    db = FinanceDB(':memory:')
     
-    conn = sqlite3.connect(db_path)
+    # Insert a statement
+    stmt_id = db.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
     
-    # Create tables WITHOUT triggers
-    conn.execute("""
-        CREATE TABLE statements (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            bank TEXT NOT NULL,
-            file_name TEXT NOT NULL
-        )
-    """)
+    # Insert transactions - this will compute proper hashes
+    db.insert_transactions(stmt_id, [
+        {"date": "01/01/2025", "description": "Test debit", "amount": 100.0, "type": "debit"},
+    ])
     
-    conn.execute("""
-        CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            statement_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            date_iso TEXT,
-            description TEXT,
-            amount REAL NOT NULL,
-            type TEXT,
-            category TEXT,
-            debit INTEGER DEFAULT 0,
-            credit INTEGER DEFAULT 0,
-            account_id TEXT,
-            hash_signature TEXT
-        )
-    """)
-    
-    # Insert test data with valid hash
-    hash_input = "TestBank|2025-01-01|Test debit|10000|0"
-    valid_hash = hashlib.sha256(hash_input.encode()).hexdigest().lower()
-    
-    conn.execute("""
-        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, 
-                                  debit, credit, account_id, hash_signature)
-        VALUES (1, '01/01/2025', '2025-01-01', 'Test debit', 100.0, 'debit', 
-                10000, 0, 'TestBank', ?)
-    """, (valid_hash,))
-    
-    conn.commit()
-    
-    # Verify hash passes
-    result_before = verify_hash_signatures(db_path)
+    # Verify hash passes before tampering
+    result_before = verify_hash_signatures(db)
     assert result_before["status"] == "PASS"
     
-    # Now tamper with the hash (no trigger to stop us)
-    conn.execute("UPDATE transactions SET hash_signature = 'tampered_hash'")
-    conn.commit()
-    conn.close()
+    # Now tamper with the hash by temporarily disabling the trigger
+    # We need to use the raw connection to drop and recreate the trigger
+    with db.transaction() as conn:
+        # Drop the immutability trigger temporarily
+        conn.execute("DROP TRIGGER IF EXISTS prevent_transaction_update")
+        
+        # Tamper with the hash
+        conn.execute("UPDATE transactions SET hash_signature = 'tampered_hash'")
+        
+        # Recreate the trigger
+        conn.execute("""
+            CREATE TRIGGER IF NOT EXISTS prevent_transaction_update
+            BEFORE UPDATE ON transactions
+            BEGIN
+                SELECT RAISE(ABORT, 'Transactions are immutable. Cannot update.');
+            END
+        """)
     
     # Verify detection
-    result_after = verify_hash_signatures(db_path)
+    result_after = verify_hash_signatures(db)
     
     assert result_after["status"] == "FAIL"
     assert result_after["tampered_count"] >= 1
     
-    # Cleanup
-    os.unlink(db_path)
+    db.close()
 
 
 # ============================================================
@@ -242,7 +221,7 @@ def test_audit_deterministic(populated_db):
     db, db_path = populated_db
     
     # Run audit 3 times
-    results = [run_full_audit(db_path) for _ in range(3)]
+    results = [run_full_audit(db) for _ in range(3)]
     
     # All results should be identical
     for i in range(1, len(results)):
@@ -256,7 +235,7 @@ def test_audit_idempotent_on_clean_db(populated_db):
     db, db_path = populated_db
     
     # Run audit multiple times
-    results = [run_full_audit(db_path) for _ in range(3)]
+    results = [run_full_audit(db) for _ in range(3)]
     
     # All should pass
     for result in results:
@@ -271,83 +250,87 @@ def test_audit_idempotent_on_clean_db(populated_db):
 
 def test_integrity_detects_null_account_id():
     """Test that integrity check detects NULL account_id."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    # Create an in-memory database using FinanceDB
+    db = FinanceDB(':memory:')
     
-    conn = sqlite3.connect(db_path)
+    # Insert a statement
+    stmt_id = db.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
     
-    # Create table without NOT NULL constraint
-    conn.execute("""
-        CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT,
-            date_iso TEXT,
-            description TEXT,
-            amount REAL,
-            type TEXT,
-            debit INTEGER DEFAULT 0,
-            credit INTEGER DEFAULT 0,
-            account_id TEXT,
-            hash_signature TEXT
-        )
-    """)
+    # Insert a transaction with valid data first
+    db.insert_transactions(stmt_id, [
+        {"date": "01/01/2025", "description": "Test transaction", "amount": 100.0, "type": "debit"},
+    ])
     
-    # Insert with NULL account_id
-    conn.execute("""
-        INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
-        VALUES ('2025-01-01', 'Test', 100, 10000, 0, NULL, 'somehash')
-    """)
-    conn.commit()
-    conn.close()
+    # Now tamper with account_id by temporarily disabling the trigger
+    with db.transaction() as conn:
+        # Drop the immutability trigger temporarily
+        conn.execute("DROP TRIGGER IF EXISTS prevent_transaction_update")
+        
+        # Set account_id to NULL
+        conn.execute("UPDATE transactions SET account_id = NULL")
+        
+        # Recreate the trigger
+        conn.execute("""
+            CREATE TRIGGER IF NOT EXISTS prevent_transaction_update
+            BEFORE UPDATE ON transactions
+            BEGIN
+                SELECT RAISE(ABORT, 'Transactions are immutable. Cannot update.');
+            END
+        """)
     
-    result = validate_ledger_integrity(db_path)
+    result = validate_ledger_integrity(db)
     
     assert result["status"] == "FAIL"
     assert any(v["type"] == "NULL_ACCOUNT_ID" for v in result["violations"])
     
-    os.unlink(db_path)
+    db.close()
 
 
 def test_integrity_detects_duplicate_hash():
     """Test that integrity check detects duplicate hash_signature."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    # Create an in-memory database using FinanceDB
+    db = FinanceDB(':memory:')
     
-    conn = sqlite3.connect(db_path)
+    # Insert a statement
+    stmt_id = db.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
     
-    conn.execute("""
-        CREATE TABLE transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            date TEXT,
-            date_iso TEXT,
-            description TEXT,
-            amount REAL,
-            type TEXT,
-            debit INTEGER DEFAULT 0,
-            credit INTEGER DEFAULT 0,
-            account_id TEXT,
-            hash_signature TEXT
-        )
-    """)
+    # Insert two transactions with different data (will have different hashes)
+    db.insert_transactions(stmt_id, [
+        {"date": "01/01/2025", "description": "Test transaction 1", "amount": 100.0, "type": "debit"},
+        {"date": "02/01/2025", "description": "Test transaction 2", "amount": 200.0, "type": "debit"},
+    ])
     
-    # Insert two transactions with same hash
-    conn.execute("""
-        INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
-        VALUES ('2025-01-01', 'Test1', 100, 10000, 0, 'ACC1', 'duplicate_hash')
-    """)
-    conn.execute("""
-        INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
-        VALUES ('2025-01-02', 'Test2', 200, 20000, 0, 'ACC1', 'duplicate_hash')
-    """)
-    conn.commit()
-    conn.close()
+    # Now make them have the same hash by temporarily disabling the trigger
+    # and dropping the unique index on hash_signature
+    with db.transaction() as conn:
+        # Drop the immutability trigger temporarily
+        conn.execute("DROP TRIGGER IF EXISTS prevent_transaction_update")
+        
+        # Drop the unique index on hash_signature temporarily
+        conn.execute("DROP INDEX IF EXISTS idx_transaction_hash")
+        
+        # Set both to have the same hash
+        conn.execute("UPDATE transactions SET hash_signature = 'duplicate_hash'")
+        
+        # Note: We don't recreate the unique index here because it would fail
+        # with duplicate values. The trigger is sufficient for the test.
+        
+        # Recreate the trigger
+        conn.execute("""
+            CREATE TRIGGER IF NOT EXISTS prevent_transaction_update
+            BEFORE UPDATE ON transactions
+            BEGIN
+                SELECT RAISE(ABORT, 'Transactions are immutable. Cannot update.');
+            END
+        """)
     
-    result = validate_ledger_integrity(db_path)
+    # Validate before recreating the unique index (can't recreate with duplicates)
+    result = validate_ledger_integrity(db)
     
     assert result["status"] == "FAIL"
     assert any(v["type"] == "DUPLICATE_HASH" for v in result["violations"])
     
-    os.unlink(db_path)
+    db.close()
 
 
 # ============================================================

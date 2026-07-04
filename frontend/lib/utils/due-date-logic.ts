@@ -4,14 +4,19 @@
 
 export function getAmountDueDisplay(card: {
   totalAmountDue: number;
-  dueDate: string;
-  billCycleEnd: string;
+  dueDate: string | undefined;
+  billCycleEnd: string | undefined;
 }): {
   amount: number;
   status: 'due' | 'paid' | 'pending';
   message: string;
 } {
   const today = new Date();
+  
+  // Add null checks before accessing card properties
+  if (!card?.dueDate || !card?.billCycleEnd) {
+    return { amount: 0, status: 'pending', message: 'Date not available' };
+  }
   
   // Parse due date
   const dueDate = parseDate(card.dueDate);
@@ -55,14 +60,14 @@ function parseDate(dateStr: string): Date | null {
   for (const format of formats) {
     const match = dateStr.match(format);
     if (match) {
-      let day = parseInt(match[1]);
-      let month = parseInt(match[2]) - 1; // JS months are 0-indexed
-      let year = parseInt(match[3]);
+      const day = parseInt(match[1]!);
+      let month = parseInt(match[2]!) - 1; // JS months are 0-indexed
+      const year = parseInt(match[3]!);
       
       // Handle month names for format 3
-      if (match[2].length === 3) {
+      if (match[2]!.length === 3) {
         const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-        month = monthNames.indexOf(match[2].toUpperCase());
+        month = monthNames.indexOf(match[2]!.toUpperCase());
       }
       
       const date = new Date(year, month, day);
@@ -88,8 +93,8 @@ function formatDate(date: Date): string {
  */
 export function calculateTotalAmountDue(cards: Array<{
   totalAmountDue: number;
-  dueDate: string;
-  billCycleEnd: string;
+  dueDate: string | undefined;
+  billCycleEnd: string | undefined;
 }>): {
   totalDue: number;
   status: 'due' | 'paid' | 'pending';

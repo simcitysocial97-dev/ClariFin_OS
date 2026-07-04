@@ -15,43 +15,21 @@
  * 10. Next Hardening Plan
  */
 
-import { ReportGenerator } from './report-generator';
 
 // ============================================================================
 // Report Types
 // ============================================================================
 
-interface FinancialAccuracyMetrics {
-  ledgerIntegrity: boolean;
-  balanceMatching: boolean;
-  cashflowAccuracy: boolean;
-  creditAccounting: boolean;
-  uiBackendMatch: boolean;
-}
 
-interface DebtCycleMetrics {
-  patternsDetected: number;
-  falsePositives: number;
-  extractionAmount: number;
-  cyclesIdentified: number;
-}
 
-interface DeterminismMetrics {
-  scoreVariance: number;
-  hashConsistency: boolean;
-  repeatRuns: number;
-  identicalResults: number;
-}
 
 // ============================================================================
 // Comprehensive Report Generator
 // ============================================================================
 
 export class ComprehensiveReports {
-  private reportGen: ReportGenerator;
 
   constructor() {
-    this.reportGen = new ReportGenerator();
   }
 
   /**

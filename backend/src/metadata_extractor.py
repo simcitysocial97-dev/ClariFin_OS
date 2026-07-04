@@ -22,16 +22,21 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import pdfplumber
+# Import balance extractor for fallback extraction
+from src.utils import parse_amount_to_paise
+from extraction.balance_extractor import (
+    extract_opening_closing_from_text,
+    extract_opening_balance_from_text,
+)
 
 
 # ============================================================
 # Core Proximity Helpers (ported from JS)
 # ============================================================
 
-def extract_currency(text: str) -> Optional[float]:
+def extract_currency(text: str) -> Optional[int]:
     """
-    Extract first currency value from text.
+    Extract first currency value from text as integer paise.
     Handles Indian lakh format (1,23,456.78) and standard format.
     Returns NEGATIVE value for credit balances (Cr suffix).
     Ported exactly from JS extractCurrency().
@@ -44,7 +49,8 @@ def extract_currency(text: str) -> Optional[float]:
     if cr_match:
         try:
             # Credit balance = negative (bank owes customer)
-            return -float(cr_match.group(1).replace(',', ''))
+            value_str = cr_match.group(1).replace(',', '')
+            return -parse_amount_to_paise(value_str)
         except (ValueError, TypeError):
             pass
     
@@ -52,7 +58,8 @@ def extract_currency(text: str) -> Optional[float]:
     if dr_match:
         try:
             # Debit balance = positive (customer owes bank)
-            return float(dr_match.group(1).replace(',', ''))
+            value_str = dr_match.group(1).replace(',', '')
+            return parse_amount_to_paise(value_str)
         except (ValueError, TypeError):
             pass
     
@@ -68,7 +75,7 @@ def extract_currency(text: str) -> Optional[float]:
         if match:
             value = match.group(1) if match.group(1) else match.group(0)
             try:
-                return float(value.replace(',', ''))
+                return parse_amount_to_paise(value.replace(',', ''))
             except (ValueError, TypeError):
                 continue
     return None
@@ -624,6 +631,15 @@ class MetadataExtractor:
 
     def _load_text(self, max_pages: int = 3):
         """Extract text from first N pages."""
+        # Lazy import - only load when needed
+        try:
+            import pdfplumber
+        except ImportError as e:
+            raise ImportError(
+                "pdfplumber is required for metadata extraction. "
+                "Install with: pip install pdfplumber"
+            ) from e
+        
         try:
             with pdfplumber.open(self.pdf_path) as pdf:
                 for i, page in enumerate(pdf.pages[:max_pages]):
@@ -792,8 +808,37 @@ class MetadataExtractor:
         if result['due_date']:
             result['due_date'] = standardize_date(result['due_date'])
 
+        # FALLBACK: Use balance extractor if opening_balance not found
+        # This handles variants like "Op Bal", "Balance Brought Forward", etc.
+        if result['opening_balance'] is None:
+            self._log('Opening balance not found via bank-specific patterns, trying fallback...')
+            fallback_opening = extract_opening_balance_from_text(self._full_text)
+            if fallback_opening is not None:
+                # Convert paise to rupees (float) to match existing format
+                result['opening_balance'] = fallback_opening / 100.0
+                result['raw']['opening_balance_fallback'] = str(fallback_opening)
+                self._log(f'  opening_balance fallback matched → {result["opening_balance"]}')
+
+        # Also try to extract actual closing balance (different from total_amount_due)
+        # This captures "Closing Balance", "Balance Carried Forward", etc.
+        fallback_opening, fallback_closing = extract_opening_closing_from_text(self._full_text)
+        
+        # If we got a better opening balance from fallback, use it
+        if result['opening_balance'] is None and fallback_opening is not None:
+            result['opening_balance'] = fallback_opening / 100.0
+            result['raw']['opening_balance_fallback'] = str(fallback_opening)
+            self._log(f'  opening_balance from generic extractor → {result["opening_balance"]}')
+        
+        # Store closing balance if found (this is new - previously not extracted)
+        if fallback_closing is not None:
+            result['closing_balance'] = fallback_closing / 100.0
+            result['raw']['closing_balance_extracted'] = str(fallback_closing)
+            self._log(f'  closing_balance extracted → {result["closing_balance"]}')
+
         self._log(f'Final result: total_due={result["total_amount_due"]}, '
                   f'min_due={result["minimum_amount_due"]}, '
+                  f'opening_balance={result["opening_balance"]}, '
+                  f'closing_balance={result.get("closing_balance")}, '
                   f'due_date={result["due_date"]}, '
                   f'card={result["card_number"]}')
 

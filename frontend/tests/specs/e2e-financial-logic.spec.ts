@@ -20,13 +20,13 @@ import {
 } from '../utils/financial-scenarios';
 import {
   assertLedgerIntegrity,
-  assertNetCashflow,
+  
   assertCreditExtractionNotIncome,
   assertNoNegativeUtilization,
   assertDebtLoopDetected,
-  assertUIBackendMatch,
-  assertNoInvalidValues,
-  assertValidPercentage,
+  
+  
+  
   assertResponseTime,
 } from '../utils/financial-assertions';
 
@@ -287,9 +287,6 @@ test.describe('UI/Backend Consistency', () => {
     const uiBalance = parseFloat(balanceText.replace(/[^0-9.-]/g, '')) || 0;
     
     // Calculate expected balance
-    const expectedBalances = calculateExpectedBalances(COMPLEX_SCENARIO.transactions);
-    const totalSavings = (expectedBalances.SAV_001 || 0) + (expectedBalances.SAV_002 || 0);
-    
     // UI should show reasonable balance (may differ due to formatting)
     expect(uiBalance).toBeGreaterThan(0);
   });
@@ -403,8 +400,8 @@ test.describe('Determinism Validation', () => {
     
     // Check first 10 transactions are identical
     for (let i = 0; i < 10; i++) {
-      expect(scenario1.transactions[i].amount).toBe(scenario2.transactions[i].amount);
-      expect(scenario1.transactions[i].description).toBe(scenario2.transactions[i].description);
+      expect(scenario1.transactions[i]?.amount).toBe(scenario2.transactions[i]?.amount);
+      expect(scenario1.transactions[i]?.description).toBe(scenario2.transactions[i]?.description);
     }
   });
 
@@ -413,8 +410,8 @@ test.describe('Determinism Validation', () => {
     const scenario2 = generateDebtLoopScenario(54321);
     
     // Should have different transaction amounts
-    const amount1 = scenario1.transactions[5].amount;
-    const amount2 = scenario2.transactions[5].amount;
+    const amount1 = scenario1.transactions[5]?.amount;
+    const amount2 = scenario2.transactions[5]?.amount;
     
     expect(amount1).not.toBe(amount2);
   });

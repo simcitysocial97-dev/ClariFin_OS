@@ -27,7 +27,6 @@ export { SeededRandom };
 // Test Data
 // ============================================================================
 
-const BASELINE_SCENARIO = generateDebtLoopScenario(11111);
 const DEBT_LOOP_SCENARIO = generateDebtLoopScenario(12345);
 
 // ============================================================================

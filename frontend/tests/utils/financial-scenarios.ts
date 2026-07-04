@@ -99,7 +99,8 @@ export class SeededRandom {
   }
 
   pick<T>(array: T[]): T {
-    return array[this.int(0, array.length - 1)];
+    const index = this.int(0, array.length - 1);
+    return array[index]!;
   }
 
   bool(probability: number = 0.5): boolean {
@@ -147,7 +148,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
       category: 'Salary',
       isRecurring: true,
     });
-    balances.SAV_001 += salary;
+    (balances.SAV_001 ??= 0, balances.SAV_001 += salary)
     
     // 2. Rent Payment via Credit Card (Day 5) - DEBT LOOP START
     const rentAmount = 25000;
@@ -166,7 +167,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
       category: 'Rent via Credit',
       isDebtLoop: true,
     });
-    balances.CC_001 -= rentAmount;
+    (balances.CC_001 ??= 0, balances.CC_001 -= rentAmount)
     
     // Transfer to savings (CRED-like behavior)
     transactions.push({
@@ -179,7 +180,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
       accountType: 'savings',
       category: 'Cashback',
     });
-    balances.SAV_001 += rentAmount * 0.02;
+    (balances.SAV_001 ??= 0, balances.SAV_001 += rentAmount * 0.02)
     
     // 3. EMI Payments (Day 10)
     const emiDate = new Date(monthStart);
@@ -197,7 +198,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
       category: 'Home Loan',
       isRecurring: true,
     });
-    balances.SAV_001 -= emiAmount;
+    (balances.SAV_001 ??= 0, balances.SAV_001 -= emiAmount)
     
     // 4. Utilities (Day 15)
     const utilDate = new Date(monthStart);
@@ -215,7 +216,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
       category: 'Utilities',
       isRecurring: true,
     });
-    balances.SAV_001 -= utilAmount;
+    (balances.SAV_001 ??= 0, balances.SAV_001 -= utilAmount)
     
     // 5. Daily Expenses (Distributed throughout month)
     const dailyExpenses = [
@@ -248,7 +249,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
           category: expense.category,
         });
         
-        balances[accountId] -= amount;
+        balances[accountId] = (balances[accountId] ?? 0) - amount;
       }
     }
     
@@ -277,7 +278,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
         category: 'Credit Card Payment',
         isRecurring: true,
       });
-      balances.SAV_001 -= paymentAmount;
+      (balances.SAV_001 ??= 0, balances.SAV_001 -= paymentAmount)
       
       // Credit the card
       transactions.push({
@@ -291,7 +292,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
         category: 'Credit Card Payment',
         isRecurring: true,
       });
-      balances.CC_001 += paymentAmount;
+      (balances.CC_001 ??= 0, balances.CC_001 += paymentAmount)
     }
     
     // 7. Interest charges (if not paid in full)
@@ -310,7 +311,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
         accountType: 'credit',
         category: 'Interest',
       });
-      balances.CC_001 -= interest;
+      (balances.CC_001 ??= 0, balances.CC_001 -= interest)
     }
     
     // 8. Savings transfer (if surplus)
@@ -329,7 +330,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
         accountType: 'savings',
         category: 'Investment',
       });
-      balances.SAV_001 -= transferAmount;
+      (balances.SAV_001 ??= 0, balances.SAV_001 -= transferAmount)
       
       transactions.push({
         id: `TXN_${String(txnId++).padStart(4, '0')}`,
@@ -341,7 +342,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
         accountType: 'savings',
         category: 'Investment',
       });
-      balances.SAV_002 += transferAmount;
+      (balances.SAV_002 ??= 0, balances.SAV_002 += transferAmount)
     }
   }
   
@@ -368,7 +369,7 @@ export function generateDebtLoopScenario(seed: number = 12345): FinancialScenari
 // ============================================================================
 
 function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split('T')[0] ?? '';
 }
 
 /**
@@ -383,9 +384,9 @@ export function calculateExpectedBalances(transactions: FinancialTransaction[]):
     }
     
     if (txn.type === 'credit') {
-      balances[txn.accountId] += txn.amount;
+      balances[txn.accountId] = (balances[txn.accountId] ?? 0) + txn.amount;
     } else {
-      balances[txn.accountId] -= txn.amount;
+      balances[txn.accountId] = (balances[txn.accountId] ?? 0) - txn.amount;
     }
   }
   

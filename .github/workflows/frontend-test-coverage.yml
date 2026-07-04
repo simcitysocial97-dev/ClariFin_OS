@@ -1,0 +1,55 @@
+name: Frontend Test Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'frontend/**'
+      - '!frontend/README.md'
+      - '.github/workflows/frontend-test-coverage.yml'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+
+    - name: Run tests and collect coverage
+      run: |
+        cd frontend
+        npm test -- --coverage --watchAll=false
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./frontend/coverage/coverage-final.json
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: frontend
+        name: codecov-frontend
+
+    - name: Run Playwright tests
+      run: |
+        cd frontend
+        npx playwright install --with-deps
+        npx playwright test
+
+    - name: Upload Playwright report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: playwright-report
+        path: frontend/playwright-report/
+        retention-days: 7

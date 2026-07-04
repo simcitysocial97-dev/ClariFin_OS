@@ -59,8 +59,8 @@ interface SidebarProps {
 
 export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProps) {
   const pathname = usePathname();
-  const { data: netWorthData } = useNetWorth();
-  const netWorthPaise = netWorthData?.net_worth_paise ?? 0;
+  const { netWorth: netWorthData } = useNetWorth();
+  const netWorthPaise = netWorthData ?? 0;
   const netWorthDisplay = formatINRCompact(netWorthPaise);
   const isPositive = netWorthPaise >= 0;
 

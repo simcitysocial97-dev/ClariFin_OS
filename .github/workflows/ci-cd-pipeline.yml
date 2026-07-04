@@ -1,0 +1,124 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      backend_changed: ${{ steps.changes.outputs.backend_changed }}
+      frontend_changed: ${{ steps.changes.outputs.frontend_changed }}
+      db_changed: ${{ steps.changes.outputs.db_changed }}
+      api_changed: ${{ steps.changes.outputs.api_changed }}
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Detect changes
+      id: changes
+      run: |
+        # Check for backend changes
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^backend/'; then
+          echo "backend_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "backend_changed=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check for frontend changes
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^frontend/'; then
+          echo "frontend_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "frontend_changed=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check for database changes
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qE '^backend/src/db/|^backend/src/migrations/'; then
+          echo "db_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "db_changed=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check for API changes
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -qE '^backend/src/api.py|^backend/src/routers/|^frontend/app/'; then
+          echo "api_changed=true" >> $GITHUB_OUTPUT
+        else
+          echo "api_changed=false" >> $GITHUB_OUTPUT
+        fi
+
+  database-migration:
+    needs: setup
+    if: needs.setup.outputs.db_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/database-migration.yml
+
+  api-contract-validation:
+    needs: setup
+    if: needs.setup.outputs.api_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/api-contract-validation.yml
+
+  backend-tests:
+    needs: [setup, database-migration]
+    if: needs.setup.outputs.backend_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/backend-tests.yml
+
+  backend-coverage:
+    needs: [setup, database-migration]
+    if: needs.setup.outputs.backend_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/backend-test-coverage.yml
+
+  frontend-lint-build:
+    needs: setup
+    if: needs.setup.outputs.frontend_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/frontend-lint-build.yml
+
+  frontend-tests:
+    needs: [setup, frontend-lint-build]
+    if: needs.setup.outputs.frontend_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/frontend-tests.yml
+
+  frontend-coverage:
+    needs: [setup, frontend-lint-build]
+    if: needs.setup.outputs.frontend_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/frontend-test-coverage.yml
+
+  playwright-tests:
+    needs: [setup, frontend-lint-build]
+    if: needs.setup.outputs.frontend_changed == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/playwright.yml
+
+  health-check:
+    needs: [setup, database-migration]
+    if: always()
+    uses: ./.github/workflows/health-check.yml
+
+  docker-build:
+    needs: [setup, backend-tests, frontend-lint-build]
+    if: always()
+    uses: ./.github/workflows/docker-build.yml
+
+  deploy:
+    needs: [database-migration, api-contract-validation, backend-tests, backend-coverage, frontend-lint-build, frontend-tests, frontend-coverage, playwright-tests, health-check, docker-build]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to production
+      run: echo "Deployment would happen here"
+      # Add actual deployment steps here
+
+  notify:
+    needs: [deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify Slack
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_COLOR: ${{ job.status == 'success' && 'good' || 'danger' }}
+        SLACK_TITLE: "CI/CD Pipeline ${{ job.status }}"
+        SLACK_MESSAGE: "Pipeline completed with status: ${{ job.status }}"
+        SLACK_USERNAME: "GitHub Actions"
+        SLACK_ICON: "https://github.com/github.png?size=48"
