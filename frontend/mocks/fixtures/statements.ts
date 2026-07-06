@@ -1,0 +1,27 @@
+export const mockStatement = {
+  id: 1,
+  bank: 'HDFC',
+  file_name: 'test-statement.pdf',
+  card_last4: '1234',
+  card_display: '****1234',
+  period_from: '01/01/2025',
+  period_to: '31/01/2025',
+  period_display: '01/01/2025 – 31/01/2025',
+  transaction_count: 10,
+  total_debit: 50000,
+  total_credit: 150000,
+  total_debit_display: '₹500.00',
+  total_credit_display: '₹1,500.00',
+  total_due: 10000,
+  total_due_display: '₹10,000.00',
+  extracted_net: -100000,
+  extracted_net_display: '₹-10,000.00',
+  min_due_display: '₹1,000.00',
+  due_date: '15/02/2025',
+  validation_status: 'exact_match',
+  validation_difference: 0,
+  badge_text: '✅ Exact Match',
+  badge_color: 'green',
+}
+
+export const mockStatementList = [mockStatement]
