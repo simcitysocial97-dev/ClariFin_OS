@@ -137,7 +137,7 @@ The following implementation work has been completed and serves as the architect
 | B03 | useNetWorth in sidebar fails | **PENDING** — Remove dead hook and sidebar display |
 | B04 | useDeleteStatement in cards page always errors | **PENDING** — Remove dead hook and delete button |
 | R3 | Two parallel hook systems (legacy + React Query) | **PENDING** — Consolidate to React Query |
-| R4 | 11 dead API functions, 10 dead React Query hooks | **PENDING** — Remove dead code |
+| R4 | 11 dead API functions, 10 dead React Query hooks | **IN PROGRESS** — 2 removed (fetchCategories, useCategories) |
 | R6 | In-memory accounts store loses data | **PENDING** — Add database persistence |
 | D1 | Duplicate overview hooks (useOverview vs useOverviewQuery) | **PENDING** — Remove legacy useOverview |
 | D3 | Two dashboard pages with overlap (`/` vs `/dashboard`) | **PENDING** — Decide which to keep |

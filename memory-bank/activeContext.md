@@ -153,6 +153,9 @@ The project has completed a comprehensive 6-phase audit and runtime validation. 
 1. **R3**: Two parallel hook systems — **PENDING**
 2. **R6**: In-memory accounts store loses data — **PENDING**
 
+### Completed This Session
+- **M8**: Removed unused `useCategories` hook and `fetchCategories` API function (committed and pushed)
+
 ### Technical Debt (UPDATED)
 - **enrich_transaction()** — Deprecated but still used for behavioral insights (non-monetary)
 - **compute_is_large()** — Disabled (uses deprecated `amount` field)
