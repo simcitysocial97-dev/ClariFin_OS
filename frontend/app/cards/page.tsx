@@ -1,6 +1,6 @@
 'use client';
 
-import { useStatements, useDeleteStatement } from '@/lib/hooks/use-finance-data';
+import { useStatements } from '@/lib/hooks/use-finance-data';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CreditCard, Trash2, Eye, Plus, CheckCircle, XCircle, AlertCircle, Calendar, IndianRupee, FileText } from 'lucide-react';
+import { CreditCard, Eye, Plus, CheckCircle, XCircle, AlertCircle, Calendar, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useEffect, useState } from 'react';
@@ -57,10 +56,7 @@ export default function CardsPage() {
   const { data: statements, loading, error, refetch } = useStatements();
   const { cards: localCards } = useAppStore();
   const { toast } = useToast();
-  const { deleteStatement: deleteStatementApi, deleting } = useDeleteStatement();
   const [paidBills, setPaidBills] = useState<string[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [statementToDelete, setStatementToDelete] = useState<Statement | null>(null);
 
   // Show error toast
   useEffect(() => {
@@ -113,33 +109,6 @@ export default function CardsPage() {
     : [];
 
   const displayStatements = useLocalData ? localStatements : (statements || []);
-
-  const handleDeleteClick = (statement: Statement) => {
-    setStatementToDelete(statement);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!statementToDelete) return;
-
-    try {
-      await deleteStatementApi(statementToDelete.id);
-      toast({
-        title: 'Statement deleted',
-        description: `${statementToDelete.bank} statement has been deleted successfully.`,
-      });
-      refetch();
-    } catch (err) {
-      toast({
-        title: 'Delete failed',
-        description: err instanceof Error ? err.message : 'Failed to delete statement',
-        variant: 'destructive',
-      });
-    } finally {
-      setDeleteDialogOpen(false);
-      setStatementToDelete(null);
-    }
-  };
 
   const handleMarkAsPaid = (id: string, bankName: string) => {
     setPaidBills([...paidBills, id]);
@@ -375,17 +344,6 @@ export default function CardsPage() {
                         Mark Unpaid
                       </Button>
                     )}
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 hover:bg-red-50 hover:text-red-700 hover:border-red-200"
-                      onClick={() => handleDeleteClick(statement)}
-                      disabled={deleting}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -393,32 +351,6 @@ export default function CardsPage() {
           })}
         </div>
       )}
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Statement</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete the statement from {statementToDelete?.bank}?
-              This will also delete all {statementToDelete?.transaction_count} associated transactions.
-              This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleConfirmDelete}
-              disabled={deleting}
-            >
-              {deleting ? 'Deleting...' : 'Delete'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
