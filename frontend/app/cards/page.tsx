@@ -1,6 +1,6 @@
 'use client';
 
-import { useStatements } from '@/lib/hooks/use-finance-data';
+import { useStatementsQuery } from '@/lib/hooks/use-query-finance';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -53,7 +53,7 @@ function getValidationBadgeClass(validationStatus: string): string {
 }
 
 export default function CardsPage() {
-  const { data: statements, loading, error, refetch } = useStatements();
+  const { data: statements, loading, error, refetch } = useStatementsQuery();
   const { cards: localCards } = useAppStore();
   const { toast } = useToast();
   const [paidBills, setPaidBills] = useState<string[]>([]);
@@ -172,7 +172,7 @@ export default function CardsPage() {
               Manage your cards and view details
             </p>
           </div>
-          <Link href="/?upload=true">
+          <Link href="/dashboard?upload=true">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               Add Card
@@ -201,7 +201,7 @@ export default function CardsPage() {
             Manage your cards and view details {useLocalData && '(from local storage)'}
           </p>
         </div>
-        <Link href="/?upload=true">
+        <Link href="/dashboard?upload=true">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Add Card
@@ -216,7 +216,7 @@ export default function CardsPage() {
           description="Upload your first bank statement to see your credit cards here. We'll automatically extract and display your card information."
           action={{
             label: "Upload Statement",
-            href: "/?upload=true"
+            href: "/dashboard?upload=true"
           }}
         />
       ) : (
@@ -304,7 +304,7 @@ export default function CardsPage() {
                        <span>{new Date(statement.due_date).toLocaleDateString('en-IN')}</span>
                      </div>
                    )}
-                   
+                    
                    {statement.min_due_display && statement.min_due_display !== '₹0.00' && (
                      <div className="flex items-center justify-between text-sm">
                        <span className="text-muted-foreground">Minimum Due:</span>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useTransactions, useBanks, useCategoryList, useExportCSV } from '@/lib/hooks/use-finance-data';
+import { useTransactionsQuery, useBanksQuery, useCategoryListQuery, useExportCSVQuery } from '@/lib/hooks/use-query-finance';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,7 +45,7 @@ export default function TransactionsPage() {
   const [editingTransaction, setEditingTransaction] = useState<any>(null);
   
   // Fetch data from API
-  const { data: txData, loading: txLoading, error: txError } = useTransactions({
+  const { data: txData, loading: txLoading, error: txError } = useTransactionsQuery({
     search: search || undefined,
     bank: bankFilter !== 'All' ? bankFilter : undefined,
     category: categoryFilter !== 'All' ? categoryFilter : undefined,
@@ -54,9 +54,9 @@ export default function TransactionsPage() {
     offset: 0,
   });
 
-  const { data: banks, loading: banksLoading } = useBanks();
-  const { data: categories, loading: categoriesLoading } = useCategoryList();
-  const { exportCSV, exporting } = useExportCSV();
+  const { data: banks, loading: banksLoading } = useBanksQuery();
+  const { data: categories, loading: categoriesLoading } = useCategoryListQuery();
+  const { exportCSV, exporting } = useExportCSVQuery();
 
   // Show error toast
   useEffect(() => {

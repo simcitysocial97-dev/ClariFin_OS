@@ -149,9 +149,21 @@ The project has completed a comprehensive 6-phase audit and runtime validation. 
 3. **B04**: useDeleteStatement in cards page always errors — **FIXED** (removed dead hook and delete button)
 4. **R4**: 11 dead API functions, 10 dead React Query hooks — **FIXED** (removed in Batch 1-2)
 
+### High Priority (RESOLVED)
+1. **R3**: Two parallel hook systems — **RESOLVED** (legacy use-finance-data.ts removed, all hooks now use React Query)
+2. **D3**: Consolidate two dashboard pages — **RESOLVED** (root page redirects to /dashboard)
+
 ### High Priority (PENDING)
-1. **R3**: Two parallel hook systems — **PENDING**
-2. **R6**: In-memory accounts store loses data — **PENDING**
+1. **R6**: In-memory accounts store loses data — **PENDING** (will be addressed last)
+
+### Completed This Session
+- **D3**: Root page (app/page.tsx) now redirects to /dashboard
+- **R3**: Removed legacy use-finance-data.ts hook system
+- **2A**: Cleaned lib/api/client.ts - removed dead API functions
+- **2B**: Removed use-finance-data.ts (legacy hook system)
+- **2C**: Updated use-query-finance.ts with active hooks
+- **2D**: Cleaned lib/format.ts - re-exports from utils/format.ts
+- **2D**: Removed /test/metadata test route
 
 ### Completed This Session
 - **M8**: Removed unused `useCategories` hook and `fetchCategories` API function (committed and pushed)

@@ -10,7 +10,7 @@ import { useAppStore } from '@/lib/store/use-app-store';
 import { parseStatement } from '@/lib/parser';
 import { Upload, FileText, X, Server, Globe, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useUpload, useOverview, useStatements, useTransactions } from '@/lib/hooks/use-finance-data';
+import { useUploadQuery, useStatementsQuery, useTransactionsQuery, useOverviewQuery } from '@/lib/hooks/use-query-finance';
 import { useMember } from '@/lib/context/member-context';
 
 // Extend Window interface for debug functions
@@ -53,10 +53,10 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
   
   const { toast } = useToast();
   const { addCard, addTransactions } = useAppStore();
-  const { upload, uploading: serverUploading, result: serverResult, error: serverError } = useUpload();
-  const { refetch: refetchOverview } = useOverview();
-  const { refetch: refetchStatements } = useStatements();
-  const { refetch: refetchTransactions } = useTransactions();
+  const { upload, uploading: serverUploading, result: serverResult, error: serverError } = useUploadQuery();
+  const { refetch: refetchStatements } = useStatementsQuery();
+  const { refetch: refetchTransactions } = useTransactionsQuery();
+  const { refetch: refetchOverview } = useOverviewQuery();
 
   // Reset state when modal opens/closes
   useEffect(() => {

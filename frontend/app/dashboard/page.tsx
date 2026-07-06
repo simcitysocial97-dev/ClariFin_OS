@@ -22,6 +22,7 @@ import { ErrorFallback } from "@/components/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
 import { formatINR, formatPercentage } from "@/lib/utils/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
+import { CashflowChart } from "@/components/dashboard/cashflow-chart";
 
 // ============================================================
 // Components
@@ -242,6 +243,14 @@ export default function DashboardPage() {
         <EMIRatioCard ratio={data.emi_ratio} />
         <BufferDaysCard days={data.buffer_days} />
       </div>
+
+      {/* Cashflow Trend Chart */}
+      <section>
+        <h2 className="text-sm font-medium text-muted-foreground mb-3">
+          Cashflow Trend
+        </h2>
+        <CashflowChart />
+      </section>
 
       {/* Secondary Row - Trend & Alerts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

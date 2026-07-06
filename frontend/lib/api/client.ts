@@ -5,56 +5,20 @@
 
 import type { Transaction } from '@/types/transaction';
 import type {
-  AnalyticsData,
   CategorySummary,
   MonthlyBreakdown,
   UncategorizedPattern,
 } from '@/types/api';
-import type {
-  BehaviorScore,
-} from '@/types/financial';
 
 // Re-export Transaction for convenience
 export type { Transaction } from '@/types/transaction';
 export type { CategorySummary, MonthlyBreakdown, UncategorizedPattern } from '@/types/api';
-export type { BehaviorScore } from '@/types/financial';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // ============================================================================
 // TYPES
 // ============================================================================
-
-export interface OverviewData {
-  // Canonical paise fields
-  total_spend_paise: number;
-  this_month_paise: number;
-  last_month_paise: number;
-  monthly_average_paise: number;
-  // Display fields
-  total_spend_display: string;
-  this_month_display: string;
-  last_month_display: string;
-  monthly_average_display: string;
-  // Other fields
-  month_change: string;
-  transaction_count: number;
-  card_count: number;
-  months_of_data: number;
-  above_below_avg: string;
-  above_avg_is_bad: boolean;
-  // Chart data (in paise)
-  monthly_chart: Array<{ month: string; amount_paise: number }>;
-  category_chart: Array<{ name: string; amount_paise: number }>;
-  bank_chart: Array<{ bank: string; amount_paise: number }>;
-  recent_transactions: Transaction[];
-  behavioral_insights: Array<{
-    title: string;
-    description: string;
-    severity: 'positive' | 'warning' | 'info' | 'alert';
-    icon: string;
-  }>;
-}
 
 export interface Statement {
   id: number;
@@ -112,25 +76,47 @@ export interface UploadResult {
 }
 
 // ============================================================================
-// API FUNCTIONS
+// Overview Data Type
 // ============================================================================
 
-/**
- * Fetch overview data with optional filters
- */
-export async function fetchOverview(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): Promise<OverviewData> {
-  const query = new URLSearchParams();
-  if (params?.exclude_transfers !== undefined)
-    query.set('exclude_transfers', String(params.exclude_transfers));
-  if (params?.member) query.set('member', params.member);
-  
-  const res = await fetch(`${API_BASE}/api/overview?${query}`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+export interface OverviewData {
+  total_spend: number;
+  total_spend_display: string;
+  this_month: number;
+  this_month_display: string;
+  last_month: number;
+  last_month_display: string;
+  month_change: number;
+  month_change_display: string;
+  transaction_count: number;
+  card_count: number;
+  category_chart: Array<{
+    category: string;
+    value: number;
+    color: string;
+  }>;
+  monthly_chart: Array<{
+    month: string;
+    spend: number;
+    income: number;
+  }>;
+  above_below_avg: {
+    above: number;
+    below: number;
+  };
+  monthly_average: number;
+  insights: Array<{
+    id: string;
+    type: string;
+    title: string;
+    description: string;
+    severity: 'info' | 'warning' | 'error';
+  }>;
 }
+
+// ============================================================================
+// API FUNCTIONS
+// ============================================================================
 
 /**
  * Fetch transactions with filtering and pagination
@@ -163,23 +149,6 @@ export async function fetchTransactions(params?: {
  */
 export async function fetchStatements(): Promise<Statement[]> {
   const res = await fetch(`${API_BASE}/api/statements`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
-}
-
-/**
- * Fetch analytics data
- */
-export async function fetchAnalytics(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): Promise<AnalyticsData> {
-  const query = new URLSearchParams();
-  if (params?.exclude_transfers !== undefined)
-    query.set('exclude_transfers', String(params.exclude_transfers));
-  if (params?.member) query.set('member', params.member);
-  
-  const res = await fetch(`${API_BASE}/api/analytics?${query}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
@@ -231,32 +200,6 @@ export async function uploadStatement(
 }
 
 /**
- * Update transaction category
- */
-export async function updateTransactionCategory(
-  id: number,
-  category: string,
-  subcategory?: string
-): Promise<void> {
-  const res = await fetch(`${API_BASE}/api/transactions/${id}/category`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ category, subcategory }),
-  });
-  if (!res.ok) throw new Error(`Update error: ${res.status}`);
-}
-
-/**
- * Delete a statement
- */
-export async function deleteStatement(id: number): Promise<void> {
-  const res = await fetch(`${API_BASE}/api/statements/${id}`, {
-    method: 'DELETE',
-  });
-  if (!res.ok) throw new Error(`Delete error: ${res.status}`);
-}
-
-/**
  * Export transactions as CSV
  */
 export async function exportCSV(params?: {
@@ -276,16 +219,16 @@ export async function exportCSV(params?: {
   return res.blob();
 }
 
-// ============================================================================
-// BEHAVIOR API FUNCTIONS
-// ============================================================================
-
 /**
- * Fetch behavior score
+ * Create a new member
  */
-export async function fetchBehaviorScore(): Promise<BehaviorScore> {
-  const res = await fetch(`${API_BASE}/api/behavior/score`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
+export async function createMember(name: string, color: string): Promise<Member> {
+  const res = await fetch(`${API_BASE}/api/members`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, color }),
+  });
+  if (!res.ok) throw new Error(`Create member error: ${res.status}`);
   return res.json();
 }
 
@@ -355,18 +298,5 @@ export async function executeImport(
     body: JSON.stringify({ filename, mapping }),
   });
   if (!res.ok) throw new Error(`Import execute error: ${res.status}`);
-  return res.json();
-}
-
-/**
- * Create a new member
- */
-export async function createMember(name: string, color: string): Promise<Member> {
-  const res = await fetch(`${API_BASE}/api/members`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, color }),
-  });
-  if (!res.ok) throw new Error(`Create member error: ${res.status}`);
   return res.json();
 }
