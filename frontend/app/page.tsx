@@ -13,7 +13,7 @@
 import { useState, useEffect } from 'react';
 import { useOverview } from '@/lib/hooks/use-finance-data';
 import { useToast } from '@/hooks/use-toast';
-import { UploadModal } from '@/components/upload/upload-modal';
+import dynamic from 'next/dynamic';
 import { QuickStats } from '@/components/dashboard/quick-stats';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { SpendingOverview } from '@/components/dashboard/spending-overview';
@@ -25,6 +25,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Plus, TrendingUp, CreditCard, Wallet, AlertCircle } from 'lucide-react';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+
+const UploadModal = dynamic(
+  () => import('@/components/upload/upload-modal').then((mod) => mod.UploadModal)
+);
 
 function DashboardContent() {
   const [excludeTransfers, setExcludeTransfers] = useState(false);
