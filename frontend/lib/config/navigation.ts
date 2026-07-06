@@ -3,8 +3,6 @@ import {
   ArrowUpDown,
   Building2,
   CreditCard,
-  Landmark,
-  TrendingUp,
   Settings,
 } from 'lucide-react';
 
@@ -54,18 +52,6 @@ export const CORE_NAV_SECTIONS: NavSection[] = [
         icon: CreditCard,
         description: 'Card management',
       },
-      {
-        name: 'Loans',
-        href: '/loans',
-        icon: Landmark,
-        description: 'Loan tracking',
-      },
-      {
-        name: 'Investments',
-        href: '/investments',
-        icon: TrendingUp,
-        description: 'Portfolio',
-      },
     ],
   },
 ];
@@ -92,7 +78,7 @@ export const ROUTE_REDIRECTS: Record<string, string> = {
   '/networth': '/dashboard?view=networth',
   '/cashflow': '/dashboard?view=cashflow',
   '/analytics': '/dashboard?view=analytics',
-  '/projections': '/loans?tab=simulator',
+  '/projections': '/dashboard',
   '/recurring': '/transactions?filter=recurring',
   '/audit': '/settings?tab=advanced',
   '/behavior': '/settings?tab=advanced',
