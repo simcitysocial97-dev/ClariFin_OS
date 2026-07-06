@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { formatINR } from '@/lib/utils/format';
 
 // Dynamically import recharts to avoid SSR issues
 import dynamic from 'next/dynamic';
@@ -20,9 +21,10 @@ const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { s
 // @ts-ignore - recharts types are incompatible with next/dynamic
 const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false, loading: () => null });
 
+// Value is in paise (canonical)
 interface CategoryChartItem {
   name: string;
-  value: number;
+  amount_paise: number;  // paise
 }
 
 interface SpendingOverviewProps {
@@ -38,6 +40,7 @@ export function SpendingOverview({ categoryChart }: SpendingOverviewProps) {
 
   // Sort and limit to top 8 categories
   const data = categoryChart
+    .map(item => ({ name: item.name, value: item.amount_paise }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 8);
 
@@ -52,6 +55,18 @@ export function SpendingOverview({ categoryChart }: SpendingOverviewProps) {
   if (!mounted) {
     return <div className="h-[300px] flex items-center justify-center text-sm text-muted-foreground">Loading chart...</div>;
   }
+
+  // Format paise value for chart display (convert to rupees for K/L formatting)
+  const formatPaiseForChart = (paise: number) => {
+    const rupees = paise / 100;
+    if (rupees >= 100000) {
+      return `₹${(rupees / 100000).toFixed(0)}L`;
+    }
+    if (rupees >= 1000) {
+      return `₹${(rupees / 1000).toFixed(0)}K`;
+    }
+    return `₹${rupees}`;
+  };
 
   return (
     <div className="h-[300px]">
@@ -72,7 +87,7 @@ export function SpendingOverview({ categoryChart }: SpendingOverviewProps) {
             tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} 
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
+            tickFormatter={formatPaiseForChart}
           />
           <YAxis 
             type="category" 
@@ -90,7 +105,7 @@ export function SpendingOverview({ categoryChart }: SpendingOverviewProps) {
               color: 'hsl(var(--popover-foreground))',
               fontSize: '12px',
             }}
-            formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
+            formatter={(value) => [formatINR(value as number), 'Amount']}
           />
           <Bar 
             dataKey="value" 

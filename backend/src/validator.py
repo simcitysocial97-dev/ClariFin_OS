@@ -1,135 +1,375 @@
 """
-Transaction validation against ground truth
+Input Validation Module
+=======================
+
+Centralized validation for all user inputs.
+Validates required fields, numeric ranges, monetary values, dates, and files.
+
+Usage:
+    from validator import validate_file_upload, validate_paise_amount
+    validate_file_upload(file, allowed_extensions=[".pdf"])
 """
-import json
-from typing import List, Dict
-from pathlib import Path
+
+import os
+from datetime import datetime
+from typing import Optional
+from fastapi import HTTPException, UploadFile
 
 
-class TransactionValidator:
-    """Compare extracted transactions with ground truth"""
+# ============================================================
+# Monetary Validation
+# ============================================================
 
-    @staticmethod
-    def load_ground_truth(json_path: str) -> List[Dict]:
-        """Load expected transactions from JSON file"""
-        with open(json_path, 'r') as f:
-            data = json.load(f)
+def validate_paise_amount(value: int, field_name: str = "amount") -> int:
+    """
+    Validate a paise amount.
+    
+    Args:
+        value: Amount in paise
+        field_name: Field name for error messages
+    
+    Returns:
+        Validated paise value
+    
+    Raises:
+        HTTPException: If value is invalid
+    """
+    if not isinstance(value, int):
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must be an integer (paise), got {type(value).__name__}"
+        )
+    
+    # Reasonable bounds for personal finance
+    # Max: ₹999,99,999.99 (about 1 million INR)
+    # Min: -₹999,99,999.99 (negative for credits)
+    MAX_PAISE = 99999999999  # ~1 billion INR
+    MIN_PAISE = -99999999999
+    
+    if value < MIN_PAISE or value > MAX_PAISE:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} out of valid range: {value} paise"
+        )
+    
+    return value
 
-        # Handle both array and object formats
-        if isinstance(data, list):
-            return data
-        elif isinstance(data, dict):
-            return data.get('transactions', [])
-        return []
 
-    @staticmethod
-    def validate(extracted: List[Dict], expected: List[Dict]) -> Dict:
-        """Compare and calculate accuracy"""
+def validate_rupees_amount(value: float, field_name: str = "amount") -> float:
+    """
+    Validate a rupees amount (for backward compatibility).
+    
+    Args:
+        value: Amount in rupees
+        field_name: Field name for error messages
+    
+    Returns:
+        Validated rupees value
+    
+    Raises:
+        HTTPException: If value is invalid
+    """
+    if not isinstance(value, (int, float)):
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must be a number, got {type(value).__name__}"
+        )
+    
+    # Reasonable bounds for personal finance
+    MAX_RUPEES = 999999999.99  # ~100 million INR
+    MIN_RUPEES = -999999999.99
+    
+    if value < MIN_RUPEES or value > MAX_RUPEES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} out of valid range: {value} rupees"
+        )
+    
+    return value
 
-        results = {
-            'extracted_count': len(extracted),
-            'expected_count': len(expected),
-            'matches': 0,
-            'missing': [],
-            'extra': [],
-            'accuracy': 0.0,
-            'mismatches': []
-        }
 
-        # Create copies to track matched items
-        expected_copy = expected.copy()
-        extracted_copy = extracted.copy()
+# ============================================================
+# Date Validation
+# ============================================================
 
-        # Find matches
-        for ext_tx in extracted:
-            match_found = False
-            for i, exp_tx in enumerate(expected_copy):
-                if TransactionValidator.is_match(ext_tx, exp_tx):
-                    results['matches'] += 1
-                    expected_copy.pop(i)
-                    match_found = True
-                    break
+def validate_date(date_str: str, field_name: str = "date") -> str:
+    """
+    Validate a date string.
+    
+    Args:
+        date_str: Date string in any supported format
+        field_name: Field name for error messages
+    
+    Returns:
+        Validated date string
+    
+    Raises:
+        HTTPException: If date is invalid
+    """
+    if not date_str:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} is required"
+        )
+    
+    # Try to parse the date
+    formats = [
+        "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
+        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
+        "%d %b '%y", "%d %B %Y", "%d %B %y",
+        "%Y-%m-%d",
+    ]
+    
+    s = date_str.strip()
+    
+    # Handle "01 Aug 25" → "01 Aug 2025"
+    import re
+    m = re.match(r'^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{2})$', s)
+    if m:
+        day, mon, yr = m.group(1), m.group(2), m.group(3)
+        yr_full = f"20{yr}" if int(yr) < 50 else f"19{yr}"
+        s = f"{day} {mon} {yr_full}"
+    
+    for fmt in formats:
+        try:
+            datetime.strptime(s, fmt)
+            return date_str  # Return original format
+        except ValueError:
+            continue
+    
+    raise HTTPException(
+        status_code=400,
+        detail=f"{field_name} has invalid format: {date_str}"
+    )
 
-            if not match_found:
-                results['extra'].append(ext_tx)
 
-        # Remaining expected items are missing
-        results['missing'] = expected_copy
-
-        # Calculate accuracy
-        if results['expected_count'] > 0:
-            results['accuracy'] = (results['matches'] / results['expected_count']) * 100
-
-        return results
-
-    @staticmethod
-    def is_match(tx1: Dict, tx2: Dict) -> bool:
-        """Check if two transactions match with fuzzy matching"""
-
-        # Date must match exactly
-        date1 = tx1.get('date', '')
-        date2 = tx2.get('date', '')
-
-        # Normalize dates
-        date1 = TransactionValidator._normalize_date(date1)
-        date2 = TransactionValidator._normalize_date(date2)
-
-        if date1 != date2:
-            return False
-
-        # Amount must be within ₹1 (100 paise)
-        amount1 = float(tx1.get('amount', 0))
-        amount2 = float(tx2.get('amount', 0))
-        if abs(amount1 - amount2) > 1.0:
-            return False
-
-        # Skip strict description matching - rely on date + amount
-        # This is more robust as PDF text extraction may vary slightly
-        return True
-
-    @staticmethod
-    def _normalize_date(date_str: str) -> str:
-        """Normalize date to DD/MM/YYYY format"""
-        if not date_str:
-            return ''
-
-        date_str = str(date_str).strip()
-
-        # If already in DD/MM/YYYY format
-        if len(date_str) == 10 and date_str.count('/') == 2:
-            return date_str
-
-        # Handle DD/MM/YY -> DD/MM/YYYY
-        parts = date_str.split('/')
-        if len(parts) == 3:
-            day, month, year = parts
-            if len(year) == 2:
-                year_int = int(year)
-                if year_int < 50:
-                    year = '20' + year
-                else:
-                    year = '19' + year
-            return f"{day}/{month}/{year}"
-
+def validate_iso_date(date_str: str, field_name: str = "date") -> str:
+    """
+    Validate an ISO date string (YYYY-MM-DD).
+    
+    Args:
+        date_str: Date string in ISO format
+        field_name: Field name for error messages
+    
+    Returns:
+        Validated date string
+    
+    Raises:
+        HTTPException: If date is invalid
+    """
+    if not date_str:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} is required"
+        )
+    
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d")
         return date_str
+    except ValueError:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must be in YYYY-MM-DD format: {date_str}"
+        )
 
-    @staticmethod
-    def print_report(results: Dict, bank_name: str = ""):
-        """Print validation report"""
-        prefix = f"[{bank_name}] " if bank_name else ""
 
-        print(f"\n{prefix}Validation Report:")
-        print(f"  Expected: {results['expected_count']}")
-        print(f"  Extracted: {results['extracted_count']}")
-        print(f"  Matches: {results['matches']}")
-        print(f"  Accuracy: {results['accuracy']:.2f}%")
+# ============================================================
+# File Validation
+# ============================================================
 
-        if results['missing']:
-            print(f"\n  Missing ({len(results['missing'])}):")
-            for tx in results['missing'][:5]:  # Show first 5
-                print(f"    - {tx.get('date')} | {tx.get('description', '')[:30]}... | ₹{tx.get('amount')}")
+def validate_file_upload(
+    file: UploadFile,
+    allowed_extensions: Optional[list[str]] = None,
+    max_size_bytes: Optional[int] = None
+) -> None:
+    """
+    Validate an uploaded file.
+    
+    Args:
+        file: UploadFile to validate
+        allowed_extensions: List of allowed extensions (e.g., [".pdf", ".csv"])
+        max_size_bytes: Maximum file size in bytes
+    
+    Raises:
+        HTTPException: If file is invalid
+    """
+    if not file:
+        raise HTTPException(
+            status_code=400,
+            detail="No file provided"
+        )
+    
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="File has no name"
+        )
+    
+    # Check extension
+    if allowed_extensions:
+        ext = os.path.splitext(file.filename)[1].lower()
+        if ext not in [e.lower() for e in allowed_extensions]:
+            raise HTTPException(
+                status_code=400,
+                detail=f"File type not allowed. Allowed: {', '.join(allowed_extensions)}"
+            )
+    
+    # Check size (if provided)
+    if max_size_bytes and hasattr(file, 'size') and file.size:
+        if file.size > max_size_bytes:
+            max_mb = max_size_bytes / (1024 * 1024)
+            raise HTTPException(
+                status_code=400,
+                detail=f"File too large. Maximum size: {max_mb}MB"
+            )
 
-        if results['extra']:
-            print(f"\n  Extra ({len(results['extra'])}):")
-            for tx in results['extra'][:5]:  # Show first 5
-                print(f"    + {tx.get('date')} | {tx.get('description', '')[:30]}... | ₹{tx.get('amount')}")
+
+# ============================================================
+# String Validation
+# ============================================================
+
+def validate_required_string(
+    value: str,
+    field_name: str,
+    min_length: int = 1,
+    max_length: int = 1000
+) -> str:
+    """
+    Validate a required string field.
+    
+    Args:
+        value: String value to validate
+        field_name: Field name for error messages
+        min_length: Minimum length (default 1)
+        max_length: Maximum length (default 1000)
+    
+    Returns:
+        Validated string
+    
+    Raises:
+        HTTPException: If string is invalid
+    """
+    if value is None:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} is required"
+        )
+    
+    if not isinstance(value, str):
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must be a string"
+        )
+    
+    if len(value) < min_length:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must be at least {min_length} characters"
+        )
+    
+    if len(value) > max_length:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{field_name} must be at most {max_length} characters"
+        )
+    
+    return value
+
+
+def validate_category(category: str) -> str:
+    """
+    Validate a transaction category.
+    
+    Args:
+        category: Category string
+    
+    Returns:
+        Validated category
+    
+    Raises:
+        HTTPException: If category is invalid
+    """
+    if not category:
+        return "Uncategorized"
+    
+    # Known categories (from categorizer)
+    known_categories = [
+        "Food & Dining",
+        "Shopping",
+        "Transport",
+        "Entertainment",
+        "Utilities",
+        "Healthcare",
+        "Education",
+        "Travel",
+        "Investments",
+        "Payments & Transfers",
+        "Income",
+        "Uncategorized",
+    ]
+    
+    # Allow any category (don't restrict to known list)
+    return category.strip()
+
+
+# ============================================================
+# Query Parameter Validation
+# ============================================================
+
+def validate_pagination(
+    limit: int = 100,
+    offset: int = 0,
+    max_limit: int = 1000
+) -> tuple[int, int]:
+    """
+    Validate pagination parameters.
+    
+    Args:
+        limit: Number of items to return
+        offset: Number of items to skip
+        max_limit: Maximum allowed limit
+    
+    Returns:
+        Tuple of (limit, offset)
+    
+    Raises:
+        HTTPException: If parameters are invalid
+    """
+    if limit < 1:
+        raise HTTPException(
+            status_code=400,
+            detail="limit must be at least 1"
+        )
+    
+    if limit > max_limit:
+        raise HTTPException(
+            status_code=400,
+            detail=f"limit must be at most {max_limit}"
+        )
+    
+    if offset < 0:
+        raise HTTPException(
+            status_code=400,
+            detail="offset must be at least 0"
+        )
+    
+    return limit, offset
+
+
+def validate_member(member: str) -> str:
+    """
+    Validate a member name.
+    
+    Args:
+        member: Member name
+    
+    Returns:
+        Validated member name
+    """
+    if not member:
+        return "Self"
+    
+    # Sanitize: remove special characters, limit length
+    sanitized = member.strip()[:50]
+    
+    return sanitized or "Self"

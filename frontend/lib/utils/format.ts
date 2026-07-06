@@ -1,22 +1,28 @@
 /**
  * Formatting Utilities
  * 
- * Phase 2A: Functions for formatting paise values to display strings.
+ * Phase 1: Functions for formatting paise values to display strings.
  * All financial calculations should use paise (INTEGER), display uses formatted strings.
+ * 
+ * Canonical formatter: formatINR(paise) - Use this for all new code.
+ * formatPaise is an alias for backward compatibility.
  */
 
 /**
  * Format paise to Indian Rupee string with lakh/crore grouping.
  * 
+ * This is the canonical formatter for all monetary display.
+ * Use this function for all new code.
+ * 
  * @param paise - Amount in paise (1 rupee = 100 paise)
  * @returns Formatted string like "₹1,234.56" or "₹1,00,000.00"
  * 
  * @example
- * formatPaise(123456)    // "₹1,234.56"
- * formatPaise(10000000)  // "₹1,00,000.00"
- * formatPaise(-500)      // "-₹5.00"
+ * formatINR(123456)    // "₹1,234.56"
+ * formatINR(10000000)  // "₹1,00,000.00"
+ * formatINR(-500)      // "-₹5.00"
  */
-export function formatPaise(paise: number | null | undefined): string {
+export function formatINR(paise: number | null | undefined): string {
   if (paise === null || paise === undefined) {
     return '₹0.00';
   }
@@ -48,6 +54,22 @@ export function formatPaise(paise: number | null | undefined): string {
   
   const result = `₹${formatted}.${paisePart.toString().padStart(2, '0')}`;
   return negative ? `-${result}` : result;
+}
+
+/**
+ * Format paise to Indian Rupee string with lakh/crore grouping.
+ * 
+ * @deprecated Use formatINR instead. This is an alias for backward compatibility.
+ * @param paise - Amount in paise (1 rupee = 100 paise)
+ * @returns Formatted string like "₹1,234.56" or "₹1,00,000.00"
+ * 
+ * @example
+ * formatPaise(123456)    // "₹1,234.56"
+ * formatPaise(10000000)  // "₹1,00,000.00"
+ * formatPaise(-500)      // "-₹5.00"
+ */
+export function formatPaise(paise: number | null | undefined): string {
+  return formatINR(paise);
 }
 
 
@@ -129,6 +151,22 @@ export function formatDateDisplay(dateStr: string | null | undefined): string {
   }
   
   return dateStr;
+}
+
+
+/**
+ * Format paise to compact INR display (e.g., "₹12.5K" or "₹2.4L")
+ */
+export function formatINRCompact(paise: number | null | undefined): string {
+  if (paise === null || paise === undefined) return '—';
+  const rupees = paise / 100;
+  if (Math.abs(rupees) >= 100000) {
+    return `₹${(rupees / 100000).toFixed(1)}L`;
+  }
+  if (Math.abs(rupees) >= 1000) {
+    return `₹${(rupees / 1000).toFixed(1)}K`;
+  }
+  return formatINR(paise);
 }
 
 

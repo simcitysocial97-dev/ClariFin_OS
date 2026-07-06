@@ -10,7 +10,10 @@ import type { Transaction } from './transaction';
 
 export interface CategorySummary {
   category: string;
-  amount: number;
+  // Canonical paise field
+  amount_paise: number;
+  // Deprecated rupees field (for backward compatibility)
+  amount?: number;
   amount_display: string;
   count: number;
   count_display: string;
@@ -41,52 +44,44 @@ export interface CategoriesResponse {
 
 export interface DayOfWeekData {
   day: string;
-  amount: number;
+  amount_paise: number;
   count: number;
 }
 
 export interface MerchantData {
-  name: string;
-  merchant?: string;  // API may return either
-  amount: number;
-  amount_display: string;
+  merchant: string;
+  amount_paise: number;
   count: number;
-  count_display?: string;
 }
 
 export interface RecurringCharge {
   description: string;
   frequency: number;
-  frequency_display?: string;
-  avg_amount: number;
-  avg_display: string;
-  annual_display: string;
+  avg_amount_paise: number;
+  annual_amount_paise: number;
 }
 
 export interface LargestTransaction {
   rank: number;
-  id?: number | string;
-  date: string;
   date_display: string;
   description: string;
-  description_display?: string;
-  amount: number;
-  amount_display: string;
+  amount_paise: number;
   bank: string;
 }
 
 export interface AnalyticsData {
   highest_month: string;
-  highest_month_amount: string;
-  avg_monthly: number;
-  avg_monthly_display: string;
-  biggest_txn_amount: string;
-  biggest_txn_desc: string;
+  highest_month_amount_paise: number;
+  avg_monthly_paise: number;
+  biggest_transaction: {
+    description: string;
+    amount_paise: number;
+    date: string;
+    bank: string;
+  } | null;
   unique_merchants: number;
-  unique_merchants_display: string;
-  transaction_count?: number;  // Used by analytics page for data check
-  spending_trend: MonthlyBreakdown[];
-  day_of_week_data: DayOfWeekData[];
+  spending_trend: Array<{ month: string; amount_paise: number; average_paise: number }>;
+  day_of_week: DayOfWeekData[];
   top_merchants: MerchantData[];
   recurring_charges: RecurringCharge[];
   largest_transactions: LargestTransaction[];

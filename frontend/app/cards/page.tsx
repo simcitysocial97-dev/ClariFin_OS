@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { formatINR } from '@/lib/utils/format';
 import type { Statement } from '@/lib/api/client';
 
 // Map validation status to badge variant
@@ -91,17 +92,21 @@ export default function CardsPage() {
           ? `${new Date(card.billCycleStart).toLocaleDateString('en-IN', { month: 'short' })} - ${new Date(card.billCycleEnd).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}`
           : 'Unknown period',
         transaction_count: 0,
-        total_debit: 0,
-        total_credit: 0,
+        // Canonical paise fields
+        total_debit_paise: 0,
+        total_credit_paise: 0,
+        total_due_paise: card.totalAmountDue ? Math.round(card.totalAmountDue * 100) : 0,
+        min_due_paise: card.minimumAmountDue ? Math.round(card.minimumAmountDue * 100) : 0,
+        extracted_net_paise: 0,
+        validation_difference_paise: 0,
+        // Display fields
         total_debit_display: '₹0',
         total_credit_display: '₹0',
-        total_due: card.totalAmountDue || 0,
-        total_due_display: `₹${card.totalAmountDue?.toLocaleString('en-IN') || '0'}`,
+        total_due_display: formatINR(card.totalAmountDue ? Math.round(card.totalAmountDue * 100) : 0),
         extracted_net_display: '₹0',
-        min_due_display: card.minimumAmountDue ? `₹${card.minimumAmountDue.toLocaleString('en-IN')}` : '₹0',
+        min_due_display: formatINR(card.minimumAmountDue ? Math.round(card.minimumAmountDue * 100) : 0),
         due_date: card.dueDate || '',
         validation_status: 'unknown',
-        validation_difference: 0,
         badge_text: 'Unknown',
         badge_color: 'gray',
       }))
@@ -307,14 +312,14 @@ export default function CardsPage() {
                       <span className="font-medium">{statement.extracted_net_display}</span>
                     </div>
                     
-                    {statement.validation_difference !== 0 && (
+                    {statement.validation_difference_paise !== undefined && statement.validation_difference_paise !== 0 && (
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground">Difference:</span>
                         <span className={cn(
                           'font-medium',
-                          statement.validation_difference > 0 ? 'text-red-600' : 'text-amber-600'
+                          statement.validation_difference_paise > 0 ? 'text-red-600' : 'text-amber-600'
                         )}>
-                          ₹{Math.abs(statement.validation_difference).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          ₹{Math.abs(statement.validation_difference_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
                     )}

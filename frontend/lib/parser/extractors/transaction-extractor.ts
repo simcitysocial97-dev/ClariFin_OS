@@ -41,20 +41,20 @@ const TRANSACTION_PATTERNS = [
  */
 export function extractTransactions(documentData: DocumentData, bankName: string): Transaction[] {
     console.log('[TRANSACTIONS] Extracting transactions...');
-    
+
     // Try table detection first (most accurate)
     for (const page of documentData.pages) {
         const table = detectTransactionTable(page);
         if (table && table.rows.length > 0) {
             console.log(`[TRANSACTIONS] Table detected on page ${page.pageNumber}`);
             const rawTransactions = extractTransactionsFromTable(table, bankName);
-            
+
             if (rawTransactions.length > 0) {
                 return rawTransactions.map((t, index) => ({
                     id: `txn-${Date.now()}-${index}`,
                     date: normalizeDate(t.date),
                     description: cleanDescription(t.description),
-                    amount: t.amount,
+                    amount_paise: Math.round(t.amount * 100),
                     type: t.type as 'debit' | 'credit',
                     category: categorizeTransaction(t.description),
                     bank: bankName,
@@ -63,7 +63,7 @@ export function extractTransactions(documentData: DocumentData, bankName: string
             }
         }
     }
-    
+
     // Fallback to regex patterns
     console.log('[TRANSACTIONS] No table found, using regex fallback');
     return extractWithRegex(documentData.fullText, bankName);
@@ -75,32 +75,32 @@ export function extractTransactions(documentData: DocumentData, bankName: string
 function extractWithRegex(text: string, bankName: string): Transaction[] {
     const transactions: Transaction[] = [];
     const seen = new Set<string>();
-    
+
     for (const pattern of TRANSACTION_PATTERNS) {
         const regex = new RegExp(pattern.regex.source, pattern.regex.flags);
         let match;
-        
+
         while ((match = regex.exec(text)) !== null) {
             const date = normalizeDate(match[pattern.dateIndex]);
             const description = cleanDescription(match[pattern.descIndex]);
             const amount = parseFloat(match[pattern.amountIndex].replace(/[^0-9.]/g, ''));
             const typeIndicator = pattern.typeIndex ? match[pattern.typeIndex] : null;
             const type = determineType(typeIndicator, description);
-            
+
             // Skip invalid transactions
             if (!date || !description || isNaN(amount) || amount === 0) continue;
             if (amount > 1000000) continue; // Sanity check
-            
+
             // Deduplicate
             const key = `${date}-${description.substring(0, 30)}-${amount}`;
             if (seen.has(key)) continue;
             seen.add(key);
-            
+
             transactions.push({
                 id: `txn-${Date.now()}-${transactions.length}`,
                 date,
                 description,
-                amount,
+                amount_paise: Math.round(amount * 100),
                 type,
                 category: categorizeTransaction(description),
                 bank: bankName,
@@ -108,14 +108,14 @@ function extractWithRegex(text: string, bankName: string): Transaction[] {
             });
         }
     }
-    
+
     // Sort by date
     transactions.sort((a, b) => {
         const dateA = a.date.split('/').reverse().join('');
         const dateB = b.date.split('/').reverse().join('');
         return dateA.localeCompare(dateB);
     });
-    
+
     console.log(`[TRANSACTIONS] Extracted ${transactions.length} transactions via regex`);
     return transactions;
 }
@@ -125,15 +125,15 @@ function extractWithRegex(text: string, bankName: string): Transaction[] {
  */
 function normalizeDate(dateStr: string): string {
     if (!dateStr) return '';
-    
+
     // Already in DD/MM/YYYY format
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
-    
+
     // DD-MM-YYYY
     if (/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
         return dateStr.replace(/-/g, '/');
     }
-    
+
     // DD Mon YY or DD Mon YYYY
     const monthMatch = dateStr.match(/^(\d{2})\s+(\w{3})\s+(\d{2,4})$/);
     if (monthMatch) {
@@ -147,7 +147,7 @@ function normalizeDate(dateStr: string): string {
         const year = monthMatch[3].length === 2 ? '20' + monthMatch[3] : monthMatch[3];
         return `${day}/${month}/${year}`;
     }
-    
+
     return dateStr;
 }
 
@@ -170,14 +170,14 @@ function determineType(typeIndicator: string | null, description: string): 'debi
         if (lower === 'c' || lower === 'cr' || lower === 'credit') return 'credit';
         if (lower === 'd' || lower === 'dr' || lower === 'debit' || lower === 'm') return 'debit';
     }
-    
+
     // Check description for credit keywords
     const creditKeywords = ['refund', 'cashback', 'reversal', 'credit', 'received', 'reward', 'payment received'];
     const descLower = description.toLowerCase();
     for (const keyword of creditKeywords) {
         if (descLower.includes(keyword)) return 'credit';
     }
-    
+
     return 'debit';
 }
 
@@ -186,58 +186,58 @@ function determineType(typeIndicator: string | null, description: string): 'debi
  */
 function categorizeTransaction(description: string): string {
     const desc = description.toLowerCase();
-    
-    if (desc.includes('swiggy') || desc.includes('zomato') || desc.includes('restaurant') || 
+
+    if (desc.includes('swiggy') || desc.includes('zomato') || desc.includes('restaurant') ||
         desc.includes('food') || desc.includes('dining') || desc.includes('cafe')) {
         return 'Food & Dining';
     }
-    
-    if (desc.includes('amazon') || desc.includes('flipkart') || desc.includes('myntra') || 
+
+    if (desc.includes('amazon') || desc.includes('flipkart') || desc.includes('myntra') ||
         desc.includes('shopping') || desc.includes('retail') || desc.includes('store')) {
         return 'Shopping';
     }
-    
-    if (desc.includes('uber') || desc.includes('ola') || desc.includes('fuel') || 
+
+    if (desc.includes('uber') || desc.includes('ola') || desc.includes('fuel') ||
         desc.includes('petrol') || desc.includes('diesel') || desc.includes('travel')) {
         return 'Transportation';
     }
-    
-    if (desc.includes('electricity') || desc.includes('water') || desc.includes('gas') || 
+
+    if (desc.includes('electricity') || desc.includes('water') || desc.includes('gas') ||
         desc.includes('bill') || desc.includes('recharge') || desc.includes('mobile')) {
         return 'Bills & Utilities';
     }
-    
-    if (desc.includes('netflix') || desc.includes('prime') || desc.includes('hotstar') || 
+
+    if (desc.includes('netflix') || desc.includes('prime') || desc.includes('hotstar') ||
         desc.includes('spotify') || desc.includes('movie') || desc.includes('entertainment')) {
         return 'Entertainment';
     }
-    
-    if (desc.includes('hospital') || desc.includes('pharmacy') || desc.includes('medical') || 
+
+    if (desc.includes('hospital') || desc.includes('pharmacy') || desc.includes('medical') ||
         desc.includes('doctor') || desc.includes('health')) {
         return 'Healthcare';
     }
-    
-    if (desc.includes('school') || desc.includes('college') || desc.includes('university') || 
+
+    if (desc.includes('school') || desc.includes('college') || desc.includes('university') ||
         desc.includes('course') || desc.includes('education')) {
         return 'Education';
     }
-    
+
     if (desc.includes('grocery') || desc.includes('supermarket') || desc.includes('bigbasket')) {
         return 'Groceries';
     }
-    
-    if (desc.includes('credit card') || desc.includes('card payment') || desc.includes('billdesk') || 
+
+    if (desc.includes('credit card') || desc.includes('card payment') || desc.includes('billdesk') ||
         desc.includes('bbps') || desc.includes('payment received')) {
         return 'Credit Card Payment';
     }
-    
+
     if (desc.includes('transfer') || desc.includes('upi') || desc.includes('neft')) {
         return 'Transfer';
     }
-    
+
     if (desc.includes('atm') || desc.includes('cash') || desc.includes('withdrawal')) {
         return 'Cash Withdrawal';
     }
-    
+
     return 'Other';
 }

@@ -46,23 +46,27 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 // ============================================================================
 
 export interface OverviewData {
-  total_spend: number;
+  // Canonical paise fields
+  total_spend_paise: number;
+  this_month_paise: number;
+  last_month_paise: number;
+  monthly_average_paise: number;
+  // Display fields
   total_spend_display: string;
-  this_month: number;
   this_month_display: string;
-  last_month: number;
   last_month_display: string;
+  monthly_average_display: string;
+  // Other fields
   month_change: string;
   transaction_count: number;
   card_count: number;
   months_of_data: number;
-  monthly_average: number;
-  monthly_average_display: string;
   above_below_avg: string;
   above_avg_is_bad: boolean;
-  monthly_chart: Array<{ month: string; amount: number }>;
-  category_chart: Array<{ name: string; value: number }>;
-  bank_chart: Array<{ bank: string; amount: number }>;
+  // Chart data (in paise)
+  monthly_chart: Array<{ month: string; amount_paise: number }>;
+  category_chart: Array<{ name: string; amount_paise: number }>;
+  bank_chart: Array<{ bank: string; amount_paise: number }>;
   recent_transactions: Transaction[];
   behavioral_insights: Array<{
     title: string;
@@ -82,17 +86,21 @@ export interface Statement {
   period_to: string;
   period_display: string;
   transaction_count: number;
-  total_debit: number;
-  total_credit: number;
+  // Canonical paise fields
+  total_debit_paise: number;
+  total_credit_paise: number;
+  total_due_paise: number;
+  min_due_paise: number;
+  extracted_net_paise?: number;
+  validation_difference_paise?: number;
+  // Display fields
   total_debit_display: string;
   total_credit_display: string;
-  total_due: number;
   total_due_display: string;
   extracted_net_display: string;
   min_due_display: string;
   due_date: string;
   validation_status: string;
-  validation_difference: number;
   badge_text: string;
   badge_color: string;
 }

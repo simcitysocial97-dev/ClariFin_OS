@@ -1,85 +1,61 @@
 # Product Context
 
-## Why This Project Exists
+## Problem Being Solved
 
-ClariFin_OS was created to solve a common personal finance management problem: the difficulty of extracting meaningful insights from bank statements that are often provided in PDF format with inconsistent layouts and formats. Traditional methods require manual data entry or expensive software solutions.
+ClariFin_OS solves the difficulty of extracting meaningful financial insights from bank statements provided in PDF format with inconsistent layouts. Traditional approaches require manual data entry or expensive proprietary software.
 
-ClariFin_OS is a Personal Financial Operating System.
+The core problem is not just parsing — it's **trust**. Users cannot verify whether the numbers displayed by financial software are correct. ClariFin_OS addresses this by making every calculation deterministic, every transaction traceable, and every balance verifiable.
 
-Core Promise:
-- Mathematically consistent
-- Ledger verified
-- Cross-account reconciliation capable
-- No silent auto-balancing
-- Any mismatch triggers explicit user confirmation
+## Target Users
 
-## Problems It Solves
+- **Personal Finance Enthusiasts**: Individuals who track spending and want detailed, verifiable insights
+- **Small Business Owners**: Those who need to separate personal and business expenses with reliable records
+- **Budget-Conscious Users**: People looking to understand and control spending habits with mathematical certainty
 
-1. **Manual Data Entry**: Eliminates the need to manually copy transaction data from PDF statements into spreadsheets or financial software
-2. **Multi-Bank Support**: Handles statements from multiple Indian banks (HDFC, ICICI, SBI, Axis, IDFC, IndusInd) with different formats
-3. **Time-Consuming Analysis**: Automates the extraction and categorization of transactions for quick financial insights
-4. **Data Silos**: Provides a unified view of credit card transactions across different banks in one application
-5. **Expense Tracking**: Automatically categorizes transactions to help users understand their spending patterns
+## Core User Workflow
 
-## How It Should Work
-
-### Core User Flow
-1. **Upload**: User uploads PDF bank statements via drag-and-drop interface
+1. **Upload**: User uploads PDF bank statements via drag-and-drop
 2. **Parse**: System automatically detects bank format and extracts transactions and metadata
 3. **Categorize**: Transactions are automatically categorized based on merchant keywords
 4. **Visualize**: Data is presented through interactive dashboards with spending insights
-5. **Manage**: Users can filter, search, and export transaction data
+5. **Verify**: Every balance, category total, and financial metric can be traced back to source transactions
 
-### Key Features
-- **Multi-PDF Upload**: Support for uploading multiple statements at once
-- **Real-time Processing**: Sequential parsing with progress indicators
-- **Smart Categorization**: 10+ predefined categories with keyword-based classification
-- **Dashboard Analytics**: Spending overview, category breakdown, and card management
-- **Data Export**: CSV export functionality for external analysis
-- **REST API**: FastAPI backend for data persistence and querying
+## Financial Correctness Philosophy
 
-## User Experience Goals
+- **Backend is authoritative**: All financial calculations originate from the FastAPI/SQLite backend
+- **Ledger integrity**: Transactions are append-only. No modification or deletion after insertion
+- **Deterministic replay**: Same input always produces same output. No silent auto-balancing
+- **End-to-end traceability**: Every monetary value displayed in the frontend can be traced to a database row
+- **Explicit confirmation**: Any mismatch between expected and computed values triggers user confirmation
 
-### Primary Users
-- **Personal Finance Enthusiasts**: Individuals who track their spending and want detailed insights
-- **Small Business Owners**: Those who need to separate personal and business expenses
-- **Budget-Conscious Users**: People looking to understand and control their spending habits
+## Privacy-First Architecture
 
-### User Experience Principles
-1. **Zero Learning Curve**: Intuitive interface that requires no training
-2. **Instant Gratification**: Quick parsing and immediate visualization of results
-3. **Mobile-Friendly**: Responsive design that works on all devices
-4. **Privacy-First**: Local deployment, user controls their data
+- Local SQLite deployment — no cloud dependency
+- User retains full data ownership
+- No telemetry, no data monetization
+- Self-hosted, single-user system
 
-### Success Metrics
-- **Parse Accuracy**: 100% accuracy in extracting transaction data from supported bank formats
-- **Processing Speed**: Under 30 seconds for typical statement PDFs
-- **User Retention**: Ongoing expense tracking with meaningful insights
+## Current Strategy
 
-## Technical Requirements
+The project has transitioned from feature implementation to **Architecture Validation and Pipeline Audit**.
 
-### Architecture
-- **Frontend**: Next.js 16 with React 19
-- **Backend**: FastAPI with SQLite database
-- **Single Source of Truth**: Backend is authoritative for all financial data
+```
+Architecture Validation
+        ↓
+    Correctness
+        ↓
+    Reliability
+        ↓
+ Implementation
+```
 
-### Performance Goals
-- **Efficient Processing**: Handle large PDF files without memory issues
-- **Browser Compatibility**: Support for modern browsers
+The audit establishes a verified understanding of the complete data pipeline before any new features are built. This ensures the foundation is correct before adding complexity.
 
-### Security & Privacy
-- **Local Deployment**: User controls their own data
-- **SQLite Database**: Data stored locally, not in cloud
+## Long-Term Product Vision
 
-## Business Context
+After the audit is complete and architectural corrections are applied, ClariFin_OS will evolve toward:
 
-### Market Position
-- **Competitive Advantage**: 100% parsing accuracy for Indian bank statements
-- **Niche Focus**: Specialized for Indian banking formats and currency
-- **Cost-Effective**: Free, open-source alternative to expensive personal finance software
-- **Privacy-Focused**: Self-hosted, no data monetization
-
-### Future Vision
-- **Phase 1**: Budget setting and tracking features
-- **Phase 2**: Due date reminders and payment tracking
-- **Phase 3**: AI-powered insights and spending predictions
+- Budget setting and tracking with ledger-verified balances
+- Due date reminders and payment tracking
+- AI-powered insights and spending predictions (built on verified data)
+- Cross-account reconciliation across multiple financial institutions

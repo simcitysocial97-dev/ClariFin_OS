@@ -23,7 +23,7 @@ const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.R
 
 interface BankChartItem {
   bank: string;
-  amount: number;
+  amount_paise: number;
 }
 
 interface BankWiseChartProps {
@@ -39,7 +39,7 @@ export function BankWiseChart({ bankChart }: BankWiseChartProps) {
 
   // Sort and limit to top 6 banks
   const data = bankChart
-    .sort((a, b) => b.amount - a.amount)
+    .sort((a, b) => b.amount_paise - a.amount_paise)
     .slice(0, 6);
 
   if (data.length === 0) {
@@ -64,7 +64,7 @@ export function BankWiseChart({ bankChart }: BankWiseChartProps) {
             tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }} 
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
+            tickFormatter={(value) => `₹${(value / 100 / 1000).toFixed(0)}K`}
           />
           <YAxis 
             type="category" 
@@ -82,10 +82,10 @@ export function BankWiseChart({ bankChart }: BankWiseChartProps) {
               color: 'hsl(var(--popover-foreground))',
               fontSize: '12px',
             }}
-            formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Amount']}
+            formatter={(value) => [`₹${(Number(value) / 100).toLocaleString('en-IN')}`, 'Amount']}
           />
           <Bar 
-            dataKey="amount" 
+            dataKey="amount_paise" 
             fill="hsl(var(--primary))" 
             radius={[0, 4, 4, 0]}
           />

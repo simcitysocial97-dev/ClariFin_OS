@@ -27,7 +27,8 @@ interface TransactionItem {
   description: string;
   category: string;
   type: 'debit' | 'credit' | string;
-  amount: number;
+  amount_paise: number;
+  amount?: number;
   amount_display?: string;
   description_display?: string;
   is_large?: boolean;
@@ -83,7 +84,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
                 transaction.type === 'debit' ? 'text-red-600' : 'text-green-600',
                 transaction.is_large && "font-bold text-amber-600"
               )}>
-                {transaction.amount_display || `${transaction.type === 'debit' ? '-' : '+'}₹${transaction.amount.toLocaleString('en-IN')}`}
+                {transaction.amount_display || `${transaction.type === 'debit' ? '-' : '+'}₹${(transaction.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
               </TableCell>
             </TableRow>
           ))}

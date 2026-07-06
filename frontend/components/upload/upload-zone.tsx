@@ -144,17 +144,17 @@ export function UploadZone() {
           };
           addCard(card);
 
-          // Add transactions with all required fields
-          const transactionsWithCardId = result.transactions.map((t: any) => ({
-            id: crypto.randomUUID(),
-            date: t.date,
-            description: t.description,
-            amount: t.amount,
-            type: t.type as 'debit' | 'credit',
-            category: t.category,
-            bank: result.metadata.bankName,
-            cardId: card.id,
-          }));
+           // Add transactions with all required fields
+           const transactionsWithCardId = result.transactions.map((t: any) => ({
+             id: crypto.randomUUID(),
+             date: t.date,
+             description: t.description,
+             amount_paise: t.amount_paise,
+             type: t.type as 'debit' | 'credit',
+             category: t.category,
+             bank: result.metadata.bankName,
+             cardId: card.id,
+           }));
           addTransactions(transactionsWithCardId);
 
           successCount++;

@@ -1,0 +1,218 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e3]:
+      - generic [ref=e4]:
+        - link "ClariFin" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - img [ref=e7]
+          - generic [ref=e10]: ClariFin
+        - generic [ref=e12]:
+          - img [ref=e13]
+          - generic [ref=e16]:
+            - generic [ref=e17]: Net Worth
+            - generic [ref=e18]: ₹0
+        - navigation [ref=e22]:
+          - generic [ref=e23]:
+            - paragraph [ref=e24]: OVERVIEW
+            - link "Dashboard" [ref=e26] [cursor=pointer]:
+              - /url: /dashboard/
+              - img [ref=e27]
+              - generic [ref=e32]: Dashboard
+          - generic [ref=e33]:
+            - paragraph [ref=e34]: MANAGE
+            - generic [ref=e35]:
+              - link "Transactions" [ref=e36] [cursor=pointer]:
+                - /url: /transactions/
+                - img [ref=e37]
+                - generic [ref=e40]: Transactions
+              - link "Accounts" [ref=e41] [cursor=pointer]:
+                - /url: /accounts/
+                - img [ref=e42]
+                - generic [ref=e46]: Accounts
+              - link "Credit Cards" [ref=e47] [cursor=pointer]:
+                - /url: /cards/
+                - img [ref=e48]
+                - generic [ref=e50]: Credit Cards
+              - link "Loans" [ref=e51] [cursor=pointer]:
+                - /url: /loans/
+                - img [ref=e52]
+                - generic [ref=e54]: Loans
+              - link "Investments" [ref=e55] [cursor=pointer]:
+                - /url: /investments/
+                - img [ref=e56]
+                - generic [ref=e59]: Investments
+        - generic [ref=e61]:
+          - link "Settings" [ref=e62] [cursor=pointer]:
+            - /url: /settings/
+            - img [ref=e63]
+            - generic [ref=e66]: Settings
+          - generic [ref=e67]:
+            - generic [ref=e68]: Theme
+            - button "Toggle theme" [ref=e69]:
+              - img
+              - generic [ref=e70]: Toggle theme
+    - main [ref=e71]:
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - heading "Dashboard" [level=1] [ref=e76]
+            - paragraph [ref=e77]: Welcome back! Here's your financial overview.
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e80]: Exclude Transfers
+              - switch [ref=e81]
+            - button "Upload Statement" [ref=e82]:
+              - img
+              - text: Upload Statement
+        - generic [ref=e83]:
+          - generic [ref=e84]:
+            - generic [ref=e85]:
+              - generic [ref=e86]: Total Spend
+              - img [ref=e87]
+            - generic [ref=e90]:
+              - generic [ref=e91]: ₹1,63,46,146.00
+              - paragraph [ref=e92]: All time spending
+              - img [ref=e94]
+          - generic [ref=e97]:
+            - generic [ref=e98]:
+              - generic [ref=e99]: This Month
+              - img [ref=e100]
+            - generic [ref=e103]:
+              - generic [ref=e104]: ₹6,77,811.00
+              - paragraph [ref=e105]: ₹3,278.42 below avg
+              - img [ref=e107]
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - generic [ref=e112]: Transactions
+              - img [ref=e113]
+            - generic [ref=e116]:
+              - generic [ref=e117]: "4337"
+              - paragraph [ref=e118]: Total recorded
+              - img [ref=e120]
+          - generic [ref=e123]:
+            - generic [ref=e124]:
+              - generic [ref=e125]: Cards
+              - img [ref=e126]
+            - generic [ref=e128]:
+              - generic [ref=e129]: "1"
+              - paragraph [ref=e130]: "Avg: ₹6,81,089.42/mo"
+        - generic [ref=e131]:
+          - heading "Insights" [level=2] [ref=e132]
+          - generic [ref=e133]:
+            - generic [ref=e135]:
+              - img [ref=e137]
+              - generic [ref=e139]:
+                - heading "Rent Spending Up" [level=4] [ref=e140]
+                - paragraph [ref=e141]: You spent 93% more on Rent this month
+            - generic [ref=e143]:
+              - img [ref=e145]
+              - generic [ref=e147]:
+                - heading "Utilities Spending Up" [level=4] [ref=e148]
+                - paragraph [ref=e149]: You spent 34% more on Utilities this month
+            - generic [ref=e151]:
+              - img [ref=e153]
+              - generic [ref=e155]:
+                - heading "Medical Savings" [level=4] [ref=e156]
+                - paragraph [ref=e157]: You spent 53% less on Medical
+            - generic [ref=e159]:
+              - img [ref=e161]
+              - generic [ref=e163]:
+                - heading "Education Savings" [level=4] [ref=e164]
+                - paragraph [ref=e165]: You spent 31% less on Education
+            - generic [ref=e167]:
+              - img [ref=e169]
+              - generic [ref=e171]:
+                - heading "UPI_Micro Spending Up" [level=4] [ref=e172]
+                - paragraph [ref=e173]: You spent 47% more on UPI_Micro this month
+            - generic [ref=e175]:
+              - img [ref=e177]
+              - generic [ref=e179]:
+                - heading "Cash_Withdrawal Spending Up" [level=4] [ref=e180]
+                - paragraph [ref=e181]: You spent 86% more on Cash_Withdrawal this month
+        - generic [ref=e182]:
+          - generic [ref=e183]:
+            - generic [ref=e185]: Recent Transactions
+            - generic [ref=e187]:
+              - table [ref=e189]:
+                - rowgroup [ref=e190]:
+                  - row "Date Description Category Amount" [ref=e191]:
+                    - columnheader "Date" [ref=e192]
+                    - columnheader "Description" [ref=e193]
+                    - columnheader "Category" [ref=e194]
+                    - columnheader "Amount" [ref=e195]
+                - rowgroup [ref=e196]:
+                  - row "31/12/2025 RAPIDO Transport ₹1,307.00" [ref=e197]:
+                    - cell "31/12/2025" [ref=e198]
+                    - cell "RAPIDO" [ref=e199]
+                    - cell "Transport" [ref=e200]:
+                      - generic [ref=e201]: Transport
+                    - cell "₹1,307.00" [ref=e202]
+                  - row "31/12/2025 CASH WITHDRAWAL Cash_Withdrawal ₹2,391.00" [ref=e203]:
+                    - cell "31/12/2025" [ref=e204]
+                    - cell "CASH WITHDRAWAL" [ref=e205]
+                    - cell "Cash_Withdrawal" [ref=e206]:
+                      - generic [ref=e207]: Cash_Withdrawal
+                    - cell "₹2,391.00" [ref=e208]
+                  - row "31/12/2025 BROADBAND BILL Utilities ₹1,530.00" [ref=e209]:
+                    - cell "31/12/2025" [ref=e210]
+                    - cell "BROADBAND BILL" [ref=e211]
+                    - cell "Utilities" [ref=e212]:
+                      - generic [ref=e213]: Utilities
+                    - cell "₹1,530.00" [ref=e214]
+                  - row "31/12/2025 IMPS TRANSFER Transfer_SA ₹55,865.00" [ref=e215]:
+                    - cell "31/12/2025" [ref=e216]
+                    - cell "IMPS TRANSFER" [ref=e217]
+                    - cell "Transfer_SA" [ref=e218]:
+                      - generic [ref=e219]: Transfer_SA
+                    - cell "₹55,865.00" [ref=e220]
+                  - row "30/12/2025 MONTHLY SALARY CREDIT Salary ₹53,506.00" [ref=e221]:
+                    - cell "30/12/2025" [ref=e222]
+                    - cell "MONTHLY SALARY CREDIT" [ref=e223]
+                    - cell "Salary" [ref=e224]:
+                      - generic [ref=e225]: Salary
+                    - cell "₹53,506.00" [ref=e226]
+                  - row "30/12/2025 RENT PAYMENT - AUG Rent ₹20,423.00" [ref=e227]:
+                    - cell "30/12/2025" [ref=e228]
+                    - cell "RENT PAYMENT - AUG" [ref=e229]
+                    - cell "Rent" [ref=e230]:
+                      - generic [ref=e231]: Rent
+                    - cell "₹20,423.00" [ref=e232]
+                  - row "30/12/2025 TRANSFER FROM SA1 Transfer_SA ₹51,722.00" [ref=e233]:
+                    - cell "30/12/2025" [ref=e234]
+                    - cell "TRANSFER FROM SA1" [ref=e235]
+                    - cell "Transfer_SA" [ref=e236]:
+                      - generic [ref=e237]: Transfer_SA
+                    - cell "₹51,722.00" [ref=e238]
+                  - row "30/12/2025 CASH - KOTAK ATM Cash_Withdrawal ₹6,811.00" [ref=e239]:
+                    - cell "30/12/2025" [ref=e240]
+                    - cell "CASH - KOTAK ATM" [ref=e241]
+                    - cell "Cash_Withdrawal" [ref=e242]:
+                      - generic [ref=e243]: Cash_Withdrawal
+                    - cell "₹6,811.00" [ref=e244]
+                  - row "30/12/2025 GAS BILL Utilities ₹3,303.00" [ref=e245]:
+                    - cell "30/12/2025" [ref=e246]
+                    - cell "GAS BILL" [ref=e247]
+                    - cell "Utilities" [ref=e248]:
+                      - generic [ref=e249]: Utilities
+                    - cell "₹3,303.00" [ref=e250]
+                  - row "30/12/2025 NEFT TRANSFER-REF4018037040 Transfer_SA ₹40,193.00" [ref=e251]:
+                    - cell "30/12/2025" [ref=e252]
+                    - cell "NEFT TRANSFER-REF4018037040" [ref=e253]
+                    - cell "Transfer_SA" [ref=e254]:
+                      - generic [ref=e255]: Transfer_SA
+                    - cell "₹40,193.00" [ref=e256]
+              - link "View all transactions" [ref=e258] [cursor=pointer]:
+                - /url: /transactions/
+                - button "View all transactions" [ref=e259]:
+                  - text: View all transactions
+                  - img
+          - generic [ref=e261]:
+            - generic [ref=e263]: Spending by Category
+            - img [ref=e268]
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e269]
+```

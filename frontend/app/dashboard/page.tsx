@@ -20,15 +20,15 @@ import { AlertTriangle, TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activ
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
-import { formatRupees, formatPercentage } from "@/lib/format";
+import { formatINR, formatPercentage } from "@/lib/utils/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 
 // ============================================================
 // Components
 // ============================================================
 
-function NetCashFlowCard({ amount }: { amount: number }) {
-  const isPositive = amount >= 0;
+function NetCashFlowCard({ amount_paise }: { amount_paise: number }) {
+  const isPositive = amount_paise >= 0;
   return (
     <Card className={`${isPositive ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
       <CardHeader className="pb-2">
@@ -42,7 +42,7 @@ function NetCashFlowCard({ amount }: { amount: number }) {
             <TrendingDown className="h-8 w-8 text-red-600" />
           )}
           <span className={`text-3xl font-bold ${isPositive ? "text-green-600" : "text-red-600"}`}>
-            {formatRupees(amount)}
+            {formatINR(amount_paise)}
           </span>
         </div>
         <p className="text-xs text-gray-500 mt-2">
@@ -237,7 +237,7 @@ export default function DashboardPage() {
 
       {/* Primary Metrics - 4 Key Numbers */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <NetCashFlowCard amount={data.net_cash_flow} />
+        <NetCashFlowCard amount_paise={data.net_cash_flow_paise} />
         <SavingsRateCard rate={data.savings_rate} />
         <EMIRatioCard ratio={data.emi_ratio} />
         <BufferDaysCard days={data.buffer_days} />

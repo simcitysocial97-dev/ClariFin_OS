@@ -9,8 +9,15 @@ import { useMemo } from 'react';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface DashboardData {
-  net_cash_flow: number;
+  // Canonical paise fields
+  net_cash_flow_paise: number;
+  total_income_paise: number;
+  total_expenses_paise: number;
+  // Deprecated rupees field (for backward compatibility)
+  net_cash_flow_rupees?: number;
+  // Other fields
   savings_rate: number;
+  emi_paise: number;
   emi_ratio: number;
   buffer_days: number;
   financial_health_score: number;

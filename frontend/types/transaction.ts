@@ -13,16 +13,15 @@ export interface Transaction {
   id: string | number;
   date: string;
   description: string;
-  amount: number;  // Legacy float - use amount_paise for calculations
   type: 'debit' | 'credit';
   category: string;
   bank: string;
   cardId?: string;
 
-  // ===== Phase 2A: Paise Fields (financial determinism) =====
-  debit?: number;        // Debit amount in paise (INTEGER)
-  credit?: number;       // Credit amount in paise (INTEGER)
-  amount_paise?: number; // Net amount in paise (credit - debit)
+  // ===== Canonical Monetary Fields (Phase 2) =====
+  amount_paise: number;  // Canonical: amount in paise (INTEGER)
+  // amount_rupees is DEPRECATED - for backward compatibility only
+  amount_rupees?: number;  // Deprecated: use amount_paise instead
 
   // ===== Extended Fields (from API) =====
   sequence_num?: number;

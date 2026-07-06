@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Edit2, Trash2, Download, Search, AlertCircle, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatINR } from '@/lib/utils/format';
 
 const categoryColors: Record<string, string> = {
   'Food & Dining': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
@@ -80,7 +81,7 @@ export default function TransactionsPage() {
         const matchesCategory = categoryFilter === 'All' || t.category === categoryFilter;
         const matchesType = typeFilter === 'all' || t.type === typeFilter;
         const matchesBank = bankFilter === 'All' || t.bank === bankFilter;
-        const matchesMinAmount = minAmount === null || t.amount >= minAmount;
+        const matchesMinAmount = minAmount === null || (t.amount_paise || 0) / 100 >= minAmount;
         return matchesSearch && matchesCategory && matchesType && matchesBank && matchesMinAmount;
       })
     : [];
@@ -125,7 +126,7 @@ export default function TransactionsPage() {
         t.description,
         t.category,
         t.type,
-        t.amount,
+        (t.amount_paise / 100).toFixed(2),
       ]);
       const csv = [headers.join(','), ...rows.map((r: any[]) => r.join(','))].join('\n');
       const blob = new Blob([csv], { type: 'text/csv' });
@@ -239,13 +240,13 @@ export default function TransactionsPage() {
     );
   }
 
-  // Calculate totals
-  const totalDebits = transactions
+  // Calculate totals using canonical paise fields
+  const totalDebitsPaise = transactions
     .filter((t: any) => t.type === 'debit')
-    .reduce((sum: number, t: any) => sum + t.amount, 0);
-  const totalCredits = transactions
+    .reduce((sum: number, t: any) => sum + (t.amount_paise || 0), 0);
+  const totalCreditsPaise = transactions
     .filter((t: any) => t.type === 'credit')
-    .reduce((sum: number, t: any) => sum + t.amount, 0);
+    .reduce((sum: number, t: any) => sum + (t.amount_paise || 0), 0);
 
   return (
     <div className="space-y-6 p-6">
@@ -369,19 +370,19 @@ export default function TransactionsPage() {
                 <div className="text-right">
                   <p className="text-muted-foreground">Total Debits</p>
                   <p className="font-semibold text-red-600 font-mono tabular-nums">
-                    ₹{totalDebits.toLocaleString('en-IN')}
+                    {formatINR(totalDebitsPaise)}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-muted-foreground">Total Credits</p>
                   <p className="font-semibold text-green-600 font-mono tabular-nums">
-                    ₹{totalCredits.toLocaleString('en-IN')}
+                    {formatINR(totalCreditsPaise)}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-muted-foreground">Net Amount</p>
                   <p className="font-semibold font-mono tabular-nums">
-                    ₹{Math.abs(totalDebits - totalCredits).toLocaleString('en-IN')}
+                    {formatINR(Math.abs(totalDebitsPaise - totalCreditsPaise))}
                   </p>
                 </div>
               </div>
@@ -458,7 +459,7 @@ export default function TransactionsPage() {
                         transaction.is_large && "font-bold text-amber-600"
                       )}
                     >
-                      {transaction.amount_display || `${transaction.type === 'debit' ? '-' : '+'}₹${transaction.amount.toLocaleString('en-IN')}`}
+                      {transaction.amount_display || formatINR(transaction.amount_paise)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">

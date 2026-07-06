@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/s
 import { ThemeToggle } from '@/components/theme-toggle';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
-import { formatINRCompact } from '@/lib/format';
+import { formatINRCompact } from '@/lib/utils/format';
 import { useNetWorth } from '@/lib/hooks/use-finance-data';
 import { Settings, Menu, ChevronLeft, ChevronRight, Wallet } from 'lucide-react';
 import { CORE_NAV_SECTIONS } from '@/lib/config/navigation';

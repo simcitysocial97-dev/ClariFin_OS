@@ -716,6 +716,7 @@ class FinanceDB:
         sql = f"""
             SELECT
                 t.id, t.sequence_num, t.date, t.description, t.amount,
+                t.amount_paise, t.debit, t.credit,
                 t.type, t.category, t.subcategory, t.raw_description, t.member,
                 s.bank, s.file_name AS statement_file,
                 s.statement_period_from, s.statement_period_to

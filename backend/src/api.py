@@ -24,6 +24,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+# Import configuration and utilities
+from config import settings
+from logger import log_info, log_error
+from errors import register_error_handlers, AppError, DatabaseError, ValidationError, NotFoundError
+
 # Import existing modules
 from db import FinanceDB
 from categorizer import categorize
@@ -177,7 +182,8 @@ def enrich_transaction(txn: dict) -> dict:
     """Add computed fields to a transaction."""
     dt = parse_date(txn.get("date", ""))
     amount = float(txn.get("amount") or 0)
-    
+    amount_paise = int(round(amount * 100))  # Convert rupees to paise
+
     return {
         **txn,
         "parsed_date": dt.strftime("%Y-%m-%d") if dt else "",
@@ -186,6 +192,7 @@ def enrich_transaction(txn: dict) -> dict:
         "weekday": dt.strftime("%A") if dt else "",
         "amount_display": format_inr(amount),
         "amount": amount,
+        "amount_paise": amount_paise,  # Add canonical paise field
         "description_display": clean_description(txn.get("description", "")),
     }
 
@@ -335,16 +342,100 @@ app = FastAPI(
 # Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Register error handlers
+register_error_handlers(app)
+
 
 def get_db():
     """Get database instance."""
     return FinanceDB(db_path=DB_PATH)
+
+
+# ============================================================
+# Health & Diagnostics Endpoints
+# ============================================================
+
+@app.get("/health")
+def health_check():
+    """
+    Basic health check endpoint.
+    
+    Returns 200 OK if the application is running.
+    This is a lightweight check that doesn't verify database connectivity.
+    """
+    return {
+        "status": "healthy",
+        "version": "1.0.0",
+        "message": "ClariFin_OS is running"
+    }
+
+
+@app.get("/ready")
+def readiness_check():
+    """
+    Readiness check endpoint.
+    
+    Verifies:
+    - Database is reachable
+    - Required directories exist
+    
+    Returns 200 OK if all checks pass, 503 otherwise.
+    """
+    import sqlite3
+    
+    checks = {
+        "database": False,
+        "upload_dir": False,
+    }
+    errors = []
+    
+    # Check database connectivity
+    try:
+        db_path = settings.database_path
+        if db_path.exists():
+            conn = sqlite3.connect(str(db_path))
+            conn.execute("SELECT 1 FROM transactions LIMIT 1")
+            conn.close()
+            checks["database"] = True
+        else:
+            # Database doesn't exist yet - that's OK for first run
+            checks["database"] = True
+    except Exception as e:
+        errors.append(f"Database error: {str(e)}")
+    
+    # Check upload directory
+    try:
+        upload_dir = settings.upload_dir
+        if upload_dir.exists() or upload_dir.parent.exists():
+            checks["upload_dir"] = True
+        else:
+            errors.append(f"Upload directory not accessible: {upload_dir}")
+    except Exception as e:
+        errors.append(f"Upload directory error: {str(e)}")
+    
+    all_healthy = all(checks.values())
+    
+    if all_healthy:
+        return {
+            "status": "ready",
+            "checks": checks,
+            "message": "All systems operational"
+        }
+    else:
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "status": "not_ready",
+                "checks": checks,
+                "errors": errors
+            }
+        )
 
 
 # ============================================================

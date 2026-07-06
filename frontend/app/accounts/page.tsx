@@ -6,6 +6,8 @@
  * 
  * Simple CRUD for managing savings accounts.
  * Backend owns all balances - no localStorage.
+ * 
+ * Phase 1: Updated to use balance_paise (canonical) and formatINR formatter.
  */
 
 import { useState, useEffect } from "react";
@@ -28,7 +30,8 @@ interface Account {
   name: string;
   bank_name: string;
   account_type: "Savings" | "Current" | "FD" | "RD";
-  balance: number;
+  balance_paise: number;  // Canonical field (in paise)
+  balance_rupees?: number;  // Deprecated - for backward compatibility
   last_updated: string;
 }
 
@@ -48,12 +51,33 @@ function AccountCard({ account, onEdit, onDelete }: {
   onEdit: (account: Account) => void;
   onDelete: (id: string) => void;
 }) {
-  const formatINR = (amount: number) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    }).format(amount);
+  // Use formatINR - accepts paise and formats with Indian grouping
+  const formatINR = (paise: number) => {
+    const negative = paise < 0;
+    const absPaise = Math.abs(paise);
+    const rupees = Math.floor(absPaise / 100);
+    const paisePart = absPaise % 100;
+    
+    // Format with Indian grouping (lakhs, crores)
+    let formatted: string;
+    if (rupees <= 999) {
+      formatted = rupees.toString();
+    } else {
+      const s = rupees.toString();
+      const last3 = s.slice(-3);
+      const remaining = s.slice(0, -3);
+      const groups: string[] = [];
+      let r = remaining;
+      while (r) {
+        groups.push(r.length >= 2 ? r.slice(-2) : r);
+        r = r.slice(0, -2);
+      }
+      groups.reverse();
+      formatted = groups.join(',') + ',' + last3;
+    }
+    
+    const result = `₹${formatted}.${paisePart.toString().padStart(2, '0')}`;
+    return negative ? `-${result}` : result;
   };
 
   return (
@@ -84,7 +108,7 @@ function AccountCard({ account, onEdit, onDelete }: {
         <div className="mt-4 pt-3 border-t">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-500">Balance</span>
-            <span className="text-lg font-bold">{formatINR(account.balance)}</span>
+            <span className="text-lg font-bold">{formatINR(account.balance_paise)}</span>
           </div>
           <p className="text-xs text-gray-400 mt-1">
             Updated: {new Date(account.last_updated).toLocaleDateString()}
@@ -108,7 +132,8 @@ function AccountForm({
     name: initialData?.name || "",
     bank_name: initialData?.bank_name || "",
     account_type: initialData?.account_type || "Savings",
-    balance: initialData?.balance.toString() || "",
+    // Convert from paise to rupees for form display
+    balance: initialData ? (initialData.balance_paise / 100).toString() : "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -274,8 +299,36 @@ export default function AccountsPage() {
     setDialogOpen(true);
   };
 
-  // Calculate total
-  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+  // Calculate total - use balance_paise (in paise)
+  const totalBalancePaise = accounts.reduce((sum, a) => sum + a.balance_paise, 0);
+  
+  // Format total balance for display
+  const formatINR = (paise: number) => {
+    const negative = paise < 0;
+    const absPaise = Math.abs(paise);
+    const rupees = Math.floor(absPaise / 100);
+    const paisePart = absPaise % 100;
+    
+    let formatted: string;
+    if (rupees <= 999) {
+      formatted = rupees.toString();
+    } else {
+      const s = rupees.toString();
+      const last3 = s.slice(-3);
+      const remaining = s.slice(0, -3);
+      const groups: string[] = [];
+      let r = remaining;
+      while (r) {
+        groups.push(r.length >= 2 ? r.slice(-2) : r);
+        r = r.slice(0, -2);
+      }
+      groups.reverse();
+      formatted = groups.join(',') + ',' + last3;
+    }
+    
+    const result = `₹${formatted}.${paisePart.toString().padStart(2, '0')}`;
+    return negative ? `-${result}` : result;
+  };
 
   // Loading state
   if (loading) {
@@ -344,11 +397,7 @@ export default function AccountsPage() {
               <span className="text-gray-600">Total Balance</span>
             </div>
             <span className="text-2xl font-bold">
-              {new Intl.NumberFormat("en-IN", {
-                style: "currency",
-                currency: "INR",
-                maximumFractionDigits: 0,
-              }).format(totalBalance)}
+              {formatINR(totalBalancePaise)}
             </span>
           </div>
         </CardContent>
@@ -368,7 +417,7 @@ export default function AccountsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {accounts
-            .sort((a, b) => b.balance - a.balance)
+            .sort((a, b) => b.balance_paise - a.balance_paise)
             .map((account) => (
               <AccountCard
                 key={account.id}

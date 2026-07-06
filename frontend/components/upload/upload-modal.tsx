@@ -204,11 +204,11 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
             addCard(card);
 
             // Add transactions with all required fields
-            const transactionsWithCardId = result.transactions.map((t: { date: string; description: string; amount: number; type: string; category: string }) => ({
+            const transactionsWithCardId = result.transactions.map((t) => ({
               id: crypto.randomUUID(),
               date: t.date,
               description: t.description,
-              amount: t.amount,
+              amount_paise: t.amount_paise,
               type: t.type as 'debit' | 'credit',
               category: t.category,
               bank: result.metadata.bankName,

@@ -13,7 +13,7 @@ interface QuickStatsProps {
   monthChange: string;
   transactionCount: number;
   cardCount: number;
-  monthlyChart?: Array<{ month: string; amount: number }>;
+  monthlyChart?: Array<{ month: string; amount_paise: number }>;
   aboveBelowAvg?: string;
   aboveAvgIsBad?: boolean;
   monthlyAverage?: string;
@@ -34,7 +34,7 @@ export function QuickStats({
   // Generate sparkline data from monthly chart
   const sparklineData = useMemo(() => {
     if (!monthlyChart || monthlyChart.length === 0) return [0];
-    return monthlyChart.map(m => m.amount);
+    return monthlyChart.map(m => m.amount_paise / 100);
   }, [monthlyChart]);
 
   // Parse month change for trend indicator

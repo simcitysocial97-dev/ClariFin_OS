@@ -1,338 +1,215 @@
 # Progress
 
-## ✅ PHASE 4A - Dual Mode Dashboard - COMPLETE 23/02/2026
+## Project Status
 
-**Status**: COMPLETE ✅  
-**Completed**: 23/02/2026
+**Current Focus**: Phase 7 — Architecture Corrections & Technical Debt Resolution (**IN PROGRESS**)
 
-### Milestone 4A.1: Mode Toggle Component ✅
-- [x] Created `frontend/components/ModeToggle.tsx`
-- [x] Toggle between 'personal' and 'family' modes
-- [x] localStorage persistence for mode preference
-- [x] `useDashboardMode` hook for state management
-
-### Milestone 4A.2: Personal Dashboard ✅
-- [x] Created `frontend/components/PersonalDashboard.tsx`
-- [x] Behavior-centric layout
-- [x] Primary: Health Score (compact), Impulse Control, Loss Aversion, 7-Day Trend
-- [x] Secondary: Micro-spend Detection, Category Volatility
-- [x] De-emphasized: EMI burden, Buffer adequacy
-- [x] Client-side insight prioritization for personal metrics
-
-### Milestone 4A.3: Family Dashboard ✅
-- [x] Created `frontend/components/FamilyDashboard.tsx`
-- [x] Stability-centric layout
-- [x] Primary: Health Score (expanded), Savings Rate, EMI Ratio, Buffer Adequacy, Cash Flow
-- [x] Secondary: Stress Index, Risk Flags
-- [x] De-emphasized: Micro-spend clustering, Late-night impulse
-- [x] Client-side insight prioritization for family metrics
-
-### Milestone 4A.4: Dashboard Page ✅
-- [x] Created `frontend/app/dashboard/page.tsx`
-- [x] Minimal page with mode routing
-- [x] Single API call: `/api/behavior/summary`
-- [x] No backend changes required
-
-### Key Principles Preserved
-1. ✅ No ledger modification
-2. ✅ No reconciliation changes
-3. ✅ No audit layer changes
-4. ✅ No scoring formula changes
-5. ✅ Same data source for both modes
-6. ✅ Client-side filtering only
+The project has completed a comprehensive 6-phase audit and runtime validation. The current focus is on **executing the prioritized implementation roadmap** to fix critical blockers, remove dead code, resolve unit violations, and consolidate duplicate systems. This phase prepares the codebase for Phase 8 (Feature Implementation).
 
 ---
 
-## ✅ PHASE 3 - Advanced Behavioral Intelligence Layer - COMPLETE 23/02/2026
+## Completed Foundation
 
-**Status**: COMPLETE ✅  
-**Completed**: 23/02/2026
+The following implementation work has been completed and serves as the architectural foundation for the audit and corrections:
 
-### Milestone 3.1: Behavior Engine ✅
-- [x] Created `backend/src/engines/behavior_engine.py`
-- [x] 5 Behavioral Indices: Loss Aversion, Impulsivity, Habit Stability, Financial Stress, Savings Discipline
-- [x] Temporal Pattern Analysis: trend, seasonality, volatility
-- [x] Rolling 90-day baseline calibration
-- [x] Composite Financial Health Score (0-100)
-- [x] Confidence scoring based on data density
+### Core Infrastructure
+- ✅ FastAPI backend with SQLite database (raw SQLite3, no ORM)
+- ✅ Next.js 16 frontend with App Router
+- ✅ PDF parsing pipeline (pdfjs-dist client-side, pdfplumber server-side)
+- ✅ Transaction extraction and categorization
+- ✅ REST API for data access (33 endpoints across 5 categories)
+- ✅ CSV/Excel import/export
 
-### Milestone 3.2: India-Specific Risk Detection ✅
-- [x] UPI micro-spend clustering detection
-- [x] Gambling/gaming transaction detection
-- [x] Loan app pattern detection
-- [x] EMI burden ratio calculation
+### Financial Engines
+- ✅ Balance engine — account balance computation, running balance history
+- ✅ Behavior engine — 5 behavioral indices + financial health score
+- ✅ Insight generator — evidence-based financial insights
+- ✅ Nudge engine — rules-based financial suggestions
+- ✅ Reconciliation engine — confidence-based transaction matching
+- ✅ Ledger audit engine — hash verification, integrity validation
 
-### Milestone 3.3: Insight Generator ✅
-- [x] Created `backend/src/engines/insight_generator.py`
-- [x] Evidence-based insights with quantitative metrics
-- [x] No motivational fluff
-- [x] Structured output (warning/positive/info)
+### Ledger Integrity
+- ✅ Append-only transaction storage
+- ✅ Hash signature unique index for duplicate prevention
+- ✅ Database-level immutability triggers
+- ✅ Deterministic replay capability
 
-### Milestone 3.4: Nudge Engine ✅
-- [x] Created `backend/src/engines/nudge_engine.py`
-- [x] Priority-sorted nudges (1-3)
-- [x] Types: habit, friction, goal, awareness
-- [x] India-specific risk nudges
+### Frontend Features
+- ✅ Dual-mode dashboard (Personal behavior-centric / Family stability-centric)
+- ✅ Transaction list with filtering and search
+- ✅ Account and card management pages
+- ✅ Dark/light theme toggle
+- ✅ Responsive sidebar navigation
+- ✅ shadcn/ui component library integration
+- ✅ React Query v5 integration (partial migration)
 
-### Milestone 3.5: API Endpoints ✅
-- [x] `GET /api/behavior/summary` - Full behavioral profile
-- [x] `GET /api/behavior/score` - Health score with breakdown
-- [x] `GET /api/behavior/insights` - Insights and nudges
+### Testing
+- ✅ 12 Playwright E2E test specs (176 passing, 18 skipped, 0 failing)
+- ✅ Python test suite (engine logic, determinism, reconciliation)
+- ✅ Global test setup with deterministic seed data
+- ✅ Backend auto-start via venv Python
 
-### Milestone 3.6: Frontend Dashboard ✅
-- [x] Created `frontend/app/behavior/page.tsx`
-- [x] Financial Health Score gauge
-- [x] Behavioral index cards
-- [x] Insights panel
-- [x] Nudges panel
-- [x] Risk flags display
-- [x] Weekly spending pattern
+### Monetary Architecture (Phase 1)
+- ✅ Money domain class (`backend/src/core/domain/money.py`)
+- ✅ DTOs with explicit `_paise` suffix (`backend/src/core/dtos/`)
+- ✅ Mappers for domain-to-DTO transformation (`backend/src/core/mappers/`)
+- ✅ API endpoint migration (`backend/src/api.py`)
+- ✅ formatINR as canonical formatter (`frontend/lib/utils/format.ts`)
+- ✅ Accounts page updated to use `balance_paise` and `formatINR`
 
-### Milestone 3.7: Test Suite ✅
-- [x] Created `backend/tests/test_behavior_engine.py`
-- [x] Determinism validation
-- [x] Score bounds checking (0-1, 0-100)
-- [x] No DB mutation tests
-- [x] Edge case handling
-
----
-
-## ✅ PHASE 2C - Ledger Audit Engine - COMPLETE 23/02/2026
-
-**Status**: COMPLETE ✅
-
-### Milestone 2C.1: Ledger Integrity Validation ✅
-- [x] Created `backend/src/engines/ledger_audit_engine.py`
-- [x] Hash signature verification
-- [x] Chronological ordering validation
-- [x] Duplicate detection
-
-### Milestone 2C.2: Audit API Endpoint ✅
-- [x] `GET /api/audit/report` - Full audit report
-- [x] Overall status (PASS/FAIL)
-- [x] Ledger integrity details
-- [x] Hash verification results
-
-### Milestone 2C.3: Audit Tests ✅
-- [x] Created `backend/tests/test_audit_minimal.py`
-- [x] Hash verification tests
-- [x] Integrity validation tests
+### Deprecated
+- ✅ Reflex dashboard archived to `backend/_archived_reflex_dashboard/`
 
 ---
 
-## ✅ ARCHITECTURAL CLEANUP - Complete 22/02/2026
+## Completed Audit Phases
 
-**Status**: COMPLETE ✅  
-**Project**: ClariFin_OS (formerly bank_parser_project)
-
----
-
-## 📋 Cleanup Summary
-
-### Directories Renamed
-- `nextjs-app/` → `frontend/`
-- `python-parser/` → `backend/`
-
-### Directories Deleted (9 items)
-1. `flutter-archive/`
-2. `nextjs-archive/`
-3. `legacy-ui-archive/`
-4. `personal-finance-pwa/`
-5. `PHASE1_FORENSIC_AUDIT/`
-6. `backup-core/`
-7. `bank-statement-parser/`
-8. `PROJECT_AUDIT.json`
-9. `audit-project.js`
-
-### Reflex Deprecated
-- Moved `finance_dashboard/` → `backend/_archived_reflex_dashboard/`
-- Added deprecation README
-- No reflex imports in active backend code
-
-### Files Created
-- `README.md` - Project documentation
-- `.env.example` - Environment template
-
-### Test Files Restored
-- Restored from backup to `data/test/`
-- 7 PDF test files
-- 7 JSON expected results
+| Phase | Status | Artifacts | Key Findings |
+|-------|--------|-----------|--------------|
+| Phase 0 — Repository Discovery | **COMPLETE** | Audit_Report.md | 394 files, 33 endpoints, 47 components |
+| Phase 0 Addendum | **COMPLETE** | Audit_Report.md | Additional inventory details |
+| Phase 1 — Backend Contract Audit | **COMPLETE** | Audit_Report.md | 33 endpoints catalogued, 8 DB tables, 19 unused |
+| Phase 2 — Frontend Inventory | **COMPLETE** | Audit_Report.md | 25 API functions, 24 hooks, 23 components, dual hook system |
+| Phase 3 — Pipeline Mapping | **COMPLETE** | Audit_Report.md | 8 connected, 6 partial, 19 disconnected pipelines |
+| Phase 4 — Financial Unit Consistency | **COMPLETE** | Audit_Report.md | Dual-unit crisis, 1 confirmed violation (100x balance - **FIXED**) |
+| Phase 5 — Dead Code & Technical Debt | **COMPLETE** | Audit_Report.md | ~3,500 lines dead code, 18 debt items, 20 safe deletions |
+| Phase 6 — Runtime Validation | **COMPLETE** | Audit_Report.md | Backend syntax fixed, 3 BLOCKERs verified, 1 CRITICAL unit violation confirmed (**FIXED**) |
 
 ---
 
-## 📊 Final Directory Structure
+## Audit Statistics (UPDATED)
 
-```
-ClariFin_OS/
-├── frontend/                    # Next.js application
-│   ├── app/                     # Pages
-│   │   ├── behavior/            # Phase 3: Behavioral Intelligence
-│   │   ├── dashboard/           # Phase 4A: Dual Mode Dashboard
-│   │   ├── reconciliation/      # Phase 2B: Reconciliation
-│   │   └── ...
-│   ├── components/              # React components
-│   │   ├── ModeToggle.tsx       # Phase 4A: Mode toggle
-│   │   ├── PersonalDashboard.tsx # Phase 4A: Personal mode
-│   │   ├── FamilyDashboard.tsx  # Phase 4A: Family mode
-│   │   └── ...
-│   ├── lib/                     # API client, hooks, store
-│   └── types/                   # TypeScript types
-├── backend/                     # FastAPI + SQLite
-│   ├── src/                     # API code
-│   │   └── engines/             # Deterministic computation engines
-│   │       ├── behavior_engine.py      # Phase 3
-│   │       ├── insight_generator.py   # Phase 3
-│   │       ├── nudge_engine.py        # Phase 3
-│   │       ├── ledger_audit_engine.py # Phase 2C
-│   │       ├── reconciliation_engine.py # Phase 2B
-│   │       └── balance_engine.py      # Phase 2A
-│   ├── tests/                   # Test suite
-│   ├── data/                    # Database + uploads
-│   └── _archived_reflex_dashboard/
-├── data/                        # Root data
-│   └── test/                    # Test files
-├── memory-bank/                 # Cline context
-├── servers/                     # MCP servers
-├── scripts/                     # Utility scripts
-├── README.md
-└── .env.example
-```
+| Metric | Count |
+|--------|-------|
+| Total Phases Completed | 6 (all complete) |
+| Audit Report Length | ~3,000 lines |
+| Backend Endpoints Catalogued | 33 |
+| Frontend API Functions | 25 |
+| React Query Hooks | 11 |
+| Legacy Hooks | 13 |
+| Dead API Functions | 11 |
+| Dead React Query Hooks | 10 |
+| Dead Legacy Hooks | 3 |
+| Unused Backend Endpoints | 19 |
+| Dead Type Files | 5 |
+| Unused Components | 7 |
+| Unit Violations | 5 (1 critical - **FIXED**) |
+| Technical Debt Items | 18 |
+| Safe Deletion Candidates | 20 |
+| Refactoring Tasks | 33 (XS to XL) |
+| Critical Blockers (RESOLVED) | 2 (B01, B02) |
+| Critical Blockers (PENDING) | 2 (B05, B06) |
 
 ---
 
-## ✅ Validation Results
+## Critical Blockers (UPDATED)
 
-| Check | Result |
-|-------|--------|
-| Frontend build | ✅ Success |
-| Backend API code | ✅ No reflex imports |
-| Database path | ✅ `backend/data/finance.db` exists |
-| Test files | ✅ Restored to `data/test/` |
-| Phase 3 tests | ✅ All passing |
-| Phase 4A components | ✅ Created |
+### RESOLVED
+1. **B01: Backend Syntax Error**
+   - **File**: `backend/src/api.py`
+   - **Line**: 193
+   - **Issue**: Invalid markdown code block delimiter (```) in Python source
+   - **Impact**: Backend cannot start, all runtime validation blocked
+   - **Status**: **FIXED** — Syntax error resolved
 
----
+2. **B02: Account Balance Unit Violation**
+   - **File**: `frontend/app/accounts/page.tsx`
+   - **Issue**: `balance_paise` displayed as rupees without ÷100
+   - **Impact**: Account balances display 100x too high
+   - **Status**: **FIXED** — Now uses `balance_paise` and `formatINR`
 
-## 📝 Phase 1: Critical Stability Fixes - COMPLETE ✅
+### PENDING
+1. **B05: Missing Pages**
+   - **Routes**: `/loans`, `/investments`
+   - **Issue**: Navigation links cause 404 errors
+   - **Status**: **PENDING** — Remove from navigation or create page files
 
-### Milestone 1.1: Unify Transaction Type ✅
-- [x] Created `types/transaction.ts` with canonical Transaction interface
-- [x] Removed duplicate interface from `lib/api/client.ts`
-
-### Milestone 1.2: Remove All `any` Types ✅
-- [x] Created `types/api.ts` with proper interfaces
-- [x] Updated all files with proper typing
-
-### Milestone 1.3: Fix Unstable React Keys ✅
-- [x] Fixed all `key={index}` patterns
-
-### Milestone 1.4: Add Global Error Boundary ✅
-- [x] Created `components/error-boundary.tsx`
-- [x] Added to `app/layout.tsx`
-
-### Milestone 1.5: Remove Dual Data Source ✅
-- [x] Pages rely solely on FastAPI backend
+2. **B06: Chain Redirect to 404**
+   - **Route**: `/projections` → `/loans?tab=simulator` → 404
+   - **Status**: **PENDING** — Redirect to /dashboard instead
 
 ---
 
-## ✅ Phase 2A Complete - Financial Determinism Foundation
+## High Priority Issues (UPDATED)
 
-- All amounts stored as INTEGER paise
-- Balance engine computes deterministically
-- 4 new API endpoints for balance queries
-- Ledger immutability triggers
-- Hash signature uniqueness
-
----
-
-## ✅ Phase 2B Complete - Deterministic Reconciliation Layer
-
-- Confidence-based matching
-- Idempotent inserts
-- Metadata-only overlay
-- No ledger mutation
+| ID | Issue | Status |
+|----|-------|--------|
+| B03 | useNetWorth in sidebar fails | **PENDING** — Remove dead hook and sidebar display |
+| B04 | useDeleteStatement in cards page always errors | **PENDING** — Remove dead hook and delete button |
+| R3 | Two parallel hook systems (legacy + React Query) | **PENDING** — Consolidate to React Query |
+| R4 | 11 dead API functions, 10 dead React Query hooks | **PENDING** — Remove dead code |
+| R6 | In-memory accounts store loses data | **PENDING** — Add database persistence |
+| D1 | Duplicate overview hooks (useOverview vs useOverviewQuery) | **PENDING** — Remove legacy useOverview |
+| D3 | Two dashboard pages with overlap (`/` vs `/dashboard`) | **PENDING** — Decide which to keep |
 
 ---
 
-## ✅ PHASE 7 - Playwright E2E Test Suite - COMPLETE 24/02/2026
+## Phase 7 Progress
 
-**Status**: COMPLETE ✅  
-**Completed**: 24/02/2026
+### Immediate (XS, <15 min) — **IN PROGRESS**
+| Task | Status | Files | Evidence |
+|------|--------|-------|----------|
+| 1. Fix B05: Remove /loans and /investments from navigation | **PENDING** | frontend/lib/config/navigation.ts | Audit finding B05 |
+| 2. Fix B06: Redirect /projections to /dashboard | **PENDING** | frontend/lib/config/navigation.ts | Audit finding B06 |
+| 3. Fix B03: Remove useNetWorth hook and sidebar display | **PENDING** | frontend/components/layout/sidebar.tsx, frontend/lib/hooks/use-finance-data.ts | Audit finding B03 |
+| 4. Fix B04: Remove useDeleteStatement hook and delete button | **PENDING** | frontend/app/cards/page.tsx, frontend/lib/hooks/use-finance-data.ts | Audit finding B04 |
+| 5. Remove dead code: due-date-logic.ts, query-client.ts, use-async-mutation.ts | **PENDING** | frontend/lib/utils/due-date-logic.ts, frontend/lib/query-client.ts, frontend/lib/hooks/use-async-mutation.ts | Audit findings M11, M12, M13 |
+| 6. Remove dead type files: investment.ts, loan.ts, recurring.ts, v2.ts | **PENDING** | frontend/types/investment.ts, frontend/types/loan.ts, frontend/types/recurring.ts, frontend/types/v2.ts | Audit findings SD9-SD12 |
+| 7. Remove dead formatters: formatRupeesCompact, truncateText | **PENDING** | frontend/lib/format.ts, frontend/lib/utils/format.ts | Audit findings M09, M10 |
 
-### Test Suite Summary
+### Low-Risk Cleanup (S, 15-60 min) — **NOT STARTED**
+| Task | Status | Files | Evidence |
+|------|--------|-------|----------|
+| 8. Remove 10 dead React Query hooks | **PENDING** | frontend/lib/hooks/use-query-finance.ts | Audit findings H06-H14 |
+| 9. Remove 11 dead API client functions | **PENDING** | frontend/lib/api/client.ts | Audit findings B07-B12, H01-H05 |
+| 10. Remove unused hooks: useAnalytics, useCategories, useMembers | **PENDING** | frontend/lib/hooks/use-finance-data.ts | Audit findings M03-M05 |
+| 11. Remove unused API functions: fetchCategories, fetchAnalytics, fetchMembers | **PENDING** | frontend/lib/api/client.ts | Audit findings M06-M08 |
+| 12. Remove test route: /test/metadata | **PENDING** | frontend/app/test/metadata/ | Audit finding SD20 |
+| 13. Consolidate formatters: Remove lib/format.ts, use lib/utils/format.ts | **PENDING** | frontend/lib/format.ts, frontend/lib/utils/format.ts | Audit finding D5 |
 
-| Test File | Passed | Skipped | Total |
-|-----------|--------|---------|-------|
-| Navigation | 28 | 0 | 28 |
-| CSS Integrity | 19 | 3 | 22 |
-| Dashboard | 14 | 2 | 16 |
-| Behavior | 25 | 0 | 25 |
-| Reconciliation | 19 | 0 | 19 |
-| Transactions | 14 | 0 | 14 |
-| E2E Financial Logic | 19 | 4 | 23 |
-| Edge Cases | 9 | 2 | 11 |
-| Behavioral Scoring | 14 | 3 | 17 |
-| Performance | 15 | 4 | 19 |
-| **Total** | **176** | **18** | **194** |
-
-**Pass Rate: 91% (176/194 tests)**
-
-### Key Fixes Applied
-1. **Backend Entry Point**: Fixed `main:app` → `src.api:app`
-2. **localStorage Safety**: Wrapped all `page.evaluate()` in try-catch
-3. **Navigation Order**: Navigate first, then seed data, then reload
-4. **Error Capture**: Added ignore patterns for expected 404s
-5. **Strict Thresholds**: Skipped tests with performance thresholds too strict for CI
-
-### Tests Skipped (18 total)
-- **CSS Integrity (3)**: Font loading, animation tests
-- **Dashboard (2)**: Mode toggle feature not fully implemented
-- **E2E Financial Logic (4)**: Business logic thresholds
-- **Edge Cases (2)**: Risk score calculation varies
-- **Behavioral Scoring (3)**: Mode switching, risk calculation
-- **Performance (4)**: Page load thresholds too strict for CI
-
-### Test Infrastructure Created
-- 12 test spec files
-- 8 utility files
-- Custom Playwright fixtures
-- Global setup with backend auto-start
-- 10 report generators
+### Medium Refactors (M, 1-4 hours) — **NOT STARTED**
+| # | Task | Status | Files | Evidence |
+|---|------|--------|-------|----------|
+| 14 | Consolidate duplicate overview hooks | **PENDING** | frontend/lib/hooks/use-finance-data.ts, frontend/lib/hooks/use-query-finance.ts | Audit finding D1 |
+| 15 | Migrate legacy hooks to React Query | **PENDING** | Multiple | Audit finding R3 |
+| 16 | Fix accounts page: Use API client instead of direct fetch | **PENDING** | frontend/app/accounts/page.tsx, frontend/lib/api/client.ts | Audit finding TD16 |
+| 17 | Consolidate category color maps | **PENDING** | frontend/app/transactions/page.tsx, frontend/components/dashboard/recent-transactions.tsx | Audit finding D8 |
+| 18 | Remove deprecated _rupees fields | **PENDING** | backend/src/core/dtos/ | Audit finding TD3 |
 
 ---
 
-## 🔜 Next Steps
+## Success Criteria for Phase 7
 
-1. **Phase 4B**: Goal tracking and progress indicators
-2. **Phase 5**: Export and reporting features
-3. **Performance**: TanStack Virtual for large datasets
-4. **Visual Regression**: Add baseline snapshots
+The phase is complete when:
+
+- [ ] All BLOCKER findings are resolved (B05, B06)
+- [ ] All HIGH priority findings are resolved (B03, B04, R3, R4, R6, D1, D3)
+- [ ] All dead code identified in Phase 5 is removed
+- [ ] All unit violations are resolved
+- [ ] Duplicate systems are consolidated
+- [ ] Codebase is verified to be free of critical runtime errors
+- [ ] Memory bank is updated to reflect current state
+
+**Progress**: 0/7 tasks complete (0%)
 
 ---
 
-## ✅ How to Run
+## Next Steps
 
-**Frontend:**
-```bash
-cd frontend && npm run dev
-```
+1. **Execute Immediate Tasks (XS)**: Fix critical blockers and remove dead code
+2. **Verify Fixes**: Confirm each change with appropriate tests and runtime validation
+3. **Update Memory Bank**: Reflect current state after each change
+4. **Proceed to Low-Risk Cleanup (S)**: Remove remaining dead code and consolidate formatters
+5. **Tackle Medium Refactors (M)**: Consolidate hooks, migrate to React Query, fix accounts page
+6. **Plan High-Risk Refactors (L)**: Consolidate dashboard pages, replace in-memory store, remove dead endpoints
 
-**Backend:**
-```bash
-cd backend && uvicorn src.api:app --reload --port 8000
-```
+---
 
-**Backend Tests:**
-```bash
-cd backend && python -m pytest tests/ -v
-```
+## Audit Artifacts
 
-**Playwright E2E Tests:**
-```bash
-cd frontend && npx playwright test
-```
-
-**Playwright Specific Spec:**
-```bash
-cd frontend && npx playwright test specs/e2e-financial-logic.spec.ts
-```
+- **Primary Report**: `Audit_Report.md` (~3,000 lines, 6 phases)
+- **Compressed Audit Reference**: Generated from audit report (Phase 7 deliverable)
+- **Architecture Consolidation Report**: `Architecture_Consolidation_Report.md`
+- **Monetary Architecture**: `docs/MONETARY_ARCHITECTURE.md`
+- **ADR-001**: `docs/adr/ADR-001-canonical-monetary-units.md`
+- **Implementation Report**: `docs/PHASE1_IMPLEMENTATION_REPORT.md`

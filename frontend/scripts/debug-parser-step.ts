@@ -85,7 +85,7 @@ async function debugParse(pdfFile: string) {
     console.log(`Found ${transactions.length} transactions`);
     console.log('\nFirst 5 transactions:');
     transactions.slice(0, 5).forEach((t, i) => {
-        console.log(`  ${i + 1}. ${t.date} | ${t.description.substring(0, 30)}... | ₹${t.amount} | ${t.type}`);
+        console.log(`  ${i + 1}. ${t.date} | ${t.description.substring(0, 30)}... | ₹${(t.amount_paise / 100).toFixed(2)} | ${t.type}`);
     });
 
     // Step 6: Validation

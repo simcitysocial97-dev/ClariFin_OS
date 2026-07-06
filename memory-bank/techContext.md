@@ -1,203 +1,217 @@
 # Technical Context
 
-## Technologies Used
+## Technology Stack
 
 ### Core Stack
-- **Next.js 16.1.6** - React framework with App Router
-- **TypeScript** - Type-safe development
-- **Tailwind CSS** - Styling
-- **shadcn/ui** - UI components
-- **PDF.js** - PDF parsing with text extraction
-- **FastAPI** - REST API framework
-- **SQLite** - Database
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend Framework | Next.js 16.1.6 (App Router) | React-based SSR/SPA |
+| Language | TypeScript (strict mode) | Type-safe frontend development |
+| Styling | Tailwind CSS | Utility-first CSS |
+| UI Components | shadcn/ui | Accessible, composable components |
+| State Management | Zustand | Lightweight client state |
+| Server State | React Query (TanStack Query) | API data fetching and caching |
+| Charts | Recharts, Chart.js | Data visualization |
+| PDF Parsing (client) | pdfjs-dist | Client-side PDF text extraction |
+| Backend Framework | FastAPI | REST API |
+| Database | SQLite (raw, no ORM) | Local persistent storage |
+| PDF Parsing (server) | pdfplumber | Server-side PDF extraction |
+| E2E Testing | Playwright | Browser automation tests |
+| Unit Testing | pytest | Python test suite |
 
 ### Deprecated
-- **Reflex** - Archived to `backend/_archived_reflex_dashboard/`
+- **Reflex Dashboard**: Archived to `backend/_archived_reflex_dashboard/`
 
 ---
 
-## Parser Architecture
-
-### Spatial Text Extraction
-```typescript
-// frontend/lib/parser/core/text-extractor.ts
-export interface TextItem {
-    text: string;
-    x: number;           // X coordinate from PDF.js transform
-    y: number;           // Y coordinate (flipped for top-down)
-    width: number;
-    height: number;
-    fontSize: number;
-    fontName: string;
-}
-```
-
-**Key Implementation Details:**
-- PDF.js loaded dynamically to avoid SSR issues
-- Y coordinate flipped (PDF origin is bottom-left, we use top-down)
-- Items grouped into lines using Y position tolerance (5px)
-- Lines sorted by Y position for top-to-bottom reading
-
----
-
-## FastAPI REST API
-
-### Architecture
-```python
-# backend/src/api.py
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
-from fastapi.middleware.cors import CORSMiddleware
-
-app = FastAPI(title="Personal Finance API", version="1.0.0")
-```
-
-### Endpoints
-
-#### Dashboard Endpoints
-- `GET /api/transactions` - List transactions with filters
-- `GET /api/overview` - Overview metrics and charts
-- `GET /api/categories` - Category summary and breakdown
-- `GET /api/analytics` - Analytics data
-- `GET /api/statements` - List statements with metadata
-
-#### Data Endpoints
-- `GET /api/banks` - List banks
-- `GET /api/categories/list` - List categories
-- `GET /api/members` - List members
-
-#### Action Endpoints
-- `POST /api/upload` - Upload PDF statement
-- `POST /api/import/detect` - Detect CSV/Excel format
-- `POST /api/import/execute` - Execute CSV/Excel import
-- `POST /api/members` - Add new member
-- `GET /api/export/csv` - Export transactions to CSV
-
-#### Balance Endpoints (Phase 2A)
-- `GET /api/accounts` - List all accounts with balances
-- `GET /api/accounts/{id}/balance` - Single account balance
-- `GET /api/accounts/{id}/running-balance` - Running balance history
-- `GET /api/statements/{id}/validate` - Validate statement balance
-
-#### Removed Endpoints (Phase 2A.1 - Ledger Immutability)
-- ~~`PUT /api/transactions/{id}/category`~~ - REMOVED
-- ~~`PUT /api/transactions/bulk-category`~~ - REMOVED
-- ~~`DELETE /api/statements/{id}`~~ - REMOVED
-
-### CORS Configuration
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
-
----
-
-## File Structure
+## Repository Structure
 
 ```
 ClariFin_OS/
 ├── frontend/                    # Next.js application
-│   ├── app/                     # Pages
+│   ├── app/                     # App Router pages
+│   │   ├── dashboard/           # Dashboard views
+│   │   ├── transactions/        # Transaction list/filter
+│   │   ├── accounts/            # Account management
+│   │   ├── cards/               # Card management
+│   │   ├── settings/            # Application settings
+│   │   └── test/                # Test pages
 │   ├── components/              # React components
-│   ├── lib/                     # API client, hooks, parser
-│   │   ├── parser/              # PDF parsing
-│   │   ├── api/                 # API client
-│   │   └── hooks/               # React hooks
-│   └── types/                   # TypeScript types
+│   │   ├── ui/                  # shadcn/ui primitives
+│   │   ├── dashboard/           # Dashboard widgets
+│   │   ├── cards/               # Card components
+│   │   ├── import/              # Import workflow
+│   │   ├── layout/              # Layout components
+│   │   ├── members/             # Member management
+│   │   ├── onboarding/          # Onboarding flow
+│   │   └── upload/              # Upload components
+│   ├── hooks/                   # React hooks
+│   ├── types/                   # TypeScript type definitions
+│   ├── lib/                     # API client, parser, utilities
+│   └── tests/                   # Playwright E2E tests
+│       ├── specs/               # Test specifications
+│       ├── fixtures/            # Custom fixtures
+│       └── utils/               # Test utilities
 ├── backend/                     # FastAPI + SQLite
-│   ├── src/                     # API code
-│   │   ├── api.py               # FastAPI endpoints
+│   ├── src/                     # Application code
+│   │   ├── api.py               # FastAPI application + endpoints
 │   │   ├── db.py                # Database operations
 │   │   ├── categorizer.py       # Transaction categorization
-│   │   └── ...                  # Other modules
-│   ├── data/                    # Database + uploads
-│   │   ├── finance.db           # SQLite database
-│   │   └── uploads/             # Uploaded statements
-│   └── _archived_reflex_dashboard/
-├── data/                        # Root data
-│   └── test/                    # Test files
-├── memory-bank/                 # Cline context
-├── servers/                     # MCP servers
-└── scripts/                     # Utility scripts
+│   │   ├── csv_importer.py      # CSV/Excel import
+│   │   ├── engines/             # Deterministic computation engines
+│   │   │   ├── balance_engine.py
+│   │   │   ├── behavior_engine.py
+│   │   │   ├── insight_generator.py
+│   │   │   ├── ledger_audit_engine.py
+│   │   │   ├── nudge_engine.py
+│   │   │   └── reconciliation_engine.py
+│   │   ├── core/                # Domain models and services
+│   │   ├── extraction/          # PDF extraction modules
+│   │   ├── parsers/             # Bank-specific parsers
+│   │   └── structural/          # Layout analysis
+│   ├── tests/                   # Python test suite
+│   └── data/                    # Database + uploads
+├── memory-bank/                 # Cline context (project documentation)
+├── servers/                     # MCP server implementations
+├── Audit_Report.md              # Append-only audit findings
+└── README.md                    # Project overview
 ```
 
 ---
 
-## Dependencies
+## Backend Architecture
 
-### Production (Frontend)
-- `pdfjs-dist` - PDF parsing
-- `react-dropzone` - File upload
-- `lucide-react` - Icons
-- `recharts` - Charts
-- `chart.js` - Charts
-- `zustand` - State management
+### FastAPI Application
+- Single `api.py` entry point with CORS middleware
+- Configured for origins: `localhost:3000`, `localhost:3001`
+- Raw SQLite3 (no ORM) with inline DDL
+- Database file: `backend/data/finance.db`
 
-### Production (Backend)
-- `fastapi` - REST API framework
-- `uvicorn` - ASGI server
-- `python-multipart` - File upload handling
-- `pandas` - CSV/Excel processing
-- `openpyxl` - Excel file support
-- `pdfplumber` - PDF extraction
+### Engine Architecture
+Each engine is a deterministic computation module:
+- **balance_engine.py**: Account balance computation, running balance history
+- **behavior_engine.py**: 5 behavioral indices + financial health score
+- **insight_generator.py**: Evidence-based financial insights
+- **ledger_audit_engine.py**: Hash verification, integrity validation
+- **nudge_engine.py**: Rules-based financial suggestions
+- **reconciliation_engine.py**: Confidence-based transaction matching
+
+### Ledger Integrity
+- Append-only transaction storage
+- Hash signature unique index prevents duplicates
+- ISO date ordering ensures correct chronological replay
+- Database-level trigger enforcement against mutation
+
+---
+
+## Frontend Architecture
+
+### App Router Pages
+- `/dashboard` — Dual-mode dashboard (Personal/Family)
+- `/transactions` — Transaction list with filtering and search
+- `/accounts` — Account management
+- `/cards` — Card management
+- `/settings` — Application settings
+
+### Data Fetching
+- React Query (TanStack Query) for server state
+- Custom hooks wrapping API calls
+- Zustand for local UI state (theme, mode preference)
+
+### Parser Architecture
+- Client-side PDF.js for text extraction
+- Spatial text extraction using PDF.js transform coordinates
+- Y-coordinate flipping (PDF origin is bottom-left → top-down)
+- Items grouped into lines using Y position tolerance (5px)
+- Bank-specific pattern matching for transaction extraction
+
+---
+
+## SQLite Architecture
+
+- Raw SQLite3 driver (no ORM, no SQLAlchemy)
+- Inline DDL in `db.py`
+- Append-only transaction table with hash-based deduplication
+- Immutability triggers at database level
+- Deterministic keys for idempotent inserts
+
+---
+
+## API Architecture
+
+- RESTful FastAPI application
+- CORS configured for local development
+- Endpoints organized by domain: transactions, accounts, behavior, audit, import/export
+- Full endpoint inventory maintained in `Audit_Report.md` (append-only)
+
+---
+
+## Testing Strategy
+
+| Layer | Tool | Scope |
+|-------|------|-------|
+| Backend unit | pytest | Engine logic, determinism, reconciliation |
+| Backend invariants | pytest | Financial invariant validation |
+| E2E | Playwright | Navigation, dashboard, transactions, behavior, reconciliation |
+| Visual | Playwright | Screenshot comparison (deferred) |
+| Performance | Playwright | Load time thresholds (CI-adjusted) |
+
+### Playwright Configuration
+- Auto-starts backend using venv Python
+- Falls back to localStorage if backend unavailable
+- Seeds deterministic test data via global setup
+- 12 test specs covering navigation, financial logic, behavioral scoring, edge cases
+
+---
+
+## MCP Usage
+
+| MCP Server | Purpose |
+|------------|---------|
+| Filesystem | File read/write operations |
+| SQLite | Database querying during audit |
+| Git | Repository inspection and version control |
+| Sequential Thinking | Complex problem decomposition |
+| Playwright | E2E test execution and browser automation |
+| Context7 | Documentation reference |
+| shadcn | UI component registry |
+| magic-ui | UI component registry |
+
+---
+
+## Financial Unit Policy
+
+- All monetary values stored as integer paise (paise = rupees × 100)
+- Frontend converts paise → rupees for display
+- Backend is authoritative for all financial calculations
+- Every monetary value must be traceable end-to-end: database → backend → API → frontend → display
+
+---
+
+## Current Engineering Principles
+
+These principles take precedence over feature work:
+
+1. **Read-Only During Audit**: No production code modifications, no refactoring, no formatting, no dependency updates
+2. **Evidence First**: Every finding must include file path, function, line number, confidence, and supporting evidence. Never infer missing information.
+3. **Financial Correctness**: Primary validation target — Database → Backend → API → Frontend → Hooks → Components → Charts → Display
+4. **Append-Only Audit Report**: `Audit_Report.md` is never rewritten. Previous phases are preserved.
+5. **SQLite Inventory**: The SQLite audit database is the supporting inventory for all audit findings.
+6. **Implementation After Audit**: No new features or architectural changes until the audit is complete.
 
 ---
 
 ## Build Configuration
 
-### next.config.ts
-- Turbopack enabled
-- Worker root configuration
-
-### TypeScript
-- Strict mode enabled
-- Path aliases configured (@/lib, @/components, etc.)
-- No implicit any
-
----
+- **Next.js**: Turbopack enabled, worker root configuration
+- **TypeScript**: Strict mode, path aliases (`@/lib`, `@/components`, etc.), no implicit any
+- **Backend**: uvicorn ASGI server, hot-reload enabled
 
 ## How to Run
 
-**Frontend:**
 ```bash
+# Frontend
 cd frontend && npm run dev
-```
 
-**Backend:**
-```bash
+# Backend
 cd backend && uvicorn src.api:app --reload --port 8000
-```
-
----
-
-## Architectural Decisions
-
-### 1. Single Source of Truth
-The FastAPI backend (SQLite-backed) is the single source of truth for all financial data.
-
-### 2. Transaction Type Authority
-`frontend/types/transaction.ts` is the only valid Transaction definition.
-
-### 3. Monetary Representation Policy (Phase 2)
-All monetary values will migrate to integer paise representation.
-
----
-
-## Known Limitations
-
-1. **Table Detection:** May fail if table structure is unusual
-2. **Proximity Matching:** Depends on consistent PDF layouts
-3. **Bank Support:** Limited to 6 major banks (expandable)
-4. **Date Formats:** Handles common formats but may miss edge cases
-
-## Future Enhancements
-
-1. Add more bank patterns
-2. Implement machine learning for table detection
-3. Support for debit card statements
-4. Multi-currency support
-5. Add authentication to API
