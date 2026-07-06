@@ -8,8 +8,6 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/s
 import { ThemeToggle } from '@/components/theme-toggle';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
-import { formatINRCompact } from '@/lib/utils/format';
-import { useNetWorth } from '@/lib/hooks/use-finance-data';
 import { Settings, Menu, ChevronLeft, ChevronRight, Wallet } from 'lucide-react';
 import { CORE_NAV_SECTIONS } from '@/lib/config/navigation';
 
@@ -41,10 +39,6 @@ interface SidebarProps {
 
 export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProps) {
   const pathname = usePathname();
-  const { data: netWorthData } = useNetWorth();
-  const netWorthPaise = netWorthData?.net_worth_paise ?? 0;
-  const netWorthDisplay = formatINRCompact(netWorthPaise);
-  const isPositive = netWorthPaise >= 0;
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
@@ -56,7 +50,7 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
         </Link>
       </div>
 
-      {/* Net Worth Chip */}
+      {/* Net Worth Chip - Temporarily removed (dead endpoint) */}
       <div className="px-3 py-4 border-b">
         <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-3 py-2">
           <Wallet className="h-4 w-4 text-muted-foreground" />
@@ -65,14 +59,10 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
               <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Net Worth
               </span>
-              <span className={cn('text-sm font-semibold', isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
-                {netWorthDisplay}
-              </span>
+              <span className="text-sm font-semibold"> — </span>
             </div>
           ) : (
-            <span className={cn('text-sm font-semibold', isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
-              {netWorthDisplay}
-            </span>
+            <span className="text-sm font-semibold"> — </span>
           )}
         </div>
       </div>

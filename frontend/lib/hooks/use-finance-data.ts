@@ -9,28 +9,18 @@ import {
   fetchTransactions,
   fetchStatements,
   fetchCategories,
-  fetchAnalytics,
   fetchBanks,
   fetchCategoryList,
-  fetchMembers,
   uploadStatement,
-  updateTransactionCategory,
-  deleteStatement,
   exportCSV,
-  fetchNetWorth,
   type Transaction,
   type OverviewData,
   type Statement,
   type CategorySummary,
-  type Member,
   type UploadResult,
-  type NetWorth,
 } from '@/lib/api/client';
 import type {
   CategoriesResponse,
-  AnalyticsData,
-  MonthlyBreakdown,
-  UncategorizedPattern,
 } from '@/types/api';
 
 // ============================================================================
@@ -184,38 +174,6 @@ export function useCategories(params?: {
 }
 
 // ============================================================================
-// useAnalytics
-// ============================================================================
-
-export function useAnalytics(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-}): HookState<AnalyticsData> {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchAnalytics(params);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [params?.exclude_transfers, params?.member]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
 // useBanks
 // ============================================================================
 
@@ -274,64 +232,6 @@ export function useCategoryList(): HookState<string[]> {
 }
 
 // ============================================================================
-// useMembers
-// ============================================================================
-
-export function useMembers(): HookState<Member[]> {
-  const [data, setData] = useState<Member[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchMembers();
-      setData(result.members);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useNetWorth
-// ============================================================================
-
-export function useNetWorth(): HookState<NetWorth> {
-  const [data, setData] = useState<NetWorth | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchNetWorth();
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
 // useUpload
 // ============================================================================
 
@@ -363,66 +263,6 @@ export function useUpload(): UploadState {
   }, []);
 
   return { uploading, error, result, upload };
-}
-
-// ============================================================================
-// useUpdateCategory
-// ============================================================================
-
-interface UpdateCategoryState {
-  updating: boolean;
-  error: Error | null;
-  update: (id: number, category: string, subcategory?: string) => Promise<void>;
-}
-
-export function useUpdateCategory(): UpdateCategoryState {
-  const [updating, setUpdating] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const update = useCallback(async (id: number, category: string, subcategory?: string) => {
-    setUpdating(true);
-    setError(null);
-    try {
-      await updateTransactionCategory(id, category, subcategory);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Update failed'));
-      throw err;
-    } finally {
-      setUpdating(false);
-    }
-  }, []);
-
-  return { updating, error, update };
-}
-
-// ============================================================================
-// useDeleteStatement
-// ============================================================================
-
-interface DeleteStatementState {
-  deleting: boolean;
-  error: Error | null;
-  deleteStatement: (id: number) => Promise<void>;
-}
-
-export function useDeleteStatement(): DeleteStatementState {
-  const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const deleteStmt = useCallback(async (id: number) => {
-    setDeleting(true);
-    setError(null);
-    try {
-      await deleteStatement(id);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Delete failed'));
-      throw err;
-    } finally {
-      setDeleting(false);
-    }
-  }, []);
-
-  return { deleting, error, deleteStatement: deleteStmt };
 }
 
 // ============================================================================
