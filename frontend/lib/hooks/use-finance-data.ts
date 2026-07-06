@@ -8,7 +8,6 @@ import {
   fetchOverview,
   fetchTransactions,
   fetchStatements,
-  fetchCategories,
   fetchBanks,
   fetchCategoryList,
   uploadStatement,
@@ -19,9 +18,6 @@ import {
   type CategorySummary,
   type UploadResult,
 } from '@/lib/api/client';
-import type {
-  CategoriesResponse,
-} from '@/types/api';
 
 // ============================================================================
 // HOOK RETURN TYPES
@@ -132,39 +128,6 @@ export function useStatements(): HookState<Statement[]> {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data, loading, error, refetch: fetchData };
-}
-
-// ============================================================================
-// useCategories
-// ============================================================================
-
-export function useCategories(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-  drill_category?: string;
-}): HookState<CategoriesResponse> {
-  const [data, setData] = useState<CategoriesResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetchCategories(params);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error('Unknown error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [params?.exclude_transfers, params?.member, params?.drill_category]);
 
   useEffect(() => {
     fetchData();

@@ -5,7 +5,6 @@
 
 import type { Transaction } from '@/types/transaction';
 import type {
-  CategoriesResponse,
   AnalyticsData,
   CategorySummary,
   MonthlyBreakdown,
@@ -164,25 +163,6 @@ export async function fetchTransactions(params?: {
  */
 export async function fetchStatements(): Promise<Statement[]> {
   const res = await fetch(`${API_BASE}/api/statements`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
-}
-
-/**
- * Fetch category data with optional drill-down
- */
-export async function fetchCategories(params?: {
-  exclude_transfers?: boolean;
-  member?: string;
-  drill_category?: string;
-}): Promise<CategoriesResponse> {
-  const query = new URLSearchParams();
-  if (params?.exclude_transfers !== undefined)
-    query.set('exclude_transfers', String(params.exclude_transfers));
-  if (params?.member) query.set('member', params.member);
-  if (params?.drill_category) query.set('drill_category', params.drill_category);
-  
-  const res = await fetch(`${API_BASE}/api/categories?${query}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }
