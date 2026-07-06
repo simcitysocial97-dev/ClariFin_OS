@@ -1,15 +1,16 @@
-Next.js
+# Next.js
 .next/
 out/
 build-errors*.log
 
-Dependencies
+# Dependencies
 node_modules/
 
-Testing
+# Testing
 coverage/
 .nyc_output/
+test-results/
 
-Misc
+# Misc
 .DS_Store
 *.pem
