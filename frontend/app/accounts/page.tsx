@@ -80,43 +80,43 @@ function AccountCard({ account, onEdit, onDelete }: {
     return negative ? `-${result}` : result;
   };
 
-  return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <Building2 className="h-5 w-5 text-gray-600" />
-            </div>
-            <div>
-              <h3 className="font-medium">{account.name}</h3>
-              <p className="text-sm text-gray-500">{account.bank_name}</p>
-              <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
-                {account.account_type}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => onEdit(account)}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => onDelete(account.id)}>
-              <Trash2 className="h-4 w-4 text-red-500" />
-            </Button>
-          </div>
-        </div>
-        <div className="mt-4 pt-3 border-t">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Balance</span>
-            <span className="text-lg font-bold">{formatINR(account.balance_paise)}</span>
-          </div>
-          <p className="text-xs text-gray-400 mt-1">
-            Updated: {new Date(account.last_updated).toLocaleDateString()}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
-  );
+   return (
+     <Card>
+       <CardContent className="p-4">
+         <div className="flex items-start justify-between">
+           <div className="flex items-center gap-3">
+             <div className="p-2 bg-gray-100 rounded-lg">
+               <Building2 className="h-5 w-5 text-gray-600" />
+             </div>
+             <div>
+               <h3 className="font-medium text-sm">{account.name}</h3>
+               <p className="text-xs text-gray-500">{account.bank_name}</p>
+               <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
+                 {account.account_type}
+               </span>
+             </div>
+           </div>
+           <div className="flex items-center gap-1">
+             <Button variant="ghost" size="sm" onClick={() => onEdit(account)}>
+               <Pencil className="h-4 w-4" />
+             </Button>
+             <Button variant="ghost" size="sm" onClick={() => onDelete(account.id)}>
+               <Trash2 className="h-4 w-4 text-red-500" />
+             </Button>
+           </div>
+         </div>
+         <div className="mt-3 pt-2 border-t">
+           <div className="flex items-center justify-between">
+             <span className="text-xs text-gray-500">Balance</span>
+             <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+           </div>
+           <p className="text-xs text-gray-400 mt-1">
+             Updated: {new Date(account.last_updated).toLocaleDateString()}
+           </p>
+         </div>
+       </CardContent>
+     </Card>
+   );
 }
 
 function AccountForm({ 
