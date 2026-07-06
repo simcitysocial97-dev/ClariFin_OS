@@ -398,93 +398,93 @@ export default function TransactionsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Date</TableHead>
-                <TableHead className="w-[120px]">Bank</TableHead>
+                <TableHead className="w-[120px] hidden md:table-cell">Bank</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead className="w-[120px]">Category</TableHead>
-                <TableHead className="w-[80px]">Type</TableHead>
+                <TableHead className="w-[120px] hidden md:table-cell">Category</TableHead>
+                <TableHead className="w-[80px] hidden md:table-cell">Type</TableHead>
                 <TableHead className="w-[120px] text-right">Amount</TableHead>
                 <TableHead className="w-[80px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {transactions.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No transactions found. Try adjusting your filters.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                transactions.map((transaction: any, index: number) => (
-                  <TableRow 
-                    key={transaction.id}
-                    className="hover:bg-muted/50 transition-colors"
-                  >
-                    <TableCell className="text-sm">{transaction.date_display || transaction.date}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-xs">
-                        {transaction.bank}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="max-w-[300px] truncate text-sm">
-                      {transaction.description_display || transaction.description}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={cn(
-                          "text-xs",
-                          categoryColors[transaction.category] || categoryColors['Other']
-                        )}
-                      >
-                        {transaction.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant="outline"
-                        className={cn(
-                          "text-xs",
-                          transaction.type === 'credit' 
-                            ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300' 
-                            : 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300'
-                        )}
-                      >
-                        {transaction.type}
-                      </Badge>
-                    </TableCell>
-                    <TableCell
-                      className={cn(
-                        "text-right font-mono tabular-nums text-sm",
-                        transaction.type === 'debit' ? 'text-red-600' : 'text-green-600',
-                        transaction.is_large && "font-bold text-amber-600"
-                      )}
-                    >
-                      {transaction.amount_display || formatINR(transaction.amount_paise)}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(transaction)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 hover:text-red-600"
-                          onClick={() => handleDelete(transaction.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
+<TableBody>
+               {transactions.length === 0 ? (
+                 <TableRow>
+                   <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                     No transactions found. Try adjusting your filters.
+                   </TableCell>
+                 </TableRow>
+               ) : (
+                 transactions.map((transaction: any, index: number) => (
+                   <TableRow 
+                     key={transaction.id}
+                     className="hover:bg-muted/50 transition-colors py-2"
+                   >
+                     <TableCell className="text-sm py-2">{transaction.date_display || transaction.date}</TableCell>
+                     <TableCell className="hidden md:table-cell py-2">
+                       <Badge variant="outline" className="text-xs">
+                         {transaction.bank}
+                       </Badge>
+                     </TableCell>
+                     <TableCell className="max-w-[300px] truncate text-sm py-2">
+                       {transaction.description_display || transaction.description}
+                     </TableCell>
+                     <TableCell className="hidden md:table-cell py-2">
+                       <Badge
+                         variant="secondary"
+                         className={cn(
+                           "text-xs",
+                           categoryColors[transaction.category] || categoryColors['Other']
+                         )}
+                       >
+                         {transaction.category}
+                       </Badge>
+                     </TableCell>
+                     <TableCell className="hidden md:table-cell py-2">
+                       <Badge 
+                         variant="outline"
+                         className={cn(
+                           "text-xs",
+                           transaction.type === 'credit' 
+                             ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-300' 
+                             : 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                         )}
+                       >
+                         {transaction.type}
+                       </Badge>
+                     </TableCell>
+                     <TableCell
+                       className={cn(
+                         "text-right font-mono tabular-nums text-sm py-2",
+                         transaction.type === 'debit' ? 'text-red-600' : 'text-green-600',
+                         transaction.is_large && "font-bold text-amber-600"
+                       )}
+                     >
+                       {transaction.amount_display || formatINR(transaction.amount_paise)}
+                     </TableCell>
+                     <TableCell className="text-right py-2">
+                       <div className="flex justify-end gap-1">
+                         <Button
+                           variant="ghost"
+                           size="icon"
+                           className="h-8 w-8"
+                           onClick={() => handleEdit(transaction)}
+                         >
+                           <Edit2 className="h-4 w-4" />
+                         </Button>
+                         <Button
+                           variant="ghost"
+                           size="icon"
+                           className="h-8 w-8 hover:text-red-600"
+                           onClick={() => handleDelete(transaction.id)}
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                       </div>
+                     </TableCell>
+                   </TableRow>
+                 ))
+               )}
+             </TableBody>
           </Table>
         </CardContent>
       </Card>
