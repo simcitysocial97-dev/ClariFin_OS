@@ -13,6 +13,7 @@ Usage:
 from typing import Optional, Any
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 import traceback
 
 from logger import log_error
@@ -208,8 +209,6 @@ def register_error_handlers(app) -> None:
     Args:
         app: FastAPI application instance
     """
-    from fastapi.exceptions import RequestValidationError
-    
     app.add_exception_handler(AppError, app_error_handler)
     app.add_exception_handler(HTTPException, http_exception_handler)
     app.add_exception_handler(RequestValidationError, validation_error_handler)
