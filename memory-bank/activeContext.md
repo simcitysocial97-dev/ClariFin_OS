@@ -139,19 +139,19 @@ The project has completed a comprehensive 6-phase audit and runtime validation. 
 1. **B01**: Backend syntax error prevents startup — **FIXED** (removed markdown delimiter)
 2. **B02**: Account balance 100x too high — **FIXED** (now uses balance_paise and formatINR)
 
-### Critical Blockers (PENDING)
-1. **B05**: /loans and /investments routes cause 404 — **PENDING**
-2. **B06**: /projections chain-redirects to 404 — **PENDING**
+### Critical Blockers (RESOLVED)
+1. **B05**: /loans and /investments routes cause 404 — **FIXED** (removed from navigation)
+2. **B06**: /projections chain-redirects to 404 — **FIXED** (redirects to /dashboard)
 
 ### High Priority (RESOLVED)
 1. **R7**: formatINR/formatRupees ambiguity — **RESOLVED** (formatINR is now canonical)
+2. **B03**: useNetWorth in sidebar fails — **FIXED** (removed dead hook, em dash placeholder)
+3. **B04**: useDeleteStatement in cards page always errors — **FIXED** (removed dead hook and delete button)
+4. **R4**: 11 dead API functions, 10 dead React Query hooks — **FIXED** (removed in Batch 1-2)
 
 ### High Priority (PENDING)
-1. **B03**: useNetWorth in sidebar fails — **PENDING**
-2. **B04**: useDeleteStatement in cards page always errors — **PENDING**
-3. **R3**: Two parallel hook systems — **PENDING**
-4. **R4**: 11 dead API functions, 10 dead React Query hooks — **PENDING**
-5. **R6**: In-memory accounts store loses data — **PENDING**
+1. **R3**: Two parallel hook systems — **PENDING**
+2. **R6**: In-memory accounts store loses data — **PENDING**
 
 ### Technical Debt (UPDATED)
 - **enrich_transaction()** — Deprecated but still used for behavioral insights (non-monetary)
