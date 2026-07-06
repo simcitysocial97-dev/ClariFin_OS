@@ -14,7 +14,6 @@ import { test, expect } from '../fixtures/test-fixtures';
 // Configuration
 // ============================================================================
 
-const SNAPSHOTS_DIR = 'tests/snapshots';
 const DIFF_THRESHOLD = 0.001; // 0.1%
 
 // Pages to snapshot
