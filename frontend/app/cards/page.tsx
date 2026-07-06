@@ -240,112 +240,112 @@ export default function CardsPage() {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="flex-1 space-y-4">
-                  {/* Statement Period */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Period:</span>
-                    <span>{statement.period_display}</span>
-                  </div>
+                 <CardContent className="flex-1 space-y-3 p-4">
+                   {/* Statement Period */}
+                   <div className="flex items-center gap-2 text-sm">
+                     <Calendar className="h-4 w-4 text-muted-foreground" />
+                     <span className="text-muted-foreground">Period:</span>
+                     <span>{statement.period_display}</span>
+                   </div>
 
-                  {/* Transaction Count */}
-                  <div className="flex items-center gap-2 text-sm">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">Transactions:</span>
-                    <span>{statement.transaction_count}</span>
-                  </div>
+                   {/* Transaction Count */}
+                   <div className="flex items-center gap-2 text-sm">
+                     <FileText className="h-4 w-4 text-muted-foreground" />
+                     <span className="text-muted-foreground">Transactions:</span>
+                     <span>{statement.transaction_count}</span>
+                   </div>
 
-                  {/* Total Debits / Credits */}
-                  <div className="grid grid-cols-2 gap-4 py-2 border-y">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Total Debits</p>
-                      <p className="text-sm font-medium text-red-600">{statement.total_debit_display}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Total Credits</p>
-                      <p className="text-sm font-medium text-green-600">{statement.total_credit_display}</p>
-                    </div>
-                  </div>
+                   {/* Total Debits / Credits */}
+                   <div className="grid grid-cols-2 gap-4 py-2 border-y">
+                     <div>
+                       <p className="text-xs text-muted-foreground">Total Debits</p>
+                       <p className="text-sm font-medium text-red-600">{statement.total_debit_display}</p>
+                     </div>
+                     <div>
+                       <p className="text-xs text-muted-foreground">Total Credits</p>
+                       <p className="text-sm font-medium text-green-600">{statement.total_credit_display}</p>
+                     </div>
+                   </div>
 
-                  {/* Validation Section */}
-                  <div className="space-y-2 bg-muted/50 rounded-lg p-3">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Validation</p>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Statement Total Due:</span>
-                      <span className="font-medium">{statement.total_due_display}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Extracted Net:</span>
-                      <span className="font-medium">{statement.extracted_net_display}</span>
-                    </div>
-                    
-                    {statement.validation_difference_paise !== undefined && statement.validation_difference_paise !== 0 && (
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Difference:</span>
-                        <span className={cn(
-                          'font-medium',
-                          statement.validation_difference_paise > 0 ? 'text-red-600' : 'text-amber-600'
-                        )}>
-                          ₹{Math.abs(statement.validation_difference_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                    )}
-                  </div>
+                   {/* Validation Section */}
+                   <div className="space-y-2 bg-muted/50 rounded-lg p-3">
+                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Validation</p>
+                     
+                     <div className="flex items-center justify-between text-sm">
+                       <span className="text-muted-foreground">Statement Total Due:</span>
+                       <span className="font-medium">{statement.total_due_display}</span>
+                     </div>
+                     
+                     <div className="flex items-center justify-between text-sm">
+                       <span className="text-muted-foreground">Extracted Net:</span>
+                       <span className="font-medium">{statement.extracted_net_display}</span>
+                     </div>
+                     
+                     {statement.validation_difference_paise !== undefined && statement.validation_difference_paise !== 0 && (
+                       <div className="flex items-center justify-between text-sm">
+                         <span className="text-muted-foreground">Difference:</span>
+                         <span className={cn(
+                           'font-medium',
+                           statement.validation_difference_paise > 0 ? 'text-red-600' : 'text-amber-600'
+                         )}>
+                           ₹{Math.abs(statement.validation_difference_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                         </span>
+                       </div>
+                     )}
+                   </div>
 
-                  {/* Due Date & Minimum Due */}
-                  {statement.due_date && (
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
-                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-muted-foreground">Due:</span>
-                      </div>
-                      <span>{new Date(statement.due_date).toLocaleDateString('en-IN')}</span>
-                    </div>
-                  )}
-                  
-                  {statement.min_due_display && statement.min_due_display !== '₹0.00' && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Minimum Due:</span>
-                      <span>{statement.min_due_display}</span>
-                    </div>
-                  )}
+                   {/* Due Date & Minimum Due */}
+                   {statement.due_date && (
+                     <div className="flex items-center justify-between text-sm">
+                       <div className="flex items-center gap-2">
+                         <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                         <span className="text-muted-foreground">Due:</span>
+                       </div>
+                       <span>{new Date(statement.due_date).toLocaleDateString('en-IN')}</span>
+                     </div>
+                   )}
+                   
+                   {statement.min_due_display && statement.min_due_display !== '₹0.00' && (
+                     <div className="flex items-center justify-between text-sm">
+                       <span className="text-muted-foreground">Minimum Due:</span>
+                       <span>{statement.min_due_display}</span>
+                     </div>
+                   )}
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 pt-2">
-                    <Link href={`/transactions?cardId=${statement.id}`} className="flex-1">
-                      <Button variant="outline" size="sm" className="w-full">
-                        <Eye className="mr-2 h-4 w-4" />
-                        View
-                      </Button>
-                    </Link>
-                    
-                    {!paid && statement.due_date && new Date(statement.due_date) > new Date() && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
-                        onClick={() => handleMarkAsPaid(String(statement.id), statement.bank)}
-                      >
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Mark Paid
-                      </Button>
-                    )}
-                    
-                    {paid && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handleMarkAsUnpaid(String(statement.id), statement.bank)}
-                      >
-                        <XCircle className="mr-2 h-4 w-4" />
-                        Mark Unpaid
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
+                   {/* Action Buttons */}
+                   <div className="flex gap-2 pt-2">
+                     <Link href={`/transactions?cardId=${statement.id}`} className="flex-1">
+                       <Button variant="outline" size="sm" className="w-full">
+                         <Eye className="mr-2 h-4 w-4" />
+                         View
+                       </Button>
+                     </Link>
+                     
+                     {!paid && statement.due_date && new Date(statement.due_date) > new Date() && (
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 border-green-200"
+                         onClick={() => handleMarkAsPaid(String(statement.id), statement.bank)}
+                       >
+                         <CheckCircle className="mr-2 h-4 w-4" />
+                         Mark Paid
+                       </Button>
+                     )}
+                     
+                     {paid && (
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         className="flex-1"
+                         onClick={() => handleMarkAsUnpaid(String(statement.id), statement.bank)}
+                       >
+                         <XCircle className="mr-2 h-4 w-4" />
+                         Mark Unpaid
+                       </Button>
+                     )}
+                   </div>
+                 </CardContent>
               </Card>
             );
           })}
