@@ -27,11 +27,11 @@ export function validateTransactions(
 
     const totalDebits = transactions
         .filter(t => t.type === 'debit')
-        .reduce((sum, t) => sum + (t.amount_paise / 100), 0);
+        .reduce((sum, t) => sum + ((t.amount_paise ?? 0) / 100), 0);
 
     const totalCredits = transactions
         .filter(t => t.type === 'credit')
-        .reduce((sum, t) => sum + (t.amount_paise / 100), 0);
+        .reduce((sum, t) => sum + ((t.amount_paise ?? 0) / 100), 0);
 
     // Calculate expected total: opening + credits - debits
     const calculatedTotal = (metadata.openingBalance || 0) + totalCredits - totalDebits;

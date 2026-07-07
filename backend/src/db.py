@@ -579,11 +579,7 @@ class FinanceDB:
 
         for seq, txn in enumerate(transactions):
             # Amount should already be in paise from parsing (source of truth)
-            # Fall back to parsing 'amount' string for backward compatibility
-            if txn.get("amount_paise") is not None:
-                amount_paise = int(txn.get("amount_paise") or 0)
-            else:
-                amount_paise = _parse_amount_paise(txn.get("amount", "0"))
+            amount_paise = int(txn.get("amount_paise") or 0)
             # Derive float for legacy 'amount' column (deprecated)
             amount = amount_paise / 100.0
             date = str(txn.get("date", "")).strip()

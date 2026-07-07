@@ -26,6 +26,9 @@ from categorizer import categorize
 
 # Import configuration and utilities
 from config import settings
+
+# Import mapper for DTO transformation
+from core.mappers import transaction_mapper
 from csv_importer import CSVImporter
 
 # Import existing modules
@@ -450,7 +453,7 @@ def get_transactions(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
 ):
-    """Get transactions with filters."""
+    """Get transactions with filters using DTO mapper."""
     try:
         db = get_db()
         filters = {}
@@ -466,19 +469,17 @@ def get_transactions(
             filters["member"] = member
 
         raw = db.get_all_transactions_with_bank(filters)
-        enriched = [enrich_transaction(dict(t)) for t in raw]
-        enriched = compute_is_large(enriched)
 
-        # Sort by date descending
-        enriched.sort(key=lambda t: t.get("parsed_date", ""), reverse=True)
+        # Convert to DTOs using mapper
+        response = transaction_mapper.TransactionMapper.to_list_response(
+            transactions=raw,
+            total=len(raw),
+            limit=limit,
+            offset=offset
+        )
 
-        total = len(enriched)
-        paginated = enriched[offset:offset + limit]
-
-        return {
-            "transactions": paginated,
-            "total": total,
-        }
+        # Serialize to JSON
+        return response.model_dump()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -1182,11 +1183,8 @@ async def upload_statement(
 
         # Categorize
         for txn in transactions:
-            amount_str = str(txn.get("amount", "")).replace(",", "")
-            try:
-                amount_float = float(amount_str) if amount_str else None
-            except ValueError:
-                amount_float = None
+            amount_paise = int(txn.get("amount_paise") or 0)
+            amount_float = amount_paise / 100.0 if amount_paise else None
             cat, subcat = categorize(txn.get("description", ""), amount_float)
             txn["category"] = cat
             txn["subcategory"] = subcat
@@ -1216,28 +1214,31 @@ async def upload_statement(
         # Validation
         total_due = metadata.get("total_amount_due")
         if total_due and total_due > 0:
-            debit_sum = sum(
-                float(str(t.get("amount", "0")).replace(",", ""))
+            # Use amount_paise (canonical integer) for computation
+            total_due_paise = int(round(total_due * 100))
+            debit_sum_paise = sum(
+                int(t.get("amount_paise") or 0)
                 for t in transactions if t.get("type") == "debit"
             )
-            credit_sum = sum(
-                float(str(t.get("amount", "0")).replace(",", ""))
+            credit_sum_paise = sum(
+                int(t.get("amount_paise") or 0)
                 for t in transactions if t.get("type") == "credit"
             )
-            net = debit_sum - credit_sum
-            diff = abs(net - total_due)
+            net_paise = debit_sum_paise - credit_sum_paise
+            diff_paise = abs(net_paise - total_due_paise)
+            diff_rupees = diff_paise / 100.0
 
-            if diff < 1.0:
+            if diff_paise < 100:  # < ₹1.00
                 val_status = "exact_match"
                 log.append("✅ Validation: exact match")
-            elif diff < 50.0:
+            elif diff_paise < 5000:  # < ₹50.00
                 val_status = "close_match"
-                log.append(f"⚠️ Validation: close match (₹{diff:.2f} off)")
+                log.append(f"⚠️ Validation: close match (₹{diff_rupees:.2f} off)")
             else:
                 val_status = "mismatch"
-                log.append(f"❌ Validation: mismatch (₹{diff:.2f} off)")
+                log.append(f"❌ Validation: mismatch (₹{diff_rupees:.2f} off)")
 
-            db.update_validation_status(statement_id, val_status, round(diff, 2))
+            db.update_validation_status(statement_id, val_status, round(diff_rupees, 2))
         else:
             db.update_validation_status(statement_id, "no_metadata", 0.0)
             log.append("⚠️ Validation: total due not found")

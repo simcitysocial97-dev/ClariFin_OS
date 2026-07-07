@@ -16,6 +16,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Edit2, Trash2, Download, Search, AlertCircle, Filter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatINR } from '@/lib/utils/format';
+import { formatMoney } from '@/lib/money';
 
 const categoryColors: Record<string, string> = {
   'Food & Dining': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
@@ -241,12 +242,19 @@ export default function TransactionsPage() {
   }
 
   // Calculate totals using canonical paise fields
+  // Support both new Money object and legacy amount_paise field
   const totalDebitsPaise = transactions
     .filter((t: any) => t.type === 'debit')
-    .reduce((sum: number, t: any) => sum + (t.amount_paise || 0), 0);
+    .reduce((sum: number, t: any) => {
+      const paise = t.amount?.paise ?? t.amount_paise ?? 0;
+      return sum + paise;
+    }, 0);
   const totalCreditsPaise = transactions
     .filter((t: any) => t.type === 'credit')
-    .reduce((sum: number, t: any) => sum + (t.amount_paise || 0), 0);
+    .reduce((sum: number, t: any) => {
+      const paise = t.amount?.paise ?? t.amount_paise ?? 0;
+      return sum + paise;
+    }, 0);
 
   return (
     <div className="space-y-6 p-6">
@@ -460,7 +468,7 @@ export default function TransactionsPage() {
                          transaction.is_large && "font-bold text-amber-600"
                        )}
                      >
-                       {transaction.amount_display || formatINR(transaction.amount_paise)}
+                       {transaction.amount_display || formatMoney(transaction.amount)}
                      </TableCell>
                      <TableCell className="text-right py-2">
                        <div className="flex justify-end gap-1">
