@@ -164,6 +164,32 @@ A comprehensive backend capability audit was completed on 2026-07-07. Key findin
 ### HIGH PRIORITY (PENDING)
 - **R6**: In-memory accounts store loses data — **PENDING** (will be addressed last)
 
+### Phase 1 — Money Integrity (COMPLETED 2026-07-07)
+**Task**: Harden amount parsing with integer paise to fix precision corruption
+
+**Changes Made**:
+1. **backend/src/db.py**:
+   - Added `Decimal, InvalidOperation, ROUND_HALF_UP` import
+   - Created `_parse_amount_paise()` function that:
+     - Uses `Decimal` internally to avoid float precision issues
+     - Returns `int` (paise) as the source of truth
+     - Raises `ValueError` on invalid input (no silent failures)
+     - Handles both string and numeric inputs for backward compatibility
+   - Updated `insert_transactions()` and `insert_csv_transactions()` to:
+     - Use `_parse_amount_paise()` as the source of truth
+     - Derive the legacy `amount` float from `amount_paise / 100.0`
+     - Store both `amount` and `amount_paise` in the database
+
+2. **backend/tests/test_db.py**:
+   - Added 5 comprehensive tests for paise parsing
+   - Tests cover: standard formats, edge cases, precision loss prevention, DB storage
+
+**Validation Results**:
+- ✅ All 5 new tests pass
+- ✅ All 8 existing determinism tests pass
+- ✅ mypy type checking passes on `db.py`
+- ✅ ruff linting passes on modified files
+
 ### Features Ready for Phase 8
 Based on the backend capability audit, the following features are ready for frontend implementation:
 1. **Analytics Dashboard** — Full backend exists, needs UI

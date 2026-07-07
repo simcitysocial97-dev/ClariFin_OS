@@ -56,6 +56,7 @@ The following implementation work has been completed and serves as the architect
 - ✅ API endpoint migration (`backend/src/api.py`)
 - ✅ formatINR as canonical formatter (`frontend/lib/utils/format.ts`)
 - ✅ Accounts page updated to use `balance_paise` and `formatINR`
+- ✅ **Amount parsing hardened** (`backend/src/db.py`) — `_parse_amount_paise()` uses Decimal for integer paise, raises ValueError on invalid input
 
 ### Deprecated
 - ✅ Reflex dashboard archived to `backend/_archived_reflex_dashboard/`
