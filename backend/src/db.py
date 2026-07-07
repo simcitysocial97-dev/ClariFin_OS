@@ -1506,12 +1506,13 @@ class FinanceDB:
         conn = self._get_conn()
         rows = conn.execute("""
             SELECT id, name, lender, loan_type, principal_paise,
-                   outstanding_paise, interest_rate, emi_paise, tenure_months,
-                   start_date, end_date, linked_account_id, status, notes,
-                   created_at, updated_at
+                   outstanding_paise, interest_rate, tenure_months,
+                   emi_paise, disbursed_date, next_emi_date,
+                   gold_weight_grams, gold_purity, interest_type,
+                   is_active, notes, created_at, updated_at
             FROM loans
-            WHERE status = 'active'
-            ORDER BY lender, name
+            WHERE is_active = 1
+            ORDER BY created_at DESC
         """).fetchall()
         if self._conn is None:
             conn.close()
@@ -1520,27 +1521,27 @@ class FinanceDB:
     def create_loan(self, loan_id: int | str, name: str, lender: str,
                     loan_type: str, principal_paise: int,
                     outstanding_paise: int, interest_rate: float,
-                    emi_paise: int | None = None, tenure_months: int | None = None,
-                    start_date: str | None = None, end_date: str | None = None,
-                    linked_account_id: int | None = None,
+                    disbursed_date: str, tenure_months: int | None = None,
+                    emi_paise: int | None = None,
+                    next_emi_date: str | None = None,
+                    gold_weight_grams: float | None = None,
+                    gold_purity: str | None = None,
+                    interest_type: str = 'reducing',
                     notes: str | None = None) -> dict:
         """Create a new loan record."""
         conn = self._get_conn()
         # Use auto-increment for existing schema (id is INTEGER PRIMARY KEY)
-        # Provide default start_date if not provided
-        from datetime import datetime
-        if start_date is None:
-            start_date = datetime.now().strftime("%Y-%m-%d")
         cur = conn.execute("""
-            INSERT INTO loans (name, lender, loan_type, principal_paise,
-                               outstanding_paise, interest_rate, emi_paise,
-                               tenure_months, start_date, end_date,
-                               linked_account_id, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO loans (
+                name, lender, loan_type, principal_paise,
+                outstanding_paise, interest_rate, tenure_months,
+                emi_paise, disbursed_date, next_emi_date,
+                gold_weight_grams, gold_purity, interest_type, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (name, lender, loan_type, principal_paise,
-              outstanding_paise, interest_rate, emi_paise,
-              tenure_months, start_date, end_date,
-              linked_account_id, notes))
+              outstanding_paise, interest_rate, tenure_months,
+              emi_paise, disbursed_date, next_emi_date,
+              gold_weight_grams, gold_purity, interest_type, notes))
         conn.commit()
         if self._conn is None:
             conn.close()
@@ -1558,11 +1559,12 @@ class FinanceDB:
 
     def update_loan(self, loan_id: int | str, **kwargs) -> dict | None:
         """Update loan fields. Only updates provided fields."""
-        allowed = {'name', 'lender', 'loan_type', 'principal_paise',
-                   'outstanding_paise', 'interest_rate', 'emi_paise',
-                   'tenure_months', 'start_date', 'end_date',
-                   'linked_account_id', 'status', 'notes'}
-        updates = {k: v for k, v in kwargs.items() if k in allowed}
+        allowed = {
+            'name', 'lender', 'outstanding_paise', 'interest_rate',
+            'tenure_months', 'emi_paise', 'next_emi_date',
+            'gold_weight_grams', 'gold_purity', 'interest_type', 'notes'
+        }
+        updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
         if not updates:
             return self.get_loan_by_id(loan_id)
 
@@ -1580,10 +1582,10 @@ class FinanceDB:
         return self.get_loan_by_id(loan_id)
 
     def delete_loan(self, loan_id: int | str) -> bool:
-        """Soft delete a loan (set status to inactive)."""
+        """Soft delete a loan (set is_active to 0)."""
         conn = self._get_conn()
         conn.execute(
-            "UPDATE loans SET status = 'inactive', updated_at = datetime('now') WHERE id = ?",
+            "UPDATE loans SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
             (loan_id,)
         )
         conn.commit()
@@ -1600,13 +1602,12 @@ class FinanceDB:
         """Get all active investments."""
         conn = self._get_conn()
         rows = conn.execute("""
-            SELECT id, name, type, platform, invested_paise,
-                   current_value_paise, units, purchase_date,
-                   maturity_date, linked_account_id, is_active, notes,
-                   last_updated, created_at
+            SELECT id, name, investment_type, units, buy_price_paise,
+                   current_price_paise, invested_paise, current_value_paise,
+                   as_of_date, is_active, notes, created_at, updated_at
             FROM investments
             WHERE is_active = 1
-            ORDER BY name
+            ORDER BY current_value_paise DESC
         """).fetchall()
         if self._conn is None:
             conn.close()
@@ -1648,10 +1649,11 @@ class FinanceDB:
 
     def update_investment(self, investment_id: int | str, **kwargs) -> dict | None:
         """Update investment fields. Only updates provided fields."""
-        allowed = {'name', 'type', 'platform', 'invested_paise',
-                   'current_value_paise', 'units', 'purchase_date',
-                   'maturity_date', 'linked_account_id', 'notes'}
-        updates = {k: v for k, v in kwargs.items() if k in allowed}
+        allowed = {
+            'name', 'units', 'current_price_paise',
+            'current_value_paise', 'as_of_date', 'notes'
+        }
+        updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
         if not updates:
             return self.get_investment_by_id(investment_id)
 

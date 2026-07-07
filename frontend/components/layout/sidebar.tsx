@@ -6,10 +6,12 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { cn } from '@/lib/utils';
 import { Settings, Menu, ChevronLeft, ChevronRight, Wallet } from 'lucide-react';
 import { CORE_NAV_SECTIONS } from '@/lib/config/navigation';
+import { useNetWorth } from '@/lib/hooks/use-networth';
+import { formatINR } from '@/lib/utils/format';
+import { VisuallyHidden } from '@/components/ui/visually-hidden';
 
 interface NavItem {
   label: string;
@@ -40,6 +42,8 @@ interface SidebarProps {
 export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProps) {
   const pathname = usePathname();
 
+  const { data: netWorthData } = useNetWorth();
+
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       {/* Header */}
@@ -50,7 +54,7 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
         </Link>
       </div>
 
-      {/* Net Worth Chip - Temporarily removed (dead endpoint) */}
+      {/* Net Worth Chip */}
       <div className="px-3 py-4 border-b">
         <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-3 py-2">
           <Wallet className="h-4 w-4 text-muted-foreground" />
@@ -59,10 +63,14 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
               <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Net Worth
               </span>
-              <span className="text-sm font-semibold"> — </span>
+              <span className="text-sm font-semibold">
+                {netWorthData?.net_worth_paise ? formatINR(netWorthData.net_worth_paise) : ' — '}
+              </span>
             </div>
           ) : (
-            <span className="text-sm font-semibold"> — </span>
+            <span className="text-sm font-semibold">
+              {netWorthData?.net_worth_paise ? formatINR(netWorthData.net_worth_paise) : ' — '}
+            </span>
           )}
         </div>
       </div>
