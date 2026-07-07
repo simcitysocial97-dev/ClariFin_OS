@@ -1,17 +1,18 @@
 "use client";
 
 /**
- * Dashboard Page - Personal Finance MVP v1.0.0
- * =================================================
+ * Dashboard Page - v2.0.0
+ * =========================
  * 
- * Simplified single-mode dashboard answering 4 questions:
- * 1. Net Cash Flow
- * 2. Savings Rate %
- * 3. EMI Ratio %
- * 4. Buffer Days
+ * Compact, enterprise-grade financial dashboard surfacing all backend intelligence.
  * 
- * No mode system. No localStorage fallback.
- * Backend is sole source of truth.
+ * Layout:
+ * - Header Row
+ * - KPI Row (4 cards)
+ * - Analytics Summary Bar
+ * - Main Content (2-column on desktop)
+ * - Secondary Row (3-column on desktop)
+ * - Footer
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,12 @@ import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
 import { formatINR, formatPercentage } from "@/lib/utils/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { CashflowChart } from "@/components/dashboard/cashflow-chart";
+import { BehaviorScoreCard } from "@/components/dashboard/behavior-score-card";
+import { InsightsPanel } from "@/components/dashboard/insights-panel";
+import { AnalyticsSummaryBar } from "@/components/dashboard/analytics-summary-bar";
+import { RecurringChargesWidget } from "@/components/dashboard/recurring-charges-widget";
+import { TopMerchantsWidget } from "@/components/dashboard/top-merchants-widget";
+import { CategorySpendChart } from "@/components/dashboard/category-spend-chart";
 
 // ============================================================
 // Components
@@ -230,13 +237,20 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Financial Dashboard</h1>
-        <p className="text-gray-500 text-sm">Your personal finance overview</p>
+      {/* Header Row */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-gray-500 text-sm">
+            {data.months_of_data || 0} months of data
+          </p>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Last updated: {new Date().toLocaleTimeString()}
+        </p>
       </div>
 
-      {/* Primary Metrics - 4 Key Numbers */}
+      {/* KPI Row - 4 Key Numbers */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <NetCashFlowCard amount_paise={data.net_cash_flow_paise} />
         <SavingsRateCard rate={data.savings_rate} />
@@ -244,29 +258,50 @@ export default function DashboardPage() {
         <BufferDaysCard days={data.buffer_days} />
       </div>
 
-      {/* Cashflow Trend Chart */}
-      <section>
-        <h2 className="text-sm font-medium text-muted-foreground mb-3">
-          Cashflow Trend
-        </h2>
-        <CashflowChart />
-      </section>
+      {/* Analytics Summary Bar */}
+      <AnalyticsSummaryBar />
 
-      {/* Secondary Row - Trend & Alerts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SevenDayTrend trend={data.seven_day_trend} />
-        <CategoryDriftAlert alert={data.category_drift_alert} />
+      {/* Main Content - 2-column on desktop, stack on mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* LEFT COLUMN - 60% width (span 2 on lg) */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Cashflow Trend Chart */}
+          <section>
+            <h2 className="text-sm font-medium text-muted-foreground mb-3">
+              Cashflow Trend
+            </h2>
+            <CashflowChart />
+          </section>
+
+          {/* Category Spend Chart */}
+          <section>
+            <h2 className="text-sm font-medium text-muted-foreground mb-3">
+              Category Spend
+            </h2>
+            <CategorySpendChart />
+          </section>
+        </div>
+
+        {/* RIGHT COLUMN - 40% width (span 1 on lg) */}
+        <div className="space-y-6">
+          <BehaviorScoreCard />
+          <InsightsPanel />
+        </div>
       </div>
 
-      {/* Recent Transactions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
-        </CardContent>
-      </Card>
+      {/* Secondary Row - 3 columns on desktop, stack on mobile */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <RecurringChargesWidget />
+        <TopMerchantsWidget />
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Footer - Health Score */}
       <HealthScoreFooter score={data.financial_health_score} />
