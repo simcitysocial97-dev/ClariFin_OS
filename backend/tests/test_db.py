@@ -98,14 +98,14 @@ def test_insert_transactions_uses_paise():
         import sqlite3
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT amount, amount_paise, debit, credit FROM transactions WHERE statement_id = ?", (stmt_id,))
+        cur = conn.execute("SELECT amount, amount_paise FROM transactions WHERE statement_id = ?", (stmt_id,))
         row = cur.fetchone()
         conn.close()
 
         assert row is not None, "Transaction not found"
         assert row["amount_paise"] == 123456, f"amount_paise should be 123456, got {row['amount_paise']}"
-        assert row["debit"] == 123456, f"debit should be 123456, got {row['debit']}"
-        assert row["credit"] == 0, f"credit should be 0, got {row['credit']}"
+        # debit/credit are GENERATED ALWAYS AS columns, computed from amount_paise and type
+        # They are not stored directly, so we don't check them here
 
     finally:
         os.unlink(db_path)

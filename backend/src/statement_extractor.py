@@ -22,6 +22,7 @@ CLI:
 import json
 import re
 import sys
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -136,6 +137,50 @@ def _split_dr_cr(amount: str) -> tuple[str, str]:
         txn_type = "debit" if indicator == "DR" else "credit"
         return val, txn_type
     return s, ""
+
+
+def _parse_amount_paise(amount_str) -> int:
+    """
+    Parse amount to integer paise (1 rupee = 100 paise).
+    Raises ValueError on invalid input (no silent failures).
+
+    Accepts:
+        - String amounts: "Rs 1,234.56", "₹1234.56", "1234"
+        - Numeric amounts: 1234, 1234.56, 1234.0
+
+    Examples:
+        "Rs 1,234.56" -> 123456
+        "₹1234.56"    -> 123456
+        "1234"        -> 123400
+        1234          -> 123400
+        1234.56       -> 123456
+    """
+    # Convert to string if numeric
+    if isinstance(amount_str, (int, float)):
+        # For integers, treat as rupees
+        if isinstance(amount_str, int):
+            return amount_str * 100
+        # For floats, use Decimal to avoid precision loss
+        paise = Decimal(str(amount_str)) * Decimal('100')
+        return int(paise.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+
+    # Handle string input
+    cleaned = (str(amount_str)
+               .replace("Rs", "")
+               .replace("₹", "")
+               .replace(",", "")
+               .strip())
+
+    if not cleaned:
+        raise ValueError(f"Empty amount string: {amount_str!r}")
+
+    try:
+        rupees = Decimal(cleaned)
+        # Financial Standard: Use quantization to guarantee safe integer conversion
+        paise = (rupees * Decimal('100')).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        return int(paise)
+    except (ValueError, InvalidOperation) as e:
+        raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
 
 
 # ============================================================
@@ -958,6 +1003,12 @@ class StatementExtractor:
             # Fix 16: Extract embedded amount from description (Axis Bank pattern)
             txn = self._extract_embedded_amount(txn)
 
+            # Add amount_paise (canonical integer representation)
+            try:
+                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))
+            except ValueError:
+                txn["amount_paise"] = 0
+
             # Fix 13: Validate before including
             if self._validate_transaction(txn):
                 transactions.append(txn)
@@ -1234,13 +1285,19 @@ class StatementExtractor:
                                 txn_type = "debit"
 
                         if date and (amount or desc):
-                            transactions.append({
+                            txn = {
                                 "date": date,
                                 "description": desc,
                                 "amount": self._normalize_amount(amount) if amount else "",
                                 "type": txn_type,
                                 "raw": tokens,
-                            })
+                            }
+                            # Add amount_paise (canonical integer representation)
+                            try:
+                                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))
+                            except ValueError:
+                                txn["amount_paise"] = 0
+                            transactions.append(txn)
         except Exception as e:
             self._log(f"Text fallback error: {e}")
 

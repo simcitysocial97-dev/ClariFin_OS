@@ -178,8 +178,9 @@ def percentage_change(current: float, previous: float) -> str:
 def enrich_transaction(txn: dict) -> dict:
     """Add computed fields to a transaction."""
     dt = parse_date(txn.get("date", ""))
-    amount = float(txn.get("amount") or 0)
-    amount_paise = int(round(amount * 100))  # Convert rupees to paise
+    # Use stored amount_paise as primary source (avoids float precision issues)
+    amount_paise = int(txn.get("amount_paise") or 0)
+    amount = amount_paise / 100.0  # Derive float for display
 
     return {
         **txn,
@@ -189,7 +190,7 @@ def enrich_transaction(txn: dict) -> dict:
         "weekday": dt.strftime("%A") if dt else "",
         "amount_display": format_inr(amount),
         "amount": amount,
-        "amount_paise": amount_paise,  # Add canonical paise field
+        "amount_paise": amount_paise,  # Canonical paise field
         "description_display": clean_description(txn.get("description", "")),
     }
 

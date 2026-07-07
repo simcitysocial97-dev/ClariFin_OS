@@ -56,6 +56,15 @@ CREATE TABLE IF NOT EXISTS transactions (
     subcategory     TEXT,
     raw_description TEXT,
     created_at      TEXT DEFAULT (datetime('now')),
+    amount_paise    INTEGER NOT NULL DEFAULT 0,
+    date_iso        TEXT,
+    hash_signature  TEXT,
+    account_id      TEXT,
+    member          TEXT DEFAULT 'Self',
+    source          TEXT DEFAULT 'pdf',
+    original_description TEXT,
+    credit INTEGER GENERATED ALWAYS AS (CASE WHEN type = 'credit' THEN amount_paise ELSE 0 END),
+    debit INTEGER GENERATED ALWAYS AS (CASE WHEN type = 'debit' THEN amount_paise ELSE 0 END),
     UNIQUE(statement_id, date, description, amount, sequence_num)
 );
 """
@@ -569,9 +578,13 @@ class FinanceDB:
         account_id = row["bank"] if row else ""
 
         for seq, txn in enumerate(transactions):
-            # Parse amount to paise (source of truth)
-            amount_paise = _parse_amount_paise(txn.get("amount", "0"))
-            # Derive float for backward compatibility
+            # Amount should already be in paise from parsing (source of truth)
+            # Fall back to parsing 'amount' string for backward compatibility
+            if txn.get("amount_paise") is not None:
+                amount_paise = int(txn.get("amount_paise") or 0)
+            else:
+                amount_paise = _parse_amount_paise(txn.get("amount", "0"))
+            # Derive float for legacy 'amount' column (deprecated)
             amount = amount_paise / 100.0
             date = str(txn.get("date", "")).strip()
             description = str(txn.get("description", "")).strip()
@@ -598,8 +611,8 @@ class FinanceDB:
                 """
                 INSERT OR IGNORE INTO transactions
                     (statement_id, sequence_num, date, description, amount, type, category, subcategory, raw_description,
-                     debit, credit, amount_paise, date_iso, hash_signature, account_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     amount_paise, date_iso, hash_signature, account_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     statement_id,
@@ -611,8 +624,6 @@ class FinanceDB:
                     category,
                     subcategory,
                     raw_description,
-                    debit_paise,
-                    credit_paise,
                     amount_paise,
                     date_iso,
                     hash_signature,
@@ -1176,8 +1187,8 @@ class FinanceDB:
                 INSERT OR IGNORE INTO transactions
                     (statement_id, sequence_num, date, description, amount, type,
                      category, subcategory, member, source, original_description,
-                     debit, credit, amount_paise, date_iso, hash_signature, account_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     amount_paise, date_iso, hash_signature, account_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     statement_id,
@@ -1191,8 +1202,6 @@ class FinanceDB:
                     member,
                     source,
                     original_description,
-                    debit_paise,
-                    credit_paise,
                     amount_paise,
                     date_iso,
                     hash_signature,
