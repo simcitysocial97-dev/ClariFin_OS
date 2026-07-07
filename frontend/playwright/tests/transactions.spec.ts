@@ -4,11 +4,15 @@ test.describe('Transactions page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/transactions')
     // Wait for table to load
-    await page.waitForSelector('table', { timeout: 10000 })
+    await page.waitForSelector('[data-testid="transactions-table"]', { timeout: 10000 })
   })
 
-  test('page loads with transaction table', async ({ page }) => {
-    await expect(page.locator('table')).toBeVisible()
+  test('transaction table renders', async ({ page }) => {
+    await expect(page.getByTestId('transactions-table')).toBeVisible()
+  })
+
+  test('search input is present', async ({ page }) => {
+    await expect(page.getByTestId('transactions-search')).toBeVisible()
   })
 
   test('search filter narrows results', async ({ page }) => {
@@ -16,7 +20,7 @@ test.describe('Transactions page', () => {
     const initialRows = await page.locator('tbody tr').count()
 
     // Type in search
-    await page.fill('[placeholder*="Search"], [placeholder*="search"]', 'salary')
+    await page.fill('[data-testid="transactions-search"]', 'salary')
 
     // Wait for filter to apply
     await page.waitForTimeout(500)
@@ -32,7 +36,7 @@ test.describe('Transactions page', () => {
   })
 
   test('export button exists and is clickable', async ({ page }) => {
-    const exportButton = page.locator('button').filter({ hasText: /export/i })
+    const exportButton = page.getByTestId('transactions-export')
     await expect(exportButton).toBeVisible()
     // Do not actually trigger download in test — just confirm button exists
   })

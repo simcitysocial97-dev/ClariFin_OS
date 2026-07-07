@@ -8,7 +8,7 @@ export const TransactionSchema = z.object({
   type: z.enum(['debit', 'credit']),
   category: z.string(),
   bank: z.string(),
-  member: z.string().nullable().optional(),
+  member: z.string().optional(),
 })
 
 export const TransactionsResponseSchema = z.object({

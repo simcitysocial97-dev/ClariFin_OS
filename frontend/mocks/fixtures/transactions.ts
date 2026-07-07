@@ -8,6 +8,7 @@ export const mockTransaction: Transaction = {
   type: 'debit',
   category: 'Food & Dining',
   bank: 'HDFC',
+  member: undefined,
 }
 
 export const mockCreditTransaction: Transaction = {

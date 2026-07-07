@@ -216,11 +216,19 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Row - 4 Key Numbers (Using core data hook; isolated inside global layout checks above) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <NetCashFlowCard amount_paise={data.net_cash_flow_paise} />
-        <SavingsRateCard rate={data.savings_rate} />
-        <EMIRatioCard ratio={data.emi_ratio} />
-        <BufferDaysCard days={data.buffer_days} />
+      <div data-testid="dashboard-kpi-row" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div data-testid="kpi-net-cash-flow">
+          <NetCashFlowCard amount_paise={data.net_cash_flow_paise} />
+        </div>
+        <div data-testid="kpi-savings-rate">
+          <SavingsRateCard rate={data.savings_rate} />
+        </div>
+        <div data-testid="kpi-emi-ratio">
+          <EMIRatioCard ratio={data.emi_ratio} />
+        </div>
+        <div data-testid="kpi-buffer-days">
+          <BufferDaysCard days={data.buffer_days} />
+        </div>
       </div>
 
       {/* Analytics Summary Bar */}
@@ -237,9 +245,11 @@ export default function DashboardPage() {
             <h2 className="text-sm font-medium text-muted-foreground mb-3">
               Cashflow Trend
             </h2>
-            <ErrorBoundary componentName="Cashflow Chart">
-              <CashflowChart />
-            </ErrorBoundary>
+            <div data-testid="cashflow-chart-section">
+              <ErrorBoundary componentName="Cashflow Chart">
+                <CashflowChart />
+              </ErrorBoundary>
+            </div>
           </section>
 
           {/* Category Spend Chart */}
@@ -255,13 +265,17 @@ export default function DashboardPage() {
 
         {/* RIGHT COLUMN - 40% width (span 1 on lg) */}
         <div className="space-y-6">
-          <ErrorBoundary componentName="Behavior Score">
-            <BehaviorScoreCard />
-          </ErrorBoundary>
+          <div data-testid="behavior-score-section">
+            <ErrorBoundary componentName="Behavior Score">
+              <BehaviorScoreCard />
+            </ErrorBoundary>
+          </div>
           
-          <ErrorBoundary componentName="Insights Panel">
-            <InsightsPanel />
-          </ErrorBoundary>
+          <div data-testid="insights-section">
+            <ErrorBoundary componentName="Insights Panel">
+              <InsightsPanel />
+            </ErrorBoundary>
+          </div>
         </div>
       </div>
 
@@ -275,16 +289,18 @@ export default function DashboardPage() {
           <TopMerchantsWidget />
         </ErrorBoundary>
 
-        <ErrorBoundary componentName="Recent Transactions">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
-            </CardContent>
-          </Card>
-        </ErrorBoundary>
+        <div data-testid="recent-transactions-section">
+          <ErrorBoundary componentName="Recent Transactions">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
+              </CardContent>
+            </Card>
+          </ErrorBoundary>
+        </div>
       </div>
 
       {/* Footer - Health Score */}

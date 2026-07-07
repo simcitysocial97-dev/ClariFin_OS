@@ -257,10 +257,10 @@ export default function TransactionsPage() {
             {totalCount} transactions found {useLocalData && '(from local storage)'}
           </p>
         </div>
-        <Button onClick={handleExportCSV} variant="outline" disabled={exporting}>
-          <Download className="mr-2 h-4 w-4" />
-          {exporting ? 'Exporting...' : 'Export CSV'}
-        </Button>
+      <Button data-testid="transactions-export" onClick={handleExportCSV} variant="outline" disabled={exporting}>
+        <Download className="mr-2 h-4 w-4" />
+        {exporting ? 'Exporting...' : 'Export CSV'}
+      </Button>
       </div>
 
       {/* Filters */}
@@ -270,6 +270,7 @@ export default function TransactionsPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                data-testid="transactions-search"
                 placeholder="Search transactions..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -394,7 +395,7 @@ export default function TransactionsPage() {
       {/* Transactions Table */}
       <Card>
         <CardContent className="p-0">
-          <Table>
+          <Table data-testid="transactions-table">
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Date</TableHead>
