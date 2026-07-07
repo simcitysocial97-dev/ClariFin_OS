@@ -899,7 +899,120 @@ def get_statements():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/cards")
+def get_cards():
+    """
+    Returns credit cards with their latest statement summary.
+    Groups statements by card_last4 and bank.
+    Returns one entry per unique card with latest statement data.
+    """
+    try:
+        db = get_db()
+        raw = db.get_all_statements_with_metadata()
+        
+        # Group statements by (bank, card_last4)
+        card_groups: dict = defaultdict(list)
+        for stmt in raw:
+            bank = stmt.get("bank") or "Unknown"
+            card_last4 = stmt.get("card_last4") or "Unknown"
+            key = (bank, card_last4)
+            card_groups[key].append(stmt)
+        
+        cards = []
+        total_outstanding = 0.0
+        total_credit_limit = 0.0
+        
+        for (bank, card_last4), statements in card_groups.items():
+            # Sort by imported_at descending to get most recent
+            statements_sorted = sorted(
+                statements,
+                key=lambda s: s.get("imported_at") or "",
+                reverse=True
+            )
+            latest = statements_sorted[0]
+            
+            # Get values from latest statement
+            credit_limit = float(latest.get("credit_limit") or 0)
+            current_outstanding = float(latest.get("total_amount_due") or 0)
+            minimum_due = float(latest.get("minimum_amount_due") or 0)
+            payment_due_date = latest.get("payment_due_date")
+            statement_date = latest.get("statement_date")
+            bill_cycle_start = latest.get("bill_cycle_start")
+            bill_cycle_end = latest.get("bill_cycle_end")
+            validation_status = latest.get("validation_status") or "pending"
+            
+            # Compute utilization
+            utilization_percent = 0.0
+            if credit_limit > 0:
+                utilization_percent = round((current_outstanding / credit_limit) * 100, 1)
+            
+            # Compute days until due
+            days_until_due = None
+            if payment_due_date:
+                try:
+                    due_dt = parse_date(payment_due_date)
+                    if due_dt:
+                        today = datetime.now()
+                        days_until_due = (due_dt - today).days
+                except Exception:
+                    pass
+            
+            # Compute payment status
+            if days_until_due is None:
+                payment_status = "unknown"
+            elif days_until_due < 0:
+                payment_status = "overdue"
+            elif days_until_due <= 3:
+                payment_status = "due_soon"
+            elif days_until_due <= 7:
+                payment_status = "upcoming"
+            else:
+                payment_status = "on_track"
+            
+            card_id = f"{bank}_{card_last4}"
+            
+            cards.append({
+                "card_id": card_id,
+                "bank": bank,
+                "card_last4": card_last4,
+                "credit_limit": credit_limit,
+                "current_outstanding": current_outstanding,
+                "minimum_due": minimum_due,
+                "payment_due_date": payment_due_date,
+                "statement_date": statement_date,
+                "bill_cycle_start": bill_cycle_start,
+                "bill_cycle_end": bill_cycle_end,
+                "utilization_percent": utilization_percent,
+                "days_until_due": days_until_due,
+                "payment_status": payment_status,
+                "validation_status": validation_status,
+                "statement_count": len(statements),
+                "latest_statement_id": latest.get("id"),
+            })
+            
+            total_outstanding += current_outstanding
+            total_credit_limit += credit_limit
+        
+        # Sort cards by bank name
+        cards.sort(key=lambda c: c.get("bank", ""))
+        
+        total_utilization = 0.0
+        if total_credit_limit > 0:
+            total_utilization = round((total_outstanding / total_credit_limit) * 100, 1)
+        
+        return {
+            "cards": cards,
+            "total_cards": len(cards),
+            "total_outstanding": total_outstanding,
+            "total_credit_limit": total_credit_limit,
+            "total_utilization_percent": total_utilization,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/banks")
+```
 def get_banks():
     """Get list of banks."""
     try:

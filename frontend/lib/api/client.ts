@@ -47,6 +47,8 @@ export interface Statement {
   validation_status: string;
   badge_text: string;
   badge_color: string;
+  // Additional fields
+  imported_at?: string;
 }
 
 export interface Member {
