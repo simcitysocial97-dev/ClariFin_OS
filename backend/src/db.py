@@ -23,6 +23,7 @@ Usage:
 
 import hashlib
 import sqlite3
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
 
 # ============================================================
@@ -151,16 +152,48 @@ def _parse_date_to_ymd(date_str: str) -> str:
 # Helpers
 # ============================================================
 
-def _parse_amount(raw: str) -> float:
-    """Convert amount string to float. Removes commas, handles empty."""
-    if raw is None:
-        return 0.0
-    s = str(raw).strip().replace(",", "").replace("₹", "").replace("Rs.", "").replace("Rs", "").replace("INR", "").strip()
-    try:
-        return float(s)
-    except (ValueError, TypeError):
-        return 0.0
+def _parse_amount_paise(amount_str) -> int:
+    """
+    Parse amount to integer paise (1 rupee = 100 paise).
+    Raises ValueError on invalid input (no silent failures).
 
+    Accepts:
+        - String amounts: "Rs 1,234.56", "₹1234.56", "1234"
+        - Numeric amounts: 1234, 1234.56, 1234.0
+
+    Examples:
+        "Rs 1,234.56" -> 123456
+        "₹1234.56"    -> 123456
+        "1234"        -> 123400
+        1234          -> 123400
+        1234.56       -> 123456
+    """
+    # Convert to string if numeric
+    if isinstance(amount_str, (int, float)):
+        # For integers, treat as rupees
+        if isinstance(amount_str, int):
+            return amount_str * 100
+        # For floats, use Decimal to avoid precision loss
+        paise = Decimal(str(amount_str)) * Decimal('100')
+        return int(paise.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+
+    # Handle string input
+    cleaned = (str(amount_str)
+               .replace("Rs", "")
+               .replace("₹", "")
+               .replace(",", "")
+               .strip())
+
+    if not cleaned:
+        raise ValueError(f"Empty amount string: {amount_str!r}")
+
+    try:
+        rupees = Decimal(cleaned)
+        # Financial Standard: Use quantization to guarantee safe integer conversion
+        paise = (rupees * Decimal('100')).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        return int(paise)
+    except (ValueError, InvalidOperation) as e:
+        raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
 
 def _row_to_dict(cursor: sqlite3.Cursor, row: tuple) -> dict:
     """Convert a sqlite3 row to a dict using cursor.description."""
@@ -536,7 +569,10 @@ class FinanceDB:
         account_id = row["bank"] if row else ""
 
         for seq, txn in enumerate(transactions):
-            amount = _parse_amount(txn.get("amount", "0"))
+            # Parse amount to paise (source of truth)
+            amount_paise = _parse_amount_paise(txn.get("amount", "0"))
+            # Derive float for backward compatibility
+            amount = amount_paise / 100.0
             date = str(txn.get("date", "")).strip()
             description = str(txn.get("description", "")).strip()
             txn_type = str(txn.get("type", "")).strip()
@@ -544,8 +580,7 @@ class FinanceDB:
             subcategory = str(txn.get("subcategory", "")).strip() or None
             raw_description = description  # preserve original
 
-            # Phase 2A: Compute paise values for financial determinism
-            amount_paise = int(round(amount * 100))
+            # Phase 2A: Compute debit/credit paise values
             debit_paise = amount_paise if txn_type == 'debit' else 0
             credit_paise = amount_paise if txn_type == 'credit' else 0
 
@@ -1111,7 +1146,10 @@ class FinanceDB:
 
         inserted = 0
         for seq, txn in enumerate(transactions):
-            amount = _parse_amount(txn.get("amount", "0"))
+            # Parse amount to paise (source of truth)
+            amount_paise = _parse_amount_paise(txn.get("amount", "0"))
+            # Derive float for backward compatibility
+            amount = amount_paise / 100.0
             date = str(txn.get("date", "")).strip()
             description = str(txn.get("description", "")).strip()
             original_description = str(txn.get("original_description", description)).strip()
@@ -1119,8 +1157,7 @@ class FinanceDB:
             category = str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
             subcategory = str(txn.get("subcategory", "")).strip() or None
 
-            # Phase 2A: Compute paise values for financial determinism
-            amount_paise = int(round(amount * 100))
+            # Phase 2A: Compute debit/credit paise values
             debit_paise = amount_paise if txn_type == 'debit' else 0
             credit_paise = amount_paise if txn_type == 'credit' else 0
 
