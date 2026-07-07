@@ -174,11 +174,8 @@ Based on the backend capability audit, the following features are ready for fron
 6. **Credit Cards Page** — ✅ **COMPLETE** (new `/api/cards` endpoint, 3 components, tests)
 
 ### Features Requiring Backend Work
-1. **Loans** — Need DB table + API endpoints (behavior engine already detects loan patterns)
-2. **Investments** — Need DB table + API endpoints
-3. **Net Worth** — Need accounts + loans + investments aggregation
-4. **Gmail Ingestion** — Need Gmail API integration
-5. **Persistent Accounts** — Need DB-backed accounts table
+1. **Gmail Ingestion** — Need Gmail API integration
+2. **Persistent Accounts** — Need DB-backed accounts table
 
 ### Recently Completed (Phase 7C)
 **Advanced Credit Cards Page** — Implemented on 2026-07-07:
@@ -302,7 +299,22 @@ The database indexes for `date_iso`, `type`, and `category` were already present
 - Remove 19 unused backend endpoints: api.py
 
 ### Architecture Improvements (XL, multi-day)
-- Loans DB table + API
-- Investments DB table + API
-- Net Worth computation
 - Gmail Ingestion
+
+## Phase 4 Prompt 2 — Loans, Investments, Net Worth (COMPLETED 2026-07-07)
+**Backend:**
+- Added `loans` and `investments` DB tables with full CRUD operations
+- Created `loan_engine.py` with EMI computation, amortization schedule, and prepayment simulation
+- Added 6 loan endpoints: GET, POST, PUT, DELETE, schedule, prepayment-simulation
+- Added 4 investment endpoints: GET, POST, PUT, DELETE
+- Added `GET /api/networth` endpoint aggregating accounts + investments + loans + cards
+
+**Frontend:**
+- Created `useLoans()` hook with Zod validation
+- Created `useInvestments()` hook with Zod validation
+- Created `useNetWorth()` hook with Zod validation
+- Built `/loans` page with list, amortization schedule drawer, prepayment simulator
+- Built `/investments` page with portfolio summary and allocation chart
+- Updated sidebar to display real net worth from API
+- Created `Drawer` and `VisuallyHidden` UI components
+- All validation passed: ruff, mypy, TypeScript, build

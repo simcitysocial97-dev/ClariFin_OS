@@ -233,10 +233,10 @@ The phase is complete when:
 | Members | ✅ `members` | ✅ `GET/POST /api/members` | ✅ MemberProvider | **✅ Working** |
 | Upload (PDF) | ✅ (triggers) | ✅ `POST /api/upload` | ✅ Upload page | **✅ Working** |
 | Import (CSV) | ✅ (triggers) | ✅ 2 endpoints | ⚠️ Partial | **🔶 Partial** |
-| **Loans** | ❌ **NO TABLE** | ❌ **NO ENDPOINT** | ❌ No frontend | **❌ Missing** |
-| **Investments** | ❌ **NO TABLE** | ❌ **NO ENDPOINT** | ❌ No frontend | **❌ Missing** |
-| **Gmail Ingestion** | ❌ | ❌ | ❌ | **❌ Missing** |
-| **Net Worth** | ❌ | ❌ | ❌ | **❌ Missing** |
+ | **Loans** | ✅ `loans` | ✅ 6 endpoints | ✅ Loans page | **✅ Working** |
+ | **Investments** | ✅ `investments` | ✅ 4 endpoints | ✅ Investments page | **✅ Working** |
+ | **Gmail Ingestion** | ❌ | ❌ | ❌ | **❌ Missing** |
+ | **Net Worth** | ✅ (computed) | ✅ `GET /api/networth` | ✅ Sidebar + Hook | **✅ Working** |
 
 ---
 
