@@ -17,6 +17,36 @@ from typing import Dict, List, Any, Tuple, Optional
 from collections import defaultdict
 import math
 
+# ============================================================
+# Caching Layer
+# ============================================================
+
+from cachetools import TTLCache
+
+# Global cache instance: max 10 elements, 5-minute (300s) expiration
+_behavior_cache = TTLCache(maxsize=10, ttl=300)
+
+
+def invalidate_behavior_cache() -> None:
+    """Clear the behavior profile cache. Call after data changes."""
+    _behavior_cache.clear()
+
+
+def get_cached_behavior_profile(db_path: str) -> Optional[Dict[str, Any]]:
+    """
+    Get behavior profile from cache if available.
+    
+    Returns cached profile or None if not cached.
+    """
+    cache_key = "global_behavior_profile"
+    return _behavior_cache.get(cache_key)
+
+
+def set_cached_behavior_profile(db_path: str, profile: Dict[str, Any]) -> None:
+    """Cache a behavior profile."""
+    cache_key = "global_behavior_profile"
+    _behavior_cache[cache_key] = profile
+
 
 # ============================================================
 # Utility Functions
@@ -69,6 +99,153 @@ def _moving_average(values: List[float], window: int = 7) -> List[float]:
         window_vals = values[start:i + 1]
         result.append(sum(window_vals) / len(window_vals))
     return result
+
+
+# ============================================================
+# SQL-Based Aggregation Functions
+# ============================================================
+
+def _get_daily_spending_sql(db_path: str, cutoff_date: str) -> Dict[str, float]:
+    """
+    Get daily spending totals using SQL aggregation.
+    Much faster than Python loops for large datasets.
+    """
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    
+    cur = conn.execute("""
+        SELECT 
+            date_iso,
+            SUM(amount) as daily_total
+        FROM transactions
+        WHERE type = 'debit' AND date_iso >= ?
+        GROUP BY date_iso
+        ORDER BY date_iso ASC
+    """, (cutoff_date,))
+    
+    rows = cur.fetchall()
+    conn.close()
+    
+    return {row["date_iso"]: float(row["daily_total"] or 0) for row in rows}
+
+
+def _get_monthly_category_spending_sql(db_path: str, cutoff_date: str) -> Dict[str, Dict[str, float]]:
+    """
+    Get monthly category spending using SQL aggregation.
+    Returns: {month: {category: total}}
+    """
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    
+    cur = conn.execute("""
+        SELECT 
+            substr(date_iso, 1, 7) as month,
+            category,
+            SUM(amount) as category_total
+        FROM transactions
+        WHERE type = 'debit' AND date_iso >= ?
+        GROUP BY month, category
+        ORDER BY month ASC
+    """, (cutoff_date,))
+    
+    rows = cur.fetchall()
+    conn.close()
+    
+    result = defaultdict(lambda: defaultdict(float))
+    for row in rows:
+        month = row["month"]
+        category = row["category"] or "Uncategorized"
+        result[month][category] = float(row["category_total"] or 0)
+    
+    return dict(result)
+
+
+def _get_monthly_income_expenses_sql(db_path: str, cutoff_date: str) -> Dict[str, Dict[str, float]]:
+    """
+    Get monthly income vs expenses using SQL aggregation.
+    Returns: {month: {"income": total, "expenses": total}}
+    """
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    
+    cur = conn.execute("""
+        SELECT 
+            substr(date_iso, 1, 7) as month,
+            type,
+            SUM(amount) as total
+        FROM transactions
+        WHERE date_iso >= ?
+        GROUP BY month, type
+        ORDER BY month ASC
+    """, (cutoff_date,))
+    
+    rows = cur.fetchall()
+    conn.close()
+    
+    result = defaultdict(lambda: {"income": 0.0, "expenses": 0.0})
+    for row in rows:
+        month = row["month"]
+        txn_type = row["type"]
+        total = float(row["total"] or 0)
+        if txn_type == "credit":
+            result[month]["income"] = total
+        else:
+            result[month]["expenses"] = total
+    
+    return dict(result)
+
+
+def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> Dict[str, Any]:
+    """
+    Get transaction statistics using SQL aggregation.
+    Returns counts and totals for various metrics.
+    """
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    
+    # Get basic stats
+    cur = conn.execute("""
+        SELECT 
+            COUNT(*) as total_count,
+            SUM(CASE WHEN type = 'debit' THEN 1 ELSE 0 END) as debit_count,
+            SUM(CASE WHEN type = 'credit' THEN 1 ELSE 0 END) as credit_count,
+            SUM(CASE WHEN type = 'debit' AND amount < 500 THEN 1 ELSE 0 END) as micro_txn_count,
+            SUM(CASE WHEN type = 'debit' THEN amount ELSE 0 END) as total_debit,
+            SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END) as total_credit
+        FROM transactions
+        WHERE date_iso >= ?
+    """, (cutoff_date,))
+    
+    row = cur.fetchone()
+    stats = {
+        "total_count": row["total_count"] or 0,
+        "debit_count": row["debit_count"] or 0,
+        "credit_count": row["credit_count"] or 0,
+        "micro_txn_count": row["micro_txn_count"] or 0,
+        "total_debit": float(row["total_debit"] or 0),
+        "total_credit": float(row["total_credit"] or 0),
+    }
+    
+    # Get weekend vs weekday spending
+    cur = conn.execute("""
+        SELECT 
+            CASE WHEN CAST(substr(date_iso, 9, 2) AS INTEGER) % 7 >= 5 THEN 'weekend' ELSE 'weekday' END as day_type,
+            SUM(amount) as total
+        FROM transactions
+        WHERE type = 'debit' AND date_iso >= ?
+        GROUP BY day_type
+    """, (cutoff_date,))
+    
+    weekend_stats = {"weekend": 0.0, "weekday": 0.0}
+    for row in cur.fetchall():
+        day_type = row["day_type"]
+        weekend_stats[day_type] = float(row["total"] or 0)
+    
+    stats["weekend_spend"] = weekend_stats["weekend"]
+    stats["weekday_spend"] = weekend_stats["weekday"]
+    
+    conn.close()
+    return stats
 
 
 # ============================================================

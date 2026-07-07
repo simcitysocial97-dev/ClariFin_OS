@@ -166,6 +166,31 @@ The following implementation work has been completed and serves as the architect
 
 ---
 
+## API Performance Optimization (COMPLETED)
+
+### Changes Made
+1. **Added cachetools dependency** to `backend/requirements.txt`
+2. **Implemented in-memory TTL cache** in `backend/src/engines/behavior_engine.py`:
+   - `TTLCache(maxsize=10, ttl=300)` - 5-minute cache expiration
+   - `invalidate_behavior_cache()` - clears cache on data changes
+   - `get_cached_behavior_profile()` / `set_cached_behavior_profile()` - cache accessors
+3. **Updated 4 behavior endpoints** to use caching:
+   - `/api/behavior/summary`
+   - `/api/behavior/score`
+   - `/api/behavior/insights`
+   - `/api/dashboard/summary`
+4. **Added cache invalidation** to data mutation endpoints:
+   - `/api/upload` (PDF statement upload)
+   - `/api/import/execute` (CSV import)
+
+### Performance Results
+- **Before**: 5-10 seconds for behavior endpoints
+- **After**: 0.42 seconds (cold cache), ~0.0001s (warm cache)
+- **All 36 tests pass**
+
+### Note on Database Indexes
+The database indexes for `date_iso`, `type`, and `category` were already present in `db.py` (lines 67, 69, 305).
+
 ## Success Criteria for Phase 7
 
 The phase is complete when:

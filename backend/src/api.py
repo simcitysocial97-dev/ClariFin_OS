@@ -53,6 +53,9 @@ from engines.ledger_audit_engine import (
 from engines.behavior_engine import (
     compute_behavior_profile,
     detect_india_risk_patterns,
+    invalidate_behavior_cache,
+    get_cached_behavior_profile,
+    set_cached_behavior_profile,
 )
 from engines.insight_generator import (
     generate_behavioral_insights,
@@ -1134,6 +1137,9 @@ async def upload_statement(
         
         log.append(f"✅ Saved (Member: {member})")
         
+        # Invalidate behavior cache after data changes
+        invalidate_behavior_cache()
+        
         return {
             "success": True,
             "bank": bank,
@@ -1206,6 +1212,9 @@ def import_execute(data: ImportExecute):
             bank=data.mapping.get("bank", "Manual Import"),
             file_name=data.filename,
         )
+        
+        # Invalidate behavior cache after data changes
+        invalidate_behavior_cache()
         
         return {
             "success": True,
@@ -1547,7 +1556,14 @@ def api_behavior_summary():
         }
     """
     try:
+        # Check cache first
+        cached = get_cached_behavior_profile(DB_PATH)
+        if cached is not None:
+            return cached
+        
+        # Compute and cache
         profile = compute_behavior_profile(DB_PATH)
+        set_cached_behavior_profile(DB_PATH, profile)
         return profile
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1569,7 +1585,13 @@ def api_behavior_score():
         }
     """
     try:
-        profile = compute_behavior_profile(DB_PATH)
+        # Check cache first
+        cached = get_cached_behavior_profile(DB_PATH)
+        if cached is not None:
+            profile = cached
+        else:
+            profile = compute_behavior_profile(DB_PATH)
+            set_cached_behavior_profile(DB_PATH, profile)
         
         indices = profile.get("behavioral_indices", {})
         
@@ -1606,7 +1628,13 @@ def api_behavior_insights():
         }
     """
     try:
-        profile = compute_behavior_profile(DB_PATH)
+        # Check cache first
+        cached = get_cached_behavior_profile(DB_PATH)
+        if cached is not None:
+            profile = cached
+        else:
+            profile = compute_behavior_profile(DB_PATH)
+            set_cached_behavior_profile(DB_PATH, profile)
         
         insights = generate_behavioral_insights(profile)
         nudges = generate_nudges(profile)
@@ -1643,8 +1671,14 @@ def api_dashboard_summary():
     try:
         db = get_db()
         
-        # Get behavior profile for key metrics
-        profile = compute_behavior_profile(DB_PATH)
+        # Check cache first
+        cached = get_cached_behavior_profile(DB_PATH)
+        if cached is not None:
+            profile = cached
+        else:
+            profile = compute_behavior_profile(DB_PATH)
+            set_cached_behavior_profile(DB_PATH, profile)
+        
         indices = profile.get("behavioral_indices", {})
         
         # Calculate net cash flow from savings discipline

@@ -22,3 +22,6 @@ httpx
 # Utilities
 python-multipart>=0.0.6
 aiofiles>=23.0.0
+
+# Caching
+cachetools>=5.0.0
