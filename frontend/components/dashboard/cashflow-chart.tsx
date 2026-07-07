@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { formatINR } from '@/lib/utils/format';
 import { ChartContainer } from '@/components/ui/chart-container';
 import { useCashflow } from '@/lib/hooks/use-cashflow';
-import type { CashflowMonth } from '@/lib/schemas/cashflow';
 
 // Dynamically import recharts to avoid SSR issues
 import dynamic from 'next/dynamic';

@@ -31,6 +31,7 @@ interface HookState<T> {
   loading: boolean;
   error: Error | null;
   refetch: () => Promise<void>;
+  dataUpdatedAt: number;
 }
 
 async function fetchDashboardSummary(): Promise<DashboardData> {
@@ -57,5 +58,6 @@ export function useDashboardMetrics(): HookState<DashboardData> {
     loading: result.isLoading,
     error: result.error ?? null,
     refetch,
+    dataUpdatedAt: result.dataUpdatedAt,
   }), [result, refetch]);
 }

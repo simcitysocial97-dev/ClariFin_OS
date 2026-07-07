@@ -2,7 +2,7 @@
  * Proximity-based label-value matching
  * Finds values near labels based on spatial position
  */
-import type { TextItem, TextLine, PageData } from '../core/text-extractor';
+import type { TextItem, PageData } from '../core/text-extractor';
 
 export interface LabelValuePair {
     label: string;

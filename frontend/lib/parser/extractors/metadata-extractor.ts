@@ -6,7 +6,7 @@
  * near their labels, achieving 100% accuracy through spatial proximity matching.
  */
 
-import type { DocumentData, PageData } from '../core/text-extractor';
+import type { DocumentData } from '../core/text-extractor';
 import { findValueNearLabel, type ProximityConfig } from '../semantic/proximity-engine';
 
 // ==========================================

@@ -4,13 +4,8 @@
  */
 
 import type { Transaction } from '@/types/transaction';
-import type {
-  CategorySummary,
-  MonthlyBreakdown,
-  UncategorizedPattern,
-} from '@/types/api';
 
-// Re-export Transaction for convenience
+// Re-export types for convenience
 export type { Transaction } from '@/types/transaction';
 export type { CategorySummary, MonthlyBreakdown, UncategorizedPattern } from '@/types/api';
 

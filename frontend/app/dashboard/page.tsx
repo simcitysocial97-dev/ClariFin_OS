@@ -165,7 +165,7 @@ function HealthScoreFooter({ score }: { score: number }) {
 // ============================================================
 
 export default function DashboardPage() {
-  const { data, loading, error, refetch } = useDashboardMetrics();
+  const { data, loading, error, refetch, dataUpdatedAt } = useDashboardMetrics();
   const { data: overviewData } = useOverview();
 
   // Page Loading state
@@ -211,7 +211,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          Last updated: {data.dataUpdatedAt ? new Date(data.dataUpdatedAt).toLocaleTimeString() : new Date().toLocaleTimeString()}
+          Last updated: {dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString() : new Date().toLocaleTimeString()}
         </p>
       </div>
 

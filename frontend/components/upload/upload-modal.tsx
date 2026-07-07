@@ -8,7 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { parseStatement } from '@/lib/parser';
-import { Upload, FileText, X, Server, Globe, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
+import { Upload, FileText, Server, Globe, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUploadQuery, useStatementsQuery, useTransactionsQuery, useOverviewQuery } from '@/lib/hooks/use-query-finance';
 import { useMember } from '@/lib/context/member-context';
@@ -37,7 +37,7 @@ type UploadMode = 'browser' | 'server';
 
 export function UploadModal({ open, onOpenChange }: UploadModalProps) {
   const [uploadMode, setUploadMode] = useState<UploadMode>('server'); // Default to server for better experience
-  const { member: contextMember, members } = useMember();
+  const { member: contextMember } = useMember();
   const selectedMember = contextMember === 'All' ? 'Self' : contextMember;
   const [processingLog, setProcessingLog] = useState<string[]>([]);
   const [uploadResult, setUploadResult] = useState<{
@@ -53,7 +53,7 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
   
   const { toast } = useToast();
   const { addCard, addTransactions } = useAppStore();
-  const { upload, uploading: serverUploading, result: serverResult, error: serverError } = useUploadQuery();
+  const { upload, result: serverResult, error: serverError } = useUploadQuery();
   const { refetch: refetchStatements } = useStatementsQuery();
   const { refetch: refetchTransactions } = useTransactionsQuery();
   const { refetch: refetchOverview } = useOverviewQuery();

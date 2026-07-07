@@ -16,11 +16,6 @@ const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.Cartesi
 const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false });
 const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false });
 
-interface CategoryChartPoint {
-  name: string;
-  value: number;  // In rupees
-}
-
 export function CategorySpendChart() {
   const [mounted, setMounted] = useState(false);
 

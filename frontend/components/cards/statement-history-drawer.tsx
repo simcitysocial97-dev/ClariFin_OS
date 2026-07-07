@@ -1,6 +1,6 @@
 'use client'
 
-import { formatINR, formatDateDisplay } from '@/lib/utils/format'
+import { formatDateDisplay } from '@/lib/utils/format'
 import {
   Sheet,
   SheetContent,

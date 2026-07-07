@@ -4,13 +4,6 @@ import { ChartContainer } from '@/components/ui/chart-container';
 import { useAnalytics } from '@/lib/hooks/use-analytics';
 import { truncateText } from '@/lib/utils/format';
 
-interface RecurringCharge {
-  description: string;
-  frequency: number;
-  avg_display: string;
-  annual_display: string;
-}
-
 export function RecurringChargesWidget() {
   const { data, isLoading, isError, refetch } = useAnalytics();
 

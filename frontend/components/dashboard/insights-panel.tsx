@@ -6,13 +6,6 @@ import { useOverview } from '@/lib/hooks/use-overview';
 import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface BehavioralInsight {
-  title: string;
-  description: string;
-  severity: 'warning' | 'positive' | 'neutral';
-  icon: string;
-}
-
 const getSeverityStyles = (severity: string) => {
   switch (severity) {
     case 'warning':

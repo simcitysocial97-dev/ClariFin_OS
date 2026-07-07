@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTransactionsQuery, useBanksQuery, useCategoryListQuery, useExportCSVQuery } from '@/lib/hooks/use-query-finance';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -54,8 +54,8 @@ export default function TransactionsPage() {
     offset: 0,
   });
 
-  const { data: banks, loading: banksLoading } = useBanksQuery();
-  const { data: categories, loading: categoriesLoading } = useCategoryListQuery();
+  const { data: banks, loading: _banksLoading } = useBanksQuery();
+  const { data: categories, loading: _categoriesLoading } = useCategoryListQuery();
   const { exportCSV, exporting } = useExportCSVQuery();
 
   // Show error toast
@@ -166,7 +166,7 @@ export default function TransactionsPage() {
     }
   };
 
-  const handleDelete = (id: string | number) => {
+  const handleDelete = (_id: string | number) => {
     toast({
       title: 'Delete not implemented',
       description: 'Delete functionality will be added soon.',
@@ -414,7 +414,7 @@ export default function TransactionsPage() {
                    </TableCell>
                  </TableRow>
                ) : (
-                 transactions.map((transaction: any, index: number) => (
+                  transactions.map((transaction: any, _index: number) => (
                    <TableRow 
                      key={transaction.id}
                      className="hover:bg-muted/50 transition-colors py-2"

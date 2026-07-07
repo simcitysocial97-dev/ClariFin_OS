@@ -4,12 +4,6 @@ import { ChartContainer } from '@/components/ui/chart-container';
 import { useAnalytics } from '@/lib/hooks/use-analytics';
 import { Badge } from '@/components/ui/badge';
 
-interface TopMerchant {
-  merchant: string;
-  amount_display: string;
-  count: number;
-}
-
 export function TopMerchantsWidget() {
   const { data, isLoading, isError, refetch } = useAnalytics();
 

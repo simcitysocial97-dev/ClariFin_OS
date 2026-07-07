@@ -5,39 +5,6 @@ import { useBehaviorScore } from '@/lib/hooks/use-behavior-score';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-// Types
-interface BehaviorComponents {
-  savings_discipline: number;
-  habit_stability: number;
-  impulsivity: number;
-  financial_stress: number;
-  loss_aversion: number;
-}
-
-interface IndiaRiskFlags {
-  upi_micro_spend_flag: boolean;
-  gambling_flag: boolean;
-  loan_app_pattern_flag: boolean;
-  loan_credit_count: number;
-  emi_ratio: number;
-  monthly_emi_total: number;
-}
-
-interface RiskFlags {
-  india_specific: IndiaRiskFlags;
-  high_impulsivity: boolean;
-  high_stress: boolean;
-  low_savings: boolean;
-}
-
-interface BehaviorScoreData {
-  financial_health_score: number;
-  confidence: number;
-  components: BehaviorComponents;
-  risk_flags: RiskFlags;
-  summary: string;
-}
-
 // Score color mapping
 const getScoreColor = (score: number) => {
   if (score >= 81) return 'text-green-600';

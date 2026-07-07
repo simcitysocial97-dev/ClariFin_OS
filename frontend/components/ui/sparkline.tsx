@@ -19,7 +19,7 @@ export function Sparkline({
   strokeWidth = 2,
   showArea = true,
 }: SparklineProps) {
-  const { path, areaPath, min, max } = useMemo(() => {
+  const { path, areaPath } = useMemo(() => {
     if (data.length === 0) return { path: '', areaPath: '', min: 0, max: 0 };
 
     const min = Math.min(...data);
@@ -38,7 +38,7 @@ export function Sparkline({
 
     const areaPath = `${path} L ${width} ${height} L 0 ${height} Z`;
 
-    return { path, areaPath, min, max };
+    return { path, areaPath };
   }, [data, width, height]);
 
   if (data.length === 0) return null;

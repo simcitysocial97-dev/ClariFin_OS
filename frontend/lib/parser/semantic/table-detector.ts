@@ -143,7 +143,7 @@ function extractRows(
  */
 export function extractTransactionsFromTable(
     table: Table,
-    bankName: string
+    _bankName: string
 ): Array<{date: string, description: string, amount: number, type: string}> {
     
     console.log('[TABLE DETECTOR] Extracting transactions from table...');
