@@ -102,3 +102,86 @@ export interface SpendingTrendPoint {
   amount: number;
   average?: number;
 }
+// ===== Account Types =====
+
+export interface Account {
+  id: number;
+  name: string;
+  bank: string;
+  account_type: string;
+  balance_paise: number;
+  account_number_last4?: string | null;
+  credit_limit_paise?: number;
+  currency?: string;
+  color?: string;
+  icon?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AccountsResponse {
+  accounts: Account[];
+  total: number;
+}
+
+// ===== Loan Types =====
+
+export interface Loan {
+  id: number;
+  name: string;
+  lender: string;
+  loan_type: string;
+  principal_paise: number;
+  outstanding_paise: number;
+  interest_rate: number;
+  emi_paise?: number | null;
+  tenure_months?: number | null;
+  start_date: string;
+  end_date?: string | null;
+  linked_account_id?: number | null;
+  status: string;
+  notes?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoansResponse {
+  loans: Loan[];
+  total: number;
+}
+
+// ===== Investment Types =====
+
+export interface Investment {
+  id: number;
+  name: string;
+  type: string;
+  platform?: string | null;
+  invested_paise: number;
+  current_value_paise: number;
+  units?: number | null;
+  purchase_date?: string | null;
+  maturity_date?: string | null;
+  linked_account_id?: number | null;
+  is_active: boolean;
+  notes?: string | null;
+  last_updated: string;
+  created_at: string;
+}
+
+export interface InvestmentsResponse {
+  investments: Investment[];
+  total: number;
+}
+
+// ===== Net Worth Types =====
+
+export interface NetWorth {
+  total_assets_paise: number;
+  total_liabilities_paise: number;
+  net_worth_paise: number;
+  accounts_total_paise: number;
+  loans_total_paise: number;
+  investments_total_paise: number;
+}

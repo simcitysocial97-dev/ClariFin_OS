@@ -1403,42 +1403,70 @@ class FinanceDB:
         """Get all active persistent accounts."""
         conn = self._get_conn()
         rows = conn.execute("""
-            SELECT id, name, bank, account_type, balance_paise,
-                   account_number_last4, is_active, notes, created_at, updated_at
+            SELECT id, name, bank_name, account_type, account_number_masked,
+                   balance_paise, credit_limit_paise, currency, color, icon,
+                   is_active, created_at, updated_at
             FROM accounts
             WHERE is_active = 1
-            ORDER BY bank, name
+            ORDER BY bank_name, name
         """).fetchall()
-        return [dict(r) for r in rows]
+        # Map DB column names to API field names
+        result = []
+        for r in rows:
+            d = dict(r)
+            d['bank'] = d.pop('bank_name')
+            d['account_number_last4'] = d.pop('account_number_masked')
+            result.append(d)
+        if self._conn is None:
+            conn.close()
+        return result
 
-    def create_account(self, account_id: str, name: str, bank: str,
+    def create_account(self, account_id: int | str, name: str, bank: str,
                        account_type: str, balance_paise: int,
                        account_number_last4: str | None = None,
                        notes: str | None = None) -> dict:
         """Create a new persistent account."""
         conn = self._get_conn()
-        conn.execute("""
-            INSERT INTO accounts (id, name, bank, account_type, balance_paise,
-                                  account_number_last4, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (account_id, name, bank, account_type, balance_paise,
-              account_number_last4, notes))
+        # Use auto-increment for existing schema (id is INTEGER PRIMARY KEY)
+        cur = conn.execute("""
+            INSERT INTO accounts (name, bank_name, account_type, balance_paise,
+                                  account_number_masked)
+            VALUES (?, ?, ?, ?, ?)
+        """, (name, bank, account_type, balance_paise,
+              account_number_last4))
         conn.commit()
-        return self.get_account_by_id(account_id)
+        if self._conn is None:
+            conn.close()
+        return self.get_account_by_id(cur.lastrowid)
 
-    def get_account_by_id(self, account_id: str) -> dict | None:
+    def get_account_by_id(self, account_id: int | str) -> dict | None:
         """Get a single account by ID."""
         conn = self._get_conn()
         row = conn.execute(
             "SELECT * FROM accounts WHERE id = ?", (account_id,)
         ).fetchone()
-        return dict(row) if row else None
+        if self._conn is None:
+            conn.close()
+        if not row:
+            return None
+        d = dict(row)
+        d['bank'] = d.pop('bank_name')
+        d['account_number_last4'] = d.pop('account_number_masked')
+        return d
 
-    def update_account(self, account_id: str, **kwargs) -> dict | None:
+    def update_account(self, account_id: int | str, **kwargs) -> dict | None:
         """Update account fields. Only updates provided fields."""
+        # Map API field names to DB column names
+        field_map = {
+            'bank': 'bank_name',
+            'account_number_last4': 'account_number_masked',
+        }
         allowed = {'name', 'bank', 'account_type', 'balance_paise',
-                   'account_number_last4', 'notes'}
-        updates = {k: v for k, v in kwargs.items() if k in allowed}
+                   'account_number_last4'}
+        updates = {}
+        for k, v in kwargs.items():
+            if k in allowed:
+                updates[field_map.get(k, k)] = v
         if not updates:
             return self.get_account_by_id(account_id)
 
@@ -1451,9 +1479,11 @@ class FinanceDB:
             f"UPDATE accounts SET {set_clause} WHERE id = ?", values
         )
         conn.commit()
+        if self._conn is None:
+            conn.close()
         return self.get_account_by_id(account_id)
 
-    def delete_account(self, account_id: str) -> bool:
+    def delete_account(self, account_id: int | str) -> bool:
         """Soft delete an account."""
         conn = self._get_conn()
         conn.execute(
@@ -1461,9 +1491,245 @@ class FinanceDB:
             (account_id,)
         )
         conn.commit()
-        return conn.execute(
+        result = conn.execute(
             "SELECT changes()"
         ).fetchone()[0] > 0
+        if self._conn is None:
+            conn.close()
+        return result
+
+
+    # ─── LOANS ────────────────────────────────────────────────────────────────
+
+    def get_all_loans(self) -> list[dict]:
+        """Get all active loans."""
+        conn = self._get_conn()
+        rows = conn.execute("""
+            SELECT id, name, lender, loan_type, principal_paise,
+                   outstanding_paise, interest_rate, emi_paise, tenure_months,
+                   start_date, end_date, linked_account_id, status, notes,
+                   created_at, updated_at
+            FROM loans
+            WHERE status = 'active'
+            ORDER BY lender, name
+        """).fetchall()
+        if self._conn is None:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    def create_loan(self, loan_id: int | str, name: str, lender: str,
+                    loan_type: str, principal_paise: int,
+                    outstanding_paise: int, interest_rate: float,
+                    emi_paise: int | None = None, tenure_months: int | None = None,
+                    start_date: str | None = None, end_date: str | None = None,
+                    linked_account_id: int | None = None,
+                    notes: str | None = None) -> dict:
+        """Create a new loan record."""
+        conn = self._get_conn()
+        # Use auto-increment for existing schema (id is INTEGER PRIMARY KEY)
+        # Provide default start_date if not provided
+        from datetime import datetime
+        if start_date is None:
+            start_date = datetime.now().strftime("%Y-%m-%d")
+        cur = conn.execute("""
+            INSERT INTO loans (name, lender, loan_type, principal_paise,
+                               outstanding_paise, interest_rate, emi_paise,
+                               tenure_months, start_date, end_date,
+                               linked_account_id, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (name, lender, loan_type, principal_paise,
+              outstanding_paise, interest_rate, emi_paise,
+              tenure_months, start_date, end_date,
+              linked_account_id, notes))
+        conn.commit()
+        if self._conn is None:
+            conn.close()
+        return self.get_loan_by_id(cur.lastrowid)
+
+    def get_loan_by_id(self, loan_id: int | str) -> dict | None:
+        """Get a single loan by ID."""
+        conn = self._get_conn()
+        row = conn.execute(
+            "SELECT * FROM loans WHERE id = ?", (loan_id,)
+        ).fetchone()
+        if self._conn is None:
+            conn.close()
+        return dict(row) if row else None
+
+    def update_loan(self, loan_id: int | str, **kwargs) -> dict | None:
+        """Update loan fields. Only updates provided fields."""
+        allowed = {'name', 'lender', 'loan_type', 'principal_paise',
+                   'outstanding_paise', 'interest_rate', 'emi_paise',
+                   'tenure_months', 'start_date', 'end_date',
+                   'linked_account_id', 'status', 'notes'}
+        updates = {k: v for k, v in kwargs.items() if k in allowed}
+        if not updates:
+            return self.get_loan_by_id(loan_id)
+
+        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause += ", updated_at = datetime('now')"
+        values = list(updates.values()) + [loan_id]
+
+        conn = self._get_conn()
+        conn.execute(
+            f"UPDATE loans SET {set_clause} WHERE id = ?", values
+        )
+        conn.commit()
+        if self._conn is None:
+            conn.close()
+        return self.get_loan_by_id(loan_id)
+
+    def delete_loan(self, loan_id: int | str) -> bool:
+        """Soft delete a loan (set status to inactive)."""
+        conn = self._get_conn()
+        conn.execute(
+            "UPDATE loans SET status = 'inactive', updated_at = datetime('now') WHERE id = ?",
+            (loan_id,)
+        )
+        conn.commit()
+        result = conn.execute(
+            "SELECT changes()"
+        ).fetchone()[0] > 0
+        if self._conn is None:
+            conn.close()
+        return result
+
+    # ─── INVESTMENTS ─────────────────────────────────────────────────────────
+
+    def get_all_investments(self) -> list[dict]:
+        """Get all active investments."""
+        conn = self._get_conn()
+        rows = conn.execute("""
+            SELECT id, name, type, platform, invested_paise,
+                   current_value_paise, units, purchase_date,
+                   maturity_date, linked_account_id, is_active, notes,
+                   last_updated, created_at
+            FROM investments
+            WHERE is_active = 1
+            ORDER BY name
+        """).fetchall()
+        if self._conn is None:
+            conn.close()
+        return [dict(r) for r in rows]
+
+    def create_investment(self, investment_id: int | str, name: str,
+                          investment_type: str, invested_paise: int,
+                          current_value_paise: int,
+                          platform: str | None = None, units: float | None = None,
+                          purchase_date: str | None = None,
+                          maturity_date: str | None = None,
+                          linked_account_id: int | None = None,
+                          notes: str | None = None) -> dict:
+        """Create a new investment record."""
+        conn = self._get_conn()
+        # Use auto-increment for existing schema (id is INTEGER PRIMARY KEY)
+        cur = conn.execute("""
+            INSERT INTO investments (name, type, platform, invested_paise,
+                                     current_value_paise, units, purchase_date,
+                                     maturity_date, linked_account_id, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (name, investment_type, platform, invested_paise,
+              current_value_paise, units, purchase_date,
+              maturity_date, linked_account_id, notes))
+        conn.commit()
+        if self._conn is None:
+            conn.close()
+        return self.get_investment_by_id(cur.lastrowid)
+
+    def get_investment_by_id(self, investment_id: int | str) -> dict | None:
+        """Get a single investment by ID."""
+        conn = self._get_conn()
+        row = conn.execute(
+            "SELECT * FROM investments WHERE id = ?", (investment_id,)
+        ).fetchone()
+        if self._conn is None:
+            conn.close()
+        return dict(row) if row else None
+
+    def update_investment(self, investment_id: int | str, **kwargs) -> dict | None:
+        """Update investment fields. Only updates provided fields."""
+        allowed = {'name', 'type', 'platform', 'invested_paise',
+                   'current_value_paise', 'units', 'purchase_date',
+                   'maturity_date', 'linked_account_id', 'notes'}
+        updates = {k: v for k, v in kwargs.items() if k in allowed}
+        if not updates:
+            return self.get_investment_by_id(investment_id)
+
+        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause += ", last_updated = datetime('now')"
+        values = list(updates.values()) + [investment_id]
+
+        conn = self._get_conn()
+        conn.execute(
+            f"UPDATE investments SET {set_clause} WHERE id = ?", values
+        )
+        conn.commit()
+        if self._conn is None:
+            conn.close()
+        return self.get_investment_by_id(investment_id)
+
+    def delete_investment(self, investment_id: int | str) -> bool:
+        """Soft delete an investment."""
+        conn = self._get_conn()
+        conn.execute(
+            "UPDATE investments SET is_active = 0, last_updated = datetime('now') WHERE id = ?",
+            (investment_id,)
+        )
+        conn.commit()
+        result = conn.execute(
+            "SELECT changes()"
+        ).fetchone()[0] > 0
+        if self._conn is None:
+            conn.close()
+        return result
+
+    def get_net_worth(self) -> dict:
+        """
+        Calculate net worth from accounts, loans, and investments.
+        Returns:
+            {
+                total_assets_paise: int,
+                total_liabilities_paise: int,
+                net_worth_paise: int,
+                accounts_total_paise: int,
+                loans_total_paise: int,
+                investments_total_paise: int
+            }
+        """
+        conn = self._get_conn()
+
+        # Get total account balances (assets)
+        accounts_row = conn.execute(
+            "SELECT COALESCE(SUM(balance_paise), 0) as total FROM accounts WHERE is_active = 1"
+        ).fetchone()
+        accounts_total = accounts_row[0] or 0
+
+        # Get total outstanding loans (liabilities)
+        loans_row = conn.execute(
+            "SELECT COALESCE(SUM(outstanding_paise), 0) as total FROM loans WHERE status = 'active'"
+        ).fetchone()
+        loans_total = loans_row[0] or 0
+
+        # Get total investment value
+        investments_row = conn.execute(
+            "SELECT COALESCE(SUM(current_value_paise), 0) as total FROM investments WHERE is_active = 1"
+        ).fetchone()
+        investments_total = investments_row[0] or 0
+
+        # Net worth = (accounts + investments) - loans
+        net_worth = (accounts_total + investments_total) - loans_total
+
+        if self._conn is None:
+            conn.close()
+
+        return {
+            "total_assets_paise": accounts_total + investments_total,
+            "total_liabilities_paise": loans_total,
+            "net_worth_paise": net_worth,
+            "accounts_total_paise": accounts_total,
+            "loans_total_paise": loans_total,
+            "investments_total_paise": investments_total,
+        }
 
 
 # ============================================================

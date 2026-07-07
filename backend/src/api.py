@@ -57,7 +57,7 @@ from engines.nudge_engine import (
 from engines.reconciliation_engine import (
     find_potential_matches,
 )
-from errors import register_error_handlers
+from errors import NotFoundError, register_error_handlers
 from metadata_extractor import MetadataExtractor
 from statement_extractor import StatementExtractor
 
@@ -1882,12 +1882,10 @@ def api_get_managed_accounts():
 @app.post("/api/accounts/manage")
 def api_create_managed_account(account: AccountCreate):
     """Create a new persistent account."""
-    import uuid
-    account_id = f"acc_{uuid.uuid4().hex[:8]}"
     try:
         with FinanceDB() as db:
             created = db.create_account(
-                account_id=account_id,
+                account_id=0,  # Will use auto-increment
                 name=account.name,
                 bank=account.bank,
                 account_type=account.account_type,
@@ -1927,6 +1925,215 @@ def api_delete_managed_account(account_id: str):
             return {"success": True}
     except HTTPException:
         raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================
+# Loans API Endpoints (Phase 4)
+# ============================================================
+
+class LoanCreate(BaseModel):
+    name: str
+    lender: str
+    loan_type: str
+    principal_paise: int
+    outstanding_paise: int
+    interest_rate: float
+    emi_paise: int | None = None
+    tenure_months: int | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    linked_account_id: int | None = None
+    notes: str | None = None
+
+class LoanUpdate(BaseModel):
+    name: str | None = None
+    lender: str | None = None
+    loan_type: str | None = None
+    principal_paise: int | None = None
+    outstanding_paise: int | None = None
+    interest_rate: float | None = None
+    emi_paise: int | None = None
+    tenure_months: int | None = None
+    start_date: str | None = None
+    end_date: str | None = None
+    linked_account_id: int | None = None
+    status: str | None = None
+    notes: str | None = None
+
+@app.get("/api/loans/manage")
+def api_get_managed_loans():
+    """Get all active loans."""
+    try:
+        with FinanceDB() as db:
+            loans = db.get_all_loans()
+            return {"loans": loans, "total": len(loans)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/loans/manage")
+def api_create_managed_loan(loan: LoanCreate):
+    """Create a new loan record."""
+    try:
+        with FinanceDB() as db:
+            created = db.create_loan(
+                loan_id=0,  # Will use auto-increment
+                name=loan.name,
+                lender=loan.lender,
+                loan_type=loan.loan_type,
+                principal_paise=loan.principal_paise,
+                outstanding_paise=loan.outstanding_paise,
+                interest_rate=loan.interest_rate,
+                emi_paise=loan.emi_paise,
+                tenure_months=loan.tenure_months,
+                start_date=loan.start_date,
+                end_date=loan.end_date,
+                linked_account_id=loan.linked_account_id,
+                notes=loan.notes
+            )
+            return {"success": True, "loan": created}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/loans/manage/{loan_id}")
+def api_update_managed_loan(loan_id: str, loan: LoanUpdate):
+    """Update an existing loan."""
+    try:
+        with FinanceDB() as db:
+            updated = db.update_loan(
+                loan_id,
+                **{k: v for k, v in loan.model_dump().items() if v is not None}
+            )
+            if not updated:
+                raise NotFoundError(f"Loan {loan_id} not found")
+            return {"success": True, "loan": updated}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/loans/manage/{loan_id}")
+def api_delete_managed_loan(loan_id: str):
+    """Soft delete a loan."""
+    try:
+        with FinanceDB() as db:
+            success = db.delete_loan(loan_id)
+            if not success:
+                raise NotFoundError(f"Loan {loan_id} not found")
+            return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================
+# Investments API Endpoints (Phase 4)
+# ============================================================
+
+class InvestmentCreate(BaseModel):
+    name: str
+    investment_type: str
+    invested_paise: int
+    current_value_paise: int
+    platform: str | None = None
+    units: float | None = None
+    purchase_date: str | None = None
+    maturity_date: str | None = None
+    linked_account_id: int | None = None
+    notes: str | None = None
+
+class InvestmentUpdate(BaseModel):
+    name: str | None = None
+    type: str | None = None
+    platform: str | None = None
+    invested_paise: int | None = None
+    current_value_paise: int | None = None
+    units: float | None = None
+    purchase_date: str | None = None
+    maturity_date: str | None = None
+    linked_account_id: int | None = None
+    notes: str | None = None
+
+@app.get("/api/investments/manage")
+def api_get_managed_investments():
+    """Get all active investments."""
+    try:
+        with FinanceDB() as db:
+            investments = db.get_all_investments()
+            return {"investments": investments, "total": len(investments)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/investments/manage")
+def api_create_managed_investment(investment: InvestmentCreate):
+    """Create a new investment record."""
+    try:
+        with FinanceDB() as db:
+            created = db.create_investment(
+                investment_id=0,  # Will use auto-increment
+                name=investment.name,
+                investment_type=investment.investment_type,
+                invested_paise=investment.invested_paise,
+                current_value_paise=investment.current_value_paise,
+                platform=investment.platform,
+                units=investment.units,
+                purchase_date=investment.purchase_date,
+                maturity_date=investment.maturity_date,
+                linked_account_id=investment.linked_account_id,
+                notes=investment.notes
+            )
+            return {"success": True, "investment": created}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/investments/manage/{investment_id}")
+def api_update_managed_investment(investment_id: str, investment: InvestmentUpdate):
+    """Update an existing investment."""
+    try:
+        with FinanceDB() as db:
+            updated = db.update_investment(
+                investment_id,
+                **{k: v for k, v in investment.model_dump().items() if v is not None}
+            )
+            if not updated:
+                raise NotFoundError(f"Investment {investment_id} not found")
+            return {"success": True, "investment": updated}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/investments/manage/{investment_id}")
+def api_delete_managed_investment(investment_id: str):
+    """Soft delete an investment."""
+    try:
+        with FinanceDB() as db:
+            success = db.delete_investment(investment_id)
+            if not success:
+                raise NotFoundError(f"Investment {investment_id} not found")
+            return {"success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================
+# Net Worth API Endpoint (Phase 4)
+# ============================================================
+
+@app.get("/api/net-worth")
+def api_get_net_worth():
+    """
+    Get net worth summary.
+    Returns total assets, liabilities, and net worth in paise.
+    """
+    try:
+        with FinanceDB() as db:
+            net_worth = db.get_net_worth()
+            return net_worth
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
