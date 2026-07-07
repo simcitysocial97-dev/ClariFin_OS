@@ -76,7 +76,7 @@ def _moving_average(values: List[float], window: int = 7) -> List[float]:
 # ============================================================
 
 def _get_transactions_90_days(db_path: str) -> List[Dict]:
-    """Get transactions from last 90 days."""
+    """Get transactions from last 90 days (or most recent 500 if no recent data)."""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     
@@ -97,8 +97,8 @@ def _get_transactions_90_days(db_path: str) -> List[Dict]:
     return rows
 
 
-def _get_all_transactions(db_path: str) -> List[Dict]:
-    """Get all transactions for historical baseline."""
+def _get_recent_transactions(db_path: str, limit: int = 500) -> List[Dict]:
+    """Get most recent N transactions for performance."""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     
@@ -107,12 +107,14 @@ def _get_all_transactions(db_path: str) -> List[Dict]:
             t.id, t.date, t.date_iso, t.description, t.amount,
             t.type, t.category, t.debit, t.credit, t.account_id
         FROM transactions t
-        ORDER BY t.date_iso ASC
-    """)
+        ORDER BY t.date_iso DESC
+        LIMIT ?
+    """, (limit,))
     
     rows = [dict(row) for row in cur.fetchall()]
     conn.close()
-    return rows
+    # Return in ascending order for time-series calculations
+    return sorted(rows, key=lambda r: r.get("date_iso", ""))
 
 
 # ============================================================
@@ -733,12 +735,12 @@ def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
             "financial_health_score": float (0–100)
         }
     """
-    # Get transactions
+    # Get transactions - use recent 500 for performance
     transactions_90d = _get_transactions_90_days(db_path)
-    all_transactions = _get_all_transactions(db_path)
+    recent_transactions = _get_recent_transactions(db_path, 500)
     
-    # Use 90-day window for calculations, fall back to all if needed
-    txn_set = transactions_90d if len(transactions_90d) >= 30 else all_transactions
+    # Use 90-day window if available, otherwise use most recent 500
+    txn_set = transactions_90d if len(transactions_90d) >= 30 else recent_transactions
     
     # Compute temporal patterns
     temporal = _compute_temporal_patterns(txn_set)
@@ -754,7 +756,7 @@ def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
     india_risks = detect_india_risk_patterns(txn_set)
     
     # Compute confidence based on data density
-    confidence = min(1.0, len(transactions_90d) / 200)
+    confidence = min(1.0, len(txn_set) / 200)
     
     # Buffer adequacy from stress index
     buffer_score = _normalize_score(financial_stress.get("buffer_days", 0), 0, 30)
@@ -792,7 +794,6 @@ def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
         "confidence": round(confidence, 2),
         "financial_health_score": round(health_score, 1),
         "data_quality": {
-            "transactions_90_days": len(transactions_90d),
-            "total_transactions": len(all_transactions),
+            "transactions_analyzed": len(txn_set),
         },
     }
