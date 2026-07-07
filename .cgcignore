@@ -12,7 +12,12 @@ build/
 target/
 out/
 .git/
+.idea/
+.vscode/
 __pycache__/
+public/
+mocks/
+_archived_reflex_dashboard/
 *.png
 *.jpg
 *.jpeg
