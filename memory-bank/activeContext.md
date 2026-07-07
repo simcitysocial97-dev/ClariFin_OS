@@ -211,7 +211,18 @@ Based on the backend capability audit, the following features are ready for fron
 6. **D3**: Consolidate two dashboard pages — **RESOLVED** (root page redirects to /dashboard)
 
 ### High Priority (PENDING)
-1. **R6**: In-memory accounts store loses data — **PENDING** (will be addressed last)
+1. **R6**: In-memory accounts store loses data — **PENDING** (will be addressed in Phase 4)
+
+### Phase 7C — Enterprise Architecture Gaps (COMPLETED 2026-07-07)
+1. **Gap 1**: dev:safe, type-check, validate scripts + concurrently — **VERIFIED**
+2. **Gap 2**: Zod validation wired to useCashflow and useTransactions — **VERIFIED**
+3. **Gap 3**: data-testid attributes + Playwright tests using getByTestId — **VERIFIED**
+
+### Phase 7D — Ready for Phase 4
+- Branch: `feat/phase4-accounts-loans-investments` created
+- DB schema audit complete: 5 tables exist (statements, transactions, members, import_mappings, reconciliations)
+- No accounts, loans, or investments tables exist — all need to be created
+- Accounts are currently computed dynamically from transactions via `balance_engine.get_accounts_list()`
 
 ## Technical Debt (UPDATED)
 - **enrich_transaction()** — Deprecated but still used for behavioral insights (non-monetary)
