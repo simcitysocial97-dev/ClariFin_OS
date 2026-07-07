@@ -4,6 +4,7 @@
  */
 
 import type { Transaction } from '@/types/transaction';
+import { TransactionsResponseSchema } from '@/lib/schemas/transaction';
 
 // Re-export types for convenience
 export type { Transaction } from '@/types/transaction';
@@ -138,7 +139,16 @@ export async function fetchTransactions(params?: {
   
   const res = await fetch(`${API_BASE}/api/transactions?${query}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+  
+  const raw = await res.json();
+  const parsed = TransactionsResponseSchema.safeParse(raw);
+  
+  if (!parsed.success) {
+    console.error('[fetchTransactions] API response validation failed:', parsed.error.issues);
+    throw new Error(`Transactions API contract mismatch: ${parsed.error.issues[0]?.message}`);
+  }
+  
+  return parsed.data;
 }
 
 /**

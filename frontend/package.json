@@ -22,7 +22,10 @@
     "test:metadata:fix": "npx tsx scripts/auto-fix-metadata.ts",
     "test:metadata:all": "npm run test:metadata:generate && npm run test:metadata",
     "prepare": "husky",
-    "gen:types": "openapi-typescript http://localhost:8000/openapi.json -o ./types/api-generated.ts"
+    "gen:types": "openapi-typescript http://localhost:8000/openapi.json -o ./types/api-generated.ts",
+    "dev:safe": "concurrently --names 'next,tsc' --prefix-colors 'cyan,yellow' 'next dev --turbopack' 'tsc --watch --noEmit --preserveWatchOutput'",
+    "type-check": "tsc --noEmit",
+    "validate": "npm run type-check && npm run lint && npm run test"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
@@ -54,6 +57,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/ui": "^4.1.10",
+    "concurrently": "^9.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
