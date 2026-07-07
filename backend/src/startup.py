@@ -7,24 +7,23 @@ Fails early with clear diagnostics if critical dependencies are missing.
 """
 
 import sys
-from pathlib import Path
 
 from config import settings, validate_startup
-from logger import log_info, log_error
+from logger import log_error, log_info
 
 
 def run_startup_validation() -> bool:
     """
     Run all startup validation checks.
-    
+
     Returns:
         True if all checks pass, raises RuntimeError otherwise.
-    
+
     Raises:
         RuntimeError: If any critical validation fails
     """
     log_info("Starting ClariFin_OS startup validation...")
-    
+
     # Validate configuration
     try:
         validate_startup()
@@ -32,7 +31,7 @@ def run_startup_validation() -> bool:
     except RuntimeError as e:
         log_error("Configuration validation failed", error=e)
         raise
-    
+
     # Check required directories
     db_dir = settings.database_path.parent
     if not db_dir.exists():
@@ -42,7 +41,7 @@ def run_startup_validation() -> bool:
         except Exception as e:
             log_error(f"Cannot create database directory: {db_dir}", error=e)
             raise RuntimeError(f"Cannot create database directory: {e}")
-    
+
     upload_dir = settings.upload_dir
     if not upload_dir.exists():
         log_info(f"Creating upload directory: {upload_dir}")
@@ -51,7 +50,7 @@ def run_startup_validation() -> bool:
         except Exception as e:
             log_error(f"Cannot create upload directory: {upload_dir}", error=e)
             raise RuntimeError(f"Cannot create upload directory: {e}")
-    
+
     # Check database connectivity (if exists)
     if settings.database_path.exists():
         try:
@@ -65,7 +64,7 @@ def run_startup_validation() -> bool:
             raise RuntimeError(f"Database connectivity check failed: {e}")
     else:
         log_info("Database not found - will be created on first use")
-    
+
     log_info("Startup validation complete - all systems ready")
     return True
 

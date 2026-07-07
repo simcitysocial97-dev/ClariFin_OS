@@ -10,11 +10,11 @@ Endpoints:
 """
 
 import sqlite3
-from pathlib import Path
+
 from fastapi import APIRouter, HTTPException
 
 from config import settings
-from logger import log_info, log_error
+from logger import log_error, log_info
 
 router = APIRouter()
 
@@ -23,7 +23,7 @@ router = APIRouter()
 def health_check():
     """
     Basic health check endpoint.
-    
+
     Returns 200 OK if the application is running.
     This is a lightweight check that doesn't verify database connectivity.
     """
@@ -38,12 +38,12 @@ def health_check():
 def readiness_check():
     """
     Readiness check endpoint.
-    
+
     Verifies:
     - Database is reachable
     - Required directories exist
     - Essential files are present
-    
+
     Returns 200 OK if all checks pass, 503 otherwise.
     """
     checks = {
@@ -52,7 +52,7 @@ def readiness_check():
         "data_dir": False,
     }
     errors = []
-    
+
     # Check database connectivity
     try:
         db_path = settings.database_path
@@ -68,7 +68,7 @@ def readiness_check():
     except Exception as e:
         errors.append(f"Database error: {str(e)}")
         log_error("Readiness check failed: database", error=e)
-    
+
     # Check upload directory
     try:
         upload_dir = settings.upload_dir
@@ -78,7 +78,7 @@ def readiness_check():
             errors.append(f"Upload directory not accessible: {upload_dir}")
     except Exception as e:
         errors.append(f"Upload directory error: {str(e)}")
-    
+
     # Check data directory
     try:
         data_dir = settings.database_path.parent
@@ -88,9 +88,9 @@ def readiness_check():
             errors.append(f"Data directory not accessible: {data_dir}")
     except Exception as e:
         errors.append(f"Data directory error: {str(e)}")
-    
+
     all_healthy = all(checks.values())
-    
+
     if all_healthy:
         return {
             "status": "ready",
@@ -111,7 +111,7 @@ def readiness_check():
 def register_health_routes(app):
     """
     Register health routes with the FastAPI app.
-    
+
     Args:
         app: FastAPI application instance
     """

@@ -47,9 +47,8 @@ export default function SettingsPage() {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = (_e) => {
       try {
-        const data = JSON.parse(e.target?.result as string);
         // Handle import logic here
         toast({
           title: 'Import successful',

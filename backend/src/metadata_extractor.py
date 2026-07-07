@@ -15,21 +15,19 @@ Architecture:
 Supports: HDFC, ICICI, Axis, SBI, IDFC First, IndusInd
 """
 
-import re
 import json
+import re
 import sys
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any
 
 import pdfplumber
-
 
 # ============================================================
 # Core Proximity Helpers (ported from JS)
 # ============================================================
 
-def extract_currency(text: str) -> Optional[float]:
+def extract_currency(text: str) -> float | None:
     """
     Extract first currency value from text.
     Handles Indian lakh format (1,23,456.78) and standard format.
@@ -39,7 +37,7 @@ def extract_currency(text: str) -> Optional[float]:
     # Check for Cr/Dr suffix first to determine sign
     cr_pattern = r'([\d,]+\.\d{2})\s*Cr'
     dr_pattern = r'([\d,]+\.\d{2})\s*Dr'
-    
+
     cr_match = re.search(cr_pattern, text, re.IGNORECASE)
     if cr_match:
         try:
@@ -47,7 +45,7 @@ def extract_currency(text: str) -> Optional[float]:
             return -float(cr_match.group(1).replace(',', ''))
         except (ValueError, TypeError):
             pass
-    
+
     dr_match = re.search(dr_pattern, text, re.IGNORECASE)
     if dr_match:
         try:
@@ -55,7 +53,7 @@ def extract_currency(text: str) -> Optional[float]:
             return float(dr_match.group(1).replace(',', ''))
         except (ValueError, TypeError):
             pass
-    
+
     patterns = [
         r'(\d{1,2},\d{2},\d{3}\.\d{2})',           # Indian lakh: 1,23,456.78
         r'(\d{1,3}(?:,\d{3})+\.\d{2})',             # Standard: 123,456.78
@@ -74,7 +72,7 @@ def extract_currency(text: str) -> Optional[float]:
     return None
 
 
-def extract_date(text: str) -> Optional[str]:
+def extract_date(text: str) -> str | None:
     """
     Extract first date from text.
     Ported exactly from JS extractDate().
@@ -93,14 +91,14 @@ def extract_date(text: str) -> Optional[str]:
     return None
 
 
-def standardize_date(date_str: str) -> Optional[str]:
+def standardize_date(date_str: str) -> str | None:
     """
     Convert any date format to standardized DD/MM/YYYY.
     Handles all formats extracted from Indian bank statements.
     """
     if not date_str:
         return None
-    
+
     months3 = {
         'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
         'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
@@ -110,9 +108,9 @@ def standardize_date(date_str: str) -> Optional[str]:
         'May': 5, 'June': 6, 'July': 7, 'August': 8,
         'September': 9, 'October': 10, 'November': 11, 'December': 12
     }
-    
+
     parsed_date = None
-    
+
     # Try DD/MM/YYYY or DD-MM-YYYY
     m = re.match(r'(\d{2})[/\-](\d{2})[/\-](\d{4})', date_str)
     if m:
@@ -120,7 +118,7 @@ def standardize_date(date_str: str) -> Optional[str]:
             parsed_date = datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
         except ValueError:
             pass
-    
+
     # Try DD/Mon/YYYY (e.g., 03/Sep/2025)
     if not parsed_date:
         m = re.match(r'(\d{2})/(\w{3})/(\d{4})', date_str)
@@ -129,7 +127,7 @@ def standardize_date(date_str: str) -> Optional[str]:
                 parsed_date = datetime(int(m.group(3)), months3[m.group(2)], int(m.group(1)))
             except ValueError:
                 pass
-    
+
     # Try DD Mon YYYY (e.g., 06 Nov 2025)
     if not parsed_date:
         m = re.match(r'(\d{1,2})\s+(\w{3})\s+(\d{4})', date_str)
@@ -138,7 +136,7 @@ def standardize_date(date_str: str) -> Optional[str]:
                 parsed_date = datetime(int(m.group(3)), months3[m.group(2)], int(m.group(1)))
             except ValueError:
                 pass
-    
+
     # Try Month DD, YYYY (e.g., January 19, 2025)
     if not parsed_date:
         m = re.match(r'(\w+)\s+(\d{1,2}),?\s+(\d{4})', date_str)
@@ -147,10 +145,10 @@ def standardize_date(date_str: str) -> Optional[str]:
                 parsed_date = datetime(int(m.group(3)), months_full[m.group(1)], int(m.group(2)))
             except ValueError:
                 pass
-    
+
     if parsed_date:
         return parsed_date.strftime('%d/%m/%Y')
-    
+
     return date_str  # Return as-is if parsing failed
 
 
@@ -165,7 +163,7 @@ def format_currency(amount: float) -> str:
     return f"{sign}₹{abs(amount):,.2f}"
 
 
-def extract_card_number(text: str) -> Optional[str]:
+def extract_card_number(text: str) -> str | None:
     """
     Extract masked card number from text.
     Ported exactly from JS extractCardNumber().
@@ -186,11 +184,11 @@ def extract_card_number(text: str) -> Optional[str]:
 
 
 def find_value_near(text: str, label: str, value_type: str = 'currency',
-                    max_distance: int = 200) -> Optional[Any]:
+                    max_distance: int = 200) -> Any | None:
     """
     Find a value near a label in text (proximity search).
     Ported exactly from JS findValueNear().
-    
+
     1. Find the label in text
     2. Take the substring after the label (up to max_distance chars)
     3. Extract value of the specified type from that substring
@@ -198,31 +196,31 @@ def find_value_near(text: str, label: str, value_type: str = 'currency',
     # Escape the label for regex
     escaped_label = re.escape(label)
     match = re.search(escaped_label, text, re.IGNORECASE)
-    
+
     if not match:
         return None
-    
+
     start_pos = match.end()
     search_area = text[start_pos:start_pos + max_distance]
-    
+
     if value_type == 'currency':
         return extract_currency(search_area)
     elif value_type == 'date':
         return extract_date(search_area)
     elif value_type == 'cardNumber':
         return extract_card_number(search_area)
-    
+
     return None
 
 
-def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
+def calculate_bill_cycle(statement_date: str) -> dict[str, str | None]:
     """
     Calculate billing cycle (30 days ending on statement date).
     Ported exactly from JS calculateBillCycle().
     """
     if not statement_date:
         return {'bill_cycle_start': None, 'bill_cycle_end': None}
-    
+
     months3 = {
         'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
         'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12
@@ -232,9 +230,9 @@ def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
         'May': 5, 'June': 6, 'July': 7, 'August': 8,
         'September': 9, 'October': 10, 'November': 11, 'December': 12
     }
-    
+
     end_date = None
-    
+
     # Try DD/MM/YYYY or DD-MM-YYYY
     m = re.match(r'(\d{2})[/\-](\d{2})[/\-](\d{4})', statement_date)
     if m:
@@ -242,7 +240,7 @@ def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
             end_date = datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
         except ValueError:
             pass
-    
+
     # Try DD Mon YY(YY)
     if not end_date:
         m = re.match(r'(\d{2})\s+(\w{3})\s+(\d{2,4})', statement_date)
@@ -253,7 +251,7 @@ def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
                 end_date = datetime(year, months3[m.group(2)], int(m.group(1)))
             except ValueError:
                 pass
-    
+
     # Try DD/Mon/YYYY
     if not end_date:
         m = re.match(r'(\d{2})/(\w{3})/(\d{4})', statement_date)
@@ -262,7 +260,7 @@ def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
                 end_date = datetime(int(m.group(3)), months3[m.group(2)], int(m.group(1)))
             except ValueError:
                 pass
-    
+
     # Try Month DD, YYYY
     if not end_date:
         m = re.match(r'(\w+)\s+(\d{1,2}),?\s+(\d{4})', statement_date)
@@ -271,15 +269,15 @@ def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
                 end_date = datetime(int(m.group(3)), months_full[m.group(1)], int(m.group(2)))
             except ValueError:
                 pass
-    
+
     if not end_date:
         return {'bill_cycle_start': None, 'bill_cycle_end': None}
-    
+
     start_date = end_date - timedelta(days=29)
-    
+
     def fmt(d: datetime) -> str:
         return d.strftime('%d/%m/%Y')
-    
+
     return {
         'bill_cycle_start': fmt(start_date),
         'bill_cycle_end': fmt(end_date),
@@ -304,7 +302,7 @@ def calculate_bill_cycle(statement_date: str) -> Dict[str, Optional[str]]:
 #   - IndusInd has `\n` in patterns — actual newline in extracted text
 # ============================================================
 
-BANK_CONFIGS: Dict[str, Dict[str, Dict]] = {
+BANK_CONFIGS: dict[str, dict[str, dict]] = {
 
     'HDFC Bank': {
         'card_number': {
@@ -616,7 +614,7 @@ class MetadataExtractor:
         self.bank = bank
         self.debug = debug
         self._full_text: str = ''
-        self._page_texts: List[str] = []
+        self._page_texts: list[str] = []
 
     def _log(self, msg: str):
         if self.debug:
@@ -634,7 +632,7 @@ class MetadataExtractor:
         except Exception as e:
             self._log(f'Error loading text: {e}')
 
-    def _extract_field(self, field_name: str, field_config: Dict) -> Optional[Any]:
+    def _extract_field(self, field_name: str, field_config: dict) -> Any | None:
         """
         Extract a single metadata field.
         Strategy (mirrors JS exactly):
@@ -657,7 +655,7 @@ class MetadataExtractor:
             match = direct.search(text)
             if match:
                 extract_idx = field_config.get('extract_index', 1)
-                
+
                 try:
                     extracted = match.group(extract_idx)
                 except IndexError:
@@ -692,7 +690,7 @@ class MetadataExtractor:
         self._log(f'  {field_name}: no match found')
         return None
 
-    def extract(self) -> Dict:
+    def extract(self) -> dict:
         """
         Extract all metadata fields for the detected bank.
         Returns dict matching the JS output structure:
@@ -799,7 +797,7 @@ class MetadataExtractor:
 
         return result
 
-    def _empty_result(self) -> Dict:
+    def _empty_result(self) -> dict:
         return {
             'bank_name': self.bank,
             'card_number': None,

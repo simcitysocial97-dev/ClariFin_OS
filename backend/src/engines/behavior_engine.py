@@ -11,16 +11,15 @@ All calculations are deterministic and reproducible.
 No ML models. No randomness. Overlay-only on immutable ledger.
 """
 
-import sqlite3
-from datetime import datetime, timedelta
-from typing import Dict, List, Any, Tuple, Optional
-from collections import defaultdict
 import math
+import sqlite3
+from collections import defaultdict
+from datetime import datetime, timedelta
+from typing import Any
 
 # ============================================================
 # Caching Layer
 # ============================================================
-
 from cachetools import TTLCache
 
 # Global cache instance: max 10 elements, 5-minute (300s) expiration
@@ -32,17 +31,17 @@ def invalidate_behavior_cache() -> None:
     _behavior_cache.clear()
 
 
-def get_cached_behavior_profile(db_path: str) -> Optional[Dict[str, Any]]:
+def get_cached_behavior_profile(db_path: str) -> dict[str, Any] | None:
     """
     Get behavior profile from cache if available.
-    
+
     Returns cached profile or None if not cached.
     """
     cache_key = "global_behavior_profile"
     return _behavior_cache.get(cache_key)
 
 
-def set_cached_behavior_profile(db_path: str, profile: Dict[str, Any]) -> None:
+def set_cached_behavior_profile(db_path: str, profile: dict[str, Any]) -> None:
     """Cache a behavior profile."""
     cache_key = "global_behavior_profile"
     _behavior_cache[cache_key] = profile
@@ -52,7 +51,7 @@ def set_cached_behavior_profile(db_path: str, profile: Dict[str, Any]) -> None:
 # Utility Functions
 # ============================================================
 
-def _parse_date(date_str: str) -> Optional[datetime]:
+def _parse_date(date_str: str) -> datetime | None:
     """Parse various date formats to datetime."""
     if not date_str:
         return None
@@ -77,7 +76,7 @@ def _normalize_score(value: float, min_val: float = 0.0, max_val: float = 1.0) -
     return max(0.0, min(1.0, normalized))
 
 
-def _coefficient_of_variation(values: List[float]) -> float:
+def _coefficient_of_variation(values: list[float]) -> float:
     """Calculate coefficient of variation (std/mean)."""
     if not values or len(values) < 2:
         return 0.0
@@ -89,7 +88,7 @@ def _coefficient_of_variation(values: List[float]) -> float:
     return std / mean
 
 
-def _moving_average(values: List[float], window: int = 7) -> List[float]:
+def _moving_average(values: list[float], window: int = 7) -> list[float]:
     """Calculate simple moving average."""
     if not values or window <= 0:
         return []
@@ -105,16 +104,16 @@ def _moving_average(values: List[float], window: int = 7) -> List[float]:
 # SQL-Based Aggregation Functions
 # ============================================================
 
-def _get_daily_spending_sql(db_path: str, cutoff_date: str) -> Dict[str, float]:
+def _get_daily_spending_sql(db_path: str, cutoff_date: str) -> dict[str, float]:
     """
     Get daily spending totals using SQL aggregation.
     Much faster than Python loops for large datasets.
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     cur = conn.execute("""
-        SELECT 
+        SELECT
             date_iso,
             SUM(amount) as daily_total
         FROM transactions
@@ -122,23 +121,23 @@ def _get_daily_spending_sql(db_path: str, cutoff_date: str) -> Dict[str, float]:
         GROUP BY date_iso
         ORDER BY date_iso ASC
     """, (cutoff_date,))
-    
+
     rows = cur.fetchall()
     conn.close()
-    
+
     return {row["date_iso"]: float(row["daily_total"] or 0) for row in rows}
 
 
-def _get_monthly_category_spending_sql(db_path: str, cutoff_date: str) -> Dict[str, Dict[str, float]]:
+def _get_monthly_category_spending_sql(db_path: str, cutoff_date: str) -> dict[str, dict[str, float]]:
     """
     Get monthly category spending using SQL aggregation.
     Returns: {month: {category: total}}
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     cur = conn.execute("""
-        SELECT 
+        SELECT
             substr(date_iso, 1, 7) as month,
             category,
             SUM(amount) as category_total
@@ -147,29 +146,29 @@ def _get_monthly_category_spending_sql(db_path: str, cutoff_date: str) -> Dict[s
         GROUP BY month, category
         ORDER BY month ASC
     """, (cutoff_date,))
-    
+
     rows = cur.fetchall()
     conn.close()
-    
+
     result = defaultdict(lambda: defaultdict(float))
     for row in rows:
         month = row["month"]
         category = row["category"] or "Uncategorized"
         result[month][category] = float(row["category_total"] or 0)
-    
+
     return dict(result)
 
 
-def _get_monthly_income_expenses_sql(db_path: str, cutoff_date: str) -> Dict[str, Dict[str, float]]:
+def _get_monthly_income_expenses_sql(db_path: str, cutoff_date: str) -> dict[str, dict[str, float]]:
     """
     Get monthly income vs expenses using SQL aggregation.
     Returns: {month: {"income": total, "expenses": total}}
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     cur = conn.execute("""
-        SELECT 
+        SELECT
             substr(date_iso, 1, 7) as month,
             type,
             SUM(amount) as total
@@ -178,10 +177,10 @@ def _get_monthly_income_expenses_sql(db_path: str, cutoff_date: str) -> Dict[str
         GROUP BY month, type
         ORDER BY month ASC
     """, (cutoff_date,))
-    
+
     rows = cur.fetchall()
     conn.close()
-    
+
     result = defaultdict(lambda: {"income": 0.0, "expenses": 0.0})
     for row in rows:
         month = row["month"]
@@ -191,21 +190,21 @@ def _get_monthly_income_expenses_sql(db_path: str, cutoff_date: str) -> Dict[str
             result[month]["income"] = total
         else:
             result[month]["expenses"] = total
-    
+
     return dict(result)
 
 
-def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> Dict[str, Any]:
+def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> dict[str, Any]:
     """
     Get transaction statistics using SQL aggregation.
     Returns counts and totals for various metrics.
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     # Get basic stats
     cur = conn.execute("""
-        SELECT 
+        SELECT
             COUNT(*) as total_count,
             SUM(CASE WHEN type = 'debit' THEN 1 ELSE 0 END) as debit_count,
             SUM(CASE WHEN type = 'credit' THEN 1 ELSE 0 END) as credit_count,
@@ -215,7 +214,7 @@ def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> Dict[str, Any]
         FROM transactions
         WHERE date_iso >= ?
     """, (cutoff_date,))
-    
+
     row = cur.fetchone()
     stats = {
         "total_count": row["total_count"] or 0,
@@ -225,25 +224,25 @@ def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> Dict[str, Any]
         "total_debit": float(row["total_debit"] or 0),
         "total_credit": float(row["total_credit"] or 0),
     }
-    
+
     # Get weekend vs weekday spending
     cur = conn.execute("""
-        SELECT 
+        SELECT
             CASE WHEN CAST(substr(date_iso, 9, 2) AS INTEGER) % 7 >= 5 THEN 'weekend' ELSE 'weekday' END as day_type,
             SUM(amount) as total
         FROM transactions
         WHERE type = 'debit' AND date_iso >= ?
         GROUP BY day_type
     """, (cutoff_date,))
-    
+
     weekend_stats = {"weekend": 0.0, "weekday": 0.0}
     for row in cur.fetchall():
         day_type = row["day_type"]
         weekend_stats[day_type] = float(row["total"] or 0)
-    
+
     stats["weekend_spend"] = weekend_stats["weekend"]
     stats["weekday_spend"] = weekend_stats["weekday"]
-    
+
     conn.close()
     return stats
 
@@ -252,42 +251,42 @@ def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> Dict[str, Any]
 # Data Extraction
 # ============================================================
 
-def _get_transactions_90_days(db_path: str) -> List[Dict]:
+def _get_transactions_90_days(db_path: str) -> list[dict]:
     """Get transactions from last 90 days (or most recent 500 if no recent data)."""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     # Get date 90 days ago
     cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
-    
+
     cur = conn.execute("""
-        SELECT 
+        SELECT
             t.id, t.date, t.date_iso, t.description, t.amount,
             t.type, t.category, t.debit, t.credit, t.account_id
         FROM transactions t
         WHERE t.date_iso >= ?
         ORDER BY t.date_iso ASC
     """, (cutoff,))
-    
+
     rows = [dict(row) for row in cur.fetchall()]
     conn.close()
     return rows
 
 
-def _get_recent_transactions(db_path: str, limit: int = 500) -> List[Dict]:
+def _get_recent_transactions(db_path: str, limit: int = 500) -> list[dict]:
     """Get most recent N transactions for performance."""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     cur = conn.execute("""
-        SELECT 
+        SELECT
             t.id, t.date, t.date_iso, t.description, t.amount,
             t.type, t.category, t.debit, t.credit, t.account_id
         FROM transactions t
         ORDER BY t.date_iso DESC
         LIMIT ?
     """, (limit,))
-    
+
     rows = [dict(row) for row in cur.fetchall()]
     conn.close()
     # Return in ascending order for time-series calculations
@@ -298,10 +297,10 @@ def _get_recent_transactions(db_path: str, limit: int = 500) -> List[Dict]:
 # Temporal Pattern Analysis
 # ============================================================
 
-def _compute_temporal_patterns(transactions: List[Dict]) -> Dict[str, Any]:
+def _compute_temporal_patterns(transactions: list[dict]) -> dict[str, Any]:
     """
     Compute temporal spending patterns.
-    
+
     Returns trend, seasonality, and residual volatility metrics.
     """
     if not transactions:
@@ -313,7 +312,7 @@ def _compute_temporal_patterns(transactions: List[Dict]) -> Dict[str, Any]:
             "daily_spending": {},
             "weekly_pattern": {},
         }
-    
+
     # Aggregate daily spending
     daily_spend = defaultdict(float)
     for txn in transactions:
@@ -321,7 +320,7 @@ def _compute_temporal_patterns(transactions: List[Dict]) -> Dict[str, Any]:
             date_iso = txn.get("date_iso", "")
             if date_iso:
                 daily_spend[date_iso] += float(txn.get("amount", 0))
-    
+
     if not daily_spend:
         return {
             "trend": 0.0,
@@ -331,18 +330,18 @@ def _compute_temporal_patterns(transactions: List[Dict]) -> Dict[str, Any]:
             "daily_spending": {},
             "weekly_pattern": {},
         }
-    
+
     # Sort by date
     sorted_dates = sorted(daily_spend.keys())
     daily_values = [daily_spend[d] for d in sorted_dates]
-    
+
     # Compute trend (7-day moving average slope)
     ma = _moving_average(daily_values, 7)
     if len(ma) >= 14:
         recent_trend = (ma[-1] - ma[-7]) / max(ma[-7], 1)
     else:
         recent_trend = 0.0
-    
+
     # Compute weekly seasonality (day-of-week variance)
     weekly_pattern = defaultdict(list)
     for date_str, amount in daily_spend.items():
@@ -352,22 +351,22 @@ def _compute_temporal_patterns(transactions: List[Dict]) -> Dict[str, Any]:
             weekly_pattern[weekday].append(amount)
         except:
             pass
-    
+
     weekly_avg = {
         day: sum(vals) / len(vals) if vals else 0
         for day, vals in weekly_pattern.items()
     }
-    
+
     # Seasonality = variance between weekday averages
     if weekly_avg:
         weekday_vals = list(weekly_avg.values())
         seasonality = _coefficient_of_variation(weekday_vals)
     else:
         seasonality = 0.0
-    
+
     # Residual volatility
     cv = _coefficient_of_variation(daily_values)
-    
+
     return {
         "trend": round(recent_trend, 4),
         "seasonality": round(seasonality, 4),
@@ -382,10 +381,10 @@ def _compute_temporal_patterns(transactions: List[Dict]) -> Dict[str, Any]:
 # Behavioral Indices
 # ============================================================
 
-def _compute_loss_aversion_index(transactions: List[Dict]) -> Dict[str, Any]:
+def _compute_loss_aversion_index(transactions: list[dict]) -> dict[str, Any]:
     """
     Compute Loss Aversion Index based on Kahneman & Tversky.
-    
+
     Components:
     - Post-income spend velocity (72h window)
     - Emotional overspend after large expenses
@@ -393,52 +392,51 @@ def _compute_loss_aversion_index(transactions: List[Dict]) -> Dict[str, Any]:
     """
     if not transactions:
         return {"score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}
-    
+
     # Find income credits (salary, transfers in)
     credits = [t for t in transactions if t.get("type") == "credit"]
     debits = [t for t in transactions if t.get("type") == "debit"]
-    
+
     if not credits or not debits:
         return {"score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}
-    
+
     # Calculate median debit for baseline
     debit_amounts = [float(t.get("amount", 0)) for t in debits]
     if not debit_amounts:
         return {"score": 0.5, "post_income_velocity": 0.0, "recovery_time_days": 0}
-    
+
     median_debit = sorted(debit_amounts)[len(debit_amounts) // 2]
-    
+
     # Post-income spending velocity
     post_income_spends = []
-    recovery_times = []
-    
+
     for credit in credits:
         credit_date = _parse_date(credit.get("date_iso", "") or credit.get("date", ""))
         if not credit_date:
             continue
-        
+
         # Find debits within 72 hours
         spend_72h = 0.0
         for debit in debits:
             debit_date = _parse_date(debit.get("date_iso", "") or debit.get("date", ""))
             if not debit_date:
                 continue
-            
+
             days_diff = (debit_date - credit_date).days
             if 0 <= days_diff <= 3:
                 spend_72h += float(debit.get("amount", 0))
-        
+
         credit_amount = float(credit.get("amount", 0))
         if credit_amount > 0:
             velocity = spend_72h / credit_amount
             post_income_spends.append(velocity)
-    
+
     # Calculate average velocity
     avg_velocity = sum(post_income_spends) / len(post_income_spends) if post_income_spends else 0
-    
+
     # Emotional overspend after large expenses (>2x median)
     large_expenses = [t for t in debits if float(t.get("amount", 0)) > 2 * median_debit]
-    
+
     # Recovery time calculation (simplified)
     # Days to return to median spending after large expense
     recovery_days = 0
@@ -446,14 +444,14 @@ def _compute_loss_aversion_index(transactions: List[Dict]) -> Dict[str, Any]:
         # Simplified: assume recovery takes proportional time
         avg_large = sum(float(t.get("amount", 0)) for t in large_expenses) / len(large_expenses)
         recovery_days = min(30, int(avg_large / max(median_debit, 1)))
-    
+
     # Normalize to 0-1 score
     # Higher velocity = higher loss aversion (spending gains quickly)
     velocity_score = _normalize_score(avg_velocity, 0, 1.5)
     recovery_score = _normalize_score(recovery_days, 0, 30)
-    
+
     loss_aversion = (velocity_score * 0.6 + recovery_score * 0.4)
-    
+
     return {
         "score": round(loss_aversion, 4),
         "post_income_velocity": round(avg_velocity, 4),
@@ -462,10 +460,10 @@ def _compute_loss_aversion_index(transactions: List[Dict]) -> Dict[str, Any]:
     }
 
 
-def _compute_impulsivity_score(transactions: List[Dict]) -> Dict[str, Any]:
+def _compute_impulsivity_score(transactions: list[dict]) -> dict[str, Any]:
     """
     Compute Impulsivity Score based on Present Bias.
-    
+
     Signals:
     - Micro-transactions clustering (< ₹500)
     - Late-night spending ratio (22:00–06:00)
@@ -474,22 +472,22 @@ def _compute_impulsivity_score(transactions: List[Dict]) -> Dict[str, Any]:
     """
     if not transactions:
         return {"score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 0.0}
-    
+
     debits = [t for t in transactions if t.get("type") == "debit"]
     if not debits:
         return {"score": 0.5, "micro_txn_ratio": 0.0, "late_night_ratio": 0.0}
-    
+
     total_debits = len(debits)
-    
+
     # Micro-transactions (< ₹500)
     micro_txns = [t for t in debits if float(t.get("amount", 0)) < 500]
     micro_ratio = len(micro_txns) / total_debits if total_debits > 0 else 0
-    
+
     # Late-night spending (simplified - would need timestamp data)
     # For now, use weekend spending as proxy
     weekend_txns = []
     weekday_txns = []
-    
+
     for txn in debits:
         date_iso = txn.get("date_iso", "")
         if date_iso:
@@ -501,7 +499,7 @@ def _compute_impulsivity_score(transactions: List[Dict]) -> Dict[str, Any]:
                     weekday_txns.append(txn)
             except:
                 pass
-    
+
     # Weekend vs weekday variance
     if weekend_txns and weekday_txns:
         weekend_avg = sum(float(t.get("amount", 0)) for t in weekend_txns) / len(weekend_txns)
@@ -509,23 +507,23 @@ def _compute_impulsivity_score(transactions: List[Dict]) -> Dict[str, Any]:
         weekend_ratio = weekend_avg / max(weekday_avg, 1)
     else:
         weekend_ratio = 1.0
-    
+
     # Category switching (discretionary categories)
     discretionary_categories = [
         "Food & Dining", "Entertainment", "Shopping", "Travel",
         "Lifestyle", "Groceries", "Online Shopping"
     ]
-    
+
     discretionary_txns = [t for t in debits if t.get("category") in discretionary_categories]
     disc_ratio = len(discretionary_txns) / total_debits if total_debits > 0 else 0
-    
+
     # Compute composite score
     micro_score = _normalize_score(micro_ratio, 0, 0.8)
     weekend_score = _normalize_score(weekend_ratio, 0.5, 2.0)
     disc_score = _normalize_score(disc_ratio, 0, 0.6)
-    
+
     impulsivity = (micro_score * 0.35 + weekend_score * 0.35 + disc_score * 0.30)
-    
+
     return {
         "score": round(impulsivity, 4),
         "micro_txn_ratio": round(micro_ratio, 4),
@@ -535,10 +533,10 @@ def _compute_impulsivity_score(transactions: List[Dict]) -> Dict[str, Any]:
     }
 
 
-def _compute_habit_stability_score(transactions: List[Dict]) -> Dict[str, Any]:
+def _compute_habit_stability_score(transactions: list[dict]) -> dict[str, Any]:
     """
     Compute Habit Stability Score based on Habit Loop Theory.
-    
+
     Measures:
     - Category coefficient of variation (monthly)
     - Recurring expense predictability
@@ -546,11 +544,11 @@ def _compute_habit_stability_score(transactions: List[Dict]) -> Dict[str, Any]:
     """
     if not transactions:
         return {"score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0}
-    
+
     debits = [t for t in transactions if t.get("type") == "debit"]
     if not debits:
         return {"score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0}
-    
+
     # Monthly category spending
     monthly_category = defaultdict(lambda: defaultdict(float))
     for txn in debits:
@@ -559,22 +557,22 @@ def _compute_habit_stability_score(transactions: List[Dict]) -> Dict[str, Any]:
             month = date_iso[:7]  # YYYY-MM
             category = txn.get("category", "Uncategorized")
             monthly_category[month][category] += float(txn.get("amount", 0))
-    
+
     # Category CV across months
     category_cvs = []
     if monthly_category:
         all_categories = set()
         for month_data in monthly_category.values():
             all_categories.update(month_data.keys())
-        
+
         for cat in all_categories:
             monthly_vals = [monthly_category[m].get(cat, 0) for m in sorted(monthly_category.keys())]
             if len(monthly_vals) >= 2:
                 cv = _coefficient_of_variation(monthly_vals)
                 category_cvs.append(cv)
-    
+
     avg_category_cv = sum(category_cvs) / len(category_cvs) if category_cvs else 0
-    
+
     # Recurring expense detection (similar amounts, same description)
     desc_amounts = defaultdict(list)
     for txn in debits:
@@ -582,36 +580,36 @@ def _compute_habit_stability_score(transactions: List[Dict]) -> Dict[str, Any]:
         amount = float(txn.get("amount", 0))
         if amount > 0:
             desc_amounts[desc].append(amount)
-    
+
     recurring_count = 0
-    for desc, amounts in desc_amounts.items():
+    for _desc, amounts in desc_amounts.items():
         if len(amounts) >= 3:
             # Check if amounts are similar (within 10%)
             avg = sum(amounts) / len(amounts)
             if all(abs(a - avg) / max(avg, 1) < 0.1 for a in amounts):
                 recurring_count += 1
-    
+
     recurring_score = min(1.0, recurring_count / 10)  # Normalize to max 10 recurring
-    
+
     # Behavioral rhythm (regular transaction days)
     daily_counts = defaultdict(int)
     for txn in debits:
         date_iso = txn.get("date_iso", "")
         if date_iso:
             daily_counts[date_iso] += 1
-    
+
     if daily_counts:
         counts = list(daily_counts.values())
         rhythm_cv = _coefficient_of_variation(counts)
         rhythm_score = 1 - _normalize_score(rhythm_cv, 0, 2)
     else:
         rhythm_score = 0.5
-    
+
     # Composite score (lower CV = higher stability)
     cv_score = 1 - _normalize_score(avg_category_cv, 0, 1.5)
-    
+
     habit_stability = (cv_score * 0.40 + recurring_score * 0.30 + rhythm_score * 0.30)
-    
+
     return {
         "score": round(habit_stability, 4),
         "category_cv": round(avg_category_cv, 4),
@@ -620,10 +618,10 @@ def _compute_habit_stability_score(transactions: List[Dict]) -> Dict[str, Any]:
     }
 
 
-def _compute_financial_stress_index(transactions: List[Dict]) -> Dict[str, Any]:
+def _compute_financial_stress_index(transactions: list[dict]) -> dict[str, Any]:
     """
     Compute Financial Stress Index.
-    
+
     Measures:
     - Balance volatility coefficient
     - End-of-month depletion ratio
@@ -632,14 +630,14 @@ def _compute_financial_stress_index(transactions: List[Dict]) -> Dict[str, Any]:
     """
     if not transactions:
         return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
-    
+
     # Separate credits and debits
     credits = [t for t in transactions if t.get("type") == "credit"]
     debits = [t for t in transactions if t.get("type") == "debit"]
-    
+
     if not debits:
         return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
-    
+
     # Daily net flow
     daily_net = defaultdict(float)
     for txn in transactions:
@@ -650,7 +648,7 @@ def _compute_financial_stress_index(transactions: List[Dict]) -> Dict[str, Any]:
                 daily_net[date_iso] -= amount
             else:
                 daily_net[date_iso] += amount
-    
+
     # Running balance simulation
     sorted_dates = sorted(daily_net.keys())
     running_balance = []
@@ -658,27 +656,27 @@ def _compute_financial_stress_index(transactions: List[Dict]) -> Dict[str, Any]:
     for date in sorted_dates:
         balance += daily_net[date]
         running_balance.append(balance)
-    
+
     # Balance volatility
     if running_balance:
         balance_cv = _coefficient_of_variation([abs(b) for b in running_balance])
     else:
         balance_cv = 0
-    
+
     # Credit dependency
     total_credit = sum(float(t.get("amount", 0)) for t in credits)
     total_debit = sum(float(t.get("amount", 0)) for t in debits)
     credit_dependency = total_credit / max(total_debit, 1) if total_debit > 0 else 0
-    
+
     # End-of-month depletion (last 5 days spending ratio)
     eom_spending = 0
     total_spending = 0
-    
+
     for txn in debits:
         date_iso = txn.get("date_iso", "")
         amount = float(txn.get("amount", 0))
         total_spending += amount
-        
+
         if date_iso:
             try:
                 dt = datetime.strptime(date_iso, "%Y-%m-%d")
@@ -686,23 +684,23 @@ def _compute_financial_stress_index(transactions: List[Dict]) -> Dict[str, Any]:
                     eom_spending += amount
             except:
                 pass
-    
+
     eom_ratio = eom_spending / max(total_spending, 1)
-    
+
     # Buffer adequacy (days of expenses covered by average balance)
     avg_balance = abs(sum(running_balance) / len(running_balance)) if running_balance else 0
     daily_avg_spend = total_debit / max(len(daily_net), 1)
     buffer_days = avg_balance / max(daily_avg_spend, 1)
     buffer_score = _normalize_score(buffer_days, 0, 30)
-    
+
     # Composite stress index (higher = more stress)
     volatility_score = _normalize_score(balance_cv, 0, 2)
     dependency_score = _normalize_score(credit_dependency, 0, 2)
     eom_score = _normalize_score(eom_ratio, 0, 0.5)
-    
-    stress_index = (volatility_score * 0.30 + dependency_score * 0.30 + 
+
+    stress_index = (volatility_score * 0.30 + dependency_score * 0.30 +
                    eom_score * 0.20 + (1 - buffer_score) * 0.20)
-    
+
     return {
         "score": round(stress_index, 4),
         "balance_volatility": round(balance_cv, 4),
@@ -712,10 +710,10 @@ def _compute_financial_stress_index(transactions: List[Dict]) -> Dict[str, Any]:
     }
 
 
-def _compute_savings_discipline_score(transactions: List[Dict]) -> Dict[str, Any]:
+def _compute_savings_discipline_score(transactions: list[dict]) -> dict[str, Any]:
     """
     Compute Savings Discipline Score.
-    
+
     Measures:
     - 3-month rolling savings rate trend
     - Savings transfer consistency
@@ -723,10 +721,10 @@ def _compute_savings_discipline_score(transactions: List[Dict]) -> Dict[str, Any
     """
     if not transactions:
         return {"score": 0.5, "savings_rate": 0.0, "momentum": 0.0}
-    
+
     # Monthly income vs expenses
     monthly_data = defaultdict(lambda: {"income": 0.0, "expenses": 0.0})
-    
+
     for txn in transactions:
         date_iso = txn.get("date_iso", "")
         if date_iso:
@@ -736,50 +734,50 @@ def _compute_savings_discipline_score(transactions: List[Dict]) -> Dict[str, Any
                 monthly_data[month]["income"] += amount
             else:
                 monthly_data[month]["expenses"] += amount
-    
+
     if not monthly_data:
         return {"score": 0.5, "savings_rate": 0.0, "momentum": 0.0}
-    
+
     # Calculate monthly savings rates
     savings_rates = []
     sorted_months = sorted(monthly_data.keys())
-    
+
     for month in sorted_months:
         income = monthly_data[month]["income"]
         expenses = monthly_data[month]["expenses"]
         if income > 0:
             rate = (income - expenses) / income
             savings_rates.append((month, rate))
-    
+
     if not savings_rates:
         return {"score": 0.5, "savings_rate": 0.0, "momentum": 0.0}
-    
+
     # Average savings rate
     avg_rate = sum(r for _, r in savings_rates) / len(savings_rates)
-    
+
     # Savings momentum (trend over last 3 months)
     if len(savings_rates) >= 2:
         recent_rates = [r for _, r in savings_rates[-3:]]
         earlier_rates = [r for _, r in savings_rates[:-3]] if len(savings_rates) > 3 else [0]
-        
+
         recent_avg = sum(recent_rates) / len(recent_rates)
         earlier_avg = sum(earlier_rates) / len(earlier_rates) if earlier_rates else 0
-        
+
         momentum = recent_avg - earlier_avg
     else:
         momentum = 0
-    
+
     # Savings consistency (how often positive savings)
     positive_months = sum(1 for _, r in savings_rates if r > 0)
     consistency = positive_months / len(savings_rates) if savings_rates else 0
-    
+
     # Composite score
     rate_score = _normalize_score(avg_rate, -0.5, 0.5)
     momentum_score = _normalize_score(momentum, -0.3, 0.3)
     consistency_score = consistency
-    
+
     savings_score = (rate_score * 0.40 + momentum_score * 0.30 + consistency_score * 0.30)
-    
+
     return {
         "score": round(savings_score, 4),
         "savings_rate": round(avg_rate, 4),
@@ -793,10 +791,10 @@ def _compute_savings_discipline_score(transactions: List[Dict]) -> Dict[str, Any
 # India-Specific Risk Detection
 # ============================================================
 
-def detect_india_risk_patterns(transactions: List[Dict]) -> Dict[str, Any]:
+def detect_india_risk_patterns(transactions: list[dict]) -> dict[str, Any]:
     """
     Detect India-specific risky financial behaviors.
-    
+
     Patterns:
     - UPI micro-spend clustering
     - Gambling/gaming transactions
@@ -810,10 +808,10 @@ def detect_india_risk_patterns(transactions: List[Dict]) -> Dict[str, Any]:
             "loan_app_pattern_flag": False,
             "emi_ratio": 0.0,
         }
-    
+
     debits = [t for t in transactions if t.get("type") == "debit"]
     credits = [t for t in transactions if t.get("type") == "credit"]
-    
+
     # UPI micro-spend detection (>10 transactions/day < ₹200)
     daily_micro = defaultdict(int)
     for txn in debits:
@@ -821,53 +819,53 @@ def detect_india_risk_patterns(transactions: List[Dict]) -> Dict[str, Any]:
         date_iso = txn.get("date_iso", "")
         if amount < 200 and date_iso:
             daily_micro[date_iso] += 1
-    
+
     upi_flag = any(count > 10 for count in daily_micro.values())
-    
+
     # Gambling detection
     gambling_keywords = [
         "dream11", "mpl", "rummy", "bet", "casino", "poker",
         "teen patti", "my11circle", "fantasy", "betting", "gambl"
     ]
-    
+
     gambling_txns = []
     for txn in debits:
         desc = (txn.get("description", "") or "").lower()
         if any(kw in desc for kw in gambling_keywords):
             gambling_txns.append(txn)
-    
+
     gambling_flag = len(gambling_txns) > 0
-    
+
     # Loan app detection (multiple small credits from NBFCs)
     loan_keywords = ["loan", "nbfc", "credit", "lend", "finance", "cash", "instant"]
-    
+
     loan_credits = []
     for txn in credits:
         desc = (txn.get("description", "") or "").lower()
         amount = float(txn.get("amount", 0))
         if any(kw in desc for kw in loan_keywords) and amount < 50000:
             loan_credits.append(txn)
-    
+
     # Check for clustering (multiple loans within 7 days)
     loan_dates = []
     for txn in loan_credits:
         date_iso = txn.get("date_iso", "")
         if date_iso:
             loan_dates.append(date_iso)
-    
+
     loan_flag = len(loan_dates) >= 2  # Multiple loan credits
-    
+
     # EMI ratio calculation
     emi_keywords = ["emi", "loan repayment", "installment"]
     monthly_emi = defaultdict(float)
-    
+
     for txn in debits:
         desc = (txn.get("description", "") or "").lower()
         date_iso = txn.get("date_iso", "")
         if any(kw in desc for kw in emi_keywords) and date_iso:
             month = date_iso[:7]
             monthly_emi[month] += float(txn.get("amount", 0))
-    
+
     # Calculate EMI to income ratio
     monthly_income = defaultdict(float)
     for txn in credits:
@@ -875,15 +873,15 @@ def detect_india_risk_patterns(transactions: List[Dict]) -> Dict[str, Any]:
         if date_iso:
             month = date_iso[:7]
             monthly_income[month] += float(txn.get("amount", 0))
-    
+
     emi_ratios = []
     for month in monthly_emi:
         if monthly_income.get(month, 0) > 0:
             ratio = monthly_emi[month] / monthly_income[month]
             emi_ratios.append(ratio)
-    
+
     avg_emi_ratio = sum(emi_ratios) / len(emi_ratios) if emi_ratios else 0
-    
+
     return {
         "upi_micro_spend_flag": upi_flag,
         "gambling_flag": gambling_flag,
@@ -899,10 +897,10 @@ def detect_india_risk_patterns(transactions: List[Dict]) -> Dict[str, Any]:
 # Main Entry Point
 # ============================================================
 
-def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
+def compute_behavior_profile(db_path: str) -> dict[str, Any]:
     """
     Compute comprehensive behavioral profile.
-    
+
     Returns:
         {
             "temporal_patterns": {...},
@@ -915,29 +913,29 @@ def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
     # Get transactions - use recent 500 for performance
     transactions_90d = _get_transactions_90_days(db_path)
     recent_transactions = _get_recent_transactions(db_path, 500)
-    
+
     # Use 90-day window if available, otherwise use most recent 500
     txn_set = transactions_90d if len(transactions_90d) >= 30 else recent_transactions
-    
+
     # Compute temporal patterns
     temporal = _compute_temporal_patterns(txn_set)
-    
+
     # Compute behavioral indices
     loss_aversion = _compute_loss_aversion_index(txn_set)
     impulsivity = _compute_impulsivity_score(txn_set)
     habit_stability = _compute_habit_stability_score(txn_set)
     financial_stress = _compute_financial_stress_index(txn_set)
     savings_discipline = _compute_savings_discipline_score(txn_set)
-    
+
     # India-specific risk detection
     india_risks = detect_india_risk_patterns(txn_set)
-    
+
     # Compute confidence based on data density
     confidence = min(1.0, len(txn_set) / 200)
-    
+
     # Buffer adequacy from stress index
     buffer_score = _normalize_score(financial_stress.get("buffer_days", 0), 0, 30)
-    
+
     # Composite Financial Health Score
     health_score = (
         0.20 * savings_discipline["score"] +
@@ -947,7 +945,7 @@ def compute_behavior_profile(db_path: str) -> Dict[str, Any]:
         0.13 * (1 - loss_aversion["score"]) +
         0.13 * buffer_score
     ) * 100  # Scale to 0-100
-    
+
     return {
         "temporal_patterns": {
             "trend": temporal["trend"],

@@ -8,19 +8,19 @@ No motivational fluff. No randomness.
 Phase 3: Part of the Advanced Behavioral Intelligence Layer.
 """
 
-from typing import Dict, List, Any
+from typing import Any
 
 
-def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+def generate_behavioral_insights(profile: dict[str, Any]) -> list[dict[str, Any]]:
     """
     Generate structured behavioral insights from behavior profile.
-    
+
     Insights must:
     - Include quantitative evidence
     - Avoid generic motivational text
     - Reference computed metrics
     - Be deterministic
-    
+
     Returns list of insight dicts with:
     - type: "warning" | "positive" | "info"
     - title: Short title
@@ -28,25 +28,25 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
     - metric: The key metric referenced
     """
     insights = []
-    
+
     if not profile:
         return insights
-    
+
     indices = profile.get("behavioral_indices", {})
     risk_signals = profile.get("risk_signals", {})
     temporal = profile.get("temporal_patterns", {})
-    
+
     # Extract individual indices
     loss_aversion = indices.get("loss_aversion", {})
     impulsivity = indices.get("impulsivity", {})
     habit_stability = indices.get("habit_stability", {})
     financial_stress = indices.get("financial_stress", {})
     savings_discipline = indices.get("savings_discipline", {})
-    
+
     # ============================================================
     # Loss Aversion Insights
     # ============================================================
-    
+
     velocity = loss_aversion.get("post_income_velocity", 0)
     if velocity > 0.5:
         pct = int(velocity * 100)
@@ -57,7 +57,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "post_income_velocity",
             "value": velocity,
         })
-    
+
     large_expenses = loss_aversion.get("large_expense_count", 0)
     if large_expenses > 3:
         insights.append({
@@ -67,11 +67,11 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "large_expense_count",
             "value": large_expenses,
         })
-    
+
     # ============================================================
     # Impulsivity Insights
     # ============================================================
-    
+
     micro_ratio = impulsivity.get("micro_txn_ratio", 0)
     if micro_ratio > 0.4:
         pct = int(micro_ratio * 100)
@@ -82,7 +82,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "micro_txn_ratio",
             "value": micro_ratio,
         })
-    
+
     weekend_ratio = impulsivity.get("weekend_ratio", 1.0)
     if weekend_ratio > 1.3:
         pct = int((weekend_ratio - 1) * 100)
@@ -93,7 +93,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "weekend_ratio",
             "value": weekend_ratio,
         })
-    
+
     disc_ratio = impulsivity.get("discretionary_ratio", 0)
     if disc_ratio > 0.4:
         pct = int(disc_ratio * 100)
@@ -104,11 +104,11 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "discretionary_ratio",
             "value": disc_ratio,
         })
-    
+
     # ============================================================
     # Habit Stability Insights
     # ============================================================
-    
+
     category_cv = habit_stability.get("category_cv", 0)
     if category_cv > 0.5:
         insights.append({
@@ -126,7 +126,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "category_cv",
             "value": category_cv,
         })
-    
+
     recurring = habit_stability.get("recurring_count", 0)
     if recurring >= 5:
         insights.append({
@@ -136,11 +136,11 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "recurring_count",
             "value": recurring,
         })
-    
+
     # ============================================================
     # Financial Stress Insights
     # ============================================================
-    
+
     buffer_days = financial_stress.get("buffer_days", 0)
     if buffer_days < 7:
         insights.append({
@@ -158,7 +158,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "buffer_days",
             "value": buffer_days,
         })
-    
+
     credit_dep = financial_stress.get("credit_dependency", 0)
     if credit_dep > 1.2:
         insights.append({
@@ -168,7 +168,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "credit_dependency",
             "value": credit_dep,
         })
-    
+
     eom_ratio = financial_stress.get("eom_depletion_ratio", 0)
     if eom_ratio > 0.25:
         pct = int(eom_ratio * 100)
@@ -179,11 +179,11 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "eom_depletion_ratio",
             "value": eom_ratio,
         })
-    
+
     # ============================================================
     # Savings Discipline Insights
     # ============================================================
-    
+
     savings_rate = savings_discipline.get("savings_rate", 0)
     if savings_rate < 0:
         insights.append({
@@ -201,7 +201,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "savings_rate",
             "value": savings_rate,
         })
-    
+
     momentum = savings_discipline.get("momentum", 0)
     if momentum < -0.1:
         insights.append({
@@ -219,7 +219,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "momentum",
             "value": momentum,
         })
-    
+
     consistency = savings_discipline.get("consistency", 0)
     if consistency < 0.5:
         insights.append({
@@ -229,13 +229,13 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "consistency",
             "value": consistency,
         })
-    
+
     # ============================================================
     # India-Specific Risk Insights
     # ============================================================
-    
+
     india_risks = risk_signals.get("india_specific", {})
-    
+
     if india_risks.get("upi_micro_spend_flag"):
         insights.append({
             "type": "warning",
@@ -244,7 +244,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "upi_micro_spend_flag",
             "value": True,
         })
-    
+
     if india_risks.get("gambling_flag"):
         count = india_risks.get("gambling_transaction_count", 0)
         insights.append({
@@ -254,7 +254,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "gambling_flag",
             "value": True,
         })
-    
+
     if india_risks.get("loan_app_pattern_flag"):
         insights.append({
             "type": "warning",
@@ -263,7 +263,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "loan_app_pattern_flag",
             "value": True,
         })
-    
+
     emi_ratio = india_risks.get("emi_ratio", 0)
     if emi_ratio > 0.4:
         pct = int(emi_ratio * 100)
@@ -274,11 +274,11 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "emi_ratio",
             "value": emi_ratio,
         })
-    
+
     # ============================================================
     # Temporal Pattern Insights
     # ============================================================
-    
+
     trend = temporal.get("trend", 0)
     if trend > 0.1:
         insights.append({
@@ -296,7 +296,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "trend",
             "value": trend,
         })
-    
+
     volatility = temporal.get("volatility", 0)
     if volatility > 0.8:
         insights.append({
@@ -306,14 +306,14 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "volatility",
             "value": volatility,
         })
-    
+
     # ============================================================
     # Overall Health Score Insight
     # ============================================================
-    
+
     health_score = profile.get("financial_health_score", 50)
     confidence = profile.get("confidence", 0)
-    
+
     if health_score >= 70:
         insights.append({
             "type": "positive",
@@ -330,7 +330,7 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "financial_health_score",
             "value": health_score,
         })
-    
+
     if confidence < 0.5:
         insights.append({
             "type": "info",
@@ -339,30 +339,30 @@ def generate_behavioral_insights(profile: Dict[str, Any]) -> List[Dict[str, Any]
             "metric": "confidence",
             "value": confidence,
         })
-    
+
     return insights
 
 
-def generate_summary_text(profile: Dict[str, Any]) -> str:
+def generate_summary_text(profile: dict[str, Any]) -> str:
     """
     Generate a brief text summary of the behavioral profile.
-    
+
     Returns a single paragraph summary.
     """
     if not profile:
         return "Insufficient data for behavioral analysis."
-    
+
     health_score = profile.get("financial_health_score", 50)
     confidence = profile.get("confidence", 0)
-    
+
     indices = profile.get("behavioral_indices", {})
-    
+
     savings = indices.get("savings_discipline", {}).get("score", 0.5)
     impulse = indices.get("impulsivity", {}).get("score", 0.5)
     stress = indices.get("financial_stress", {}).get("score", 0.5)
-    
+
     parts = []
-    
+
     # Health score
     if health_score >= 70:
         parts.append("Your financial behavior shows strong discipline")
@@ -370,25 +370,25 @@ def generate_summary_text(profile: Dict[str, Any]) -> str:
         parts.append("Your financial behavior is moderate with room for improvement")
     else:
         parts.append("Your financial behavior needs attention")
-    
+
     # Savings
     if savings > 0.6:
         parts.append("savings discipline is strong")
     elif savings < 0.3:
         parts.append("savings discipline needs work")
-    
+
     # Impulsivity
     if impulse > 0.7:
         parts.append("impulse spending is high")
     elif impulse < 0.3:
         parts.append("spending is well-controlled")
-    
+
     # Stress
     if stress > 0.6:
         parts.append("financial stress indicators are elevated")
-    
+
     # Confidence
     if confidence < 0.5:
         parts.append(f"(analysis based on limited data: {int(confidence * 100)}% confidence)")
-    
+
     return ". ".join(parts) + "."

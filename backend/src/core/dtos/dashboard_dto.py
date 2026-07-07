@@ -6,14 +6,15 @@ Data Transfer Objects for dashboard and analytics API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
+from typing import Any
+
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
 
 
 class DashboardSummaryDTO(BaseModel):
     """
     Dashboard summary data transfer object.
-    
+
     Monetary fields:
     - net_cash_flow_paise: Net cash flow in paise (canonical)
     - total_income_paise: Total income in paise
@@ -22,7 +23,7 @@ class DashboardSummaryDTO(BaseModel):
     - savings_paise: Savings amount in paise
     """
     net_cash_flow_paise: int = Field(description="Net cash flow in paise (income - expenses)")
-    net_cash_flow_rupees: Optional[float] = Field(
+    net_cash_flow_rupees: float | None = Field(
         default=None,
         description="Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise)"
     )
@@ -32,7 +33,7 @@ class DashboardSummaryDTO(BaseModel):
     emi_paise: int = Field(description="EMI amount in paise")
     emi_ratio: float = Field(description="EMI to income ratio (0-100)")
     buffer_days: int = Field(description="Emergency buffer in days")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -51,25 +52,25 @@ class DashboardSummaryDTO(BaseModel):
 class OverviewDTO(BaseModel):
     """
     Overview data transfer object for dashboard.
-    
+
     Contains aggregated financial metrics and chart data.
     """
     total_spend_paise: int = Field(description="Total spending in paise")
-    total_spend_rupees: Optional[float] = Field(
+    total_spend_rupees: float | None = Field(
         default=None,
         description="Total spending in rupees (DEPRECATED)"
     )
     transaction_count: int = Field(description="Total number of transactions")
-    category_chart: List[Dict[str, Any]] = Field(
+    category_chart: list[dict[str, Any]] = Field(
         description="Category-wise spending data for charts"
     )
-    monthly_chart: List[Dict[str, Any]] = Field(
+    monthly_chart: list[dict[str, Any]] = Field(
         description="Monthly spending trend data"
     )
-    bank_wise_chart: List[Dict[str, Any]] = Field(
+    bank_wise_chart: list[dict[str, Any]] = Field(
         description="Bank-wise spending distribution"
     )
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -89,7 +90,7 @@ class CategoryBreakdownDTO(BaseModel):
     amount_paise: int = Field(description="Amount in paise")
     count: int = Field(description="Number of transactions")
     percentage: float = Field(description="Percentage of total")
-    
+
     class Config:
         json_schema_extra = {
             "example": {

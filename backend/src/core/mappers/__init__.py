@@ -13,8 +13,8 @@ Architecture:
 """
 
 from .account_mapper import AccountMapper
-from .transaction_mapper import TransactionMapper
 from .dashboard_mapper import DashboardMapper
+from .transaction_mapper import TransactionMapper
 
 __all__ = [
     'AccountMapper',

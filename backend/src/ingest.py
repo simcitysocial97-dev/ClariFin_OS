@@ -29,21 +29,18 @@ Example output:
 """
 
 import sys
-import os
 from collections import Counter
 from pathlib import Path
-from typing import List
 
 # Allow running from any directory by adding src/ to path
 _SRC_DIR = Path(__file__).parent
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from statement_extractor import StatementExtractor
 from categorizer import categorize
 from db import FinanceDB
 from metadata_extractor import MetadataExtractor
-
+from statement_extractor import StatementExtractor
 
 # ============================================================
 # Core Ingestion Logic
@@ -239,7 +236,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
             else:
                 db.update_validation_status(stmt_id, "no_metadata", 0.0)
                 result["validation_status"] = "no_metadata"
-                print(f"  Validation: ⚠️ Total due not found in PDF")
+                print("  Validation: ⚠️ Total due not found in PDF")
 
         except Exception as meta_err:
             print(f"  Metadata extraction error: {meta_err}")
@@ -261,7 +258,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
     return result
 
 
-def ingest_directory(dir_path: str, db: FinanceDB, debug: bool = False) -> List[dict]:
+def ingest_directory(dir_path: str, db: FinanceDB, debug: bool = False) -> list[dict]:
     """Process all .pdf files in a directory. Returns list of result dicts."""
     pdf_files = sorted(Path(dir_path).glob("*.pdf"))
     if not pdf_files:
@@ -323,10 +320,10 @@ def _print_result(result: dict) -> None:
     if categories:
         print(f"  Categories: {_format_categories(categories)}")
 
-    print(f"  ✅ Imported")
+    print("  ✅ Imported")
 
 
-def _print_summary(results: List[dict]) -> None:
+def _print_summary(results: list[dict]) -> None:
     """Print final summary line."""
     imported = sum(1 for r in results if r["status"] == "imported")
     skipped = sum(1 for r in results if r["status"] == "skipped")

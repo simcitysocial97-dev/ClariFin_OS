@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Enter the frontend workspace to run your linting rules safely
+cd frontend && npx lint-staged

@@ -13,8 +13,8 @@ Architecture:
 """
 
 from .account_dto import AccountDTO, AccountListResponse
-from .transaction_dto import TransactionDTO, TransactionListResponse
 from .dashboard_dto import DashboardSummaryDTO, OverviewDTO
+from .transaction_dto import TransactionDTO, TransactionListResponse
 
 __all__ = [
     'AccountDTO',

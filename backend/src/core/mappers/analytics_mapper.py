@@ -6,43 +6,43 @@ Transforms analytics domain objects into AnalyticsResponse DTOs.
 This is the ONLY location where analytics API responses are constructed.
 """
 
-from typing import List, Dict, Any, Optional
-from core.domain.money import Money
+from typing import Any
+
 from core.dtos.analytics_dto import (
     AnalyticsResponse,
-    SpendingTrendPoint,
     DayOfWeekData,
+    LargestTransaction,
     MerchantData,
     RecurringCharge,
-    LargestTransaction
+    SpendingTrendPoint,
 )
 
 
 class AnalyticsMapper:
     """
     Mapper for analytics domain objects to DTOs.
-    
+
     Responsibilities:
     - Transform analytics data to AnalyticsResponse
     - Ensure all monetary fields have explicit units (_paise suffix)
     """
-    
+
     @staticmethod
     def to_response(
         highest_month: str,
         highest_month_amount_paise: int,
         avg_monthly_paise: int,
-        biggest_transaction: Optional[Dict[str, Any]],
+        biggest_transaction: dict[str, Any] | None,
         unique_merchants: int,
-        spending_trend: List[Dict[str, Any]],
-        day_of_week: List[Dict[str, Any]],
-        top_merchants: List[Dict[str, Any]],
-        recurring_charges: List[Dict[str, Any]],
-        largest_transactions: List[Dict[str, Any]],
+        spending_trend: list[dict[str, Any]],
+        day_of_week: list[dict[str, Any]],
+        top_merchants: list[dict[str, Any]],
+        recurring_charges: list[dict[str, Any]],
+        largest_transactions: list[dict[str, Any]],
     ) -> AnalyticsResponse:
         """
         Convert analytics data to AnalyticsResponse.
-        
+
         Args:
             highest_month: Month label with highest spending
             highest_month_amount_paise: Amount in paise for highest month
@@ -54,7 +54,7 @@ class AnalyticsMapper:
             top_merchants: Top merchants by spending
             recurring_charges: Detected recurring charges
             largest_transactions: Largest transactions list
-            
+
         Returns:
             AnalyticsResponse instance
         """

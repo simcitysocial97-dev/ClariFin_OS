@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { formatINR } from '@/lib/utils/format';
 import { ChartContainer } from '@/components/ui/chart-container';
 import { useCashflow } from '@/lib/hooks/use-cashflow';
+import type { CashflowMonth } from '@/lib/schemas/cashflow';
 
 // Dynamically import recharts to avoid SSR issues
 import dynamic from 'next/dynamic';
@@ -18,16 +19,6 @@ const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.Cartesi
 const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false, loading: () => null }) as typeof import('recharts').Tooltip;
 const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false, loading: () => null }) as typeof import('recharts').ResponsiveContainer;
 const Legend = dynamic(() => import('recharts').then((mod) => mod.Legend), { ssr: false, loading: () => null }) as typeof import('recharts').Legend;
-
-// Value is in paise (canonical)
-interface CashflowMonth {
-  month_key: string;
-  month_label: string;
-  income_paise: number;
-  expense_paise: number;
-  net_paise: number;
-  transaction_count: number;
-}
 
 interface CashflowChartProps {
   months?: number;
@@ -54,8 +45,8 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
     return `₹${rupees}`;
   };
 
-  // Check for empty data
-  const isEmpty = !data || data.months.length === 0;
+  // Check for empty data safely utilizing Zod structural parameters
+  const isEmpty = !data || !data.months || data.months.length === 0;
 
   if (!mounted) {
     return (
@@ -71,7 +62,7 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
       onRetry={refetch}
       title="Cashflow Trend"
     >
-      {data && data.months.length > 0 && (
+      {data && data.months && data.months.length > 0 && (
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart

@@ -6,8 +6,9 @@ Data Transfer Objects for analytics API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
+from typing import Any
+
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
 
 
 class SpendingTrendPoint(BaseModel):
@@ -53,24 +54,24 @@ class AnalyticsResponse(BaseModel):
     highest_month: str = Field(description="Month with highest spending")
     highest_month_amount_paise: int = Field(description="Highest month amount in paise")
     avg_monthly_paise: int = Field(description="Average monthly spending in paise")
-    biggest_transaction: Optional[Dict[str, Any]] = Field(
+    biggest_transaction: dict[str, Any] | None = Field(
         default=None,
         description="Biggest single transaction details"
     )
     unique_merchants: int = Field(description="Number of unique merchants")
-    spending_trend: List[SpendingTrendPoint] = Field(
+    spending_trend: list[SpendingTrendPoint] = Field(
         description="Monthly spending trend data"
     )
-    day_of_week: List[DayOfWeekData] = Field(
+    day_of_week: list[DayOfWeekData] = Field(
         description="Day-of-week spending breakdown"
     )
-    top_merchants: List[MerchantData] = Field(
+    top_merchants: list[MerchantData] = Field(
         description="Top merchants by spending"
     )
-    recurring_charges: List[RecurringCharge] = Field(
+    recurring_charges: list[RecurringCharge] = Field(
         description="Detected recurring charges"
     )
-    largest_transactions: List[LargestTransaction] = Field(
+    largest_transactions: list[LargestTransaction] = Field(
         description="Largest transactions"
     )
 

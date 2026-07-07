@@ -22,11 +22,8 @@ Usage:
 """
 
 import hashlib
-import os
 import sqlite3
 from pathlib import Path
-from typing import Dict, List, Optional
-
 
 # ============================================================
 # Schema
@@ -165,7 +162,7 @@ def _parse_amount(raw: str) -> float:
         return 0.0
 
 
-def _row_to_dict(cursor: sqlite3.Cursor, row: tuple) -> Dict:
+def _row_to_dict(cursor: sqlite3.Cursor, row: tuple) -> dict:
     """Convert a sqlite3 row to a dict using cursor.description."""
     return {col[0]: row[i] for i, col in enumerate(cursor.description)}
 
@@ -184,7 +181,7 @@ class FinanceDB:
         self.db_path = str(db_path)
         # Ensure parent directory exists
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
         self._create_tables()
 
     # ----------------------------------------------------------
@@ -210,7 +207,7 @@ class FinanceDB:
             # Create new tables for members and import mappings
             conn.execute(_DDL_MEMBERS)
             conn.execute(_DDL_IMPORT_MAPPINGS)
-            
+
             # Phase 2B.1: Create reconciliations table
             conn.execute(_DDL_RECONCILIATIONS)
 
@@ -271,7 +268,7 @@ class FinanceDB:
             try:
                 # Fetch all transactions with dates but no date_iso
                 cur = conn.execute("""
-                    SELECT id, date FROM transactions 
+                    SELECT id, date FROM transactions
                     WHERE date IS NOT NULL AND date != '' AND (date_iso IS NULL OR date_iso = '')
                 """)
                 rows = cur.fetchall()
@@ -428,16 +425,16 @@ class FinanceDB:
     # ----------------------------------------------------------
 
     def insert_transactions(
-        self, statement_id: int, transactions: List[Dict]
+        self, statement_id: int, transactions: list[dict]
     ) -> int:
         """
         Bulk insert transactions. Deduplicates by hash_signature.
-        
+
         Phase 2A.1: Uses hash_signature for deduplication.
         Hash = SHA256(account_id | date_iso | description | debit | credit)
-        
+
         Phase 2A: Also populates debit, credit, amount_paise columns for financial determinism.
-        
+
         Returns count of rows actually inserted.
         """
         if not transactions:
@@ -445,7 +442,7 @@ class FinanceDB:
 
         conn = self._get_conn()
         inserted = 0
-        
+
         # Get bank (account_id) for this statement
         cur = conn.execute("SELECT bank FROM statements WHERE id = ?", (statement_id,))
         row = cur.fetchone()
@@ -459,12 +456,12 @@ class FinanceDB:
             category = str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
             subcategory = str(txn.get("subcategory", "")).strip() or None
             raw_description = description  # preserve original
-            
+
             # Phase 2A: Compute paise values for financial determinism
             amount_paise = int(round(amount * 100))
             debit_paise = amount_paise if txn_type == 'debit' else 0
             credit_paise = amount_paise if txn_type == 'credit' else 0
-            
+
             # Phase 2A.1: Compute date_iso
             date_iso = _parse_date_to_ymd(date) if date else ""
 
@@ -512,7 +509,7 @@ class FinanceDB:
     # Query Methods
     # ----------------------------------------------------------
 
-    def get_all_transactions(self, filters: Optional[Dict] = None) -> List[Dict]:
+    def get_all_transactions(self, filters: dict | None = None) -> list[dict]:
         """
         Fetch transactions with optional filters.
         Supported filter keys:
@@ -564,7 +561,7 @@ class FinanceDB:
             conn.close()
         return rows
 
-    def get_monthly_summary(self) -> List[Dict]:
+    def get_monthly_summary(self) -> list[dict]:
         """
         Returns monthly aggregates:
           [{month, total_debit, total_credit, transaction_count}]
@@ -590,9 +587,9 @@ class FinanceDB:
 
     def get_category_summary(
         self,
-        date_from: Optional[str] = None,
-        date_to: Optional[str] = None,
-    ) -> List[Dict]:
+        date_from: str | None = None,
+        date_to: str | None = None,
+    ) -> list[dict]:
         """
         Returns per-category aggregates:
           [{category, total_amount, count}]
@@ -629,7 +626,7 @@ class FinanceDB:
         self,
         transaction_id: int,
         category: str,
-        subcategory: Optional[str] = None,
+        subcategory: str | None = None,
     ) -> bool:
         """
         Manually re-categorize a transaction.
@@ -646,7 +643,7 @@ class FinanceDB:
             conn.close()
         return updated
 
-    def get_banks(self) -> List[str]:
+    def get_banks(self) -> list[str]:
         """Returns list of distinct bank names in the database."""
         conn = self._get_conn()
         cur = conn.execute("SELECT DISTINCT bank FROM statements ORDER BY bank")
@@ -677,7 +674,7 @@ class FinanceDB:
     # Dashboard Query Methods (new — do not modify existing methods above)
     # ----------------------------------------------------------
 
-    def get_all_transactions_with_bank(self, filters: Optional[Dict] = None) -> List[Dict]:
+    def get_all_transactions_with_bank(self, filters: dict | None = None) -> list[dict]:
         """
         JOIN transactions with statements to include bank info.
         Returns list of dicts with all transaction + statement fields.
@@ -732,7 +729,7 @@ class FinanceDB:
             conn.close()
         return rows
 
-    def get_all_statements(self) -> List[Dict]:
+    def get_all_statements(self) -> list[dict]:
         """
         Returns all statements with computed transaction counts and totals.
         Keys: id, bank, card_last4, statement_period_from, statement_period_to,
@@ -761,9 +758,9 @@ class FinanceDB:
 
     def bulk_update_category(
         self,
-        transaction_ids: List[int],
+        transaction_ids: list[int],
         category: str,
-        subcategory: Optional[str] = None,
+        subcategory: str | None = None,
     ) -> int:
         """
         UPDATE transactions SET category=?, subcategory=? WHERE id IN (...).
@@ -784,7 +781,7 @@ class FinanceDB:
             conn.close()
         return updated
 
-    def get_uncategorized_patterns(self, limit: int = 50) -> List[Dict]:
+    def get_uncategorized_patterns(self, limit: int = 50) -> list[dict]:
         """
         Returns grouped uncategorized transaction descriptions.
         [{description, count, total_amount}] ordered by count DESC.
@@ -804,7 +801,7 @@ class FinanceDB:
             conn.close()
         return rows
 
-    def get_category_totals_by_month(self) -> List[Dict]:
+    def get_category_totals_by_month(self) -> list[dict]:
         """
         For stacked bar chart. Returns list of dicts:
         [{month: "2025-04", category: "Food & Dining", total: 2345.67}, ...]
@@ -884,7 +881,7 @@ class FinanceDB:
             conn.commit()
             conn.close()
 
-    def get_statement_validation_summary(self) -> List[Dict]:
+    def get_statement_validation_summary(self) -> list[dict]:
         """Returns list of dicts for each statement with validation info."""
         conn = self._get_conn()
         cur = conn.execute("""
@@ -916,7 +913,7 @@ class FinanceDB:
             conn.commit()
             conn.close()
 
-    def get_statement_pdf_path(self, statement_id: int) -> Optional[str]:
+    def get_statement_pdf_path(self, statement_id: int) -> str | None:
         """Get the file_name for a statement."""
         conn = self._get_conn()
         cur = conn.execute("SELECT file_name FROM statements WHERE id = ?", (statement_id,))
@@ -934,7 +931,7 @@ class FinanceDB:
             conn.close()
         return result
 
-    def get_all_statements_with_metadata(self) -> List[Dict]:
+    def get_all_statements_with_metadata(self) -> list[dict]:
         """
         Returns all statements with metadata + computed transaction counts and totals.
         Includes: total_amount_due, minimum_amount_due, payment_due_date,
@@ -968,7 +965,7 @@ class FinanceDB:
     # Member Methods (new)
     # ----------------------------------------------------------
 
-    def get_members(self) -> List[Dict]:
+    def get_members(self) -> list[dict]:
         """Return all members as list of dicts."""
         conn = self._get_conn()
         cur = conn.execute("SELECT id, name, color, created_at FROM members ORDER BY name")
@@ -995,7 +992,7 @@ class FinanceDB:
 
     def insert_csv_transactions(
         self,
-        transactions: List[Dict],
+        transactions: list[dict],
         member: str = "Self",
         source: str = "csv",
         bank: str = "Manual Import",
@@ -1005,9 +1002,9 @@ class FinanceDB:
         Insert transactions from CSV/Excel import.
         Each transaction dict: date, description, amount, type, category, subcategory.
         Creates a statement record with source='csv' and the filename.
-        
+
         Phase 2A: Also populates debit, credit, amount_paise columns for financial determinism.
-        
+
         Returns count of inserted transactions.
         """
         if not transactions:
@@ -1034,15 +1031,15 @@ class FinanceDB:
             txn_type = str(txn.get("type", "")).strip()
             category = str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
             subcategory = str(txn.get("subcategory", "")).strip() or None
-            
+
             # Phase 2A: Compute paise values for financial determinism
             amount_paise = int(round(amount * 100))
             debit_paise = amount_paise if txn_type == 'debit' else 0
             credit_paise = amount_paise if txn_type == 'credit' else 0
-            
+
             # Phase 2A.1: Compute date_iso
             date_iso = _parse_date_to_ymd(date) if date else ""
-            
+
             # Phase 2A.1: Compute hash_signature
             hash_input = f"{bank}|{date_iso}|{description}|{debit_paise}|{credit_paise}"
             hash_signature = hashlib.sha256(hash_input.encode()).hexdigest().lower()
@@ -1090,7 +1087,7 @@ class FinanceDB:
     # Import Mapping Methods (new)
     # ----------------------------------------------------------
 
-    def save_import_mapping(self, mapping: Dict) -> int:
+    def save_import_mapping(self, mapping: dict) -> int:
         """Save a column mapping configuration for reuse."""
         conn = self._get_conn()
         cur = conn.execute(
@@ -1117,7 +1114,7 @@ class FinanceDB:
             conn.close()
         return cur.lastrowid
 
-    def get_import_mappings(self) -> List[Dict]:
+    def get_import_mappings(self) -> list[dict]:
         """Get all saved import mappings."""
         conn = self._get_conn()
         cur = conn.execute("""
@@ -1148,10 +1145,10 @@ class FinanceDB:
     ) -> bool:
         """
         Insert a reconciliation record using INSERT OR IGNORE for idempotency.
-        
+
         Phase 2B: Metadata-only, no ledger mutation.
         Uses deterministic_key to prevent duplicates.
-        
+
         Args:
             debit_txn_id: Transaction ID with debit
             credit_txn_id: Transaction ID with credit
@@ -1161,17 +1158,17 @@ class FinanceDB:
             date_diff_days: Days between transaction dates
             match_confidence: Confidence score (0.0-1.0)
             match_type: 'exact', 'window', 'fuzzy', or 'manual'
-        
+
         Returns:
             True if inserted, False if already exists (ignored)
         """
         conn = self._get_conn()
-        
+
         # Generate deterministic key (smaller id first for consistency)
         min_id = min(debit_txn_id, credit_txn_id)
         max_id = max(debit_txn_id, credit_txn_id)
         deterministic_key = f"{min_id}:{max_id}"
-        
+
         # Use INSERT OR IGNORE for idempotency
         cur = conn.execute(
             """
@@ -1191,33 +1188,33 @@ class FinanceDB:
                 deterministic_key
             ),
         )
-        
+
         inserted = cur.rowcount > 0
-        
+
         if self._conn is None:
             conn.commit()
             conn.close()
-        
+
         return inserted
 
-    def get_reconciliations(self, status: Optional[str] = None) -> List[Dict]:
+    def get_reconciliations(self, status: str | None = None) -> list[dict]:
         """
         Get all reconciliations with transaction details.
-        
+
         Args:
             status: Optional filter by status ('pending', 'confirmed', 'rejected')
-        
+
         Returns:
             List of reconciliation records with transaction details including bank names
         """
         conn = self._get_conn()
-        
+
         where_clause = "WHERE r.status = ?" if status else ""
         params = [status] if status else []
-        
+
         sql = f"""
-            SELECT 
-                r.id, 
+            SELECT
+                r.id,
                 r.debit_txn_id, r.credit_txn_id,
                 r.debit_account_id, r.credit_account_id,
                 r.amount, r.date_diff_days,
@@ -1236,7 +1233,7 @@ class FinanceDB:
             {where_clause}
             ORDER BY r.created_at DESC
         """
-        
+
         cur = conn.execute(sql, params)
         rows = [dict(row) for row in cur.fetchall()]
         if self._conn is None:
@@ -1246,16 +1243,16 @@ class FinanceDB:
     def confirm_reconciliation(self, reconciliation_id: int) -> bool:
         """
         Confirm a pending reconciliation.
-        
+
         Phase 2B: Updates reconciliation.status only. No ledger mutation.
-        
+
         Returns:
             True if updated, False if not found or not pending
         """
         conn = self._get_conn()
         cur = conn.execute(
             """
-            UPDATE reconciliations 
+            UPDATE reconciliations
             SET status = 'confirmed', confirmed_at = datetime('now')
             WHERE id = ? AND status = 'pending'
             """,
@@ -1270,16 +1267,16 @@ class FinanceDB:
     def reject_reconciliation(self, reconciliation_id: int) -> bool:
         """
         Reject a pending reconciliation.
-        
+
         Phase 2B: Updates reconciliation.status only. No ledger mutation.
-        
+
         Returns:
             True if updated, False if not found or not pending
         """
         conn = self._get_conn()
         cur = conn.execute(
             """
-            UPDATE reconciliations 
+            UPDATE reconciliations
             SET status = 'rejected'
             WHERE id = ? AND status = 'pending'
             """,
@@ -1291,14 +1288,14 @@ class FinanceDB:
             conn.close()
         return updated
 
-    def get_pending_reconciliations(self) -> List[Dict]:
+    def get_pending_reconciliations(self) -> list[dict]:
         """Get all pending reconciliations."""
         return self.get_reconciliations(status='pending')
 
-    def get_confirmed_transfer_ids(self) -> List[tuple]:
+    def get_confirmed_transfer_ids(self) -> list[tuple]:
         """
         Get all transaction IDs involved in confirmed transfers.
-        
+
         Returns list of (debit_txn_id, credit_txn_id) tuples for confirmed reconciliations.
         Used by analytics to exclude transfers from spending totals.
         """
@@ -1319,7 +1316,6 @@ class FinanceDB:
 # ============================================================
 
 if __name__ == "__main__":
-    import json
 
     db = FinanceDB()
     print(f"Database: {db.db_path}")

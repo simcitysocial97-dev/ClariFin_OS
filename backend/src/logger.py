@@ -18,19 +18,19 @@ from typing import Any
 def setup_logging(name: str = "clarifin") -> logging.Logger:
     """
     Set up and return a configured logger.
-    
+
     Args:
         name: Logger name (default: "clarifin")
-    
+
     Returns:
         Configured logger instance
     """
     logger = logging.getLogger(name)
-    
+
     if logger.handlers:
         # Already configured
         return logger
-    
+
     # Get settings
     try:
         from config import settings
@@ -39,14 +39,14 @@ def setup_logging(name: str = "clarifin") -> logging.Logger:
     except ImportError:
         log_level = "INFO"
         log_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    
+
     # Configure handler
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(logging.Formatter(log_format))
-    
+
     logger.addHandler(handler)
     logger.setLevel(getattr(logging, log_level, logging.INFO))
-    
+
     return logger
 
 
@@ -57,7 +57,7 @@ logger = setup_logging()
 def log_request(method: str, path: str, status_code: int, **kwargs: Any) -> None:
     """
     Log an HTTP request with context.
-    
+
     Args:
         method: HTTP method (GET, POST, etc.)
         path: Request path
@@ -72,7 +72,7 @@ def log_request(method: str, path: str, status_code: int, **kwargs: Any) -> None
 def log_error(message: str, error: Exception | None = None, **kwargs: Any) -> None:
     """
     Log an error with context.
-    
+
     Args:
         message: Error message
         error: Optional exception
@@ -88,7 +88,7 @@ def log_error(message: str, error: Exception | None = None, **kwargs: Any) -> No
 def log_warning(message: str, **kwargs: Any) -> None:
     """
     Log a warning with context.
-    
+
     Args:
         message: Warning message
         **kwargs: Additional context to log
@@ -100,7 +100,7 @@ def log_warning(message: str, **kwargs: Any) -> None:
 def log_info(message: str, **kwargs: Any) -> None:
     """
     Log an info message with context.
-    
+
     Args:
         message: Info message
         **kwargs: Additional context to log

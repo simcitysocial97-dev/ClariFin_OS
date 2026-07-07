@@ -12,10 +12,11 @@ Constraints:
 
 import json
 import sys
+from pathlib import Path
+from typing import Any
+
 import camelot
 import pdfplumber
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
 
 
 class CamelotExtractor:
@@ -67,7 +68,7 @@ class CamelotExtractor:
 
     # ========== Table Extraction ==========
 
-    def extract_tables_from_page(self, page_number: int) -> Tuple[List, str]:
+    def extract_tables_from_page(self, page_number: int) -> tuple[list, str]:
         """
         Extract tables from a single page.
         Tries lattice first; falls back to stream if no valid tables found.
@@ -133,7 +134,7 @@ class CamelotExtractor:
         numeric_cells = 0
         date_start_rows = 0
 
-        for i, row in enumerate(rows):
+        for _i, row in enumerate(rows):
             for j, cell in enumerate(row):
                 cell_str = str(cell).strip()
                 total_cells += 1
@@ -167,7 +168,7 @@ class CamelotExtractor:
 
     # ========== Best Table Selection ==========
 
-    def extract_best_table(self) -> Dict[str, Any]:
+    def extract_best_table(self) -> dict[str, Any]:
         """
         Scan pages 0-4, score all candidate tables, return the best one.
 

@@ -6,8 +6,8 @@ Transforms statement domain objects into StatementDTO instances.
 This is the ONLY location where statement API responses are constructed.
 """
 
-from typing import List, Dict, Any
-from core.domain.money import Money
+from typing import Any
+
 from core.dtos.statement_dto import StatementDTO
 
 
@@ -38,21 +38,21 @@ def _format_inr(paise: int) -> str:
 class StatementMapper:
     """
     Mapper for statement domain objects to DTOs.
-    
+
     Responsibilities:
     - Transform statement data to StatementDTO
     - Convert rupee amounts to paise canonical form
     - Generate display fields
     """
-    
+
     @staticmethod
-    def to_dto(stmt: Dict[str, Any]) -> StatementDTO:
+    def to_dto(stmt: dict[str, Any]) -> StatementDTO:
         """
         Convert a statement record to StatementDTO.
-        
+
         Args:
             stmt: Statement dict from database
-            
+
         Returns:
             StatementDTO instance
         """
@@ -62,14 +62,14 @@ class StatementMapper:
         total_due_rupees = float(stmt.get("total_amount_due") or 0)
         min_due_rupees = float(stmt.get("minimum_amount_due") or 0)
         diff_rupees = float(stmt.get("validation_difference") or 0)
-        
+
         total_debit_paise = int(round(total_debit_rupees * 100))
         total_credit_paise = int(round(total_credit_rupees * 100))
         total_due_paise = int(round(total_due_rupees * 100))
         min_due_paise = int(round(min_due_rupees * 100))
         diff_paise = int(round(diff_rupees * 100))
         extracted_net_paise = total_debit_paise - total_credit_paise
-        
+
         # Validation badge
         validation_status = stmt.get("validation_status") or "pending"
         badge_text = (
@@ -85,9 +85,9 @@ class StatementMapper:
             else "red" if validation_status == "mismatch"
             else "gray"
         )
-        
+
         card_last4 = stmt.get("card_last4") or ""
-        
+
         return StatementDTO(
             id=stmt.get("id"),
             bank=stmt.get("bank"),

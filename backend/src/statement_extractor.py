@@ -23,17 +23,16 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import camelot
 import pdfplumber
-
 
 # ============================================================
 # Constants
 # ============================================================
 
-BANK_KEYWORDS: Dict[str, List[str]] = {
+BANK_KEYWORDS: dict[str, list[str]] = {
     "HDFC Bank":       ["HDFC Bank", "HDFC BANK"],
     "ICICI Bank":      ["ICICI Bank", "ICICI BANK"],
     "Axis Bank":       ["Axis Bank", "AXIS BANK"],
@@ -78,11 +77,11 @@ def _cell_str(cell: Any) -> str:
     return str(cell).strip() if cell is not None else ""
 
 
-def _is_empty_row(row: List[str]) -> bool:
+def _is_empty_row(row: list[str]) -> bool:
     return all(c == "" for c in row)
 
 
-def _is_header_row(row: List[str]) -> bool:
+def _is_header_row(row: list[str]) -> bool:
     row_text = " ".join(c.lower() for c in row)
     return any(phrase in row_text for phrase in HEADER_PHRASES)
 
@@ -122,7 +121,7 @@ def _cell_has_digits(cell: str) -> bool:
 _DR_CR_PATTERN = re.compile(r'^(.*?)\s+(DR|CR|Dr|Cr)\s*$', re.DOTALL)
 
 
-def _split_dr_cr(amount: str) -> Tuple[str, str]:
+def _split_dr_cr(amount: str) -> tuple[str, str]:
     """
     Split "1,234.56 DR" → ("1,234.56", "debit")
     Split "500.00 CR"   → ("500.00", "credit")
@@ -152,17 +151,17 @@ class StatementExtractor:
     def __init__(self, pdf_path: str, debug: bool = False):
         self.pdf_path = str(pdf_path)
         self.debug = debug
-        self._bank: Optional[str] = None
+        self._bank: str | None = None
         self._num_pages: int = 0
-        self._best_page: Optional[int] = None
-        self._best_strategy: Optional[str] = None
+        self._best_page: int | None = None
+        self._best_strategy: str | None = None
         self._best_score: float = 0.0
         self._date_col_idx: int = 0   # detected date column index
         self._desc_col_idx: int = 1   # detected description column index
-        self._amount_col_idx: Optional[int] = None   # Fix 2B: single amount col
-        self._debit_col_idx: Optional[int] = None    # Fix 2B: debit col (separate)
-        self._credit_col_idx: Optional[int] = None   # Fix 2B: credit col (separate)
-        self._header_row: Optional[List[str]] = None  # Fix 9: captured header row
+        self._amount_col_idx: int | None = None   # Fix 2B: single amount col
+        self._debit_col_idx: int | None = None    # Fix 2B: debit col (separate)
+        self._credit_col_idx: int | None = None   # Fix 2B: credit col (separate)
+        self._header_row: list[str] | None = None  # Fix 9: captured header row
 
     def _log(self, msg: str) -> None:
         if self.debug:
@@ -200,7 +199,7 @@ class StatementExtractor:
     # Step 2: Extract Tables from Page
     # ----------------------------------------------------------
 
-    def extract_tables_from_page(self, page_number: int) -> List[Dict]:
+    def extract_tables_from_page(self, page_number: int) -> list[dict]:
         """
         Extract all tables from a single page using Camelot.
         Fix 15: Try lattice first. If lattice returns a usable table (>=3 cols, >=5 rows),
@@ -266,7 +265,7 @@ class StatementExtractor:
     # Step 3: Score Table
     # ----------------------------------------------------------
 
-    def score_table(self, table_entry: Dict) -> float:
+    def score_table(self, table_entry: dict) -> float:
         """
         Score a table candidate to determine if it's the transaction table.
 
@@ -343,7 +342,7 @@ class StatementExtractor:
     # Step 4: Select Best Table
     # ----------------------------------------------------------
 
-    def select_best_table(self) -> Dict:
+    def select_best_table(self) -> dict:
         """
         Scan first MAX_PAGES_TO_SCAN pages.
         Score all tables. Return the highest-scoring one.
@@ -387,7 +386,7 @@ class StatementExtractor:
     # Step 5: Clean Rows + Header Capture
     # ----------------------------------------------------------
 
-    def _extract_header_row(self, rows: List[List]) -> Optional[List[str]]:
+    def _extract_header_row(self, rows: list[list]) -> list[str] | None:
         """
         Fix 9: Scan first 5 rows for the one that best matches HEADER_PHRASES.
         Returns the header row as a list of strings, or None if not found.
@@ -401,7 +400,7 @@ class StatementExtractor:
                 return row
         return None
 
-    def clean_rows(self, rows: List[List]) -> List[List[str]]:
+    def clean_rows(self, rows: list[list]) -> list[list[str]]:
         """
         Convert raw Camelot rows to clean string lists.
         Remove: fully empty rows, header rows.
@@ -425,7 +424,7 @@ class StatementExtractor:
     # Step 6: Detect Date Column + Description Column + Amount Columns
     # ----------------------------------------------------------
 
-    def _detect_date_column(self, rows: List[List[str]]) -> int:
+    def _detect_date_column(self, rows: list[list[str]]) -> int:
         """
         Find which column index has the highest density of date-like values.
         Returns the column index (default 0).
@@ -445,7 +444,7 @@ class StatementExtractor:
         self._log(f"Date column detection: counts={date_counts}, best_idx={best_idx}")
         return best_idx
 
-    def _detect_description_column(self, rows: List[List[str]], date_col_idx: int) -> int:
+    def _detect_description_column(self, rows: list[list[str]], date_col_idx: int) -> int:
         """
         Fix 3: Find the description column by scanning the header row first,
         then falling back to the column with the longest average text length
@@ -491,7 +490,7 @@ class StatementExtractor:
         # Last resort: index 1 if date is 0, else 0
         return 1 if date_col_idx == 0 else 0
 
-    def _detect_amount_columns(self, rows: List[List[str]], date_col_idx: int) -> Dict:
+    def _detect_amount_columns(self, rows: list[list[str]], date_col_idx: int) -> dict:
         """
         Fix 4: Find amount column(s) by scanning for the rightmost column(s)
         where >50% of cells match a currency/number pattern.
@@ -585,12 +584,12 @@ class StatementExtractor:
         "brought forward", "carried forward",
     }
 
-    def _is_summary_row(self, row: List[str]) -> bool:
+    def _is_summary_row(self, row: list[str]) -> bool:
         """Returns True if the row looks like a fee/tax/total summary row."""
         row_text = " ".join(c.lower() for c in row)
         return any(kw in row_text for kw in self._SUMMARY_KEYWORDS)
 
-    def _row_has_standalone_amount(self, row: List[str], date_col_idx: int) -> bool:
+    def _row_has_standalone_amount(self, row: list[str], date_col_idx: int) -> bool:
         """
         Fix 2C: Returns True if a no-date row looks like a standalone transaction
         (has a currency-formatted amount) rather than a description continuation.
@@ -646,8 +645,8 @@ class StatementExtractor:
         return False
 
     def merge_multiline_rows(
-        self, rows: List[List[str]], date_col_idx: int
-    ) -> List[List[str]]:
+        self, rows: list[list[str]], date_col_idx: int
+    ) -> list[list[str]]:
         """
         Group continuation rows into their parent transaction row.
         A new transaction starts when the date column contains a date-like value.
@@ -656,8 +655,8 @@ class StatementExtractor:
         Fix 5: Correct duplicate text detection (superset check).
         Fix 6: Skip summary/total rows during merge.
         """
-        merged: List[List[str]] = []
-        current: Optional[List[str]] = None
+        merged: list[list[str]] = []
+        current: list[str] | None = None
 
         # Use detected description column (set by _detect_description_column in extract())
         desc_col = self._desc_col_idx
@@ -722,7 +721,7 @@ class StatementExtractor:
     # Step 8: Normalize Transactions
     # ----------------------------------------------------------
 
-    def _detect_amount_structure(self, rows: List[List[str]]) -> str:
+    def _detect_amount_structure(self, rows: list[list[str]]) -> str:
         """
         Detect if the table has separate debit/credit columns or single amount.
         Returns: "separate_debit_credit" or "single_amount"
@@ -808,7 +807,7 @@ class StatementExtractor:
             return "debit"
         return ""
 
-    def _validate_transaction(self, txn: Dict) -> bool:
+    def _validate_transaction(self, txn: dict) -> bool:
         """
         Fix 13: Validate a transaction dict before including in output.
         A valid transaction must have:
@@ -825,59 +824,59 @@ class StatementExtractor:
             return False
         return True
 
-    def _extract_embedded_amount(self, txn: Dict) -> Dict:
+    def _extract_embedded_amount(self, txn: dict) -> dict:
         """
         Fix 16: Extract amount from description when amount column is missing/empty.
-        
+
         Axis Bank pattern: "BBPS PAYMENT RECEIVED - 19,688.00 Cr"
         The amount and Cr/Dr indicator are embedded in the description.
-        
+
         Pattern: DESCRIPTION AMOUNT Cr/Dr
         - Amount: numeric with optional commas and decimal
         - Suffix: Cr (credit) or Dr (debit)
         """
         desc = txn.get("description", "")
         amount = txn.get("amount", "")
-        txn_type = txn.get("type", "")
-        
+        txn.get("type", "")
+
         # Only process if amount is missing, empty, or "0"
         if amount and amount != "0" and amount != "0.00":
             return txn
-        
+
         if not desc:
             return txn
-        
+
         # Pattern: amount followed by Cr/Dr at end of description
         # Examples: "BBPS PAYMENT RECEIVED - 19,688.00 Cr", "CASHBACK CREDIT 994.00 Cr"
         embedded_pattern = re.compile(
             r'([\d,]+\.?\d*)\s*(Cr|Dr|CR|DR)\s*$'
         )
-        
+
         match = embedded_pattern.search(desc)
         if match:
             embedded_amount = match.group(1).replace(",", "")
             embedded_type = match.group(2).upper()
-            
+
             # Validate the extracted amount
             try:
                 float(embedded_amount)
             except (ValueError, TypeError):
                 return txn
-            
+
             # Update transaction
             txn["amount"] = embedded_amount
             txn["type"] = "credit" if embedded_type == "CR" else "debit"
-            
+
             # Clean description - remove the embedded amount suffix
             txn["description"] = desc[:match.start()].strip()
-            
+
             self._log(f"  Extracted embedded amount: {embedded_amount} {embedded_type} from '{desc}'")
-        
+
         return txn
 
     def normalize_transactions(
-        self, rows: List[List[str]], date_col_idx: int
-    ) -> List[Dict]:
+        self, rows: list[list[str]], date_col_idx: int
+    ) -> list[dict]:
         """
         Build structured transaction dicts from merged rows.
 
@@ -955,10 +954,10 @@ class StatementExtractor:
                 "type": txn_type,
                 "raw": row,
             }
-            
+
             # Fix 16: Extract embedded amount from description (Axis Bank pattern)
             txn = self._extract_embedded_amount(txn)
-            
+
             # Fix 13: Validate before including
             if self._validate_transaction(txn):
                 transactions.append(txn)
@@ -1037,13 +1036,13 @@ class StatementExtractor:
         # Simple score: prefer more rows and more dates
         return (min(row_count, 100) * 1.5) + (date_rows / row_count * 30)
 
-    def _collect_all_pages(self, start_page: int, strategy: str) -> List[List]:
+    def _collect_all_pages(self, start_page: int, strategy: str) -> list[list]:
         """
         After finding the best table on start_page, collect rows from
         all subsequent pages. Uses strict scoring first; falls back to
         looser continuation scoring. Stops when no table with dates found.
         """
-        all_rows: List[List] = []
+        all_rows: list[list] = []
         consecutive_no_dates = 0
 
         for page_num in range(start_page, self._num_pages):
@@ -1093,7 +1092,7 @@ class StatementExtractor:
                 self._log(f"  Page {page_num}: no date table (#{consecutive_no_dates})")
                 # Fix 11: Increased threshold from 2 to 3 (handles T&C pages between txn pages)
                 if consecutive_no_dates >= 3:
-                    self._log(f"  Stopping: 3 consecutive pages with no date rows")
+                    self._log("  Stopping: 3 consecutive pages with no date rows")
                     break
 
         return all_rows
@@ -1102,11 +1101,11 @@ class StatementExtractor:
     # Step 10: Text-based Fallback (for PDFs where Camelot finds no table)
     # ----------------------------------------------------------
 
-    def _extract_via_text_fallback(self, bank: str) -> Dict:
+    def _extract_via_text_fallback(self, bank: str) -> dict:
         """
         Fallback for PDFs where Camelot cannot detect a transaction table.
         Uses pdfplumber text extraction to find lines starting with dates.
-        
+
         Handles multiple formats:
         - Standard: DATE DESCRIPTION AMOUNT Cr/Dr
         - Axis Bank: DATE DESCRIPTION Cr_AMOUNT Cr Dr_AMOUNT Dr
@@ -1131,14 +1130,14 @@ class StatementExtractor:
                         # Skip header-like lines
                         if _is_header_row([line]):
                             continue
-                        
+
                         date = tokens[0]
-                        
+
                         # Detect Axis Bank format: DATE ... AMOUNT Cr/Dr CASHBACK Cr/Dr
                         # Example: "01/04/2025 BBPS PAYMENT RECEIVED - 19,688.00 Cr 0.00 Dr"
                         # The LAST Cr/Dr pair is CASHBACK EARNED (should be ignored)
                         # The SECOND-TO-LAST Cr/Dr pair is the main transaction amount
-                        
+
                         # Find all Cr/Dr positions from the end
                         cr_dr_positions = []
                         i = len(tokens) - 1
@@ -1155,7 +1154,7 @@ class StatementExtractor:
                                 except ValueError:
                                     pass
                             i -= 1
-                        
+
                         # Axis Bank format: has 2 Cr/Dr pairs (main amount + cashback earned)
                         # We only want the FIRST pair (main transaction)
                         if len(cr_dr_positions) >= 2:
@@ -1164,7 +1163,7 @@ class StatementExtractor:
                             amount = tokens[amount_idx].replace(",", "")
                             desc_end = amount_idx
                             desc = " ".join(tokens[1:desc_end]).strip()
-                            
+
                             if amount and amount != "0.00" and amount != "0":
                                 transactions.append({
                                     "date": date,
@@ -1174,14 +1173,14 @@ class StatementExtractor:
                                     "raw": tokens,
                                 })
                             continue
-                        
+
                         # Single Cr/Dr pair (standard format)
                         if len(cr_dr_positions) == 1:
                             amount_idx, crdr_idx, txn_type = cr_dr_positions[0]
                             amount = tokens[amount_idx].replace(",", "")
                             desc_end = amount_idx
                             desc = " ".join(tokens[1:desc_end]).strip()
-                            
+
                             if amount and amount != "0.00" and amount != "0":
                                 transactions.append({
                                     "date": date,
@@ -1191,7 +1190,7 @@ class StatementExtractor:
                                     "raw": tokens,
                                 })
                             continue
-                        
+
                         # Standard format: DATE ... AMOUNT Cr/Dr
                         amount = ""
                         txn_type = ""
@@ -1259,7 +1258,7 @@ class StatementExtractor:
     # Step 11: Full Extract Pipeline
     # ----------------------------------------------------------
 
-    def extract(self) -> Dict:
+    def extract(self) -> dict:
         """
         Full extraction pipeline.
         Returns structured dict with bank, transactions, metadata.
@@ -1270,7 +1269,7 @@ class StatementExtractor:
 
         # Step 2-4: Find best table
         try:
-            best_entry = self.select_best_table()
+            self.select_best_table()
         except ExtractionError as e:
             self._log(f"ExtractionError: {e}")
             # Fallback: try pdfplumber text extraction
@@ -1319,7 +1318,7 @@ class StatementExtractor:
         self._log(f"Transactions extracted: {len(transactions)}")
 
         # Fix 14: Compute statement period from min/max dates
-        statement_period: Dict = {}
+        statement_period: dict = {}
         if transactions:
             dates = [t["date"] for t in transactions if t.get("date")]
             if dates:

@@ -12,13 +12,13 @@ Architecture:
 
 Usage:
     from core.domain.money import Money
-    
+
     # Create from paise
     amount = Money(100000)  # ₹1,000.00
-    
+
     # Arithmetic
     total = amount1.add(amount2)
-    
+
     # Serialization
     dto = amount.to_dict()  # {"paise": 100000}
 """

@@ -9,63 +9,57 @@ Run: python src/api.py
 API Docs: http://localhost:8000/docs
 """
 
-import os
 import sys
-from pathlib import Path
-from datetime import datetime
-from typing import Optional, List, Dict, Any
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Query
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from categorizer import categorize
+
 # Import configuration and utilities
 from config import settings
-from logger import log_info, log_error
-from errors import register_error_handlers, AppError, DatabaseError, ValidationError, NotFoundError
+from csv_importer import CSVImporter
 
 # Import existing modules
 from db import FinanceDB
-from categorizer import categorize
-from statement_extractor import StatementExtractor
-from metadata_extractor import MetadataExtractor
-from csv_importer import CSVImporter
 from engines.balance_engine import (
-    compute_running_balance,
     compute_account_balance,
-    validate_statement_balance,
+    compute_running_balance,
     get_accounts_list,
-)
-from engines.reconciliation_engine import (
-    find_potential_matches,
-    find_matches_for_transaction,
-)
-from engines.ledger_audit_engine import (
-    validate_ledger_integrity,
-    verify_hash_signatures,
-    run_full_audit,
+    validate_statement_balance,
 )
 from engines.behavior_engine import (
     compute_behavior_profile,
-    detect_india_risk_patterns,
-    invalidate_behavior_cache,
     get_cached_behavior_profile,
+    invalidate_behavior_cache,
     set_cached_behavior_profile,
 )
 from engines.insight_generator import (
     generate_behavioral_insights,
     generate_summary_text,
 )
+from engines.ledger_audit_engine import (
+    run_full_audit,
+)
 from engines.nudge_engine import (
     generate_nudges,
-    get_top_nudge,
     get_nudge_summary,
+    get_top_nudge,
 )
+from engines.reconciliation_engine import (
+    find_potential_matches,
+)
+from errors import register_error_handlers
+from metadata_extractor import MetadataExtractor
+from statement_extractor import StatementExtractor
 
 # ============================================================
 # Configuration
@@ -104,7 +98,7 @@ def format_inr(amount: float) -> str:
     return f"-{result}" if negative else result
 
 
-def parse_date(date_str: str) -> Optional[datetime]:
+def parse_date(date_str: str) -> datetime | None:
     """Parse various Indian date formats to datetime."""
     if not date_str:
         return None
@@ -205,13 +199,13 @@ def compute_is_large(transactions: list) -> list:
     debit_txns = [t for t in transactions if t.get("type") == "debit"]
     if not debit_txns:
         return transactions
-    
+
     avg_debit = sum(t.get("amount", 0) for t in debit_txns) / len(debit_txns)
     threshold = avg_debit * 2.5
-    
+
     for t in transactions:
         t["is_large"] = bool(t.get("type") == "debit" and t.get("amount", 0) > threshold)
-    
+
     return transactions
 
 
@@ -219,18 +213,18 @@ def compute_behavioral_insights(transactions: list) -> list:
     """Generate behavioral insights from transactions."""
     insights = []
     debit_txns = [t for t in transactions if t.get("type") == "debit"]
-    
+
     if not debit_txns:
         return []
-    
+
     # Get month keys
-    month_keys = sorted(set(t.get("month_key", "") for t in debit_txns if t.get("month_key")))
+    month_keys = sorted({t.get("month_key", "") for t in debit_txns if t.get("month_key")})
     if len(month_keys) < 1:
         return []
-    
+
     this_month = month_keys[-1]
-    previous_months = month_keys[:-1]
-    
+    month_keys[:-1]
+
     # Category drift
     cat_monthly: dict = defaultdict(lambda: defaultdict(float))
     for t in debit_txns:
@@ -238,7 +232,7 @@ def compute_behavioral_insights(transactions: list) -> list:
         cat = t.get("category", "Uncategorized")
         if mk:
             cat_monthly[cat][mk] += t.get("amount", 0)
-    
+
     for cat, monthly_data in cat_monthly.items():
         if len(monthly_data) >= 2:
             this_month_cat = monthly_data.get(this_month, 0)
@@ -261,14 +255,14 @@ def compute_behavioral_insights(transactions: list) -> list:
                             "severity": "positive",
                             "icon": "trending-down",
                         })
-    
+
     # Spending trend
     monthly_totals: dict = defaultdict(float)
     for t in debit_txns:
         mk = t.get("month_key", "")
         if mk:
             monthly_totals[mk] += t.get("amount", 0)
-    
+
     if len(monthly_totals) >= 2:
         this_month_total = monthly_totals.get(this_month, 0)
         other_totals = [v for k, v in monthly_totals.items() if k != this_month]
@@ -290,7 +284,7 @@ def compute_behavioral_insights(transactions: list) -> list:
                         "severity": "positive",
                         "icon": "check-circle",
                     })
-    
+
     # Largest expense
     this_month_txns = [t for t in debit_txns if t.get("month_key") == this_month]
     if this_month_txns:
@@ -303,7 +297,7 @@ def compute_behavioral_insights(transactions: list) -> list:
             "severity": "info",
             "icon": "zap",
         })
-    
+
     return insights[:6]
 
 
@@ -313,11 +307,11 @@ def compute_behavioral_insights(transactions: list) -> list:
 
 class CategoryUpdate(BaseModel):
     category: str
-    subcategory: Optional[str] = None
+    subcategory: str | None = None
 
 
 class BulkCategoryUpdate(BaseModel):
-    ids: List[int]
+    ids: list[int]
     category: str
 
 
@@ -355,7 +349,7 @@ app.add_middleware(
 register_error_handlers(app)
 
 
-def get_db():
+def get_db() -> FinanceDB:
     """Get database instance."""
     return FinanceDB(db_path=DB_PATH)
 
@@ -368,7 +362,7 @@ def get_db():
 def health_check():
     """
     Basic health check endpoint.
-    
+
     Returns 200 OK if the application is running.
     This is a lightweight check that doesn't verify database connectivity.
     """
@@ -383,21 +377,21 @@ def health_check():
 def readiness_check():
     """
     Readiness check endpoint.
-    
+
     Verifies:
     - Database is reachable
     - Required directories exist
-    
+
     Returns 200 OK if all checks pass, 503 otherwise.
     """
     import sqlite3
-    
+
     checks = {
         "database": False,
         "upload_dir": False,
     }
     errors = []
-    
+
     # Check database connectivity
     try:
         db_path = settings.database_path
@@ -411,7 +405,7 @@ def readiness_check():
             checks["database"] = True
     except Exception as e:
         errors.append(f"Database error: {str(e)}")
-    
+
     # Check upload directory
     try:
         upload_dir = settings.upload_dir
@@ -421,9 +415,9 @@ def readiness_check():
             errors.append(f"Upload directory not accessible: {upload_dir}")
     except Exception as e:
         errors.append(f"Upload directory error: {str(e)}")
-    
+
     all_healthy = all(checks.values())
-    
+
     if all_healthy:
         return {
             "status": "ready",
@@ -447,11 +441,11 @@ def readiness_check():
 
 @app.get("/api/transactions")
 def get_transactions(
-    search: Optional[str] = None,
-    bank: Optional[str] = "All",
-    category: Optional[str] = "All",
-    type: Optional[str] = "All",
-    member: Optional[str] = "All",
+    search: str | None = None,
+    bank: str | None = "All",
+    category: str | None = "All",
+    type: str | None = "All",
+    member: str | None = "All",
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
 ):
@@ -469,17 +463,17 @@ def get_transactions(
             filters["type"] = type
         if member and member != "All":
             filters["member"] = member
-        
+
         raw = db.get_all_transactions_with_bank(filters)
         enriched = [enrich_transaction(dict(t)) for t in raw]
         enriched = compute_is_large(enriched)
-        
+
         # Sort by date descending
         enriched.sort(key=lambda t: t.get("parsed_date", ""), reverse=True)
-        
+
         total = len(enriched)
         paginated = enriched[offset:offset + limit]
-        
+
         return {
             "transactions": paginated,
             "total": total,
@@ -491,7 +485,7 @@ def get_transactions(
 @app.get("/api/overview")
 def get_overview(
     exclude_transfers: bool = Query(True),
-    member: Optional[str] = "All",
+    member: str | None = "All",
 ):
     """Get overview metrics and charts."""
     try:
@@ -499,76 +493,76 @@ def get_overview(
         filters = {}
         if member and member != "All":
             filters["member"] = member
-        
+
         raw = db.get_all_transactions_with_bank(filters)
         transactions = [enrich_transaction(dict(t)) for t in raw]
-        
+
         # Get confirmed transfer transaction IDs
         confirmed_transfer_ids = set()
         for debit_id, credit_id in db.get_confirmed_transfer_ids():
             confirmed_transfer_ids.add(debit_id)
             confirmed_transfer_ids.add(credit_id)
-        
+
         # Filter out transfers if requested
         if exclude_transfers:
             # Exclude by category AND by confirmed reconciliation
             transactions = [
-                t for t in transactions 
-                if t.get("category") != "Payments & Transfers" 
+                t for t in transactions
+                if t.get("category") != "Payments & Transfers"
                 and t.get("id") not in confirmed_transfer_ids
             ]
-        
+
         # Compute metrics
         debit_txns = [t for t in transactions if t.get("type") == "debit"]
-        month_keys = sorted(set(t.get("month_key", "") for t in debit_txns if t.get("month_key")))
-        
+        month_keys = sorted({t.get("month_key", "") for t in debit_txns if t.get("month_key")})
+
         total_spend = sum(t.get("amount", 0) for t in debit_txns)
-        
+
         this_month = month_keys[-1] if month_keys else ""
         last_month = month_keys[-2] if len(month_keys) >= 2 else ""
-        
+
         this_month_spend = sum(t.get("amount", 0) for t in debit_txns if t.get("month_key") == this_month)
         last_month_spend = sum(t.get("amount", 0) for t in debit_txns if t.get("month_key") == last_month)
-        
+
         month_change = percentage_change(this_month_spend, last_month_spend) if last_month_spend > 0 else "—"
-        
+
         # Monthly chart
         monthly: dict = defaultdict(float)
         for t in debit_txns:
             mk = t.get("month_key", "")
             if mk:
                 monthly[mk] += t.get("amount", 0)
-        
+
         monthly_chart = [
             {"month": datetime.strptime(m, "%Y-%m").strftime("%b %y"), "amount": round(monthly[m], 2)}
             for m in sorted(monthly.keys())[-12:]
         ]
-        
+
         # Category chart
         cat_totals: dict = defaultdict(float)
         for t in debit_txns:
             cat_totals[t.get("category", "Uncategorized")] += t.get("amount", 0)
-        
+
         sorted_cats = sorted(cat_totals.items(), key=lambda x: x[1], reverse=True)
         category_chart = [{"name": cat, "value": round(amt, 2)} for cat, amt in sorted_cats[:8]]
-        
+
         # Bank chart
         bank_totals: dict = defaultdict(float)
         for t in debit_txns:
             bank_totals[t.get("bank", "Unknown")] += t.get("amount", 0)
-        
+
         bank_chart = [
             {"bank": bank, "amount": round(amt, 2)}
             for bank, amt in sorted(bank_totals.items(), key=lambda x: x[1], reverse=True)
         ]
-        
+
         # Recent transactions
         recent = sorted(transactions, key=lambda t: t.get("parsed_date", ""), reverse=True)[:10]
         recent = compute_is_large(recent)
-        
+
         # Behavioral insights
         insights = compute_behavioral_insights(transactions)
-        
+
         # Above/below average
         if monthly:
             avg_monthly = sum(monthly.values()) / len(monthly)
@@ -578,7 +572,7 @@ def get_overview(
         else:
             above_below = "at average"
             above_is_bad = False
-        
+
         return {
             "total_spend": total_spend,
             "total_spend_display": format_inr(total_spend),
@@ -588,7 +582,7 @@ def get_overview(
             "last_month_display": format_inr(last_month_spend),
             "month_change": month_change,
             "transaction_count": len(transactions),
-            "card_count": len(set(t.get("bank") for t in transactions if t.get("bank"))),
+            "card_count": len({t.get("bank") for t in transactions if t.get("bank")}),
             "months_of_data": len(month_keys),
             "monthly_average": avg_monthly if monthly else 0,
             "monthly_average_display": format_inr(avg_monthly) if monthly else "₹0",
@@ -607,8 +601,8 @@ def get_overview(
 @app.get("/api/categories")
 def get_categories(
     exclude_transfers: bool = Query(True),
-    member: Optional[str] = "All",
-    drill_category: Optional[str] = None,
+    member: str | None = "All",
+    drill_category: str | None = None,
 ):
     """Get category summary and breakdown."""
     try:
@@ -616,13 +610,13 @@ def get_categories(
         filters = {}
         if member and member != "All":
             filters["member"] = member
-        
+
         raw = db.get_all_transactions_with_bank(filters)
         transactions = [enrich_transaction(dict(t)) for t in raw]
-        
+
         if exclude_transfers:
             transactions = [t for t in transactions if t.get("category") != "Payments & Transfers"]
-        
+
         # Category summary
         cat_data: dict = defaultdict(lambda: {"amount": 0.0, "count": 0})
         total_debit = 0.0
@@ -632,7 +626,7 @@ def get_categories(
                 cat_data[cat]["amount"] += t.get("amount", 0)
                 cat_data[cat]["count"] += 1
                 total_debit += t.get("amount", 0)
-        
+
         summary = [
             {
                 "category": cat,
@@ -643,7 +637,7 @@ def get_categories(
             }
             for cat, data in sorted(cat_data.items(), key=lambda x: x[1]["amount"], reverse=True)
         ]
-        
+
         # Monthly breakdown
         data: dict = defaultdict(lambda: defaultdict(float))
         for t in transactions:
@@ -652,7 +646,7 @@ def get_categories(
                 cat = t.get("category", "Uncategorized")
                 if mk:
                     data[mk][cat] += t.get("amount", 0)
-        
+
         top_cats = [c for c, _ in sorted(cat_data.items(), key=lambda x: x[1]["amount"], reverse=True)[:6]]
         sorted_months = sorted(data.keys())[-12:]
         monthly_breakdown = []
@@ -661,7 +655,7 @@ def get_categories(
             for cat in top_cats:
                 row[cat] = round(data[m].get(cat, 0), 2)
             monthly_breakdown.append(row)
-        
+
         # Drill transactions
         drill_transactions = []
         if drill_category:
@@ -669,7 +663,7 @@ def get_categories(
                 t for t in transactions
                 if t.get("category") == drill_category
             ][:50]
-        
+
         # Uncategorized patterns
         raw_uncat = db.get_uncategorized_patterns(limit=30)
         uncategorized_patterns = [
@@ -680,7 +674,7 @@ def get_categories(
             }
             for p in raw_uncat
         ]
-        
+
         return {
             "summary": summary,
             "monthly_breakdown": monthly_breakdown,
@@ -694,7 +688,7 @@ def get_categories(
 @app.get("/api/analytics")
 def get_analytics(
     exclude_transfers: bool = Query(True),
-    member: Optional[str] = "All",
+    member: str | None = "All",
 ):
     """Get analytics data."""
     try:
@@ -702,26 +696,26 @@ def get_analytics(
         filters = {}
         if member and member != "All":
             filters["member"] = member
-        
+
         raw = db.get_all_transactions_with_bank(filters)
         transactions = [enrich_transaction(dict(t)) for t in raw]
-        
+
         if exclude_transfers:
             transactions = [t for t in transactions if t.get("category") != "Payments & Transfers"]
-        
+
         debit_txns = [t for t in transactions if t.get("type") == "debit"]
-        
+
         # Monthly data
         monthly: dict = defaultdict(float)
         for t in debit_txns:
             mk = t.get("month_key", "")
             if mk:
                 monthly[mk] += t.get("amount", 0)
-        
+
         sorted_months = sorted(monthly.keys())
         monthly_amounts = [monthly[m] for m in sorted_months]
         avg_monthly = sum(monthly_amounts) / len(monthly_amounts) if monthly_amounts else 0
-        
+
         # Highest month
         if monthly:
             max_month = max(monthly, key=lambda k: monthly[k])
@@ -730,7 +724,7 @@ def get_analytics(
         else:
             highest_month = ""
             highest_month_amount = "₹0"
-        
+
         # Biggest transaction
         if debit_txns:
             biggest = max(debit_txns, key=lambda t: t.get("amount", 0))
@@ -742,13 +736,13 @@ def get_analytics(
             }
         else:
             biggest_transaction = None
-        
+
         # Spending trend
         spending_trend = [
             {"month": datetime.strptime(m, "%Y-%m").strftime("%b %y"), "amount": round(monthly[m], 2), "average": round(avg_monthly, 2)}
             for m in sorted_months
         ]
-        
+
         # Day of week
         day_totals: dict = defaultdict(lambda: {"amount": 0.0, "count": 0})
         for t in debit_txns:
@@ -756,7 +750,7 @@ def get_analytics(
             if wd:
                 day_totals[wd]["amount"] += t.get("amount", 0)
                 day_totals[wd]["count"] += 1
-        
+
         day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         day_of_week = [
             {
@@ -766,7 +760,7 @@ def get_analytics(
             }
             for day in day_order
         ]
-        
+
         # Top merchants
         merchant_data: dict = defaultdict(lambda: {"amount": 0.0, "count": 0})
         for t in debit_txns:
@@ -774,7 +768,7 @@ def get_analytics(
                 desc = (t["description"] or "")[:40]
                 merchant_data[desc]["amount"] += t.get("amount", 0)
                 merchant_data[desc]["count"] += 1
-        
+
         sorted_m = sorted(merchant_data.items(), key=lambda x: x[1]["amount"], reverse=True)[:10]
         top_merchants = [
             {
@@ -784,13 +778,13 @@ def get_analytics(
             }
             for name, data in sorted_m
         ]
-        
+
         # Recurring charges
         merchant_txns: dict = defaultdict(list)
         for t in debit_txns:
             if t.get("description"):
                 merchant_txns[t["description"]].append(t.get("amount", 0))
-        
+
         recurring = []
         for desc, amounts in merchant_txns.items():
             if len(amounts) >= 2:
@@ -804,9 +798,9 @@ def get_analytics(
                             "avg_display": format_inr(avg_amt),
                             "annual_display": format_inr(avg_amt * 12),
                         })
-        
+
         recurring.sort(key=lambda x: x["frequency"], reverse=True)
-        
+
         # Largest transactions
         sorted_debits = sorted(debit_txns, key=lambda t: t.get("amount", 0), reverse=True)
         largest_transactions = [
@@ -819,14 +813,14 @@ def get_analytics(
             }
             for i, t in enumerate(sorted_debits[:10])
         ]
-        
+
         return {
             "highest_month": highest_month,
             "highest_month_amount": highest_month_amount,
             "avg_monthly": round(avg_monthly, 2),
             "avg_monthly_display": format_inr(avg_monthly),
             "biggest_transaction": biggest_transaction,
-            "unique_merchants": len(set(t.get("description", "") for t in debit_txns)),
+            "unique_merchants": len({t.get("description", "") for t in debit_txns}),
             "spending_trend": spending_trend,
             "day_of_week": day_of_week,
             "top_merchants": top_merchants,
@@ -843,7 +837,7 @@ def get_statements():
     try:
         db = get_db()
         raw = db.get_all_statements_with_metadata()
-        
+
         statements = []
         for stmt in raw:
             total_debit = float(stmt.get("total_debit") or 0)
@@ -852,7 +846,7 @@ def get_statements():
             min_due = float(stmt.get("minimum_amount_due") or 0)
             diff = float(stmt.get("validation_difference") or 0)
             extracted_net = total_debit - total_credit
-            
+
             validation_status = stmt.get("validation_status") or "pending"
             badge_text = (
                 "✅ Exact Match" if validation_status == "exact_match"
@@ -867,7 +861,7 @@ def get_statements():
                 else "red" if validation_status == "mismatch"
                 else "gray"
             )
-            
+
             statements.append({
                 "id": stmt.get("id"),
                 "bank": stmt.get("bank"),
@@ -893,7 +887,7 @@ def get_statements():
                 "badge_text": badge_text,
                 "badge_color": badge_color,
             })
-        
+
         return statements
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -909,7 +903,7 @@ def get_cards():
     try:
         db = get_db()
         raw = db.get_all_statements_with_metadata()
-        
+
         # Group statements by (bank, card_last4)
         card_groups: dict = defaultdict(list)
         for stmt in raw:
@@ -917,11 +911,11 @@ def get_cards():
             card_last4 = stmt.get("card_last4") or "Unknown"
             key = (bank, card_last4)
             card_groups[key].append(stmt)
-        
+
         cards = []
         total_outstanding = 0.0
         total_credit_limit = 0.0
-        
+
         for (bank, card_last4), statements in card_groups.items():
             # Sort by imported_at descending to get most recent
             statements_sorted = sorted(
@@ -930,7 +924,7 @@ def get_cards():
                 reverse=True
             )
             latest = statements_sorted[0]
-            
+
             # Get values from latest statement
             credit_limit = float(latest.get("credit_limit") or 0)
             current_outstanding = float(latest.get("total_amount_due") or 0)
@@ -940,12 +934,12 @@ def get_cards():
             bill_cycle_start = latest.get("bill_cycle_start")
             bill_cycle_end = latest.get("bill_cycle_end")
             validation_status = latest.get("validation_status") or "pending"
-            
+
             # Compute utilization
             utilization_percent = 0.0
             if credit_limit > 0:
                 utilization_percent = round((current_outstanding / credit_limit) * 100, 1)
-            
+
             # Compute days until due
             days_until_due = None
             if payment_due_date:
@@ -956,7 +950,7 @@ def get_cards():
                         days_until_due = (due_dt - today).days
                 except Exception:
                     pass
-            
+
             # Compute payment status
             if days_until_due is None:
                 payment_status = "unknown"
@@ -968,9 +962,9 @@ def get_cards():
                 payment_status = "upcoming"
             else:
                 payment_status = "on_track"
-            
+
             card_id = f"{bank}_{card_last4}"
-            
+
             cards.append({
                 "card_id": card_id,
                 "bank": bank,
@@ -989,17 +983,17 @@ def get_cards():
                 "statement_count": len(statements),
                 "latest_statement_id": latest.get("id"),
             })
-            
+
             total_outstanding += current_outstanding
             total_credit_limit += credit_limit
-        
+
         # Sort cards by bank name
         cards.sort(key=lambda c: c.get("bank", ""))
-        
+
         total_utilization = 0.0
         if total_credit_limit > 0:
             total_utilization = round((total_outstanding / total_credit_limit) * 100, 1)
-        
+
         return {
             "cards": cards,
             "total_cards": len(cards),
@@ -1012,7 +1006,6 @@ def get_cards():
 
 
 @app.get("/api/banks")
-```
 def get_banks():
     """Get list of banks."""
     try:
@@ -1030,7 +1023,7 @@ def get_categories_list():
         db = get_db()
         # Get from transactions
         raw = db.get_all_transactions_with_bank()
-        cats = sorted(set(t.get("category") for t in raw if t.get("category")))
+        cats = sorted({t.get("category") for t in raw if t.get("category")})
         return {"categories": cats}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1054,7 +1047,7 @@ def get_members():
 @app.get("/api/cashflow/monthly")
 def get_cashflow_monthly(
     months: int = Query(default=6, ge=1, le=12),
-    member: Optional[str] = Query(default=None),
+    member: str | None = Query(default=None),
 ):
     """
     Returns month-by-month income and expense aggregation.
@@ -1062,21 +1055,21 @@ def get_cashflow_monthly(
     """
     try:
         db = get_db()
-        
+
         # Build query with optional member filter
         conditions = ["t.date_iso IS NOT NULL"]
         params = []
-        
+
         if member and member != "All":
             conditions.append("t.member = ?")
             params.append(member)
-        
+
         where = "WHERE " + " AND ".join(conditions)
-        
+
         # Query using date_iso for proper month grouping
         # date_iso is in YYYY-MM-DD format, so we extract YYYY-MM
         sql = f"""
-            SELECT 
+            SELECT
                 substr(t.date_iso, 1, 7) as month_key,
                 SUM(CASE WHEN t.type = 'credit' THEN t.amount_paise ELSE 0 END) as income_paise,
                 SUM(CASE WHEN t.type = 'debit' THEN t.amount_paise ELSE 0 END) as expense_paise,
@@ -1086,37 +1079,37 @@ def get_cashflow_monthly(
             GROUP BY substr(t.date_iso, 1, 7)
             ORDER BY month_key ASC
         """
-        
+
         conn = db._get_conn()
         cur = conn.execute(sql, params)
         rows = [dict(row) for row in cur.fetchall()]
         if db._conn is None:
             conn.close()
-        
+
         # Format response - limit to requested number of months
         months_data = []
         total_income = 0
         total_expense = 0
-        
+
         # Get the most recent N months
         rows_sorted = sorted(rows, key=lambda r: r.get("month_key", ""), reverse=True)
         rows_limited = rows_sorted[:months]
-        
+
         for row in rows_limited:
             month_key = row.get("month_key", "")
             if not month_key:
                 continue
-            
+
             income = int(row.get("income_paise", 0) or 0)
             expense = int(row.get("expense_paise", 0) or 0)
-            
+
             # Create month label (e.g., "Jan 2025")
             try:
                 month_dt = datetime.strptime(month_key, "%Y-%m")
                 month_label = month_dt.strftime("%b %Y")
             except ValueError:
                 month_label = month_key
-            
+
             months_data.append({
                 "month_key": month_key,
                 "month_label": month_label,
@@ -1125,13 +1118,13 @@ def get_cashflow_monthly(
                 "net_paise": income - expense,
                 "transaction_count": int(row.get("transaction_count", 0) or 0),
             })
-            
+
             total_income += income
             total_expense += expense
-        
+
         # Sort by month_key ascending for the response
         months_data.sort(key=lambda m: m["month_key"])
-        
+
         return {
             "months": months_data,
             "period_months": len(months_data),
@@ -1156,19 +1149,19 @@ async def upload_statement(
     try:
         db = get_db()
         log = []
-        
+
         # Save file
         filename = file.filename
         if not filename.lower().endswith(".pdf"):
             raise HTTPException(status_code=400, detail="Only PDF files allowed")
-        
+
         save_path = UPLOAD_DIR / filename
         content = await file.read()
         with open(save_path, "wb") as f:
             f.write(content)
-        
+
         log.append(f"📄 Processing: {filename}")
-        
+
         # Check duplicate
         if db.get_duplicate_check_by_filename(filename):
             return {
@@ -1176,16 +1169,16 @@ async def upload_statement(
                 "error": "File already imported",
                 "log": log + ["⚠️ Already imported, skipping"],
             }
-        
+
         # Extract
         extractor = StatementExtractor(str(save_path))
         result = extractor.extract()
         bank = result.get("bank", "Unknown")
         transactions = result.get("transactions", [])
-        
+
         log.append(f"✅ Bank: {bank}")
         log.append(f"✅ Extracted {len(transactions)} transactions")
-        
+
         # Categorize
         for txn in transactions:
             amount_str = str(txn.get("amount", "")).replace(",", "")
@@ -1197,7 +1190,7 @@ async def upload_statement(
             txn["category"] = cat
             txn["subcategory"] = subcat
             txn["member"] = member
-        
+
         # Insert
         period = result.get("statement_period", {})
         statement_id = db.insert_statement(
@@ -1207,7 +1200,7 @@ async def upload_statement(
             period_to=period.get("to", ""),
         )
         db.insert_transactions(statement_id, transactions)
-        
+
         # Metadata
         metadata = {}
         try:
@@ -1218,7 +1211,7 @@ async def upload_statement(
                 log.append(f"✅ Total Due: ₹{metadata['total_amount_due']:,.2f}")
         except Exception as e:
             log.append(f"⚠️ Metadata: {str(e)[:60]}")
-        
+
         # Validation
         total_due = metadata.get("total_amount_due")
         if total_due and total_due > 0:
@@ -1232,7 +1225,7 @@ async def upload_statement(
             )
             net = debit_sum - credit_sum
             diff = abs(net - total_due)
-            
+
             if diff < 1.0:
                 val_status = "exact_match"
                 log.append("✅ Validation: exact match")
@@ -1242,17 +1235,17 @@ async def upload_statement(
             else:
                 val_status = "mismatch"
                 log.append(f"❌ Validation: mismatch (₹{diff:.2f} off)")
-            
+
             db.update_validation_status(statement_id, val_status, round(diff, 2))
         else:
             db.update_validation_status(statement_id, "no_metadata", 0.0)
             log.append("⚠️ Validation: total due not found")
-        
+
         log.append(f"✅ Saved (Member: {member})")
-        
+
         # Invalidate behavior cache after data changes
         invalidate_behavior_cache()
-        
+
         return {
             "success": True,
             "bank": bank,
@@ -1274,16 +1267,16 @@ async def import_detect(file: UploadFile = File(...)):
         suffix = Path(filename).suffix.lower()
         if suffix not in [".csv", ".xlsx", ".xls"]:
             raise HTTPException(status_code=400, detail="Unsupported file type")
-        
+
         save_path = UPLOAD_DIR / filename
         content = await file.read()
         with open(save_path, "wb") as f:
             f.write(content)
-        
+
         # Detect format
         importer = CSVImporter(str(save_path))
         detected = importer.detect_format()
-        
+
         return {
             "filename": filename,
             "columns": detected.get("columns", []),
@@ -1303,20 +1296,20 @@ def import_execute(data: ImportExecute):
     try:
         db = get_db()
         save_path = UPLOAD_DIR / data.filename
-        
+
         if not save_path.exists():
             raise HTTPException(status_code=404, detail="File not found")
-        
+
         importer = CSVImporter(str(save_path))
         transactions, warnings = importer.import_transactions(data.mapping)
-        
+
         if not transactions:
             return {
                 "success": False,
                 "error": "No valid transactions found",
                 "warnings": warnings,
             }
-        
+
         # Insert
         inserted = db.insert_csv_transactions(
             transactions=transactions,
@@ -1325,10 +1318,10 @@ def import_execute(data: ImportExecute):
             bank=data.mapping.get("bank", "Manual Import"),
             file_name=data.filename,
         )
-        
+
         # Invalidate behavior cache after data changes
         invalidate_behavior_cache()
-        
+
         return {
             "success": True,
             "count": inserted,
@@ -1408,11 +1401,11 @@ def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query
 
 @app.get("/api/export/csv")
 def export_csv(
-    search: Optional[str] = None,
-    bank: Optional[str] = "All",
-    category: Optional[str] = "All",
-    type: Optional[str] = "All",
-    member: Optional[str] = "All",
+    search: str | None = None,
+    bank: str | None = "All",
+    category: str | None = "All",
+    type: str | None = "All",
+    member: str | None = "All",
 ):
     """Export transactions to CSV."""
     try:
@@ -1428,13 +1421,13 @@ def export_csv(
             filters["type"] = type
         if member and member != "All":
             filters["member"] = member
-        
+
         raw = db.get_all_transactions_with_bank(filters)
-        
+
         import io
         output = io.StringIO()
         output.write("Date,Bank,Description,Amount,Type,Category\n")
-        
+
         for txn in raw:
             date = format_date_display(txn.get("date", ""))
             bank_name = txn.get("bank", "")
@@ -1442,12 +1435,12 @@ def export_csv(
             amount = txn.get("amount", 0)
             txn_type = txn.get("type", "")
             cat = txn.get("category", "")
-            
+
             output.write(f'"{date}","{bank_name}","{desc}",{amount},"{txn_type}","{cat}"\n')
-        
+
         csv_data = output.getvalue()
         output.close()
-        
+
         return StreamingResponse(
             io.StringIO(csv_data),
             media_type="text/csv",
@@ -1462,26 +1455,26 @@ def export_csv(
 # ============================================================
 
 @app.get("/api/reconciliations")
-def api_get_reconciliations(status: Optional[str] = None):
+def api_get_reconciliations(status: str | None = None):
     """
     Get all reconciliations with transaction details.
-    
+
     Phase 2B: Metadata-only, no ledger mutation.
-    
+
     Args:
         status: Optional filter ('pending', 'confirmed', 'rejected')
     """
     try:
         db = get_db()
         reconciliations = db.get_reconciliations(status)
-        
+
         # Enrich with display fields
         for r in reconciliations:
             # Amount is already in rupees in new schema
             amount = r.get("amount", 0)
             r["amount_display"] = format_inr(amount)
             r["confidence_display"] = f"{r.get('match_confidence', 0) * 100:.0f}%"
-        
+
         return {"reconciliations": reconciliations}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1497,19 +1490,19 @@ def api_get_pending_reconciliations():
 def api_scan_reconciliations():
     """
     Scan for potential transfer matches across accounts.
-    
+
     Phase 2B.1: Deterministic matching with confidence scoring.
-    
+
     Returns potential matches that can be saved as reconciliations.
     """
     try:
         matches = find_potential_matches(DB_PATH)
-        
+
         # Enrich with display fields
         for m in matches:
             m["amount_display"] = format_inr(m.get("amount", 0))
             m["confidence_display"] = f"{m.get('match_confidence', 0) * 100:.0f}%"
-        
+
         return {"matches": matches, "count": len(matches)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1528,7 +1521,7 @@ def api_create_reconciliation(
 ):
     """
     Create a reconciliation record between two transactions.
-    
+
     Phase 2B: Metadata-only, no ledger mutation.
     Uses INSERT OR IGNORE for idempotency.
     """
@@ -1553,13 +1546,13 @@ def api_create_reconciliation(
 def api_batch_insert_reconciliations():
     """
     Scan and insert all potential matches as pending reconciliations.
-    
+
     Uses INSERT OR IGNORE for idempotency - existing records are not duplicated.
     """
     try:
         db = get_db()
         matches = find_potential_matches(DB_PATH)
-        
+
         inserted_count = 0
         for m in matches:
             inserted = db.insert_reconciliation(
@@ -1574,7 +1567,7 @@ def api_batch_insert_reconciliations():
             )
             if inserted:
                 inserted_count += 1
-        
+
         return {
             "success": True,
             "scanned": len(matches),
@@ -1589,7 +1582,7 @@ def api_batch_insert_reconciliations():
 def api_confirm_reconciliation(reconciliation_id: int):
     """
     Confirm a pending reconciliation.
-    
+
     Phase 2B: Updates reconciliation.status only. No ledger mutation.
     """
     try:
@@ -1608,7 +1601,7 @@ def api_confirm_reconciliation(reconciliation_id: int):
 def api_reject_reconciliation(reconciliation_id: int):
     """
     Reject a pending reconciliation.
-    
+
     Phase 2B: Updates reconciliation.status only. No ledger mutation.
     """
     try:
@@ -1631,9 +1624,9 @@ def api_reject_reconciliation(reconciliation_id: int):
 def api_audit_report():
     """
     Run full ledger audit and return combined report.
-    
+
     Phase 2C: Read-only integrity verification.
-    
+
     Returns:
         {
             "overall_status": "PASS" or "FAIL",
@@ -1656,9 +1649,9 @@ def api_audit_report():
 def api_behavior_summary():
     """
     Get comprehensive behavioral profile.
-    
+
     Phase 3: Advanced Behavioral Intelligence Layer.
-    
+
     Returns:
         {
             "temporal_patterns": {...},
@@ -1673,7 +1666,7 @@ def api_behavior_summary():
         cached = get_cached_behavior_profile(DB_PATH)
         if cached is not None:
             return cached
-        
+
         # Compute and cache
         profile = compute_behavior_profile(DB_PATH)
         set_cached_behavior_profile(DB_PATH, profile)
@@ -1686,9 +1679,9 @@ def api_behavior_summary():
 def api_behavior_score():
     """
     Get financial health score with breakdown.
-    
+
     Phase 3: Composite health score with component breakdown.
-    
+
     Returns:
         {
             "financial_health_score": float (0–100),
@@ -1705,9 +1698,9 @@ def api_behavior_score():
         else:
             profile = compute_behavior_profile(DB_PATH)
             set_cached_behavior_profile(DB_PATH, profile)
-        
+
         indices = profile.get("behavioral_indices", {})
-        
+
         return {
             "financial_health_score": profile.get("financial_health_score", 50),
             "confidence": profile.get("confidence", 0),
@@ -1729,9 +1722,9 @@ def api_behavior_score():
 def api_behavior_insights():
     """
     Get behavioral insights and nudges.
-    
+
     Phase 3: Evidence-based insights with actionable suggestions.
-    
+
     Returns:
         {
             "insights": [...],
@@ -1748,12 +1741,12 @@ def api_behavior_insights():
         else:
             profile = compute_behavior_profile(DB_PATH)
             set_cached_behavior_profile(DB_PATH, profile)
-        
+
         insights = generate_behavioral_insights(profile)
         nudges = generate_nudges(profile)
         top_nudge = get_top_nudge(profile)
         summary = get_nudge_summary(profile)
-        
+
         return {
             "insights": insights,
             "nudges": nudges,
@@ -1774,7 +1767,7 @@ def api_behavior_insights():
 def api_dashboard_summary():
     """
     Get simplified dashboard summary for MVP.
-    
+
     Returns 4 key metrics:
     - Net Cash Flow
     - Savings Rate %
@@ -1783,7 +1776,7 @@ def api_dashboard_summary():
     """
     try:
         db = get_db()
-        
+
         # Check cache first
         cached = get_cached_behavior_profile(DB_PATH)
         if cached is not None:
@@ -1791,57 +1784,57 @@ def api_dashboard_summary():
         else:
             profile = compute_behavior_profile(DB_PATH)
             set_cached_behavior_profile(DB_PATH, profile)
-        
+
         indices = profile.get("behavioral_indices", {})
-        
+
         # Calculate net cash flow from savings discipline
         savings_discipline = indices.get("savings_discipline", {})
         savings_rate = savings_discipline.get("savings_rate", 0)
-        
+
         # Get financial stress data for EMI ratio and buffer
         financial_stress = indices.get("financial_stress", {})
         emi_ratio = profile.get("risk_signals", {}).get("india_specific", {}).get("emi_ratio", 0)
         buffer_days = financial_stress.get("buffer_days", 0)
-        
+
         # Calculate net cash flow (simplified)
         # Net cash flow = (income - expenses) over last 30 days
         raw = db.get_all_transactions_with_bank({})
         transactions = [enrich_transaction(dict(t)) for t in raw]
-        
+
         # Get last 30 days transactions
         from datetime import datetime, timedelta
         cutoff = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
         recent_txns = [t for t in transactions if t.get("parsed_date", "") >= cutoff]
-        
+
         total_income = sum(t.get("amount", 0) for t in recent_txns if t.get("type") == "credit")
         total_expenses = sum(t.get("amount", 0) for t in recent_txns if t.get("type") == "debit")
         net_cash_flow = total_income - total_expenses
-        
+
         # Calculate 7-day trend
         seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
         seven_day_txns = [t for t in transactions if t.get("parsed_date", "") >= seven_days_ago]
-        
+
         prev_seven_start = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
-        prev_seven_end = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+        (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
         prev_seven_txns = [t for t in transactions if prev_seven_start <= t.get("parsed_date", "") < seven_days_ago]
-        
+
         current_spend = sum(t.get("amount", 0) for t in seven_day_txns if t.get("type") == "debit")
         prev_spend = sum(t.get("amount", 0) for t in prev_seven_txns if t.get("type") == "debit")
-        
+
         seven_day_trend = 0
         if prev_spend > 0:
             seven_day_trend = (current_spend - prev_spend) / prev_spend
-        
+
         # Category drift alert (simplified)
         category_drift_alert = None
         if profile.get("risk_signals", {}).get("high_impulsivity"):
             category_drift_alert = "High impulsivity detected. Consider reviewing discretionary spending."
         elif profile.get("risk_signals", {}).get("low_savings"):
             category_drift_alert = "Savings rate is below target. Consider reducing non-essential expenses."
-        
+
         # Recent transactions
         recent = sorted(transactions, key=lambda t: t.get("parsed_date", ""), reverse=True)[:10]
-        
+
         return {
             "net_cash_flow_paise": int(round(net_cash_flow * 100)),
             "savings_rate": savings_rate,
@@ -1867,13 +1860,13 @@ class AccountCreate(BaseModel):
     balance: float = 0.0
 
 class AccountUpdate(BaseModel):
-    name: Optional[str] = None
-    bank_name: Optional[str] = None
-    account_type: Optional[str] = None
-    balance: Optional[float] = None
+    name: str | None = None
+    bank_name: str | None = None
+    account_type: str | None = None
+    balance: float | None = None
 
 # In-memory storage for accounts (replace with database in production)
-_accounts_store = {}
+_accounts_store: dict[str, dict] = {}
 _account_id_counter = 1
 
 @app.get("/api/accounts/manage")
@@ -1910,7 +1903,7 @@ def api_update_managed_account(account_id: str, account: AccountUpdate):
     try:
         if account_id not in _accounts_store:
             raise HTTPException(status_code=404, detail="Account not found")
-        
+
         existing = _accounts_store[account_id]
         if account.name is not None:
             existing["name"] = account.name
@@ -1921,7 +1914,7 @@ def api_update_managed_account(account_id: str, account: AccountUpdate):
         if account.balance is not None:
             existing["balance"] = account.balance
         existing["last_updated"] = datetime.now().isoformat()
-        
+
         return existing
     except HTTPException:
         raise
@@ -1934,7 +1927,7 @@ def api_delete_managed_account(account_id: str):
     try:
         if account_id not in _accounts_store:
             raise HTTPException(status_code=404, detail="Account not found")
-        
+
         del _accounts_store[account_id]
         return {"success": True, "message": "Account deleted"}
     except HTTPException:

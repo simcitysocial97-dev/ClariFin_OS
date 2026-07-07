@@ -19,13 +19,12 @@ Rules:
 """
 
 import re
-from typing import List, Tuple
 
 # Short keywords (≤4 chars) that must match as whole words to avoid false positives
 # e.g., "emi" in "premium", "ola" in "cola", "lab" in "laboratory"
 _WORD_BOUNDARY_KEYWORDS = {
     "emi", "ola", "lab", "kfc", "jio", "pvr", "aws", "dth", "lic",
-    "1mg", "emi", "ola",
+    "1mg",
 }
 
 
@@ -38,7 +37,7 @@ _WORD_BOUNDARY_KEYWORDS = {
 # e.g., "swiggy instamart" before "swiggy"
 # NOTE: UPI/Payment keywords are NOT in rules - handled separately at the end
 
-_RULES: List[Tuple[str, str, str]] = [
+_RULES: list[tuple[str, str, str]] = [
 
     # ── Groceries (check BEFORE Food & Dining for swiggy instamart) ──────────
     ("avenue supermarts",   "Groceries",        "Offline"),  # D-Mart parent company
@@ -241,7 +240,7 @@ _RULES: List[Tuple[str, str, str]] = [
 # Categorize Function
 # ============================================================
 
-def categorize(description: str, amount: float = None) -> Tuple[str, str]:
+def categorize(description: str, amount: float = None) -> tuple[str, str]:
     """
     Categorize a transaction description using keyword matching.
 
@@ -260,11 +259,11 @@ def categorize(description: str, amount: float = None) -> Tuple[str, str]:
     Short keywords (in _WORD_BOUNDARY_KEYWORDS) use word-boundary regex
     to avoid false positives (e.g., "emi" in "premium", "ola" in "cola").
     All other keywords use fast substring search.
-    
+
     UPI Logic:
         - UPI + amount < 500 → "General Expenses" / "UPI"
         - UPI + amount >= 500 → "Payments & Transfers" / "UPI"
-    
+
     Transfer Logic:
         - No merchant match + amount >= 2000 → "Payments & Transfers"
     """
@@ -300,7 +299,7 @@ def categorize(description: str, amount: float = None) -> Tuple[str, str]:
     return ("Uncategorized", "")
 
 
-def categorize_batch(descriptions: List[str]) -> List[Tuple[str, str]]:
+def categorize_batch(descriptions: list[str]) -> list[tuple[str, str]]:
     """
     Categorize a list of descriptions. Returns list of (category, subcategory) tuples.
     """
@@ -335,7 +334,7 @@ if __name__ == "__main__":
     print(f"{'Description':<45} {'Amt':>8} {'Expected':<25} {'Got':<25} {'Match'}")
     print("-" * 115)
     passed = 0
-    for desc, amt, exp_cat, exp_sub in test_cases:
+    for desc, amt, exp_cat, _exp_sub in test_cases:
         cat, sub = categorize(desc, amt)
         match = "✅" if cat == exp_cat else "❌"
         if cat == exp_cat:

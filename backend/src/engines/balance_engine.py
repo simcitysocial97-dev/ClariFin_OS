@@ -16,10 +16,8 @@ Usage:
 """
 
 import sqlite3
-from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 from datetime import datetime
-
+from pathlib import Path
 
 # ============================================================
 # Date Parsing (consistent with db.py)
@@ -32,7 +30,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
     """
     if not date_str:
         return ""
-    
+
     formats = [
         "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
         "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
@@ -47,7 +45,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
     return ""
 
 
-def _parse_date_for_sort(date_str: str) -> Tuple[str, int]:
+def _parse_date_for_sort(date_str: str) -> tuple[str, int]:
     """
     Parse date for sorting. Returns (ymd_string, original_id_for_tiebreaker).
     Used to sort transactions chronologically while preserving insertion order for same-date txns.
@@ -62,20 +60,20 @@ def _parse_date_for_sort(date_str: str) -> Tuple[str, int]:
 
 def compute_running_balance(
     db_path: str,
-    account_id: Optional[str] = None,
+    account_id: str | None = None,
     starting_balance_paise: int = 0,
-) -> List[Dict]:
+) -> list[dict]:
     """
     Compute running balance by replaying all transactions chronologically.
-    
+
     Phase 2A.1: Uses SQL ORDER BY date_iso ASC, id ASC for deterministic replay.
     No Python-side sorting - all ordering is database-enforced.
-    
+
     Args:
         db_path: Path to SQLite database
         account_id: Optional bank/account name to filter transactions
         starting_balance_paise: Opening balance in paise (default 0)
-    
+
     Returns:
         List of dicts with keys:
             - transaction_id: int
@@ -89,13 +87,13 @@ def compute_running_balance(
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     # Phase 2A.2: Account-scoped determinism
     # Query directly by account_id - no JOIN needed
     # Uses idx_account_date_iso index for optimal performance
     if account_id:
         sql = """
-            SELECT 
+            SELECT
                 t.id, t.date, t.date_iso, t.description, t.debit, t.credit, t.amount_paise,
                 t.account_id as bank
             FROM transactions t
@@ -105,28 +103,28 @@ def compute_running_balance(
         cur = conn.execute(sql, (account_id,))
     else:
         sql = """
-            SELECT 
+            SELECT
                 t.id, t.date, t.date_iso, t.description, t.debit, t.credit, t.amount_paise,
                 t.account_id as bank
             FROM transactions t
             ORDER BY t.date_iso ASC, t.id ASC
         """
         cur = conn.execute(sql)
-    
+
     rows = [dict(row) for row in cur.fetchall()]
     conn.close()
-    
+
     # Compute running balance (no sorting needed - SQL already ordered)
     balance = starting_balance_paise
     results = []
-    
+
     for row in rows:
         debit = row.get("debit") or 0
         credit = row.get("credit") or 0
-        
+
         # Net effect: credit increases balance, debit decreases
         balance += credit - debit
-        
+
         results.append({
             "transaction_id": row["id"],
             "date": row["date"],
@@ -137,7 +135,7 @@ def compute_running_balance(
             "balance_paise": balance,
             "bank": row["bank"],
         })
-    
+
     return results
 
 
@@ -145,15 +143,15 @@ def compute_account_balance(
     db_path: str,
     account_id: str,
     starting_balance_paise: int = 0,
-) -> Dict:
+) -> dict:
     """
     Compute current balance for a single account.
-    
+
     Args:
         db_path: Path to SQLite database
         account_id: Bank/account name
         starting_balance_paise: Opening balance in paise
-    
+
     Returns:
         Dict with keys:
             - account_id: str
@@ -165,10 +163,10 @@ def compute_account_balance(
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     # Phase 2A.2: Query directly by account_id - no JOIN needed
     sql = """
-        SELECT 
+        SELECT
             COUNT(*) as count,
             COALESCE(SUM(t.debit), 0) as total_debit,
             COALESCE(SUM(t.credit), 0) as total_credit
@@ -178,13 +176,13 @@ def compute_account_balance(
     cur = conn.execute(sql, (account_id,))
     row = cur.fetchone()
     conn.close()
-    
+
     total_debit = row["total_debit"] or 0
     total_credit = row["total_credit"] or 0
     count = row["count"] or 0
-    
+
     balance = starting_balance_paise + total_credit - total_debit
-    
+
     return {
         "account_id": account_id,
         "balance_paise": balance,
@@ -199,18 +197,18 @@ def validate_statement_balance(
     db_path: str,
     statement_id: int,
     claimed_closing_balance_paise: int,
-) -> Dict:
+) -> dict:
     """
     Validate a statement's closing balance against computed balance.
-    
+
     This compares the statement's claimed closing balance against the
     computed balance from replaying all transactions in that statement.
-    
+
     Args:
         db_path: Path to SQLite database
         statement_id: Statement ID to validate
         claimed_closing_balance_paise: The statement's claimed closing balance
-    
+
     Returns:
         Dict with keys:
             - statement_id: int
@@ -223,10 +221,10 @@ def validate_statement_balance(
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     # Get all transactions for this statement
     sql = """
-        SELECT 
+        SELECT
             t.id, t.debit, t.credit,
             s.bank
         FROM transactions t
@@ -237,16 +235,16 @@ def validate_statement_balance(
     cur = conn.execute(sql, (statement_id,))
     rows = [dict(row) for row in cur.fetchall()]
     conn.close()
-    
+
     # Compute balance from transactions
     computed_balance = 0
     for row in rows:
         debit = row.get("debit") or 0
         credit = row.get("credit") or 0
         computed_balance += credit - debit
-    
+
     difference = abs(computed_balance - claimed_closing_balance_paise)
-    
+
     return {
         "statement_id": statement_id,
         "status": "match" if difference == 0 else "mismatch",
@@ -260,21 +258,21 @@ def validate_statement_balance(
     }
 
 
-def get_accounts_list(db_path: str) -> List[Dict]:
+def get_accounts_list(db_path: str) -> list[dict]:
     """
     Get list of all accounts (banks) with their current balances.
-    
+
     Args:
         db_path: Path to SQLite database
-    
+
     Returns:
         List of dicts with account info and balances.
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    
+
     sql = """
-        SELECT 
+        SELECT
             s.bank,
             COUNT(t.id) as transaction_count,
             COALESCE(SUM(t.debit), 0) as total_debit,
@@ -287,13 +285,13 @@ def get_accounts_list(db_path: str) -> List[Dict]:
     cur = conn.execute(sql)
     rows = [dict(row) for row in cur.fetchall()]
     conn.close()
-    
+
     results = []
     for row in rows:
         total_debit = row["total_debit"] or 0
         total_credit = row["total_credit"] or 0
         balance = total_credit - total_debit  # Assuming 0 starting balance
-        
+
         results.append({
             "account_id": row["bank"],
             "bank": row["bank"],
@@ -303,7 +301,7 @@ def get_accounts_list(db_path: str) -> List[Dict]:
             "balance_paise": balance,
             "balance_display": _format_paise(balance),
         })
-    
+
     return results
 
 
@@ -314,20 +312,20 @@ def get_accounts_list(db_path: str) -> List[Dict]:
 def _format_paise(paise: int) -> str:
     """
     Format paise as Indian Rupee string with lakh/crore grouping.
-    
+
     Examples:
         123456 -> "₹1,234.56"
         10000000 -> "₹1,00,000.00"
     """
     if paise is None:
         return "₹0.00"
-    
+
     negative = paise < 0
     paise = abs(paise)
-    
+
     rupees = paise // 100
     paise_part = paise % 100
-    
+
     # Format with Indian grouping (lakhs, crores)
     if rupees <= 999:
         formatted = str(rupees)
@@ -341,7 +339,7 @@ def _format_paise(paise: int) -> str:
             remaining = remaining[:-2]
         groups.reverse()
         formatted = ",".join(groups) + "," + last3
-    
+
     result = f"₹{formatted}.{paise_part:02d}"
     return f"-{result}" if negative else result
 
@@ -351,26 +349,25 @@ def _format_paise(paise: int) -> str:
 # ============================================================
 
 if __name__ == "__main__":
-    import sys
     from pathlib import Path
-    
+
     # Default db path
     db_path = str(Path(__file__).parent.parent / "data" / "finance.db")
-    
+
     print("=" * 60)
     print("Balance Engine Test")
     print("=" * 60)
     print(f"Database: {db_path}")
     print()
-    
+
     # Get accounts
     accounts = get_accounts_list(db_path)
     print(f"Found {len(accounts)} accounts:")
     for acc in accounts:
         print(f"  {acc['bank']}: {acc['balance_display']} ({acc['transaction_count']} txns)")
-    
+
     print()
-    
+
     # Show running balance for first account if exists
     if accounts:
         first_account = accounts[0]["bank"]

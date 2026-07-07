@@ -1,12 +1,11 @@
 "use client";
 
 /**
- * Dashboard Page - v2.0.0
+ * Dashboard Page - v2.1.0
  * =========================
- * 
- * Compact, enterprise-grade financial dashboard surfacing all backend intelligence.
- * 
- * Layout:
+ * * Compact, enterprise-grade financial dashboard surfacing all backend intelligence.
+ * Includes isolated component-level error boundaries to avoid total page failures.
+ * * Layout:
  * - Header Row
  * - KPI Row (4 cards)
  * - Analytics Summary Bar
@@ -20,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
 import { useOverview } from "@/lib/hooks/use-overview";
 import { formatINR, formatPercentage } from "@/lib/utils/format";
@@ -33,7 +33,7 @@ import { TopMerchantsWidget } from "@/components/dashboard/top-merchants-widget"
 import { CategorySpendChart } from "@/components/dashboard/category-spend-chart";
 
 // ============================================================
-// Components
+// Internal Presentational Components
 // ============================================================
 
 function NetCashFlowCard({ amount_paise }: { amount_paise: number }) {
@@ -168,7 +168,7 @@ export default function DashboardPage() {
   const { data, loading, error, refetch } = useDashboardMetrics();
   const { data: overviewData } = useOverview();
 
-  // Loading state
+  // Page Loading state
   if (loading) {
     return (
       <div className="container mx-auto py-6 space-y-6">
@@ -177,7 +177,7 @@ export default function DashboardPage() {
     );
   }
 
-  // Error state
+  // Page Global Error state (Hook failures)
   if (error) {
     return (
       <div className="container mx-auto py-6">
@@ -211,11 +211,11 @@ export default function DashboardPage() {
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
-          Last updated: {new Date().toLocaleTimeString()}
+          Last updated: {data.dataUpdatedAt ? new Date(data.dataUpdatedAt).toLocaleTimeString() : new Date().toLocaleTimeString()}
         </p>
       </div>
 
-      {/* KPI Row - 4 Key Numbers */}
+      {/* KPI Row - 4 Key Numbers (Using core data hook; isolated inside global layout checks above) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <NetCashFlowCard amount_paise={data.net_cash_flow_paise} />
         <SavingsRateCard rate={data.savings_rate} />
@@ -224,7 +224,9 @@ export default function DashboardPage() {
       </div>
 
       {/* Analytics Summary Bar */}
-      <AnalyticsSummaryBar />
+      <ErrorBoundary componentName="Analytics Summary Bar">
+        <AnalyticsSummaryBar />
+      </ErrorBoundary>
 
       {/* Main Content - 2-column on desktop, stack on mobile */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -235,7 +237,9 @@ export default function DashboardPage() {
             <h2 className="text-sm font-medium text-muted-foreground mb-3">
               Cashflow Trend
             </h2>
-            <CashflowChart />
+            <ErrorBoundary componentName="Cashflow Chart">
+              <CashflowChart />
+            </ErrorBoundary>
           </section>
 
           {/* Category Spend Chart */}
@@ -243,29 +247,44 @@ export default function DashboardPage() {
             <h2 className="text-sm font-medium text-muted-foreground mb-3">
               Category Spend
             </h2>
-            <CategorySpendChart />
+            <ErrorBoundary componentName="Category Spend Chart">
+              <CategorySpendChart />
+            </ErrorBoundary>
           </section>
         </div>
 
         {/* RIGHT COLUMN - 40% width (span 1 on lg) */}
         <div className="space-y-6">
-          <BehaviorScoreCard />
-          <InsightsPanel />
+          <ErrorBoundary componentName="Behavior Score">
+            <BehaviorScoreCard />
+          </ErrorBoundary>
+          
+          <ErrorBoundary componentName="Insights Panel">
+            <InsightsPanel />
+          </ErrorBoundary>
         </div>
       </div>
 
       {/* Secondary Row - 3 columns on desktop, stack on mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <RecurringChargesWidget />
-        <TopMerchantsWidget />
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
-          </CardContent>
-        </Card>
+        <ErrorBoundary componentName="Recurring Charges">
+          <RecurringChargesWidget />
+        </ErrorBoundary>
+
+        <ErrorBoundary componentName="Top Merchants">
+          <TopMerchantsWidget />
+        </ErrorBoundary>
+
+        <ErrorBoundary componentName="Recent Transactions">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
+            </CardContent>
+          </Card>
+        </ErrorBoundary>
       </div>
 
       {/* Footer - Health Score */}

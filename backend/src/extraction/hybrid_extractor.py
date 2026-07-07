@@ -18,22 +18,22 @@ Constraints:
 
 import json
 import sys
-import camelot
-import pdfplumber
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any
+
+import camelot
+import pdfplumber
 
 # Import LayoutAnalyzer from sibling package
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from structural.layout_analyzer import LayoutAnalyzer
 
-
 # ============================================================
 # Coordinate Conversion
 # ============================================================
 
-def _bbox_to_camelot(bbox: Tuple, page_height: float) -> str:
+def _bbox_to_camelot(bbox: tuple, page_height: float) -> str:
     """
     Convert pdfplumber bbox (x0, y0, x1, y1) measured from top-left
     to Camelot table_areas format "x0,y0,x1,y1" measured from bottom-left.
@@ -55,7 +55,7 @@ def _bbox_to_camelot(bbox: Tuple, page_height: float) -> str:
 # Strategy Selection
 # ============================================================
 
-def _count_vertical_lines_in_bbox(pdf_path: str, page_num: int, bbox: Tuple) -> int:
+def _count_vertical_lines_in_bbox(pdf_path: str, page_num: int, bbox: tuple) -> int:
     """Count vertical lines inside the table bbox on a given page."""
     try:
         with pdfplumber.open(pdf_path) as pdf:
@@ -79,7 +79,7 @@ def _count_vertical_lines_in_bbox(pdf_path: str, page_num: int, bbox: Tuple) -> 
         return 0
 
 
-def _select_flavor(pdf_path: str, page_num: int, bbox: Tuple) -> str:
+def _select_flavor(pdf_path: str, page_num: int, bbox: tuple) -> str:
     """Select Camelot flavor based on vertical line count in bbox."""
     vlines = _count_vertical_lines_in_bbox(pdf_path, page_num, bbox)
     return 'lattice' if vlines >= 3 else 'stream'
@@ -89,7 +89,7 @@ def _select_flavor(pdf_path: str, page_num: int, bbox: Tuple) -> str:
 # Column Separators
 # ============================================================
 
-def _get_sorted_x_starts(columns: Dict, table_x0: float = 0.0) -> List[float]:
+def _get_sorted_x_starts(columns: dict, table_x0: float = 0.0) -> list[float]:
     """
     Extract sorted internal column separator x positions from columns dict.
     Excludes the leftmost x_start (table boundary) since Camelot uses
@@ -112,11 +112,11 @@ def _get_sorted_x_starts(columns: Dict, table_x0: float = 0.0) -> List[float]:
 # Row Utilities
 # ============================================================
 
-def _is_empty_row(row: List[str]) -> bool:
+def _is_empty_row(row: list[str]) -> bool:
     return all(str(cell).strip() == '' for cell in row)
 
 
-def _is_header_row(row: List[str], header_keywords: List[str]) -> bool:
+def _is_header_row(row: list[str], header_keywords: list[str]) -> bool:
     row_text = ' '.join(str(c).strip().lower() for c in row)
     return any(kw in row_text for kw in header_keywords)
 
@@ -132,7 +132,7 @@ def _row_has_date(first_cell: str) -> bool:
     return s[0].isdigit() and ('/' in s or '-' in s)
 
 
-def _split_amount_dr_cr(amount_str: str) -> Tuple[str, str]:
+def _split_amount_dr_cr(amount_str: str) -> tuple[str, str]:
     """
     Split "1,234.56 DR" → ("1,234.56", "DR")
     Split "500.00 CR"   → ("500.00", "CR")
@@ -153,8 +153,8 @@ def _split_amount_dr_cr(amount_str: str) -> Tuple[str, str]:
 # pdfplumber Fallback Extractor
 # ============================================================
 
-def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: Tuple,
-                        columns: Dict, debug: bool = False) -> List[List[str]]:
+def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: tuple,
+                        columns: dict, debug: bool = False) -> list[list[str]]:
     """
     Fallback: extract rows using pdfplumber character coordinates.
     - Collect chars inside bbox
@@ -177,7 +177,7 @@ def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: Tuple,
                 return rows
 
             # Group by Y (round to nearest 4px)
-            lines: Dict[int, List] = defaultdict(list)
+            lines: dict[int, list] = defaultdict(list)
             for c in chars_in_bbox:
                 y_key = round(c.get('top', 0) / 4) * 4
                 lines[y_key].append(c)
@@ -230,8 +230,8 @@ class HybridExtractor:
     def __init__(self, pdf_path: str, debug: bool = False):
         self.pdf_path = str(pdf_path)
         self.debug = debug
-        self._analyzer: Optional[LayoutAnalyzer] = None
-        self._layout: Optional[Dict] = None
+        self._analyzer: LayoutAnalyzer | None = None
+        self._layout: dict | None = None
 
     def _log(self, message: str):
         if self.debug:
@@ -239,15 +239,15 @@ class HybridExtractor:
 
     # ========== Step 1: Layout Analysis ==========
 
-    def _run_layout_analysis(self) -> Dict:
+    def _run_layout_analysis(self) -> dict:
         self._analyzer = LayoutAnalyzer(self.pdf_path, debug=self.debug)
         self._layout = self._analyzer.analyze()
         return self._layout
 
     # ========== Step 2: Camelot Extraction per Page ==========
 
-    def _extract_page_camelot(self, page_num: int, bbox: Tuple,
-                               columns: Dict, page_height: float) -> Tuple[List[List[str]], str]:
+    def _extract_page_camelot(self, page_num: int, bbox: tuple,
+                               columns: dict, page_height: float) -> tuple[list[list[str]], str]:
         """
         Extract table from one page using Camelot.
         Returns (rows_as_list_of_lists, strategy_used).
@@ -282,7 +282,7 @@ class HybridExtractor:
 
         for attempt in attempts:
             try:
-                kwargs: Dict[str, Any] = {
+                kwargs: dict[str, Any] = {
                     'pages': page_str,
                     'flavor': attempt['flavor'],
                     'suppress_stdout': True,
@@ -315,9 +315,9 @@ class HybridExtractor:
 
     # ========== Step 3: Post-Processing ==========
 
-    def _post_process_rows(self, raw_rows: List[List[str]],
-                           columns: Dict, bank: str,
-                           amount_structure: Dict) -> List[Dict]:
+    def _post_process_rows(self, raw_rows: list[list[str]],
+                           columns: dict, bank: str,
+                           amount_structure: dict) -> list[dict]:
         """
         Clean raw rows into transaction dicts:
         - Remove empty rows
@@ -327,8 +327,8 @@ class HybridExtractor:
         - Include 'raw' field
         """
         col_names = list(columns.keys())
-        transactions: List[Dict] = []
-        pending: Optional[Dict] = None
+        transactions: list[dict] = []
+        pending: dict | None = None
 
         for row in raw_rows:
             # Normalize row length
@@ -367,9 +367,9 @@ class HybridExtractor:
 
         return transactions
 
-    def _build_transaction(self, cell: Dict, col_names: List[str],
-                           amount_structure: Dict, raw_row: List[str]) -> Dict:
-        txn: Dict[str, Any] = {}
+    def _build_transaction(self, cell: dict, col_names: list[str],
+                           amount_structure: dict, raw_row: list[str]) -> dict:
+        txn: dict[str, Any] = {}
 
         # Date (always first column)
         txn['date'] = cell.get(col_names[0], '').strip()
@@ -412,20 +412,20 @@ class HybridExtractor:
 
         return txn
 
-    def _find_key(self, col_names: List[str], candidates: List[str]) -> Optional[str]:
+    def _find_key(self, col_names: list[str], candidates: list[str]) -> str | None:
         for candidate in candidates:
             for col in col_names:
                 if candidate in col.lower():
                     return col
         return None
 
-    def _find_description_key(self, col_names: List[str]) -> Optional[str]:
+    def _find_description_key(self, col_names: list[str]) -> str | None:
         return self._find_key(col_names, [
             'description', 'narration', 'particulars', 'details', 'col_1'
         ])
 
-    def _infer_columns_from_rows(self, raw_rows: List[List[str]],
-                                  layout_columns: Dict) -> Dict:
+    def _infer_columns_from_rows(self, raw_rows: list[list[str]],
+                                  layout_columns: dict) -> dict:
         """
         Determine effective column structure for post-processing.
 
@@ -517,7 +517,7 @@ class HybridExtractor:
 
     # ========== Step 4: Metadata Value Extraction ==========
 
-    def _extract_metadata_values(self, metadata_fields: Dict) -> Dict:
+    def _extract_metadata_values(self, metadata_fields: dict) -> dict:
         """Extract actual text values for metadata fields using pdfplumber."""
         values = {}
         try:
@@ -552,7 +552,7 @@ class HybridExtractor:
 
     # ========== Main Entry Point ==========
 
-    def extract(self) -> Dict:
+    def extract(self) -> dict:
         """Full extraction pipeline."""
 
         # Step 1: Layout analysis
@@ -586,7 +586,7 @@ class HybridExtractor:
 
         # Step 3: Extract rows from each page using Camelot
         self._log("Step 3: Extracting rows with Camelot...")
-        all_raw_rows: List[List[str]] = []
+        all_raw_rows: list[list[str]] = []
         strategies_used: set = set()
 
         with pdfplumber.open(self.pdf_path) as pdf:

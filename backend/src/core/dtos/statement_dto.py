@@ -6,14 +6,14 @@ Data Transfer Objects for statement-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
+
 from pydantic import BaseModel, Field
-from typing import List, Optional
 
 
 class StatementDTO(BaseModel):
     """
     Statement data transfer object.
-    
+
     Monetary fields:
     - total_debit_paise: Total debit amount in paise (canonical)
     - total_credit_paise: Total credit amount in paise (canonical)
@@ -31,7 +31,7 @@ class StatementDTO(BaseModel):
     period_to: str = Field(description="Statement period end")
     period_display: str = Field(description="Formatted period display")
     transaction_count: int = Field(description="Number of transactions")
-    
+
     # Canonical paise fields
     total_debit_paise: int = Field(description="Total debit in paise")
     total_credit_paise: int = Field(description="Total credit in paise")
@@ -39,19 +39,19 @@ class StatementDTO(BaseModel):
     min_due_paise: int = Field(description="Minimum amount due in paise")
     extracted_net_paise: int = Field(description="Net (debit - credit) in paise")
     validation_difference_paise: int = Field(description="Validation difference in paise")
-    
+
     # Display fields
     total_debit_display: str = Field(description="Formatted total debit")
     total_credit_display: str = Field(description="Formatted total credit")
     total_due_display: str = Field(description="Formatted total due")
     extracted_net_display: str = Field(description="Formatted extracted net")
     min_due_display: str = Field(description="Formatted minimum due")
-    
+
     due_date: str = Field(description="Payment due date")
     validation_status: str = Field(description="Validation status")
     badge_text: str = Field(description="Badge display text")
     badge_color: str = Field(description="Badge color")
-    
+
     class Config:
         json_schema_extra = {
             "example": {

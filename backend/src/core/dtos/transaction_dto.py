@@ -6,14 +6,14 @@ Data Transfer Objects for transaction-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
+
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
 
 
 class TransactionDTO(BaseModel):
     """
     Transaction data transfer object.
-    
+
     Monetary fields:
     - amount_paise: Transaction amount in paise (canonical)
     - amount_rupees: Transaction amount in rupees (temporary, for backward compatibility)
@@ -23,20 +23,20 @@ class TransactionDTO(BaseModel):
     date: str = Field(description="Transaction date (ISO format)")
     description: str = Field(description="Transaction description")
     amount_paise: int = Field(description="Transaction amount in paise (canonical)")
-    amount_rupees: Optional[float] = Field(
+    amount_rupees: float | None = Field(
         default=None,
         description="Transaction amount in rupees (DEPRECATED - use amount_paise)"
     )
-    balance_paise: Optional[int] = Field(
+    balance_paise: int | None = Field(
         default=None,
         description="Running balance after transaction in paise"
     )
     category: str = Field(description="Transaction category")
-    subcategory: Optional[str] = Field(default=None, description="Transaction subcategory")
+    subcategory: str | None = Field(default=None, description="Transaction subcategory")
     bank: str = Field(description="Bank name")
     transaction_type: str = Field(description="Transaction type (debit/credit)")
-    reference_number: Optional[str] = Field(default=None, description="Bank reference number")
-    
+    reference_number: str | None = Field(default=None, description="Bank reference number")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -57,11 +57,11 @@ class TransactionDTO(BaseModel):
 
 class TransactionListResponse(BaseModel):
     """Response for transaction list endpoint."""
-    transactions: List[TransactionDTO] = Field(description="List of transactions")
+    transactions: list[TransactionDTO] = Field(description="List of transactions")
     total: int = Field(description="Total number of transactions")
     limit: int = Field(description="Number of transactions per page")
     offset: int = Field(description="Offset for pagination")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -77,13 +77,13 @@ class CategorySummaryDTO(BaseModel):
     """Category summary with monetary values."""
     category: str = Field(description="Category name")
     amount_paise: int = Field(description="Total amount in paise")
-    amount_rupees: Optional[float] = Field(
+    amount_rupees: float | None = Field(
         default=None,
         description="Total amount in rupees (DEPRECATED)"
     )
     count: int = Field(description="Number of transactions")
     percentage: float = Field(description="Percentage of total (0-100)")
-    
+
     class Config:
         json_schema_extra = {
             "example": {

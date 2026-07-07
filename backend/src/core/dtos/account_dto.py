@@ -6,14 +6,14 @@ Data Transfer Objects for account-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
+
 from pydantic import BaseModel, Field
-from typing import List, Optional
 
 
 class AccountDTO(BaseModel):
     """
     Account data transfer object.
-    
+
     Monetary fields:
     - balance_paise: Account balance in paise (canonical)
     - balance_rupees: Account balance in rupees (temporary, for backward compatibility)
@@ -24,14 +24,14 @@ class AccountDTO(BaseModel):
     account_type: str = Field(description="Account type (Savings, Current, FD, RD)")
     balance_paise: int = Field(description="Balance in paise (1 INR = 100 paise)")
     last_updated: str = Field(description="Last update timestamp (ISO format)")
-    
+
     # TODO: Remove in Phase 2 - backward compatibility during migration
     # Frontend will migrate to use balance_paise, then this field can be removed
-    balance_rupees: Optional[float] = Field(
+    balance_rupees: float | None = Field(
         default=None,
         description="Balance in rupees (DEPRECATED - use balance_paise)"
     )
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -48,10 +48,10 @@ class AccountDTO(BaseModel):
 
 class AccountListResponse(BaseModel):
     """Response for account list endpoint."""
-    accounts: List[AccountDTO] = Field(description="List of accounts")
+    accounts: list[AccountDTO] = Field(description="List of accounts")
     total_accounts: int = Field(description="Total number of accounts")
     total_balance_paise: int = Field(description="Total balance across all accounts in paise")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
