@@ -1,0 +1,11 @@
+{
+  "name": "clarifin-os-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:all": "concurrently --names \"app,api,graph\" --prefix-colors \"cyan,green,magenta\" \"cd frontend && npx next dev --port 3000 --turbopack\" \"cd backend && source .venv/bin/activate && uvicorn main:app --reload --port 8000\" \"cgc watch .\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.3"
+  }
+}

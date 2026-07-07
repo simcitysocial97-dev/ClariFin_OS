@@ -1,5 +1,26 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Enter the frontend workspace to run your linting rules safely
+echo "🛡️ Running pre-commit validation gates..."
+
+# 1. Run frontend validation on changed files
 cd frontend && npx lint-staged
+FRONTEND_STATUS=$?
+
+cd ..
+
+# 2. Run backend validation if backend files are modified
+if git diff --cached --name-only | grep -q '^backend/'; then
+    echo "🐍 Backend changes detected. Running Python linting and type gates..."
+    cd backend && python3 -m ruff check . && python3 -m mypy .
+    BACKEND_STATUS=$?
+    cd ..
+else
+    BACKEND_STATUS=0
+fi
+
+# Abort commit if either gate fails
+if [ $FRONTEND_STATUS -ne 0 ] || [ $BACKEND_STATUS -ne 0 ]; then
+    echo "❌ Commit blocked. Please fix linting/type errors before saving."
+    exit 1
+fi
