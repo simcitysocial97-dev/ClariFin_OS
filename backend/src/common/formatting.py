@@ -4,55 +4,46 @@ from datetime import datetime
 
 
 def format_inr(amount: float) -> str:
-    """
-    Format amount as Indian Rupees with proper separators.
-
-    Args:
-        amount: Amount in rupees (NOT paise)
-
-    Returns:
-        Formatted string like "₹1,23,456.78"
-    """
-    if amount < 0:
-        return f"-₹{abs(amount):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"₹{amount:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    """Format amount in Indian Rupee notation with lakh/crore grouping."""
+    if amount is None:
+        return "₹0.00"
+    negative = amount < 0
+    amount = abs(amount)
+    integer_part = int(amount)
+    decimal_part = f"{amount:.2f}".split(".")[1]
+    s = str(integer_part)
+    if len(s) <= 3:
+        formatted = s
+    else:
+        last3 = s[-3:]
+        remaining = s[:-3]
+        groups = []
+        while remaining:
+            groups.append(remaining[-2:] if len(remaining) >= 2 else remaining)
+            remaining = remaining[:-2]
+        groups.reverse()
+        formatted = ",".join(groups) + "," + last3
+    result = f"₹{formatted}.{decimal_part}"
+    return f"-{result}" if negative else result
 
 
 def format_date_display(date_str: str) -> str:
-    """
-    Format date string for display.
-
-    Args:
-        date_str: Date in various formats (YYYY-MM-DD, DD/MM/YYYY, etc.)
-
-    Returns:
-        Standardized display format
-    """
-    try:
-        # Try parsing common formats
-        for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"]:
-            try:
-                dt = datetime.strptime(date_str, fmt)
-                return dt.strftime("%d %b %Y")
-            except ValueError:
-                continue
-        return date_str  # Return as-is if parsing fails
-    except Exception:
-        return date_str
+    """Convert any date format to: 15 Jun 2025"""
+    from .parsing import parse_date
+    dt = parse_date(date_str)
+    if dt:
+        return dt.strftime("%d %b %Y")
+    return date_str
 
 
 def clean_description(desc: str) -> str:
-    """
-    Clean transaction description for display.
-
-    Args:
-        desc: Raw transaction description
-
-    Returns:
-        Cleaned description with normalized whitespace
-    """
-    # Remove multiple spaces
-    cleaned = re.sub(r'\s+', ' ', desc)
-    # Remove common banking prefixes
-    cleaned = re.sub(r'^(UPI|NEFT|IMPS|RTGS)[-\s]*', '', cleaned, flags=re.IGNORECASE)
-    return cleaned.strip()
+    """Clean transaction descriptions for display."""
+    if not desc:
+        return ""
+    # Remove leading date+time
+    cleaned = re.sub(r'^\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+', '', desc)
+    # Remove leading timestamp
+    cleaned = re.sub(r'^\d{2}:\d{2}:\d{2}\s+', '', cleaned)
+    # Collapse multiple spaces
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    return cleaned

@@ -1,36 +1,23 @@
 """Transaction enrichment utilities."""
-from typing import Any
-
 from .formatting import clean_description, format_date_display, format_inr
-from .parsing import parse_date
+from .parsing import get_weekday, parse_date
 
 
-def enrich_transaction(txn: dict[str, Any]) -> dict[str, Any]:
-    """
-    Enrich transaction with formatted fields and metadata.
+def enrich_transaction(txn: dict) -> dict:
+    """Add computed fields to a transaction."""
+    dt = parse_date(txn.get("date", ""))
+    # Use stored amount_paise as primary source (avoids float precision issues)
+    amount_paise = int(txn.get("amount_paise") or 0)
+    amount = amount_paise / 100.0  # Derive float for display
 
-    Args:
-        txn: Raw transaction dict from database
-
-    Returns:
-        Enriched transaction dict with display fields
-    """
-    enriched = txn.copy()
-
-    # Format amount for display
-    if "amount" in enriched:
-        enriched["amount_formatted"] = format_inr(float(enriched["amount"]))
-
-    # Format date for display
-    if "date" in enriched:
-        enriched["date_formatted"] = format_date_display(enriched["date"])
-
-    # Clean description
-    if "description" in enriched:
-        enriched["description_clean"] = clean_description(enriched["description"])
-
-    # Add parsed date object
-    if "date" in enriched:
-        enriched["date_parsed"] = parse_date(enriched["date"])
-
-    return enriched
+    return {
+        **txn,
+        "parsed_date": dt.strftime("%Y-%m-%d") if dt else "",
+        "date_display": format_date_display(txn.get("date", "")),
+        "month_key": dt.strftime("%Y-%m") if dt else "",
+        "weekday": get_weekday(txn.get("date", "")),
+        "amount_display": format_inr(amount),
+        "amount": amount,
+        "amount_paise": amount_paise,  # Canonical paise field
+        "description_display": clean_description(txn.get("description", "")),
+    }
