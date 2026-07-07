@@ -1850,72 +1850,67 @@ def api_dashboard_summary():
 
 
 # ============================================================
-# Accounts Management API (MVP v1.0.0)
+# Accounts Management API (Phase 4 - DB-backed)
 # ============================================================
 
 class AccountCreate(BaseModel):
     name: str
-    bank_name: str
-    account_type: str = "Savings"
-    balance: float = 0.0
+    bank: str
+    account_type: str = "savings"
+    balance_paise: int
+    account_number_last4: str | None = None
+    notes: str | None = None
 
 class AccountUpdate(BaseModel):
     name: str | None = None
-    bank_name: str | None = None
+    bank: str | None = None
     account_type: str | None = None
-    balance: float | None = None
-
-# In-memory storage for accounts (replace with database in production)
-_accounts_store: dict[str, dict] = {}
-_account_id_counter = 1
+    balance_paise: int | None = None
+    account_number_last4: str | None = None
+    notes: str | None = None
 
 @app.get("/api/accounts/manage")
 def api_get_managed_accounts():
-    """Get all manually managed accounts."""
+    """Get all persistently stored accounts."""
     try:
-        accounts = list(_accounts_store.values())
-        return {"accounts": accounts}
+        with FinanceDB() as db:
+            accounts = db.get_all_accounts()
+            return {"accounts": accounts, "total": len(accounts)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/accounts/manage")
 def api_create_managed_account(account: AccountCreate):
-    """Create a new manually managed account."""
+    """Create a new persistent account."""
+    import uuid
+    account_id = f"acc_{uuid.uuid4().hex[:8]}"
     try:
-        global _account_id_counter
-        new_account = {
-            "id": str(_account_id_counter),
-            "name": account.name,
-            "bank_name": account.bank_name,
-            "account_type": account.account_type,
-            "balance": account.balance,
-            "last_updated": datetime.now().isoformat(),
-        }
-        _accounts_store[str(_account_id_counter)] = new_account
-        _account_id_counter += 1
-        return new_account
+        with FinanceDB() as db:
+            created = db.create_account(
+                account_id=account_id,
+                name=account.name,
+                bank=account.bank,
+                account_type=account.account_type,
+                balance_paise=account.balance_paise,
+                account_number_last4=account.account_number_last4,
+                notes=account.notes
+            )
+            return {"success": True, "account": created}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/api/accounts/manage/{account_id}")
 def api_update_managed_account(account_id: str, account: AccountUpdate):
-    """Update an existing manually managed account."""
+    """Update an existing account."""
     try:
-        if account_id not in _accounts_store:
-            raise HTTPException(status_code=404, detail="Account not found")
-
-        existing = _accounts_store[account_id]
-        if account.name is not None:
-            existing["name"] = account.name
-        if account.bank_name is not None:
-            existing["bank_name"] = account.bank_name
-        if account.account_type is not None:
-            existing["account_type"] = account.account_type
-        if account.balance is not None:
-            existing["balance"] = account.balance
-        existing["last_updated"] = datetime.now().isoformat()
-
-        return existing
+        with FinanceDB() as db:
+            updated = db.update_account(
+                account_id,
+                **{k: v for k, v in account.model_dump().items() if v is not None}
+            )
+            if not updated:
+                raise NotFoundError(f"Account {account_id} not found")
+            return {"success": True, "account": updated}
     except HTTPException:
         raise
     except Exception as e:
@@ -1923,13 +1918,13 @@ def api_update_managed_account(account_id: str, account: AccountUpdate):
 
 @app.delete("/api/accounts/manage/{account_id}")
 def api_delete_managed_account(account_id: str):
-    """Delete a manually managed account."""
+    """Soft delete an account."""
     try:
-        if account_id not in _accounts_store:
-            raise HTTPException(status_code=404, detail="Account not found")
-
-        del _accounts_store[account_id]
-        return {"success": True, "message": "Account deleted"}
+        with FinanceDB() as db:
+            success = db.delete_account(account_id)
+            if not success:
+                raise NotFoundError(f"Account {account_id} not found")
+            return {"success": True}
     except HTTPException:
         raise
     except Exception as e:

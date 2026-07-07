@@ -183,6 +183,7 @@ class FinanceDB:
         Path(self.db_path).parent.mkdir(parents=True, exist_ok=True)
         self._conn: sqlite3.Connection | None = None
         self._create_tables()
+        self._run_migrations()  # Phase 4: Add schema drift columns + new tables
 
     # ----------------------------------------------------------
     # Connection Management
@@ -368,6 +369,92 @@ class FinanceDB:
         if self._conn is not None:
             return self._conn
         return self._connect()
+
+    def _run_migrations(self) -> None:
+        """
+        Run database migrations to bring schema up to date.
+        Safe to run on every startup — uses ADD COLUMN IF NOT EXISTS pattern.
+        Never drops existing data.
+        """
+        conn = self._get_conn()
+        cursor = conn.cursor()
+
+        migrations = [
+            # Phase 1: Add columns that enrich_transaction computes at runtime
+            # These were always being set but never formally in schema
+            ("transactions", "amount_paise", "INTEGER"),
+            ("transactions", "debit", "INTEGER DEFAULT 0"),
+            ("transactions", "credit", "INTEGER DEFAULT 0"),
+            ("transactions", "date_iso", "TEXT"),
+            ("transactions", "member", "TEXT"),
+            ("transactions", "account_id", "TEXT"),
+            ("transactions", "hash_signature", "TEXT"),
+        ]
+
+        for table, column, col_type in migrations:
+            try:
+                cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}")
+                conn.commit()
+            except Exception:
+                # Column already exists — safe to ignore
+                pass
+
+        # Create new tables
+        cursor.executescript("""
+            -- Persistent accounts table
+            CREATE TABLE IF NOT EXISTS accounts (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                bank TEXT NOT NULL,
+                account_type TEXT NOT NULL DEFAULT 'savings',
+                balance_paise INTEGER NOT NULL DEFAULT 0,
+                account_number_last4 TEXT,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                notes TEXT,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+
+            -- Loans table
+            CREATE TABLE IF NOT EXISTS loans (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                lender TEXT NOT NULL,
+                loan_type TEXT NOT NULL,
+                principal_paise INTEGER NOT NULL,
+                outstanding_paise INTEGER NOT NULL,
+                interest_rate REAL NOT NULL,
+                tenure_months INTEGER,
+                emi_paise INTEGER,
+                disbursed_date TEXT NOT NULL,
+                next_emi_date TEXT,
+                gold_weight_grams REAL,
+                gold_purity TEXT,
+                interest_type TEXT DEFAULT 'reducing',
+                is_active INTEGER NOT NULL DEFAULT 1,
+                notes TEXT,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+
+            -- Investments table
+            CREATE TABLE IF NOT EXISTS investments (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                investment_type TEXT NOT NULL,
+                units REAL,
+                buy_price_paise INTEGER,
+                current_price_paise INTEGER,
+                invested_paise INTEGER NOT NULL,
+                current_value_paise INTEGER NOT NULL,
+                as_of_date TEXT NOT NULL,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                notes TEXT,
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+        """)
+        conn.commit()
 
     # ----------------------------------------------------------
     # Statement Methods
@@ -1309,6 +1396,74 @@ class FinanceDB:
         if self._conn is None:
             conn.close()
         return rows
+
+    # ─── ACCOUNTS ─────────────────────────────────────────────────────────────
+
+    def get_all_accounts(self) -> list[dict]:
+        """Get all active persistent accounts."""
+        conn = self._get_conn()
+        rows = conn.execute("""
+            SELECT id, name, bank, account_type, balance_paise,
+                   account_number_last4, is_active, notes, created_at, updated_at
+            FROM accounts
+            WHERE is_active = 1
+            ORDER BY bank, name
+        """).fetchall()
+        return [dict(r) for r in rows]
+
+    def create_account(self, account_id: str, name: str, bank: str,
+                       account_type: str, balance_paise: int,
+                       account_number_last4: str | None = None,
+                       notes: str | None = None) -> dict:
+        """Create a new persistent account."""
+        conn = self._get_conn()
+        conn.execute("""
+            INSERT INTO accounts (id, name, bank, account_type, balance_paise,
+                                  account_number_last4, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (account_id, name, bank, account_type, balance_paise,
+              account_number_last4, notes))
+        conn.commit()
+        return self.get_account_by_id(account_id)
+
+    def get_account_by_id(self, account_id: str) -> dict | None:
+        """Get a single account by ID."""
+        conn = self._get_conn()
+        row = conn.execute(
+            "SELECT * FROM accounts WHERE id = ?", (account_id,)
+        ).fetchone()
+        return dict(row) if row else None
+
+    def update_account(self, account_id: str, **kwargs) -> dict | None:
+        """Update account fields. Only updates provided fields."""
+        allowed = {'name', 'bank', 'account_type', 'balance_paise',
+                   'account_number_last4', 'notes'}
+        updates = {k: v for k, v in kwargs.items() if k in allowed}
+        if not updates:
+            return self.get_account_by_id(account_id)
+
+        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause += ", updated_at = datetime('now')"
+        values = list(updates.values()) + [account_id]
+
+        conn = self._get_conn()
+        conn.execute(
+            f"UPDATE accounts SET {set_clause} WHERE id = ?", values
+        )
+        conn.commit()
+        return self.get_account_by_id(account_id)
+
+    def delete_account(self, account_id: str) -> bool:
+        """Soft delete an account."""
+        conn = self._get_conn()
+        conn.execute(
+            "UPDATE accounts SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
+            (account_id,)
+        )
+        conn.commit()
+        return conn.execute(
+            "SELECT changes()"
+        ).fetchone()[0] > 0
 
 
 # ============================================================
