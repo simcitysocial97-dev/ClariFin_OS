@@ -17,7 +17,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertTriangle, TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
@@ -133,43 +133,6 @@ function BufferDaysCard({ days }: { days: number }) {
         </p>
       </CardContent>
     </Card>
-  );
-}
-
-function SevenDayTrend({ trend }: { trend: number }) {
-  const isUp = trend > 0;
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600">7-Day Spend Trend</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-2">
-          {isUp ? (
-            <TrendingUp className="h-5 w-5 text-red-500" />
-          ) : (
-            <TrendingDown className="h-5 w-5 text-green-500" />
-          )}
-          <span className={`text-xl font-bold ${isUp ? "text-red-600" : "text-green-600"}`}>
-            {isUp ? "+" : ""}{(trend * 100).toFixed(0)}%
-          </span>
-        </div>
-        <p className="text-xs text-gray-500 mt-2">
-          {isUp ? "Spending increasing" : "Spending decreasing"}
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function CategoryDriftAlert({ alert }: { alert: string | null }) {
-  if (!alert) return null;
-  return (
-    <Alert className="bg-amber-50 border-amber-200">
-      <AlertTriangle className="h-4 w-4 text-amber-600" />
-      <AlertTitle className="text-amber-800">Spending Alert</AlertTitle>
-      <AlertDescription className="text-amber-700">{alert}</AlertDescription>
-    </Alert>
   );
 }
 

@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Navigate into the frontend folder if your git root is one level up, then run lint-staged
+cd frontend && npx lint-staged

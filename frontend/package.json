@@ -20,7 +20,8 @@
     "test:metadata:generate": "node scripts/generate-expected-metadata.js",
     "test:metadata": "npx tsx scripts/test-metadata.ts",
     "test:metadata:fix": "npx tsx scripts/auto-fix-metadata.ts",
-    "test:metadata:all": "npm run test:metadata:generate && npm run test:metadata"
+    "test:metadata:all": "npm run test:metadata:generate && npm run test:metadata",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
@@ -53,8 +54,12 @@
     "@vitest/ui": "^4.1.10",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "lint-staged": "^16.4.0",
     "msw": "^2.14.6",
+    "prettier": "^3.9.4",
     "shadcn": "^3.8.4",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",

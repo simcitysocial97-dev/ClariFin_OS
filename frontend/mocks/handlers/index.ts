@@ -9,6 +9,7 @@ import { accountHandlers } from './accounts'
 import { behaviorHandlers } from './behavior'
 import { analyticsHandlers } from './analytics'
 import { cardHandlers } from './cards'
+import { reconciliationHandlers } from './reconciliation'
 
 export const handlers = [
   ...transactionHandlers,
@@ -22,4 +23,5 @@ export const handlers = [
   ...behaviorHandlers,
   ...analyticsHandlers,
   ...cardHandlers,
+  ...reconciliationHandlers,
 ]
