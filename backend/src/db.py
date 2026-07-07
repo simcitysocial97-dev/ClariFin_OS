@@ -654,11 +654,11 @@ class FinanceDB:
             conditions.append("t.category = ?")
             params.append(filters["category"])
         if filters.get("min_amount") is not None:
-            conditions.append("t.amount >= ?")
-            params.append(float(filters["min_amount"]))
+            conditions.append("t.amount_paise >= ?")
+            params.append(int(filters["min_amount"] * 100))
         if filters.get("max_amount") is not None:
-            conditions.append("t.amount <= ?")
-            params.append(float(filters["max_amount"]))
+            conditions.append("t.amount_paise <= ?")
+            params.append(int(filters["max_amount"] * 100))
         if filters.get("type"):
             conditions.append("t.type = ?")
             params.append(filters["type"])
@@ -821,11 +821,11 @@ class FinanceDB:
             conditions.append("t.type = ?")
             params.append(filters["type"])
         if filters.get("min_amount") is not None:
-            conditions.append("t.amount >= ?")
-            params.append(float(filters["min_amount"]))
+            conditions.append("t.amount_paise >= ?")
+            params.append(int(filters["min_amount"] * 100))
         if filters.get("max_amount") is not None:
-            conditions.append("t.amount <= ?")
-            params.append(float(filters["max_amount"]))
+            conditions.append("t.amount_paise <= ?")
+            params.append(int(filters["max_amount"] * 100))
         if filters.get("member") and filters["member"] != "All":
             conditions.append("t.member = ?")
             params.append(filters["member"])
