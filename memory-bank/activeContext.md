@@ -171,6 +171,7 @@ Based on the backend capability audit, the following features are ready for fron
 3. **Behavior Insights Panel** — Full backend exists, needs list/render component
 4. **Reconciliation UI** — Full backend exists (6 endpoints), needs CRUD UI
 5. **Overview Page** — Backend works, frontend has mock handlers
+6. **Credit Cards Page** — ✅ **COMPLETE** (new `/api/cards` endpoint, 3 components, tests)
 
 ### Features Requiring Backend Work
 1. **Loans** — Need DB table + API endpoints (behavior engine already detects loan patterns)
@@ -178,6 +179,18 @@ Based on the backend capability audit, the following features are ready for fron
 3. **Net Worth** — Need accounts + loans + investments aggregation
 4. **Gmail Ingestion** — Need Gmail API integration
 5. **Persistent Accounts** — Need DB-backed accounts table
+
+### Recently Completed (Phase 7C)
+**Advanced Credit Cards Page** — Implemented on 2026-07-07:
+- **Backend**: Added `GET /api/cards` endpoint that groups statements by card and computes utilization/payment status
+- **Frontend Hook**: Created `useCards()` hook in `frontend/lib/hooks/use-cards.ts`
+- **Components**:
+  - `CardPortfolioHeader` — Summary row with total outstanding, credit limit, utilization, card count
+  - `CreditCardTile` — Card display with utilization bar, key figures, payment status badge, action buttons
+  - `StatementHistoryDrawer` — Slide-out drawer showing all statements for a card
+- **Tests**: Added MSW handler and 6 contract tests
+- **Build**: Clean build, all 55 tests passing
+```
 
 ## Key Findings Summary (UPDATED)
 

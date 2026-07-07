@@ -163,6 +163,8 @@ The following implementation work has been completed and serves as the architect
 | Build Behavior Insights Panel | **READY** — Backend `GET /api/behavior/insights` fully built |
 | Build Reconciliation UI | **READY** — 6 backend endpoints exist |
 | Build Overview Page (live data) | **READY** — Backend `GET /api/overview` works, frontend has mocks |
+| **Advanced Credit Cards Page** | **COMPLETE** — `GET /api/cards` endpoint, 3 components, tests |
+```
 
 ---
 
@@ -219,7 +221,9 @@ The phase is complete when:
 | Categories | ✅ (computed) | ✅ `GET /api/categories` | ⚠️ Mock only | **🔶 Partial** |
 | Analytics | ✅ (computed) | ✅ `GET /api/analytics` | ❌ No frontend | **🔶 Partial** |
 | Statements/Cards | ✅ `statements` | ✅ `GET /api/statements` | ✅ Cards page | **✅ Working** |
+| Cards Summary | ✅ `statements` | ✅ `GET /api/cards` | ✅ Cards page | **✅ Working** |
 | Reconciliation | ✅ `reconciliations` | ✅ 6 endpoints | ❌ No frontend | **🔶 Partial** |
+```
 | Behavior Score | ✅ (computed) | ✅ `GET /api/behavior/score` | ❌ No frontend | **✅ Working** |
 | Behavior Insights | ✅ (computed) | ✅ `GET /api/behavior/insights` | ❌ No frontend | **✅ Working** |
 | Behavior Summary | ✅ (computed) | ✅ `GET /api/behavior/summary` | ❌ No frontend | **✅ Working** |
