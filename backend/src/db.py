@@ -1208,7 +1208,7 @@ class FinanceDB:
             status: Optional filter by status ('pending', 'confirmed', 'rejected')
         
         Returns:
-            List of reconciliation records with transaction details
+            List of reconciliation records with transaction details including bank names
         """
         conn = self._get_conn()
         
@@ -1226,8 +1226,10 @@ class FinanceDB:
                 r.created_at, r.confirmed_at,
                 dt.date as debit_date, dt.date_iso as debit_date_iso,
                 dt.description as debit_description, dt.debit as debit_amount_paise,
+                dt.account_id as debit_bank,
                 ct.date as credit_date, ct.date_iso as credit_date_iso,
-                ct.description as credit_description, ct.credit as credit_amount_paise
+                ct.description as credit_description, ct.credit as credit_amount_paise,
+                ct.account_id as credit_bank
             FROM reconciliations r
             JOIN transactions dt ON r.debit_txn_id = dt.id
             JOIN transactions ct ON r.credit_txn_id = ct.id
