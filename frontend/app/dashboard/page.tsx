@@ -21,6 +21,7 @@ import { AlertTriangle, TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activ
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
+import { useOverview } from "@/lib/hooks/use-overview";
 import { formatINR, formatPercentage } from "@/lib/utils/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { CashflowChart } from "@/components/dashboard/cashflow-chart";
@@ -202,6 +203,7 @@ function HealthScoreFooter({ score }: { score: number }) {
 
 export default function DashboardPage() {
   const { data, loading, error, refetch } = useDashboardMetrics();
+  const { data: overviewData } = useOverview();
 
   // Loading state
   if (loading) {
@@ -242,7 +244,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-gray-500 text-sm">
-            {data.months_of_data || 0} months of data
+            {overviewData?.months_of_data || 0} months of data
           </p>
         </div>
         <p className="text-xs text-muted-foreground">
