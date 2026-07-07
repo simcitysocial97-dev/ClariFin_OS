@@ -5,6 +5,7 @@ import { bankHandlers } from './banks'
 import { categoryHandlers } from './categories'
 import { dashboardHandlers } from './dashboard'
 import { cashflowHandlers } from './cashflow'
+import { accountHandlers } from './accounts'
 
 export const handlers = [
   ...transactionHandlers,
@@ -14,4 +15,5 @@ export const handlers = [
   ...categoryHandlers,
   ...dashboardHandlers,
   ...cashflowHandlers,
+  ...accountHandlers,
 ]

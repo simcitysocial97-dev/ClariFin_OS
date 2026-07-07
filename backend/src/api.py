@@ -1696,7 +1696,7 @@ def api_dashboard_summary():
         recent = sorted(transactions, key=lambda t: t.get("parsed_date", ""), reverse=True)[:10]
         
         return {
-            "net_cash_flow": net_cash_flow,
+            "net_cash_flow_paise": int(round(net_cash_flow * 100)),
             "savings_rate": savings_rate,
             "emi_ratio": emi_ratio,
             "buffer_days": buffer_days,

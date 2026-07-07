@@ -8,24 +8,16 @@ import { useCashflow } from '@/lib/hooks/use-cashflow';
 // Dynamically import recharts to avoid SSR issues
 import dynamic from 'next/dynamic';
 
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const ComposedChart = dynamic(() => import('recharts').then((mod) => mod.ComposedChart), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const Line = dynamic(() => import('recharts').then((mod) => mod.Line), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false, loading: () => null });
-// @ts-ignore - recharts types are incompatible with next/dynamic
-const Legend = dynamic(() => import('recharts').then((mod) => mod.Legend), { ssr: false, loading: () => null });
+// Type-safe dynamic imports for recharts components
+const ComposedChart = dynamic(() => import('recharts').then((mod) => mod.ComposedChart), { ssr: false, loading: () => null }) as typeof import('recharts').ComposedChart;
+const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false, loading: () => null }) as typeof import('recharts').Bar;
+const Line = dynamic(() => import('recharts').then((mod) => mod.Line), { ssr: false, loading: () => null }) as typeof import('recharts').Line;
+const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false, loading: () => null }) as typeof import('recharts').XAxis;
+const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false, loading: () => null }) as typeof import('recharts').YAxis;
+const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false, loading: () => null }) as typeof import('recharts').CartesianGrid;
+const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false, loading: () => null }) as typeof import('recharts').Tooltip;
+const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false, loading: () => null }) as typeof import('recharts').ResponsiveContainer;
+const Legend = dynamic(() => import('recharts').then((mod) => mod.Legend), { ssr: false, loading: () => null }) as typeof import('recharts').Legend;
 
 // Value is in paise (canonical)
 interface CashflowMonth {

@@ -1,5 +1,5 @@
 export const mockDashboardSummary = {
-  net_cash_flow: 50000,
+  net_cash_flow_paise: 5000000, // ₹50,000.00 in paise
   savings_rate: 0.15,
   emi_ratio: 0.25,
   buffer_days: 45,

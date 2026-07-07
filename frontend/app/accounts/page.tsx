@@ -20,6 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Pencil, Trash2, Building2, AlertCircle, Wallet } from "lucide-react";
+import { formatINR } from "@/lib/utils/format";
 
 // ============================================================
 // Types
@@ -51,36 +52,7 @@ function AccountCard({ account, onEdit, onDelete }: {
   onEdit: (account: Account) => void;
   onDelete: (id: string) => void;
 }) {
-  // Use formatINR - accepts paise and formats with Indian grouping
-  const formatINR = (paise: number) => {
-    const negative = paise < 0;
-    const absPaise = Math.abs(paise);
-    const rupees = Math.floor(absPaise / 100);
-    const paisePart = absPaise % 100;
-    
-    // Format with Indian grouping (lakhs, crores)
-    let formatted: string;
-    if (rupees <= 999) {
-      formatted = rupees.toString();
-    } else {
-      const s = rupees.toString();
-      const last3 = s.slice(-3);
-      const remaining = s.slice(0, -3);
-      const groups: string[] = [];
-      let r = remaining;
-      while (r) {
-        groups.push(r.length >= 2 ? r.slice(-2) : r);
-        r = r.slice(0, -2);
-      }
-      groups.reverse();
-      formatted = groups.join(',') + ',' + last3;
-    }
-    
-    const result = `₹${formatted}.${paisePart.toString().padStart(2, '0')}`;
-    return negative ? `-${result}` : result;
-  };
-
-   return (
+  return (
      <Card>
        <CardContent className="p-4">
          <div className="flex items-start justify-between">
@@ -301,34 +273,6 @@ export default function AccountsPage() {
 
   // Calculate total - use balance_paise (in paise)
   const totalBalancePaise = accounts.reduce((sum, a) => sum + a.balance_paise, 0);
-  
-  // Format total balance for display
-  const formatINR = (paise: number) => {
-    const negative = paise < 0;
-    const absPaise = Math.abs(paise);
-    const rupees = Math.floor(absPaise / 100);
-    const paisePart = absPaise % 100;
-    
-    let formatted: string;
-    if (rupees <= 999) {
-      formatted = rupees.toString();
-    } else {
-      const s = rupees.toString();
-      const last3 = s.slice(-3);
-      const remaining = s.slice(0, -3);
-      const groups: string[] = [];
-      let r = remaining;
-      while (r) {
-        groups.push(r.length >= 2 ? r.slice(-2) : r);
-        r = r.slice(0, -2);
-      }
-      groups.reverse();
-      formatted = groups.join(',') + ',' + last3;
-    }
-    
-    const result = `₹${formatted}.${paisePart.toString().padStart(2, '0')}`;
-    return negative ? `-${result}` : result;
-  };
 
   // Loading state
   if (loading) {
