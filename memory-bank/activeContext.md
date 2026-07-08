@@ -2,7 +2,13 @@
 
 ## Current Mission
 
-**Prompt 4A.12: Create Pydantic base models for domain entities** — COMPLETED
+**Prompt 4A.13: Create Transaction domain model** — COMPLETED
+
+## Prompt 4A.13 Changes (2026-08-07)
+- ✅ Created `src/models/transaction.py` with `Transaction(DomainModel)` entity (id, statement_id, date, description, amount: Money, category, member, bank?)
+- ✅ Added `from_db_row()` factory converting DB rows (canonical `amount_paise`) into `Transaction`
+- ✅ Exported `Transaction` from `src/models/__init__.py`
+- ✅ Validation: `Transaction(amount=Money(paise=50000))` → `₹500.00` and correct `model_dump()`
 
 ## Prompt 4A.12 Changes (2026-08-07)
 - ✅ Created `src/models/__init__.py` exporting `DomainModel` and `Money`
