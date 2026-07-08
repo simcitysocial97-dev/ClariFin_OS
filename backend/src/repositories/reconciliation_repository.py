@@ -20,11 +20,39 @@ class ReconciliationRepository(BaseRepository):
         Returns:
             List of reconciliation records with transaction details including bank names
         """
-        return self._db().get_reconciliations(status=status)
+        with self._get_conn() as conn:
+            where_clause = "WHERE r.status = ?" if status else ""
+            params = [status] if status else []
+
+            sql = f"""
+                SELECT
+                    r.id,
+                    r.debit_txn_id, r.credit_txn_id,
+                    r.debit_account_id, r.credit_account_id,
+                    r.amount, r.date_diff_days,
+                    r.match_confidence, r.match_type,
+                    r.status, r.deterministic_key,
+                    r.created_at, r.confirmed_at,
+                    dt.date as debit_date, dt.date_iso as debit_date_iso,
+                    dt.description as debit_description, dt.debit as debit_amount_paise,
+                    dt.account_id as debit_bank,
+                    ct.date as credit_date, ct.date_iso as credit_date_iso,
+                    ct.description as credit_description, ct.credit as credit_amount_paise,
+                    ct.account_id as credit_bank
+                FROM reconciliations r
+                JOIN transactions dt ON r.debit_txn_id = dt.id
+                JOIN transactions ct ON r.credit_txn_id = ct.id
+                {where_clause}
+                ORDER BY r.created_at DESC
+            """
+
+            cur = conn.execute(sql, params)
+            rows = [dict(row) for row in cur.fetchall()]
+        return rows
 
     def get_pending_reconciliations(self) -> list[dict]:
         """Get all pending reconciliations."""
-        return self._db().get_pending_reconciliations()
+        return self.get_reconciliations(status='pending')
 
     def insert_reconciliation(
         self,
@@ -46,16 +74,34 @@ class ReconciliationRepository(BaseRepository):
         Returns:
             True if inserted, False if already exists (ignored)
         """
-        return self._db().insert_reconciliation(
-            debit_txn_id=debit_txn_id,
-            credit_txn_id=credit_txn_id,
-            debit_account_id=debit_account_id,
-            credit_account_id=credit_account_id,
-            amount=amount,
-            date_diff_days=date_diff_days,
-            match_confidence=match_confidence,
-            match_type=match_type,
-        )
+        with self._get_conn() as conn:
+            # Generate deterministic key (smaller id first for consistency)
+            min_id = min(debit_txn_id, credit_txn_id)
+            max_id = max(debit_txn_id, credit_txn_id)
+            deterministic_key = f"{min_id}:{max_id}"
+
+            # Use INSERT OR IGNORE for idempotency
+            cur = conn.execute(
+                """
+                INSERT OR IGNORE INTO reconciliations (
+                    debit_txn_id, credit_txn_id,
+                    debit_account_id, credit_account_id,
+                    amount, date_diff_days,
+                    match_confidence, match_type,
+                    deterministic_key
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    debit_txn_id, credit_txn_id,
+                    debit_account_id, credit_account_id,
+                    amount, date_diff_days,
+                    round(match_confidence, 4), match_type,
+                    deterministic_key
+                ),
+            )
+
+            inserted = cur.rowcount > 0
+        return inserted
 
     def confirm_reconciliation(self, reconciliation_id: int) -> bool:
         """
@@ -66,7 +112,17 @@ class ReconciliationRepository(BaseRepository):
         Returns:
             True if updated, False if not found or not pending
         """
-        return self._db().confirm_reconciliation(reconciliation_id)
+        with self._get_conn() as conn:
+            cur = conn.execute(
+                """
+                UPDATE reconciliations
+                SET status = 'confirmed', confirmed_at = datetime('now')
+                WHERE id = ? AND status = 'pending'
+                """,
+                (reconciliation_id,),
+            )
+            updated = cur.rowcount > 0
+        return updated
 
     def reject_reconciliation(self, reconciliation_id: int) -> bool:
         """
@@ -77,7 +133,17 @@ class ReconciliationRepository(BaseRepository):
         Returns:
             True if updated, False if not found or not pending
         """
-        return self._db().reject_reconciliation(reconciliation_id)
+        with self._get_conn() as conn:
+            cur = conn.execute(
+                """
+                UPDATE reconciliations
+                SET status = 'rejected'
+                WHERE id = ? AND status = 'pending'
+                """,
+                (reconciliation_id,),
+            )
+            updated = cur.rowcount > 0
+        return updated
 
     def get_confirmed_transfer_ids(self) -> list[tuple]:
         """
@@ -86,7 +152,14 @@ class ReconciliationRepository(BaseRepository):
         Returns list of (debit_txn_id, credit_txn_id) tuples for confirmed reconciliations.
         Used by analytics to exclude transfers from spending totals.
         """
-        return self._db().get_confirmed_transfer_ids()
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                SELECT debit_txn_id, credit_txn_id
+                FROM reconciliations
+                WHERE status = 'confirmed'
+            """)
+            rows = [(row[0], row[1]) for row in cur.fetchall()]
+        return rows
 
     def scan_potential_matches(self) -> list[dict]:
         """
@@ -97,4 +170,3 @@ class ReconciliationRepository(BaseRepository):
         Returns potential matches that can be saved as reconciliations.
         """
         return find_potential_matches(self.db_path)
-

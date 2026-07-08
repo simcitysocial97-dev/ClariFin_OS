@@ -717,33 +717,8 @@ class FinanceDB:
         All monetary values in paise (INTEGER).
         Uses date_iso for proper month grouping.
         """
-        conditions = ["t.date_iso IS NOT NULL"]
-        params = []
-
-        if member and member != "All":
-            conditions.append("t.member = ?")
-            params.append(member)
-
-        where = "WHERE " + " AND ".join(conditions)
-
-        sql = f"""
-            SELECT
-                substr(t.date_iso, 1, 7) as month_key,
-                SUM(CASE WHEN t.type = 'credit' THEN t.amount_paise ELSE 0 END) as income_paise,
-                SUM(CASE WHEN t.type = 'debit' THEN t.amount_paise ELSE 0 END) as expense_paise,
-                COUNT(*) as transaction_count
-            FROM transactions t
-            {where}
-            GROUP BY substr(t.date_iso, 1, 7)
-            ORDER BY month_key ASC
-        """
-
-        conn = self._get_conn()
-        cur = conn.execute(sql, params)
-        rows = [dict(row) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.cashflow_repository import CashflowRepository
+        return CashflowRepository(self.db_path).get_monthly_cashflow(months=months, member=member)
 
 
     # ----------------------------------------------------------
@@ -980,40 +955,17 @@ class FinanceDB:
         Returns:
             True if inserted, False if already exists (ignored)
         """
-        conn = self._get_conn()
-
-        # Generate deterministic key (smaller id first for consistency)
-        min_id = min(debit_txn_id, credit_txn_id)
-        max_id = max(debit_txn_id, credit_txn_id)
-        deterministic_key = f"{min_id}:{max_id}"
-
-        # Use INSERT OR IGNORE for idempotency
-        cur = conn.execute(
-            """
-            INSERT OR IGNORE INTO reconciliations (
-                debit_txn_id, credit_txn_id,
-                debit_account_id, credit_account_id,
-                amount, date_diff_days,
-                match_confidence, match_type,
-                deterministic_key
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                debit_txn_id, credit_txn_id,
-                debit_account_id, credit_account_id,
-                amount, date_diff_days,
-                round(match_confidence, 4), match_type,
-                deterministic_key
-            ),
+        from src.repositories.reconciliation_repository import ReconciliationRepository
+        return ReconciliationRepository(self.db_path).insert_reconciliation(
+            debit_txn_id=debit_txn_id,
+            credit_txn_id=credit_txn_id,
+            debit_account_id=debit_account_id,
+            credit_account_id=credit_account_id,
+            amount=amount,
+            date_diff_days=date_diff_days,
+            match_confidence=match_confidence,
+            match_type=match_type,
         )
-
-        inserted = cur.rowcount > 0
-
-        if self._conn is None:
-            conn.commit()
-            conn.close()
-
-        return inserted
 
     def get_reconciliations(self, status: str | None = None) -> list[dict]:
         """
@@ -1025,38 +977,8 @@ class FinanceDB:
         Returns:
             List of reconciliation records with transaction details including bank names
         """
-        conn = self._get_conn()
-
-        where_clause = "WHERE r.status = ?" if status else ""
-        params = [status] if status else []
-
-        sql = f"""
-            SELECT
-                r.id,
-                r.debit_txn_id, r.credit_txn_id,
-                r.debit_account_id, r.credit_account_id,
-                r.amount, r.date_diff_days,
-                r.match_confidence, r.match_type,
-                r.status, r.deterministic_key,
-                r.created_at, r.confirmed_at,
-                dt.date as debit_date, dt.date_iso as debit_date_iso,
-                dt.description as debit_description, dt.debit as debit_amount_paise,
-                dt.account_id as debit_bank,
-                ct.date as credit_date, ct.date_iso as credit_date_iso,
-                ct.description as credit_description, ct.credit as credit_amount_paise,
-                ct.account_id as credit_bank
-            FROM reconciliations r
-            JOIN transactions dt ON r.debit_txn_id = dt.id
-            JOIN transactions ct ON r.credit_txn_id = ct.id
-            {where_clause}
-            ORDER BY r.created_at DESC
-        """
-
-        cur = conn.execute(sql, params)
-        rows = [dict(row) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.reconciliation_repository import ReconciliationRepository
+        return ReconciliationRepository(self.db_path).get_reconciliations(status=status)
 
     def confirm_reconciliation(self, reconciliation_id: int) -> bool:
         """
@@ -1067,20 +989,8 @@ class FinanceDB:
         Returns:
             True if updated, False if not found or not pending
         """
-        conn = self._get_conn()
-        cur = conn.execute(
-            """
-            UPDATE reconciliations
-            SET status = 'confirmed', confirmed_at = datetime('now')
-            WHERE id = ? AND status = 'pending'
-            """,
-            (reconciliation_id,),
-        )
-        updated = cur.rowcount > 0
-        if self._conn is None:
-            conn.commit()
-            conn.close()
-        return updated
+        from src.repositories.reconciliation_repository import ReconciliationRepository
+        return ReconciliationRepository(self.db_path).confirm_reconciliation(reconciliation_id)
 
     def reject_reconciliation(self, reconciliation_id: int) -> bool:
         """
@@ -1091,24 +1001,13 @@ class FinanceDB:
         Returns:
             True if updated, False if not found or not pending
         """
-        conn = self._get_conn()
-        cur = conn.execute(
-            """
-            UPDATE reconciliations
-            SET status = 'rejected'
-            WHERE id = ? AND status = 'pending'
-            """,
-            (reconciliation_id,),
-        )
-        updated = cur.rowcount > 0
-        if self._conn is None:
-            conn.commit()
-            conn.close()
-        return updated
+        from src.repositories.reconciliation_repository import ReconciliationRepository
+        return ReconciliationRepository(self.db_path).reject_reconciliation(reconciliation_id)
 
     def get_pending_reconciliations(self) -> list[dict]:
         """Get all pending reconciliations."""
-        return self.get_reconciliations(status='pending')
+        from src.repositories.reconciliation_repository import ReconciliationRepository
+        return ReconciliationRepository(self.db_path).get_pending_reconciliations()
 
     def get_confirmed_transfer_ids(self) -> list[tuple]:
         """
@@ -1117,16 +1016,8 @@ class FinanceDB:
         Returns list of (debit_txn_id, credit_txn_id) tuples for confirmed reconciliations.
         Used by analytics to exclude transfers from spending totals.
         """
-        conn = self._get_conn()
-        cur = conn.execute("""
-            SELECT debit_txn_id, credit_txn_id
-            FROM reconciliations
-            WHERE status = 'confirmed'
-        """)
-        rows = [(row[0], row[1]) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.reconciliation_repository import ReconciliationRepository
+        return ReconciliationRepository(self.db_path).get_confirmed_transfer_ids()
 
     # ─── ACCOUNTS ─────────────────────────────────────────────────────────────
 
@@ -1253,12 +1144,8 @@ class FinanceDB:
         Get all data needed for net worth calculation.
         Returns accounts, loans, investments, and statements for the networth endpoint.
         """
-        return {
-            "accounts": self.get_all_accounts(),
-            "loans": self.get_all_loans(),
-            "investments": self.get_all_investments(),
-            "statements": self.get_all_statements(),
-        }
+        from src.repositories.networth_repository import NetWorthRepository
+        return NetWorthRepository(self.db_path).get_networth_data()
 
     def get_net_worth(self) -> dict:
         """
@@ -1273,40 +1160,8 @@ class FinanceDB:
                 investments_total_paise: int
             }
         """
-        conn = self._get_conn()
-
-        # Get total account balances (assets)
-        accounts_row = conn.execute(
-            "SELECT COALESCE(SUM(balance_paise), 0) as total FROM accounts WHERE is_active = 1"
-        ).fetchone()
-        accounts_total = accounts_row[0] or 0
-
-        # Get total outstanding loans (liabilities)
-        loans_row = conn.execute(
-            "SELECT COALESCE(SUM(outstanding_paise), 0) as total FROM loans WHERE status = 'active'"
-        ).fetchone()
-        loans_total = loans_row[0] or 0
-
-        # Get total investment value
-        investments_row = conn.execute(
-            "SELECT COALESCE(SUM(current_value_paise), 0) as total FROM investments WHERE is_active = 1"
-        ).fetchone()
-        investments_total = investments_row[0] or 0
-
-        # Net worth = (accounts + investments) - loans
-        net_worth = (accounts_total + investments_total) - loans_total
-
-        if self._conn is None:
-            conn.close()
-
-        return {
-            "total_assets_paise": accounts_total + investments_total,
-            "total_liabilities_paise": loans_total,
-            "net_worth_paise": net_worth,
-            "accounts_total_paise": accounts_total,
-            "loans_total_paise": loans_total,
-            "investments_total_paise": investments_total,
-        }
+        from src.repositories.networth_repository import NetWorthRepository
+        return NetWorthRepository(self.db_path).get_net_worth()
 
 
 # ============================================================

@@ -2,13 +2,19 @@
 
 ## Current Mission
 
-**Prompt 4A.7: Move Transaction SQL** — COMPLETED
+**Prompt 4A.8-4A.10: Move Reconciliation, Cashflow, and NetWorth SQL** — COMPLETED
 
-## Prompt 4A.7 Changes (2026-07-08)
-- Added missing `get_monthly_summary()` and `get_category_summary()` delegations to `db.py`
-- Added missing `get_all_statements()`, `get_statement_count()`, `get_transaction_count()`, `get_banks()` methods to `db.py`
-- All transaction methods now delegate to `TransactionRepository` (backward compatibility)
-- All methods tested and working: 4337 transactions, 24 monthly summaries, 21 category summaries
+## Prompt 4A.8 Changes (2026-07-08)
+- Fixed `ReconciliationRepository` to use proper `_get_conn()` context manager pattern
+- All reconciliation methods now delegate to `ReconciliationRepository` (backward compatibility)
+
+## Prompt 4A.9 Changes (2026-07-08)
+- Fixed `CashflowRepository` to use proper `_get_conn()` context manager pattern
+- `get_monthly_cashflow()` now delegates to `CashflowRepository`
+
+## Prompt 4A.10 Changes (2026-07-08)
+- Fixed `NetWorthRepository` to use proper `_get_conn()` context manager pattern
+- `get_networth_data()` and `get_net_worth()` now delegate to `NetWorthRepository`
 
 ## Next Steps
 - Run full test suite to verify all changes
