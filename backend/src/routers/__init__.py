@@ -11,6 +11,7 @@ from . import (
     members,
     networth,
     reconciliation,
+    transactions,
 )
 
-__all__ = ["banks", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "reconciliation", "members"]
+__all__ = ["banks", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]
