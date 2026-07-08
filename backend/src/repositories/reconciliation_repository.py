@@ -1,4 +1,8 @@
-"""Reconciliation domain repository."""
+"""Reconciliation domain repository.
+
+LOC WATCH: No repository file > 200 LOC.
+If it grows beyond 200, split by sub-domain.
+"""
 from src.engines.reconciliation_engine import find_potential_matches
 from src.repositories.base import BaseRepository
 

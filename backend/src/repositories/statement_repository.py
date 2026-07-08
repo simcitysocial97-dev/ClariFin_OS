@@ -1,4 +1,8 @@
-"""Statement domain repository."""
+"""Statement domain repository.
+
+LOC WATCH: No repository file > 200 LOC.
+If it grows beyond 200, split by sub-domain.
+"""
 from src.engines.balance_engine import validate_statement_balance
 from src.repositories.base import BaseRepository
 

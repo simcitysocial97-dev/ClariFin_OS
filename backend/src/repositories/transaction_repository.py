@@ -1,4 +1,8 @@
-"""Transaction domain repository."""
+"""Transaction domain repository.
+
+LOC WATCH: No repository file > 200 LOC.
+If it grows beyond 200, split by sub-domain.
+"""
 from src.repositories.base import BaseRepository
 
 

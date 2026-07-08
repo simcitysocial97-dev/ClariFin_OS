@@ -2,7 +2,16 @@
 
 ## Current Mission
 
-**Phase 3B.9: DashboardRepository** — COMPLETED
+**Step 3C.2-3C.3: Repository Smoke Tests + LOC Watch** — COMPLETED
+
+## Step 3C.2-3C.3 Changes (2026-07-08)
+- Created `tests/test_repository_smoke.py` with 9 smoke tests for high-impact repositories
+- Tests verify TransactionRepository, ReconciliationRepository, AccountRepository, StatementRepository match FinanceDB behavior
+- Added LOC WATCH header comment to all repository files (transaction, reconciliation, account, statement, dashboard)
+- Fixed circular import in `dashboard_repository.py` (changed `from src.repositories import TransactionRepository` to direct import)
+- All 9 smoke tests pass, validating repository wrappers delegate correctly to FinanceDB
+
+## Next Steps
 
 ## Phase 3B.9 Changes (2026-07-08)
 - Created `src/repositories/dashboard_repository.py` with DashboardRepository wrapper (cross-domain orchestration)

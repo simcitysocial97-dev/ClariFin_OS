@@ -54,3 +54,12 @@ Run these terminal validation checks immediately after *any* file modification:
 - **Strict Code Limitations:** 
   - NEVER use `as any`, `@ts-ignore`, or `@ts-nocheck` in TypeScript.
   - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`. Parse debug queries using: `../.venv/bin/python3 -c "import sqlite3; ..."`
+
+---
+
+## 6. Repository Boundary Rule
+
+- ONLY files under src/repositories/ may import FinanceDB.
+- Routers MUST NOT import FinanceDB or get_db().
+- Engines MUST NOT import FinanceDB.
+- If FinanceDB import is detected outside repositories/, refactor immediately.

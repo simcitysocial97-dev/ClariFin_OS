@@ -1,4 +1,8 @@
-"""Dashboard domain repository (cross-domain orchestration)."""
+"""Dashboard domain repository (cross-domain orchestration).
+
+LOC WATCH: No repository file > 200 LOC.
+If it grows beyond 200, split by sub-domain.
+"""
 from datetime import datetime, timedelta
 
 from src.common import DB_PATH, enrich_transaction
@@ -7,7 +11,7 @@ from src.engines.behavior_engine import (
     get_cached_behavior_profile,
     set_cached_behavior_profile,
 )
-from src.repositories import TransactionRepository
+from src.repositories.transaction_repository import TransactionRepository
 
 
 class DashboardRepository:
