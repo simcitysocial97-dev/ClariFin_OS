@@ -1,5 +1,5 @@
 """Behavioral analytics and insights endpoints."""
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from engines.behavior_engine import (
     compute_behavior_profile,
@@ -47,7 +47,7 @@ def api_behavior_summary():
         set_cached_behavior_profile(DB_PATH, profile)
         return profile
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/score")
@@ -90,7 +90,7 @@ def api_behavior_score():
             "summary": generate_summary_text(profile),
         }
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/insights")
@@ -131,4 +131,4 @@ def api_behavior_insights():
             "confidence": profile.get("confidence", 0),
         }
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
