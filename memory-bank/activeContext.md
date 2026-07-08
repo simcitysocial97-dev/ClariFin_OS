@@ -2,7 +2,17 @@
 
 ## Current Mission
 
-**Mypy Strict Mode Enablement** — COMPLETED
+**NetWorthService Extraction** — COMPLETED
+
+## NetWorthService Changes (2026-09-07)
+- ✅ Created `NetWorthService` in `src/services/networth_service.py` with `calculate()` method
+- ✅ Moved business logic (card statement deduplication, is_partial check) from router to service
+- ✅ Updated router to use `NetWorthService` instead of `NetWorthRepository` directly (fixes Repository Boundary Rule violation)
+- ✅ Removed unused `get_net_worth()` method (had dead SQL code) from `NetWorthRepository`
+- ✅ Validation: ruff clean, mypy clean on all modified files
+
+## Next Steps
+- Router now correctly delegates to service layer, maintaining clean architecture
 
 ## Router Type Fixes (2026-09-07)
 - ✅ Fixed `pyproject.toml` mypy module patterns: added `src.models` and `src.repositories` (without wildcard) to match packages correctly
