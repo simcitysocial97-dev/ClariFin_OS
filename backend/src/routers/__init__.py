@@ -1,6 +1,7 @@
 """API routers organized by domain."""
 from . import (
     banks,
+    behavior,
     cards_statements,
     cashflow,
     export,
@@ -14,4 +15,4 @@ from . import (
     transactions,
 )
 
-__all__ = ["banks", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]
+__all__ = ["banks", "behavior", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]
