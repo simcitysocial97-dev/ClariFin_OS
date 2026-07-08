@@ -18,5 +18,10 @@
 - SELECT/UPDATE/INSERT in `db.py`: Only schema/migration operations (no domain SQL)
 - FinanceDB imports in routers: None (all use repositories)
 
-## Next Steps
-- No further action required - migration is complete and validated
+## Forensic Verification Results (2026-08-07)
+- ✅ All SQL queries confined to `_create_tables()` and `_run_migrations()` (schema/migration operations only)
+- ✅ No repository imports in `db.py` (correct dependency direction enforced)
+- ✅ Table count: 8 (statements, transactions, members, import_mappings, reconciliations, accounts, loans, investments)
+- ✅ Trigger count: 2 (prevent_transaction_update, prevent_transaction_delete)
+- ✅ Ruff lint: All checks passed
+- ✅ Mypy type check: Success, no issues found
