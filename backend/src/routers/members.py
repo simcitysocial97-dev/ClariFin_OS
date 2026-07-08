@@ -14,7 +14,7 @@ class MemberCreate(BaseModel):
 
 
 @router.get("/members")
-async def get_members():
+async def get_members() -> dict:
     """
     Get all members.
 
@@ -25,7 +25,7 @@ async def get_members():
 
 
 @router.post("/members")
-async def create_member(member: MemberCreate):
+async def create_member(member: MemberCreate) -> dict:
     """
     Create a new member.
 

@@ -17,7 +17,7 @@ def export_csv(
     category: str | None = "All",
     type: str | None = "All",
     member: str | None = "All",
-):
+) -> StreamingResponse:
     """Export transactions to CSV."""
     try:
         repo = TransactionRepository()

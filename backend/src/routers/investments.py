@@ -1,5 +1,4 @@
 """Investment portfolio management endpoints."""
-import uuid
 
 from fastapi import APIRouter
 from pydantic import BaseModel

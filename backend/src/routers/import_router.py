@@ -33,7 +33,7 @@ class ImportExecute(BaseModel):
 async def upload_statement(
     file: UploadFile = File(...),
     member: str = Form("Self"),
-):
+) -> dict:
     """Upload and process a PDF statement."""
     try:
         stmt_repo = StatementRepository()
@@ -41,7 +41,7 @@ async def upload_statement(
         log = []
 
         # Save file
-        filename = file.filename
+        filename = file.filename or ""
         if not filename.lower().endswith(".pdf"):
             raise HTTPException(status_code=400, detail="Only PDF files allowed")
 
@@ -72,7 +72,7 @@ async def upload_statement(
         # Categorize
         for txn in transactions:
             amount_paise = int(txn.get("amount_paise") or 0)
-            amount_float = amount_paise / 100.0 if amount_paise else None
+            amount_float = amount_paise / 100.0 if amount_paise else 0.0
             cat, subcat = categorize(txn.get("description", ""), amount_float)
             txn["category"] = cat
             txn["subcategory"] = subcat
@@ -149,16 +149,16 @@ async def upload_statement(
 
 
 @router.post("/import/detect")
-async def import_detect(file: UploadFile = File(...)):
+async def import_detect(file: UploadFile = File(...)) -> dict:
     """Detect CSV/Excel format."""
     try:
         # Save file
-        filename = file.filename
+        filename = file.filename or ""
         suffix = Path(filename).suffix.lower()
         if suffix not in [".csv", ".xlsx", ".xls"]:
             raise HTTPException(status_code=400, detail="Unsupported file type")
 
-        save_path = UPLOAD_DIR / filename
+        save_path = UPLOAD_DIR / filename if filename else UPLOAD_DIR / "unknown"
         content = await file.read()
         with open(save_path, "wb") as f:
             f.write(content)

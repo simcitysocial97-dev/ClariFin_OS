@@ -64,7 +64,9 @@ ignore_missing_imports = true
 # Domain layer: enforce strict type checking (models, repositories)
 [[tool.mypy.overrides]]
 module = [
+    "src.repositories",
     "src.repositories.*",
+    "src.models",
     "src.models.*",
 ]
 ignore_errors = false

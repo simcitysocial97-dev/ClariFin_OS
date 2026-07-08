@@ -13,8 +13,8 @@ import sqlite3
 
 from fastapi import APIRouter, HTTPException
 
-from config import settings
-from logger import log_error, log_info
+from src.config import settings
+from src.logger import log_error, log_info
 
 router = APIRouter()
 

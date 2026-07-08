@@ -2,7 +2,21 @@
 
 ## Current Mission
 
-**Add Account domain model (feat)** — COMPLETED
+**Mypy Strict Mode Enablement** — COMPLETED
+
+## Router Type Fixes (2026-09-07)
+- ✅ Fixed `pyproject.toml` mypy module patterns: added `src.models` and `src.repositories` (without wildcard) to match packages correctly
+- ✅ Fixed `src/routers/members.py`: Added `-> dict` return type annotations on `get_members` and `create_member`
+- ✅ Fixed `src/routers/export.py`: Added `-> StreamingResponse` return type annotation
+- ✅ Fixed `src/routers/cashflow.py`: Added `-> dict` return type annotation
+- ✅ Fixed `src/routers/import_router.py`: Added null-safety for `file.filename` (using `or ""` fallback), fixed `amount_float` to use `0.0` instead of `None`
+- ✅ Fixed `src/health.py`: Changed relative imports to absolute imports (`from config` → `from src.config`)
+- ✅ Fixed `src/logger.py`: Changed relative imports to absolute imports (`from config` → `from src.config`)
+- ✅ Cleaned unused imports (`uuid`) and missing newlines with `ruff --fix`
+
+## Mypy Strict Mode Enablement (2026-09-07)
+- ✅ **Validated**: `mypy src/models src/repositories src/routers` passes with 0 errors (42 source files)
+- ✅ **Validated**: `ruff check src/models src/repositories src/routers` passes
 
 ## Account Domain Model Changes (2026-09-07)
 - ✅ Created `src/models/account.py` with `Account(DomainModel)` (id, name, type: AccountType Literal, initial_balance: Money) + `from_db_row()` factory mapping `initial_balance_paise` → `Money`

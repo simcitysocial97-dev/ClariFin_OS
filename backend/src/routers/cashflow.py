@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api", tags=["cashflow"])
 def get_cashflow_monthly(
     months: int = Query(default=6, ge=1, le=12),
     member: str | None = Query(default=None),
-):
+) -> dict:
     """
     Returns month-by-month income and expense aggregation.
     All monetary values in paise (INTEGER).
