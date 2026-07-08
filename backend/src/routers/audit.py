@@ -1,10 +1,7 @@
 """Audit and integrity verification endpoints."""
 from fastapi import APIRouter, HTTPException
 
-from engines.ledger_audit_engine import (
-    run_full_audit,
-)
-from src.common import DB_PATH
+from src.repositories import AuditRepository
 
 router = APIRouter(prefix="/api/audit", tags=["audit"])
 
@@ -24,7 +21,8 @@ def api_audit_report():
         }
     """
     try:
-        report = run_full_audit(DB_PATH)
+        repo = AuditRepository()
+        report = repo.run_full_audit()
         return report
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

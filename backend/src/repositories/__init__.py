@@ -1,5 +1,6 @@
 """Repository layer for domain-specific data access."""
 from .account_repository import AccountRepository
+from .audit_repository import AuditRepository
 from .bank_repository import BankRepository
 from .base import BaseRepository
 from .cashflow_repository import CashflowRepository
@@ -13,6 +14,7 @@ from .transaction_repository import TransactionRepository
 
 __all__ = [
     "AccountRepository",
+    "AuditRepository",
     "BaseRepository",
     "CashflowRepository",
     "InvestmentRepository",

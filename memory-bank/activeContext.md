@@ -2,13 +2,18 @@
 
 ## Current Mission
 
-**Phase 3B.6: ReconciliationRepository** — COMPLETED
+**Phase 3B.7: AuditRepository** — COMPLETED
+
+## Phase 3B.7 Changes (2026-07-08)
+- Created `src/repositories/audit_repository.py` with AuditRepository wrapper
+- Wrapped method: run_full_audit
+- Updated `routers/audit.py` to use AuditRepository instead of direct DB_PATH
+- Exported AuditRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.6 Changes (2026-07-08)
 - Created `src/repositories/reconciliation_repository.py` with ReconciliationRepository wrapper
 - Wrapped methods: get_reconciliations, get_pending_reconciliations, insert_reconciliation, confirm_reconciliation, reject_reconciliation, get_confirmed_transfer_ids
 - Updated `routers/reconciliation.py` to use ReconciliationRepository instead of get_db()
-- Exported ReconciliationRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.5 Changes (2026-07-08)
 - Created `src/repositories/transaction_repository.py` with TransactionRepository wrapper
