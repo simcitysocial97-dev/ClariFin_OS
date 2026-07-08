@@ -2,13 +2,18 @@
 
 ## Current Mission
 
-**Phase 3B.7: AuditRepository** — COMPLETED
+**Phase 3B.8: BehaviorRepository** — COMPLETED
+
+## Phase 3B.8 Changes (2026-07-08)
+- Created `src/repositories/behavior_repository.py` with BehaviorRepository wrapper
+- Wrapped methods: compute_profile, get_cached_profile, set_cached_profile, generate_insights
+- Updated `routers/behavior.py` to use BehaviorRepository instead of direct DB_PATH
+- Exported BehaviorRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.7 Changes (2026-07-08)
 - Created `src/repositories/audit_repository.py` with AuditRepository wrapper
 - Wrapped method: run_full_audit
 - Updated `routers/audit.py` to use AuditRepository instead of direct DB_PATH
-- Exported AuditRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.6 Changes (2026-07-08)
 - Created `src/repositories/reconciliation_repository.py` with ReconciliationRepository wrapper

@@ -1,11 +1,6 @@
 """Behavioral analytics and insights endpoints."""
 from fastapi import APIRouter, HTTPException
 
-from engines.behavior_engine import (
-    compute_behavior_profile,
-    get_cached_behavior_profile,
-    set_cached_behavior_profile,
-)
 from engines.insight_generator import (
     generate_behavioral_insights,
     generate_summary_text,
@@ -15,7 +10,7 @@ from engines.nudge_engine import (
     get_nudge_summary,
     get_top_nudge,
 )
-from src.common import DB_PATH
+from src.repositories import BehaviorRepository
 
 router = APIRouter(prefix="/api/behavior", tags=["behavior"])
 
@@ -37,14 +32,15 @@ def api_behavior_summary():
         }
     """
     try:
+        repo = BehaviorRepository()
         # Check cache first
-        cached = get_cached_behavior_profile(DB_PATH)
+        cached = repo.get_cached_profile()
         if cached is not None:
             return cached
 
         # Compute and cache
-        profile = compute_behavior_profile(DB_PATH)
-        set_cached_behavior_profile(DB_PATH, profile)
+        profile = repo.compute_profile()
+        repo.set_cached_profile(profile)
         return profile
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -66,13 +62,14 @@ def api_behavior_score():
         }
     """
     try:
+        repo = BehaviorRepository()
         # Check cache first
-        cached = get_cached_behavior_profile(DB_PATH)
+        cached = repo.get_cached_profile()
         if cached is not None:
             profile = cached
         else:
-            profile = compute_behavior_profile(DB_PATH)
-            set_cached_behavior_profile(DB_PATH, profile)
+            profile = repo.compute_profile()
+            repo.set_cached_profile(profile)
 
         indices = profile.get("behavioral_indices", {})
 
@@ -109,13 +106,14 @@ def api_behavior_insights():
         }
     """
     try:
+        repo = BehaviorRepository()
         # Check cache first
-        cached = get_cached_behavior_profile(DB_PATH)
+        cached = repo.get_cached_profile()
         if cached is not None:
             profile = cached
         else:
-            profile = compute_behavior_profile(DB_PATH)
-            set_cached_behavior_profile(DB_PATH, profile)
+            profile = repo.compute_profile()
+            repo.set_cached_profile(profile)
 
         insights = generate_behavioral_insights(profile)
         nudges = generate_nudges(profile)
