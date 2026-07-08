@@ -2,7 +2,13 @@
 
 ## Current Mission
 
-**Phase 3B.5: TransactionRepository** — COMPLETED
+**Phase 3B.6: ReconciliationRepository** — COMPLETED
+
+## Phase 3B.6 Changes (2026-07-08)
+- Created `src/repositories/reconciliation_repository.py` with ReconciliationRepository wrapper
+- Wrapped methods: get_reconciliations, get_pending_reconciliations, insert_reconciliation, confirm_reconciliation, reject_reconciliation, get_confirmed_transfer_ids
+- Updated `routers/reconciliation.py` to use ReconciliationRepository instead of get_db()
+- Exported ReconciliationRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.5 Changes (2026-07-08)
 - Created `src/repositories/transaction_repository.py` with TransactionRepository wrapper
@@ -10,7 +16,6 @@
 - Updated `routers/transactions.py` to use TransactionRepository instead of get_db()
 - Updated `routers/export.py` to use TransactionRepository instead of get_db()
 - Exported TransactionRepository in `src/repositories/__init__.py`
-- All endpoints tested and working: /api/transactions, /api/categories, /api/analytics, /api/export/csv
 
 ## Phase 3B.4 Changes (2026-07-08)
 - Added `get_networth_data` method to `db.py` returning accounts, loans, investments, statements

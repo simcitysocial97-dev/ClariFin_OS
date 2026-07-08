@@ -7,6 +7,7 @@ from .investment_repository import InvestmentRepository
 from .loan_repository import LoanRepository
 from .member_repository import MemberRepository
 from .networth_repository import NetWorthRepository
+from .reconciliation_repository import ReconciliationRepository
 from .statement_repository import StatementRepository
 from .transaction_repository import TransactionRepository
 
@@ -19,6 +20,7 @@ __all__ = [
     "MemberRepository",
     "NetWorthRepository",
     "BankRepository",
+    "ReconciliationRepository",
     "StatementRepository",
     "TransactionRepository",
 ]

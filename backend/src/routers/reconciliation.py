@@ -2,7 +2,8 @@
 from fastapi import APIRouter, HTTPException, Query
 
 from engines.reconciliation_engine import find_potential_matches
-from src.common import DB_PATH, format_inr, get_db
+from src.common import DB_PATH, format_inr
+from src.repositories import ReconciliationRepository
 
 router = APIRouter(prefix="/api/reconciliations", tags=["reconciliation"])
 
@@ -18,8 +19,8 @@ def api_get_reconciliations(status: str | None = None):
         status: Optional filter ('pending', 'confirmed', 'rejected')
     """
     try:
-        db = get_db()
-        reconciliations = db.get_reconciliations(status)
+        repo = ReconciliationRepository()
+        reconciliations = repo.get_reconciliations(status)
 
         # Enrich with display fields
         for r in reconciliations:
@@ -79,8 +80,8 @@ def api_create_reconciliation(
     Uses INSERT OR IGNORE for idempotency.
     """
     try:
-        db = get_db()
-        inserted = db.insert_reconciliation(
+        repo = ReconciliationRepository()
+        inserted = repo.insert_reconciliation(
             debit_txn_id=debit_txn_id,
             credit_txn_id=credit_txn_id,
             debit_account_id=debit_account_id,
@@ -103,12 +104,12 @@ def api_batch_insert_reconciliations():
     Uses INSERT OR IGNORE for idempotency - existing records are not duplicated.
     """
     try:
-        db = get_db()
+        repo = ReconciliationRepository()
         matches = find_potential_matches(DB_PATH)
 
         inserted_count = 0
         for m in matches:
-            inserted = db.insert_reconciliation(
+            inserted = repo.insert_reconciliation(
                 debit_txn_id=m["debit_txn_id"],
                 credit_txn_id=m["credit_txn_id"],
                 debit_account_id=m["debit_account_id"],
@@ -139,8 +140,8 @@ def api_confirm_reconciliation(reconciliation_id: int):
     Phase 2B: Updates reconciliation.status only. No ledger mutation.
     """
     try:
-        db = get_db()
-        updated = db.confirm_reconciliation(reconciliation_id)
+        repo = ReconciliationRepository()
+        updated = repo.confirm_reconciliation(reconciliation_id)
         if not updated:
             raise HTTPException(status_code=404, detail="Reconciliation not found or not pending")
         return {"success": True, "status": "confirmed"}
@@ -158,8 +159,8 @@ def api_reject_reconciliation(reconciliation_id: int):
     Phase 2B: Updates reconciliation.status only. No ledger mutation.
     """
     try:
-        db = get_db()
-        updated = db.reject_reconciliation(reconciliation_id)
+        repo = ReconciliationRepository()
+        updated = repo.reject_reconciliation(reconciliation_id)
         if not updated:
             raise HTTPException(status_code=404, detail="Reconciliation not found or not pending")
         return {"success": True, "status": "rejected"}
