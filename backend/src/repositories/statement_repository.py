@@ -89,7 +89,7 @@ class StatementRepository(BaseRepository):
             )
             row = cur.fetchone()
             if row:
-                return row[0]
+                return int(row[0])
 
             cur = conn.execute(
                 """
@@ -99,7 +99,7 @@ class StatementRepository(BaseRepository):
                 (bank, card_last4 or None, period_from or None, period_to or None, file_name),
             )
             conn.commit()
-        return cur.lastrowid or 0
+        return int(cur.lastrowid or 0)
 
     def get_duplicate_check(self, bank: str, file_name: str) -> bool:
         """Returns True if (bank, file_name) already exists in statements."""
@@ -116,7 +116,7 @@ class StatementRepository(BaseRepository):
         with self._get_conn() as conn:
             cur = conn.execute("SELECT COUNT(*) FROM statements")
             count = cur.fetchone()[0]
-        return count
+        return int(count)
 
     def update_statement_metadata(self, statement_id: int, metadata: dict) -> None:
         """Update statement with all extracted metadata."""

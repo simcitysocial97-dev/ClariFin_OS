@@ -1,5 +1,4 @@
 """Behavior domain repository."""
-from src.repositories.base import DB_PATH
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,
@@ -13,6 +12,7 @@ from src.engines.nudge_engine import (
     get_nudge_summary,
     get_top_nudge,
 )
+from src.repositories.base import DB_PATH
 
 
 class BehaviorRepository:

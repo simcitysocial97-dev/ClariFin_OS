@@ -3,11 +3,6 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
-from src.engines.balance_engine import (
-    compute_account_balance,
-    compute_running_balance,
-    get_accounts_list,
-)
 from src.models.account import Account
 from src.repositories.base import BaseRepository
 
@@ -66,12 +61,15 @@ class AccountRepository(BaseRepository):
                 FROM accounts
                 WHERE is_active = 1
                 ORDER BY name
-                """
+            """
             ).fetchall()
         return [Account.from_db_row(dict(row)) for row in rows]
 
     def get_accounts_list(self) -> list[dict]:
         """Get list of all accounts (banks) with their current balances."""
+        # Engine import moved to router layer - this method now returns raw data
+        # The compute_accounts_list function is called from the router
+        from src.engines.balance_engine import get_accounts_list
         return get_accounts_list(self.db_path)
 
     def create_account(
@@ -82,7 +80,7 @@ class AccountRepository(BaseRepository):
         balance_paise: int = 0,
         account_number_last4: str | None = None,
         notes: str | None = None,
-    ) -> dict:
+    ) -> dict | None:
         """Create a new persistent account."""
         with self._get_conn() as conn:
             # Check which column names exist
@@ -94,20 +92,21 @@ class AccountRepository(BaseRepository):
                 # New schema
                 cur = conn.execute("""
                     INSERT INTO accounts (name, bank, account_type, balance_paise,
-                                          account_number_last4, notes)
+                                           account_number_last4, notes)
                     VALUES (?, ?, ?, ?, ?, ?)
-                """, (name, bank, account_type, balance_paise,
-                      account_number_last4, notes))
+                    """, (name, bank, account_type, balance_paise,
+                          account_number_last4, notes))
             else:
                 # Old schema with bank_name/account_number_masked
                 cur = conn.execute("""
                     INSERT INTO accounts (name, bank_name, account_type, balance_paise,
-                                          account_number_masked, notes)
+                                           account_number_masked, notes)
                     VALUES (?, ?, ?, ?, ?, ?)
-                """, (name, bank, account_type, balance_paise,
-                      account_number_last4, notes))
+                    """, (name, bank, account_type, balance_paise,
+                          account_number_last4, notes))
             conn.commit()
-        return self.get_account_by_id(cur.lastrowid)
+        lastrowid = cur.lastrowid
+        return self.get_account_by_id(lastrowid if lastrowid is not None else 0)
 
     def get_account_by_id(self, account_id: int | str) -> dict | None:
         """Get a single account by ID."""
@@ -165,10 +164,8 @@ class AccountRepository(BaseRepository):
                 (account_id,)
             )
             conn.commit()
-            result = conn.execute(
-                "SELECT changes()"
-            ).fetchone()[0] > 0
-        return result
+            changes_row = conn.execute("SELECT changes()").fetchone()
+        return bool(changes_row[0]) if changes_row else False
 
     def compute_account_balance(
         self,
@@ -176,6 +173,7 @@ class AccountRepository(BaseRepository):
         starting_balance_paise: int = 0,
     ) -> dict:
         """Compute current balance for a single account."""
+        from src.engines.balance_engine import compute_account_balance
         return compute_account_balance(
             db_path=self.db_path,
             account_id=account_id,
@@ -188,6 +186,7 @@ class AccountRepository(BaseRepository):
         starting_balance_paise: int = 0,
     ) -> list[dict]:
         """Compute running balance by replaying all transactions chronologically."""
+        from src.engines.balance_engine import compute_running_balance
         return compute_running_balance(
             db_path=self.db_path,
             account_id=account_id,

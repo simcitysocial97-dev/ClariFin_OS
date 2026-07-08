@@ -1,6 +1,6 @@
 """Audit domain repository."""
-from src.repositories.base import DB_PATH
 from src.engines.ledger_audit_engine import run_full_audit
+from src.repositories.base import DB_PATH
 
 
 class AuditRepository:

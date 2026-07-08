@@ -5,7 +5,10 @@ from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from .formatting import format_inr
 
 
-def _parse_amount_paise(amount_str) -> int:
+from typing import Any, Union
+
+
+def _parse_amount_paise(amount_str: Union[str, int, float]) -> int:
     """
     Parse amount to integer paise (1 rupee = 100 paise).
     Raises ValueError on invalid input (no silent failures).

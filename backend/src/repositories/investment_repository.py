@@ -53,12 +53,12 @@ class InvestmentRepository(BaseRepository):
         with self._get_conn() as conn:
             cur = conn.execute("""
                 INSERT INTO investments (name, type, platform, invested_paise,
-                                         current_value_paise, units, purchase_date,
-                                         maturity_date, linked_account_id, notes)
+                                       current_value_paise, units, purchase_date,
+                                       maturity_date, linked_account_id, notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (name, investment_type, platform, invested_paise,
-                  current_value_paise, units, purchase_date,
-                  maturity_date, linked_account_id, notes))
+                """, (name, investment_type, platform, invested_paise,
+                      current_value_paise, units, purchase_date,
+                      maturity_date, linked_account_id, notes))
             conn.commit()
         return cur.lastrowid or 0
 
@@ -70,7 +70,7 @@ class InvestmentRepository(BaseRepository):
             ).fetchone()
         return dict(row) if row else None
 
-    def update(self, investment_id: int | str, **kwargs) -> dict | None:
+    def update(self, investment_id: int | str, **kwargs: str | int | float | None) -> dict | None:
         """Update investment fields. Only updates provided fields."""
         allowed = {
             'name', 'units', 'current_price_paise',
@@ -99,7 +99,5 @@ class InvestmentRepository(BaseRepository):
                 (investment_id,)
             )
             conn.commit()
-            result = conn.execute(
-                "SELECT changes()"
-            ).fetchone()[0] > 0
-        return result
+            changes_row = conn.execute("SELECT changes()").fetchone()
+        return bool(changes_row[0]) if changes_row else False

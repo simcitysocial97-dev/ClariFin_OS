@@ -5,6 +5,7 @@ If it grows beyond 200, split by sub-domain.
 """
 import hashlib
 from collections import defaultdict
+from typing import Any
 
 from src.models.transaction import Transaction
 from src.repositories.base import BaseRepository
@@ -91,8 +92,8 @@ class TransactionRepository(BaseRepository):
         Supported filter keys: date_from, date_to, bank, category, min_amount, max_amount, type
         """
         filters = filters or {}
-        conditions = []
-        params = []
+        conditions: list[str] = []
+        params: list[Any] = []
 
         if filters.get("date_from"):
             conditions.append("t.date >= ?")
@@ -143,8 +144,8 @@ class TransactionRepository(BaseRepository):
         Order: transactions.id ASC (insertion order = chronological per statement).
         """
         filters = filters or {}
-        conditions = []
-        params = []
+        conditions: list[str] = []
+        params: list[Any] = []
 
         if filters.get("search"):
             conditions.append("t.description LIKE ?")
@@ -266,7 +267,7 @@ class TransactionRepository(BaseRepository):
         with self._get_conn() as conn:
             cur = conn.execute("SELECT COUNT(*) FROM transactions")
             count = cur.fetchone()[0]
-        return count
+        return int(count)
 
     def get_monthly_summary(self) -> list[dict]:
         """
@@ -300,8 +301,8 @@ class TransactionRepository(BaseRepository):
         Returns per-category aggregates:
           [{category, total_amount, count}]
         """
-        conditions = []
-        params = []
+        conditions: list[str] = []
+        params: list[Any] = []
         if date_from:
             conditions.append("date >= ?")
             params.append(date_from)
@@ -339,7 +340,7 @@ class TransactionRepository(BaseRepository):
             )
             rows = cur.fetchall()
 
-        data: dict = defaultdict(lambda: defaultdict(float))
+        data: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
         for row in rows:
             if row["type"] != "debit":
                 continue
@@ -417,9 +418,9 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def get_confirmed_transfer_ids(self) -> list[tuple]:
+    def get_confirmed_transfer_ids(self) -> list[tuple[int, int]]:
         """
-        Returns list of (debit_txn_id, credit_txn_id) for confirmed reconciliations.
+        Returns list of (debit_txn_id, credit_txn_id) tuples for confirmed reconciliations.
         """
         with self._get_conn() as conn:
             cur = conn.execute("""
@@ -427,7 +428,7 @@ class TransactionRepository(BaseRepository):
                 FROM reconciliations
                 WHERE status = 'confirmed'
             """)
-            rows = [(row[0], row[1]) for row in cur.fetchall()]
+            rows = [(int(row[0]), int(row[1])) for row in cur.fetchall()]
         return rows
 
     def insert_csv_transactions(
@@ -457,7 +458,7 @@ class TransactionRepository(BaseRepository):
                 """,
                 (bank, file_name or f"{source}_import_{len(transactions)}_txns", source),
             )
-            statement_id = cur.lastrowid
+            statement_id = cur.lastrowid or 0
 
             inserted = 0
             for seq, txn in enumerate(transactions):

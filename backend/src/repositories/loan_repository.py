@@ -59,10 +59,10 @@ class LoanRepository(BaseRepository):
                     emi_paise, disbursed_date, gold_weight_grams, gold_purity,
                     interest_type, notes
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (name, lender, loan_type, principal_paise,
-                  outstanding_paise, interest_rate, tenure_months,
-                  emi_paise, disbursed_date, gold_weight_grams, gold_purity,
-                  interest_type, notes))
+                """, (name, lender, loan_type, principal_paise,
+                      outstanding_paise, interest_rate, tenure_months,
+                      emi_paise, disbursed_date, gold_weight_grams, gold_purity,
+                      interest_type, notes))
             conn.commit()
         return cur.lastrowid or 0
 
@@ -74,7 +74,7 @@ class LoanRepository(BaseRepository):
             ).fetchone()
         return dict(row) if row else None
 
-    def update(self, loan_id: int | str, **kwargs) -> dict | None:
+    def update(self, loan_id: int | str, **kwargs: str | int | float | None) -> dict | None:
         """Update loan fields. Only updates provided fields."""
         allowed = {
             'name', 'lender', 'outstanding_paise', 'interest_rate',
@@ -104,7 +104,5 @@ class LoanRepository(BaseRepository):
                 (loan_id,)
             )
             conn.commit()
-            result = conn.execute(
-                "SELECT changes()"
-            ).fetchone()[0] > 0
-        return result
+            changes_row = conn.execute("SELECT changes()").fetchone()
+        return bool(changes_row[0]) if changes_row else False

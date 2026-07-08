@@ -5,13 +5,13 @@ If it grows beyond 200, split by sub-domain.
 """
 from datetime import datetime, timedelta
 
-from src.repositories.base import DB_PATH
 from src.common import enrich_transaction
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,
     set_cached_behavior_profile,
 )
+from src.repositories.base import DB_PATH
 from src.repositories.transaction_repository import TransactionRepository
 
 

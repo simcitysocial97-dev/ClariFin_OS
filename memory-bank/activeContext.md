@@ -66,10 +66,14 @@
 - SELECT/UPDATE/INSERT in `db.py`: Only schema/migration operations (no domain SQL)
 - FinanceDB imports in routers: None (all use repositories)
 
-## Forensic Verification Results (2026-08-07)
-- ✅ All SQL queries confined to `_create_tables()` and `_run_migrations()` (schema/migration operations only)
-- ✅ No repository imports in `db.py` (correct dependency direction enforced)
-- ✅ Table count: 8 (statements, transactions, members, import_mappings, reconciliations, accounts, loans, investments)
-- ✅ Trigger count: 2 (prevent_transaction_update, prevent_transaction_delete)
-- ✅ Ruff lint: All checks passed
-- ✅ Mypy type check: Success, no issues found
+## Mypy Strict Mode Enablement (2026-09-07)
+- ✅ Updated `pyproject.toml` with correct module patterns for mypy overrides
+- ✅ Fixed repository type annotations: added `Any` import for params, proper `int()` casts for `lastrowid`/`fetchone()[0]`
+- ✅ Fixed `get_confirmed_transfer_ids` return type to `list[tuple[int, int]]`
+- ✅ Fixed `delete` methods to properly handle `changes_row` with `bool(changes_row[0]) if changes_row else False`
+- ✅ Added type annotation for `**kwargs` in `update` methods: `**kwargs: str | int | float | None`
+- ✅ Fixed `create_account` return type to `dict | None`
+- ✅ Fixed `src/common/calculations.py` import block and `_parse_amount_paise` type annotation
+- ✅ **Validated**: `mypy src/models src/repositories` passes with 0 errors
+- ✅ **Validated**: `ruff check --fix src/models src/repositories` passes (fixed import order, trailing newlines)
+- ✅ **Validated**: Frontend `npm run type-check` passes

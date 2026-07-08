@@ -43,7 +43,28 @@ ignore_missing_imports = true
 
 # Per-file overrides for type annotation issues
 [[tool.mypy.overrides]]
-module = ["categorizer", "statement_extractor", "csv_importer", "metadata_extractor", "db", "api", "engines.nudge_engine", "engines.insight_generator", "engines.behavior_engine", "engines.balance_engine", "errors"]
+module = ["src.categorizer", "src.statement_extractor", "src.csv_importer", "src.metadata_extractor", "src.db", "src.api", "src.engines.nudge_engine", "src.engines.insight_generator", "src.engines.behavior_engine", "src.engines.balance_engine", "src.errors"]
 disallow_untyped_defs = false
 check_untyped_defs = false
 ignore_errors = true
+
+# Common layer utilities (have mixed typing)
+[[tool.mypy.overrides]]
+module = ["src.common.*"]
+disallow_untyped_defs = false
+check_untyped_defs = false
+
+# Routers: allow missing imports and untyped defs for now (phase 1 - focus on models/repositories)
+[[tool.mypy.overrides]]
+module = ["src.routers.*", "src.health", "src.config", "src.logger"]
+disallow_untyped_defs = false
+check_untyped_defs = false
+ignore_missing_imports = true
+
+# Domain layer: enforce strict type checking (models, repositories)
+[[tool.mypy.overrides]]
+module = [
+    "src.repositories.*",
+    "src.models.*",
+]
+ignore_errors = false
