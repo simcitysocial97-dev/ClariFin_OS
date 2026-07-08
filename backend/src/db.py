@@ -791,12 +791,8 @@ class FinanceDB:
 
     def get_banks(self) -> list[str]:
         """Returns list of distinct bank names in the database."""
-        conn = self._get_conn()
-        cur = conn.execute("SELECT DISTINCT bank FROM statements ORDER BY bank")
-        rows = [row[0] for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.bank_repository import BankRepository
+        return BankRepository(self.db_path).get_all()
 
     def get_statement_count(self) -> int:
         """Returns total number of imported statements."""
