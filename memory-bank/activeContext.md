@@ -2,7 +2,14 @@
 
 ## Current Mission
 
-**Prompt 4A.13: Create Transaction domain model** — COMPLETED
+**Prompt 4A.14: Update TransactionRepository to return Transaction models** — COMPLETED
+
+## Prompt 4A.14 Changes (2026-08-07)
+- ✅ Added `get_all()` and `get_all_with_bank()` to `TransactionRepository` returning `list[Transaction]`
+- ✅ Both map canonical `amount_paise` → `Money` and normalize stored Indian/ISO dates via `_parse_date_to_ymd` (now also accepts `YYYY-MM-DD`)
+- ✅ Left existing dict-returning methods (`get_all_transactions`, `get_all_transactions_with_bank`) and monthly/category summaries untouched (non-breaking)
+- ✅ Cleaned lint on `src/models/base.py` (dropped unused datetime import), `src/models/transaction.py` (`X | None`, import order)
+- ✅ Validation: `repo.get_all()[0]` → `<class 'src.models.transaction.Transaction'>`, `₹55865.00`, `IMPS TRANSFER`
 
 ## Prompt 4A.13 Changes (2026-08-07)
 - ✅ Created `src/models/transaction.py` with `Transaction(DomainModel)` entity (id, statement_id, date, description, amount: Money, category, member, bank?)

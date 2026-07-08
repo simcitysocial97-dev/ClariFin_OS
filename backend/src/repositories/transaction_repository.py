@@ -6,17 +6,30 @@ If it grows beyond 200, split by sub-domain.
 import hashlib
 from collections import defaultdict
 
+from src.models.transaction import Transaction
 from src.repositories.base import BaseRepository
 
 
 def _parse_date_to_ymd(date_str: str) -> str:
-    """Parse Indian date formats to YYYY-MM-DD for sorting/grouping."""
+    """Parse Indian date formats to YYYY-MM-DD for sorting/grouping.
+
+    Returns the input unchanged if it is already in YYYY-MM-DD form.
+    Returns '' for any value that cannot be normalized.
+    """
     from datetime import datetime
+    s = (date_str or "").strip()
+    if not s:
+        return ""
+    # Already ISO — pass through unchanged (accepts YYYY-MM-DD and YYYY/MM/DD)
+    for iso_fmt in ("%Y-%m-%d", "%Y/%m/%d"):
+        try:
+            return datetime.strptime(s, iso_fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            continue
     formats = [
         "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
         "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
     ]
-    s = date_str.strip()
     for fmt in formats:
         try:
             return datetime.strptime(s, fmt).strftime("%Y-%m-%d")
@@ -27,6 +40,50 @@ def _parse_date_to_ymd(date_str: str) -> str:
 
 class TransactionRepository(BaseRepository):
     """Repository for transaction operations."""
+
+    def get_all(self) -> list[Transaction]:
+        """
+        Return all transactions as Transaction domain models.
+
+        Maps the canonical `amount_paise` column into the `Money` value object.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    t.id, t.statement_id, t.date, t.description,
+                    t.amount_paise, t.category, t.member, s.bank
+                FROM transactions t
+                LEFT JOIN statements s ON t.statement_id = s.id
+                ORDER BY t.date DESC, t.id DESC
+                """
+            ).fetchall()
+        return [
+            Transaction.from_db_row({**dict(row), "date": _parse_date_to_ymd(row["date"])})
+            for row in rows
+        ]
+
+    def get_all_with_bank(self) -> list[Transaction]:
+        """
+        Return all transactions joined with statement bank info as Transaction models.
+
+        Mirrors get_all_transactions_with_bank but wraps rows in Transaction.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    t.id, t.statement_id, t.date, t.description,
+                    t.amount_paise, t.category, t.member, s.bank
+                FROM transactions t
+                LEFT JOIN statements s ON t.statement_id = s.id
+                ORDER BY t.id ASC
+                """
+            ).fetchall()
+        return [
+            Transaction.from_db_row({**dict(row), "date": _parse_date_to_ymd(row["date"])})
+            for row in rows
+        ]
 
     def get_all_transactions(self, filters: dict | None = None) -> list[dict]:
         """

@@ -1,5 +1,4 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import date, datetime
 
 
 class DomainModel(BaseModel):

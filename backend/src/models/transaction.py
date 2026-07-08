@@ -1,6 +1,6 @@
 from datetime import date
+
 from src.models.base import DomainModel, Money
-from typing import Optional
 
 
 class Transaction(DomainModel):
@@ -13,7 +13,7 @@ class Transaction(DomainModel):
     amount: Money
     category: str
     member: str
-    bank: Optional[str] = None
+    bank: str | None = None
 
     @classmethod
     def from_db_row(cls, row: dict) -> "Transaction":
