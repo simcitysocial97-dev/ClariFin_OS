@@ -2,20 +2,18 @@
 
 ## Current Mission
 
-**Prompt 4A.3 & 4A.4: Move Investment & Loan SQL** — COMPLETED
+**Prompt 4A.7: Move Transaction SQL** — COMPLETED
 
-## Prompt 4A.3 Changes (2026-07-08)
-- Moved `get_all_investments()`, `create_investment()`, `get_investment_by_id()`, `update_investment()`, `delete_investment()` SQL from `db.py` into `src/repositories/investment_repository.py`
-- Updated `db.py` to delegate to `InvestmentRepository` (backward compatibility)
-- All methods tested and working
-
-## Prompt 4A.4 Changes (2026-07-08)
-- Moved `get_all_loans()`, `create_loan()`, `get_loan_by_id()`, `update_loan()`, `delete_loan()` SQL from `db.py` into `src/repositories/loan_repository.py`
-- Updated `db.py` to delegate to `LoanRepository` (backward compatibility)
-- All methods tested and working
+## Prompt 4A.7 Changes (2026-07-08)
+- Added missing `get_monthly_summary()` and `get_category_summary()` delegations to `db.py`
+- Added missing `get_all_statements()`, `get_statement_count()`, `get_transaction_count()`, `get_banks()` methods to `db.py`
+- All transaction methods now delegate to `TransactionRepository` (backward compatibility)
+- All methods tested and working: 4337 transactions, 24 monthly summaries, 21 category summaries
 
 ## Next Steps
-- Continue moving other SQL methods into repositories as needed
+- Run full test suite to verify all changes
+- Commit and push changes
+```
 
 ## Phase 3B.9 Changes (2026-07-08)
 - Created `src/repositories/dashboard_repository.py` with DashboardRepository wrapper (cross-domain orchestration)
