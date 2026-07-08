@@ -46,13 +46,14 @@ class PrepaymentRequest(BaseModel):
 
 @router.get("/loans")
 def get_loans():
-    """Get all active loans with computed summary."""
+    """Get all active loans (domain models) with computed summary."""
     repo = LoanRepository()
-    loans = repo.get_all()
+    loans = repo.get_all_models()
+    raw = repo.get_all()
 
-    total_outstanding = sum(ln['outstanding_paise'] for ln in loans)
-    total_principal = sum(ln['principal_paise'] for ln in loans)
-    total_emi = sum(ln['emi_paise'] or 0 for ln in loans)
+    total_outstanding = sum(r['outstanding_paise'] for r in raw)
+    total_principal = sum(loan.principal.paise for loan in loans)
+    total_emi = sum(loan.emi.paise for loan in loans)
 
     return {
         "loans": loans,

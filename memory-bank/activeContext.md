@@ -10,6 +10,13 @@
 - ✅ Added `AccountRepository.get_all() -> list[Account]` (aliases `balance_paise AS initial_balance_paise`, `account_type AS type`); existing dict methods untouched (non-breaking)
 - ✅ Validation: ruff clean; runtime import + model construction OK; 0 new mypy errors (pre-existing mypy warnings in engines/db/other repos unchanged)
 
+## Loan Domain Model Changes (2026-09-07)
+- ✅ Created `src/models/loan.py` with `Loan(DomainModel)` (id, name, principal: Money, interest_rate: float, start_date: date, tenure_months: int, emi: Money) + `from_db_row()` mapping `principal_paise`/`emi_paise` → `Money`, `disbursed_date` → `start_date`
+- ✅ Exported `Loan` from `src/models/__init__.py`
+- ✅ Added `LoanRepository.get_all_models() -> list[Loan]` (COALESCE disbursed_date→start_date, emi_paise→0); kept `get_all() -> list[dict]` for net worth + summary (non-breaking)
+- ✅ Updated `routers/loans.py` GET `/loans` to return `Loan` models; summary still derives `total_outstanding_paise` from raw dicts
+- ✅ Validation: ruff clean on all 4 files; model construction + serialization OK; 0 new mypy errors (pre-existing warnings in engines/db/other repos unchanged)
+
 ## Current Mission (Prior)
 
 **Prompt 4A.15: Update transactions router to use Transaction models** — COMPLETED

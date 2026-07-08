@@ -1,4 +1,5 @@
 """Loan domain repository."""
+from src.models.loan import Loan
 from src.repositories.base import BaseRepository
 
 
@@ -6,7 +7,7 @@ class LoanRepository(BaseRepository):
     """Repository for loan-related operations."""
 
     def get_all(self) -> list[dict]:
-        """Get all active loans."""
+        """Get all active loans (raw dicts, for summaries / net worth)."""
         with self._get_conn() as conn:
             rows = conn.execute("""
                 SELECT id, name, lender, loan_type, principal_paise,
@@ -18,6 +19,27 @@ class LoanRepository(BaseRepository):
                 ORDER BY created_at DESC
             """).fetchall()
         return [dict(r) for r in rows]
+
+    def get_all_models(self) -> list[Loan]:
+        """
+        Return all active loans as Loan domain models.
+
+        Maps canonical paise columns (principal_paise, emi_paise) into Money
+        value objects. `disbursed_date` is exposed to the model as `start_date`.
+        COALESCE guards nullable columns so the required model fields always
+        receive valid values.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, name, principal_paise, interest_rate,
+                       COALESCE(disbursed_date, '1970-01-01') AS start_date,
+                       tenure_months,
+                       COALESCE(emi_paise, 0) AS emi_paise
+                FROM loans
+                WHERE status = 'active'
+                ORDER BY created_at DESC
+            """).fetchall()
+        return [Loan.from_db_row(dict(r)) for r in rows]
 
     def create(self, name: str, lender: str, loan_type: str, principal_paise: int,
                outstanding_paise: int, interest_rate: float,
