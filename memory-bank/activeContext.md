@@ -38,6 +38,11 @@
 - ✅ Exported all three from `src/models/__init__.py`; existing dict-returning repo methods untouched (non-breaking)
 - ✅ Validation: ruff clean on 7 files; mypy clean on 3 new models; runtime construction + `get_all_models` presence OK
 
+## Service Layer Infrastructure (2026-09-07)
+- ✅ Created `src/api_common.py` exporting `DB_PATH` for shared configuration
+- ✅ Created `src/services/__init__.py` with `BaseService` export
+- ✅ Created `src/services/base.py` with `BaseService` class (orchestrates repos/engines, no SQL)
+
 ## Current Mission (Prior)
 
 **Prompt 4A.15: Update transactions router to use Transaction models** — COMPLETED
