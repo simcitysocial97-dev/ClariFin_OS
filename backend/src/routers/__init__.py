@@ -1,4 +1,4 @@
 """API routers organized by domain."""
-from . import health, members
+from . import banks, health, members
 
-__all__ = ["health", "members"]
+__all__ = ["banks", "health", "members"]

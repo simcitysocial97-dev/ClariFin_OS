@@ -146,11 +146,13 @@ register_error_handlers(app)
 # Register health router
 health.register_health_routes(app)
 
-# Register members router
-from src.routers import members
+# Register routers
+from src.routers import banks, members
 
+app.include_router(banks.router)
 app.include_router(members.router)
 
+# Banks routes → routers/banks.py
 # Members routes → routers/members.py
 
 
@@ -722,15 +724,7 @@ def get_cards():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/banks")
-def get_banks():
-    """Get list of banks."""
-    try:
-        db = get_db()
-        banks = db.get_banks()
-        return {"banks": banks}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# Banks routes → routers/banks.py
 
 
 @app.get("/api/categories/list")
