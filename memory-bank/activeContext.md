@@ -2,14 +2,21 @@
 
 ## Current Mission
 
-**Phase 3B.4: NetWorthRepository** — COMPLETED
+**Phase 3B.5: TransactionRepository** — COMPLETED
+
+## Phase 3B.5 Changes (2026-07-08)
+- Created `src/repositories/transaction_repository.py` with TransactionRepository wrapper
+- Wrapped methods: get_all_transactions, get_all_transactions_with_bank, insert_transactions, get_monthly_summary, get_category_summary, get_category_totals_by_month, bulk_update_category, get_uncategorized_patterns, get_confirmed_transfer_ids
+- Updated `routers/transactions.py` to use TransactionRepository instead of get_db()
+- Updated `routers/export.py` to use TransactionRepository instead of get_db()
+- Exported TransactionRepository in `src/repositories/__init__.py`
+- All endpoints tested and working: /api/transactions, /api/categories, /api/analytics, /api/export/csv
 
 ## Phase 3B.4 Changes (2026-07-08)
 - Added `get_networth_data` method to `db.py` returning accounts, loans, investments, statements
 - Created `src/repositories/networth_repository.py` with NetWorthRepository wrapper
 - Updated `routers/networth.py` to use NetWorthRepository instead of direct FinanceDB calls
 - Exported NetWorthRepository in `src/repositories/__init__.py`
-- All endpoints tested and working: /api/networth
 
 ## Phase 3B.3 Changes (2026-07-08)
 - Added `get_monthly_cashflow` method to `db.py` for month-by-month income/expense aggregation

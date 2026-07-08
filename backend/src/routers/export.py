@@ -4,7 +4,8 @@ import io
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
-from src.common import clean_description, format_date_display, get_db
+from src.common import clean_description, format_date_display
+from src.repositories import TransactionRepository
 
 router = APIRouter(prefix="/api", tags=["export"])
 
@@ -19,7 +20,7 @@ def export_csv(
 ):
     """Export transactions to CSV."""
     try:
-        db = get_db()
+        repo = TransactionRepository()
         filters = {}
         if search:
             filters["search"] = search
@@ -32,7 +33,7 @@ def export_csv(
         if member and member != "All":
             filters["member"] = member
 
-        raw = db.get_all_transactions_with_bank(filters)
+        raw = repo.get_all_transactions_with_bank(filters)
 
         output = io.StringIO()
         output.write("Date,Bank,Description,Amount,Type,Category\n")

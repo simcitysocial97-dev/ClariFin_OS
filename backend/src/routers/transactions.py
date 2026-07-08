@@ -9,10 +9,10 @@ from src.common import (
     compute_is_large,
     enrich_transaction,
     format_inr,
-    get_db,
     percentage_change,
 )
 from src.core.mappers import transaction_mapper
+from src.repositories import TransactionRepository
 
 router = APIRouter(prefix="/api", tags=["transactions"])
 
@@ -29,7 +29,7 @@ def get_transactions(
 ):
     """Get transactions with filters using DTO mapper."""
     try:
-        db = get_db()
+        repo = TransactionRepository()
         filters = {}
         if search:
             filters["search"] = search
@@ -42,7 +42,7 @@ def get_transactions(
         if member and member != "All":
             filters["member"] = member
 
-        raw = db.get_all_transactions_with_bank(filters)
+        raw = repo.get_all_transactions_with_bank(filters)
 
         # Convert to DTOs using mapper
         response = transaction_mapper.TransactionMapper.to_list_response(
@@ -65,17 +65,17 @@ def get_overview(
 ):
     """Get overview metrics and charts."""
     try:
-        db = get_db()
+        repo = TransactionRepository()
         filters = {}
         if member and member != "All":
             filters["member"] = member
 
-        raw = db.get_all_transactions_with_bank(filters)
+        raw = repo.get_all_transactions_with_bank(filters)
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
         # Get confirmed transfer transaction IDs
         confirmed_transfer_ids = set()
-        for debit_id, credit_id in db.get_confirmed_transfer_ids():
+        for debit_id, credit_id in repo.get_confirmed_transfer_ids():
             confirmed_transfer_ids.add(debit_id)
             confirmed_transfer_ids.add(credit_id)
 
@@ -182,12 +182,12 @@ def get_categories(
 ):
     """Get category summary and breakdown."""
     try:
-        db = get_db()
+        repo = TransactionRepository()
         filters = {}
         if member and member != "All":
             filters["member"] = member
 
-        raw = db.get_all_transactions_with_bank(filters)
+        raw = repo.get_all_transactions_with_bank(filters)
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
         if exclude_transfers:
@@ -241,7 +241,7 @@ def get_categories(
             ][:50]
 
         # Uncategorized patterns
-        raw_uncat = db.get_uncategorized_patterns(limit=30)
+        raw_uncat = repo.get_uncategorized_patterns(limit=30)
         uncategorized_patterns = [
             {
                 "description": p.get("description", ""),
@@ -268,12 +268,12 @@ def get_analytics(
 ):
     """Get analytics data."""
     try:
-        db = get_db()
+        repo = TransactionRepository()
         filters = {}
         if member and member != "All":
             filters["member"] = member
 
-        raw = db.get_all_transactions_with_bank(filters)
+        raw = repo.get_all_transactions_with_bank(filters)
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
         if exclude_transfers:
