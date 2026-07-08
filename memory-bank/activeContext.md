@@ -48,9 +48,16 @@ Three-layer automatic coverage configured:
 - ✅ Watcher live and auto-updating on file changes
 - ✅ Git hooks installed for commit-time sync
 
+## CGC Token Efficiency Audit (2026-07-08)
+- Updated `.clinerules` to clarify CGC tool usage:
+  - Added `analyze_code_relationships` and `execute_cypher_query` to Graph-First Search
+  - Added Rule 2.5: CGC Relationship Queries with `find_callers`, `find_callees`, `class_hierarchy`
+  - Added Rule 2.6: CGC Cypher Queries for complex queries
+  - Modified Phase A to use CGC `find_code` for schema discovery before reading files
+- **Next**: Monitor token usage in subsequent tasks to verify improvements
+
 ## Technical Debt (UPDATED)
 - **enrich_transaction()** — Deprecated but still used for behavioral insights (non-monetary)
 - **compute_is_large()** — Disabled (uses deprecated `amount` field)
 - **formatRupees / formatRupeesCompact** — Deprecated, kept for backward compatibility (**PENDING REMOVAL**)
 - **Empty modular directories**: `app/`, `audits/`, `db/`, `parsers/`, `reports/`, `routers/`, `utils/` — shell directories with no .py files
-- **Unused extraction modules**: `camelot_extractor.py`, `hybrid_extractor.py` — exist on disk, not wired into upload flow

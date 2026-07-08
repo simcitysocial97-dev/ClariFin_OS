@@ -14,8 +14,14 @@ You must manage the memory bank autonomously. **Do not wait for the user to tell
 ---
 
 ## 2. WORKSPACE & CGC MCP PROTOCOL
-- **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `search_code`) to map classes, dependencies, and call stacks. NEVER use `read_file` or `list_dir` for bulk discovery.
-- **Server Autonomy:** Before starting any task, check if services are active. If offline, open a persistent background terminal tab and run `npm run start:all` from the root directory. 
+- **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) to locate and map classes, dependencies, and call stacks. NEVER use `read_file` or `list_dir` for BULK DISCOVERY. Use `read_file` ONLY when you need the actual source code of a specific, already-identified target.
+- **CGC Relationship Queries:** Use `analyze_code_relationships` to find callers/callees before reading files. This prevents reading multiple files to trace code flow.
+  - Use `find_callers` to find who calls a function
+  - Use `find_callees` to find what a function calls
+  - Use `class_hierarchy` to understand inheritance
+- **CGC Cypher Queries:** For complex queries (inheritance, module dependencies, cross-cutting concerns), use `execute_cypher_query` to extract precise data without file reads.
+  - Example: `MATCH (c:Class {name: 'FinanceDB'})-[:INHERITS]->(p:Class) RETURN p.name`
+  - Example: `MATCH (f:Function) WHERE f.name CONTAINS 'transaction' RETURN f.name, f.path`
 - **Git Commit Protocol:** After passing validation and updating `activeContext.md`, execute:
   1. `git add -A`
   2. `git commit -m "[type]: [description]"` (semantic style)
@@ -25,7 +31,8 @@ You must manage the memory bank autonomously. **Do not wait for the user to tell
 
 ## 3. MANDATORY 3-PHASE EXECUTION LOOP
 Wrap EVERY user request inside this strict execution pattern:
-- **Phase A (Schema Discovery):** Locate and read the explicit data contracts/schemas first (e.g., `@frontend/types/api.ts` or `backend/app/models/`). Lock these definitions into your immediate context window.
+- **Phase A (Schema Discovery):** Use CGC `find_code` to locate schema files, then read ONLY the specific type definitions needed. Do NOT read entire files - extract only the relevant type definitions.
+  - Example: `find_code("TransactionDTO")` to locate the schema, then read only the class definition
 - **Phase B (Delta-Only Generation):** Execute code modifications strictly matching the Phase A schemas. Enforce financial guardrails.
 - **Phase C (Autonomous Verification Gate):** Run full frontend and backend validation suites. Self-correct errors iteratively until logs clear cleanly.
 
