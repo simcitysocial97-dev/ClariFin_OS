@@ -2,13 +2,12 @@
 
 ## Current Mission
 
-**Prompt 4A.1: Move Member SQL** — COMPLETED
+**Prompt 4A.2: Move Bank SQL** — COMPLETED
 
-## Prompt 4A.1 Changes (2026-07-08)
-- Added `_get_conn()` method to `src/repositories/base.py` for direct connection access
-- Moved `get_members()` and `add_member()` SQL from `db.py` into `src/repositories/member_repository.py`
-- Updated `db.py` to delegate to `MemberRepository` (backward compatibility)
-- All methods tested: `get_all()` and `create()` work correctly via repository and via `FinanceDB` wrapper
+## Prompt 4A.2 Changes (2026-07-08)
+- Moved `get_banks()` SQL from `db.py` into `src/repositories/bank_repository.py`
+- Updated `db.py` to delegate to `BankRepository` (backward compatibility)
+- All methods tested: `get_all()` works correctly via repository and via `FinanceDB` wrapper
 
 ## Next Steps
 - Continue moving other SQL methods into repositories as needed

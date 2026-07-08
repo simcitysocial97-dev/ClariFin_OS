@@ -1615,20 +1615,8 @@ class FinanceDB:
 
     def get_all_loans(self) -> list[dict]:
         """Get all active loans."""
-        conn = self._get_conn()
-        rows = conn.execute("""
-            SELECT id, name, lender, loan_type, principal_paise,
-                   outstanding_paise, interest_rate, tenure_months,
-                   emi_paise, disbursed_date, next_emi_date,
-                   gold_weight_grams, gold_purity, interest_type,
-                   is_active, notes, created_at, updated_at
-            FROM loans
-            WHERE is_active = 1
-            ORDER BY created_at DESC
-        """).fetchall()
-        if self._conn is None:
-            conn.close()
-        return [dict(r) for r in rows]
+        from src.repositories.loan_repository import LoanRepository
+        return LoanRepository(self.db_path).get_all()
 
     def create_loan(self, loan_id: int | str, name: str, lender: str,
                     loan_type: str, principal_paise: int,
@@ -1641,89 +1629,35 @@ class FinanceDB:
                     interest_type: str = 'reducing',
                     notes: str | None = None) -> dict:
         """Create a new loan record."""
-        conn = self._get_conn()
-        # Use auto-increment for existing schema (id is INTEGER PRIMARY KEY)
-        cur = conn.execute("""
-            INSERT INTO loans (
-                name, lender, loan_type, principal_paise,
-                outstanding_paise, interest_rate, tenure_months,
-                emi_paise, disbursed_date, next_emi_date,
-                gold_weight_grams, gold_purity, interest_type, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (name, lender, loan_type, principal_paise,
-              outstanding_paise, interest_rate, tenure_months,
-              emi_paise, disbursed_date, next_emi_date,
-              gold_weight_grams, gold_purity, interest_type, notes))
-        conn.commit()
-        if self._conn is None:
-            conn.close()
-        return self.get_loan_by_id(cur.lastrowid)
+        from src.repositories.loan_repository import LoanRepository
+        return LoanRepository(self.db_path).create(
+            name, lender, loan_type, principal_paise,
+            outstanding_paise, interest_rate, disbursed_date,
+            tenure_months, emi_paise, next_emi_date,
+            gold_weight_grams, gold_purity, interest_type, notes
+        )
 
     def get_loan_by_id(self, loan_id: int | str) -> dict | None:
         """Get a single loan by ID."""
-        conn = self._get_conn()
-        row = conn.execute(
-            "SELECT * FROM loans WHERE id = ?", (loan_id,)
-        ).fetchone()
-        if self._conn is None:
-            conn.close()
-        return dict(row) if row else None
+        from src.repositories.loan_repository import LoanRepository
+        return LoanRepository(self.db_path).get_by_id(loan_id)
 
     def update_loan(self, loan_id: int | str, **kwargs) -> dict | None:
         """Update loan fields. Only updates provided fields."""
-        allowed = {
-            'name', 'lender', 'outstanding_paise', 'interest_rate',
-            'tenure_months', 'emi_paise', 'next_emi_date',
-            'gold_weight_grams', 'gold_purity', 'interest_type', 'notes'
-        }
-        updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
-        if not updates:
-            return self.get_loan_by_id(loan_id)
-
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
-        set_clause += ", updated_at = datetime('now')"
-        values = list(updates.values()) + [loan_id]
-
-        conn = self._get_conn()
-        conn.execute(
-            f"UPDATE loans SET {set_clause} WHERE id = ?", values
-        )
-        conn.commit()
-        if self._conn is None:
-            conn.close()
-        return self.get_loan_by_id(loan_id)
+        from src.repositories.loan_repository import LoanRepository
+        return LoanRepository(self.db_path).update(loan_id, **kwargs)
 
     def delete_loan(self, loan_id: int | str) -> bool:
         """Soft delete a loan (set is_active to 0)."""
-        conn = self._get_conn()
-        conn.execute(
-            "UPDATE loans SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
-            (loan_id,)
-        )
-        conn.commit()
-        result = conn.execute(
-            "SELECT changes()"
-        ).fetchone()[0] > 0
-        if self._conn is None:
-            conn.close()
-        return result
+        from src.repositories.loan_repository import LoanRepository
+        return LoanRepository(self.db_path).delete(loan_id)
 
     # ─── INVESTMENTS ─────────────────────────────────────────────────────────
 
     def get_all_investments(self) -> list[dict]:
         """Get all active investments."""
-        conn = self._get_conn()
-        rows = conn.execute("""
-            SELECT id, name, investment_type, units, buy_price_paise,
-                   current_price_paise, invested_paise, current_value_paise,
-                   as_of_date, is_active, notes, created_at, updated_at
-            FROM investments
-            WHERE is_active = 1
-            ORDER BY current_value_paise DESC
-        """).fetchall()
-        if self._conn is None:
-            conn.close()
-        return [dict(r) for r in rows]
+        from src.repositories.investment_repository import InvestmentRepository
+        return InvestmentRepository(self.db_path).get_all()
 
     def create_investment(self, investment_id: int | str, name: str,
                           investment_type: str, invested_paise: int,
@@ -1751,51 +1685,18 @@ class FinanceDB:
 
     def get_investment_by_id(self, investment_id: int | str) -> dict | None:
         """Get a single investment by ID."""
-        conn = self._get_conn()
-        row = conn.execute(
-            "SELECT * FROM investments WHERE id = ?", (investment_id,)
-        ).fetchone()
-        if self._conn is None:
-            conn.close()
-        return dict(row) if row else None
+        from src.repositories.investment_repository import InvestmentRepository
+        return InvestmentRepository(self.db_path).get_by_id(investment_id)
 
     def update_investment(self, investment_id: int | str, **kwargs) -> dict | None:
         """Update investment fields. Only updates provided fields."""
-        allowed = {
-            'name', 'units', 'current_price_paise',
-            'current_value_paise', 'as_of_date', 'notes'
-        }
-        updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
-        if not updates:
-            return self.get_investment_by_id(investment_id)
-
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
-        set_clause += ", last_updated = datetime('now')"
-        values = list(updates.values()) + [investment_id]
-
-        conn = self._get_conn()
-        conn.execute(
-            f"UPDATE investments SET {set_clause} WHERE id = ?", values
-        )
-        conn.commit()
-        if self._conn is None:
-            conn.close()
-        return self.get_investment_by_id(investment_id)
+        from src.repositories.investment_repository import InvestmentRepository
+        return InvestmentRepository(self.db_path).update(investment_id, **kwargs)
 
     def delete_investment(self, investment_id: int | str) -> bool:
         """Soft delete an investment."""
-        conn = self._get_conn()
-        conn.execute(
-            "UPDATE investments SET is_active = 0, last_updated = datetime('now') WHERE id = ?",
-            (investment_id,)
-        )
-        conn.commit()
-        result = conn.execute(
-            "SELECT changes()"
-        ).fetchone()[0] > 0
-        if self._conn is None:
-            conn.close()
-        return result
+        from src.repositories.investment_repository import InvestmentRepository
+        return InvestmentRepository(self.db_path).delete(investment_id)
 
     def get_networth_data(self) -> dict:
         """
