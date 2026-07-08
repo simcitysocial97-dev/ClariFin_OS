@@ -12,7 +12,21 @@ class StatementRepository(BaseRepository):
 
     def get_all_statements(self) -> list[dict]:
         """Get all statements with computed transaction counts and totals."""
-        return self._db().get_all_statements()
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT
+                    s.id, s.bank, s.card_last4,
+                    s.statement_period_from, s.statement_period_to,
+                    s.file_name, s.imported_at,
+                    COUNT(t.id) AS transaction_count,
+                    COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount ELSE 0 END), 0) AS total_debit,
+                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) AS total_credit
+                FROM statements s
+                LEFT JOIN transactions t ON t.statement_id = s.id
+                GROUP BY s.id
+                ORDER BY s.imported_at DESC
+            """).fetchall()
+        return [dict(r) for r in rows]
 
     def get_all_statements_with_metadata(self) -> list[dict]:
         """
@@ -20,7 +34,24 @@ class StatementRepository(BaseRepository):
         Includes: total_amount_due, minimum_amount_due, payment_due_date,
                   validation_status, validation_difference, card_last4.
         """
-        return self._db().get_all_statements_with_metadata()
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT
+                    s.id, s.bank, s.card_last4,
+                    s.statement_period_from, s.statement_period_to,
+                    s.file_name, s.imported_at,
+                    s.total_amount_due, s.minimum_amount_due,
+                    s.payment_due_date, s.statement_date,
+                    s.validation_status, s.validation_difference,
+                    COUNT(t.id) AS transaction_count,
+                    COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount ELSE 0 END), 0) AS total_debit,
+                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) AS total_credit
+                FROM statements s
+                LEFT JOIN transactions t ON t.statement_id = s.id
+                GROUP BY s.id
+                ORDER BY s.imported_at DESC
+            """).fetchall()
+        return [dict(r) for r in rows]
 
     def insert_statement(
         self,
@@ -35,33 +66,98 @@ class StatementRepository(BaseRepository):
         return the existing id without inserting.
         Returns statement_id (int).
         """
-        return self._db().insert_statement(
-            bank=bank,
-            file_name=file_name,
-            period_from=period_from,
-            period_to=period_to,
-            card_last4=card_last4,
-        )
+        with self._get_conn() as conn:
+            # Check if already exists
+            cur = conn.execute(
+                "SELECT id FROM statements WHERE bank = ? AND file_name = ?",
+                (bank, file_name),
+            )
+            row = cur.fetchone()
+            if row:
+                return row[0]
+
+            cur = conn.execute(
+                """
+                INSERT INTO statements (bank, card_last4, statement_period_from, statement_period_to, file_name)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (bank, card_last4 or None, period_from or None, period_to or None, file_name),
+            )
+            conn.commit()
+        return cur.lastrowid or 0
 
     def update_statement_metadata(self, statement_id: int, metadata: dict) -> None:
         """Update statement with all extracted metadata."""
-        return self._db().update_statement_metadata(statement_id, metadata)
+        with self._get_conn() as conn:
+            conn.execute("""
+                UPDATE statements SET
+                    total_amount_due = ?,
+                    minimum_amount_due = ?,
+                    payment_due_date = ?,
+                    statement_date = ?,
+                    card_last4 = COALESCE(?, card_last4),
+                    credit_limit = ?,
+                    opening_balance = ?,
+                    bill_cycle_start = ?,
+                    bill_cycle_end = ?
+                WHERE id = ?
+            """, (
+                metadata.get("total_amount_due"),
+                metadata.get("minimum_amount_due"),
+                metadata.get("due_date"),
+                metadata.get("statement_date"),
+                metadata.get("card_last4"),
+                metadata.get("credit_limit"),
+                metadata.get("opening_balance"),
+                metadata.get("bill_cycle_start"),
+                metadata.get("bill_cycle_end"),
+                statement_id,
+            ))
+            conn.commit()
 
     def update_validation_status(self, statement_id: int, status: str, difference: float) -> None:
         """Update validation status after comparing extracted sum vs total_due."""
-        return self._db().update_validation_status(statement_id, status, difference)
+        with self._get_conn() as conn:
+            conn.execute("""
+                UPDATE statements SET
+                    validation_status = ?,
+                    validation_difference = ?
+                WHERE id = ?
+            """, (status, difference, statement_id))
+            conn.commit()
 
     def get_statement_validation_summary(self) -> list[dict]:
         """Returns list of dicts for each statement with validation info."""
-        return self._db().get_statement_validation_summary()
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT
+                    s.id, s.bank, s.file_name,
+                    s.total_amount_due, s.minimum_amount_due,
+                    s.payment_due_date, s.statement_date, s.card_last4,
+                    s.validation_status, s.validation_difference,
+                    s.statement_period_from, s.statement_period_to,
+                    COUNT(t.id) as transaction_count,
+                    COALESCE(SUM(CASE WHEN t.type='debit' THEN t.amount ELSE 0 END), 0) as total_debit,
+                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) as total_credit
+                FROM statements s
+                LEFT JOIN transactions t ON t.statement_id = s.id
+                GROUP BY s.id
+                ORDER BY s.imported_at DESC
+            """).fetchall()
+        return [dict(r) for r in rows]
 
     def delete_statement(self, statement_id: int) -> None:
         """Delete a statement and all its transactions."""
-        return self._db().delete_statement(statement_id)
+        with self._get_conn() as conn:
+            conn.execute("DELETE FROM transactions WHERE statement_id = ?", (statement_id,))
+            conn.execute("DELETE FROM statements WHERE id = ?", (statement_id,))
+            conn.commit()
 
     def get_statement_pdf_path(self, statement_id: int) -> str | None:
         """Get the file_name for a statement."""
-        return self._db().get_statement_pdf_path(statement_id)
+        with self._get_conn() as conn:
+            row = conn.execute("SELECT file_name FROM statements WHERE id = ?", (statement_id,)).fetchone()
+        return row[0] if row else None
 
     def validate_statement(self, statement_id: int, claimed_balance_paise: int) -> dict:
         """Validate a statement's closing balance against computed balance."""
@@ -69,4 +165,6 @@ class StatementRepository(BaseRepository):
 
     def get_duplicate_check_by_filename(self, file_name: str) -> bool:
         """Returns True if file_name already exists in statements (any bank)."""
-        return self._db().get_duplicate_check_by_filename(file_name)
+        with self._get_conn() as conn:
+            row = conn.execute("SELECT 1 FROM statements WHERE file_name = ?", (file_name,)).fetchone()
+        return row is not None

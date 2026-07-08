@@ -878,25 +878,8 @@ class FinanceDB:
               file_name, imported_at, transaction_count, total_debit, total_credit.
         Order: imported_at DESC.
         """
-        sql = """
-            SELECT
-                s.id, s.bank, s.card_last4,
-                s.statement_period_from, s.statement_period_to,
-                s.file_name, s.imported_at,
-                COUNT(t.id) AS transaction_count,
-                COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount ELSE 0 END), 0) AS total_debit,
-                COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) AS total_credit
-            FROM statements s
-            LEFT JOIN transactions t ON t.statement_id = s.id
-            GROUP BY s.id
-            ORDER BY s.imported_at DESC
-        """
-        conn = self._get_conn()
-        cur = conn.execute(sql)
-        rows = [dict(row) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).get_all_statements()
 
     def bulk_update_category(
         self,
@@ -1023,97 +1006,33 @@ class FinanceDB:
 
     def update_statement_metadata(self, statement_id: int, metadata: dict) -> None:
         """Update statement with all extracted metadata."""
-        conn = self._get_conn()
-        conn.execute("""
-            UPDATE statements SET
-                total_amount_due = ?,
-                minimum_amount_due = ?,
-                payment_due_date = ?,
-                statement_date = ?,
-                card_last4 = COALESCE(?, card_last4),
-                credit_limit = ?,
-                opening_balance = ?,
-                bill_cycle_start = ?,
-                bill_cycle_end = ?
-            WHERE id = ?
-        """, (
-            metadata.get("total_amount_due"),
-            metadata.get("minimum_amount_due"),
-            metadata.get("due_date"),
-            metadata.get("statement_date"),
-            metadata.get("card_last4"),
-            metadata.get("credit_limit"),
-            metadata.get("opening_balance"),
-            metadata.get("bill_cycle_start"),
-            metadata.get("bill_cycle_end"),
-            statement_id,
-        ))
-        if self._conn is None:
-            conn.commit()
-            conn.close()
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).update_statement_metadata(statement_id, metadata)
 
     def update_validation_status(self, statement_id: int, status: str, difference: float) -> None:
         """Update validation status after comparing extracted sum vs total_due."""
-        conn = self._get_conn()
-        conn.execute("""
-            UPDATE statements SET
-                validation_status = ?,
-                validation_difference = ?
-            WHERE id = ?
-        """, (status, difference, statement_id))
-        if self._conn is None:
-            conn.commit()
-            conn.close()
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).update_validation_status(statement_id, status, difference)
 
     def get_statement_validation_summary(self) -> list[dict]:
         """Returns list of dicts for each statement with validation info."""
-        conn = self._get_conn()
-        cur = conn.execute("""
-            SELECT
-                s.id, s.bank, s.file_name,
-                s.total_amount_due, s.minimum_amount_due,
-                s.payment_due_date, s.statement_date, s.card_last4,
-                s.validation_status, s.validation_difference,
-                s.statement_period_from, s.statement_period_to,
-                COUNT(t.id) as transaction_count,
-                COALESCE(SUM(CASE WHEN t.type='debit' THEN t.amount ELSE 0 END), 0) as total_debit,
-                COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) as total_credit
-            FROM statements s
-            LEFT JOIN transactions t ON t.statement_id = s.id
-            GROUP BY s.id
-            ORDER BY s.imported_at DESC
-        """)
-        rows = [dict(row) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).get_statement_validation_summary()
 
     def delete_statement(self, statement_id: int) -> None:
         """Delete a statement and all its transactions."""
-        conn = self._get_conn()
-        conn.execute("DELETE FROM transactions WHERE statement_id = ?", (statement_id,))
-        conn.execute("DELETE FROM statements WHERE id = ?", (statement_id,))
-        if self._conn is None:
-            conn.commit()
-            conn.close()
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).delete_statement(statement_id)
 
     def get_statement_pdf_path(self, statement_id: int) -> str | None:
         """Get the file_name for a statement."""
-        conn = self._get_conn()
-        cur = conn.execute("SELECT file_name FROM statements WHERE id = ?", (statement_id,))
-        row = cur.fetchone()
-        if self._conn is None:
-            conn.close()
-        return row[0] if row else None
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).get_statement_pdf_path(statement_id)
 
     def get_duplicate_check_by_filename(self, file_name: str) -> bool:
         """Returns True if file_name already exists in statements (any bank)."""
-        conn = self._get_conn()
-        cur = conn.execute("SELECT 1 FROM statements WHERE file_name = ?", (file_name,))
-        result = cur.fetchone() is not None
-        if self._conn is None:
-            conn.close()
-        return result
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).get_duplicate_check_by_filename(file_name)
 
     def get_all_statements_with_metadata(self) -> list[dict]:
         """
@@ -1121,28 +1040,8 @@ class FinanceDB:
         Includes: total_amount_due, minimum_amount_due, payment_due_date,
                   validation_status, validation_difference, card_last4.
         """
-        sql = """
-            SELECT
-                s.id, s.bank, s.card_last4,
-                s.statement_period_from, s.statement_period_to,
-                s.file_name, s.imported_at,
-                s.total_amount_due, s.minimum_amount_due,
-                s.payment_due_date, s.statement_date,
-                s.validation_status, s.validation_difference,
-                COUNT(t.id) AS transaction_count,
-                COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount ELSE 0 END), 0) AS total_debit,
-                COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) AS total_credit
-            FROM statements s
-            LEFT JOIN transactions t ON t.statement_id = s.id
-            GROUP BY s.id
-            ORDER BY s.imported_at DESC
-        """
-        conn = self._get_conn()
-        cur = conn.execute(sql)
-        rows = [dict(row) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.statement_repository import StatementRepository
+        return StatementRepository(self.db_path).get_all_statements_with_metadata()
 
 
     # ----------------------------------------------------------
@@ -1487,128 +1386,33 @@ class FinanceDB:
 
     def get_all_accounts(self) -> list[dict]:
         """Get all active persistent accounts."""
-        conn = self._get_conn()
-        # Check which column names exist
-        cur = conn.execute("PRAGMA table_info(accounts)")
-        columns = [row[1] for row in cur.fetchall()]
-
-        # Use correct column names based on schema
-        if 'bank' in columns:
-            # New schema
-            rows = conn.execute("""
-                SELECT id, name, bank, account_type, account_number_last4,
-                       balance_paise, is_active, created_at, updated_at
-                FROM accounts
-                WHERE is_active = 1
-                ORDER BY bank, name
-            """).fetchall()
-        else:
-            # Old schema with bank_name/account_number_masked
-            rows = conn.execute("""
-                SELECT id, name, bank_name, account_type, account_number_masked,
-                       balance_paise, is_active, created_at, updated_at
-                FROM accounts
-                WHERE is_active = 1
-                ORDER BY bank_name, name
-            """).fetchall()
-
-        # Map DB column names to API field names
-        result = []
-        for r in rows:
-            d = dict(r)
-            d['bank'] = d.pop('bank_name', d.get('bank'))
-            d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
-            result.append(d)
-        if self._conn is None:
-            conn.close()
-        return result
+        from src.repositories.account_repository import AccountRepository
+        return AccountRepository(self.db_path).get_all_accounts()
 
     def create_account(self, account_id: int | str, name: str, bank: str,
                        account_type: str, balance_paise: int,
                        account_number_last4: str | None = None,
                        notes: str | None = None) -> dict:
         """Create a new persistent account."""
-        conn = self._get_conn()
-        # Check which column names exist
-        cur = conn.execute("PRAGMA table_info(accounts)")
-        columns = [row[1] for row in cur.fetchall()]
-
-        # Use correct column names based on schema
-        if 'bank' in columns:
-            # New schema
-            cur = conn.execute("""
-                INSERT INTO accounts (name, bank, account_type, balance_paise,
-                                      account_number_last4, notes)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (name, bank, account_type, balance_paise,
-                  account_number_last4, notes))
-        else:
-            # Old schema with bank_name/account_number_masked
-            cur = conn.execute("""
-                INSERT INTO accounts (name, bank_name, account_type, balance_paise,
-                                      account_number_masked, notes)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (name, bank, account_type, balance_paise,
-                  account_number_last4, notes))
-        conn.commit()
-        if self._conn is None:
-            conn.close()
-        return self.get_account_by_id(cur.lastrowid)
+        from src.repositories.account_repository import AccountRepository
+        return AccountRepository(self.db_path).create_account(
+            name, bank, account_type, balance_paise, account_number_last4, notes
+        )
 
     def get_account_by_id(self, account_id: int | str) -> dict | None:
         """Get a single account by ID."""
-        conn = self._get_conn()
-        row = conn.execute(
-            "SELECT * FROM accounts WHERE id = ?", (account_id,)
-        ).fetchone()
-        if self._conn is None:
-            conn.close()
-        if not row:
-            return None
-        d = dict(row)
-        # Map old column names to new for API compatibility
-        d['bank'] = d.pop('bank_name', d.get('bank'))
-        d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
-        return d
+        from src.repositories.account_repository import AccountRepository
+        return AccountRepository(self.db_path).get_account_by_id(account_id)
 
     def update_account(self, account_id: int | str, **kwargs) -> dict | None:
         """Update account fields. Only updates provided fields."""
-        allowed = {'name', 'bank', 'account_type', 'balance_paise',
-                   'account_number_last4', 'notes'}
-        updates = {}
-        for k, v in kwargs.items():
-            if k in allowed:
-                updates[k] = v
-        if not updates:
-            return self.get_account_by_id(account_id)
-
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
-        set_clause += ", updated_at = datetime('now')"
-        values = list(updates.values()) + [account_id]
-
-        conn = self._get_conn()
-        conn.execute(
-            f"UPDATE accounts SET {set_clause} WHERE id = ?", values
-        )
-        conn.commit()
-        if self._conn is None:
-            conn.close()
-        return self.get_account_by_id(account_id)
+        from src.repositories.account_repository import AccountRepository
+        return AccountRepository(self.db_path).update_account(account_id, **kwargs)
 
     def delete_account(self, account_id: int | str) -> bool:
         """Soft delete an account."""
-        conn = self._get_conn()
-        conn.execute(
-            "UPDATE accounts SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
-            (account_id,)
-        )
-        conn.commit()
-        result = conn.execute(
-            "SELECT changes()"
-        ).fetchone()[0] > 0
-        if self._conn is None:
-            conn.close()
-        return result
+        from src.repositories.account_repository import AccountRepository
+        return AccountRepository(self.db_path).delete_account(account_id)
 
 
     # ─── LOANS ────────────────────────────────────────────────────────────────

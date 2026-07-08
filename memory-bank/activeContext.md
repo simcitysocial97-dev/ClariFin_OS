@@ -2,12 +2,17 @@
 
 ## Current Mission
 
-**Prompt 4A.2: Move Bank SQL** — COMPLETED
+**Prompt 4A.3 & 4A.4: Move Investment & Loan SQL** — COMPLETED
 
-## Prompt 4A.2 Changes (2026-07-08)
-- Moved `get_banks()` SQL from `db.py` into `src/repositories/bank_repository.py`
-- Updated `db.py` to delegate to `BankRepository` (backward compatibility)
-- All methods tested: `get_all()` works correctly via repository and via `FinanceDB` wrapper
+## Prompt 4A.3 Changes (2026-07-08)
+- Moved `get_all_investments()`, `create_investment()`, `get_investment_by_id()`, `update_investment()`, `delete_investment()` SQL from `db.py` into `src/repositories/investment_repository.py`
+- Updated `db.py` to delegate to `InvestmentRepository` (backward compatibility)
+- All methods tested and working
+
+## Prompt 4A.4 Changes (2026-07-08)
+- Moved `get_all_loans()`, `create_loan()`, `get_loan_by_id()`, `update_loan()`, `delete_loan()` SQL from `db.py` into `src/repositories/loan_repository.py`
+- Updated `db.py` to delegate to `LoanRepository` (backward compatibility)
+- All methods tested and working
 
 ## Next Steps
 - Continue moving other SQL methods into repositories as needed
