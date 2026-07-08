@@ -86,6 +86,23 @@ class StatementRepository(BaseRepository):
             conn.commit()
         return cur.lastrowid or 0
 
+    def get_duplicate_check(self, bank: str, file_name: str) -> bool:
+        """Returns True if (bank, file_name) already exists in statements."""
+        with self._get_conn() as conn:
+            cur = conn.execute(
+                "SELECT 1 FROM statements WHERE bank = ? AND file_name = ?",
+                (bank, file_name),
+            )
+            result = cur.fetchone() is not None
+        return result
+
+    def get_statement_count(self) -> int:
+        """Get total count of statements."""
+        with self._get_conn() as conn:
+            cur = conn.execute("SELECT COUNT(*) FROM statements")
+            count = cur.fetchone()[0]
+        return count
+
     def update_statement_metadata(self, statement_id: int, metadata: dict) -> None:
         """Update statement with all extracted metadata."""
         with self._get_conn() as conn:
@@ -168,3 +185,10 @@ class StatementRepository(BaseRepository):
         with self._get_conn() as conn:
             row = conn.execute("SELECT 1 FROM statements WHERE file_name = ?", (file_name,)).fetchone()
         return row is not None
+
+    def get_banks(self) -> list[str]:
+        """Get distinct list of banks from statements."""
+        with self._get_conn() as conn:
+            cur = conn.execute("SELECT DISTINCT bank FROM statements ORDER BY bank")
+            banks = [row[0] for row in cur.fetchall()]
+        return banks

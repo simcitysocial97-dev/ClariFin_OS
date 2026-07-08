@@ -25,6 +25,9 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
+from repositories.statement_repository import StatementRepository
+from repositories.transaction_repository import TransactionRepository
+from repositories.reconciliation_repository import ReconciliationRepository
 from engines.reconciliation_engine import find_potential_matches
 from engines.balance_engine import compute_account_balance
 
@@ -40,10 +43,11 @@ def temp_db():
     os.close(fd)
     
     db = FinanceDB(db_path=db_path)
+    stmt_repo = StatementRepository(db_path)
     
     # Insert test statements for different accounts
-    stmt_a = db.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_b = db.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
+    stmt_a = stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
+    stmt_b = stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
     
     yield db, db_path
     
@@ -145,13 +149,14 @@ def test_deterministic_key_consistency(populated_db):
 def test_idempotent_insert(populated_db):
     """Test that INSERT OR IGNORE prevents duplicates."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
     matches = find_potential_matches(db_path)
     assert len(matches) > 0, "Should find matches"
     
     # Insert first match
     m = matches[0]
-    inserted_1 = db.insert_reconciliation(
+    inserted_1 = rec_repo.insert_reconciliation(
         debit_txn_id=m["debit_txn_id"],
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
@@ -164,7 +169,7 @@ def test_idempotent_insert(populated_db):
     assert inserted_1 is True, "First insert should succeed"
     
     # Try to insert same match again
-    inserted_2 = db.insert_reconciliation(
+    inserted_2 = rec_repo.insert_reconciliation(
         debit_txn_id=m["debit_txn_id"],
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
@@ -177,7 +182,7 @@ def test_idempotent_insert(populated_db):
     assert inserted_2 is False, "Second insert should be ignored"
     
     # Verify only one row exists
-    reconciliations = db.get_reconciliations()
+    reconciliations = rec_repo.get_reconciliations()
     keys = [r["deterministic_key"] for r in reconciliations]
     assert keys.count(m["deterministic_key"]) == 1, "Should have exactly one row"
 
@@ -185,12 +190,13 @@ def test_idempotent_insert(populated_db):
 def test_mirrored_pair_prevention(populated_db):
     """Test that mirrored pairs (A,B) and (B,A) are prevented."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
     matches = find_potential_matches(db_path)
     m = matches[0]
     
     # Insert with original order
-    inserted_1 = db.insert_reconciliation(
+    inserted_1 = rec_repo.insert_reconciliation(
         debit_txn_id=m["debit_txn_id"],
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
@@ -203,7 +209,7 @@ def test_mirrored_pair_prevention(populated_db):
     assert inserted_1 is True
     
     # Try to insert with reversed order
-    inserted_2 = db.insert_reconciliation(
+    inserted_2 = rec_repo.insert_reconciliation(
         debit_txn_id=m["credit_txn_id"],  # Reversed
         credit_txn_id=m["debit_txn_id"],  # Reversed
         debit_account_id=m["credit_account_id"],
@@ -223,12 +229,13 @@ def test_mirrored_pair_prevention(populated_db):
 def test_confirmed_row_immutable(populated_db):
     """Test that confirmed rows cannot be modified."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
     matches = find_potential_matches(db_path)
     m = matches[0]
     
     # Insert and confirm
-    db.insert_reconciliation(
+    rec_repo.insert_reconciliation(
         debit_txn_id=m["debit_txn_id"],
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
@@ -239,14 +246,14 @@ def test_confirmed_row_immutable(populated_db):
         match_type=m["match_type"],
     )
     
-    reconciliations = db.get_reconciliations()
+    reconciliations = rec_repo.get_reconciliations()
     rec_id = reconciliations[0]["id"]
     
     # Confirm
-    db.confirm_reconciliation(rec_id)
+    rec_repo.confirm_reconciliation(rec_id)
     
     # Get the confirmed row
-    confirmed = db.get_reconciliations(status="confirmed")
+    confirmed = rec_repo.get_reconciliations(status="confirmed")
     assert len(confirmed) == 1
     
     # Verify fields are unchanged
@@ -258,6 +265,7 @@ def test_confirmed_row_immutable(populated_db):
 def test_confirm_does_not_modify_transactions(populated_db):
     """Test that confirming reconciliation does NOT modify transaction records."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
     matches = find_potential_matches(db_path)
     m = matches[0]
@@ -270,7 +278,7 @@ def test_confirm_does_not_modify_transactions(populated_db):
     conn.close()
     
     # Insert and confirm
-    db.insert_reconciliation(
+    rec_repo.insert_reconciliation(
         debit_txn_id=m["debit_txn_id"],
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
@@ -281,8 +289,8 @@ def test_confirm_does_not_modify_transactions(populated_db):
         match_type=m["match_type"],
     )
     
-    reconciliations = db.get_reconciliations()
-    db.confirm_reconciliation(reconciliations[0]["id"])
+    reconciliations = rec_repo.get_reconciliations()
+    rec_repo.confirm_reconciliation(reconciliations[0]["id"])
     
     # Get transaction states after
     conn = sqlite3.connect(db_path)
@@ -302,6 +310,7 @@ def test_confirm_does_not_modify_transactions(populated_db):
 def test_balance_unaffected_by_reconciliation(populated_db):
     """Test that balance computation is unaffected by reconciliation state."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
     # Compute balance before reconciliation
     balance_before = compute_account_balance(db_path, "Account_A")
@@ -309,7 +318,7 @@ def test_balance_unaffected_by_reconciliation(populated_db):
     # Create and confirm reconciliations
     matches = find_potential_matches(db_path)
     for m in matches:
-        db.insert_reconciliation(
+        rec_repo.insert_reconciliation(
             debit_txn_id=m["debit_txn_id"],
             credit_txn_id=m["credit_txn_id"],
             debit_account_id=m["debit_account_id"],
@@ -321,8 +330,8 @@ def test_balance_unaffected_by_reconciliation(populated_db):
         )
     
     # Confirm all
-    for r in db.get_reconciliations(status="pending"):
-        db.confirm_reconciliation(r["id"])
+    for r in rec_repo.get_reconciliations(status="pending"):
+        rec_repo.confirm_reconciliation(r["id"])
     
     # Compute balance after reconciliation
     balance_after = compute_account_balance(db_path, "Account_A")
@@ -335,6 +344,7 @@ def test_balance_unaffected_by_reconciliation(populated_db):
 def test_replay_determinism_maintained(populated_db):
     """Test that ledger replay determinism is maintained after reconciliation."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
     # Get initial transaction order
     conn = sqlite3.connect(db_path)
@@ -351,7 +361,7 @@ def test_replay_determinism_maintained(populated_db):
     # Create and confirm reconciliations
     matches = find_potential_matches(db_path)
     for m in matches:
-        db.insert_reconciliation(
+        rec_repo.insert_reconciliation(
             debit_txn_id=m["debit_txn_id"],
             credit_txn_id=m["credit_txn_id"],
             debit_account_id=m["debit_account_id"],
@@ -362,8 +372,8 @@ def test_replay_determinism_maintained(populated_db):
             match_type=m["match_type"],
         )
     
-    for r in db.get_reconciliations(status="pending"):
-        db.confirm_reconciliation(r["id"])
+    for r in rec_repo.get_reconciliations(status="pending"):
+        rec_repo.confirm_reconciliation(r["id"])
     
     # Get transaction order after
     conn = sqlite3.connect(db_path)

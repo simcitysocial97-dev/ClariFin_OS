@@ -1,7 +1,9 @@
 """Base repository with common database access pattern."""
 import sqlite3
+from pathlib import Path
 
-from src.common.database import DB_PATH
+# Default database path (relative to this file)
+DB_PATH = str(Path(__file__).parent.parent / "data" / "finance.db")
 
 
 class BaseRepository:

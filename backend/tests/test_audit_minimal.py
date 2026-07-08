@@ -26,6 +26,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
+from repositories.statement_repository import StatementRepository
+from repositories.transaction_repository import TransactionRepository
 from engines.ledger_audit_engine import (
     validate_ledger_integrity,
     verify_hash_signatures,
@@ -56,11 +58,14 @@ def populated_db(temp_db):
     """Populate database with test transactions."""
     db, db_path = temp_db
     
+    stmt_repo = StatementRepository(db_path)
+    txn_repo = TransactionRepository(db_path)
+    
     # Insert a statement
-    stmt_id = db.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
+    stmt_id = stmt_repo.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
     
     # Insert transactions
-    db.insert_transactions(stmt_id, [
+    txn_repo.insert_transactions(stmt_id, [
         {"date": "01/01/2025", "description": "Test debit", "amount": 100.0, "type": "debit"},
         {"date": "02/01/2025", "description": "Test credit", "amount": 50.0, "type": "credit"},
     ])

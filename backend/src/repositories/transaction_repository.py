@@ -204,6 +204,13 @@ class TransactionRepository(BaseRepository):
             conn.commit()
         return inserted
 
+    def get_transaction_count(self) -> int:
+        """Get total count of transactions."""
+        with self._get_conn() as conn:
+            cur = conn.execute("SELECT COUNT(*) FROM transactions")
+            count = cur.fetchone()[0]
+        return count
+
     def get_monthly_summary(self) -> list[dict]:
         """
         Returns monthly aggregates:

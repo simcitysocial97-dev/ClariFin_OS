@@ -20,6 +20,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB, _parse_date_to_ymd
+from repositories.statement_repository import StatementRepository
+from repositories.transaction_repository import TransactionRepository
 from engines.balance_engine import compute_running_balance, compute_account_balance
 
 
@@ -36,10 +38,12 @@ def create_test_db():
 
 def populate_test_data(db_path: str):
     """Populate test database with sample transactions."""
-    db = FinanceDB(db_path)
+    FinanceDB(db_path)  # Ensure schema exists
+    stmt_repo = StatementRepository(db_path)
+    txn_repo = TransactionRepository(db_path)
     
     # Create statement
-    stmt_id = db.insert_statement(
+    stmt_id = stmt_repo.insert_statement(
         bank="TestBank",
         file_name="test_statement.pdf",
         period_from="01/01/2025",
@@ -55,8 +59,7 @@ def populate_test_data(db_path: str):
         {"date": "10/01/2025", "description": "Transaction A2", "amount": 75, "type": "debit"},  # Same date as A
     ]
     
-    db.insert_transactions(stmt_id, transactions)
-    return db
+    txn_repo.insert_transactions(stmt_id, transactions)
 
 
 # ============================================================
@@ -110,10 +113,12 @@ def test_insert_order_independence():
     
     db_path = create_test_db()
     try:
-        db = FinanceDB(db_path)
+        FinanceDB(db_path)  # Ensure schema exists
+        stmt_repo = StatementRepository(db_path)
+        txn_repo = TransactionRepository(db_path)
         
         # Create statement
-        stmt_id = db.insert_statement(
+        stmt_id = stmt_repo.insert_statement(
             bank="OrderTest",
             file_name="order_test.pdf",
         )
@@ -125,7 +130,7 @@ def test_insert_order_independence():
             {"date": "10/01/2025", "description": "First", "amount": 300, "type": "debit"},
         ]
         
-        db.insert_transactions(stmt_id, transactions)
+        txn_repo.insert_transactions(stmt_id, transactions)
         
         # Get running balance
         result = compute_running_balance(db_path, "OrderTest")
@@ -159,10 +164,12 @@ def test_duplicate_prevention():
     
     db_path = create_test_db()
     try:
-        db = FinanceDB(db_path)
+        FinanceDB(db_path)  # Ensure schema exists
+        stmt_repo = StatementRepository(db_path)
+        txn_repo = TransactionRepository(db_path)
         
         # Create statement
-        stmt_id = db.insert_statement(
+        stmt_id = stmt_repo.insert_statement(
             bank="DupTest",
             file_name="dup_test.pdf",
         )
@@ -170,11 +177,11 @@ def test_duplicate_prevention():
         # Insert transaction
         txn = {"date": "15/01/2025", "description": "Duplicate Test", "amount": 100, "type": "debit"}
         
-        count1 = db.insert_transactions(stmt_id, [txn])
+        count1 = txn_repo.insert_transactions(stmt_id, [txn])
         assert count1 == 1, f"First insert should succeed: {count1}"
         
         # Try to insert same transaction again
-        count2 = db.insert_transactions(stmt_id, [txn])
+        count2 = txn_repo.insert_transactions(stmt_id, [txn])
         assert count2 == 0, f"Second insert should be rejected: {count2}"
         
         # Verify only one transaction exists
@@ -295,10 +302,12 @@ def test_date_iso_migration():
     
     db_path = create_test_db()
     try:
-        db = FinanceDB(db_path)
+        FinanceDB(db_path)  # Ensure schema exists
+        stmt_repo = StatementRepository(db_path)
+        txn_repo = TransactionRepository(db_path)
         
         # Create statement
-        stmt_id = db.insert_statement(
+        stmt_id = stmt_repo.insert_statement(
             bank="DateTest",
             file_name="date_test.pdf",
         )
@@ -310,7 +319,7 @@ def test_date_iso_migration():
             {"date": "15 Jan 2025", "description": "DD Mon YYYY", "amount": 300, "type": "debit"},
         ]
         
-        db.insert_transactions(stmt_id, transactions)
+        txn_repo.insert_transactions(stmt_id, transactions)
         
         # Check date_iso values
         conn = sqlite3.connect(db_path)
@@ -345,18 +354,20 @@ def test_account_scoped_determinism():
     
     db_path = create_test_db()
     try:
-        db = FinanceDB(db_path)
+        FinanceDB(db_path)  # Ensure schema exists
+        stmt_repo = StatementRepository(db_path)
+        txn_repo = TransactionRepository(db_path)
         
         # Create two statements for same bank (account)
-        stmt_id1 = db.insert_statement(
+        stmt_id1 = stmt_repo.insert_statement(
             bank="AccountA",
             file_name="statement1.pdf",
         )
-        stmt_id2 = db.insert_statement(
+        stmt_id2 = stmt_repo.insert_statement(
             bank="AccountA",
             file_name="statement2.pdf",
         )
-        stmt_id3 = db.insert_statement(
+        stmt_id3 = stmt_repo.insert_statement(
             bank="AccountB",
             file_name="statement3.pdf",
         )
@@ -373,9 +384,9 @@ def test_account_scoped_determinism():
             {"date": "12/01/2025", "description": "B-Txn1", "amount": 300, "type": "debit"},
         ]
         
-        db.insert_transactions(stmt_id1, txns1)
-        db.insert_transactions(stmt_id2, txns2)
-        db.insert_transactions(stmt_id3, txns3)
+        txn_repo.insert_transactions(stmt_id1, txns1)
+        txn_repo.insert_transactions(stmt_id2, txns2)
+        txn_repo.insert_transactions(stmt_id3, txns3)
         
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row

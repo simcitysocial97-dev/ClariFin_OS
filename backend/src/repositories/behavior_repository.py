@@ -1,5 +1,5 @@
 """Behavior domain repository."""
-from src.common import DB_PATH
+from src.repositories.base import DB_PATH
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,
