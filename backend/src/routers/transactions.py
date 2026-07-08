@@ -2,7 +2,7 @@
 from collections import defaultdict
 from datetime import datetime
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from src.common import (
     DB_PATH,
@@ -56,7 +56,7 @@ def get_transactions(
         # Serialize to JSON
         return response.model_dump()
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/overview")
@@ -172,7 +172,7 @@ def get_overview(
             "behavioral_insights": insights,
         }
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/categories")
@@ -259,7 +259,7 @@ def get_categories(
             "uncategorized_patterns": uncategorized_patterns,
         }
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/analytics")
@@ -405,7 +405,7 @@ def get_analytics(
             "largest_transactions": largest_transactions,
         }
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/dashboard/summary")
@@ -425,6 +425,7 @@ def api_dashboard_summary():
         from engines.behavior_engine import (
             compute_behavior_profile,
             get_cached_behavior_profile,
+            set_cached_behavior_profile,
         )
 
         db = get_db()
@@ -435,6 +436,7 @@ def api_dashboard_summary():
             profile = cached
         else:
             profile = compute_behavior_profile(DB_PATH)
+            set_cached_behavior_profile(DB_PATH, profile)
 
         indices = profile.get("behavioral_indices", {})
 
@@ -465,6 +467,7 @@ def api_dashboard_summary():
         seven_day_txns = [t for t in transactions if t.get("parsed_date", "") >= seven_days_ago]
 
         prev_seven_start = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
+        (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
         prev_seven_txns = [t for t in transactions if prev_seven_start <= t.get("parsed_date", "") < seven_days_ago]
 
         current_spend = sum(t.get("amount", 0) for t in seven_day_txns if t.get("type") == "debit")
@@ -495,4 +498,4 @@ def api_dashboard_summary():
             "recent_transactions": recent,
         }
     except Exception as e:
-        raise Exception(e)
+        raise HTTPException(status_code=500, detail=str(e))
