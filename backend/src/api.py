@@ -19,7 +19,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 # Import health module for router registration
@@ -34,12 +33,10 @@ from core.mappers import transaction_mapper
 from csv_importer import CSVImporter
 
 # Import existing modules
-from db import FinanceDB
 from engines.balance_engine import (
     compute_account_balance,
     compute_running_balance,
     get_accounts_list,
-    validate_statement_balance,
 )
 from engines.behavior_engine import (
     compute_behavior_profile,
@@ -62,20 +59,17 @@ from engines.nudge_engine import (
 from engines.reconciliation_engine import (
     find_potential_matches,
 )
-from errors import NotFoundError, register_error_handlers
+from errors import register_error_handlers
 from metadata_extractor import MetadataExtractor
 
 # Import shared utilities from common module
 from src.common import (
     DB_PATH,
-    clean_description,
     compute_behavioral_insights,
     compute_is_large,
     enrich_transaction,
-    format_date_display,
     format_inr,
     get_db,
-    parse_date,
     percentage_change,
 )
 from statement_extractor import StatementExtractor
@@ -147,9 +141,21 @@ register_error_handlers(app)
 health.register_health_routes(app)
 
 # Register routers
-from src.routers import banks, cashflow, export, health, investments, loans, managed_accounts, networth, members
+from src.routers import (
+    banks,
+    cards_statements,
+    cashflow,
+    export,
+    health,
+    investments,
+    loans,
+    managed_accounts,
+    members,
+    networth,
+)
 
 app.include_router(banks.router)
+app.include_router(cards_statements.router)
 app.include_router(cashflow.router)
 app.include_router(export.router)
 app.include_router(investments.router)
