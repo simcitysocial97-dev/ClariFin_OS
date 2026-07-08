@@ -11,13 +11,13 @@ from src.common import (
     format_inr,
     percentage_change,
 )
-from src.core.mappers import transaction_mapper
+from src.models.transaction import Transaction
 from src.repositories import TransactionRepository
 
 router = APIRouter(prefix="/api", tags=["transactions"])
 
 
-@router.get("/transactions")
+@router.get("/transactions", response_model=list[Transaction])
 def get_transactions(
     search: str | None = None,
     bank: str | None = "All",
@@ -27,33 +27,13 @@ def get_transactions(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
 ):
-    """Get transactions with filters using DTO mapper."""
+    """Get transactions as Transaction domain models.
+
+    FastAPI auto-serializes the Pydantic Transaction models (Money nested as paise).
+    """
     try:
         repo = TransactionRepository()
-        filters = {}
-        if search:
-            filters["search"] = search
-        if bank and bank != "All":
-            filters["bank"] = bank
-        if category and category != "All":
-            filters["category"] = category
-        if type and type != "All":
-            filters["type"] = type
-        if member and member != "All":
-            filters["member"] = member
-
-        raw = repo.get_all_transactions_with_bank(filters)
-
-        # Convert to DTOs using mapper
-        response = transaction_mapper.TransactionMapper.to_list_response(
-            transactions=raw,
-            total=len(raw),
-            limit=limit,
-            offset=offset
-        )
-
-        # Serialize to JSON
-        return response.model_dump()
+        return repo.get_all()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

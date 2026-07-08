@@ -2,7 +2,13 @@
 
 ## Current Mission
 
-**Prompt 4A.14: Update TransactionRepository to return Transaction models** — COMPLETED
+**Prompt 4A.15: Update transactions router to use Transaction models** — COMPLETED
+
+## Prompt 4A.15 Changes (2026-08-07)
+- ✅ `/api/transactions` route now sets `response_model=list[Transaction]` and returns `repo.get_all()` (FastAPI auto-serializes `Money` as `{paise}`)
+- ✅ Removed now-unused `transaction_mapper` import from `src/routers/transactions.py`
+- ✅ Regenerated frontend `types/api-generated.ts` via `npm run gen:types` (now contains `Transaction` + `Money` schemas)
+- ✅ Validated live: `GET /api/transactions` returns `[{id, statement_id, date, description, amount:{paise}, category, member, bank}]`; OpenAPI `components.schemas.Transaction` shows nested `Money`
 
 ## Prompt 4A.14 Changes (2026-08-07)
 - ✅ Added `get_all()` and `get_all_with_bank()` to `TransactionRepository` returning `list[Transaction]`
