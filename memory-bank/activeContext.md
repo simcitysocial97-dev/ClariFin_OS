@@ -40,8 +40,12 @@
 
 ## Service Layer Infrastructure (2026-09-07)
 - ✅ Created `src/api_common.py` exporting `DB_PATH` for shared configuration
-- ✅ Created `src/services/__init__.py` with `BaseService` export
+- ✅ Created `src/services/__init__.py` with `BaseService` and `DashboardService` exports
 - ✅ Created `src/services/base.py` with `BaseService` class (orchestrates repos/engines, no SQL)
+- ✅ Created `src/models/dashboard.py` with `DashboardSummary` domain model
+- ✅ Extracted `DashboardService.get_summary()` from `DashboardRepository` (now orchestrates repos/engines)
+- ✅ Updated `src/routers/dashboard.py` to use `DashboardService` instead of `DashboardRepository`
+- ✅ Deleted `src/repositories/dashboard_repository.py` (orchestration moved to service)
 
 ## Current Mission (Prior)
 

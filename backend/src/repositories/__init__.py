@@ -5,7 +5,6 @@ from .bank_repository import BankRepository
 from .base import BaseRepository
 from .behavior_repository import BehaviorRepository
 from .cashflow_repository import CashflowRepository
-from .dashboard_repository import DashboardRepository
 from .import_mapping_repository import ImportMappingRepository
 from .investment_repository import InvestmentRepository
 from .loan_repository import LoanRepository
@@ -21,7 +20,6 @@ __all__ = [
     "BaseRepository",
     "BehaviorRepository",
     "CashflowRepository",
-    "DashboardRepository",
     "ImportMappingRepository",
     "InvestmentRepository",
     "LoanRepository",

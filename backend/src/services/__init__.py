@@ -4,5 +4,6 @@ Services coordinate repositories and engines to implement business logic.
 """
 
 from src.services.base import BaseService
+from src.services.dashboard_service import DashboardService
 
-__all__ = ["BaseService"]
+__all__ = ["BaseService", "DashboardService"]

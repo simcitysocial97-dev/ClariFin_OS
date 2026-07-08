@@ -1,7 +1,7 @@
 """Dashboard summary endpoint."""
 from fastapi import APIRouter, HTTPException
 
-from src.repositories import DashboardRepository
+from src.services.dashboard_service import DashboardService
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
@@ -18,7 +18,7 @@ def api_dashboard_summary() -> dict:
     - Buffer Days
     """
     try:
-        repo = DashboardRepository()
-        return repo.get_summary()
+        service = DashboardService()
+        return service.get_summary().model_dump()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

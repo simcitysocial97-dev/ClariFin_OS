@@ -1,8 +1,5 @@
-"""Dashboard domain repository (cross-domain orchestration).
+"""Dashboard business orchestration service."""
 
-LOC WATCH: No repository file > 200 LOC.
-If it grows beyond 200, split by sub-domain.
-"""
 from datetime import datetime, timedelta
 
 from src.common import enrich_transaction
@@ -11,26 +8,24 @@ from src.engines.behavior_engine import (
     get_cached_behavior_profile,
     set_cached_behavior_profile,
 )
-from src.repositories.base import DB_PATH
+from src.models.base import Money
+from src.models.dashboard import DashboardSummary
 from src.repositories.transaction_repository import TransactionRepository
+from src.services.base import BaseService
 
 
-class DashboardRepository:
-    """Repository for dashboard operations (cross-domain orchestration)."""
+class DashboardService(BaseService):
+    """Service for dashboard orchestration."""
 
     def __init__(self, db_path: str | None = None):
-        self.db_path = db_path or DB_PATH
-        self._txn_repo = TransactionRepository(self.db_path)
+        super().__init__(db_path)
+        self.txn_repo = TransactionRepository(self.db_path)
 
-    def get_summary(self) -> dict:
+    def get_summary(self) -> DashboardSummary:
         """
-        Get simplified dashboard summary for MVP.
+        Orchestrate dashboard data from multiple sources.
 
-        Returns 4 key metrics:
-        - Net Cash Flow
-        - Savings Rate %
-        - EMI Ratio %
-        - Buffer Days
+        This is business logic, not data access.
         """
         # Check cache first
         cached = get_cached_behavior_profile(self.db_path)
@@ -51,9 +46,8 @@ class DashboardRepository:
         emi_ratio = profile.get("risk_signals", {}).get("india_specific", {}).get("emi_ratio", 0)
         buffer_days = financial_stress.get("buffer_days", 0)
 
-        # Calculate net cash flow (simplified)
-        # Net cash flow = (income - expenses) over last 30 days
-        raw = self._txn_repo.get_all_transactions_with_bank({})
+        # Compute transaction list (dict format for API compatibility)
+        raw = self.txn_repo.get_all_transactions_with_bank({})
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
         # Get last 30 days transactions
@@ -66,11 +60,13 @@ class DashboardRepository:
 
         # Calculate 7-day trend
         seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
-        seven_day_txns = [t for t in transactions if t.get("parsed_date", "") >= seven_days_ago]
-
         prev_seven_start = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
-        (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
-        prev_seven_txns = [t for t in transactions if prev_seven_start <= t.get("parsed_date", "") < seven_days_ago]
+        seven_day_txns = [t for t in transactions if t.get("parsed_date", "") >= seven_days_ago]
+        prev_seven_txns = [
+            t
+            for t in transactions
+            if prev_seven_start <= t.get("parsed_date", "") < seven_days_ago
+        ]
 
         current_spend = sum(t.get("amount", 0) for t in seven_day_txns if t.get("type") == "debit")
         prev_spend = sum(t.get("amount", 0) for t in prev_seven_txns if t.get("type") == "debit")
@@ -89,13 +85,13 @@ class DashboardRepository:
         # Recent transactions
         recent = sorted(transactions, key=lambda t: t.get("parsed_date", ""), reverse=True)[:10]
 
-        return {
-            "net_cash_flow_paise": int(round(net_cash_flow * 100)),
-            "savings_rate": savings_rate,
-            "emi_ratio": emi_ratio,
-            "buffer_days": buffer_days,
-            "financial_health_score": profile.get("financial_health_score", 50),
-            "seven_day_trend": seven_day_trend,
-            "category_drift_alert": category_drift_alert,
-            "recent_transactions": recent,
-        }
+        return DashboardSummary(
+            net_cash_flow=Money(paise=int(round(net_cash_flow * 100))),
+            savings_rate=savings_rate,
+            emi_ratio=emi_ratio,
+            buffer_days=buffer_days,
+            financial_health_score=profile.get("financial_health_score", 50),
+            seven_day_trend=seven_day_trend,
+            category_drift_alert=category_drift_alert,
+            recent_transactions=recent,
+        )
