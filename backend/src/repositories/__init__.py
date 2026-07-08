@@ -5,6 +5,7 @@ from .base import BaseRepository
 from .investment_repository import InvestmentRepository
 from .loan_repository import LoanRepository
 from .member_repository import MemberRepository
+from .statement_repository import StatementRepository
 
 __all__ = [
     "AccountRepository",
@@ -13,4 +14,5 @@ __all__ = [
     "BankRepository",
     "InvestmentRepository",
     "LoanRepository",
+    "StatementRepository",
 ]

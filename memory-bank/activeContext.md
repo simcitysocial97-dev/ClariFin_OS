@@ -2,14 +2,20 @@
 
 ## Current Mission
 
-**Phase 3B.1: ManagedAccountRepository** — COMPLETED
+**Phase 3B.2: StatementRepository** — COMPLETED
+
+## Phase 3B.2 Changes (2026-07-08)
+- Created `src/repositories/statement_repository.py` with StatementRepository wrapper
+- Wrapped methods: get_all_statements, get_all_statements_with_metadata, insert_statement, update_statement_metadata, update_validation_status, get_statement_validation_summary, delete_statement, get_statement_pdf_path
+- Updated `routers/cards_statements.py` to use StatementRepository instead of get_db()
+- Exported StatementRepository in `src/repositories/__init__.py`
+- All endpoints tested and working: /api/statements, /api/cards
 
 ## Phase 3B.1 Changes (2026-07-08)
 - Created `src/repositories/account_repository.py` with AccountRepository wrapper
 - Wrapped methods: get_all_accounts, create_account, update_account, delete_account, compute_account_balance, compute_running_balance
 - Updated `routers/managed_accounts.py` to use AccountRepository instead of FinanceDB
 - Fixed schema compatibility in `db.py` for accounts table (bank_name → bank, account_number_masked → account_number_last4)
-- All endpoints tested and working: /api/accounts/manage, /api/accounts/{id}/balance
 
 ## CGC Indexing Quality Improvements (COMPLETED 2026-07-08)
 

@@ -4,7 +4,8 @@ from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, Query
 
-from src.common import format_inr, get_db, parse_date
+from src.common import format_inr, parse_date
+from src.repositories import StatementRepository
 
 router = APIRouter(prefix="/api", tags=["cards", "statements"])
 
@@ -13,8 +14,8 @@ router = APIRouter(prefix="/api", tags=["cards", "statements"])
 def get_statements():
     """Get all statements with metadata."""
     try:
-        db = get_db()
-        raw = db.get_all_statements_with_metadata()
+        repo = StatementRepository()
+        raw = repo.get_all_statements_with_metadata()
 
         statements = []
         for stmt in raw:
@@ -79,8 +80,8 @@ def get_cards():
     Returns one entry per unique card with latest statement data.
     """
     try:
-        db = get_db()
-        raw = db.get_all_statements_with_metadata()
+        repo = StatementRepository()
+        raw = repo.get_all_statements_with_metadata()
 
         # Group statements by (bank, card_last4)
         card_groups: dict = defaultdict(list)
