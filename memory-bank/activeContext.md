@@ -17,6 +17,13 @@
 - ✅ Updated `routers/loans.py` GET `/loans` to return `Loan` models; summary still derives `total_outstanding_paise` from raw dicts
 - ✅ Validation: ruff clean on all 4 files; model construction + serialization OK; 0 new mypy errors (pre-existing warnings in engines/db/other repos unchanged)
 
+## Domain Models Waves 7-9 (2026-09-07)
+- ✅ **Investment** (`src/models/investment.py`): id, name, type, units?, buy_price/current_price/invested/current_value: Money, as_of_date?; `get_all_models()` added to `InvestmentRepository` (COALESCE paise cols)
+- ✅ **Statement** (`src/models/statement.py`): id, bank, card_last4?, period_from?, period_to?, file_name, imported_at?; `get_all_models()` added to `StatementRepository`
+- ✅ **Reconciliation** (`src/models/reconciliation.py`): id, debit/credit txn+account ids, amount: Money (amount float→paise alias), date_diff_days, match_confidence, match_type, status; `get_all_models()` added to `ReconciliationRepository`
+- ✅ Exported all three from `src/models/__init__.py`; existing dict-returning repo methods untouched (non-breaking)
+- ✅ Validation: ruff clean on 7 files; mypy clean on 3 new models; runtime construction + `get_all_models` presence OK
+
 ## Current Mission (Prior)
 
 **Prompt 4A.15: Update transactions router to use Transaction models** — COMPLETED

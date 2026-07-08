@@ -4,6 +4,7 @@ LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
 from src.engines.balance_engine import validate_statement_balance
+from src.models.statement import Statement
 from src.repositories.base import BaseRepository
 
 
@@ -27,6 +28,20 @@ class StatementRepository(BaseRepository):
                 ORDER BY s.imported_at DESC
             """).fetchall()
         return [dict(r) for r in rows]
+
+    def get_all_models(self) -> list[Statement]:
+        """
+        Return all statements as Statement domain models (core metadata columns).
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, bank, card_last4,
+                       statement_period_from, statement_period_to,
+                       file_name, imported_at
+                FROM statements
+                ORDER BY imported_at DESC
+            """).fetchall()
+        return [Statement.from_db_row(dict(r)) for r in rows]
 
     def get_all_statements_with_metadata(self) -> list[dict]:
         """

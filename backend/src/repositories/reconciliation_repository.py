@@ -4,11 +4,30 @@ LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
 from src.engines.reconciliation_engine import find_potential_matches
+from src.models.reconciliation import Reconciliation
 from src.repositories.base import BaseRepository
 
 
 class ReconciliationRepository(BaseRepository):
     """Repository for reconciliation operations."""
+
+    def get_all_models(self) -> list[Reconciliation]:
+        """
+        Return all reconciliations as Reconciliation domain models.
+
+        The `amount` column is stored as a float; it is exposed to the model
+        as `amount_paise` (paise, ₹1.00 = 100) via an alias.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, debit_txn_id, credit_txn_id,
+                       debit_account_id, credit_account_id,
+                       amount AS amount_paise, date_diff_days,
+                       match_confidence, match_type, status
+                FROM reconciliations
+                ORDER BY created_at DESC
+            """).fetchall()
+        return [Reconciliation.from_db_row(dict(r)) for r in rows]
 
     def get_reconciliations(self, status: str | None = None) -> list[dict]:
         """

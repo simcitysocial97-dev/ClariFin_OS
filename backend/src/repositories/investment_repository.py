@@ -1,4 +1,5 @@
 """Investment domain repository."""
+from src.models.investment import Investment
 from src.repositories.base import BaseRepository
 
 
@@ -6,7 +7,7 @@ class InvestmentRepository(BaseRepository):
     """Repository for investment-related operations."""
 
     def get_all(self) -> list[dict]:
-        """Get all active investments."""
+        """Get all active investments (raw dicts, for net worth)."""
         with self._get_conn() as conn:
             rows = conn.execute("""
                 SELECT id, name, investment_type, units, buy_price_paise,
@@ -17,6 +18,29 @@ class InvestmentRepository(BaseRepository):
                 ORDER BY current_value_paise DESC
             """).fetchall()
         return [dict(r) for r in rows]
+
+    def get_all_models(self) -> list[Investment]:
+        """
+        Return all active investments as Investment domain models.
+
+        Maps canonical paise columns (buy_price_paise, current_price_paise,
+        invested_paise, current_value_paise) into Money value objects.
+        COALESCE guards nullable columns so required model fields stay valid.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, name, investment_type,
+                       COALESCE(units, 0) AS units,
+                       COALESCE(buy_price_paise, 0) AS buy_price_paise,
+                       COALESCE(current_price_paise, 0) AS current_price_paise,
+                       COALESCE(invested_paise, 0) AS invested_paise,
+                       COALESCE(current_value_paise, 0) AS current_value_paise,
+                       COALESCE(as_of_date, '') AS as_of_date
+                FROM investments
+                WHERE is_active = 1
+                ORDER BY current_value_paise DESC
+            """).fetchall()
+        return [Investment.from_db_row(dict(r)) for r in rows]
 
     def create(self, name: str, investment_type: str, invested_paise: int,
                current_value_paise: int,
