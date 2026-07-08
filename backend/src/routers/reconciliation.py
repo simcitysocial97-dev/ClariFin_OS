@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api/reconciliations", tags=["reconciliation"])
 
 
 @router.get("")
-def api_get_reconciliations(status: str | None = None):
+def api_get_reconciliations(status: str | None = None) -> dict:
     """
     Get all reconciliations with transaction details.
 
@@ -34,13 +34,13 @@ def api_get_reconciliations(status: str | None = None):
 
 
 @router.get("/pending")
-def api_get_pending_reconciliations():
+def api_get_pending_reconciliations() -> dict:
     """Get all pending reconciliations."""
     return api_get_reconciliations(status="pending")
 
 
 @router.get("/scan")
-def api_scan_reconciliations():
+def api_scan_reconciliations() -> dict:
     """
     Scan for potential transfer matches across accounts.
 
@@ -72,7 +72,7 @@ def api_create_reconciliation(
     date_diff_days: int = Query(0, description="Days between transaction dates"),
     match_confidence: float = Query(..., description="Confidence score 0.0-1.0"),
     match_type: str = Query("exact", description="'exact', 'window', 'fuzzy', or 'manual'"),
-):
+) -> dict:
     """
     Create a reconciliation record between two transactions.
 
@@ -97,7 +97,7 @@ def api_create_reconciliation(
 
 
 @router.post("/batch-insert")
-def api_batch_insert_reconciliations():
+def api_batch_insert_reconciliations() -> dict:
     """
     Scan and insert all potential matches as pending reconciliations.
 
@@ -133,7 +133,7 @@ def api_batch_insert_reconciliations():
 
 
 @router.post("/{reconciliation_id}/confirm")
-def api_confirm_reconciliation(reconciliation_id: int):
+def api_confirm_reconciliation(reconciliation_id: int) -> dict:
     """
     Confirm a pending reconciliation.
 
@@ -152,7 +152,7 @@ def api_confirm_reconciliation(reconciliation_id: int):
 
 
 @router.post("/{reconciliation_id}/reject")
-def api_reject_reconciliation(reconciliation_id: int):
+def api_reject_reconciliation(reconciliation_id: int) -> dict:
     """
     Reject a pending reconciliation.
 

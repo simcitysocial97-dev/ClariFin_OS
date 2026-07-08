@@ -1,11 +1,11 @@
 """Behavioral analytics and insights endpoints."""
 from fastapi import APIRouter, HTTPException
 
-from engines.insight_generator import (
+from src.engines.insight_generator import (
     generate_behavioral_insights,
     generate_summary_text,
 )
-from engines.nudge_engine import (
+from src.engines.nudge_engine import (
     generate_nudges,
     get_nudge_summary,
     get_top_nudge,
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/behavior", tags=["behavior"])
 
 
 @router.get("/summary")
-def api_behavior_summary():
+def api_behavior_summary() -> dict:
     """
     Get comprehensive behavioral profile.
 
@@ -47,7 +47,7 @@ def api_behavior_summary():
 
 
 @router.get("/score")
-def api_behavior_score():
+def api_behavior_score() -> dict:
     """
     Get financial health score with breakdown.
 
@@ -91,7 +91,7 @@ def api_behavior_score():
 
 
 @router.get("/insights")
-def api_behavior_insights():
+def api_behavior_insights() -> dict:
     """
     Get behavioral insights and nudges.
 

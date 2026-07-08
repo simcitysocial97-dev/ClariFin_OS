@@ -11,7 +11,7 @@ router = APIRouter(prefix="/api", tags=["cards", "statements"])
 
 
 @router.get("/statements")
-def get_statements():
+def get_statements() -> list[dict]:
     """Get all statements with metadata."""
     try:
         repo = StatementRepository()
@@ -73,7 +73,7 @@ def get_statements():
 
 
 @router.get("/cards")
-def get_cards():
+def get_cards() -> dict:
     """
     Returns credit cards with their latest statement summary.
     Groups statements by card_last4 and bank.
@@ -185,7 +185,7 @@ def get_cards():
 
 
 @router.get("/statements/{statement_id}/validate")
-def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query(..., description="Claimed closing balance in paise")):
+def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query(..., description="Claimed closing balance in paise")) -> dict:
     """Validate a statement's closing balance against computed balance."""
     try:
         repo = StatementRepository()

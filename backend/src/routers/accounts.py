@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/accounts", tags=["accounts"])
 
 
 @router.get("")
-def api_get_accounts():
+def api_get_accounts() -> dict:
     """Get all accounts with their computed balances."""
     try:
         repo = AccountRepository()
@@ -18,7 +18,7 @@ def api_get_accounts():
 
 
 @router.get("/{account_id}/balance")
-def api_get_account_balance(account_id: str):
+def api_get_account_balance(account_id: str) -> dict:
     """Get current balance for a specific account."""
     try:
         repo = AccountRepository()
@@ -29,12 +29,14 @@ def api_get_account_balance(account_id: str):
 
 
 @router.get("/{account_id}/running-balance")
-def api_get_running_balance(account_id: str, limit: int = Query(1, ge=1, le=1000)):
+def api_get_running_balance(
+    account_id: str,
+    limit: int = Query(1, ge=1, le=1000),
+) -> dict:
     """Get running balance history for an account."""
     try:
         repo = AccountRepository()
         result = repo.compute_running_balance(account_id)
-        # Return limited results
         return {
             "account_id": account_id,
             "transactions": result[:limit],

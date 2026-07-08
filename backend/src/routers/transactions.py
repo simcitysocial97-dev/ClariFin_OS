@@ -26,7 +26,7 @@ def get_transactions(
     member: str | None = "All",
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
-):
+) -> list[Transaction]:
     """Get transactions as Transaction domain models.
 
     FastAPI auto-serializes the Pydantic Transaction models (Money nested as paise).
@@ -42,7 +42,7 @@ def get_transactions(
 def get_overview(
     exclude_transfers: bool = Query(True),
     member: str | None = "All",
-):
+) -> dict:
     """Get overview metrics and charts."""
     try:
         repo = TransactionRepository()
@@ -159,7 +159,7 @@ def get_categories(
     exclude_transfers: bool = Query(True),
     member: str | None = "All",
     drill_category: str | None = None,
-):
+) -> dict:
     """Get category summary and breakdown."""
     try:
         repo = TransactionRepository()
@@ -245,7 +245,7 @@ def get_categories(
 def get_analytics(
     exclude_transfers: bool = Query(True),
     member: str | None = "All",
-):
+) -> dict:
     """Get analytics data."""
     try:
         repo = TransactionRepository()

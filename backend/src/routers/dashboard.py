@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
 
 @router.get("/summary")
-def api_dashboard_summary():
+def api_dashboard_summary() -> dict:
     """
     Get simplified dashboard summary for MVP.
 

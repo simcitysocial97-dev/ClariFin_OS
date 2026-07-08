@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api/audit", tags=["audit"])
 
 
 @router.get("/report")
-def api_audit_report():
+def api_audit_report() -> dict:
     """
     Run full ledger audit and return combined report.
 

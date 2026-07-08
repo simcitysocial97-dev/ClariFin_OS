@@ -4,7 +4,7 @@ import uuid
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from errors import NotFoundError
+from src.errors import NotFoundError
 from src.repositories.investment_repository import InvestmentRepository
 
 router = APIRouter(prefix="/api", tags=["investments"])
@@ -33,7 +33,7 @@ class InvestmentUpdate(BaseModel):
 
 
 @router.get("/investments")
-def get_investments():
+def get_investments() -> dict:
     """Get all investments with calculated returns."""
     repo = InvestmentRepository()
     investments = repo.get_all()
@@ -62,28 +62,22 @@ def get_investments():
 
 
 @router.post("/investments")
-def create_investment(investment: InvestmentCreate):
+def create_investment(investment: InvestmentCreate) -> dict:
     """Create a new investment."""
-    investment_id = f"inv_{uuid.uuid4().hex[:8]}"
-
     repo = InvestmentRepository()
     created = repo.create(
-        investment_id=investment_id,
         name=investment.name,
         investment_type=investment.investment_type,
         invested_paise=investment.invested_paise,
         current_value_paise=investment.current_value_paise,
-        as_of_date=investment.as_of_date,
         units=investment.units,
-        buy_price_paise=investment.buy_price_paise,
-        current_price_paise=investment.current_price_paise,
         notes=investment.notes,
     )
     return {"success": True, "investment": created}
 
 
 @router.put("/investments/{investment_id}")
-def update_investment(investment_id: str, investment: InvestmentUpdate):
+def update_investment(investment_id: str, investment: InvestmentUpdate) -> dict:
     """Update an investment."""
     repo = InvestmentRepository()
     updated = repo.update(
@@ -96,7 +90,7 @@ def update_investment(investment_id: str, investment: InvestmentUpdate):
 
 
 @router.delete("/investments/{investment_id}")
-def delete_investment(investment_id: str):
+def delete_investment(investment_id: str) -> dict:
     """Delete an investment."""
     repo = InvestmentRepository()
     success = repo.delete(investment_id)

@@ -54,7 +54,7 @@ module = ["src.common.*"]
 disallow_untyped_defs = false
 check_untyped_defs = false
 
-# Routers: allow missing imports and untyped defs for now (phase 1 - focus on models/repositories)
+# Routers + health: allow missing imports and untyped defs for now
 [[tool.mypy.overrides]]
 module = ["src.routers.*", "src.health", "src.config", "src.logger"]
 disallow_untyped_defs = false

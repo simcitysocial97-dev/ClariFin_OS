@@ -4,7 +4,7 @@ import uuid
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from errors import NotFoundError
+from src.errors import NotFoundError
 from src.repositories.loan_repository import LoanRepository
 
 router = APIRouter(prefix="/api", tags=["loans"])
@@ -45,7 +45,7 @@ class PrepaymentRequest(BaseModel):
 
 
 @router.get("/loans")
-def get_loans():
+def get_loans() -> dict:
     """Get all active loans (domain models) with computed summary."""
     repo = LoanRepository()
     loans = repo.get_all_models()
@@ -67,20 +67,10 @@ def get_loans():
 
 
 @router.post("/loans")
-def create_loan(loan: LoanCreate):
+def create_loan(loan: LoanCreate) -> dict:
     """Create a new loan record."""
-    from engines.loan_engine import compute_emi
-
-    loan_id = f"loan_{uuid.uuid4().hex[:8]}"
-
-    # Auto-compute EMI if not provided (personal/home/vehicle loans)
-    emi = loan.emi_paise
-    if emi is None and loan.tenure_months and loan.loan_type != 'gold':
-        emi = compute_emi(loan.principal_paise, loan.interest_rate, loan.tenure_months)
-
     repo = LoanRepository()
     created = repo.create(
-        loan_id=loan_id,
         name=loan.name,
         lender=loan.lender,
         loan_type=loan.loan_type,
@@ -89,7 +79,7 @@ def create_loan(loan: LoanCreate):
         interest_rate=loan.interest_rate,
         disbursed_date=loan.disbursed_date,
         tenure_months=loan.tenure_months,
-        emi_paise=emi,
+        emi_paise=loan.emi_paise,
         next_emi_date=loan.next_emi_date,
         gold_weight_grams=loan.gold_weight_grams,
         gold_purity=loan.gold_purity,
@@ -100,7 +90,7 @@ def create_loan(loan: LoanCreate):
 
 
 @router.put("/loans/{loan_id}")
-def update_loan(loan_id: str, loan: LoanUpdate):
+def update_loan(loan_id: str, loan: LoanUpdate) -> dict:
     """Update loan outstanding or other fields."""
     repo = LoanRepository()
     updated = repo.update(
@@ -113,7 +103,7 @@ def update_loan(loan_id: str, loan: LoanUpdate):
 
 
 @router.delete("/loans/{loan_id}")
-def delete_loan(loan_id: str):
+def delete_loan(loan_id: str) -> dict:
     """Soft delete a loan."""
     repo = LoanRepository()
     success = repo.delete(loan_id)
@@ -123,9 +113,9 @@ def delete_loan(loan_id: str):
 
 
 @router.get("/loans/{loan_id}/schedule")
-def get_loan_schedule(loan_id: str):
+def get_loan_schedule(loan_id: str) -> dict:
     """Get amortization schedule for a loan."""
-    from engines.loan_engine import compute_amortization_schedule
+    from src.engines.loan_engine import compute_amortization_schedule
 
     repo = LoanRepository()
     loan = repo.get_by_id(loan_id)
@@ -157,9 +147,9 @@ def get_loan_schedule(loan_id: str):
 
 
 @router.post("/loans/{loan_id}/prepayment-simulation")
-def simulate_prepayment(loan_id: str, request: PrepaymentRequest):
+def simulate_prepayment(loan_id: str, request: PrepaymentRequest) -> dict:
     """Simulate impact of a prepayment."""
-    from engines.loan_engine import compute_prepayment_impact, compute_remaining_months
+    from src.engines.loan_engine import compute_prepayment_impact, compute_remaining_months
 
     repo = LoanRepository()
     loan = repo.get_by_id(loan_id)
@@ -180,4 +170,3 @@ def simulate_prepayment(loan_id: str, request: PrepaymentRequest):
         mode=request.mode,
     )
     return result
-

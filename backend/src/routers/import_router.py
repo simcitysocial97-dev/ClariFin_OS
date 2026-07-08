@@ -6,14 +6,14 @@ from pathlib import Path
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from categorizer import categorize
-from csv_importer import CSVImporter
-from metadata_extractor import MetadataExtractor
+from src.categorizer import categorize
+from src.csv_importer import CSVImporter
+from src.metadata_extractor import MetadataExtractor
 from src.repositories import StatementRepository, TransactionRepository
 from src.statement_extractor import StatementExtractor
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from engines.behavior_engine import invalidate_behavior_cache as invalidate_cache
+from src.engines.behavior_engine import invalidate_behavior_cache as invalidate_cache
 
 router = APIRouter(prefix="/api", tags=["import"])
 
@@ -181,7 +181,7 @@ async def import_detect(file: UploadFile = File(...)):
 
 
 @router.post("/import/execute")
-def import_execute(data: ImportExecute):
+def import_execute(data: ImportExecute) -> dict:
     """Execute CSV/Excel import."""
     try:
         txn_repo = TransactionRepository()
