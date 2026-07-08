@@ -2,7 +2,12 @@
 
 ## Current Mission
 
-**Prompt 4A.11: Remove backward compatibility imports from db.py** — COMPLETED
+**Prompt 4A.12: Create Pydantic base models for domain entities** — COMPLETED
+
+## Prompt 4A.12 Changes (2026-08-07)
+- ✅ Created `src/models/__init__.py` exporting `DomainModel` and `Money`
+- ✅ Created `src/models/base.py` with `DomainModel` (ORM mode, validate_assignment) and `Money` (paise-based, ₹1.00 = 100 paise)
+- ✅ Validation: `Money(paise=12345)` → `₹123.45` / `123.45` (matches expected)
 
 ## Prompt 4A.11 Changes (2026-08-07)
 - ✅ Removed `from src.repositories.statement_repository import StatementRepository` from `db.py` `__main__` block
