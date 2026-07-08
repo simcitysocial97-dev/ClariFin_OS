@@ -146,7 +146,12 @@ register_error_handlers(app)
 # Register health router
 health.register_health_routes(app)
 
-# Health routes → routers/health.py (re-exported from src.health)
+# Register members router
+from src.routers import members
+
+app.include_router(members.router)
+
+# Members routes → routers/members.py
 
 
 # ============================================================
@@ -741,15 +746,7 @@ def get_categories_list():
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/members")
-def get_members():
-    """Get list of members."""
-    try:
-        db = get_db()
-        members = db.get_members()
-        return {"members": members}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# Members routes → routers/members.py
 
 
 # ============================================================
@@ -1049,17 +1046,6 @@ def import_execute(data: ImportExecute):
 # - PUT /api/transactions/bulk-category - REMOVED
 # - DELETE /api/statements/{id} - REMOVED
 # Ledger is now append-only. Use compensating transactions for corrections.
-
-
-@app.post("/api/members")
-def create_member(member: MemberCreate):
-    """Add a new member."""
-    try:
-        db = get_db()
-        member_id = db.add_member(member.name, member.color)
-        return {"success": True, "id": member_id}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================================
