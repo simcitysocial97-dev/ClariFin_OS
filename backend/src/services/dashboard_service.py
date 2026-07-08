@@ -1,6 +1,7 @@
 """Dashboard business orchestration service."""
 
-from datetime import datetime, timedelta
+from collections import Counter
+from datetime import datetime
 
 from src.common import enrich_transaction
 from src.engines.behavior_engine import (
@@ -10,6 +11,7 @@ from src.engines.behavior_engine import (
 )
 from src.models.base import Money
 from src.models.dashboard import DashboardSummary
+from src.repositories.reconciliation_repository import ReconciliationRepository
 from src.repositories.transaction_repository import TransactionRepository
 from src.services.base import BaseService
 
@@ -20,12 +22,13 @@ class DashboardService(BaseService):
     def __init__(self, db_path: str | None = None):
         super().__init__(db_path)
         self.txn_repo = TransactionRepository(self.db_path)
+        self.recon_repo = ReconciliationRepository(self.db_path)
 
     def get_summary(self) -> DashboardSummary:
         """
         Orchestrate dashboard data from multiple sources.
 
-        This is business logic, not data access.
+        Returns a typed DashboardSummary with behavior insights.
         """
         # Check cache first
         cached = get_cached_behavior_profile(self.db_path)
@@ -35,63 +38,53 @@ class DashboardService(BaseService):
             profile = compute_behavior_profile(self.db_path)
             set_cached_behavior_profile(self.db_path, profile)
 
-        indices = profile.get("behavioral_indices", {})
-
-        # Calculate net cash flow from savings discipline
-        savings_discipline = indices.get("savings_discipline", {})
-        savings_rate = savings_discipline.get("savings_rate", 0)
-
-        # Get financial stress data for EMI ratio and buffer
-        financial_stress = indices.get("financial_stress", {})
-        emi_ratio = profile.get("risk_signals", {}).get("india_specific", {}).get("emi_ratio", 0)
-        buffer_days = financial_stress.get("buffer_days", 0)
-
-        # Compute transaction list (dict format for API compatibility)
+        # Get transactions
         raw = self.txn_repo.get_all_transactions_with_bank({})
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
-        # Get last 30 days transactions
-        cutoff = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
-        recent_txns = [t for t in transactions if t.get("parsed_date", "") >= cutoff]
+        # Calculate spending this month
+        this_month_cutoff = datetime.now().replace(day=1).strftime("%Y-%m-%d")
+        this_month_txns = [t for t in transactions if t.get("parsed_date", "") >= this_month_cutoff]
+        spending_this_month = sum(
+            t.get("amount", 0) for t in this_month_txns if t.get("type") == "debit"
+        )
 
-        total_income = sum(t.get("amount", 0) for t in recent_txns if t.get("type") == "credit")
-        total_expenses = sum(t.get("amount", 0) for t in recent_txns if t.get("type") == "debit")
-        net_cash_flow = total_income - total_expenses
+        # Top category by spend
+        category_spends = [t.get("category", "Uncategorized") for t in this_month_txns if t.get("type") == "debit"]
+        top_category = Counter(category_spends).most_common(1)[0][0] if category_spends else "None"
 
-        # Calculate 7-day trend
-        seven_days_ago = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
-        prev_seven_start = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
-        seven_day_txns = [t for t in transactions if t.get("parsed_date", "") >= seven_days_ago]
-        prev_seven_txns = [
+        # Large transactions (>= ₹10,000)
+        large_threshold_paise = 10000 * 100  # ₹10,000
+        large_transactions = [
             t
             for t in transactions
-            if prev_seven_start <= t.get("parsed_date", "") < seven_days_ago
-        ]
+            if t.get("amount_paise", 0) >= large_threshold_paise
+        ][:5]
 
-        current_spend = sum(t.get("amount", 0) for t in seven_day_txns if t.get("type") == "debit")
-        prev_spend = sum(t.get("amount", 0) for t in prev_seven_txns if t.get("type") == "debit")
+        # Pending reconciliations
+        pending_count = len(self.recon_repo.get_reconciliations(status="pending"))
 
-        seven_day_trend = 0
-        if prev_spend > 0:
-            seven_day_trend = (current_spend - prev_spend) / prev_spend
+        # Insights and nudges (derived from profile)
+        insights: list[str] = []
+        nudges: list[str] = []
 
-        # Category drift alert (simplified)
-        category_drift_alert = None
+        indices = profile.get("behavioral_indices", {})
+        savings_discipline = indices.get("savings_discipline", {})
+
+        if profile.get("risk_signals", {}).get("low_savings"):
+            nudges.append("Consider setting aside more for savings this month.")
         if profile.get("risk_signals", {}).get("high_impulsivity"):
-            category_drift_alert = "High impulsivity detected. Consider reviewing discretionary spending."
-        elif profile.get("risk_signals", {}).get("low_savings"):
-            category_drift_alert = "Savings rate is below target. Consider reducing non-essential expenses."
+            nudges.append("High impulsivity detected. Review discretionary spending.")
 
-        # Recent transactions
-        recent = sorted(transactions, key=lambda t: t.get("parsed_date", ""), reverse=True)[:10]
+        if savings_discipline.get("savings_rate", 0) > 0.2:
+            insights.append("Great job! Your savings rate exceeds 20%.")
 
         return DashboardSummary(
-            net_cash_flow=Money(paise=int(round(net_cash_flow * 100))),
-            savings_rate=savings_rate,
-            emi_ratio=emi_ratio,
-            buffer_days=buffer_days,
-            financial_health_score=profile.get("financial_health_score", 50),
-            seven_day_trend=seven_day_trend,
-            category_drift_alert=category_drift_alert,
-            recent_transactions=recent,
+            behavior_score=float(profile.get("financial_health_score", 50)) / 100.0,
+            spending_this_month=Money(paise=int(round(spending_this_month * 100))),
+            top_category=top_category,
+            insights=insights,
+            nudges=nudges,
+            reconciliation_pending=pending_count,
+            large_transactions=large_transactions,
         )

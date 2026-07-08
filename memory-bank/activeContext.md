@@ -38,14 +38,10 @@
 - ✅ Exported all three from `src/models/__init__.py`; existing dict-returning repo methods untouched (non-breaking)
 - ✅ Validation: ruff clean on 7 files; mypy clean on 3 new models; runtime construction + `get_all_models` presence OK
 
-## Service Layer Infrastructure (2026-09-07)
-- ✅ Created `src/api_common.py` exporting `DB_PATH` for shared configuration
-- ✅ Created `src/services/__init__.py` with `BaseService` and `DashboardService` exports
-- ✅ Created `src/services/base.py` with `BaseService` class (orchestrates repos/engines, no SQL)
-- ✅ Created `src/models/dashboard.py` with `DashboardSummary` domain model
-- ✅ Extracted `DashboardService.get_summary()` from `DashboardRepository` (now orchestrates repos/engines)
-- ✅ Updated `src/routers/dashboard.py` to use `DashboardService` instead of `DashboardRepository`
-- ✅ Deleted `src/repositories/dashboard_repository.py` (orchestration moved to service)
+## DashboardSummary Typed Response Model (2026-09-07)
+- ✅ Updated `DashboardSummary` model with typed fields: behavioral_score, spending_this_month, top_category, insights, nudges, reconciliation_pending, large_transactions
+- ✅ Updated `DashboardService.get_summary()` to compute and return typed model
+- ✅ Updated `src/routers/dashboard.py` with `response_model=DashboardSummary`
 
 ## Current Mission (Prior)
 
