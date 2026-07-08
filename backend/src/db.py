@@ -496,6 +496,23 @@ class FinanceDB:
                 updated_at TEXT NOT NULL DEFAULT (datetime('now'))
             );
         """)
+
+        # Migration: Rename columns in accounts table if they exist with old names
+        # This handles the case where accounts table was created with bank_name/account_number_masked
+        try:
+            # Check if old columns exist
+            cur = conn.execute("PRAGMA table_info(accounts)")
+            columns = [row[1] for row in cur.fetchall()]
+            if 'bank_name' in columns and 'bank' not in columns:
+                # Need to migrate: rename columns
+                conn.execute("ALTER TABLE accounts RENAME COLUMN bank_name TO bank")
+            if 'account_number_masked' in columns and 'account_number_last4' not in columns:
+                conn.execute("ALTER TABLE accounts RENAME COLUMN account_number_masked TO account_number_last4")
+            conn.commit()
+        except Exception:
+            # SQLite version may not support RENAME COLUMN, or already migrated
+            pass
+
         conn.commit()
 
     # ----------------------------------------------------------
@@ -1444,20 +1461,36 @@ class FinanceDB:
     def get_all_accounts(self) -> list[dict]:
         """Get all active persistent accounts."""
         conn = self._get_conn()
-        rows = conn.execute("""
-            SELECT id, name, bank_name, account_type, account_number_masked,
-                   balance_paise, credit_limit_paise, currency, color, icon,
-                   is_active, created_at, updated_at
-            FROM accounts
-            WHERE is_active = 1
-            ORDER BY bank_name, name
-        """).fetchall()
+        # Check which column names exist
+        cur = conn.execute("PRAGMA table_info(accounts)")
+        columns = [row[1] for row in cur.fetchall()]
+
+        # Use correct column names based on schema
+        if 'bank' in columns:
+            # New schema
+            rows = conn.execute("""
+                SELECT id, name, bank, account_type, account_number_last4,
+                       balance_paise, is_active, created_at, updated_at
+                FROM accounts
+                WHERE is_active = 1
+                ORDER BY bank, name
+            """).fetchall()
+        else:
+            # Old schema with bank_name/account_number_masked
+            rows = conn.execute("""
+                SELECT id, name, bank_name, account_type, account_number_masked,
+                       balance_paise, is_active, created_at, updated_at
+                FROM accounts
+                WHERE is_active = 1
+                ORDER BY bank_name, name
+            """).fetchall()
+
         # Map DB column names to API field names
         result = []
         for r in rows:
             d = dict(r)
-            d['bank'] = d.pop('bank_name')
-            d['account_number_last4'] = d.pop('account_number_masked')
+            d['bank'] = d.pop('bank_name', d.get('bank'))
+            d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
             result.append(d)
         if self._conn is None:
             conn.close()
@@ -1469,13 +1502,27 @@ class FinanceDB:
                        notes: str | None = None) -> dict:
         """Create a new persistent account."""
         conn = self._get_conn()
-        # Use auto-increment for existing schema (id is INTEGER PRIMARY KEY)
-        cur = conn.execute("""
-            INSERT INTO accounts (name, bank_name, account_type, balance_paise,
-                                  account_number_masked)
-            VALUES (?, ?, ?, ?, ?)
-        """, (name, bank, account_type, balance_paise,
-              account_number_last4))
+        # Check which column names exist
+        cur = conn.execute("PRAGMA table_info(accounts)")
+        columns = [row[1] for row in cur.fetchall()]
+
+        # Use correct column names based on schema
+        if 'bank' in columns:
+            # New schema
+            cur = conn.execute("""
+                INSERT INTO accounts (name, bank, account_type, balance_paise,
+                                      account_number_last4, notes)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (name, bank, account_type, balance_paise,
+                  account_number_last4, notes))
+        else:
+            # Old schema with bank_name/account_number_masked
+            cur = conn.execute("""
+                INSERT INTO accounts (name, bank_name, account_type, balance_paise,
+                                      account_number_masked, notes)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (name, bank, account_type, balance_paise,
+                  account_number_last4, notes))
         conn.commit()
         if self._conn is None:
             conn.close()
@@ -1492,23 +1539,19 @@ class FinanceDB:
         if not row:
             return None
         d = dict(row)
-        d['bank'] = d.pop('bank_name')
-        d['account_number_last4'] = d.pop('account_number_masked')
+        # Map old column names to new for API compatibility
+        d['bank'] = d.pop('bank_name', d.get('bank'))
+        d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
         return d
 
     def update_account(self, account_id: int | str, **kwargs) -> dict | None:
         """Update account fields. Only updates provided fields."""
-        # Map API field names to DB column names
-        field_map = {
-            'bank': 'bank_name',
-            'account_number_last4': 'account_number_masked',
-        }
         allowed = {'name', 'bank', 'account_type', 'balance_paise',
-                   'account_number_last4'}
+                   'account_number_last4', 'notes'}
         updates = {}
         for k, v in kwargs.items():
             if k in allowed:
-                updates[field_map.get(k, k)] = v
+                updates[k] = v
         if not updates:
             return self.get_account_by_id(account_id)
 

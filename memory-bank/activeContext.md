@@ -2,16 +2,14 @@
 
 ## Current Mission
 
-**Phase 3A: Repository Layer (Wrapper Only)** — COMPLETED
+**Phase 3B.1: ManagedAccountRepository** — COMPLETED
 
-## Phase 3A Changes (2026-07-08)
-- Created `src/repositories/` package with BaseRepository, MemberRepository, BankRepository, InvestmentRepository, LoanRepository
-- Updated `routers/members.py` to use MemberRepository instead of get_db()
-- Updated `routers/banks.py` to use BankRepository instead of get_db()
-- Updated `routers/investments.py` to use InvestmentRepository instead of FinanceDB context manager
-- Updated `routers/loans.py` to use LoanRepository instead of FinanceDB context manager
-- All endpoints tested and working: /api/members, /api/banks, /api/investments, /api/loans
-- ruff check passed; mypy errors are pre-existing in codebase
+## Phase 3B.1 Changes (2026-07-08)
+- Created `src/repositories/account_repository.py` with AccountRepository wrapper
+- Wrapped methods: get_all_accounts, create_account, update_account, delete_account, compute_account_balance, compute_running_balance
+- Updated `routers/managed_accounts.py` to use AccountRepository instead of FinanceDB
+- Fixed schema compatibility in `db.py` for accounts table (bank_name → bank, account_number_masked → account_number_last4)
+- All endpoints tested and working: /api/accounts/manage, /api/accounts/{id}/balance
 
 ## CGC Indexing Quality Improvements (COMPLETED 2026-07-08)
 
