@@ -6,15 +6,17 @@ from .cashflow_repository import CashflowRepository
 from .investment_repository import InvestmentRepository
 from .loan_repository import LoanRepository
 from .member_repository import MemberRepository
+from .networth_repository import NetWorthRepository
 from .statement_repository import StatementRepository
 
 __all__ = [
     "AccountRepository",
     "BaseRepository",
     "CashflowRepository",
-    "MemberRepository",
-    "BankRepository",
     "InvestmentRepository",
     "LoanRepository",
+    "MemberRepository",
+    "NetWorthRepository",
+    "BankRepository",
     "StatementRepository",
 ]

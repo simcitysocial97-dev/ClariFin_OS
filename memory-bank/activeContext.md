@@ -2,7 +2,14 @@
 
 ## Current Mission
 
-**Phase 3B.3: CashflowRepository** — COMPLETED
+**Phase 3B.4: NetWorthRepository** — COMPLETED
+
+## Phase 3B.4 Changes (2026-07-08)
+- Added `get_networth_data` method to `db.py` returning accounts, loans, investments, statements
+- Created `src/repositories/networth_repository.py` with NetWorthRepository wrapper
+- Updated `routers/networth.py` to use NetWorthRepository instead of direct FinanceDB calls
+- Exported NetWorthRepository in `src/repositories/__init__.py`
+- All endpoints tested and working: /api/networth
 
 ## Phase 3B.3 Changes (2026-07-08)
 - Added `get_monthly_cashflow` method to `db.py` for month-by-month income/expense aggregation
@@ -21,7 +28,6 @@
 ## Phase 3B.1 Changes (2026-07-08)
 - Created `src/repositories/account_repository.py` with AccountRepository wrapper
 - Wrapped methods: get_all_accounts, create_account, update_account, delete_account, compute_account_balance, compute_running_balance
-- Updated `routers/managed_accounts.py` to use AccountRepository instead of FinanceDB
 
 ## CGC Indexing Quality Improvements (COMPLETED 2026-07-08)
 

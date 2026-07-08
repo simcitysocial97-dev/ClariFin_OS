@@ -1812,6 +1812,18 @@ class FinanceDB:
             conn.close()
         return result
 
+    def get_networth_data(self) -> dict:
+        """
+        Get all data needed for net worth calculation.
+        Returns accounts, loans, investments, and statements for the networth endpoint.
+        """
+        return {
+            "accounts": self.get_all_accounts(),
+            "loans": self.get_all_loans(),
+            "investments": self.get_all_investments(),
+            "statements": self.get_all_statements(),
+        }
+
     def get_net_worth(self) -> dict:
         """
         Calculate net worth from accounts, loans, and investments.
