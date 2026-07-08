@@ -2,7 +2,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from src.common import get_db
+from src.repositories.member_repository import MemberRepository
 
 router = APIRouter(prefix="/api", tags=["members"])
 
@@ -20,8 +20,8 @@ async def get_members():
 
     Returns list of members who have transactions.
     """
-    db = get_db()
-    return {"members": db.get_members()}
+    repo = MemberRepository()
+    return {"members": repo.get_all()}
 
 
 @router.post("/members")
@@ -35,6 +35,6 @@ async def create_member(member: MemberCreate):
     Returns:
         Success message and member id
     """
-    db = get_db()
-    member_id = db.add_member(member.name, member.color)
+    repo = MemberRepository()
+    member_id = repo.create(member.name, member.color)
     return {"success": True, "id": member_id}

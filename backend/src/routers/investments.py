@@ -4,8 +4,8 @@ import uuid
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from db import FinanceDB
 from errors import NotFoundError
+from src.repositories.investment_repository import InvestmentRepository
 
 router = APIRouter(prefix="/api", tags=["investments"])
 
@@ -35,8 +35,8 @@ class InvestmentUpdate(BaseModel):
 @router.get("/investments")
 def get_investments():
     """Get all investments with calculated returns."""
-    with FinanceDB() as db:
-        investments = db.get_all_investments()
+    repo = InvestmentRepository()
+    investments = repo.get_all()
 
     total_invested = sum(i["invested_paise"] for i in investments)
     total_current = sum(i["current_value_paise"] for i in investments)
@@ -66,40 +66,40 @@ def create_investment(investment: InvestmentCreate):
     """Create a new investment."""
     investment_id = f"inv_{uuid.uuid4().hex[:8]}"
 
-    with FinanceDB() as db:
-        created = db.create_investment(
-            investment_id=investment_id,
-            name=investment.name,
-            investment_type=investment.investment_type,
-            invested_paise=investment.invested_paise,
-            current_value_paise=investment.current_value_paise,
-            as_of_date=investment.as_of_date,
-            units=investment.units,
-            buy_price_paise=investment.buy_price_paise,
-            current_price_paise=investment.current_price_paise,
-            notes=investment.notes,
-        )
+    repo = InvestmentRepository()
+    created = repo.create(
+        investment_id=investment_id,
+        name=investment.name,
+        investment_type=investment.investment_type,
+        invested_paise=investment.invested_paise,
+        current_value_paise=investment.current_value_paise,
+        as_of_date=investment.as_of_date,
+        units=investment.units,
+        buy_price_paise=investment.buy_price_paise,
+        current_price_paise=investment.current_price_paise,
+        notes=investment.notes,
+    )
     return {"success": True, "investment": created}
 
 
 @router.put("/investments/{investment_id}")
 def update_investment(investment_id: str, investment: InvestmentUpdate):
     """Update an investment."""
-    with FinanceDB() as db:
-        updated = db.update_investment(
-            investment_id,
-            **{k: v for k, v in investment.model_dump().items() if v is not None}
-        )
-        if not updated:
-            raise NotFoundError(f"Investment {investment_id} not found")
+    repo = InvestmentRepository()
+    updated = repo.update(
+        investment_id,
+        **{k: v for k, v in investment.model_dump().items() if v is not None}
+    )
+    if not updated:
+        raise NotFoundError(f"Investment {investment_id} not found")
     return {"success": True, "investment": updated}
 
 
 @router.delete("/investments/{investment_id}")
 def delete_investment(investment_id: str):
     """Delete an investment."""
-    with FinanceDB() as db:
-        success = db.delete_investment(investment_id)
-        if not success:
-            raise NotFoundError(f"Investment {investment_id} not found")
+    repo = InvestmentRepository()
+    success = repo.delete(investment_id)
+    if not success:
+        raise NotFoundError(f"Investment {investment_id} not found")
     return {"success": True}

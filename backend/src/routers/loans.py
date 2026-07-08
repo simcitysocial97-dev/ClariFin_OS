@@ -4,8 +4,8 @@ import uuid
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from db import FinanceDB
 from errors import NotFoundError
+from src.repositories.loan_repository import LoanRepository
 
 router = APIRouter(prefix="/api", tags=["loans"])
 
@@ -47,8 +47,8 @@ class PrepaymentRequest(BaseModel):
 @router.get("/loans")
 def get_loans():
     """Get all active loans with computed summary."""
-    with FinanceDB() as db:
-        loans = db.get_all_loans()
+    repo = LoanRepository()
+    loans = repo.get_all()
 
     total_outstanding = sum(ln['outstanding_paise'] for ln in loans)
     total_principal = sum(ln['principal_paise'] for ln in loans)
@@ -77,47 +77,47 @@ def create_loan(loan: LoanCreate):
     if emi is None and loan.tenure_months and loan.loan_type != 'gold':
         emi = compute_emi(loan.principal_paise, loan.interest_rate, loan.tenure_months)
 
-    with FinanceDB() as db:
-        created = db.create_loan(
-            loan_id=loan_id,
-            name=loan.name,
-            lender=loan.lender,
-            loan_type=loan.loan_type,
-            principal_paise=loan.principal_paise,
-            outstanding_paise=loan.outstanding_paise,
-            interest_rate=loan.interest_rate,
-            disbursed_date=loan.disbursed_date,
-            tenure_months=loan.tenure_months,
-            emi_paise=emi,
-            next_emi_date=loan.next_emi_date,
-            gold_weight_grams=loan.gold_weight_grams,
-            gold_purity=loan.gold_purity,
-            interest_type=loan.interest_type,
-            notes=loan.notes,
-        )
+    repo = LoanRepository()
+    created = repo.create(
+        loan_id=loan_id,
+        name=loan.name,
+        lender=loan.lender,
+        loan_type=loan.loan_type,
+        principal_paise=loan.principal_paise,
+        outstanding_paise=loan.outstanding_paise,
+        interest_rate=loan.interest_rate,
+        disbursed_date=loan.disbursed_date,
+        tenure_months=loan.tenure_months,
+        emi_paise=emi,
+        next_emi_date=loan.next_emi_date,
+        gold_weight_grams=loan.gold_weight_grams,
+        gold_purity=loan.gold_purity,
+        interest_type=loan.interest_type,
+        notes=loan.notes,
+    )
     return {"success": True, "loan": created}
 
 
 @router.put("/loans/{loan_id}")
 def update_loan(loan_id: str, loan: LoanUpdate):
     """Update loan outstanding or other fields."""
-    with FinanceDB() as db:
-        updated = db.update_loan(
-            loan_id,
-            **{k: v for k, v in loan.model_dump().items() if v is not None}
-        )
-        if not updated:
-            raise NotFoundError(f"Loan {loan_id} not found")
+    repo = LoanRepository()
+    updated = repo.update(
+        loan_id,
+        **{k: v for k, v in loan.model_dump().items() if v is not None}
+    )
+    if not updated:
+        raise NotFoundError(f"Loan {loan_id} not found")
     return {"success": True, "loan": updated}
 
 
 @router.delete("/loans/{loan_id}")
 def delete_loan(loan_id: str):
     """Soft delete a loan."""
-    with FinanceDB() as db:
-        success = db.delete_loan(loan_id)
-        if not success:
-            raise NotFoundError(f"Loan {loan_id} not found")
+    repo = LoanRepository()
+    success = repo.delete(loan_id)
+    if not success:
+        raise NotFoundError(f"Loan {loan_id} not found")
     return {"success": True}
 
 
@@ -126,10 +126,10 @@ def get_loan_schedule(loan_id: str):
     """Get amortization schedule for a loan."""
     from engines.loan_engine import compute_amortization_schedule
 
-    with FinanceDB() as db:
-        loan = db.get_loan_by_id(loan_id)
-        if not loan:
-            raise NotFoundError(f"Loan {loan_id} not found")
+    repo = LoanRepository()
+    loan = repo.get_by_id(loan_id)
+    if not loan:
+        raise NotFoundError(f"Loan {loan_id} not found")
 
     if loan['loan_type'] == 'gold':
         return {"error": "Gold loans do not have fixed amortization schedules"}
@@ -160,10 +160,10 @@ def simulate_prepayment(loan_id: str, request: PrepaymentRequest):
     """Simulate impact of a prepayment."""
     from engines.loan_engine import compute_prepayment_impact, compute_remaining_months
 
-    with FinanceDB() as db:
-        loan = db.get_loan_by_id(loan_id)
-        if not loan:
-            raise NotFoundError(f"Loan {loan_id} not found")
+    repo = LoanRepository()
+    loan = repo.get_by_id(loan_id)
+    if not loan:
+        raise NotFoundError(f"Loan {loan_id} not found")
 
     remaining_months = compute_remaining_months(
         loan['outstanding_paise'],

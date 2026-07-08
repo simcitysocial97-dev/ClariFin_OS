@@ -1,7 +1,7 @@
 """Bank listing endpoint."""
 from fastapi import APIRouter
 
-from src.common import get_db
+from src.repositories.bank_repository import BankRepository
 
 router = APIRouter(prefix="/api", tags=["banks"])
 
@@ -14,5 +14,5 @@ async def get_banks():
     Returns:
         List of unique bank names
     """
-    db = get_db()
-    return db.get_banks()
+    repo = BankRepository()
+    return repo.get_all()
