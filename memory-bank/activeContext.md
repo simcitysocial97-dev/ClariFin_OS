@@ -2,13 +2,18 @@
 
 ## Current Mission
 
-**Phase 3B.8: BehaviorRepository** — COMPLETED
+**Phase 3B.9: DashboardRepository** — COMPLETED
+
+## Phase 3B.9 Changes (2026-07-08)
+- Created `src/repositories/dashboard_repository.py` with DashboardRepository wrapper (cross-domain orchestration)
+- Wrapped method: get_summary (combines TransactionRepository + behavior profile)
+- Updated `routers/dashboard.py` to use DashboardRepository instead of direct DB_PATH and get_db()
+- Exported DashboardRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.8 Changes (2026-07-08)
 - Created `src/repositories/behavior_repository.py` with BehaviorRepository wrapper
 - Wrapped methods: compute_profile, get_cached_profile, set_cached_profile, generate_insights
 - Updated `routers/behavior.py` to use BehaviorRepository instead of direct DB_PATH
-- Exported BehaviorRepository in `src/repositories/__init__.py`
 
 ## Phase 3B.7 Changes (2026-07-08)
 - Created `src/repositories/audit_repository.py` with AuditRepository wrapper
