@@ -2,6 +2,16 @@
 
 ## Current Mission
 
+**Add Account domain model (feat)** — COMPLETED
+
+## Account Domain Model Changes (2026-09-07)
+- ✅ Created `src/models/account.py` with `Account(DomainModel)` (id, name, type: AccountType Literal, initial_balance: Money) + `from_db_row()` factory mapping `initial_balance_paise` → `Money`
+- ✅ Exported `Account` from `src/models/__init__.py`
+- ✅ Added `AccountRepository.get_all() -> list[Account]` (aliases `balance_paise AS initial_balance_paise`, `account_type AS type`); existing dict methods untouched (non-breaking)
+- ✅ Validation: ruff clean; runtime import + model construction OK; 0 new mypy errors (pre-existing mypy warnings in engines/db/other repos unchanged)
+
+## Current Mission (Prior)
+
 **Prompt 4A.15: Update transactions router to use Transaction models** — COMPLETED
 
 ## Prompt 4A.15 Changes (2026-08-07)

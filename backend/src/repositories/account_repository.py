@@ -8,6 +8,7 @@ from src.engines.balance_engine import (
     compute_running_balance,
     get_accounts_list,
 )
+from src.models.account import Account
 from src.repositories.base import BaseRepository
 
 
@@ -49,6 +50,25 @@ class AccountRepository(BaseRepository):
                 d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
                 result.append(d)
         return result
+
+    def get_all(self) -> list[Account]:
+        """
+        Return all active accounts as Account domain models.
+
+        Maps the canonical `balance_paise` column into the `initial_balance`
+        Money value object exposed by the Account model.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                """
+                SELECT id, name, account_type AS type,
+                       balance_paise AS initial_balance_paise
+                FROM accounts
+                WHERE is_active = 1
+                ORDER BY name
+                """
+            ).fetchall()
+        return [Account.from_db_row(dict(row)) for row in rows]
 
     def get_accounts_list(self) -> list[dict]:
         """Get list of all accounts (banks) with their current balances."""
