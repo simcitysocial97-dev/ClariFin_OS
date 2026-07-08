@@ -1,4 +1,5 @@
 """Reconciliation domain repository."""
+from src.engines.reconciliation_engine import find_potential_matches
 from src.repositories.base import BaseRepository
 
 
@@ -82,4 +83,14 @@ class ReconciliationRepository(BaseRepository):
         Used by analytics to exclude transfers from spending totals.
         """
         return self._db().get_confirmed_transfer_ids()
+
+    def scan_potential_matches(self) -> list[dict]:
+        """
+        Scan for potential transfer matches across accounts.
+
+        Phase 2B.1: Deterministic matching with confidence scoring.
+
+        Returns potential matches that can be saved as reconciliations.
+        """
+        return find_potential_matches(self.db_path)
 

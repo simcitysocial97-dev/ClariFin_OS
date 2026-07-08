@@ -1,5 +1,9 @@
 """Account domain repository."""
-from engines.balance_engine import compute_account_balance, compute_running_balance
+from src.engines.balance_engine import (
+    compute_account_balance,
+    compute_running_balance,
+    get_accounts_list,
+)
 from src.repositories.base import BaseRepository
 
 
@@ -9,6 +13,10 @@ class AccountRepository(BaseRepository):
     def get_all_accounts(self) -> list[dict]:
         """Get all active persistent accounts."""
         return self._db().get_all_accounts()
+
+    def get_accounts_list(self) -> list[dict]:
+        """Get list of all accounts (banks) with their current balances."""
+        return get_accounts_list(self.db_path)
 
     def create_account(
         self,

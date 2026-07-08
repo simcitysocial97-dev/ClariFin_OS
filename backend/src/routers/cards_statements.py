@@ -188,9 +188,8 @@ def get_cards():
 def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query(..., description="Claimed closing balance in paise")):
     """Validate a statement's closing balance against computed balance."""
     try:
-        from engines.balance_engine import validate_statement_balance
-        from src.common import DB_PATH
-        result = validate_statement_balance(DB_PATH, statement_id, claimed_balance_paise)
+        repo = StatementRepository()
+        result = repo.validate_statement(statement_id, claimed_balance_paise)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

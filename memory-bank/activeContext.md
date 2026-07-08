@@ -54,7 +54,12 @@
 
 ## Phase 3B.1 Changes (2026-07-08)
 - Created `src/repositories/account_repository.py` with AccountRepository wrapper
-- Wrapped methods: get_all_accounts, create_account, update_account, delete_account, compute_account_balance, compute_running_balance
+- Wrapped methods: get_all_accounts, create_account, update_account, delete_account, compute_account_balance, compute_running_balance, get_accounts_list
+
+## Import Router Cleanup (2026-07-08)
+- Updated `routers/import_router.py` to use StatementRepository and TransactionRepository instead of get_db()
+- Added `get_duplicate_check_by_filename` and `insert_csv_transactions` to repositories
+- All routers now use repositories only — no direct FinanceDB or get_db() imports
 
 ## CGC Indexing Quality Improvements (COMPLETED 2026-07-08)
 

@@ -1,8 +1,7 @@
 """Reconciliation matching and confirmation endpoints."""
 from fastapi import APIRouter, HTTPException, Query
 
-from engines.reconciliation_engine import find_potential_matches
-from src.common import DB_PATH, format_inr
+from src.common import format_inr
 from src.repositories import ReconciliationRepository
 
 router = APIRouter(prefix="/api/reconciliations", tags=["reconciliation"])
@@ -50,7 +49,8 @@ def api_scan_reconciliations():
     Returns potential matches that can be saved as reconciliations.
     """
     try:
-        matches = find_potential_matches(DB_PATH)
+        repo = ReconciliationRepository()
+        matches = repo.scan_potential_matches()
 
         # Enrich with display fields
         for m in matches:
@@ -105,7 +105,7 @@ def api_batch_insert_reconciliations():
     """
     try:
         repo = ReconciliationRepository()
-        matches = find_potential_matches(DB_PATH)
+        matches = repo.scan_potential_matches()
 
         inserted_count = 0
         for m in matches:

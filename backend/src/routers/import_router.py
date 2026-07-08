@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from categorizer import categorize
 from csv_importer import CSVImporter
 from metadata_extractor import MetadataExtractor
-from src.common import get_db
+from src.repositories import StatementRepository, TransactionRepository
 from src.statement_extractor import StatementExtractor
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -36,7 +36,8 @@ async def upload_statement(
 ):
     """Upload and process a PDF statement."""
     try:
-        db = get_db()
+        stmt_repo = StatementRepository()
+        txn_repo = TransactionRepository()
         log = []
 
         # Save file
@@ -52,7 +53,7 @@ async def upload_statement(
         log.append(f"📄 Processing: {filename}")
 
         # Check duplicate
-        if db.get_duplicate_check_by_filename(filename):
+        if stmt_repo.get_duplicate_check_by_filename(filename):
             return {
                 "success": False,
                 "error": "File already imported",
@@ -79,20 +80,20 @@ async def upload_statement(
 
         # Insert
         period = result.get("statement_period", {})
-        statement_id = db.insert_statement(
+        statement_id = stmt_repo.insert_statement(
             bank=bank,
             file_name=filename,
             period_from=period.get("from", ""),
             period_to=period.get("to", ""),
         )
-        db.insert_transactions(statement_id, transactions)
+        txn_repo.insert_transactions(statement_id, transactions)
 
         # Metadata
         metadata = {}
         try:
             meta_extractor = MetadataExtractor(str(save_path), bank=bank)
             metadata = meta_extractor.extract()
-            db.update_statement_metadata(statement_id, metadata)
+            stmt_repo.update_statement_metadata(statement_id, metadata)
             if metadata.get("total_amount_due"):
                 log.append(f"✅ Total Due: ₹{metadata['total_amount_due']:,.2f}")
         except Exception as e:
@@ -125,9 +126,9 @@ async def upload_statement(
                 val_status = "mismatch"
                 log.append(f"❌ Validation: mismatch (₹{diff_rupees:.2f} off)")
 
-            db.update_validation_status(statement_id, val_status, round(diff_rupees, 2))
+            stmt_repo.update_validation_status(statement_id, val_status, round(diff_rupees, 2))
         else:
-            db.update_validation_status(statement_id, "no_metadata", 0.0)
+            stmt_repo.update_validation_status(statement_id, "no_metadata", 0.0)
             log.append("⚠️ Validation: total due not found")
 
         log.append(f"✅ Saved (Member: {member})")
@@ -183,7 +184,7 @@ async def import_detect(file: UploadFile = File(...)):
 def import_execute(data: ImportExecute):
     """Execute CSV/Excel import."""
     try:
-        db = get_db()
+        txn_repo = TransactionRepository()
         save_path = UPLOAD_DIR / data.filename
 
         if not save_path.exists():
@@ -200,7 +201,7 @@ def import_execute(data: ImportExecute):
             }
 
         # Insert
-        inserted = db.insert_csv_transactions(
+        inserted = txn_repo.insert_csv_transactions(
             transactions=transactions,
             member=data.member,
             source="csv",

@@ -1,4 +1,5 @@
 """Statement domain repository."""
+from src.engines.balance_engine import validate_statement_balance
 from src.repositories.base import BaseRepository
 
 
@@ -57,3 +58,11 @@ class StatementRepository(BaseRepository):
     def get_statement_pdf_path(self, statement_id: int) -> str | None:
         """Get the file_name for a statement."""
         return self._db().get_statement_pdf_path(statement_id)
+
+    def validate_statement(self, statement_id: int, claimed_balance_paise: int) -> dict:
+        """Validate a statement's closing balance against computed balance."""
+        return validate_statement_balance(self.db_path, statement_id, claimed_balance_paise)
+
+    def get_duplicate_check_by_filename(self, file_name: str) -> bool:
+        """Returns True if file_name already exists in statements (any bank)."""
+        return self._db().get_duplicate_check_by_filename(file_name)

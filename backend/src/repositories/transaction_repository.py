@@ -88,3 +88,28 @@ class TransactionRepository(BaseRepository):
         """
         return self._db().get_confirmed_transfer_ids()
 
+    def insert_csv_transactions(
+        self,
+        transactions: list[dict],
+        member: str = "Self",
+        source: str = "csv",
+        bank: str = "Manual Import",
+        file_name: str = "",
+    ) -> int:
+        """
+        Insert transactions from CSV/Excel import.
+        Each transaction dict: date, description, amount, type, category, subcategory.
+        Creates a statement record with source='csv' and the filename.
+
+        Phase 2A: Also populates debit, credit, amount_paise columns for financial determinism.
+
+        Returns count of inserted transactions.
+        """
+        return self._db().insert_csv_transactions(
+            transactions=transactions,
+            member=member,
+            source=source,
+            bank=bank,
+            file_name=file_name,
+        )
+
