@@ -2,16 +2,16 @@
 
 ## Current Mission
 
-**Step 3C.2-3C.3: Repository Smoke Tests + LOC Watch** — COMPLETED
+**Prompt 4A.1: Move Member SQL** — COMPLETED
 
-## Step 3C.2-3C.3 Changes (2026-07-08)
-- Created `tests/test_repository_smoke.py` with 9 smoke tests for high-impact repositories
-- Tests verify TransactionRepository, ReconciliationRepository, AccountRepository, StatementRepository match FinanceDB behavior
-- Added LOC WATCH header comment to all repository files (transaction, reconciliation, account, statement, dashboard)
-- Fixed circular import in `dashboard_repository.py` (changed `from src.repositories import TransactionRepository` to direct import)
-- All 9 smoke tests pass, validating repository wrappers delegate correctly to FinanceDB
+## Prompt 4A.1 Changes (2026-07-08)
+- Added `_get_conn()` method to `src/repositories/base.py` for direct connection access
+- Moved `get_members()` and `add_member()` SQL from `db.py` into `src/repositories/member_repository.py`
+- Updated `db.py` to delegate to `MemberRepository` (backward compatibility)
+- All methods tested: `get_all()` and `create()` work correctly via repository and via `FinanceDB` wrapper
 
 ## Next Steps
+- Continue moving other SQL methods into repositories as needed
 
 ## Phase 3B.9 Changes (2026-07-08)
 - Created `src/repositories/dashboard_repository.py` with DashboardRepository wrapper (cross-domain orchestration)
@@ -71,47 +71,14 @@
 - All routers now use repositories only — no direct FinanceDB or get_db() imports
 
 ## CGC Indexing Quality Improvements (COMPLETED 2026-07-08)
-
-### Phase 0 — SCIP Enabled
 - Installed `scip-python` v0.6.6 (npm global), symlinked to `~/.local/bin/scip-python`
 - CGC `.env` (`/home/vasantha/.codegraphcontext/.env`):
   - `SCIP_INDEXER=true`, `SCIP_LANGUAGES=python`
   - `ENABLE_INHERIT_RESOLVE=true` (resolves class hierarchies)
   - `IGNORE_DIRS` updated: `node_modules,venv,.venv,env,.env,dist,build,target,out,.git,idea,.vscode,__pycache__,public,mocks,_archived_reflex_dashboard,memory-bank,docs,servers,target,.cline`
-- `.cgcignore` overhauled with global patterns (node_modules/, venv/, __pycache__/, dist/, build/, public/, mocks/, tests/, *.spec.ts, *.test.ts, etc.)
-  - Removed overly broad `*.mjs` rule (was blocking useful frontend code)
+- `.cgcignore` overhauled with global patterns
 - ENOSPC Fix: Root partition `/dev/sda8` was 98% full (1.3G) — SCIP writes temp to `/tmp` on root
   - Created `/home/vasantha/.tmp` and set `TMPDIR` redirect
-  - Added `export TMPDIR=/home/vasantha/.tmp` to `~/.bashrc` (persistent)
-
-### Phase 1 — Automatic/Live Indexing (COMPLETED 2026-07-08)
-Three-layer automatic coverage configured:
-1. **File Watcher (live)**: `cgc watch` running as systemd user service `cgc-watch.service`
-   - Service file: `/home/vasantha/.config/systemd/user/ccgc-watch.service`
-   - `systemctl --user enable cgc-watch.service` (survives reboots)
-   - `systemctl --user start cgc-watch.service` (active, PID 429065)
-   - Verified: touching `db.py` triggered auto re-index (debug log shows parse activity)
-2. **Git Hooks (commit-time)**: `cgc hook install` installed
-   - Managed hooks: `post-commit`, `post-checkout`
-   - Merge driver: installed
-   - `.gitattributes`: installed
-3. **MCP Server**: Already running (PID 326653) for IDE queries
-
-### Verification Results
-- ✅ `cgc update` re-indexed in 330s with SCIP (no ENOSPC)
-- ✅ `FinanceDB`, `AccountDTO`, `TransactionMapper`, `Settings` resolve with symbol-level info
-- ✅ 24 `INHERITS` edges found: DTOs→BaseModel, AppError→Exception, ValidationError/DatabaseError/FileError/NotFoundError→AppError
-- ✅ `db.py` analysis: 59 functions, 226 variables, 1 class indexed; `__enter__` shows `Self@FinanceDB` return type (SCIP symbol-level)
-- ✅ Watcher live and auto-updating on file changes
-- ✅ Git hooks installed for commit-time sync
-
-## CGC Token Efficiency Audit (2026-07-08)
-- Updated `.clinerules` to clarify CGC tool usage:
-  - Added `analyze_code_relationships` and `execute_cypher_query` to Graph-First Search
-  - Added Rule 2.5: CGC Relationship Queries with `find_callers`, `find_callees`, `class_hierarchy`
-  - Added Rule 2.6: CGC Cypher Queries for complex queries
-  - Modified Phase A to use CGC `find_code` for schema discovery before reading files
-- **Next**: Monitor token usage in subsequent tasks to verify improvements
 
 ## Technical Debt (UPDATED)
 - **enrich_transaction()** — Deprecated but still used for behavioral insights (non-monetary)

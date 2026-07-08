@@ -1155,24 +1155,13 @@ class FinanceDB:
 
     def get_members(self) -> list[dict]:
         """Return all members as list of dicts."""
-        conn = self._get_conn()
-        cur = conn.execute("SELECT id, name, color, created_at FROM members ORDER BY name")
-        rows = [dict(row) for row in cur.fetchall()]
-        if self._conn is None:
-            conn.close()
-        return rows
+        from src.repositories.member_repository import MemberRepository
+        return MemberRepository(self.db_path).get_all()
 
     def add_member(self, name: str, color: str = "#6366F1") -> int:
         """Add new family member. Return id."""
-        conn = self._get_conn()
-        cur = conn.execute(
-            "INSERT INTO members (name, color) VALUES (?, ?)",
-            (name, color),
-        )
-        if self._conn is None:
-            conn.commit()
-            conn.close()
-        return cur.lastrowid
+        from src.repositories.member_repository import MemberRepository
+        return MemberRepository(self.db_path).create(name, color)
 
     # ----------------------------------------------------------
     # CSV/Excel Import Methods (new)
