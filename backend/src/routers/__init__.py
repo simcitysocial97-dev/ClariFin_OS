@@ -10,6 +10,7 @@ from . import (
     managed_accounts,
     members,
     networth,
+    reconciliation,
 )
 
-__all__ = ["banks", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "members"]
+__all__ = ["banks", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "reconciliation", "members"]
