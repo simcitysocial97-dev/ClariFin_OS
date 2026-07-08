@@ -6,6 +6,7 @@ from . import (
     cashflow,
     export,
     health,
+    import_router,
     investments,
     loans,
     managed_accounts,
@@ -15,4 +16,4 @@ from . import (
     transactions,
 )
 
-__all__ = ["banks", "behavior", "cards_statements", "cashflow", "export", "health", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]
+__all__ = ["banks", "behavior", "cards_statements", "cashflow", "export", "health", "import_router", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]
