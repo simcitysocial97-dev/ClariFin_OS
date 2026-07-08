@@ -82,3 +82,4 @@ class ReconciliationRepository(BaseRepository):
         Used by analytics to exclude transfers from spending totals.
         """
         return self._db().get_confirmed_transfer_ids()
+
