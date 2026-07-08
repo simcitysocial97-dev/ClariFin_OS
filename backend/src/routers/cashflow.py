@@ -3,7 +3,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, Query
 
-from src.common import get_db
+from src.repositories import CashflowRepository
 
 router = APIRouter(prefix="/api", tags=["cashflow"])
 
@@ -18,37 +18,8 @@ def get_cashflow_monthly(
     All monetary values in paise (INTEGER).
     """
     try:
-        db = get_db()
-
-        # Build query with optional member filter
-        conditions = ["t.date_iso IS NOT NULL"]
-        params = []
-
-        if member and member != "All":
-            conditions.append("t.member = ?")
-            params.append(member)
-
-        where = "WHERE " + " AND ".join(conditions)
-
-        # Query using date_iso for proper month grouping
-        # date_iso is in YYYY-MM-DD format, so we extract YYYY-MM
-        sql = f"""
-            SELECT
-                substr(t.date_iso, 1, 7) as month_key,
-                SUM(CASE WHEN t.type = 'credit' THEN t.amount_paise ELSE 0 END) as income_paise,
-                SUM(CASE WHEN t.type = 'debit' THEN t.amount_paise ELSE 0 END) as expense_paise,
-                COUNT(*) as transaction_count
-            FROM transactions t
-            {where}
-            GROUP BY substr(t.date_iso, 1, 7)
-            ORDER BY month_key ASC
-        """
-
-        conn = db._get_conn()
-        cur = conn.execute(sql, params)
-        rows = [dict(row) for row in cur.fetchall()]
-        if db._conn is None:
-            conn.close()
+        repo = CashflowRepository()
+        rows = repo.get_monthly_cashflow(months=months, member=member)
 
         # Format response - limit to requested number of months
         months_data = []

@@ -2,7 +2,14 @@
 
 ## Current Mission
 
-**Phase 3B.2: StatementRepository** — COMPLETED
+**Phase 3B.3: CashflowRepository** — COMPLETED
+
+## Phase 3B.3 Changes (2026-07-08)
+- Added `get_monthly_cashflow` method to `db.py` for month-by-month income/expense aggregation
+- Created `src/repositories/cashflow_repository.py` with CashflowRepository wrapper
+- Updated `routers/cashflow.py` to use CashflowRepository instead of direct `_get_conn()` calls
+- Exported CashflowRepository in `src/repositories/__init__.py`
+- All endpoints tested and working: /api/cashflow/monthly
 
 ## Phase 3B.2 Changes (2026-07-08)
 - Created `src/repositories/statement_repository.py` with StatementRepository wrapper
@@ -15,7 +22,6 @@
 - Created `src/repositories/account_repository.py` with AccountRepository wrapper
 - Wrapped methods: get_all_accounts, create_account, update_account, delete_account, compute_account_balance, compute_running_balance
 - Updated `routers/managed_accounts.py` to use AccountRepository instead of FinanceDB
-- Fixed schema compatibility in `db.py` for accounts table (bank_name → bank, account_number_masked → account_number_last4)
 
 ## CGC Indexing Quality Improvements (COMPLETED 2026-07-08)
 
