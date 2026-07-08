@@ -1,6 +1,5 @@
 """Display formatting utilities."""
 import re
-from datetime import datetime
 
 
 def format_inr(amount: float) -> str:

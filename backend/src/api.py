@@ -1,12 +1,16 @@
 """
 FastAPI REST API for Personal Finance Tracker
-==============================================
+=============================================
 
 This API wraps the existing database and pipeline, exposing functionality
 as HTTP endpoints for use by external applications (Next.js, mobile apps, etc.).
 
 Run: python src/api.py
 API Docs: http://localhost:8000/docs
+
+Phase 2 Router Extraction Complete:
+- All route handlers extracted to src/routers/
+- This file now contains only app setup, middleware, and remaining endpoints
 """
 
 import sys
@@ -17,7 +21,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 # Import health module for router registration
 import src.health as health
@@ -25,7 +28,6 @@ import src.health as health
 # Import configuration and utilities
 from config import settings
 
-# Import mapper for DTO transformation
 # Import existing modules
 from engines.balance_engine import (
     compute_account_balance,
@@ -41,47 +43,6 @@ from errors import register_error_handlers
 from src.common import (
     DB_PATH,
 )
-
-# ============================================================
-# Configuration
-# ============================================================
-
-# Upload directory
-UPLOAD_DIR = Path(__file__).parent.parent / "data" / "uploads"
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
-# ============================================================
-# Helper Functions
-# ============================================================
-
-# Note: All utility functions (format_inr, parse_date, enrich_transaction, etc.)
-# are now imported from src.common module to avoid duplication.
-
-
-# ============================================================
-# Pydantic Models
-# ============================================================
-
-class CategoryUpdate(BaseModel):
-    category: str
-    subcategory: str | None = None
-
-
-class BulkCategoryUpdate(BaseModel):
-    ids: list[int]
-    category: str
-
-
-class ImportExecute(BaseModel):
-    filename: str
-    mapping: dict
-    member: str = "Self"
-
-
-class MemberCreate(BaseModel):
-    name: str
-    color: str = "#6366F1"
-
 
 # ============================================================
 # FastAPI App
@@ -140,24 +101,6 @@ app.include_router(networth.router)
 app.include_router(reconciliation.router)
 app.include_router(transactions.router)
 app.include_router(members.router)
-
-# Banks routes → routers/banks.py
-# Behavior routes → routers/behavior.py
-# Cashflow routes → routers/cashflow.py
-# Export routes → routers/export.py
-# Investments routes → routers/investments.py
-# Loans routes → routers/loans.py
-# Managed accounts routes → routers/managed_accounts.py
-# Networth routes → routers/networth.py
-# Reconciliation routes → routers/reconciliation.py
-# Transactions routes → routers/transactions.py
-# Import routes → routers/import_router.py
-
-
-# ============================================================
-# Balance API Endpoints (Phase 2A)
-# ============================================================
-
 
 # ============================================================
 # Balance API Endpoints (Phase 2A)
