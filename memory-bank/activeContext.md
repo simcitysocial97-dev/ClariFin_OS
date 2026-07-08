@@ -75,5 +75,6 @@
 - ✅ Fixed `create_account` return type to `dict | None`
 - ✅ Fixed `src/common/calculations.py` import block and `_parse_amount_paise` type annotation
 - ✅ **Validated**: `mypy src/models src/repositories` passes with 0 errors
-- ✅ **Validated**: `ruff check --fix src/models src/repositories` passes (fixed import order, trailing newlines)
+- ✅ **Validated**: `ruff check src/models src/repositories` passes
 - ✅ **Validated**: Frontend `npm run type-check` passes
+- ✅ Router fixes: imports corrected, return types added, method signatures fixed
