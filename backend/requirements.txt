@@ -17,5 +17,5 @@ cachetools==7.1.4
 httpx==0.28.1
 
 # Testing
-pytest==9.0.0
+pytest==8.3.0
 pytest-asyncio==0.25.2
