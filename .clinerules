@@ -42,9 +42,8 @@ Wrap EVERY user request inside this strict execution pattern:
 Run these terminal validation checks immediately after *any* file modification:
 - **Frontend Core & Gate:** `cd frontend && npm run type-check && npm run lint && npm test -- --run && npm run build`
 - **Backend Core (Virtual Env Isolated):**
-  `cd backend && ../.venv/bin/python3 -m ruff check .`
-  `cd backend && ../.venv/bin/python3 -m mypy .`
-- **OpenAPI Synchronization:** If backend Pydantic schemas change, run the offline contract compilation script via `../.venv/bin/python3` to refresh `frontend/types/api-generated.ts`.
+  `cd backend && ./venv/bin/python3 -m ruff check .`
+  `cd backend && ./venv/bin/python3 -m mypy .`
 
 ---
 
@@ -53,7 +52,7 @@ Run these terminal validation checks immediately after *any* file modification:
 - **Next.js Conventions:** Prepend component files with `'use client'` *only* if they require state or user interaction hooks (e.g., onClick). Otherwise, default to lean Server Components. Use dynamic structural routing parameters (`app/reconciliation/[id]/page.tsx`).
 - **Strict Code Limitations:** 
   - NEVER use `as any`, `@ts-ignore`, or `@ts-nocheck` in TypeScript.
-  - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`. Parse debug queries using: `../.venv/bin/python3 -c "import sqlite3; ..."`
+  - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`. Parse debug queries using: `./venv/bin/python3 -c "import sqlite3; ..."`
 
 ---
 
