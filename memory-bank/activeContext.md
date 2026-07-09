@@ -42,4 +42,4 @@
 
 ## Next Steps
 - Phase 5 architecture cleanup complete
-- Ready for Phase 6 enhancements
+- Verify no code references the legacy 'amount' float column.
