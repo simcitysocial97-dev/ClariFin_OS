@@ -1,4 +1,5 @@
 """Cashflow domain repository."""
+from typing import Any
 from src.repositories.base import BaseRepository
 
 
@@ -9,7 +10,7 @@ class CashflowRepository(BaseRepository):
         self,
         months: int = 6,
         member: str | None = None,
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """
         Returns month-by-month income and expense aggregation.
         All monetary values in paise (INTEGER).

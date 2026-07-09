@@ -67,7 +67,7 @@ class ColumnMapper:
         """Find which standard field this column matches"""
 
         best_field = None
-        best_score = 0
+        best_score = 0.0
 
         for standard_field, aliases in self.COLUMN_ALIASES.items():
             for alias in aliases:

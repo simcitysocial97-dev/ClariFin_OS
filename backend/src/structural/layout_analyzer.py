@@ -9,7 +9,7 @@ Improvements:
 - Strict transaction page detection
 """
 
-from typing import Any
+from typing import Any, Optional
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -71,15 +71,15 @@ class LayoutAnalyzer:
         self.debug = debug
 
         # Results
-        self.bank = None
-        self.header_info = None
-        self.table_bbox = None
-        self.table_pages = []
-        self.columns = None
-        self.column_labels = None
-        self.amount_structure = None
-        self.metadata_region = None
-        self.metadata_fields = None
+        self.bank: Optional[str] = None
+        self.header_info: Optional[dict[str, Any]] = None
+        self.table_bbox: Optional[tuple[float, float, float, float]] = None
+        self.table_pages: list[int] = []
+        self.columns: Optional[dict[str, dict[str, Any]]] = None
+        self.column_labels: Optional[dict[str, str]] = None
+        self.amount_structure: Optional[dict[str, Any]] = None
+        self.metadata_region: Optional[dict[str, Any]] = None
+        self.metadata_fields: Optional[dict[str, Any]] = None
 
     def analyze(self) -> dict[str, Any]:
         with pdfplumber.open(self.pdf_path) as pdf:
@@ -123,7 +123,7 @@ class LayoutAnalyzer:
         return self._build_result()
 
     # ========== Bank Detection ==========
-    def _detect_bank(self, pdf) -> str:
+    def _detect_bank(self, pdf: Any) -> str:
         text = ""
         for page in pdf.pages[:2]:
             page_text = page.extract_text()
@@ -137,7 +137,7 @@ class LayoutAnalyzer:
         return "Unknown"
 
     # ========== Header Detection (Validated) ==========
-    def _find_table_header(self, pdf) -> dict[str, Any] | None:
+    def _find_table_header(self, pdf: Any) -> Optional[dict[str, Any]]:
         best_result = None
         best_score = 0
 
@@ -186,7 +186,7 @@ class LayoutAnalyzer:
 
         return best_result
 
-    def _header_has_transaction_pages(self, pdf, header_info: dict[str, Any]) -> bool:
+    def _header_has_transaction_pages(self, pdf: Any, header_info: dict[str, Any]) -> bool:
         """Check if starting from this header page, we find transaction pages."""
         pages = self._detect_table_pages(pdf, header_info['page'], stop_on_first=False)
         return len(pages) > 0 and pages[0] == header_info['page']
@@ -212,7 +212,7 @@ class LayoutAnalyzer:
         return groups
 
     # ========== Table Bounding Box ==========
-    def _build_table_bbox(self, page, header_info: dict[str, Any]) -> tuple[float, float, float, float]:
+    def _build_table_bbox(self, page: Any, header_info: dict[str, Any]) -> tuple[float, float, float, float]:
         page_width = page.width
         page_height = page.height
         y_top = header_info['y_bottom'] + 5
@@ -224,7 +224,7 @@ class LayoutAnalyzer:
         x1 = page_width * 0.98
         return (x0, y_top, x1, y_bottom)
 
-    def _find_stop_boundary(self, page, header_y: float, page_height: float) -> float:
+    def _find_stop_boundary(self, page: Any, header_y: float, page_height: float) -> float:
         best_y = page_height - 40
         for keyword in self.STOP_KEYWORDS:
             try:
@@ -242,7 +242,7 @@ class LayoutAnalyzer:
         return best_y
 
     # ========== Transaction Page Detection (Stricter) ==========
-    def _detect_table_pages(self, pdf, header_page: int, stop_on_first: bool = True) -> list[int]:
+    def _detect_table_pages(self, pdf: Any, header_page: int, stop_on_first: bool = True) -> list[int]:
         table_pages = [header_page]
 
         for page_num in range(header_page + 1, len(pdf.pages)):
@@ -260,7 +260,7 @@ class LayoutAnalyzer:
 
         return table_pages
 
-    def _page_has_transactions(self, page) -> bool:
+    def _page_has_transactions(self, page: Any) -> bool:
         """Stricter check: look for multiple rows with date pattern and digits."""
         chars = page.chars
         if not chars:
@@ -297,7 +297,7 @@ class LayoutAnalyzer:
         return transaction_line_count >= 2
 
     # ========== Column Detection from Header Row ==========
-    def _detect_columns_from_header_row(self, page, bbox: tuple[Any, ...], header_info: dict[str, Any]) -> tuple[dict, dict]:
+    def _detect_columns_from_header_row(self, page: Any, bbox: tuple[float, float, float, float], header_info: dict[str, Any]) -> tuple[dict[str, dict[str, Any]], dict[str, str]]:
         """
         Extract header row characters, detect columns via gaps, then classify.
         """
@@ -353,7 +353,7 @@ class LayoutAnalyzer:
 
         # Build column boundaries: start at x0, then each gap, then x1
         boundaries = [x0] + gaps + [x1]
-        columns = {}
+        columns: dict[str, dict[str, Any]] = {}
         for i in range(len(boundaries) - 1):
             col_start = boundaries[i]
             col_end = boundaries[i + 1]
@@ -376,8 +376,8 @@ class LayoutAnalyzer:
             }
 
         # Rename duplicate types (e.g., two description columns) by appending _1, _2
-        seen = defaultdict(int)
-        final_columns = {}
+        seen: dict[str, int] = defaultdict(int)
+        final_columns: dict[str, dict[str, Any]] = {}
         for col_type, col_def in columns.items():
             if col_type in seen:
                 new_type = f"{col_type}_{seen[col_type]}"
@@ -388,7 +388,7 @@ class LayoutAnalyzer:
             final_columns[new_type] = col_def
 
         # Build labels
-        labels = {name: defn['header_text'] for name, defn in final_columns.items()}
+        labels: dict[str, str] = {name: defn['header_text'] for name, defn in final_columns.items()}
         return final_columns, labels
 
     def _classify_header_text(self, text: str) -> str | None:
@@ -417,7 +417,7 @@ class LayoutAnalyzer:
         }
 
     # ========== Amount Structure Analysis (with data row check) ==========
-    def _analyze_amount_structure(self, page, bbox: tuple[Any, ...], columns: dict[str, Any]) -> dict[str, Any]:
+    def _analyze_amount_structure(self, page: Any, bbox: tuple[float, float, float, float], columns: dict[str, dict[str, float]]) -> dict[str, Any]:
         """
         Determine amount structure by scanning a few data rows.
         """
@@ -477,8 +477,8 @@ class LayoutAnalyzer:
         return result
 
     # ========== Metadata Detection ==========
-    def _detect_metadata(self, pdf) -> tuple[dict | None, dict]:
-        metadata_fields = {}
+    def _detect_metadata(self, pdf: Any) -> tuple[Optional[dict[str, Any]], dict[str, Any]]:
+        metadata_fields: dict[str, dict[str, Any]] = {}
         metadata_region = None
 
         for page_num in range(min(2, len(pdf.pages))):
@@ -513,7 +513,7 @@ class LayoutAnalyzer:
                 }
         return metadata_region, metadata_fields
 
-    def _find_value_near_label(self, page, label_bbox: dict[str, Any]) -> dict[str, Any] | None:
+    def _find_value_near_label(self, page: Any, label_bbox: dict[str, Any]) -> Optional[dict[str, Any]]:
         label_x1 = label_bbox['x1']
         label_y = label_bbox['y_top']
         label_x0 = label_bbox['x0']
@@ -541,7 +541,7 @@ class LayoutAnalyzer:
         }
 
     # ========== Utility ==========
-    def _log(self, message: str):
+    def _log(self, message: str) -> None:
         if self.debug:
             print(f"[LayoutAnalyzer] {message}")
 
@@ -551,14 +551,14 @@ class LayoutAnalyzer:
         return f"({bbox[0]:.0f}, {bbox[1]:.0f}, {bbox[2]:.0f}, {bbox[3]:.0f})"
 
     def _build_result(self) -> dict[str, Any]:
-        clean_columns = {}
+        clean_columns: dict[str, dict[str, Any]] = {}
         if self.columns:
             for name, col_def in self.columns.items():
                 clean_columns[name] = {
                     'x_start': round(col_def.get('x_start', 0), 1),
                     'x_end': round(col_def.get('x_end', 0), 1),
                 }
-        clean_metadata = {}
+        clean_metadata: dict[str, dict[str, Any]] = {}
         if self.metadata_fields:
             for field_name, field_info in self.metadata_fields.items():
                 clean_metadata[field_name] = {
@@ -584,7 +584,7 @@ class LayoutAnalyzer:
         }
 
     # ========== Debug Visualization ==========
-    def generate_debug_image(self, output_dir: str = 'debug'):
+    def generate_debug_image(self, output_dir: str = 'debug') -> None:
         Path(output_dir).mkdir(exist_ok=True)
         with pdfplumber.open(self.pdf_path) as pdf:
             for page_num in (self.table_pages or [0]):
@@ -623,7 +623,7 @@ def analyze_pdf(pdf_path: str, debug: bool = False) -> dict[str, Any]:
     return result
 
 
-def main():
+def main() -> None:
     import sys
     if len(sys.argv) < 2:
         print("Usage: python layout_analyzer.py <pdf_path> [--debug]")

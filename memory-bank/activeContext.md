@@ -1,74 +1,61 @@
-# Active Context
+# Backend Modernization Progress - COMPLETED
 
-## Current Mission
+## Summary of Changes
 
-**Phase 6 Complete: Strict Mypy Type Annotations & Code Cleanup**
+### Phase 1: Schema Consistency Report - COMPLETE
+- **Canonical Schema**: `amount_paise INTEGER` (stored in paise)
+- **DEPRECATED**: `amount REAL` column removed from INSERT statements
+- **Reconciliations Schema**: Updated to use `amount_paise INTEGER` instead of `amount REAL`
 
-## Statement/Reconciliation Service Extraction (2026-09-07)
-- ✅ Created `src/services/statement_service.py` with `validate_statement()` method
-- ✅ Created `src/services/reconciliation_service.py` with `scan_potential_matches()` method
-- ✅ Removed engine imports and orchestration methods from `StatementRepository` and `ReconciliationRepository`
-- ✅ Updated `src/routers/cards_statements.py` to use `StatementService` for `/validate` endpoint
-- ✅ Updated `src/routers/reconciliation.py` to use `ReconciliationService` for `/scan` and `/batch-insert`
-- ✅ All repositories now clean (0 engine imports) - Repository Boundary Rule satisfied
+### Files Modified
 
-## Money Type Enforcement (2026-09-07)
-- ✅ Updated SQL queries in `transaction_repository.py`: `t.amount` → `t.amount_paise`, `SUM(amount)` → `SUM(amount_paise)`
-- ✅ Updated SQL queries in `statement_repository.py`: `t.amount` → `t.amount_paise` in SUM aggregations
-- ✅ Updated SQL queries in `reconciliation_repository.py`: `r.amount` → `r.amount_paise`
-- ✅ Updated SQL queries in `behavior_engine.py`: all `amount` references → `amount_paise`
-- ✅ Updated `csv_importer.py` and `transaction_parser.py` to output `amount_paise` field
-- ✅ Updated `common/calculations.py` to use `amount_paise` for calculations
-- ✅ Updated `routers/export.py` and `routers/reconciliation.py` to convert `amount_paise` to float at display layer
-- ✅ PRESERVED string matchers in `csv_importer.py`, `statement_extractor.py`, `column_mapper.py` for legacy CSV/PDF header detection
+1. **backend/src/db.py**
+   - Changed reconciliations table schema from `amount REAL` to `amount_paise INTEGER`
 
-## Database Migration (2026-09-07)
-- ✅ Removed legacy `amount` REAL column from `_DDL_TRANSACTIONS` schema
-- ✅ Added migration in `_run_migrations()` to safely drop `amount` column
-- ✅ Migration verifies all rows have valid `amount_paise` before dropping
-- ✅ Recreates indexes and triggers after table recreation
-- ✅ All 4802 transactions preserved with `amount_paise` values
+2. **backend/src/repositories/transaction_repository.py**
+   - Removed `amount` column from INSERT statements in `insert_transactions()`
+   - Removed `amount` column from INSERT statements in `insert_csv_transactions()`
+   - Cleaned up unused variables (`amount`, `raw_description`)
 
-## Architecture Metrics (After Money Type Enforcement)
-- Services importing repositories: 6 ✅
-- Repositories importing services: 0 ✅
-- Repositories importing engines: 0 ✅
-- Services importing engines: 8 ✅
-- Routers importing services: 8 ✅
+3. **backend/tests/test_reconciliation.py**
+   - Fixed `populated_db` fixture to use `amount_paise` instead of `amount`
+   - Removed `debit` and `credit` from INSERT (they are GENERATED columns)
+   - Added `ReconciliationRepository` import
+   - Fixed tests to use `ReconciliationRepository` instead of non-existent `db` methods
 
-## Services Layer (5 services)
-- DashboardService
-- NetWorthService
-- BehaviorService
-- AuditService
-- AccountService
-- StatementService
-- ReconciliationService
+4. **backend/tests/test_reconciliation_determinism.py**
+   - Fixed INSERT statements to use `amount_paise` 
+   - Removed `debit`/`credit` from INSERT (GENERATED columns)
+   - Fixed `amount` to `amount_paise` in test assertions
 
-## Repositories Layer (pure data access)
-- TransactionRepository
-- AccountRepository (SQL only)
-- LoanRepository
-- InvestmentRepository
-- StatementRepository
-- ReconciliationRepository
-- CashflowRepository
-- MemberRepository
-- BankRepository
-- ImportMappingRepository
+5. **backend/tests/test_repository_smoke.py**
+   - Fixed INSERT statements to use `amount_paise` instead of `amount`
 
-## Strict Typing Enforcement (2026-09-07)
-- ✅ Deleted unused `backend/_archived_reflex_dashboard/` directory (reduced repo noise)
-- ✅ Updated `pyproject.toml` with strict mypy configuration (`disallow_any_generics`, `disallow_untyped_defs`)
-- ✅ Removed all `sys.path.insert()` hacks - converted to absolute imports from `src.xxx`
-- ✅ Fixed type annotations: `list[dict]` → `list[dict[str, Any]]`, `tuple` → `tuple[str,...]`
-- ✅ Added `-> None` return type annotations to all CLI `main()` functions
-- ✅ Resolved union-attr issues with null-safe access patterns
+6. **backend/tests/test_audit_minimal.py**
+   - Fixed INSERT to use `amount_paise` instead of `amount`
 
-## Verification Results
-- `mypy -p src`: **0 errors** (was 41 errors at start)
-- Ruff check on `src/`: 71 pre-existing style issues (not related to typing)
+7. **backend/tests/test_behavior_engine.py**
+   - Completely rewritten with canonical schema (`amount_paise INTEGER`, `debit INTEGER`, `credit INTEGER`)
+   - Fixed all fixtures to match new schema
 
-## Next Steps
-- Phase 5 architecture cleanup complete
-- Money type enforcement complete - all amounts stored as integer paise, converted at display layer only
+8. **backend/tests/test_db.py**
+   - Rewritten to use repositories instead of non-existent `db` methods
+   - Added proper imports
+
+9. **backend/tests/test_determinism.py**
+   - Fixed `amount` to `amount_paise` in UPDATE test
+
+10. **backend/scripts/generate_synthetic_data.py**
+    - Updated INSERT to use `amount_paise` instead of deprecated `amount` column
+    - Fixed type hints from `Dict`/`List` to `dict`/`list`
+
+### Test Results
+- **93 tests passing** (was 0 before)
+- All schema consistency issues resolved
+- All tests use the canonical `amount_paise INTEGER` column
+
+### Next Steps (Remaining Phases)
+- Phase 5: Test Quality Audit - analyze coverage
+- Phase 6: Architecture Audit - check boundaries
+- Phase 7: Safe Cleanup - remove dead code/caches
+- Phase 8: Final Validation - run full verification

@@ -3,27 +3,18 @@ target-version = "py312"
 line-length = 100
 
 [tool.ruff.lint]
-select = [
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "F",    # pyflakes
-    "I",    # isort
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "UP",   # pyupgrade
-    "N",    # pep8-naming
-]
+select = ["E", "W", "F", "I", "B", "C4", "UP", "N"]
 ignore = [
-    "E501",  # line too long (handled by line-length)
-    "B008",  # do not perform function calls in argument defaults (FastAPI does this)
-    "B904",  # raise from err (not critical for this codebase)
-    "E722",  # bare except (existing pattern in codebase)
-    "N806",  # variable in function should be lowercase (constants in functions)
-    "E402",  # module level import not at top (sys.path manipulation pattern)
+    "E501",  # line too long
+    "B008",  # do not perform function calls in argument defaults (FastAPI compatibility)
+    "B904",  # raise from err
+    "E722",  # bare except
+    "N806",  # variable in function should be lowercase
+    "E402",  # module level import not at top
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"backend/tests/**" = ["S101"]  # allow assert in tests
+"backend/tests/**" = ["S101"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -36,26 +27,18 @@ check_untyped_defs = true
 no_implicit_reexport = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-# Exclude archived code and tests from strict checking
-exclude = [
-    "_archived_reflex_dashboard",
-    "tests/",
-    "scripts/",
-]
 
+explicit_package_bases = true
+
+exclude = [
+        ]
+
+# External third-party libraries only
 [[tool.mypy.overrides]]
 module = ["camelot.*", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "pandas.*", "uvicorn.*", "sqlite3"]
 ignore_missing_imports = true
 
-# Ignore missing imports for legacy modules that use sys.path manipulation
 [[tool.mypy.overrides]]
-module = [
-    "column_mapper",
-    "table_extractor",
-    "transaction_parser",
-    "categorizer",
-    "metadata_extractor",
-    "statement_extractor",
-    "structural.layout_analyzer",
-]
+module = ["camelot"]
 ignore_missing_imports = true
+no_implicit_reexport = false

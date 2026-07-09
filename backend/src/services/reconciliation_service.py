@@ -1,5 +1,7 @@
 """Reconciliation business orchestration service."""
 
+from typing import Any
+
 from src.engines.reconciliation_engine import find_potential_matches
 from src.repositories.reconciliation_repository import ReconciliationRepository
 from src.services.base import BaseService
@@ -16,7 +18,7 @@ class ReconciliationService(BaseService):
         super().__init__(db_path)
         self.repo = ReconciliationRepository(self.db_path)
 
-    def scan_potential_matches(self) -> list[dict]:
+    def scan_potential_matches(self) -> list[dict[str, Any]]:
         """
         Scan for potential transfer matches across accounts.
 

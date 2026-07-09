@@ -31,7 +31,7 @@ class ImportMappingRepository(BaseRepository):
             conn.commit()
         return cur.lastrowid or 0
 
-    def get_all(self) -> list[dict]:
+    def get_all(self) -> list[dict[str, Any]]:
         """Get all saved import mappings."""
         with self._get_conn() as conn:
             cur = conn.execute("""

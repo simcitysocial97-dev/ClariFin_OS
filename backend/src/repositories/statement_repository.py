@@ -11,7 +11,7 @@ from src.repositories.base import BaseRepository
 class StatementRepository(BaseRepository):
     """Repository for statement operations."""
 
-    def get_all_statements(self) -> list[dict]:
+    def get_all_statements(self) -> list[dict[str, Any]]:
         """Get all statements with computed transaction counts and totals."""
         with self._get_conn() as conn:
             rows = conn.execute("""
@@ -43,7 +43,7 @@ class StatementRepository(BaseRepository):
             """).fetchall()
         return [Statement.from_db_row(dict(r)) for r in rows]
 
-    def get_all_statements_with_metadata(self) -> list[dict]:
+    def get_all_statements_with_metadata(self) -> list[dict[str, Any]]:
         """
         Returns all statements with metadata + computed transaction counts and totals.
         Includes: total_amount_due, minimum_amount_due, payment_due_date,
@@ -158,7 +158,7 @@ class StatementRepository(BaseRepository):
             """, (status, difference, statement_id))
             conn.commit()
 
-    def get_statement_validation_summary(self) -> list[dict]:
+    def get_statement_validation_summary(self) -> list[dict[str, Any]]:
         """Returns list of dicts for each statement with validation info."""
         with self._get_conn() as conn:
             rows = conn.execute("""

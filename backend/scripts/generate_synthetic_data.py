@@ -18,19 +18,17 @@ Usage:
 
 import argparse
 import hashlib
-import os
 import random
 import sqlite3
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from db import FinanceDB, _parse_date_to_ymd
-
+from db import FinanceDB
 
 # ============================================================
 # Configuration
@@ -110,14 +108,14 @@ SCENARIO_PROFILES = {
 def clear_database(db_path: Path) -> None:
     """Clear all data from the database and ensure schema is up to date."""
     # First, initialize the database with FinanceDB to ensure all columns exist
-    db = FinanceDB(str(db_path))
-    
+    FinanceDB(str(db_path))
+
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
     # Disable foreign keys temporarily
     cursor.execute("PRAGMA foreign_keys = OFF")
-    
+
     # Clear tables (with error handling for missing tables)
     tables_to_clear = ["reconciliations", "transactions", "statements"]
     for table in tables_to_clear:
@@ -125,16 +123,16 @@ def clear_database(db_path: Path) -> None:
             cursor.execute(f"DELETE FROM {table}")
         except sqlite3.OperationalError:
             pass  # Table doesn't exist
-    
+
     # Keep Self member
     try:
         cursor.execute("DELETE FROM members WHERE name != 'Self'")
     except sqlite3.OperationalError:
         pass  # Table doesn't exist
-    
+
     # Re-enable foreign keys
     cursor.execute("PRAGMA foreign_keys = ON")
-    
+
     conn.commit()
     conn.close()
     print(f"✓ Cleared existing data from {db_path}")
@@ -179,7 +177,7 @@ def generate_description(category: str, platform: str = None) -> str:
         "CC_Payment": ["CREDIT CARD PAYMENT", "CC PAYMENT - {card}"],
         "Debt_Injection": [f"{platform} - DEBT" if platform else "DEBT TRANSFER"],
     }
-    
+
     template_list = templates.get(category, ["TRANSACTION"])
     return random.choice(template_list).format(
         company=random.choice(["TECHCORP", "INFOSYS", "TCS", "WIPRO", "STARTUP"]),
@@ -197,27 +195,27 @@ def generate_description(category: str, platform: str = None) -> str:
 def generate_salary_transactions(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate monthly salary transactions."""
     transactions = []
     current_month = start_date.replace(day=1)
-    
+
     while current_month <= end_date:
         # Salary day (1st-5th of month)
         salary_day = random.randint(1, 5)
         salary_date = current_month.replace(day=salary_day)
-        
+
         # Sometimes salary is delayed (based on consistency profile)
         if random.random() > profile["salary_consistency"]:
             salary_date += timedelta(days=random.randint(1, 10))
-        
+
         if salary_date > end_date:
             break
-        
+
         account = random.choice(CATEGORIES["Salary"]["accounts"])
         amount = random.randint(*CATEGORIES["Salary"]["amount_range"])
-        
+
         transactions.append({
             "date": salary_date,
             "account_id": account,
@@ -226,21 +224,21 @@ def generate_salary_transactions(
             "amount": amount,
             "type": "credit",
         })
-        
+
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
-    
+
     return transactions
 
 
 def generate_regular_expenses(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate regular monthly expenses."""
     transactions = []
-    
+
     # Rent (monthly)
     current_month = start_date.replace(day=1)
     while current_month <= end_date:
@@ -256,7 +254,7 @@ def generate_regular_expenses(
             })
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
-    
+
     # Utilities (monthly)
     current_month = start_date.replace(day=1)
     while current_month <= end_date:
@@ -273,23 +271,23 @@ def generate_regular_expenses(
                 })
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
-    
+
     return transactions
 
 
 def generate_daily_expenses(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate daily variable expenses."""
     transactions = []
     current_date = start_date
-    
+
     while current_date <= end_date:
         # Weekend spike
         weekend_factor = get_weekend_factor(current_date, profile["weekend_spike"])
-        
+
         # Daily spending probability
         if random.random() < 0.7 * weekend_factor:
             # Groceries
@@ -302,7 +300,7 @@ def generate_daily_expenses(
                     "amount": random.randint(*CATEGORIES["Groceries"]["amount_range"]),
                     "type": "debit",
                 })
-            
+
             # Dining
             if random.random() < 0.4 * weekend_factor:
                 transactions.append({
@@ -313,7 +311,7 @@ def generate_daily_expenses(
                     "amount": random.randint(*CATEGORIES["Dining"]["amount_range"]),
                     "type": "debit",
                 })
-            
+
             # Entertainment
             if random.random() < 0.2 * weekend_factor:
                 transactions.append({
@@ -324,7 +322,7 @@ def generate_daily_expenses(
                     "amount": random.randint(*CATEGORIES["Entertainment"]["amount_range"]),
                     "type": "debit",
                 })
-            
+
             # Shopping
             if random.random() < 0.15 * weekend_factor:
                 transactions.append({
@@ -335,30 +333,30 @@ def generate_daily_expenses(
                     "amount": random.randint(*CATEGORIES["Shopping"]["amount_range"]),
                     "type": "debit",
                 })
-        
+
         current_date += timedelta(days=1)
-    
+
     return transactions
 
 
 def generate_micro_transactions(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate UPI micro-transactions."""
     transactions = []
     current_date = start_date
-    
+
     while current_date <= end_date:
         # Number of micro-transactions per day
         num_micro = int(random.random() * 5 * profile["micro_spend_frequency"])
-        
+
         for _ in range(num_micro):
             # Random time (including late-night)
             hour = random.randint(0, 23)
             txn_datetime = current_date.replace(hour=hour, minute=random.randint(0, 59))
-            
+
             transactions.append({
                 "date": txn_datetime,
                 "account_id": random.choice(CATEGORIES["UPI_Micro"]["accounts"]),
@@ -367,31 +365,31 @@ def generate_micro_transactions(
                 "amount": random.randint(*CATEGORIES["UPI_Micro"]["amount_range"]),
                 "type": "debit",
             })
-        
+
         current_date += timedelta(days=1)
-    
+
     return transactions
 
 
 def generate_transfers(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate inter-account transfers (SA1 ↔ SA2)."""
     transactions = []
     current_date = start_date
-    
+
     while current_date <= end_date:
         if random.random() < 0.1:  # 10% chance per day
             amount = random.randint(*CATEGORIES["Transfer_SA"]["amount_range"])
-            
+
             # Debit from one SA, credit to other
             if random.random() < 0.5:
                 from_acc, to_acc = "SA1", "SA2"
             else:
                 from_acc, to_acc = "SA2", "SA1"
-            
+
             # Debit transaction
             transactions.append({
                 "date": current_date,
@@ -401,7 +399,7 @@ def generate_transfers(
                 "amount": amount,
                 "type": "debit",
             })
-            
+
             # Credit transaction (same day or next day)
             credit_date = current_date if random.random() < 0.7 else current_date + timedelta(days=1)
             if credit_date <= end_date:
@@ -413,28 +411,28 @@ def generate_transfers(
                     "amount": amount,
                     "type": "credit",
                 })
-        
+
         current_date += timedelta(days=1)
-    
+
     return transactions
 
 
 def generate_emi_payments(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate EMI payments."""
     transactions = []
     current_month = start_date.replace(day=1)
-    
+
     # Create 1-3 active EMIs
     emis = [
         {"amount": random.randint(10000, 20000), "day": 5, "description": "HOME LOAN EMI"},
         {"amount": random.randint(5000, 15000), "day": 10, "description": "CAR LOAN EMI"},
         {"amount": random.randint(3000, 8000), "day": 15, "description": "PERSONAL LOAN EMI"},
     ]
-    
+
     # Select EMIs based on scenario
     if profile["debt_probability"] > 0.2:
         active_emis = emis  # All EMIs for debt trap
@@ -442,7 +440,7 @@ def generate_emi_payments(
         active_emis = random.sample(emis, 2)
     else:
         active_emis = random.sample(emis, 1)
-    
+
     while current_month <= end_date:
         for emi in active_emis:
             emi_date = current_month.replace(day=emi["day"])
@@ -455,31 +453,31 @@ def generate_emi_payments(
                     "amount": emi["amount"],
                     "type": "debit",
                 })
-        
+
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
-    
+
     return transactions
 
 
 def generate_cc_payments(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate credit card payments from savings accounts."""
     transactions = []
     current_month = start_date.replace(day=1)
-    
+
     while current_month <= end_date:
         # CC payment around 20th-25th of each month
         payment_date = current_month.replace(day=random.randint(20, 25))
-        
+
         if payment_date <= end_date:
             for cc in ["CC1", "CC2", "CC3"]:
                 if random.random() < 0.7:  # 70% chance to pay each card
                     amount = random.randint(*CATEGORIES["CC_Payment"]["amount_range"])
-                    
+
                     # Debit from SA
                     transactions.append({
                         "date": payment_date,
@@ -489,44 +487,44 @@ def generate_cc_payments(
                         "amount": amount,
                         "type": "debit",
                     })
-                    
+
                     # Credit to CC
                     transactions.append({
                         "date": payment_date,
                         "account_id": cc,
                         "category": "CC_Payment",
-                        "description": f"PAYMENT RECEIVED FROM SA",
+                        "description": "PAYMENT RECEIVED FROM SA",
                         "amount": amount,
                         "type": "credit",
                     })
-        
+
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
-    
+
     return transactions
 
 
 def generate_debt_injections(
     start_date: datetime,
     end_date: datetime,
-    profile: Dict,
-) -> List[Dict]:
+    profile: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Generate debt injections from credit cards to savings accounts."""
     transactions = []
     current_month = start_date.replace(day=1)
-    
+
     while current_month <= end_date:
         # Check if debt injection happens this month
         if random.random() < profile["debt_probability"]:
             # Debt injection date (usually end of month for rent/education)
             injection_date = current_month.replace(day=random.randint(25, 28))
-            
+
             if injection_date <= end_date:
                 amount = random.randint(*CATEGORIES["Debt_Injection"]["amount_range"])
                 platform = random.choice(DEBT_PLATFORMS)
                 from_cc = random.choice(["CC1", "CC2", "CC3"])
                 to_sa = random.choice(["SA1", "SA2"])
-                
+
                 # Debit from CC (cash advance/transfer)
                 transactions.append({
                     "date": injection_date,
@@ -536,7 +534,7 @@ def generate_debt_injections(
                     "amount": amount,
                     "type": "debit",
                 })
-                
+
                 # Credit to SA
                 transactions.append({
                     "date": injection_date,
@@ -546,10 +544,10 @@ def generate_debt_injections(
                     "amount": amount,
                     "type": "credit",
                 })
-        
+
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
-    
+
     return transactions
 
 
@@ -557,55 +555,55 @@ def generate_debt_injections(
 # Main Generator
 # ============================================================
 
-def generate_scenario(scenario_name: str, db_path: Path) -> Dict:
+def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
     """Generate a complete scenario dataset."""
     profile = SCENARIO_PROFILES[scenario_name]
     print(f"\n{'='*60}")
     print(f"Generating '{scenario_name}' scenario: {profile['description']}")
     print(f"{'='*60}")
-    
+
     # Date range: 8 months
     start_date = datetime(2025, 1, 1)
     end_date = datetime(2025, 8, 31)
-    
+
     all_transactions = []
-    
+
     # Generate all transaction types
     print("  Generating salary transactions...")
     all_transactions.extend(generate_salary_transactions(start_date, end_date, profile))
-    
+
     print("  Generating regular expenses...")
     all_transactions.extend(generate_regular_expenses(start_date, end_date, profile))
-    
+
     print("  Generating daily expenses...")
     all_transactions.extend(generate_daily_expenses(start_date, end_date, profile))
-    
+
     print("  Generating micro-transactions...")
     all_transactions.extend(generate_micro_transactions(start_date, end_date, profile))
-    
+
     print("  Generating transfers...")
     all_transactions.extend(generate_transfers(start_date, end_date, profile))
-    
+
     print("  Generating EMI payments...")
     all_transactions.extend(generate_emi_payments(start_date, end_date, profile))
-    
+
     print("  Generating CC payments...")
     all_transactions.extend(generate_cc_payments(start_date, end_date, profile))
-    
+
     print("  Generating debt injections...")
     all_transactions.extend(generate_debt_injections(start_date, end_date, profile))
-    
+
     # Sort by date
     all_transactions.sort(key=lambda x: x["date"])
-    
+
     # Insert into database
     print(f"\n  Inserting {len(all_transactions)} transactions into database...")
-    
+
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
+
     inserted = 0
-    
+
     # Create statements for each account
     statement_ids = {}
     for account_id in ACCOUNTS.keys():
@@ -614,30 +612,29 @@ def generate_scenario(scenario_name: str, db_path: Path) -> Dict:
             VALUES (?, ?, ?)
         """, (account_id, f"synthetic_{scenario_name}_{account_id}", "synthetic"))
         statement_ids[account_id] = cursor.lastrowid
-    
+
     # Insert transactions
     for txn in all_transactions:
         date_iso = txn["date"].strftime("%Y-%m-%d")
         date_str = txn["date"].strftime("%d/%m/%Y")
-        
+
         amount_paise = int(txn["amount"] * 100)
         debit = amount_paise if txn["type"] == "debit" else 0
         credit = amount_paise if txn["type"] == "credit" else 0
-        
+
         hash_sig = generate_hash(txn["account_id"], date_iso, txn["description"], debit, credit)
-        
+
         try:
             cursor.execute("""
                 INSERT INTO transactions (
-                    statement_id, date, date_iso, description, amount, type,
+                    statement_id, date, date_iso, description, type,
                     category, debit, credit, amount_paise, hash_signature, account_id
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 statement_ids[txn["account_id"]],
                 date_str,
                 date_iso,
                 txn["description"],
-                txn["amount"],
                 txn["type"],
                 txn["category"],
                 debit,
@@ -649,19 +646,19 @@ def generate_scenario(scenario_name: str, db_path: Path) -> Dict:
             inserted += 1
         except sqlite3.IntegrityError:
             pass  # Duplicate hash, skip
-    
+
     conn.commit()
     conn.close()
-    
+
     stats = {
         "scenario": scenario_name,
         "total_generated": len(all_transactions),
         "inserted": inserted,
         "duplicates": len(all_transactions) - inserted,
     }
-    
+
     print(f"  ✓ Inserted {inserted} transactions ({len(all_transactions) - inserted} duplicates skipped)")
-    
+
     return stats
 
 
@@ -682,35 +679,35 @@ def main():
         action="store_true",
         help="Keep existing data (don't clear database)"
     )
-    
+
     args = parser.parse_args()
-    
+
     print(f"\n{'#'*60}")
     print("# ClariFin_OS Synthetic Data Generator")
     print(f"{'#'*60}")
     print(f"\nDatabase: {DB_PATH}")
-    
+
     # Clear database
     if not args.keep_existing:
         clear_database(DB_PATH)
-    
+
     # Generate scenarios
     if args.scenario == "all":
         scenarios = ["healthy", "debt_trap", "erratic"]
         # For "all", we generate sequentially (will need separate DBs or clear between)
         print("\nNote: 'all' scenario generates each scenario sequentially.")
         print("Each scenario clears the previous data.\n")
-        
+
         all_stats = []
         for scenario in scenarios:
             clear_database(DB_PATH)
             stats = generate_scenario(scenario, DB_PATH)
             all_stats.append(stats)
-            
+
             # Run validation
             print(f"\n  Validating {scenario} scenario...")
             # Could add validation here
-        
+
         print(f"\n{'='*60}")
         print("SUMMARY")
         print(f"{'='*60}")
@@ -718,7 +715,7 @@ def main():
             print(f"  {stats['scenario']}: {stats['inserted']} transactions")
     else:
         stats = generate_scenario(args.scenario, DB_PATH)
-        
+
         print(f"\n{'='*60}")
         print("SUMMARY")
         print(f"{'='*60}")
@@ -726,7 +723,7 @@ def main():
         print(f"  Total generated: {stats['total_generated']}")
         print(f"  Inserted: {stats['inserted']}")
         print(f"  Duplicates skipped: {stats['duplicates']}")
-    
+
     print("\n✓ Done!")
 
 

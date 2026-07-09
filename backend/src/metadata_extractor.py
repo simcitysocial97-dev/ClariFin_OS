@@ -302,7 +302,7 @@ def calculate_bill_cycle(statement_date: str) -> dict[str, str | None]:
 #   - IndusInd has `\n` in patterns — actual newline in extracted text
 # ============================================================
 
-BANK_CONFIGS: dict[str, dict[str, dict]] = {
+BANK_CONFIGS: dict[str, dict[str, Any]] = {
 
     'HDFC Bank': {
         'card_number': {
@@ -616,11 +616,11 @@ class MetadataExtractor:
         self._full_text: str = ''
         self._page_texts: list[str] = []
 
-    def _log(self, msg: str):
+    def _log(self, msg: str) -> None:
         if self.debug:
             print(f'[MetadataExtractor] {msg}')
 
-    def _load_text(self, max_pages: int = 3):
+    def _load_text(self, max_pages: int = 3) -> None:
         """Extract text from first N pages."""
         try:
             with pdfplumber.open(self.pdf_path) as pdf:
@@ -719,7 +719,7 @@ class MetadataExtractor:
             if not config:
                 return self._empty_result()
 
-        result = {
+        result: dict[str, Any] = {
             'bank_name': self.bank,
             'card_number': None,
             'total_amount_due': None,
@@ -775,7 +775,7 @@ class MetadataExtractor:
 
         # Derive card_last4 from card_number
         if result['card_number']:
-            cn = result['card_number'].replace(' ', '')
+            cn = str(result['card_number']).replace(' ', '')
             # Extract last 4 digits
             digits = ''.join(c for c in cn if c.isdigit())
             if len(digits) >= 4:
@@ -788,7 +788,7 @@ class MetadataExtractor:
 
         # Standardize due_date to DD/MM/YYYY format
         if result['due_date']:
-            result['due_date'] = standardize_date(result['due_date'])
+            result['due_date'] = standardize_date(str(result['due_date']))
 
         self._log(f'Final result: total_due={result["total_amount_due"]}, '
                   f'min_due={result["minimum_amount_due"]}, '
@@ -837,7 +837,7 @@ if __name__ == '__main__':
     # If bank is Unknown, try to detect from PDF
     if bank == 'Unknown':
         try:
-            from statement_extractor import StatementExtractor
+            from src.statement_extractor import StatementExtractor
             se = StatementExtractor(pdf_path)
             bank = se.detect_bank()
             if debug:

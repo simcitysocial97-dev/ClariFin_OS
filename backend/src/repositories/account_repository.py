@@ -11,7 +11,7 @@ from src.repositories.base import BaseRepository
 class AccountRepository(BaseRepository):
     """Repository for managed account operations."""
 
-    def get_all_accounts(self) -> list[dict]:
+    def get_all_accounts(self) -> list[dict[str, Any]]:
         """Get all active persistent accounts."""
         with self._get_conn() as conn:
             # Check which column names exist

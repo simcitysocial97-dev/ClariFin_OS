@@ -7,7 +7,7 @@ from src.repositories.base import BaseRepository
 class InvestmentRepository(BaseRepository):
     """Repository for investment-related operations."""
 
-    def get_all(self) -> list[dict]:
+    def get_all(self) -> list[dict[str, Any]]:
         """Get all active investments (raw dicts, for net worth)."""
         with self._get_conn() as conn:
             rows = conn.execute("""

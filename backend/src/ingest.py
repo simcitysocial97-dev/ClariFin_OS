@@ -33,16 +33,11 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-# Allow running from any directory by adding src/ to path
-_SRC_DIR = Path(__file__).parent
-if str(_SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(_SRC_DIR))
-
-from categorizer import categorize
-from metadata_extractor import MetadataExtractor
+from src.categorizer import categorize
+from src.metadata_extractor import MetadataExtractor
 from src.repositories.statement_repository import StatementRepository
 from src.repositories.transaction_repository import TransactionRepository
-from statement_extractor import StatementExtractor
+from src.statement_extractor import StatementExtractor
 
 # ============================================================
 # Core Ingestion Logic
@@ -263,7 +258,7 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
     return result
 
 
-def ingest_directory(dir_path: str, db_path: str = "data/finance.db", debug: bool = False) -> list[dict]:
+def ingest_directory(dir_path: str, db_path: str = "data/finance.db", debug: bool = False) -> list[dict[str, Any]]:
     """Process all .pdf files in a directory. Returns list of result dicts."""
     pdf_files = sorted(Path(dir_path).glob("*.pdf"))
     if not pdf_files:

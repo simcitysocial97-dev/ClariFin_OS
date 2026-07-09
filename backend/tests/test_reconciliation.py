@@ -28,6 +28,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
+from repositories.reconciliation_repository import ReconciliationRepository
+from repositories.statement_repository import StatementRepository
 from engines.reconciliation_engine import (
     find_potential_matches,
     find_matches_for_transaction,
@@ -48,10 +50,11 @@ def temp_db():
     os.close(fd)
     
     db = FinanceDB(db_path=db_path)
+    stmt_repo = StatementRepository(db_path)
     
     # Insert test statements for different accounts
-    stmt_a = db.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_b = db.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
+    stmt_a = stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
+    stmt_b = stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
     
     yield db, db_path
     
@@ -70,23 +73,25 @@ def populated_db(temp_db):
     conn = sqlite3.connect(db_path)
     
     # Insert transactions for Account A (debits)
+    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
-        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, debit, credit, account_id)
+        INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES 
-            (1, '01/01/2025', '2025-01-01', 'Transfer to B', 1000.00, 'debit', 100000, 0, 'Account_A'),
-            (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 2000.00, 'debit', 200000, 0, 'Account_A'),
-            (1, '10/01/2025', '2025-01-10', 'Different amount', 500.00, 'debit', 50000, 0, 'Account_A'),
-            (1, '15/01/2025', '2025-01-15', 'Same account transfer', 300.00, 'debit', 30000, 0, 'Account_A')
+            (1, '01/01/2025', '2025-01-01', 'Transfer to B', 100000, 'debit', 'Account_A'),
+            (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 200000, 'debit', 'Account_A'),
+            (1, '10/01/2025', '2025-01-10', 'Different amount', 50000, 'debit', 'Account_A'),
+            (1, '15/01/2025', '2025-01-15', 'Same account transfer', 30000, 'debit', 'Account_A')
     """)
     
     # Insert transactions for Account B (credits)
+    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
-        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, debit, credit, account_id)
+        INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES 
-            (2, '01/01/2025', '2025-01-01', 'Transfer from A', 1000.00, 'credit', 0, 100000, 'Account_B'),
-            (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 2000.00, 'credit', 0, 200000, 'Account_B'),
-            (2, '10/01/2025', '2025-01-10', 'Different amount', 750.00, 'credit', 0, 75000, 'Account_B'),
-            (2, '15/01/2025', '2025-01-15', 'Same account credit', 300.00, 'credit', 0, 30000, 'Account_B')
+            (2, '01/01/2025', '2025-01-01', 'Transfer from A', 100000, 'credit', 'Account_B'),
+            (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 200000, 'credit', 'Account_B'),
+            (2, '10/01/2025', '2025-01-10', 'Different amount', 75000, 'credit', 'Account_B'),
+            (2, '15/01/2025', '2025-01-15', 'Same account credit', 30000, 'credit', 'Account_B')
     """)
     
     conn.commit()
@@ -181,41 +186,46 @@ def test_no_same_account_matches(populated_db):
 def test_confirm_no_transaction_mutation(populated_db):
     """Test that confirming a reconciliation does NOT modify transaction records."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
-    # Create a reconciliation using the new API
-    inserted = db.insert_reconciliation(
-        debit_txn_id=1,
-        credit_txn_id=5,
-        debit_account_id="Account_A",
-        credit_account_id="Account_B",
-        amount=1000.00,
-        date_diff_days=0,
-        match_confidence=0.8,
-        match_type="exact",
+    # Get a match to work with
+    matches = find_potential_matches(db_path)
+    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
+    
+    # Create a reconciliation
+    inserted = rec_repo.insert_reconciliation(
+        debit_txn_id=m["debit_txn_id"],
+        credit_txn_id=m["credit_txn_id"],
+        debit_account_id=m["debit_account_id"],
+        credit_account_id=m["credit_account_id"],
+        amount=m["amount"],
+        date_diff_days=m["date_diff_days"],
+        match_confidence=m["match_confidence"],
+        match_type=m["match_type"],
     )
     
     assert inserted is True, "Insert should succeed"
     
     # Get reconciliations to find the ID
-    recs = db.get_reconciliations(status="pending")
+    recs = rec_repo.get_reconciliations(status="pending")
     rec_id = recs[0]["id"] if recs else None
     
     if rec_id:
         # Get transaction states before confirm
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount FROM transactions WHERE id = 1")
+        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
         txn_before = dict(cur.fetchone())
         conn.close()
         
         # Confirm the reconciliation
-        result = db.confirm_reconciliation(rec_id)
+        result = rec_repo.confirm_reconciliation(rec_id)
         assert result is True, "Confirm should succeed"
         
         # Get transaction states after confirm
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount FROM transactions WHERE id = 1")
+        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
         txn_after = dict(cur.fetchone())
         conn.close()
         
@@ -230,41 +240,46 @@ def test_confirm_no_transaction_mutation(populated_db):
 def test_reject_no_transaction_mutation(populated_db):
     """Test that rejecting a reconciliation does NOT modify transaction records."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
     
-    # Create a reconciliation using the new API
-    inserted = db.insert_reconciliation(
-        debit_txn_id=1,
-        credit_txn_id=5,
-        debit_account_id="Account_A",
-        credit_account_id="Account_B",
-        amount=1000.00,
-        date_diff_days=0,
-        match_confidence=0.8,
-        match_type="exact",
+    # Get a match to work with
+    matches = find_potential_matches(db_path)
+    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
+    
+    # Create a reconciliation
+    inserted = rec_repo.insert_reconciliation(
+        debit_txn_id=m["debit_txn_id"],
+        credit_txn_id=m["credit_txn_id"],
+        debit_account_id=m["debit_account_id"],
+        credit_account_id=m["credit_account_id"],
+        amount=m["amount"],
+        date_diff_days=m["date_diff_days"],
+        match_confidence=m["match_confidence"],
+        match_type=m["match_type"],
     )
     
     assert inserted is True, "Insert should succeed"
     
     # Get reconciliations to find the ID
-    recs = db.get_reconciliations(status="pending")
+    recs = rec_repo.get_reconciliations(status="pending")
     rec_id = recs[0]["id"] if recs else None
     
     if rec_id:
         # Get transaction states before reject
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount FROM transactions WHERE id = 1")
+        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
         txn_before = dict(cur.fetchone())
         conn.close()
         
         # Reject the reconciliation
-        result = db.reject_reconciliation(rec_id)
+        result = rec_repo.reject_reconciliation(rec_id)
         assert result is True, "Reject should succeed"
         
         # Get transaction states after reject
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount FROM transactions WHERE id = 1")
+        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
         txn_after = dict(cur.fetchone())
         conn.close()
         
@@ -279,30 +294,35 @@ def test_reject_no_transaction_mutation(populated_db):
 def test_prevent_duplicate_pairs(populated_db):
     """Test that duplicate reconciliation pairs are prevented via idempotent insert."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
+    
+    # Get a match to work with
+    matches = find_potential_matches(db_path)
+    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
     
     # Create first reconciliation
-    inserted_1 = db.insert_reconciliation(
-        debit_txn_id=1,
-        credit_txn_id=5,
-        debit_account_id="Account_A",
-        credit_account_id="Account_B",
-        amount=1000.00,
-        date_diff_days=0,
-        match_confidence=0.8,
-        match_type="exact",
+    inserted_1 = rec_repo.insert_reconciliation(
+        debit_txn_id=m["debit_txn_id"],
+        credit_txn_id=m["credit_txn_id"],
+        debit_account_id=m["debit_account_id"],
+        credit_account_id=m["credit_account_id"],
+        amount=m["amount"],
+        date_diff_days=m["date_diff_days"],
+        match_confidence=m["match_confidence"],
+        match_type=m["match_type"],
     )
     assert inserted_1 is True
     
     # Try to create duplicate (same pair) - should be ignored
-    inserted_2 = db.insert_reconciliation(
-        debit_txn_id=1,
-        credit_txn_id=5,
-        debit_account_id="Account_A",
-        credit_account_id="Account_B",
-        amount=1000.00,
-        date_diff_days=0,
-        match_confidence=0.8,
-        match_type="exact",
+    inserted_2 = rec_repo.insert_reconciliation(
+        debit_txn_id=m["debit_txn_id"],
+        credit_txn_id=m["credit_txn_id"],
+        debit_account_id=m["debit_account_id"],
+        credit_account_id=m["credit_account_id"],
+        amount=m["amount"],
+        date_diff_days=m["date_diff_days"],
+        match_confidence=m["match_confidence"],
+        match_type=m["match_type"],
     )
     assert inserted_2 is False, "Duplicate should be ignored"
 
@@ -310,31 +330,36 @@ def test_prevent_duplicate_pairs(populated_db):
 def test_prevent_mirrored_pairs(populated_db):
     """Test that mirrored pairs (A,B) and (B,A) are prevented via deterministic key."""
     db, db_path = populated_db
+    rec_repo = ReconciliationRepository(db_path)
+    
+    # Get a match to work with
+    matches = find_potential_matches(db_path)
+    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
     
     # Create first reconciliation
-    inserted_1 = db.insert_reconciliation(
-        debit_txn_id=1,
-        credit_txn_id=5,
-        debit_account_id="Account_A",
-        credit_account_id="Account_B",
-        amount=1000.00,
-        date_diff_days=0,
-        match_confidence=0.8,
-        match_type="exact",
+    inserted_1 = rec_repo.insert_reconciliation(
+        debit_txn_id=m["debit_txn_id"],
+        credit_txn_id=m["credit_txn_id"],
+        debit_account_id=m["debit_account_id"],
+        credit_account_id=m["credit_account_id"],
+        amount=m["amount"],
+        date_diff_days=m["date_diff_days"],
+        match_confidence=m["match_confidence"],
+        match_type=m["match_type"],
     )
     assert inserted_1 is True
     
     # Try to create mirrored pair (swapped IDs) - should be ignored
     # Note: The deterministic key uses min/max IDs, so this is the same key
-    inserted_2 = db.insert_reconciliation(
-        debit_txn_id=5,
-        credit_txn_id=1,
-        debit_account_id="Account_B",
-        credit_account_id="Account_A",
-        amount=1000.00,
-        date_diff_days=0,
-        match_confidence=0.8,
-        match_type="exact",
+    inserted_2 = rec_repo.insert_reconciliation(
+        debit_txn_id=m["credit_txn_id"],
+        credit_txn_id=m["debit_txn_id"],
+        debit_account_id=m["credit_account_id"],
+        credit_account_id=m["debit_account_id"],
+        amount=m["amount"],
+        date_diff_days=m["date_diff_days"],
+        match_confidence=m["match_confidence"],
+        match_type=m["match_type"],
     )
     assert inserted_2 is False, "Mirrored pair should be ignored"
 

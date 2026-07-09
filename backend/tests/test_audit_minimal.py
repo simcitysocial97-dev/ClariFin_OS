@@ -66,8 +66,8 @@ def populated_db(temp_db):
     
     # Insert transactions
     txn_repo.insert_transactions(stmt_id, [
-        {"date": "01/01/2025", "description": "Test debit", "amount": 100.0, "type": "debit"},
-        {"date": "02/01/2025", "description": "Test credit", "amount": 50.0, "type": "credit"},
+        {"date": "01/01/2025", "description": "Test debit", "amount_paise": 10000, "type": "debit"},
+        {"date": "02/01/2025", "description": "Test credit", "amount_paise": 5000, "type": "credit"},
     ])
     
     return db, db_path
@@ -130,7 +130,7 @@ def test_update_prevented_by_trigger(populated_db):
     # Attempt to update - should raise exception
     with pytest.raises(sqlite3.IntegrityError) as exc_info:
         conn.execute(
-            "UPDATE transactions SET amount = 999.99 WHERE id = ?",
+            "UPDATE transactions SET amount_paise = 99999 WHERE id = ?",
             (txn_id,)
         )
         conn.commit()

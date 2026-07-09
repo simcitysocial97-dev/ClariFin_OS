@@ -7,7 +7,7 @@ router = APIRouter(prefix="/api", tags=["banks"])
 
 
 @router.get("/banks")
-async def get_banks():
+async def get_banks() -> list[str]:
     """
     List all known banks from uploaded statements.
 

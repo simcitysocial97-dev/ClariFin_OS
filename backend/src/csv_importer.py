@@ -180,7 +180,7 @@ class CSVImporter:
                     return columns[i]
         return None
 
-    def _is_date_value(self, value) -> bool:
+    def _is_date_value(self, value: Any) -> bool:
         """Check if a value looks like a date."""
         if pd.isna(value):
             return False
@@ -209,7 +209,7 @@ class CSVImporter:
 
         return False
 
-    def _is_numeric_value(self, value) -> bool:
+    def _is_numeric_value(self, value: Any) -> bool:
         """Check if a value is numeric (after cleaning)."""
         if pd.isna(value):
             return False
@@ -231,7 +231,7 @@ class CSVImporter:
         except ValueError:
             return False
 
-    def _parse_amount(self, value) -> float | None:
+    def _parse_amount(self, value: Any) -> float | None:
         """Parse an amount value to float."""
         if pd.isna(value):
             return None
@@ -272,7 +272,7 @@ class CSVImporter:
 
             date_count = sum(1 for v in values if self._is_date_value(v))
             if date_count / len(values) > 0.5:
-                return col
+                return str(col)
 
         return None
 
@@ -287,7 +287,7 @@ class CSVImporter:
 
         # Then, find column with longest average string length
         best_col = None
-        best_avg_len = 0
+        best_avg_len = 0.0
 
         for col in columns:
             values = df[col].dropna().head(20)
@@ -305,7 +305,7 @@ class CSVImporter:
                 best_avg_len = avg_len
                 best_col = col
 
-        return best_col
+        return str(best_col) if best_col else None
 
     def _detect_amount_column(self, df: pd.DataFrame, exclude_cols: list[str]) -> str | None:
         """Detect which column contains amounts."""
@@ -324,7 +324,7 @@ class CSVImporter:
 
             numeric_count = sum(1 for v in values if self._is_numeric_value(v))
             if numeric_count / len(values) > 0.5:
-                return col
+                return str(col)
 
         return None
 
@@ -348,7 +348,7 @@ class CSVImporter:
             # Check if values are type indicators
             type_count = sum(1 for v in values if str(v).lower().strip() in type_values)
             if type_count / len(values) > 0.5:
-                return col
+                return str(col)
 
         return None
 
@@ -477,7 +477,7 @@ class CSVImporter:
         mapping: dict[str, Any],
         member: str = "Self",
         bank: str = "Manual Import",
-    ) -> tuple[list[dict], list[str]]:
+    ) -> tuple[list[dict[str, Any]], list[str]]:
         """
         Import transactions using the provided column mapping.
 
@@ -523,13 +523,7 @@ class CSVImporter:
             return [], warnings
 
         # Import categorizer
-        try:
-            from categorizer import categorize
-        except ImportError:
-            # Fallback if categorizer not in path
-            import sys
-            sys.path.insert(0, str(Path(__file__).parent))
-            from categorizer import categorize
+        from src.categorizer import categorize
 
         for idx, row in df.iterrows():
             try:

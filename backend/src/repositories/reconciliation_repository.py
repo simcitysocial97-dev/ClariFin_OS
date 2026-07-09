@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+from typing import Any
 from src.models.reconciliation import Reconciliation
 from src.repositories.base import BaseRepository
 
@@ -27,7 +28,7 @@ class ReconciliationRepository(BaseRepository):
             """).fetchall()
         return [Reconciliation.from_db_row(dict(r)) for r in rows]
 
-    def get_reconciliations(self, status: str | None = None) -> list[dict]:
+    def get_reconciliations(self, status: str | None = None) -> list[dict[str, Any]]:
         """
         Get all reconciliations with transaction details.
 
@@ -67,7 +68,7 @@ class ReconciliationRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def get_pending_reconciliations(self) -> list[dict]:
+    def get_pending_reconciliations(self) -> list[dict[str, Any]]:
         """Get all pending reconciliations."""
         return self.get_reconciliations(status='pending')
 
@@ -162,7 +163,7 @@ class ReconciliationRepository(BaseRepository):
             updated = cur.rowcount > 0
         return updated
 
-    def get_confirmed_transfer_ids(self) -> list[tuple]:
+    def get_confirmed_transfer_ids(self) -> list[tuple[int, int]]:
         """
         Get all transaction IDs involved in confirmed transfers.
 

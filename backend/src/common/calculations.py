@@ -61,7 +61,7 @@ def percentage_change(current: float, previous: float) -> str:
     return f"{sign}{change:.1f}%"
 
 
-def compute_is_large(transactions: list[Any]) -> list:
+def compute_is_large(transactions: list[Any]) -> list[dict[str, Any]]:
     """Flag transactions that are >2.5x average debit."""
     debit_txns = [t for t in transactions if t.get("type") == "debit"]
     if not debit_txns:
@@ -76,7 +76,7 @@ def compute_is_large(transactions: list[Any]) -> list:
     return transactions
 
 
-def compute_behavioral_insights(transactions: list[Any]) -> list:
+def compute_behavioral_insights(transactions: list[Any]) -> list[dict[str, Any]]:
     """Generate behavioral insights from transactions."""
     insights = []
     debit_txns = [t for t in transactions if t.get("type") == "debit"]

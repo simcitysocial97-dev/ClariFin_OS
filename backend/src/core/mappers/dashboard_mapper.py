@@ -50,7 +50,7 @@ class DashboardMapper:
         Returns:
             DashboardSummaryDTO instance
         """
-        dto_data = {
+        dto_data: dict[str, Any] = {
             "net_cash_flow_paise": net_cash_flow.paise,
             "total_income_paise": total_income.paise,
             "total_expenses_paise": total_expenses.paise,
@@ -89,7 +89,7 @@ class DashboardMapper:
         Returns:
             OverviewDTO instance
         """
-        dto_data = {
+        dto_data: dict[str, Any] = {
             "total_spend_paise": total_spend.paise,
             "transaction_count": transaction_count,
             "category_chart": category_chart,

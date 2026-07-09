@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api", tags=["cards", "statements"])
 
 
 @router.get("/statements")
-def get_statements() -> list[dict]:
+def get_statements() -> list[dict[str, Any]]:
     """Get all statements with metadata."""
     try:
         repo = StatementRepository()
@@ -86,7 +86,7 @@ def get_cards() -> dict[str, Any]:
         raw = repo.get_all_statements_with_metadata()
 
         # Group statements by (bank, card_last4)
-        card_groups: dict[str, Any] = defaultdict(list)
+        card_groups: dict[tuple[str, str], list[Any]] = defaultdict(list)
         for stmt in raw:
             bank = stmt.get("bank") or "Unknown"
             card_last4 = stmt.get("card_last4") or "Unknown"

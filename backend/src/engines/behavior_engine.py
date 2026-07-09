@@ -23,7 +23,7 @@ from typing import Any
 from cachetools import TTLCache
 
 # Global cache instance: max 10 elements, 5-minute (300s) expiration
-_behavior_cache = TTLCache(maxsize=10, ttl=300)
+_behavior_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=10, ttl=300)
 
 
 def invalidate_behavior_cache() -> None:
@@ -150,7 +150,7 @@ def _get_monthly_category_spending_sql(db_path: str, cutoff_date: str) -> dict[s
     rows = cur.fetchall()
     conn.close()
 
-    result = defaultdict(lambda: defaultdict(int))
+    result: defaultdict[str, defaultdict[str, float]] = defaultdict(lambda: defaultdict(float))
     for row in rows:
         month = row["month"]
         category = row["category"] or "Uncategorized"
@@ -181,7 +181,7 @@ def _get_monthly_income_expenses_sql(db_path: str, cutoff_date: str) -> dict[str
     rows = cur.fetchall()
     conn.close()
 
-    result = defaultdict(lambda: {"income_paise": 0, "expenses_paise": 0})
+    result: defaultdict[str, dict[str, int]] = defaultdict(lambda: {"income_paise": 0, "expenses_paise": 0})
     for row in rows:
         month = row["month"]
         txn_type = row["type"]
@@ -251,7 +251,7 @@ def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> dict[str, Any]
 # Data Extraction
 # ============================================================
 
-def _get_transactions_90_days(db_path: str) -> list[dict]:
+def _get_transactions_90_days(db_path: str) -> list[dict[str, Any]]:
     """Get transactions from last 90 days (or most recent 500 if no recent data)."""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -273,7 +273,7 @@ def _get_transactions_90_days(db_path: str) -> list[dict]:
     return rows
 
 
-def _get_recent_transactions(db_path: str, limit: int = 500) -> list[dict]:
+def _get_recent_transactions(db_path: str, limit: int = 500) -> list[dict[str, Any]]:
     """Get most recent N transactions for performance."""
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -314,7 +314,7 @@ def _compute_temporal_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
         }
 
     # Aggregate daily spending
-    daily_spend = defaultdict(int)
+    daily_spend: defaultdict[str, float] = defaultdict(float)
     for txn in transactions:
         if txn.get("type") == "debit":
             date_iso = txn.get("date_iso", "")
@@ -343,7 +343,7 @@ def _compute_temporal_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
         recent_trend = 0.0
 
     # Compute weekly seasonality (day-of-week variance)
-    weekly_pattern = defaultdict(list)
+    weekly_pattern: defaultdict[str, list[float]] = defaultdict(list)
     for date_str, amount in daily_spend.items():
         try:
             dt = datetime.strptime(date_str, "%Y-%m-%d")
@@ -408,7 +408,7 @@ def _compute_loss_aversion_index(transactions: list[dict[str, Any]]) -> dict[str
     median_debit = sorted(debit_amounts)[len(debit_amounts) // 2]
 
     # Post-income spending velocity
-    post_income_spends = []
+    post_income_spends: list[float] = []
 
     for credit in credits:
         credit_date = _parse_date(credit.get("date_iso", "") or credit.get("date", ""))
@@ -550,7 +550,7 @@ def _compute_habit_stability_score(transactions: list[dict[str, Any]]) -> dict[s
         return {"score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0}
 
     # Monthly category spending (use amount_paise, convert to rupees for analysis)
-    monthly_category = defaultdict(lambda: defaultdict(float))
+    monthly_category: defaultdict[str, defaultdict[str, float]] = defaultdict(lambda: defaultdict(float))
     for txn in debits:
         date_iso = txn.get("date_iso", "")
         if date_iso:
@@ -559,9 +559,9 @@ def _compute_habit_stability_score(transactions: list[dict[str, Any]]) -> dict[s
             monthly_category[month][category] += (txn.get("amount_paise", 0) or 0) / 100.0
 
     # Category CV across months
-    category_cvs = []
+    category_cvs: list[float] = []
     if monthly_category:
-        all_categories = set()
+        all_categories: set[str] = set()
         for month_data in monthly_category.values():
             all_categories.update(month_data.keys())
 
@@ -574,7 +574,7 @@ def _compute_habit_stability_score(transactions: list[dict[str, Any]]) -> dict[s
     avg_category_cv = sum(category_cvs) / len(category_cvs) if category_cvs else 0
 
     # Recurring expense detection (similar amounts, same description)
-    desc_amounts = defaultdict(list)
+    desc_amounts: defaultdict[str, list[float]] = defaultdict(list)
     for txn in debits:
         desc = txn.get("description", "")[:30]  # Truncate for matching
         amount = (txn.get("amount_paise", 0) or 0) / 100.0
@@ -592,14 +592,14 @@ def _compute_habit_stability_score(transactions: list[dict[str, Any]]) -> dict[s
     recurring_score = min(1.0, recurring_count / 10)  # Normalize to max 10 recurring
 
     # Behavioral rhythm (regular transaction days)
-    daily_counts = defaultdict(int)
+    daily_counts: defaultdict[str, float] = defaultdict(float)
     for txn in debits:
         date_iso = txn.get("date_iso", "")
         if date_iso:
             daily_counts[date_iso] += 1
 
     if daily_counts:
-        counts = list(daily_counts.values())
+        counts = [float(v) for v in daily_counts.values()]
         rhythm_cv = _coefficient_of_variation(counts)
         rhythm_score = 1 - _normalize_score(rhythm_cv, 0, 2)
     else:
@@ -639,7 +639,7 @@ def _compute_financial_stress_index(transactions: list[dict[str, Any]]) -> dict[
         return {"score": 0.5, "balance_volatility": 0.0, "credit_dependency": 0.0}
 
     # Daily net flow (convert amount_paise to rupees for analysis)
-    daily_net = defaultdict(float)
+    daily_net: defaultdict[str, float] = defaultdict(float)
     for txn in transactions:
         date_iso = txn.get("date_iso", "")
         if date_iso:
@@ -651,8 +651,8 @@ def _compute_financial_stress_index(transactions: list[dict[str, Any]]) -> dict[
 
     # Running balance simulation
     sorted_dates = sorted(daily_net.keys())
-    running_balance = []
-    balance = 0
+    running_balance: list[float] = []
+    balance: float = 0.0
     for date in sorted_dates:
         balance += daily_net[date]
         running_balance.append(balance)
@@ -669,8 +669,8 @@ def _compute_financial_stress_index(transactions: list[dict[str, Any]]) -> dict[
     credit_dependency = total_credit / max(total_debit, 1) if total_debit > 0 else 0
 
     # End-of-month depletion (last 5 days spending ratio)
-    eom_spending = 0
-    total_spending = 0
+    eom_spending: float = 0.0
+    total_spending: float = 0.0
 
     for txn in debits:
         date_iso = txn.get("date_iso", "")
@@ -723,7 +723,7 @@ def _compute_savings_discipline_score(transactions: list[dict[str, Any]]) -> dic
         return {"score": 0.5, "savings_rate": 0.0, "momentum": 0.0}
 
     # Monthly income vs expenses (use amount_paise, convert to rupees for analysis)
-    monthly_data = defaultdict(lambda: {"income": 0.0, "expenses": 0.0})
+    monthly_data: defaultdict[str, dict[str, float]] = defaultdict(lambda: {"income": 0.0, "expenses": 0.0})
 
     for txn in transactions:
         date_iso = txn.get("date_iso", "")
@@ -813,7 +813,7 @@ def detect_india_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
     credits = [t for t in transactions if t.get("type") == "credit"]
 
     # UPI micro-spend detection (>10 transactions/day < ₹200)
-    daily_micro = defaultdict(int)
+    daily_micro: defaultdict[str, int] = defaultdict(int)
     for txn in debits:
         amount = (txn.get("amount_paise", 0) or 0) / 100.0
         date_iso = txn.get("date_iso", "")
@@ -857,7 +857,7 @@ def detect_india_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
 
     # EMI ratio calculation
     emi_keywords = ["emi", "loan repayment", "installment"]
-    monthly_emi = defaultdict(float)
+    monthly_emi: defaultdict[str, float] = defaultdict(float)
 
     for txn in debits:
         desc = (txn.get("description", "") or "").lower()
@@ -867,7 +867,7 @@ def detect_india_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
             monthly_emi[month] += (txn.get("amount_paise", 0) or 0) / 100.0
 
     # Calculate EMI to income ratio
-    monthly_income = defaultdict(float)
+    monthly_income: defaultdict[str, float] = defaultdict(float)
     for txn in credits:
         date_iso = txn.get("date_iso", "")
         if date_iso:

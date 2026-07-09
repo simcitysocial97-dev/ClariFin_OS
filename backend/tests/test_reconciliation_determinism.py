@@ -66,21 +66,23 @@ def populated_db(temp_db):
     conn = sqlite3.connect(db_path)
     
     # Insert transactions for Account A (debits)
+    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
-        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, debit, credit, account_id)
+        INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES 
-            (1, '01/01/2025', '2025-01-01', 'Transfer to B', 1000.00, 'debit', 100000, 0, 'Account_A'),
-            (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 2000.00, 'debit', 200000, 0, 'Account_A'),
-            (1, '10/01/2025', '2025-01-10', 'Different amount', 500.00, 'debit', 50000, 0, 'Account_A')
+            (1, '01/01/2025', '2025-01-01', 'Transfer to B', 100000, 'debit', 'Account_A'),
+            (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 200000, 'debit', 'Account_A'),
+            (1, '10/01/2025', '2025-01-10', 'Different amount', 50000, 'debit', 'Account_A')
     """)
     
     # Insert transactions for Account B (credits)
+    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
-        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, debit, credit, account_id)
+        INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES 
-            (2, '01/01/2025', '2025-01-01', 'Transfer from A', 1000.00, 'credit', 0, 100000, 'Account_B'),
-            (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 2000.00, 'credit', 0, 200000, 'Account_B'),
-            (2, '10/01/2025', '2025-01-10', 'Different amount', 750.00, 'credit', 0, 75000, 'Account_B')
+            (2, '01/01/2025', '2025-01-01', 'Transfer from A', 100000, 'credit', 'Account_B'),
+            (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 200000, 'credit', 'Account_B'),
+            (2, '10/01/2025', '2025-01-10', 'Different amount', 75000, 'credit', 'Account_B')
     """)
     
     conn.commit()
@@ -259,7 +261,7 @@ def test_confirmed_row_immutable(populated_db):
     # Verify fields are unchanged
     assert confirmed[0]["deterministic_key"] == m["deterministic_key"]
     assert confirmed[0]["match_confidence"] == m["match_confidence"]
-    assert confirmed[0]["amount"] == m["amount"]
+    assert confirmed[0]["amount_paise"] == int(m["amount"] * 100)
 
 
 def test_confirm_does_not_modify_transactions(populated_db):
@@ -273,7 +275,7 @@ def test_confirm_does_not_modify_transactions(populated_db):
     # Get transaction states before
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    cur = conn.execute("SELECT debit, credit, amount FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+    cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
     txn_before = dict(cur.fetchone())
     conn.close()
     
@@ -295,7 +297,7 @@ def test_confirm_does_not_modify_transactions(populated_db):
     # Get transaction states after
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    cur = conn.execute("SELECT debit, credit, amount FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+    cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
     txn_after = dict(cur.fetchone())
     conn.close()
     

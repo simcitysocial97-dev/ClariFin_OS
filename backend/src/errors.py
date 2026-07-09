@@ -209,9 +209,9 @@ def register_error_handlers(app: FastAPI) -> None:
     Args:
         app: FastAPI application instance
     """
-    app.add_exception_handler(AppError, app_error_handler)
-    app.add_exception_handler(HTTPException, http_exception_handler)
-    app.add_exception_handler(RequestValidationError, validation_error_handler)
+    app.add_exception_handler(AppError, app_error_handler)  # type: ignore
+    app.add_exception_handler(HTTPException, http_exception_handler)  # type: ignore
+    app.add_exception_handler(RequestValidationError, validation_error_handler)  # type: ignore
     app.add_exception_handler(Exception, generic_exception_handler)
 
 

@@ -12,7 +12,7 @@ Endpoints:
 from typing import Any
 
 import sqlite3
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, FastAPI, HTTPException
 
 from src.config import settings
 from src.logger import log_error, log_info
@@ -109,7 +109,7 @@ def readiness_check() -> dict[str, Any]:
         )
 
 
-def register_health_routes(app) -> None:
+def register_health_routes(app: FastAPI) -> None:
     """
     Register health routes with the FastAPI app.
 

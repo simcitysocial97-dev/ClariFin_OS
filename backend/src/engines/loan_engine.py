@@ -38,7 +38,7 @@ def compute_amortization_schedule(
     tenure_months: int,
     disbursed_date: str,
     emi_paise: int | None = None
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """
     Generate full amortization schedule for a reducing balance loan.
 

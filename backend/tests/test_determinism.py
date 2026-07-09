@@ -218,11 +218,11 @@ def test_update_prevention():
         
         conn = sqlite3.connect(db_path)
         
-        # Try to update a transaction
+        # Try to update a transaction (use amount_paise since amount column no longer exists)
         blocked = False
         error_msg = ""
         try:
-            conn.execute("UPDATE transactions SET amount = 999 WHERE id = 1")
+            conn.execute("UPDATE transactions SET amount_paise = 999 WHERE id = 1")
             conn.commit()
         except Exception as e:
             blocked = True

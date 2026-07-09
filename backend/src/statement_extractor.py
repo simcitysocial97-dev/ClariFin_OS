@@ -24,7 +24,7 @@ import re
 import sys
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import camelot
 import pdfplumber
@@ -139,7 +139,7 @@ def _split_dr_cr(amount: str) -> tuple[str, str]:
     return s, ""
 
 
-def _parse_amount_paise(amount_str) -> int:
+def _parse_amount_paise(amount_str: Any) -> int:
     """
     Parse amount to integer paise (1 rupee = 100 paise).
     Raises ValueError on invalid input (no silent failures).
@@ -244,7 +244,7 @@ class StatementExtractor:
     # Step 2: Extract Tables from Page
     # ----------------------------------------------------------
 
-    def extract_tables_from_page(self, page_number: int) -> list[dict]:
+    def extract_tables_from_page(self, page_number: int) -> list[dict[str, Any]]:
         """
         Extract all tables from a single page using Camelot.
         Fix 15: Try lattice first. If lattice returns a usable table (>=3 cols, >=5 rows),
@@ -431,7 +431,7 @@ class StatementExtractor:
     # Step 5: Clean Rows + Header Capture
     # ----------------------------------------------------------
 
-    def _extract_header_row(self, rows: list[list]) -> list[str] | None:
+    def _extract_header_row(self, rows: list[list[Any]]) -> list[str] | None:
         """
         Fix 9: Scan first 5 rows for the one that best matches HEADER_PHRASES.
         Returns the header row as a list of strings, or None if not found.
@@ -445,7 +445,7 @@ class StatementExtractor:
                 return row
         return None
 
-    def clean_rows(self, rows: list[list]) -> list[list[str]]:
+    def clean_rows(self, rows: list[list[Any]]) -> list[list[str]]:
         """
         Convert raw Camelot rows to clean string lists.
         Remove: fully empty rows, header rows.
@@ -511,7 +511,7 @@ class StatementExtractor:
                         return i
 
         # Fallback: column with longest average text (excluding date and numeric cols)
-        avg_lengths = []
+        avg_lengths: list[float] = []
         for col_idx in range(col_count):
             if col_idx == date_col_idx:
                 avg_lengths.append(0)
@@ -921,7 +921,7 @@ class StatementExtractor:
 
     def normalize_transactions(
         self, rows: list[list[str]], date_col_idx: int
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """
         Build structured transaction dicts from merged rows.
 
@@ -967,7 +967,8 @@ class StatementExtractor:
 
             desc = row[desc_col].strip() if desc_col < len(row) else ""
 
-            if amount_structure == "separate_debit_credit" and debit_col is not None:
+            # debit_col and credit_col are guaranteed non-None here due to the outer check
+            if amount_structure == "separate_debit_credit" and debit_col is not None and credit_col is not None:
                 debit_val = row[debit_col].strip() if debit_col < len(row) else ""
                 credit_val = row[credit_col].strip() if credit_col < len(row) else ""
 
@@ -992,7 +993,7 @@ class StatementExtractor:
                 if not txn_type:
                     txn_type = self._detect_type_from_amount(raw_amount)
 
-            txn = {
+            txn: dict[str, Any] = {
                 "date": date,
                 "description": desc,
                 "amount": amount,
@@ -1067,7 +1068,7 @@ class StatementExtractor:
             return min(pages_with_dates)
         return best_page
 
-    def _score_continuation(self, table) -> float:
+    def _score_continuation(self, table: Any) -> float:
         """
         Looser scoring for continuation pages.
         Requires only 1 date row (not 2), col_count >= 2, row_count >= 2.
@@ -1087,18 +1088,18 @@ class StatementExtractor:
         # Simple score: prefer more rows and more dates
         return (min(row_count, 100) * 1.5) + (date_rows / row_count * 30)
 
-    def _collect_all_pages(self, start_page: int, strategy: str) -> list[list]:
+    def _collect_all_pages(self, start_page: int, strategy: str) -> list[list[Any]]:
         """
         After finding the best table on start_page, collect rows from
         all subsequent pages. Uses strict scoring first; falls back to
         looser continuation scoring. Stops when no table with dates found.
         """
-        all_rows: list[list] = []
+        all_rows: list[list[Any]] = []
         consecutive_no_dates = 0
 
         for page_num in range(start_page, self._num_pages):
             page_str = str(page_num + 1)
-            page_tables = []
+            page_tables: list[Any] = []
 
             for flavor in (strategy, "stream" if strategy == "lattice" else "lattice"):
                 try:
@@ -1162,7 +1163,7 @@ class StatementExtractor:
         - Axis Bank: DATE DESCRIPTION Cr_AMOUNT Cr Dr_AMOUNT Dr
         """
         self._log("Using pdfplumber text fallback...")
-        transactions = []
+        transactions: list[dict[str, Any]] = []
 
         try:
             with pdfplumber.open(self.pdf_path) as pdf:
@@ -1294,9 +1295,9 @@ class StatementExtractor:
                             }
                             # Add amount_paise (canonical integer representation)
                             try:
-                                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))
+                                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))  # type: ignore[assignment]
                             except ValueError:
-                                txn["amount_paise"] = 0
+                                txn["amount_paise"] = 0  # type: ignore[assignment]
                             transactions.append(txn)
         except Exception as e:
             self._log(f"Text fallback error: {e}")
@@ -1337,12 +1338,13 @@ class StatementExtractor:
 
         # Step 5: Scan backwards from best_page to find the true first page
         # with transaction data (handles cases where earlier pages also have txns)
-        actual_start = self._find_actual_start_page(start_page, strategy)
+        # start_page and strategy are guaranteed non-None after select_best_table() succeeds
+        actual_start = self._find_actual_start_page(cast(int, start_page), cast(str, strategy))
         self._log(f"Best page={start_page}, actual start={actual_start}")
 
         # Collect rows from actual start page onwards
         self._log(f"Collecting rows from page {actual_start} onwards...")
-        all_raw_rows = self._collect_all_pages(actual_start, strategy)
+        all_raw_rows = self._collect_all_pages(actual_start, cast(str, strategy))
         self._log(f"Total raw rows collected: {len(all_raw_rows)}")
 
         # Step 6: Clean rows

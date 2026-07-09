@@ -31,7 +31,7 @@ def generate_nudges(profile: dict[str, Any]) -> list[dict[str, Any]]:
     - message: Actionable suggestion
     - trigger: The condition that triggered this nudge
     """
-    nudges = []
+    nudges: list[dict[str, Any]] = []
 
     if not profile:
         return nudges

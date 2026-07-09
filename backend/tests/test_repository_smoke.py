@@ -124,10 +124,10 @@ def test_reconciliation_repository_get_reconciliations():
         # Insert transactions
         conn = sqlite3.connect(db_path)
         conn.execute("""
-            INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, amount_paise, account_id)
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
             VALUES
-                (1, '01/01/2025', '2025-01-01', 'Transfer out', 1000.00, 'debit', 100000, 'Account_A'),
-                (2, '01/01/2025', '2025-01-01', 'Transfer in', 1000.00, 'credit', 100000, 'Account_B')
+                (1, '01/01/2025', '2025-01-01', 'Transfer out', 100000, 'debit', 'Account_A'),
+                (2, '01/01/2025', '2025-01-01', 'Transfer in', 100000, 'credit', 'Account_B')
         """)
         conn.commit()
         conn.close()
@@ -166,10 +166,10 @@ def test_reconciliation_repository_get_pending():
 
         conn = sqlite3.connect(db_path)
         conn.execute("""
-            INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, amount_paise, account_id)
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
             VALUES
-                (1, '01/01/2025', '2025-01-01', 'Transfer out', 1000.00, 'debit', 100000, 'Account_A'),
-                (2, '01/01/2025', '2025-01-01', 'Transfer in', 1000.00, 'credit', 100000, 'Account_B')
+                (1, '01/01/2025', '2025-01-01', 'Transfer out', 100000, 'debit', 'Account_A'),
+                (2, '01/01/2025', '2025-01-01', 'Transfer in', 100000, 'credit', 'Account_B')
         """)
         conn.commit()
         conn.close()

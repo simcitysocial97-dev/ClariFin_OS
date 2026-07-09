@@ -7,12 +7,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent))
-
-from column_mapper import ColumnMapper  # type: ignore[import-not-found]
-from table_extractor import TableExtractor  # type: ignore[import-not-found]
-from transaction_parser import TransactionParser  # type: ignore[import-not-found]
+from src.column_mapper import ColumnMapper
+from src.table_extractor import TableExtractor
+from src.transaction_parser import TransactionParser
 
 
 def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[dict[str, Any]]:

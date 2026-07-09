@@ -342,7 +342,7 @@ def get_analytics(
             if t.get("description"):
                 merchant_txns[t["description"]].append(t.get("amount", 0))
 
-        recurring = []
+        recurring: list[dict[str, Any]] = []
         for desc, amounts in merchant_txns.items():
             if len(amounts) >= 2:
                 avg_amt = sum(amounts) / len(amounts)
@@ -356,7 +356,7 @@ def get_analytics(
                             "annual_display": format_inr(avg_amt * 12),
                         })
 
-        recurring.sort(key=lambda x: x["frequency"], reverse=True)
+        recurring.sort(key=lambda x: x.get("frequency", 0), reverse=True)
 
         # Largest transactions
         sorted_debits = sorted(debit_txns, key=lambda t: t.get("amount", 0), reverse=True)

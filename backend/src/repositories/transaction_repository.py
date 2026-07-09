@@ -86,7 +86,7 @@ class TransactionRepository(BaseRepository):
             for row in rows
         ]
 
-    def get_all_transactions(self, filters: dict[str, Any] | None = None) -> list[dict]:
+    def get_all_transactions(self, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         Fetch transactions with optional filters.
         Supported filter keys: date_from, date_to, bank, category, min_amount, max_amount, type
@@ -135,7 +135,7 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def get_all_transactions_with_bank(self, filters: dict[str, Any] | None = None) -> list[dict]:
+    def get_all_transactions_with_bank(self, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
         """
         JOIN transactions with statements to include bank info.
         Returns list of dicts with all transaction + statement fields.
@@ -211,14 +211,11 @@ class TransactionRepository(BaseRepository):
             for seq, txn in enumerate(transactions):
                 # Amount should already be in paise from parsing (source of truth)
                 amount_paise = int(txn.get("amount_paise") or 0)
-                # Derive float for legacy 'amount' column (deprecated)
-                amount = amount_paise / 100.0
                 date = str(txn.get("date", "")).strip()
                 description = str(txn.get("description", "")).strip()
                 txn_type = str(txn.get("type", "")).strip()
                 category = str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
                 subcategory = str(txn.get("subcategory", "")).strip() or None
-                raw_description = description  # preserve original
 
                 # Phase 2A: Compute debit/credit paise values
                 debit_paise = amount_paise if txn_type == 'debit' else 0
@@ -237,20 +234,18 @@ class TransactionRepository(BaseRepository):
                 cur = conn.execute(
                     """
                     INSERT OR IGNORE INTO transactions
-                        (statement_id, sequence_num, date, description, amount, type, category, subcategory, raw_description,
+                        (statement_id, sequence_num, date, description, type, category, subcategory,
                          amount_paise, date_iso, hash_signature, account_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         statement_id,
                         seq,
                         date,
                         description,
-                        amount,
                         txn_type,
                         category,
                         subcategory,
-                        raw_description,
                         amount_paise,
                         date_iso,
                         hash_signature,
@@ -269,7 +264,7 @@ class TransactionRepository(BaseRepository):
             count = cur.fetchone()[0]
         return int(count)
 
-    def get_monthly_summary(self) -> list[dict]:
+    def get_monthly_summary(self) -> list[dict[str, Any]]:
         """
         Returns monthly aggregates:
           [{month, total_debit_paise, total_credit_paise, transaction_count}]
@@ -296,7 +291,7 @@ class TransactionRepository(BaseRepository):
         self,
         date_from: str | None = None,
         date_to: str | None = None,
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """
         Returns per-category aggregates:
           [{category, total_amount_paise, count}]
@@ -328,7 +323,7 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def get_category_totals_by_month(self) -> list[dict]:
+    def get_category_totals_by_month(self) -> list[dict[str, Any]]:
         """
         For stacked bar chart. Returns list of dicts:
         [{month: "2025-04", category: "Food & Dining", total_paise: 234567}, ...]
@@ -399,7 +394,7 @@ class TransactionRepository(BaseRepository):
             conn.commit()
         return updated
 
-    def get_uncategorized_patterns(self, limit: int = 50) -> list[dict]:
+    def get_uncategorized_patterns(self, limit: int = 50) -> list[dict[str, Any]]:
         """
         Returns grouped uncategorized transaction descriptions.
         [{description, count, total_amount_paise}] ordered by count DESC.
@@ -465,14 +460,12 @@ class TransactionRepository(BaseRepository):
                 # Parse amount to paise (source of truth)
                 amount_paise = int(txn.get("amount_paise") or 0)
                 if "amount" in txn and not amount_paise:
-                    # Handle legacy amount field
+                    # Handle legacy amount field - convert to paise
                     try:
                         amount_paise = int(float(txn.get("amount", 0)) * 100)
                     except (ValueError, TypeError):
                         amount_paise = 0
 
-                # Derive float for backward compatibility
-                amount = amount_paise / 100.0
                 date = str(txn.get("date", "")).strip()
                 description = str(txn.get("description", "")).strip()
                 original_description = str(txn.get("original_description", description)).strip()
@@ -497,17 +490,16 @@ class TransactionRepository(BaseRepository):
                 cur = conn.execute(
                     """
                     INSERT OR IGNORE INTO transactions
-                        (statement_id, sequence_num, date, description, amount, type,
+                        (statement_id, sequence_num, date, description, type,
                          category, subcategory, member, source, original_description,
                          amount_paise, date_iso, hash_signature, account_id)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         statement_id,
                         seq,
                         date,
                         description,
-                        amount,
                         txn_type,
                         category,
                         subcategory,

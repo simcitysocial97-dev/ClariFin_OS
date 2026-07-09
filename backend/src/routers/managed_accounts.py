@@ -104,7 +104,7 @@ def api_get_account_balance(account_id: str) -> dict[str, Any]:
 
 
 @router.get("/accounts/{account_id}/running-balance")
-def api_get_account_running_balance(account_id: str) -> list[dict]:
+def api_get_account_running_balance(account_id: str) -> list[dict[str, Any]]:
     """Get running balance for an account."""
     try:
         service = AccountService()

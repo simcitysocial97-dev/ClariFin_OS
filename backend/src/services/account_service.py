@@ -21,7 +21,7 @@ class AccountService(BaseService):
         super().__init__(db_path)
         self.repo = AccountRepository(self.db_path)
 
-    def get_accounts_list(self) -> list[dict]:
+    def get_accounts_list(self) -> list[dict[str, Any]]:
         """Get list of all accounts (banks) with their current balances."""
         return get_accounts_list(self.db_path)
 
@@ -37,7 +37,7 @@ class AccountService(BaseService):
 
     def compute_running_balance(
         self, account_id: str | None = None, starting_balance_paise: int = 0
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """Compute running balance by replaying all transactions chronologically."""
         return compute_running_balance(
             db_path=self.db_path,

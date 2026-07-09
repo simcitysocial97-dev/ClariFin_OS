@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS reconciliations (
     debit_account_id TEXT NOT NULL,
     credit_account_id TEXT NOT NULL,
 
-    amount REAL NOT NULL,
+    amount_paise INTEGER NOT NULL,
     date_diff_days INTEGER NOT NULL DEFAULT 0,
 
     match_confidence REAL NOT NULL DEFAULT 0.0,

@@ -46,10 +46,10 @@ def _parse_date_to_ymd(date_str: str) -> str:
     return ""
 
 
-def _parse_date_for_sort(date_str: str) -> tuple[str, int]:
+def _parse_date_for_sort(date_str: str) -> str:
     """
-    Parse date for sorting. Returns (ymd_string, original_id_for_tiebreaker).
-    Used to sort transactions chronologically while preserving insertion order for same-date txns.
+    Parse date for sorting. Returns ymd_string.
+    Used to sort transactions chronologically.
     """
     ymd = _parse_date_to_ymd(date_str)
     return ymd if ymd else "0000-00-00"
@@ -63,7 +63,7 @@ def compute_running_balance(
     db_path: str,
     account_id: str | None = None,
     starting_balance_paise: int = 0,
-) -> list[dict]:
+) -> list[dict[str, Any]]:
     """
     Compute running balance by replaying all transactions chronologically.
 
@@ -259,7 +259,7 @@ def validate_statement_balance(
     }
 
 
-def get_accounts_list(db_path: str) -> list[dict]:
+def get_accounts_list(db_path: str) -> list[dict[str, Any]]:
     """
     Get list of all accounts (banks) with their current balances.
 

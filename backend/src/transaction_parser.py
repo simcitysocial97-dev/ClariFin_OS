@@ -18,9 +18,9 @@ class TransactionParser:
         self.mapping = column_mapping
         self.bank_name = bank_name
 
-    def parse_dataframe(self, df: pd.DataFrame) -> list[dict]:
+    def parse_dataframe(self, df: pd.DataFrame) -> list[dict[str, Any]]:
         """Parse all rows in DataFrame"""
-        transactions = []
+        transactions: list[dict[str, Any]] = []
 
         for _idx, row in df.iterrows():
             tx = self.parse_row(row)
@@ -107,7 +107,7 @@ class TransactionParser:
 
         return f"{day.zfill(2)}/{month.zfill(2)}/{year}"
 
-    def _parse_amount(self, value) -> float:
+    def _parse_amount(self, value: Any) -> float:
         """
         Parse amount from cell value.
         NO REGEX - just clean and convert.

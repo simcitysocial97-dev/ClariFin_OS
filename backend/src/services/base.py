@@ -2,7 +2,7 @@
 Base service class for business orchestration.
 """
 
-from src.api_common import DB_PATH
+from src.common import DB_PATH
 
 
 class BaseService:

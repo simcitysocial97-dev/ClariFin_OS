@@ -242,7 +242,7 @@ def _generate_explanation(debit_txn: dict[str, Any], credit_txn: dict[str, Any],
 # Core Matching Functions
 # ============================================================
 
-def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[dict]:
+def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[dict[str, Any]]:
     """
     Find potential transfer matches across accounts.
 
@@ -304,7 +304,7 @@ def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[
     return matches
 
 
-def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days: int = 3) -> list[dict]:
+def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days: int = 3) -> list[dict[str, Any]]:
     """
     Find potential matches for a specific transaction.
 
