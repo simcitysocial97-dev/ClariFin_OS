@@ -3,7 +3,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from src.errors import NotFoundError
-from src.repositories import AccountRepository
+from src.repositories.account_repository import AccountRepository
+from src.services.account_service import AccountService
 
 router = APIRouter(prefix="/api", tags=["accounts"])
 
@@ -94,8 +95,19 @@ def api_delete_managed_account(account_id: str) -> dict:
 def api_get_account_balance(account_id: str) -> dict:
     """Get computed balance for an account."""
     try:
-        repo = AccountRepository()
-        balance = repo.compute_account_balance(account_id)
+        service = AccountService()
+        balance = service.compute_account_balance(account_id)
         return balance
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/accounts/{account_id}/running-balance")
+def api_get_account_running_balance(account_id: str) -> list[dict]:
+    """Get running balance for an account."""
+    try:
+        service = AccountService()
+        running = service.compute_running_balance(account_id)
+        return running
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

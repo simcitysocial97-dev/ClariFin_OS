@@ -22,8 +22,17 @@
 - ✅ Added `BehaviorService` to `src/services/__init__.py` exports
 - ✅ Validation: ruff clean, mypy clean on all modified files
 
+## AccountService Extraction (2026-09-07)
+- ✅ Created `src/services/account_service.py` with `get_accounts_list()`, `compute_account_balance()`, `compute_running_balance()` methods
+- ✅ Removed `get_accounts_list`, `compute_account_balance`, `compute_running_balance` from `AccountRepository` (kept SQL methods: `get_all_accounts`, `create_account`, `update_account`, `delete_account`, `get_account_by_id`)
+- ✅ Updated `src/routers/accounts.py` to use `AccountService` for orchestration endpoints
+- ✅ Updated `src/routers/managed_accounts.py` to use `AccountService` for `/balance` and added `/running-balance` endpoint
+- ✅ Added `AccountService` to `src/services/__init__.py` exports
+- ✅ Validation: `GET /api/accounts` ✅, `GET /api/accounts/{id}/balance` ✅, `GET /api/accounts/{id}/running-balance` ✅
+
 ## Next Steps
-- AccountRepository has 3 engine-call methods that should be extracted
+- Continue extracting engine-call methods to services where appropriate
+```
 
 ## NetWorthService Changes (2026-09-07)
 - ✅ Created `NetWorthService` in `src/services/networth_service.py` with `calculate()` method

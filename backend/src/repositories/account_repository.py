@@ -65,13 +65,6 @@ class AccountRepository(BaseRepository):
             ).fetchall()
         return [Account.from_db_row(dict(row)) for row in rows]
 
-    def get_accounts_list(self) -> list[dict]:
-        """Get list of all accounts (banks) with their current balances."""
-        # Engine import moved to router layer - this method now returns raw data
-        # The compute_accounts_list function is called from the router
-        from src.engines.balance_engine import get_accounts_list
-        return get_accounts_list(self.db_path)
-
     def create_account(
         self,
         name: str,
@@ -167,28 +160,3 @@ class AccountRepository(BaseRepository):
             changes_row = conn.execute("SELECT changes()").fetchone()
         return bool(changes_row[0]) if changes_row else False
 
-    def compute_account_balance(
-        self,
-        account_id: str,
-        starting_balance_paise: int = 0,
-    ) -> dict:
-        """Compute current balance for a single account."""
-        from src.engines.balance_engine import compute_account_balance
-        return compute_account_balance(
-            db_path=self.db_path,
-            account_id=account_id,
-            starting_balance_paise=starting_balance_paise,
-        )
-
-    def compute_running_balance(
-        self,
-        account_id: str | None = None,
-        starting_balance_paise: int = 0,
-    ) -> list[dict]:
-        """Compute running balance by replaying all transactions chronologically."""
-        from src.engines.balance_engine import compute_running_balance
-        return compute_running_balance(
-            db_path=self.db_path,
-            account_id=account_id,
-            starting_balance_paise=starting_balance_paise,
-        )

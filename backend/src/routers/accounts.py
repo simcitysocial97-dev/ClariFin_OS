@@ -1,7 +1,7 @@
 """Account balance and running balance endpoints."""
 from fastapi import APIRouter, HTTPException, Query
 
-from src.repositories import AccountRepository
+from src.services.account_service import AccountService
 
 router = APIRouter(prefix="/api/accounts", tags=["accounts"])
 
@@ -10,8 +10,8 @@ router = APIRouter(prefix="/api/accounts", tags=["accounts"])
 def api_get_accounts() -> dict:
     """Get all accounts with their computed balances."""
     try:
-        repo = AccountRepository()
-        accounts = repo.get_accounts_list()
+        service = AccountService()
+        accounts = service.get_accounts_list()
         return {"accounts": accounts}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -21,8 +21,8 @@ def api_get_accounts() -> dict:
 def api_get_account_balance(account_id: str) -> dict:
     """Get current balance for a specific account."""
     try:
-        repo = AccountRepository()
-        result = repo.compute_account_balance(account_id)
+        service = AccountService()
+        result = service.compute_account_balance(account_id)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -35,8 +35,8 @@ def api_get_running_balance(
 ) -> dict:
     """Get running balance history for an account."""
     try:
-        repo = AccountRepository()
-        result = repo.compute_running_balance(account_id)
+        service = AccountService()
+        result = service.compute_running_balance(account_id)
         return {
             "account_id": account_id,
             "transactions": result[:limit],
