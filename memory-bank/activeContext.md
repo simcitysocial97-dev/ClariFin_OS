@@ -54,8 +54,11 @@
 - All schema consistency issues resolved
 - All tests use the canonical `amount_paise INTEGER` column
 
-### Next Steps (Remaining Phases)
-- Phase 5: Test Quality Audit - analyze coverage
-- Phase 6: Architecture Audit - check boundaries
-- Phase 7: Safe Cleanup - remove dead code/caches
-- Phase 8: Final Validation - run full verification
+### Phase 2: Dependency Cleanup - COMPLETE
+- Removed polluted root `.venv` (756MB, unrelated packages: reflex, redis, socketio)
+- Removed incomplete `backend/venv` (missing key packages)
+- Created clean `backend/venv` with 45 packages from canonical requirements.txt
+- All imports verified: fastapi, pydantic, pandas, pdfplumber, camelot, cachetools, pytest
+- Fixed package.json to reference `backend/venv` instead of root `.venv`
+
+### Next Steps
