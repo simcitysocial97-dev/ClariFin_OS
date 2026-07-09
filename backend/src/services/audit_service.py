@@ -1,13 +1,16 @@
-"""Audit domain repository."""
+"""
+Audit business orchestration service.
+"""
 from src.engines.ledger_audit_engine import run_full_audit
-from src.repositories.base import DB_PATH
+from src.services.base import BaseService
 
 
-class AuditRepository:
-    """Repository for audit operations."""
+class AuditService(BaseService):
+    """
+    Orchestrates audit operations using engines.
 
-    def __init__(self, db_path: str | None = None):
-        self.db_path = db_path or DB_PATH
+    Provides integrity verification for ledger data.
+    """
 
     def run_full_audit(self) -> dict:
         """

@@ -1,7 +1,7 @@
 """Audit and integrity verification endpoints."""
 from fastapi import APIRouter, HTTPException
 
-from src.repositories import AuditRepository
+from src.services import AuditService
 
 router = APIRouter(prefix="/api/audit", tags=["audit"])
 
@@ -21,8 +21,8 @@ def api_audit_report() -> dict:
         }
     """
     try:
-        repo = AuditRepository()
-        report = repo.run_full_audit()
+        service = AuditService()
+        report = service.run_full_audit()
         return report
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

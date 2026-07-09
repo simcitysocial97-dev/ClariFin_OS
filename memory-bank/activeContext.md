@@ -2,7 +2,15 @@
 
 ## Current Mission
 
-**BehaviorService Extraction** — COMPLETED
+**AuditService Extraction** — COMPLETED
+
+## AuditService Changes (2026-09-07)
+- ✅ Created `AuditService` in `src/services/audit_service.py` with `run_full_audit()`
+- ✅ Updated `src/routers/audit.py` to use `AuditService` instead of `AuditRepository`
+- ✅ Deleted `src/repositories/audit_repository.py` (was pure orchestration, no SQL)
+- ✅ Removed `AuditRepository` from `src/repositories/__init__.py` exports
+- ✅ Added `AuditService` to `src/services/__init__.py` exports
+- ✅ Validation: ruff clean, mypy clean on all modified files
 
 ## BehaviorService Changes (2026-09-07)
 - ✅ Created `BehaviorService` in `src/services/behavior_service.py` with `compute_profile()`, `get_cached_profile()`, `set_cached_profile()`, `generate_insights()`
@@ -13,7 +21,7 @@
 - ✅ Validation: ruff clean, mypy clean on all modified files
 
 ## Next Steps
-- All orchestration moved from repositories to services layer
+- AccountRepository has 3 engine-call methods that should be extracted
 
 ## NetWorthService Changes (2026-09-07)
 - ✅ Created `NetWorthService` in `src/services/networth_service.py` with `calculate()` method
