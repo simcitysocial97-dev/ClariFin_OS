@@ -5,12 +5,14 @@
 **AuditService Extraction** — COMPLETED
 
 ## AuditService Changes (2026-09-07)
-- ✅ Created `AuditService` in `src/services/audit_service.py` with `run_full_audit()`
+- ✅ Created `AuditService` in `src/services/audit_service.py` extending `BaseService` with `run_full_audit()`
 - ✅ Updated `src/routers/audit.py` to use `AuditService` instead of `AuditRepository`
 - ✅ Deleted `src/repositories/audit_repository.py` (was pure orchestration, no SQL)
-- ✅ Removed `AuditRepository` from `src/repositories/__init__.py` exports
-- ✅ Added `AuditService` to `src/services/__init__.py` exports
+- ✅ Removed `AuditRepository` from `src/repositories/__init__.py` exports (was already absent)
+- ✅ Added `AuditService` to `src/services/__init__.py` exports (was already present)
 - ✅ Validation: ruff clean, mypy clean on all modified files
+
+## Next Steps
 
 ## BehaviorService Changes (2026-09-07)
 - ✅ Created `BehaviorService` in `src/services/behavior_service.py` with `compute_profile()`, `get_cached_profile()`, `set_cached_profile()`, `generate_insights()`
