@@ -1,16 +1,8 @@
 """Behavioral analytics and insights endpoints."""
 from fastapi import APIRouter, HTTPException
 
-from src.engines.insight_generator import (
-    generate_behavioral_insights,
-    generate_summary_text,
-)
-from src.engines.nudge_engine import (
-    generate_nudges,
-    get_nudge_summary,
-    get_top_nudge,
-)
-from src.repositories import BehaviorRepository
+from src.engines.insight_generator import generate_summary_text
+from src.services import BehaviorService
 
 router = APIRouter(prefix="/api/behavior", tags=["behavior"])
 
@@ -32,15 +24,15 @@ def api_behavior_summary() -> dict:
         }
     """
     try:
-        repo = BehaviorRepository()
+        service = BehaviorService()
         # Check cache first
-        cached = repo.get_cached_profile()
+        cached = service.get_cached_profile()
         if cached is not None:
             return cached
 
         # Compute and cache
-        profile = repo.compute_profile()
-        repo.set_cached_profile(profile)
+        profile = service.compute_profile()
+        service.set_cached_profile(profile)
         return profile
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -62,14 +54,14 @@ def api_behavior_score() -> dict:
         }
     """
     try:
-        repo = BehaviorRepository()
+        service = BehaviorService()
         # Check cache first
-        cached = repo.get_cached_profile()
+        cached = service.get_cached_profile()
         if cached is not None:
             profile = cached
         else:
-            profile = repo.compute_profile()
-            repo.set_cached_profile(profile)
+            profile = service.compute_profile()
+            service.set_cached_profile(profile)
 
         indices = profile.get("behavioral_indices", {})
 
@@ -106,27 +98,24 @@ def api_behavior_insights() -> dict:
         }
     """
     try:
-        repo = BehaviorRepository()
+        service = BehaviorService()
         # Check cache first
-        cached = repo.get_cached_profile()
+        cached = service.get_cached_profile()
         if cached is not None:
             profile = cached
         else:
-            profile = repo.compute_profile()
-            repo.set_cached_profile(profile)
+            profile = service.compute_profile()
+            service.set_cached_profile(profile)
 
-        insights = generate_behavioral_insights(profile)
-        nudges = generate_nudges(profile)
-        top_nudge = get_top_nudge(profile)
-        summary = get_nudge_summary(profile)
+        insights_result = service.generate_insights(profile)
 
         return {
-            "insights": insights,
-            "nudges": nudges,
-            "top_nudge": top_nudge,
-            "summary": summary,
-            "financial_health_score": profile.get("financial_health_score", 50),
-            "confidence": profile.get("confidence", 0),
+            "insights": insights_result["insights"],
+            "nudges": insights_result["nudges"],
+            "top_nudge": insights_result["top_nudge"],
+            "summary": insights_result["summary"],
+            "financial_health_score": insights_result["financial_health_score"],
+            "confidence": insights_result["confidence"],
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

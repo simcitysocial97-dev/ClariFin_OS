@@ -2,17 +2,24 @@
 
 ## Current Mission
 
-**NetWorthService Extraction** — COMPLETED
+**BehaviorService Extraction** — COMPLETED
+
+## BehaviorService Changes (2026-09-07)
+- ✅ Created `BehaviorService` in `src/services/behavior_service.py` with `compute_profile()`, `get_cached_profile()`, `set_cached_profile()`, `generate_insights()`
+- ✅ Updated `src/routers/behavior.py` to use `BehaviorService` instead of `BehaviorRepository`
+- ✅ Deleted `src/repositories/behavior_repository.py` (was pure orchestration, no SQL)
+- ✅ Removed `BehaviorRepository` from `src/repositories/__init__.py` exports
+- ✅ Added `BehaviorService` to `src/services/__init__.py` exports
+- ✅ Validation: ruff clean, mypy clean on all modified files
+
+## Next Steps
+- All orchestration moved from repositories to services layer
 
 ## NetWorthService Changes (2026-09-07)
 - ✅ Created `NetWorthService` in `src/services/networth_service.py` with `calculate()` method
 - ✅ Moved business logic (card statement deduplication, is_partial check) from router to service
 - ✅ Updated router to use `NetWorthService` instead of `NetWorthRepository` directly (fixes Repository Boundary Rule violation)
 - ✅ Removed unused `get_net_worth()` method (had dead SQL code) from `NetWorthRepository`
-- ✅ Validation: ruff clean, mypy clean on all modified files
-
-## Next Steps
-- Router now correctly delegates to service layer, maintaining clean architecture
 
 ## Router Type Fixes (2026-09-07)
 - ✅ Fixed `pyproject.toml` mypy module patterns: added `src.models` and `src.repositories` (without wildcard) to match packages correctly

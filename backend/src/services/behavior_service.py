@@ -1,25 +1,25 @@
-"""Behavior domain repository."""
+"""Behavior business orchestration service."""
+
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,
     set_cached_behavior_profile,
 )
-from src.engines.insight_generator import (
-    generate_behavioral_insights,
-)
+from src.engines.insight_generator import generate_behavioral_insights
 from src.engines.nudge_engine import (
     generate_nudges,
     get_nudge_summary,
     get_top_nudge,
 )
-from src.repositories.base import DB_PATH
+from src.services.base import BaseService
 
 
-class BehaviorRepository:
-    """Repository for behavior operations."""
+class BehaviorService(BaseService):
+    """
+    Orchestrates behavior analysis using behavior_engine.
 
-    def __init__(self, db_path: str | None = None):
-        self.db_path = db_path or DB_PATH
+    Caching layer for behavioral profile computation.
+    """
 
     def compute_profile(self) -> dict:
         """Compute behavioral profile from transaction data."""
@@ -54,4 +54,3 @@ class BehaviorRepository:
             "financial_health_score": profile.get("financial_health_score", 50),
             "confidence": profile.get("confidence", 0),
         }
-
