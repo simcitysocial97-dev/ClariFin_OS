@@ -42,7 +42,9 @@ def export_csv(
             date = format_date_display(txn.get("date", ""))
             bank_name = txn.get("bank", "")
             desc = (clean_description(txn.get("description", ""))).replace(",", ";").replace('"', '""')
-            amount = txn.get("amount", 0)
+            # Use amount_paise and convert to rupees for display
+            amount_paise = txn.get("amount_paise", 0) or 0
+            amount = amount_paise / 100.0 if amount_paise else 0
             txn_type = txn.get("type", "")
             cat = txn.get("category", "")
 

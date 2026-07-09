@@ -74,7 +74,7 @@ class TransactionParser:
         return {
             'date': date,
             'description': description,
-            'amount': round(amount, 2),
+            'amount_paise': int(amount * 100),
             'type': tx_type,
             'bank': self.bank_name,
             'category': 'Uncategorized'

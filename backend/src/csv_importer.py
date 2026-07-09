@@ -614,7 +614,7 @@ class CSVImporter:
                     "date": formatted_date,
                     "description": description,
                     "original_description": description,
-                    "amount": amount,
+                    "amount_paise": int(round(amount * 100)),
                     "type": txn_type,
                     "category": category,
                     "subcategory": subcategory,
@@ -692,4 +692,5 @@ if __name__ == "__main__":
     if transactions:
         print("\nFirst 5 transactions:")
         for txn in transactions[:5]:
-            print(f"  {txn['date']} | {txn['description'][:30]:<30} | ₹{txn['amount']:>10,.2f} | {txn['type']} | {txn['category']}")
+            amount_rupees = txn.get('amount_paise', 0) / 100.0
+            print(f"  {txn['date']} | {txn['description'][:30]:<30} | ₹{amount_rupees:>10,.2f} | {txn['type']} | {txn['category']}")

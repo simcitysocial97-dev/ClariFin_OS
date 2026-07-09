@@ -14,14 +14,13 @@ class ReconciliationRepository(BaseRepository):
         """
         Return all reconciliations as Reconciliation domain models.
 
-        The `amount` column is stored as a float; it is exposed to the model
-        as `amount_paise` (paise, ₹1.00 = 100) via an alias.
+        The `amount_paise` column stores integer paise (₹1.00 = 100).
         """
         with self._get_conn() as conn:
             rows = conn.execute("""
                 SELECT id, debit_txn_id, credit_txn_id,
                        debit_account_id, credit_account_id,
-                       amount AS amount_paise, date_diff_days,
+                       amount_paise, date_diff_days,
                        match_confidence, match_type, status
                 FROM reconciliations
                 ORDER BY created_at DESC
@@ -47,7 +46,7 @@ class ReconciliationRepository(BaseRepository):
                     r.id,
                     r.debit_txn_id, r.credit_txn_id,
                     r.debit_account_id, r.credit_account_id,
-                    r.amount, r.date_diff_days,
+                    r.amount_paise, r.date_diff_days,
                     r.match_confidence, r.match_type,
                     r.status, r.deterministic_key,
                     r.created_at, r.confirmed_at,
@@ -104,7 +103,7 @@ class ReconciliationRepository(BaseRepository):
                 INSERT OR IGNORE INTO reconciliations (
                     debit_txn_id, credit_txn_id,
                     debit_account_id, credit_account_id,
-                    amount, date_diff_days,
+                    amount_paise, date_diff_days,
                     match_confidence, match_type,
                     deterministic_key
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -112,7 +111,7 @@ class ReconciliationRepository(BaseRepository):
                 (
                     debit_txn_id, credit_txn_id,
                     debit_account_id, credit_account_id,
-                    amount, date_diff_days,
+                    int(round(amount * 100)), date_diff_days,
                     round(match_confidence, 4), match_type,
                     deterministic_key
                 ),

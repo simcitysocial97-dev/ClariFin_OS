@@ -24,8 +24,9 @@ def api_get_reconciliations(status: str | None = None) -> dict:
 
         # Enrich with display fields
         for r in reconciliations:
-            # Amount is already in rupees in new schema
-            amount = r.get("amount", 0)
+            # Amount is stored as paise, convert to rupees for display
+            amount_paise = r.get("amount_paise", 0) or 0
+            amount = amount_paise / 100.0 if amount_paise else 0
             r["amount_display"] = format_inr(amount)
             r["confidence_display"] = f"{r.get('match_confidence', 0) * 100:.0f}%"
 

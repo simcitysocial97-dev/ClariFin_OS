@@ -121,7 +121,7 @@ class TransactionRepository(BaseRepository):
 
         sql = f"""
             SELECT
-                t.id, t.statement_id, t.date, t.description, t.amount,
+                t.id, t.statement_id, t.date, t.description, t.amount_paise,
                 t.type, t.category, t.subcategory, t.raw_description, t.created_at,
                 s.bank, s.file_name, s.statement_period_from, s.statement_period_to
             FROM transactions t
@@ -173,7 +173,7 @@ class TransactionRepository(BaseRepository):
 
         sql = f"""
             SELECT
-                t.id, t.sequence_num, t.date, t.description, t.amount,
+                t.id, t.sequence_num, t.date, t.description,
                 t.amount_paise, t.debit, t.credit,
                 t.type, t.category, t.subcategory, t.raw_description, t.member,
                 s.bank, s.file_name AS statement_file,
@@ -272,14 +272,14 @@ class TransactionRepository(BaseRepository):
     def get_monthly_summary(self) -> list[dict]:
         """
         Returns monthly aggregates:
-          [{month, total_debit, total_credit, transaction_count}]
+          [{month, total_debit_paise, total_credit_paise, transaction_count}]
         Month format: YYYY-MM (derived from date string).
         """
         sql = """
             SELECT
                 substr(date, 7, 4) || '-' || substr(date, 4, 2) AS month,
-                SUM(CASE WHEN type = 'debit'  THEN amount ELSE 0 END) AS total_debit,
-                SUM(CASE WHEN type = 'credit' THEN amount ELSE 0 END) AS total_credit,
+                SUM(CASE WHEN type = 'debit'  THEN amount_paise ELSE 0 END) AS total_debit_paise,
+                SUM(CASE WHEN type = 'credit' THEN amount_paise ELSE 0 END) AS total_credit_paise,
                 COUNT(*) AS transaction_count
             FROM transactions
             WHERE date LIKE '__/__/____'
@@ -299,7 +299,7 @@ class TransactionRepository(BaseRepository):
     ) -> list[dict]:
         """
         Returns per-category aggregates:
-          [{category, total_amount, count}]
+          [{category, total_amount_paise, count}]
         """
         conditions: list[str] = []
         params: list[Any] = []
@@ -315,12 +315,12 @@ class TransactionRepository(BaseRepository):
         sql = f"""
             SELECT
                 category,
-                SUM(amount) AS total_amount,
+                SUM(amount_paise) AS total_amount_paise,
                 COUNT(*) AS count
             FROM transactions
             {where}
             GROUP BY category
-            ORDER BY total_amount DESC
+            ORDER BY total_amount_paise DESC
         """
 
         with self._get_conn() as conn:
@@ -331,16 +331,16 @@ class TransactionRepository(BaseRepository):
     def get_category_totals_by_month(self) -> list[dict]:
         """
         For stacked bar chart. Returns list of dicts:
-        [{month: "2025-04", category: "Food & Dining", total: 2345.67}, ...]
+        [{month: "2025-04", category: "Food & Dining", total_paise: 234567}, ...]
         Uses Python-side date parsing to handle all date formats.
         """
         with self._get_conn() as conn:
             cur = conn.execute(
-                "SELECT date, category, amount, type FROM transactions ORDER BY id ASC"
+                "SELECT date, category, amount_paise, type FROM transactions ORDER BY id ASC"
             )
             rows = cur.fetchall()
 
-        data: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+        data: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
         for row in rows:
             if row["type"] != "debit":
                 continue
@@ -348,12 +348,12 @@ class TransactionRepository(BaseRepository):
             if not ymd:
                 continue
             month = ymd[:7]  # YYYY-MM
-            data[month][row["category"]] += row["amount"]
+            data[month][row["category"]] += row["amount_paise"]
 
         result = []
         for month in sorted(data.keys()):
             for cat, total in data[month].items():
-                result.append({"month": month, "category": cat, "total": round(total, 2)})
+                result.append({"month": month, "category": cat, "total_paise": total})
         return result
 
     def update_category(
@@ -402,14 +402,14 @@ class TransactionRepository(BaseRepository):
     def get_uncategorized_patterns(self, limit: int = 50) -> list[dict]:
         """
         Returns grouped uncategorized transaction descriptions.
-        [{description, count, total_amount}] ordered by count DESC.
+        [{description, count, total_amount_paise}] ordered by count DESC.
         """
         sql = """
-            SELECT description, COUNT(*) AS count, SUM(amount) AS total_amount
+            SELECT description, COUNT(*) AS count, SUM(amount_paise) AS total_amount_paise
             FROM transactions
             WHERE category = 'Uncategorized'
             GROUP BY description
-            ORDER BY count DESC, total_amount DESC
+            ORDER BY count DESC, total_amount_paise DESC
             LIMIT ?
         """
 

@@ -19,8 +19,8 @@ class StatementRepository(BaseRepository):
                     s.statement_period_from, s.statement_period_to,
                     s.file_name, s.imported_at,
                     COUNT(t.id) AS transaction_count,
-                    COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount ELSE 0 END), 0) AS total_debit,
-                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) AS total_credit
+                    COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount_paise ELSE 0 END), 0) AS total_debit_paise,
+                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount_paise ELSE 0 END), 0) AS total_credit_paise
                 FROM statements s
                 LEFT JOIN transactions t ON t.statement_id = s.id
                 GROUP BY s.id
@@ -58,8 +58,8 @@ class StatementRepository(BaseRepository):
                     s.payment_due_date, s.statement_date,
                     s.validation_status, s.validation_difference,
                     COUNT(t.id) AS transaction_count,
-                    COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount ELSE 0 END), 0) AS total_debit,
-                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) AS total_credit
+                    COALESCE(SUM(CASE WHEN t.type='debit'  THEN t.amount_paise ELSE 0 END), 0) AS total_debit_paise,
+                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount_paise ELSE 0 END), 0) AS total_credit_paise
                 FROM statements s
                 LEFT JOIN transactions t ON t.statement_id = s.id
                 GROUP BY s.id
@@ -168,8 +168,8 @@ class StatementRepository(BaseRepository):
                     s.validation_status, s.validation_difference,
                     s.statement_period_from, s.statement_period_to,
                     COUNT(t.id) as transaction_count,
-                    COALESCE(SUM(CASE WHEN t.type='debit' THEN t.amount ELSE 0 END), 0) as total_debit,
-                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount ELSE 0 END), 0) as total_credit
+                    COALESCE(SUM(CASE WHEN t.type='debit' THEN t.amount_paise ELSE 0 END), 0) as total_debit_paise,
+                    COALESCE(SUM(CASE WHEN t.type='credit' THEN t.amount_paise ELSE 0 END), 0) as total_credit_paise
                 FROM statements s
                 LEFT JOIN transactions t ON t.statement_id = s.id
                 GROUP BY s.id

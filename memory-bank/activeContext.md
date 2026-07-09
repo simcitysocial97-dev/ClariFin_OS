@@ -12,7 +12,17 @@
 - ✅ Updated `src/routers/reconciliation.py` to use `ReconciliationService` for `/scan` and `/batch-insert`
 - ✅ All repositories now clean (0 engine imports) - Repository Boundary Rule satisfied
 
-## Architecture Metrics (After Phase 5)
+## Money Type Enforcement (2026-09-07)
+- ✅ Updated SQL queries in `transaction_repository.py`: `t.amount` → `t.amount_paise`, `SUM(amount)` → `SUM(amount_paise)`
+- ✅ Updated SQL queries in `statement_repository.py`: `t.amount` → `t.amount_paise` in SUM aggregations
+- ✅ Updated SQL queries in `reconciliation_repository.py`: `r.amount` → `r.amount_paise`
+- ✅ Updated SQL queries in `behavior_engine.py`: all `amount` references → `amount_paise`
+- ✅ Updated `csv_importer.py` and `transaction_parser.py` to output `amount_paise` field
+- ✅ Updated `common/calculations.py` to use `amount_paise` for calculations
+- ✅ Updated `routers/export.py` and `routers/reconciliation.py` to convert `amount_paise` to float at display layer
+- ✅ PRESERVED string matchers in `csv_importer.py`, `statement_extractor.py`, `column_mapper.py` for legacy CSV/PDF header detection
+
+## Architecture Metrics (After Money Type Enforcement)
 - Services importing repositories: 6 ✅
 - Repositories importing services: 0 ✅
 - Repositories importing engines: 0 ✅
@@ -42,4 +52,4 @@
 
 ## Next Steps
 - Phase 5 architecture cleanup complete
-- Verify no code references the legacy 'amount' float column.
+- Money type enforcement complete - all amounts stored as integer paise, converted at display layer only

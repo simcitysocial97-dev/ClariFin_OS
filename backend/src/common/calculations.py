@@ -67,11 +67,11 @@ def compute_is_large(transactions: list) -> list:
     if not debit_txns:
         return transactions
 
-    avg_debit = sum(t.get("amount", 0) for t in debit_txns) / len(debit_txns)
-    threshold = avg_debit * 2.5
+    avg_debit = sum((t.get("amount_paise", 0) or 0) for t in debit_txns) / len(debit_txns)
+    threshold = avg_debit * 250000  # 2.5x in paise
 
     for t in transactions:
-        t["is_large"] = bool(t.get("type") == "debit" and t.get("amount", 0) > threshold)
+        t["is_large"] = bool(t.get("type") == "debit" and (t.get("amount_paise", 0) or 0) > threshold)
 
     return transactions
 
@@ -92,13 +92,13 @@ def compute_behavioral_insights(transactions: list) -> list:
     this_month = month_keys[-1]
     month_keys[:-1]
 
-    # Category drift
+    # Category drift (use amount_paise, convert to rupees for percentage)
     cat_monthly: dict = defaultdict(lambda: defaultdict(float))
     for t in debit_txns:
         mk = t.get("month_key", "")
         cat = t.get("category", "Uncategorized")
         if mk:
-            cat_monthly[cat][mk] += t.get("amount", 0)
+            cat_monthly[cat][mk] += ((t.get("amount_paise", 0) or 0) / 100.0)
 
     for cat, monthly_data in cat_monthly.items():
         if len(monthly_data) >= 2:
@@ -128,7 +128,7 @@ def compute_behavioral_insights(transactions: list) -> list:
     for t in debit_txns:
         mk = t.get("month_key", "")
         if mk:
-            monthly_totals[mk] += t.get("amount", 0)
+            monthly_totals[mk] += ((t.get("amount_paise", 0) or 0) / 100.0)
 
     if len(monthly_totals) >= 2:
         this_month_total = monthly_totals.get(this_month, 0)
@@ -155,9 +155,9 @@ def compute_behavioral_insights(transactions: list) -> list:
     # Largest expense
     this_month_txns = [t for t in debit_txns if t.get("month_key") == this_month]
     if this_month_txns:
-        largest = max(this_month_txns, key=lambda t: t.get("amount", 0))
+        largest = max(this_month_txns, key=lambda t: (t.get("amount_paise", 0) or 0))
         desc = (largest.get("description_display") or largest.get("description", ""))[:30]
-        amt = format_inr(largest.get("amount", 0))
+        amt = format_inr((largest.get("amount_paise", 0) or 0) / 100.0)
         insights.append({
             "title": "Largest Expense",
             "description": f"Your biggest: {desc} at {amt}",
