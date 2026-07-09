@@ -2,8 +2,8 @@
 Map PDF column names to standard transaction fields.
 Uses FUZZY MATCHING, not regex.
 """
-from typing import Any
 from difflib import SequenceMatcher
+from typing import Any
 
 
 class ColumnMapper:

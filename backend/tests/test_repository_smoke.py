@@ -20,7 +20,6 @@ from src.repositories.reconciliation_repository import ReconciliationRepository
 from src.repositories.statement_repository import StatementRepository
 from src.repositories.transaction_repository import TransactionRepository
 
-
 # ============================================================
 # Test: TransactionRepository smoke tests
 # ============================================================

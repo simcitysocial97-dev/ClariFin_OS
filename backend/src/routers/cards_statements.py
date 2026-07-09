@@ -1,7 +1,7 @@
 """Cards and statements endpoints."""
-from typing import Any
 from collections import defaultdict
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 

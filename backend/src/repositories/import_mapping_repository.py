@@ -1,5 +1,6 @@
 """Import mapping domain repository."""
 from typing import Any
+
 from src.repositories.base import BaseRepository
 
 

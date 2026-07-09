@@ -1,5 +1,6 @@
 """Managed accounts endpoints (DB-backed)."""
 from typing import Any
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 

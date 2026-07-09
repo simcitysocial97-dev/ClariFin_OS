@@ -7,9 +7,9 @@ and prepayment simulations for all loan types.
 All monetary values in paise (integer).
 """
 
-from typing import Any
 import math
 from datetime import datetime
+from typing import Any
 
 from dateutil.relativedelta import relativedelta
 

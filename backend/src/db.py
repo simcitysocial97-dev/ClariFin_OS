@@ -25,7 +25,7 @@ import sqlite3
 import types
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any,  Literal
+from typing import Any, Literal
 
 # ============================================================
 # Schema
@@ -412,36 +412,16 @@ class FinanceDB:
 
     def _run_migrations(self) -> None:
         """
-        Run database migrations to bring schema up to date.
-        Safe to run on every startup — uses ADD COLUMN IF NOT EXISTS pattern.
-        Never drops existing data.
+        Run database migrations for schema evolution.
+        Creates accounts, loans, and investments tables.
+        Handles column renames for backward compatibility.
+        Safe to run on every startup.
         """
         conn = self._get_conn()
-        cursor = conn.cursor()
 
-        migrations = [
-            # Phase 1: Add columns that enrich_transaction computes at runtime
-            # These were always being set but never formally in schema
-            ("transactions", "amount_paise", "INTEGER"),
-            ("transactions", "debit", "INTEGER DEFAULT 0"),
-            ("transactions", "credit", "INTEGER DEFAULT 0"),
-            ("transactions", "date_iso", "TEXT"),
-            ("transactions", "member", "TEXT"),
-            ("transactions", "account_id", "TEXT"),
-            ("transactions", "hash_signature", "TEXT"),
-        ]
-
-        for table, column, col_type in migrations:
-            try:
-                cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}")
-                conn.commit()
-            except Exception:
-                # Column already exists — safe to ignore
-                pass
-
-        # Create new tables
-        cursor.executescript("""
-            -- Persistent accounts table
+        # Create accounts, loans, and investments tables
+        # These are not in DDL as they are Phase 2 additions
+        conn.executescript("""
             CREATE TABLE IF NOT EXISTS accounts (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -455,7 +435,6 @@ class FinanceDB:
                 updated_at TEXT NOT NULL DEFAULT (datetime('now'))
             );
 
-            -- Loans table
             CREATE TABLE IF NOT EXISTS loans (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -477,7 +456,6 @@ class FinanceDB:
                 updated_at TEXT NOT NULL DEFAULT (datetime('now'))
             );
 
-            -- Investments table
             CREATE TABLE IF NOT EXISTS investments (
                 id TEXT PRIMARY KEY,
                 name TEXT NOT NULL,
@@ -496,22 +474,17 @@ class FinanceDB:
         """)
 
         # Migration: Rename columns in accounts table if they exist with old names
-        # This handles the case where accounts table was created with bank_name/account_number_masked
+        # Handles backward compatibility for early schema versions
         try:
-            # Check if old columns exist
             cur = conn.execute("PRAGMA table_info(accounts)")
             columns = [row[1] for row in cur.fetchall()]
             if 'bank_name' in columns and 'bank' not in columns:
-                # Need to migrate: rename columns
                 conn.execute("ALTER TABLE accounts RENAME COLUMN bank_name TO bank")
             if 'account_number_masked' in columns and 'account_number_last4' not in columns:
                 conn.execute("ALTER TABLE accounts RENAME COLUMN account_number_masked TO account_number_last4")
             conn.commit()
         except Exception:
-            # SQLite version may not support RENAME COLUMN, or already migrated
-            pass
-
-        conn.commit()
+            pass  # SQLite version may not support RENAME COLUMN or already migrated
 
 # ============================================================
 # CLI / Quick Test

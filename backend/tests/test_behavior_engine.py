@@ -12,31 +12,32 @@ Validates:
 Phase 3: Advanced Behavioral Intelligence Layer
 """
 
-import pytest
-import sqlite3
-import tempfile
-import os
-from datetime import datetime, timedelta
 import hashlib
 import json
+import os
+import sqlite3
 
 # Add parent directory to path
 import sys
+import tempfile
+from datetime import datetime, timedelta
 from pathlib import Path
+
+import pytest
+
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from engines.behavior_engine import (
+    _coefficient_of_variation,
+    _compute_financial_stress_index,
+    _compute_habit_stability_score,
+    _compute_impulsivity_score,
+    _compute_loss_aversion_index,
+    _compute_savings_discipline_score,
+    _moving_average,
+    _normalize_score,
     compute_behavior_profile,
     detect_india_risk_patterns,
-    _normalize_score,
-    _coefficient_of_variation,
-    _moving_average,
-    _compute_temporal_patterns,
-    _compute_loss_aversion_index,
-    _compute_impulsivity_score,
-    _compute_habit_stability_score,
-    _compute_financial_stress_index,
-    _compute_savings_discipline_score,
 )
 from engines.insight_generator import (
     generate_behavioral_insights,
@@ -45,9 +46,7 @@ from engines.insight_generator import (
 from engines.nudge_engine import (
     generate_nudges,
     get_top_nudge,
-    get_nudge_summary,
 )
-
 
 # ============================================================
 # Test Fixtures
@@ -58,10 +57,10 @@ def temp_db():
     """Create a temporary database with test transactions (in paise)."""
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
-    
+
     # Create tables with canonical schema (amount_paise as INTEGER)
     cur.execute("""
         CREATE TABLE transactions (
@@ -82,17 +81,17 @@ def temp_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    
+
     # Generate 90 days of test transactions
     base_date = datetime.now() - timedelta(days=90)
-    
+
     transactions = []
     txn_id = 1
-    
+
     for day in range(90):
         date = base_date + timedelta(days=day)
         date_iso = date.strftime("%Y-%m-%d")
-        
+
         # Daily expenses (groceries, food) - values in paise
         if day % 2 == 0:
             transactions.append((
@@ -100,14 +99,14 @@ def temp_db():
                 "Groceries", None, "Self", "ACC001", 50000, None, None
             ))
             txn_id += 1
-        
+
         if day % 3 == 0:
             transactions.append((
                 txn_id, 1, date_iso, date_iso, "RESTAURANT", 80000, "debit",
                 "Food & Dining", None, "Self", "ACC001", 80000, None, None
             ))
             txn_id += 1
-        
+
         # Monthly salary (1st of each month) - in paise
         if date.day == 1:
             transactions.append((
@@ -115,7 +114,7 @@ def temp_db():
                 "Income", None, "Self", "ACC001", None, 5000000, None
             ))
             txn_id += 1
-        
+
         # Monthly EMI (5th of each month) - in paise
         if date.day == 5:
             transactions.append((
@@ -123,7 +122,7 @@ def temp_db():
                 "EMI", None, "Self", "ACC001", 1500000, None, None
             ))
             txn_id += 1
-        
+
         # Micro transactions (UPI) - in paise
         if day % 1 == 0:
             transactions.append((
@@ -131,19 +130,19 @@ def temp_db():
                 "Food & Dining", None, "Self", "ACC001", 15000, None, None
             ))
             txn_id += 1
-    
+
     cur.executemany("""
         INSERT INTO transactions (
             id, statement_id, date, date_iso, description, amount_paise, type,
             category, subcategory, member, account_id, debit, credit, balance
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, transactions)
-    
+
     conn.commit()
     conn.close()
-    
+
     yield db_path
-    
+
     # Cleanup
     os.unlink(db_path)
 
@@ -153,10 +152,10 @@ def minimal_db():
     """Create a minimal database with few transactions (in paise)."""
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
-    
+
     cur.execute("""
         CREATE TABLE transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -176,7 +175,7 @@ def minimal_db():
             created_at TEXT DEFAULT CURRENT_TIMESTAMP
         )
     """)
-    
+
     # Just 5 transactions (in paise)
     transactions = [
         (1, 1, "2025-01-01", "2025-01-01", "TEST DEBIT", 10000, "debit", "Test", None, "Self", "ACC001", 10000, None, None),
@@ -185,19 +184,19 @@ def minimal_db():
         (4, 1, "2025-01-04", "2025-01-04", "TEST DEBIT", 15000, "debit", "Test", None, "Self", "ACC001", 15000, None, None),
         (5, 1, "2025-01-05", "2025-01-05", "TEST DEBIT", 30000, "debit", "Test", None, "Self", "ACC001", 30000, None, None),
     ]
-    
+
     cur.executemany("""
         INSERT INTO transactions (
             id, statement_id, date, date_iso, description, amount_paise, type,
             category, subcategory, member, account_id, debit, credit, balance
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, transactions)
-    
+
     conn.commit()
     conn.close()
-    
+
     yield db_path
-    
+
     os.unlink(db_path)
 
 

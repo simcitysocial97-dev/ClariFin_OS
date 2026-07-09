@@ -1,4 +1,4 @@
-from typing import Any,  Literal
+from typing import Any, Literal
 
 from src.models.base import DomainModel, Money
 

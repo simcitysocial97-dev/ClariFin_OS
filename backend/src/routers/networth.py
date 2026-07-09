@@ -1,5 +1,6 @@
 """Net worth endpoint."""
 from typing import Any
+
 from fastapi import APIRouter
 
 from src.services import NetWorthService

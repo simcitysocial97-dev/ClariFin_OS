@@ -1,6 +1,7 @@
 """Net worth business orchestration service."""
 
 from typing import Any
+
 from src.repositories import NetWorthRepository
 from src.services.base import BaseService
 

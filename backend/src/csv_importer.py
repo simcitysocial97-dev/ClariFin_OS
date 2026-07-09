@@ -25,11 +25,11 @@ CLI:
     python csv_importer.py <file_path> [--debug]
 """
 
-from typing import Any
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 try:
     import pandas as pd

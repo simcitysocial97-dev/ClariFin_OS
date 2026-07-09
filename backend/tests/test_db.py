@@ -6,9 +6,9 @@ Tests for _parse_amount_paise function to verify integer paise parsing.
 """
 
 import os
+import sqlite3
 import sys
 import tempfile
-import sqlite3
 from pathlib import Path
 
 # Add src to path
@@ -19,7 +19,6 @@ import pytest
 from db import FinanceDB, _parse_amount_paise
 from repositories.statement_repository import StatementRepository
 from repositories.transaction_repository import TransactionRepository
-
 
 # ============================================================
 # Test: _parse_amount_paise

@@ -1,5 +1,6 @@
 """Behavioral analytics and insights endpoints."""
 from typing import Any
+
 from fastapi import APIRouter, HTTPException
 
 from src.engines.insight_generator import generate_summary_text

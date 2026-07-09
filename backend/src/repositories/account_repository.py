@@ -4,6 +4,7 @@ LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
 from typing import Any
+
 from src.models.account import Account
 from src.repositories.base import BaseRepository
 

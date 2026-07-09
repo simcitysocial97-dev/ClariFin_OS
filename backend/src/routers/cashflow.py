@@ -1,6 +1,6 @@
 """Cashflow endpoints."""
-from typing import Any
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 

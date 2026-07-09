@@ -1,6 +1,7 @@
 """Behavior business orchestration service."""
 
 from typing import Any
+
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,

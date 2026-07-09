@@ -2,8 +2,8 @@
 PURE TABLE EXTRACTION - NO REGEX ALLOWED
 Extract tables from PDF using pdfplumber's table detection
 """
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import pdfplumber

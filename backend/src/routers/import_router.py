@@ -1,8 +1,8 @@
 """Statement upload and import endpoints."""
 # Import invalidate_cache from behavior_engine
-from typing import Any
 import sys
 from pathlib import Path
+from typing import Any
 
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel

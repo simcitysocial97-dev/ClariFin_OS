@@ -1,5 +1,6 @@
 """Loan domain repository."""
 from typing import Any
+
 from src.models.loan import Loan
 from src.repositories.base import BaseRepository
 

@@ -4,6 +4,7 @@ LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
 from typing import Any
+
 from src.models.reconciliation import Reconciliation
 from src.repositories.base import BaseRepository
 
@@ -16,12 +17,14 @@ class ReconciliationRepository(BaseRepository):
         Return all reconciliations as Reconciliation domain models.
 
         The `amount_paise` column stores integer paise (₹1.00 = 100).
+        Handles backward compatibility for legacy databases with `amount REAL`.
         """
         with self._get_conn() as conn:
             rows = conn.execute("""
                 SELECT id, debit_txn_id, credit_txn_id,
                        debit_account_id, credit_account_id,
-                       amount_paise, date_diff_days,
+                       COALESCE(amount_paise, CAST(amount AS INTEGER)) as amount_paise,
+                       date_diff_days,
                        match_confidence, match_type, status
                 FROM reconciliations
                 ORDER BY created_at DESC
@@ -47,7 +50,8 @@ class ReconciliationRepository(BaseRepository):
                     r.id,
                     r.debit_txn_id, r.credit_txn_id,
                     r.debit_account_id, r.credit_account_id,
-                    r.amount_paise, r.date_diff_days,
+                    r.amount_paise,
+                    r.date_diff_days,
                     r.match_confidence, r.match_type,
                     r.status, r.deterministic_key,
                     r.created_at, r.confirmed_at,

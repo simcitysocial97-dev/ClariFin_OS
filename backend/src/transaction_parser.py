@@ -2,8 +2,8 @@
 Parse transactions from table rows.
 ONLY regex allowed: Date parsing (DD/MM/YYYY)
 """
-from typing import Any
 import re  # ONLY for date validation
+from typing import Any
 
 import pandas as pd
 

@@ -28,10 +28,10 @@ Example output:
     Done: 1 imported, 1 skipped, 82 transactions total
 """
 
-from typing import Any
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import Any
 
 from src.categorizer import categorize
 from src.metadata_extractor import MetadataExtractor

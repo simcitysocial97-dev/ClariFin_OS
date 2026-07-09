@@ -1,14 +1,12 @@
 """Calculation utilities."""
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
+from typing import Any
 
 from .formatting import format_inr
 
 
-from typing import Any, Union
-
-
-def _parse_amount_paise(amount_str: Union[str, int, float]) -> int:
+def _parse_amount_paise(amount_str: str | int | float) -> int:
     """
     Parse amount to integer paise (1 rupee = 100 paise).
     Raises ValueError on invalid input (no silent failures).

@@ -1,5 +1,6 @@
 """Account balance and running balance endpoints."""
 from typing import Any
+
 from fastapi import APIRouter, HTTPException, Query
 
 from src.services.account_service import AccountService

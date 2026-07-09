@@ -9,10 +9,10 @@ Improvements:
 - Strict transaction page detection
 """
 
-from typing import Any, Optional
 import json
 from collections import defaultdict
 from pathlib import Path
+from typing import Any
 
 import pdfplumber
 
@@ -71,15 +71,15 @@ class LayoutAnalyzer:
         self.debug = debug
 
         # Results
-        self.bank: Optional[str] = None
-        self.header_info: Optional[dict[str, Any]] = None
-        self.table_bbox: Optional[tuple[float, float, float, float]] = None
+        self.bank: str | None = None
+        self.header_info: dict[str, Any] | None = None
+        self.table_bbox: tuple[float, float, float, float] | None = None
         self.table_pages: list[int] = []
-        self.columns: Optional[dict[str, dict[str, Any]]] = None
-        self.column_labels: Optional[dict[str, str]] = None
-        self.amount_structure: Optional[dict[str, Any]] = None
-        self.metadata_region: Optional[dict[str, Any]] = None
-        self.metadata_fields: Optional[dict[str, Any]] = None
+        self.columns: dict[str, dict[str, Any]] | None = None
+        self.column_labels: dict[str, str] | None = None
+        self.amount_structure: dict[str, Any] | None = None
+        self.metadata_region: dict[str, Any] | None = None
+        self.metadata_fields: dict[str, Any] | None = None
 
     def analyze(self) -> dict[str, Any]:
         with pdfplumber.open(self.pdf_path) as pdf:
@@ -137,7 +137,7 @@ class LayoutAnalyzer:
         return "Unknown"
 
     # ========== Header Detection (Validated) ==========
-    def _find_table_header(self, pdf: Any) -> Optional[dict[str, Any]]:
+    def _find_table_header(self, pdf: Any) -> dict[str, Any] | None:
         best_result = None
         best_score = 0
 
@@ -477,7 +477,7 @@ class LayoutAnalyzer:
         return result
 
     # ========== Metadata Detection ==========
-    def _detect_metadata(self, pdf: Any) -> tuple[Optional[dict[str, Any]], dict[str, Any]]:
+    def _detect_metadata(self, pdf: Any) -> tuple[dict[str, Any] | None, dict[str, Any]]:
         metadata_fields: dict[str, dict[str, Any]] = {}
         metadata_region = None
 
@@ -513,7 +513,7 @@ class LayoutAnalyzer:
                 }
         return metadata_region, metadata_fields
 
-    def _find_value_near_label(self, page: Any, label_bbox: dict[str, Any]) -> Optional[dict[str, Any]]:
+    def _find_value_near_label(self, page: Any, label_bbox: dict[str, Any]) -> dict[str, Any] | None:
         label_x1 = label_bbox['x1']
         label_y = label_bbox['y_top']
         label_x0 = label_bbox['x0']

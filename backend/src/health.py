@@ -9,9 +9,9 @@ Endpoints:
   - /ready — confirms database connectivity and essential services
 """
 
+import sqlite3
 from typing import Any
 
-import sqlite3
 from fastapi import APIRouter, FastAPI, HTTPException
 
 from src.config import settings

@@ -1,4 +1,5 @@
 from typing import Any
+
 from src.models.base import DomainModel, Money
 
 

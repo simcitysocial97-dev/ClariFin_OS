@@ -19,3 +19,4 @@ httpx==0.28.1
 # Testing
 pytest==8.3.0
 pytest-asyncio==0.25.2
+pytest-cov==5.0.0

@@ -2,7 +2,6 @@
 Main entry point - orchestrates table extraction and parsing
 PURE TABLE EXTRACTION - NO REGEX FOR TRANSACTION MATCHING
 """
-import sys
 import json
 from pathlib import Path
 from typing import Any

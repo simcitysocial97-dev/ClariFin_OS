@@ -1,5 +1,6 @@
 """Investment domain repository."""
 from typing import Any
+
 from src.models.investment import Investment
 from src.repositories.base import BaseRepository
 

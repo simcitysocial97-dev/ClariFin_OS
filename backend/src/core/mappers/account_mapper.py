@@ -7,6 +7,7 @@ This is the ONLY location where account API responses are constructed.
 """
 
 from typing import Any
+
 from src.core.domain.money import Money
 from src.core.dtos.account_dto import AccountDTO, AccountListResponse
 

@@ -15,10 +15,10 @@ Usage:
     from engines.balance_engine import compute_running_balance, validate_statement_balance
 """
 
-from typing import Any
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 # ============================================================
 # Date Parsing (consistent with db.py)
