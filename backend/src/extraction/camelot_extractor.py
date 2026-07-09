@@ -40,7 +40,7 @@ class CamelotExtractor:
         self.pdf_path = str(pdf_path)
         self.debug = debug
 
-    def _log(self, message: str):
+    def _log(self, message: str) -> None:
         if self.debug:
             print(f"[CamelotExtractor] {message}")
 
@@ -68,7 +68,7 @@ class CamelotExtractor:
 
     # ========== Table Extraction ==========
 
-    def extract_tables_from_page(self, page_number: int) -> tuple[list, str]:
+    def extract_tables_from_page(self, page_number: int) -> tuple[list[Any], str]:
         """
         Extract tables from a single page.
         Tries lattice first; falls back to stream if no valid tables found.
@@ -111,7 +111,7 @@ class CamelotExtractor:
 
     # ========== Table Scoring ==========
 
-    def score_table(self, table) -> float:
+    def score_table(self, table: Any) -> float:
         """
         Score a camelot table based on:
         - row_count: more rows = better
@@ -243,7 +243,7 @@ class CamelotExtractor:
 
 # ========== CLI Entry Point ==========
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python camelot_extractor.py <pdf_path> [--debug]")
         sys.exit(1)

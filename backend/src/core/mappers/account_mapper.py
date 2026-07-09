@@ -46,7 +46,7 @@ class AccountMapper:
         Returns:
             AccountDTO instance
         """
-        dto_data = {
+        dto_data: dict[str, Any] = {
             "id": account_id,
             "name": name,
             "bank_name": bank_name,
@@ -63,7 +63,7 @@ class AccountMapper:
 
     @staticmethod
     def to_list_response(
-        accounts: list[tuple],
+        accounts: list[tuple[str, str, str, str, int, str]],
         include_rupees_field: bool = True
     ) -> AccountListResponse:
         """

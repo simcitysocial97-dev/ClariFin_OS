@@ -25,9 +25,7 @@ from typing import Any
 import camelot
 import pdfplumber
 
-# Import LayoutAnalyzer from sibling package
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from structural.layout_analyzer import LayoutAnalyzer
+from src.structural.layout_analyzer import LayoutAnalyzer
 
 # ============================================================
 # Coordinate Conversion
@@ -161,7 +159,7 @@ def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: tuple[Any, ...],
     - Cluster by y coordinate (round to nearest 3–5 pixels)
     - Assign text to column bucket based on x coordinate
     """
-    rows = []
+    rows: list[list[str]] = []
     try:
         with pdfplumber.open(pdf_path) as pdf:
             if page_num >= len(pdf.pages):
@@ -177,7 +175,7 @@ def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: tuple[Any, ...],
                 return rows
 
             # Group by Y (round to nearest 4px)
-            lines: dict[int, list] = defaultdict(list)
+            lines: dict[int, list[dict[str, Any]]] = defaultdict(list)
             for c in chars_in_bbox:
                 y_key = round(c.get('top', 0) / 4) * 4
                 lines[y_key].append(c)
@@ -233,7 +231,7 @@ class HybridExtractor:
         self._analyzer: LayoutAnalyzer | None = None
         self._layout: dict[str, Any] | None = None
 
-    def _log(self, message: str):
+    def _log(self, message: str) -> None:
         if self.debug:
             print(f"[HybridExtractor] {message}")
 
@@ -298,13 +296,14 @@ class HybridExtractor:
                 if len(tables) == 0:
                     continue
 
-                all_rows = []
+                all_rows: list[list[Any]] = []
                 for table in tables:
                     all_rows.extend(table.df.values.tolist())
 
                 if all_rows:
                     self._log(f"Page {page_num}: extracted {len(all_rows)} rows via {attempt['flavor']}")
-                    return all_rows, attempt['flavor']
+                    # Cast to correct return type
+                    return [list(str(c) for c in row) for row in all_rows], str(attempt['flavor'])
 
             except Exception as e:
                 self._log(f"Page {page_num}: {attempt['flavor']} (cols={attempt['use_cols']}) failed: {e}")
@@ -317,7 +316,7 @@ class HybridExtractor:
 
     def _post_process_rows(self, raw_rows: list[list[str]],
                            columns: dict[str, Any], bank: str,
-                           amount_structure: dict[str, Any]) -> list[dict]:
+                           amount_structure: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Clean raw rows into transaction dicts:
         - Remove empty rows
@@ -542,7 +541,7 @@ class HybridExtractor:
 
     # ========== Debug Visualization ==========
 
-    def _generate_debug_images(self, output_dir: str = 'debug'):
+    def _generate_debug_images(self, output_dir: str = 'debug') -> None:
         if self._analyzer is None:
             return
         try:
@@ -581,7 +580,7 @@ class HybridExtractor:
         # Step 2: Extract metadata values
         self._log("Step 2: Extracting metadata values...")
         metadata_values = self._extract_metadata_values(
-            self._analyzer.metadata_fields or {}
+            (self._analyzer and self._analyzer.metadata_fields) or {}
         )
 
         # Step 3: Extract rows from each page using Camelot
@@ -658,7 +657,7 @@ class HybridExtractor:
 # CLI Entry Point
 # ============================================================
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python hybrid_extractor.py <pdf_path> [--debug]")
         sys.exit(1)
