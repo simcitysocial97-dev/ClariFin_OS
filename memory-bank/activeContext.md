@@ -63,3 +63,19 @@
 - Updated .gitignore with `env/` entry for completeness
 
 ### Next Steps
+
+- Removed obsolete amount column migration code from `_create_tables()` (13 lines)
+- Removed legacy amount column drop logic from `_run_migrations()` (93 lines)
+
+---
+
+## CGC Token Efficiency Audit - COMPLETED
+
+### Changes Made
+- **Updated .clinerules Section 2**: Clarified that `find_code` returns complete source code (INDEX_SOURCE=true) and `read_file` should NOT be called after it
+- **Updated .clinerules Section 3**: Fixed Phase A wording to emphasize source is already available in CGC results
+- **Updated .cgcignore**: Added `**/error-context.md` and `**/__snapshots__/**` patterns to reduce index bloat from test artifacts
+- **Updated CGC .env**: Added `TOOL_RESULT_LIMITS={"find_code": 10, "analyze_code_relationships": 10, "execute_cypher_query": 20}` to limit response sizes
+
+### Token Savings Expected
+- Eliminated duplicate `read_file` after `find_code`: ~300-500 tokens per symbol lookup

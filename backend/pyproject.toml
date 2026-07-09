@@ -40,5 +40,5 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["camelot"]
-ignore_missing_imports = true
+ignore_missing_imports = false
 no_implicit_reexport = false

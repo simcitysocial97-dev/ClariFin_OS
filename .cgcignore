@@ -36,6 +36,8 @@
 **/test-results/**
 **/playwright-report/**
 **/test-data/**
+**/error-context.md
+**/__snapshots__/**
 
 # === IDE / TOOLING ===
 **/.idea/**

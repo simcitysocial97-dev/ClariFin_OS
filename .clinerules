@@ -14,7 +14,7 @@ You must manage the memory bank autonomously. **Do not wait for the user to tell
 ---
 
 ## 2. WORKSPACE & CGC MCP PROTOCOL
-- **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) to locate and map classes, dependencies, and call stacks. NEVER use `read_file` or `list_dir` for BULK DISCOVERY. Use `read_file` ONLY when you need the actual source code of a specific, already-identified target.
+- **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) for ALL code discovery. CGC is configured with INDEX_SOURCE=true, meaning `find_code` returns COMPLETE source code in the `source` field. DO NOT call `read_file` after `find_code` - the source is already available.
 - **CGC Relationship Queries:** Use `analyze_code_relationships` to find callers/callees before reading files. This prevents reading multiple files to trace code flow.
   - Use `find_callers` to find who calls a function
   - Use `find_callees` to find what a function calls
@@ -31,8 +31,8 @@ You must manage the memory bank autonomously. **Do not wait for the user to tell
 
 ## 3. MANDATORY 3-PHASE EXECUTION LOOP
 Wrap EVERY user request inside this strict execution pattern:
-- **Phase A (Schema Discovery):** Use CGC `find_code` to locate schema files, then read ONLY the specific type definitions needed. Do NOT read entire files - extract only the relevant type definitions.
-  - Example: `find_code("TransactionDTO")` to locate the schema, then read only the class definition
+- **Phase A (Schema Discovery):** Use CGC `find_code("SymbolName")` to locate and retrieve schemas. The `source` field in results contains the COMPLETE type definition - NO `read_file` call needed. Target specific symbols to get only what you need.
+  - Example: `find_code("TransactionDTO")` returns full class definition with source code (INDEX_SOURCE=true)
 - **Phase B (Delta-Only Generation):** Execute code modifications strictly matching the Phase A schemas. Enforce financial guardrails.
 - **Phase C (Autonomous Verification Gate):** Run full frontend and backend validation suites. Self-correct errors iteratively until logs clear cleanly.
 
