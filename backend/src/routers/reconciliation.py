@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from src.common import format_inr
 from src.repositories import ReconciliationRepository
+from src.services.reconciliation_service import ReconciliationService
 
 router = APIRouter(prefix="/api/reconciliations", tags=["reconciliation"])
 
@@ -49,8 +50,8 @@ def api_scan_reconciliations() -> dict:
     Returns potential matches that can be saved as reconciliations.
     """
     try:
-        repo = ReconciliationRepository()
-        matches = repo.scan_potential_matches()
+        service = ReconciliationService()
+        matches = service.scan_potential_matches()
 
         # Enrich with display fields
         for m in matches:
@@ -104,9 +105,10 @@ def api_batch_insert_reconciliations() -> dict:
     Uses INSERT OR IGNORE for idempotency - existing records are not duplicated.
     """
     try:
-        repo = ReconciliationRepository()
-        matches = repo.scan_potential_matches()
+        service = ReconciliationService()
+        matches = service.scan_potential_matches()
 
+        repo = ReconciliationRepository()
         inserted_count = 0
         for m in matches:
             inserted = repo.insert_reconciliation(

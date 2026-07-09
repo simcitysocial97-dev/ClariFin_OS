@@ -3,7 +3,6 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
-from src.engines.reconciliation_engine import find_potential_matches
 from src.models.reconciliation import Reconciliation
 from src.repositories.base import BaseRepository
 
@@ -179,13 +178,3 @@ class ReconciliationRepository(BaseRepository):
             """)
             rows = [(row[0], row[1]) for row in cur.fetchall()]
         return rows
-
-    def scan_potential_matches(self) -> list[dict]:
-        """
-        Scan for potential transfer matches across accounts.
-
-        Phase 2B.1: Deterministic matching with confidence scoring.
-
-        Returns potential matches that can be saved as reconciliations.
-        """
-        return find_potential_matches(self.db_path)

@@ -9,5 +9,16 @@ from src.services.base import BaseService
 from src.services.behavior_service import BehaviorService
 from src.services.dashboard_service import DashboardService
 from src.services.networth_service import NetWorthService
+from src.services.reconciliation_service import ReconciliationService
+from src.services.statement_service import StatementService
 
-__all__ = ["AccountService", "AuditService", "BaseService", "BehaviorService", "DashboardService", "NetWorthService"]
+__all__ = [
+    "AccountService",
+    "AuditService",
+    "BaseService",
+    "BehaviorService",
+    "DashboardService",
+    "NetWorthService",
+    "ReconciliationService",
+    "StatementService",
+]

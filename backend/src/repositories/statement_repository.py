@@ -3,7 +3,6 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
-from src.engines.balance_engine import validate_statement_balance
 from src.models.statement import Statement
 from src.repositories.base import BaseRepository
 
@@ -190,10 +189,6 @@ class StatementRepository(BaseRepository):
         with self._get_conn() as conn:
             row = conn.execute("SELECT file_name FROM statements WHERE id = ?", (statement_id,)).fetchone()
         return row[0] if row else None
-
-    def validate_statement(self, statement_id: int, claimed_balance_paise: int) -> dict:
-        """Validate a statement's closing balance against computed balance."""
-        return validate_statement_balance(self.db_path, statement_id, claimed_balance_paise)
 
     def get_duplicate_check_by_filename(self, file_name: str) -> bool:
         """Returns True if file_name already exists in statements (any bank)."""

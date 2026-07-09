@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from src.common import format_inr, parse_date
 from src.repositories import StatementRepository
+from src.services.statement_service import StatementService
 
 router = APIRouter(prefix="/api", tags=["cards", "statements"])
 
@@ -188,8 +189,8 @@ def get_cards() -> dict:
 def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query(..., description="Claimed closing balance in paise")) -> dict:
     """Validate a statement's closing balance against computed balance."""
     try:
-        repo = StatementRepository()
-        result = repo.validate_statement(statement_id, claimed_balance_paise)
+        service = StatementService()
+        result = service.validate_statement(statement_id, claimed_balance_paise)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
