@@ -79,3 +79,17 @@
 
 ### Token Savings Expected
 - Eliminated duplicate `read_file` after `find_code`: ~300-500 tokens per symbol lookup
+
+---
+
+## SCIP TypeScript Installation - COMPLETED
+
+### Changes Made
+- **Installed @sourcegraph/scip-typescript v0.4.0** globally via npm
+- **Updated CGC .env SCIP_LANGUAGES**: Changed from `python` to `python,typescript,javascript`
+- **Verified TypeScript indexing**: `find_code("useDashboardMetrics")` returns TypeScript function with full source
+
+### Performance Optimizations Applied
+- **TOOL_RESULT_LIMITS**: Already configured to limit responses (`find_code: 10`, `analyze_code_relationships: 10`, `execute_cypher_query: 20`)
+- **INDEX_SOURCE=true**: Source code already stored in graph for both Python and TypeScript
+- **SCIP_INDEXER=true**: Enabled for accurate call resolution in both languages
