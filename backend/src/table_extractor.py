@@ -2,6 +2,7 @@
 PURE TABLE EXTRACTION - NO REGEX ALLOWED
 Extract tables from PDF using pdfplumber's table detection
 """
+from typing import Any
 from pathlib import Path
 
 import pandas as pd
@@ -80,7 +81,7 @@ class TableExtractor:
         # Remove duplicates (same table detected by multiple strategies)
         return self._deduplicate_tables(dfs)
 
-    def _table_to_dataframe(self, table: list, page_num: int) -> pd.DataFrame | None:
+    def _table_to_dataframe(self, table: list[Any], page_num: int) -> pd.DataFrame | None:
         """Convert raw table data to DataFrame"""
 
         if not table or len(table) < 1:

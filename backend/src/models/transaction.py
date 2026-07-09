@@ -1,3 +1,4 @@
+from typing import Any
 from datetime import date
 
 from src.models.base import DomainModel, Money
@@ -16,7 +17,7 @@ class Transaction(DomainModel):
     bank: str | None = None
 
     @classmethod
-    def from_db_row(cls, row: dict) -> "Transaction":
+    def from_db_row(cls, row: dict[str, Any]) -> "Transaction":
         """
         Convert database row to Transaction model.
 

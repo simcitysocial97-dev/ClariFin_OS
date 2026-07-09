@@ -1,5 +1,6 @@
 """Investment portfolio management endpoints."""
 
+from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -32,7 +33,7 @@ class InvestmentUpdate(BaseModel):
 
 
 @router.get("/investments")
-def get_investments() -> dict:
+def get_investments() -> dict[str, Any]:
     """Get all investments with calculated returns."""
     repo = InvestmentRepository()
     investments = repo.get_all()
@@ -61,7 +62,7 @@ def get_investments() -> dict:
 
 
 @router.post("/investments")
-def create_investment(investment: InvestmentCreate) -> dict:
+def create_investment(investment: InvestmentCreate) -> dict[str, Any]:
     """Create a new investment."""
     repo = InvestmentRepository()
     created = repo.create(
@@ -76,7 +77,7 @@ def create_investment(investment: InvestmentCreate) -> dict:
 
 
 @router.put("/investments/{investment_id}")
-def update_investment(investment_id: str, investment: InvestmentUpdate) -> dict:
+def update_investment(investment_id: str, investment: InvestmentUpdate) -> dict[str, Any]:
     """Update an investment."""
     repo = InvestmentRepository()
     updated = repo.update(
@@ -89,7 +90,7 @@ def update_investment(investment_id: str, investment: InvestmentUpdate) -> dict:
 
 
 @router.delete("/investments/{investment_id}")
-def delete_investment(investment_id: str) -> dict:
+def delete_investment(investment_id: str) -> dict[str, Any]:
     """Delete an investment."""
     repo = InvestmentRepository()
     success = repo.delete(investment_id)

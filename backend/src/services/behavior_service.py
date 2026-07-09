@@ -1,5 +1,6 @@
 """Behavior business orchestration service."""
 
+from typing import Any
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,
@@ -21,19 +22,19 @@ class BehaviorService(BaseService):
     Caching layer for behavioral profile computation.
     """
 
-    def compute_profile(self) -> dict:
+    def compute_profile(self) -> dict[str, Any]:
         """Compute behavioral profile from transaction data."""
         return compute_behavior_profile(self.db_path)
 
-    def get_cached_profile(self) -> dict | None:
+    def get_cached_profile(self) -> dict[str, Any] | None:
         """Get cached behavioral profile if available."""
         return get_cached_behavior_profile(self.db_path)
 
-    def set_cached_profile(self, profile: dict) -> None:
+    def set_cached_profile(self, profile: dict[str, Any]) -> None:
         """Cache behavioral profile."""
         set_cached_behavior_profile(self.db_path, profile)
 
-    def generate_insights(self, profile: dict | None = None) -> dict:
+    def generate_insights(self, profile: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Generate behavioral insights and nudges.
 

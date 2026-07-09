@@ -28,6 +28,7 @@ Example output:
     Done: 1 imported, 1 skipped, 82 transactions total
 """
 
+from typing import Any
 import sys
 from collections import Counter
 from pathlib import Path
@@ -47,7 +48,7 @@ from statement_extractor import StatementExtractor
 # Core Ingestion Logic
 # ============================================================
 
-def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = False) -> dict:
+def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = False) -> dict[str, Any]:
     """
     Process a single PDF file through the full pipeline:
       1. Check for duplicate (skip if already imported)
@@ -64,7 +65,7 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
         "inserted_count": int,
         "period_from": str,
         "period_to": str,
-        "categories": dict,
+        "categories": dict[str, Any],
         "error": str (only on error)
       }
     """
@@ -107,7 +108,7 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
         result["period_to"] = period_to
 
         # Step 3: Categorize
-        category_counts: Counter = Counter()
+        category_counts: Counter[Any] = Counter()
         for txn in transactions:
             desc = txn.get("description", "") or ""
             # Fix 4: Pass amount to categorize() for UPI small-transaction fallback
@@ -280,7 +281,7 @@ def ingest_directory(dir_path: str, db_path: str = "data/finance.db", debug: boo
 # Output Formatting
 # ============================================================
 
-def _format_categories(categories: dict, top_n: int = 6) -> str:
+def _format_categories(categories: dict[str, Any], top_n: int = 6) -> str:
     """Format category counts as a compact string."""
     if not categories:
         return "None"
@@ -291,7 +292,7 @@ def _format_categories(categories: dict, top_n: int = 6) -> str:
     return ", ".join(parts)
 
 
-def _print_result(result: dict) -> None:
+def _print_result(result: dict[str, Any]) -> None:
     """Print a formatted result for one PDF."""
     file_name = result["file"]
     status = result["status"]
@@ -327,7 +328,7 @@ def _print_result(result: dict) -> None:
     print("  ✅ Imported")
 
 
-def _print_summary(results: list[dict]) -> None:
+def _print_summary(results: list[dict[str, Any]]) -> None:
     """Print final summary line."""
     imported = sum(1 for r in results if r["status"] == "imported")
     skipped = sum(1 for r in results if r["status"] == "skipped")

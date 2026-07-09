@@ -1,5 +1,6 @@
 """Net worth business orchestration service."""
 
+from typing import Any
 from src.repositories import NetWorthRepository
 from src.services.base import BaseService
 
@@ -11,7 +12,7 @@ class NetWorthService(BaseService):
         super().__init__(db_path)
         self.repo = NetWorthRepository(self.db_path)
 
-    def calculate(self) -> dict:
+    def calculate(self) -> dict[str, Any]:
         """
         Compute net worth from all financial data.
 

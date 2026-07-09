@@ -6,8 +6,9 @@ Transforms account domain objects into AccountDTO instances.
 This is the ONLY location where account API responses are constructed.
 """
 
-from core.domain.money import Money
-from core.dtos.account_dto import AccountDTO, AccountListResponse
+from typing import Any
+from src.core.domain.money import Money
+from src.core.dtos.account_dto import AccountDTO, AccountListResponse
 
 
 class AccountMapper:
@@ -113,7 +114,7 @@ class AccountMapper:
         balance: Money,
         last_updated: str,
         include_rupees_field: bool = True
-    ) -> dict:
+    ) -> dict[str, Any]:
         """
         Convert account data to dictionary (for direct JSON response).
 

@@ -15,6 +15,7 @@ Usage:
     from engines.balance_engine import compute_running_balance, validate_statement_balance
 """
 
+from typing import Any
 import sqlite3
 from datetime import datetime
 from pathlib import Path
@@ -143,7 +144,7 @@ def compute_account_balance(
     db_path: str,
     account_id: str,
     starting_balance_paise: int = 0,
-) -> dict:
+) -> dict[str, Any]:
     """
     Compute current balance for a single account.
 
@@ -197,7 +198,7 @@ def validate_statement_balance(
     db_path: str,
     statement_id: int,
     claimed_closing_balance_paise: int,
-) -> dict:
+) -> dict[str, Any]:
     """
     Validate a statement's closing balance against computed balance.
 

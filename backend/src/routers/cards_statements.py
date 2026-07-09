@@ -1,4 +1,5 @@
 """Cards and statements endpoints."""
+from typing import Any
 from collections import defaultdict
 from datetime import datetime
 
@@ -74,7 +75,7 @@ def get_statements() -> list[dict]:
 
 
 @router.get("/cards")
-def get_cards() -> dict:
+def get_cards() -> dict[str, Any]:
     """
     Returns credit cards with their latest statement summary.
     Groups statements by card_last4 and bank.
@@ -85,7 +86,7 @@ def get_cards() -> dict:
         raw = repo.get_all_statements_with_metadata()
 
         # Group statements by (bank, card_last4)
-        card_groups: dict = defaultdict(list)
+        card_groups: dict[str, Any] = defaultdict(list)
         for stmt in raw:
             bank = stmt.get("bank") or "Unknown"
             card_last4 = stmt.get("card_last4") or "Unknown"
@@ -186,7 +187,7 @@ def get_cards() -> dict:
 
 
 @router.get("/statements/{statement_id}/validate")
-def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query(..., description="Claimed closing balance in paise")) -> dict:
+def api_validate_statement(statement_id: int, claimed_balance_paise: int = Query(..., description="Claimed closing balance in paise")) -> dict[str, Any]:
     """Validate a statement's closing balance against computed balance."""
     try:
         service = StatementService()

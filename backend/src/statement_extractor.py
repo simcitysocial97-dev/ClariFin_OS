@@ -310,7 +310,7 @@ class StatementExtractor:
     # Step 3: Score Table
     # ----------------------------------------------------------
 
-    def score_table(self, table_entry: dict) -> float:
+    def score_table(self, table_entry: dict[str, Any]) -> float:
         """
         Score a table candidate to determine if it's the transaction table.
 
@@ -387,7 +387,7 @@ class StatementExtractor:
     # Step 4: Select Best Table
     # ----------------------------------------------------------
 
-    def select_best_table(self) -> dict:
+    def select_best_table(self) -> dict[str, Any]:
         """
         Scan first MAX_PAGES_TO_SCAN pages.
         Score all tables. Return the highest-scoring one.
@@ -535,7 +535,7 @@ class StatementExtractor:
         # Last resort: index 1 if date is 0, else 0
         return 1 if date_col_idx == 0 else 0
 
-    def _detect_amount_columns(self, rows: list[list[str]], date_col_idx: int) -> dict:
+    def _detect_amount_columns(self, rows: list[list[str]], date_col_idx: int) -> dict[str, Any]:
         """
         Fix 4: Find amount column(s) by scanning for the rightmost column(s)
         where >50% of cells match a currency/number pattern.
@@ -852,7 +852,7 @@ class StatementExtractor:
             return "debit"
         return ""
 
-    def _validate_transaction(self, txn: dict) -> bool:
+    def _validate_transaction(self, txn: dict[str, Any]) -> bool:
         """
         Fix 13: Validate a transaction dict before including in output.
         A valid transaction must have:
@@ -869,7 +869,7 @@ class StatementExtractor:
             return False
         return True
 
-    def _extract_embedded_amount(self, txn: dict) -> dict:
+    def _extract_embedded_amount(self, txn: dict[str, Any]) -> dict[str, Any]:
         """
         Fix 16: Extract amount from description when amount column is missing/empty.
 
@@ -1152,7 +1152,7 @@ class StatementExtractor:
     # Step 10: Text-based Fallback (for PDFs where Camelot finds no table)
     # ----------------------------------------------------------
 
-    def _extract_via_text_fallback(self, bank: str) -> dict:
+    def _extract_via_text_fallback(self, bank: str) -> dict[str, Any]:
         """
         Fallback for PDFs where Camelot cannot detect a transaction table.
         Uses pdfplumber text extraction to find lines starting with dates.
@@ -1315,7 +1315,7 @@ class StatementExtractor:
     # Step 11: Full Extract Pipeline
     # ----------------------------------------------------------
 
-    def extract(self) -> dict:
+    def extract(self) -> dict[str, Any]:
         """
         Full extraction pipeline.
         Returns structured dict with bank, transactions, metadata.
@@ -1375,7 +1375,7 @@ class StatementExtractor:
         self._log(f"Transactions extracted: {len(transactions)}")
 
         # Fix 14: Compute statement period from min/max dates
-        statement_period: dict = {}
+        statement_period: dict[str, Any] = {}
         if transactions:
             dates = [t["date"] for t in transactions if t.get("date")]
             if dates:

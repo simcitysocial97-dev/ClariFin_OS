@@ -22,8 +22,10 @@ Usage:
 """
 
 import sqlite3
+import types
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
+from typing import Any,  Literal
 
 # ============================================================
 # Schema
@@ -165,7 +167,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
 # Helpers
 # ============================================================
 
-def _parse_amount_paise(amount_str) -> int:
+def _parse_amount_paise(amount_str: str | int | float) -> int:
     """
     Parse amount to integer paise (1 rupee = 100 paise).
     Raises ValueError on invalid input (no silent failures).
@@ -208,7 +210,7 @@ def _parse_amount_paise(amount_str) -> int:
     except (ValueError, InvalidOperation) as e:
         raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
 
-def _row_to_dict(cursor: sqlite3.Cursor, row: tuple) -> dict:
+def _row_to_dict(cursor: sqlite3.Cursor, row: tuple[Any, ...]) -> dict[str, Any]:
     """Convert a sqlite3 row to a dict using cursor.description."""
     return {col[0]: row[i] for i, col in enumerate(cursor.description)}
 
@@ -396,11 +398,16 @@ class FinanceDB:
             conn.commit()
 
     # Context manager support
-    def __enter__(self):
+    def __enter__(self) -> "FinanceDB":
         self._conn = self._connect()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> Literal[False]:
         if self._conn:
             if exc_type is None:
                 self._conn.commit()

@@ -290,7 +290,7 @@ def calculate_bill_cycle(statement_date: str) -> dict[str, str | None]:
 # Each field config is a dict with:
 #   direct_pattern: compiled regex (tried first)
 #   extract_index: which group to extract (default 1)
-#   labels: list of label strings for proximity search (fallback)
+#   labels: list[Any] of label strings for proximity search (fallback)
 #   value_type: 'currency' | 'date' | 'cardNumber'
 #   distance: max chars for proximity search
 #   transform: optional callable to transform the extracted string
@@ -632,7 +632,7 @@ class MetadataExtractor:
         except Exception as e:
             self._log(f'Error loading text: {e}')
 
-    def _extract_field(self, field_name: str, field_config: dict) -> Any | None:
+    def _extract_field(self, field_name: str, field_config: dict[str, Any]) -> Any | None:
         """
         Extract a single metadata field.
         Strategy (mirrors JS exactly):
@@ -690,7 +690,7 @@ class MetadataExtractor:
         self._log(f'  {field_name}: no match found')
         return None
 
-    def extract(self) -> dict:
+    def extract(self) -> dict[str, Any]:
         """
         Extract all metadata fields for the detected bank.
         Returns dict matching the JS output structure:
@@ -797,7 +797,7 @@ class MetadataExtractor:
 
         return result
 
-    def _empty_result(self) -> dict:
+    def _empty_result(self) -> dict[str, Any]:
         return {
             'bank_name': self.bank,
             'card_number': None,

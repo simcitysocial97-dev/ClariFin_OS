@@ -297,7 +297,7 @@ def _get_recent_transactions(db_path: str, limit: int = 500) -> list[dict]:
 # Temporal Pattern Analysis
 # ============================================================
 
-def _compute_temporal_patterns(transactions: list[dict]) -> dict[str, Any]:
+def _compute_temporal_patterns(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute temporal spending patterns.
 
@@ -372,7 +372,7 @@ def _compute_temporal_patterns(transactions: list[dict]) -> dict[str, Any]:
         "seasonality": round(seasonality, 4),
         "residual_volatility": round(cv, 4),
         "coefficient_of_variation": round(cv, 4),
-        "daily_spending": dict(daily_spend),
+        "daily_spending": dict[str, Any](daily_spend),
         "weekly_pattern": weekly_avg,
     }
 
@@ -381,7 +381,7 @@ def _compute_temporal_patterns(transactions: list[dict]) -> dict[str, Any]:
 # Behavioral Indices
 # ============================================================
 
-def _compute_loss_aversion_index(transactions: list[dict]) -> dict[str, Any]:
+def _compute_loss_aversion_index(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute Loss Aversion Index based on Kahneman & Tversky.
 
@@ -460,7 +460,7 @@ def _compute_loss_aversion_index(transactions: list[dict]) -> dict[str, Any]:
     }
 
 
-def _compute_impulsivity_score(transactions: list[dict]) -> dict[str, Any]:
+def _compute_impulsivity_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute Impulsivity Score based on Present Bias.
 
@@ -533,7 +533,7 @@ def _compute_impulsivity_score(transactions: list[dict]) -> dict[str, Any]:
     }
 
 
-def _compute_habit_stability_score(transactions: list[dict]) -> dict[str, Any]:
+def _compute_habit_stability_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute Habit Stability Score based on Habit Loop Theory.
 
@@ -618,7 +618,7 @@ def _compute_habit_stability_score(transactions: list[dict]) -> dict[str, Any]:
     }
 
 
-def _compute_financial_stress_index(transactions: list[dict]) -> dict[str, Any]:
+def _compute_financial_stress_index(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute Financial Stress Index.
 
@@ -710,7 +710,7 @@ def _compute_financial_stress_index(transactions: list[dict]) -> dict[str, Any]:
     }
 
 
-def _compute_savings_discipline_score(transactions: list[dict]) -> dict[str, Any]:
+def _compute_savings_discipline_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute Savings Discipline Score.
 
@@ -791,7 +791,7 @@ def _compute_savings_discipline_score(transactions: list[dict]) -> dict[str, Any
 # India-Specific Risk Detection
 # ============================================================
 
-def detect_india_risk_patterns(transactions: list[dict]) -> dict[str, Any]:
+def detect_india_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Detect India-specific risky financial behaviors.
 

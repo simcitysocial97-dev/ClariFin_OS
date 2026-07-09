@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+from typing import Any
 from src.models.account import Account
 from src.repositories.base import BaseRepository
 
@@ -73,7 +74,7 @@ class AccountRepository(BaseRepository):
         balance_paise: int = 0,
         account_number_last4: str | None = None,
         notes: str | None = None,
-    ) -> dict | None:
+    ) -> dict[str, Any] | None:
         """Create a new persistent account."""
         with self._get_conn() as conn:
             # Check which column names exist
@@ -101,7 +102,7 @@ class AccountRepository(BaseRepository):
         lastrowid = cur.lastrowid
         return self.get_account_by_id(lastrowid if lastrowid is not None else 0)
 
-    def get_account_by_id(self, account_id: int | str) -> dict | None:
+    def get_account_by_id(self, account_id: int | str) -> dict[str, Any] | None:
         """Get a single account by ID."""
         with self._get_conn() as conn:
             row = conn.execute(
@@ -124,7 +125,7 @@ class AccountRepository(BaseRepository):
         balance_paise: int | None = None,
         account_number_last4: str | None = None,
         notes: str | None = None,
-    ) -> dict | None:
+    ) -> dict[str, Any] | None:
         """Update an existing account. Only updates provided fields."""
         updates = {k: v for k, v in {
             "name": name,

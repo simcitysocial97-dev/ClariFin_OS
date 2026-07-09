@@ -302,4 +302,3 @@ def test_statement_repository_insert():
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
-</tool_call>

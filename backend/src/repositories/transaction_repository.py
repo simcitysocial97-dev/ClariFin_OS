@@ -86,7 +86,7 @@ class TransactionRepository(BaseRepository):
             for row in rows
         ]
 
-    def get_all_transactions(self, filters: dict | None = None) -> list[dict]:
+    def get_all_transactions(self, filters: dict[str, Any] | None = None) -> list[dict]:
         """
         Fetch transactions with optional filters.
         Supported filter keys: date_from, date_to, bank, category, min_amount, max_amount, type
@@ -135,7 +135,7 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def get_all_transactions_with_bank(self, filters: dict | None = None) -> list[dict]:
+    def get_all_transactions_with_bank(self, filters: dict[str, Any] | None = None) -> list[dict]:
         """
         JOIN transactions with statements to include bank info.
         Returns list of dicts with all transaction + statement fields.
@@ -189,7 +189,7 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def insert_transactions(self, statement_id: int, transactions: list[dict]) -> int:
+    def insert_transactions(self, statement_id: int, transactions: list[dict[str, Any]]) -> int:
         """
         Bulk insert transactions. Deduplicates by hash_signature.
         Phase 2A.1: Uses hash_signature for deduplication.
@@ -433,7 +433,7 @@ class TransactionRepository(BaseRepository):
 
     def insert_csv_transactions(
         self,
-        transactions: list[dict],
+        transactions: list[dict[str, Any]],
         member: str = "Self",
         source: str = "csv",
         bank: str = "Manual Import",

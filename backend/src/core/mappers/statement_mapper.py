@@ -8,7 +8,7 @@ This is the ONLY location where statement API responses are constructed.
 
 from typing import Any
 
-from core.dtos.statement_dto import StatementDTO
+from src.core.dtos.statement_dto import StatementDTO
 
 
 def _format_inr(paise: int) -> str:

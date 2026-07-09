@@ -1,4 +1,5 @@
 """Behavioral analytics and insights endpoints."""
+from typing import Any
 from fastapi import APIRouter, HTTPException
 
 from src.engines.insight_generator import generate_summary_text
@@ -8,7 +9,7 @@ router = APIRouter(prefix="/api/behavior", tags=["behavior"])
 
 
 @router.get("/summary")
-def api_behavior_summary() -> dict:
+def api_behavior_summary() -> dict[str, Any]:
     """
     Get comprehensive behavioral profile.
 
@@ -39,7 +40,7 @@ def api_behavior_summary() -> dict:
 
 
 @router.get("/score")
-def api_behavior_score() -> dict:
+def api_behavior_score() -> dict[str, Any]:
     """
     Get financial health score with breakdown.
 
@@ -83,7 +84,7 @@ def api_behavior_score() -> dict:
 
 
 @router.get("/insights")
-def api_behavior_insights() -> dict:
+def api_behavior_insights() -> dict[str, Any]:
     """
     Get behavioral insights and nudges.
 

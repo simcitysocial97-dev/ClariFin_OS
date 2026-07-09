@@ -1,4 +1,5 @@
 """Reconciliation matching and confirmation endpoints."""
+from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from src.common import format_inr
@@ -9,7 +10,7 @@ router = APIRouter(prefix="/api/reconciliations", tags=["reconciliation"])
 
 
 @router.get("")
-def api_get_reconciliations(status: str | None = None) -> dict:
+def api_get_reconciliations(status: str | None = None) -> dict[str, Any]:
     """
     Get all reconciliations with transaction details.
 
@@ -36,13 +37,13 @@ def api_get_reconciliations(status: str | None = None) -> dict:
 
 
 @router.get("/pending")
-def api_get_pending_reconciliations() -> dict:
+def api_get_pending_reconciliations() -> dict[str, Any]:
     """Get all pending reconciliations."""
     return api_get_reconciliations(status="pending")
 
 
 @router.get("/scan")
-def api_scan_reconciliations() -> dict:
+def api_scan_reconciliations() -> dict[str, Any]:
     """
     Scan for potential transfer matches across accounts.
 
@@ -74,7 +75,7 @@ def api_create_reconciliation(
     date_diff_days: int = Query(0, description="Days between transaction dates"),
     match_confidence: float = Query(..., description="Confidence score 0.0-1.0"),
     match_type: str = Query("exact", description="'exact', 'window', 'fuzzy', or 'manual'"),
-) -> dict:
+) -> dict[str, Any]:
     """
     Create a reconciliation record between two transactions.
 
@@ -99,7 +100,7 @@ def api_create_reconciliation(
 
 
 @router.post("/batch-insert")
-def api_batch_insert_reconciliations() -> dict:
+def api_batch_insert_reconciliations() -> dict[str, Any]:
     """
     Scan and insert all potential matches as pending reconciliations.
 
@@ -136,7 +137,7 @@ def api_batch_insert_reconciliations() -> dict:
 
 
 @router.post("/{reconciliation_id}/confirm")
-def api_confirm_reconciliation(reconciliation_id: int) -> dict:
+def api_confirm_reconciliation(reconciliation_id: int) -> dict[str, Any]:
     """
     Confirm a pending reconciliation.
 
@@ -155,7 +156,7 @@ def api_confirm_reconciliation(reconciliation_id: int) -> dict:
 
 
 @router.post("/{reconciliation_id}/reject")
-def api_reject_reconciliation(reconciliation_id: int) -> dict:
+def api_reject_reconciliation(reconciliation_id: int) -> dict[str, Any]:
     """
     Reject a pending reconciliation.
 

@@ -1,4 +1,5 @@
 """Member management endpoints."""
+from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -14,7 +15,7 @@ class MemberCreate(BaseModel):
 
 
 @router.get("/members")
-async def get_members() -> dict:
+async def get_members() -> dict[str, Any]:
     """
     Get all members.
 
@@ -25,7 +26,7 @@ async def get_members() -> dict:
 
 
 @router.post("/members")
-async def create_member(member: MemberCreate) -> dict:
+async def create_member(member: MemberCreate) -> dict[str, Any]:
     """
     Create a new member.
 

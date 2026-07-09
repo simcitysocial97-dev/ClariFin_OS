@@ -13,23 +13,12 @@ Phase 2 Router Extraction Complete:
 - This file now contains only app setup, middleware, and router registration
 """
 
-import sys
-from pathlib import Path
-
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent))
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# Import health module for router registration
-import src.health as health
-
-# Import configuration and utilities
-from config import settings
-
-# Import error handlers
-from errors import register_error_handlers
+from src.config import settings
+from src.errors import register_error_handlers
+from src.health import register_health_routes
 
 # ============================================================
 # FastAPI App
@@ -54,7 +43,7 @@ app.add_middleware(
 register_error_handlers(app)
 
 # Register health router
-health.register_health_routes(app)
+register_health_routes(app)
 
 # Register routers
 from src.routers import (
@@ -66,7 +55,6 @@ from src.routers import (
     cashflow,
     dashboard,
     export,
-    health,
     import_router,
     investments,
     loans,
@@ -85,7 +73,6 @@ app.include_router(cards_statements.router)
 app.include_router(cashflow.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
-app.include_router(health.router)
 app.include_router(import_router.router)
 app.include_router(investments.router)
 app.include_router(loans.router)

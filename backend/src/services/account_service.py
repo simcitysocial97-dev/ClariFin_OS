@@ -1,5 +1,6 @@
 """Account business orchestration service."""
 
+from typing import Any
 from src.engines.balance_engine import (
     compute_account_balance,
     compute_running_balance,
@@ -26,7 +27,7 @@ class AccountService(BaseService):
 
     def compute_account_balance(
         self, account_id: str, starting_balance_paise: int = 0
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Compute current balance for a single account."""
         return compute_account_balance(
             db_path=self.db_path,

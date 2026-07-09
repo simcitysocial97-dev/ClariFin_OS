@@ -1,3 +1,4 @@
+from typing import Any
 from src.models.base import DomainModel
 
 
@@ -13,7 +14,7 @@ class Statement(DomainModel):
     imported_at: str | None = None
 
     @classmethod
-    def from_db_row(cls, row: dict) -> "Statement":
+    def from_db_row(cls, row: dict[str, Any]) -> "Statement":
         return cls(
             id=row["id"],
             bank=row["bank"],

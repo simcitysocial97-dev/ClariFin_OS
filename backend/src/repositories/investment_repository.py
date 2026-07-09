@@ -1,4 +1,5 @@
 """Investment domain repository."""
+from typing import Any
 from src.models.investment import Investment
 from src.repositories.base import BaseRepository
 
@@ -62,7 +63,7 @@ class InvestmentRepository(BaseRepository):
             conn.commit()
         return cur.lastrowid or 0
 
-    def get_by_id(self, investment_id: int | str) -> dict | None:
+    def get_by_id(self, investment_id: int | str) -> dict[str, Any] | None:
         """Get a single investment by ID."""
         with self._get_conn() as conn:
             row = conn.execute(
@@ -70,7 +71,7 @@ class InvestmentRepository(BaseRepository):
             ).fetchone()
         return dict(row) if row else None
 
-    def update(self, investment_id: int | str, **kwargs: str | int | float | None) -> dict | None:
+    def update(self, investment_id: int | str, **kwargs: str | int | float | None) -> dict[str, Any] | None:
         """Update investment fields. Only updates provided fields."""
         allowed = {
             'name', 'units', 'current_price_paise',

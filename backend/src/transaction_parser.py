@@ -2,6 +2,7 @@
 Parse transactions from table rows.
 ONLY regex allowed: Date parsing (DD/MM/YYYY)
 """
+from typing import Any
 import re  # ONLY for date validation
 
 import pandas as pd
@@ -28,7 +29,7 @@ class TransactionParser:
 
         return transactions
 
-    def parse_row(self, row: pd.Series) -> dict | None:
+    def parse_row(self, row: pd.Series) -> dict[str, Any] | None:
         """Parse a single row into transaction dict"""
 
         # Get date

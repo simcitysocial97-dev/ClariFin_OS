@@ -1,4 +1,5 @@
 """Transaction listing and analytics endpoints."""
+from typing import Any
 from collections import defaultdict
 from datetime import datetime
 
@@ -42,7 +43,7 @@ def get_transactions(
 def get_overview(
     exclude_transfers: bool = Query(True),
     member: str | None = "All",
-) -> dict:
+) -> dict[str, Any]:
     """Get overview metrics and charts."""
     try:
         repo = TransactionRepository()
@@ -83,7 +84,7 @@ def get_overview(
         month_change = percentage_change(this_month_spend, last_month_spend) if last_month_spend > 0 else "—"
 
         # Monthly chart
-        monthly: dict = defaultdict(float)
+        monthly: dict[str, Any] = defaultdict(float)
         for t in debit_txns:
             mk = t.get("month_key", "")
             if mk:
@@ -95,7 +96,7 @@ def get_overview(
         ]
 
         # Category chart
-        cat_totals: dict = defaultdict(float)
+        cat_totals: dict[str, Any] = defaultdict(float)
         for t in debit_txns:
             cat_totals[t.get("category", "Uncategorized")] += t.get("amount", 0)
 
@@ -103,7 +104,7 @@ def get_overview(
         category_chart = [{"name": cat, "value": round(amt, 2)} for cat, amt in sorted_cats[:8]]
 
         # Bank chart
-        bank_totals: dict = defaultdict(float)
+        bank_totals: dict[str, Any] = defaultdict(float)
         for t in debit_txns:
             bank_totals[t.get("bank", "Unknown")] += t.get("amount", 0)
 
@@ -159,7 +160,7 @@ def get_categories(
     exclude_transfers: bool = Query(True),
     member: str | None = "All",
     drill_category: str | None = None,
-) -> dict:
+) -> dict[str, Any]:
     """Get category summary and breakdown."""
     try:
         repo = TransactionRepository()
@@ -174,7 +175,7 @@ def get_categories(
             transactions = [t for t in transactions if t.get("category") != "Payments & Transfers"]
 
         # Category summary
-        cat_data: dict = defaultdict(lambda: {"amount": 0.0, "count": 0})
+        cat_data: dict[str, Any] = defaultdict(lambda: {"amount": 0.0, "count": 0})
         total_debit = 0.0
         for t in transactions:
             if t.get("type") == "debit":
@@ -195,7 +196,7 @@ def get_categories(
         ]
 
         # Monthly breakdown
-        data: dict = defaultdict(lambda: defaultdict(float))
+        data: dict[str, Any] = defaultdict(lambda: defaultdict(float))
         for t in transactions:
             if t.get("type") == "debit":
                 mk = t.get("month_key", "")
@@ -245,7 +246,7 @@ def get_categories(
 def get_analytics(
     exclude_transfers: bool = Query(True),
     member: str | None = "All",
-) -> dict:
+) -> dict[str, Any]:
     """Get analytics data."""
     try:
         repo = TransactionRepository()
@@ -262,7 +263,7 @@ def get_analytics(
         debit_txns = [t for t in transactions if t.get("type") == "debit"]
 
         # Monthly data
-        monthly: dict = defaultdict(float)
+        monthly: dict[str, Any] = defaultdict(float)
         for t in debit_txns:
             mk = t.get("month_key", "")
             if mk:
@@ -300,7 +301,7 @@ def get_analytics(
         ]
 
         # Day of week
-        day_totals: dict = defaultdict(lambda: {"amount": 0.0, "count": 0})
+        day_totals: dict[str, Any] = defaultdict(lambda: {"amount": 0.0, "count": 0})
         for t in debit_txns:
             wd = t.get("weekday", "")
             if wd:
@@ -318,7 +319,7 @@ def get_analytics(
         ]
 
         # Top merchants
-        merchant_data: dict = defaultdict(lambda: {"amount": 0.0, "count": 0})
+        merchant_data: dict[str, Any] = defaultdict(lambda: {"amount": 0.0, "count": 0})
         for t in debit_txns:
             if t.get("description"):
                 desc = (t["description"] or "")[:40]
@@ -336,7 +337,7 @@ def get_analytics(
         ]
 
         # Recurring charges
-        merchant_txns: dict = defaultdict(list)
+        merchant_txns: dict[str, Any] = defaultdict(list)
         for t in debit_txns:
             if t.get("description"):
                 merchant_txns[t["description"]].append(t.get("amount", 0))

@@ -1,3 +1,4 @@
+from typing import Any
 from src.models.base import DomainModel, Money
 
 
@@ -16,7 +17,7 @@ class Reconciliation(DomainModel):
     status: str
 
     @classmethod
-    def from_db_row(cls, row: dict) -> "Reconciliation":
+    def from_db_row(cls, row: dict[str, Any]) -> "Reconciliation":
         # The `amount` column is stored as a float; normalize to paise (₹1.00 = 100).
         return cls(
             id=row["id"],

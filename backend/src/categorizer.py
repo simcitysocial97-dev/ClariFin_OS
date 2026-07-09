@@ -240,7 +240,7 @@ _RULES: list[tuple[str, str, str]] = [
 # Categorize Function
 # ============================================================
 
-def categorize(description: str, amount: float = None) -> tuple[str, str]:
+def categorize(description: str, amount: float | None = None) -> tuple[str, str]:
     """
     Categorize a transaction description using keyword matching.
 

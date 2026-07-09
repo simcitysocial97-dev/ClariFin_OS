@@ -1,3 +1,4 @@
+from typing import Any
 from src.models.base import DomainModel, Money
 
 
@@ -15,7 +16,7 @@ class Investment(DomainModel):
     as_of_date: str | None = None
 
     @classmethod
-    def from_db_row(cls, row: dict) -> "Investment":
+    def from_db_row(cls, row: dict[str, Any]) -> "Investment":
         return cls(
             id=row["id"],
             name=row["name"],

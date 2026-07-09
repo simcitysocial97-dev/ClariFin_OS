@@ -25,6 +25,7 @@ CLI:
     python csv_importer.py <file_path> [--debug]
 """
 
+from typing import Any
 import re
 import sys
 from datetime import datetime
@@ -112,7 +113,7 @@ class CSVImporter:
         self.file_path = Path(file_path)
         self.debug = debug
         self._df: pd.DataFrame | None = None
-        self._detected_format: dict | None = None
+        self._detected_format: dict[str, Any] | None = None
 
     def _read_file(self, skip_rows: int = 0) -> pd.DataFrame:
         """Read the file into a pandas DataFrame."""
@@ -387,13 +388,13 @@ class CSVImporter:
         # Default to Indian format
         return "%d/%m/%Y"
 
-    def detect_format(self) -> dict:
+    def detect_format(self) -> dict[str, Any]:
         """
         Auto-detect file structure.
 
         Returns:
             dict with:
-                - columns: list of column names
+                - columns: list[Any] of column names
                 - row_count: number of data rows
                 - sample_rows: first 5 rows as list of dicts
                 - detected_mapping: best guess for column mapping
@@ -473,7 +474,7 @@ class CSVImporter:
 
     def import_transactions(
         self,
-        mapping: dict,
+        mapping: dict[str, Any],
         member: str = "Self",
         bank: str = "Manual Import",
     ) -> tuple[list[dict], list[str]]:
@@ -481,7 +482,7 @@ class CSVImporter:
         Import transactions using the provided column mapping.
 
         Args:
-            mapping: dict with:
+            mapping: dict[str, Any] with:
                 - date_column: str
                 - description_column: str
                 - amount_column: str (optional if debit/credit columns)

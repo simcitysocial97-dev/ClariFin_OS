@@ -7,6 +7,7 @@ and prepayment simulations for all loan types.
 All monetary values in paise (integer).
 """
 
+from typing import Any
 import math
 from datetime import datetime
 
@@ -88,7 +89,7 @@ def compute_prepayment_impact(
     remaining_months: int,
     prepayment_paise: int,
     mode: str = 'reduce_tenure'
-) -> dict:
+) -> dict[str, Any]:
     """
     Simulate impact of a prepayment.
 

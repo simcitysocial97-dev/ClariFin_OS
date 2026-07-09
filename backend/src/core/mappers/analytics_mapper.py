@@ -8,7 +8,7 @@ This is the ONLY location where analytics API responses are constructed.
 
 from typing import Any
 
-from core.dtos.analytics_dto import (
+from src.core.dtos.analytics_dto import (
     AnalyticsResponse,
     DayOfWeekData,
     LargestTransaction,

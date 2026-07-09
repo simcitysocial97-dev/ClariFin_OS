@@ -9,6 +9,7 @@ Improvements:
 - Strict transaction page detection
 """
 
+from typing import Any
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -80,7 +81,7 @@ class LayoutAnalyzer:
         self.metadata_region = None
         self.metadata_fields = None
 
-    def analyze(self) -> dict:
+    def analyze(self) -> dict[str, Any]:
         with pdfplumber.open(self.pdf_path) as pdf:
             self.bank = self._detect_bank(pdf)
             self._log(f"Detected bank: {self.bank}")
@@ -136,7 +137,7 @@ class LayoutAnalyzer:
         return "Unknown"
 
     # ========== Header Detection (Validated) ==========
-    def _find_table_header(self, pdf) -> dict | None:
+    def _find_table_header(self, pdf) -> dict[str, Any] | None:
         best_result = None
         best_score = 0
 
@@ -170,7 +171,7 @@ class LayoutAnalyzer:
                     'page': page_num,
                     'y': y_center,
                     'y_bottom': max(item['y_bottom'] for item in group_items),
-                    'anchors': list(distinct),
+                    'anchors': list[Any](distinct),
                     'items': group_items,
                     'score': score,
                 }
@@ -185,12 +186,12 @@ class LayoutAnalyzer:
 
         return best_result
 
-    def _header_has_transaction_pages(self, pdf, header_info: dict) -> bool:
+    def _header_has_transaction_pages(self, pdf, header_info: dict[str, Any]) -> bool:
         """Check if starting from this header page, we find transaction pages."""
         pages = self._detect_table_pages(pdf, header_info['page'], stop_on_first=False)
         return len(pages) > 0 and pages[0] == header_info['page']
 
-    def _group_by_y(self, items: list[dict]) -> dict[float, list[dict]]:
+    def _group_by_y(self, items: list[dict[str, Any]]) -> dict[float, list[dict[str, Any]]]:
         if not items:
             return {}
         sorted_items = sorted(items, key=lambda x: x['y'])
@@ -211,7 +212,7 @@ class LayoutAnalyzer:
         return groups
 
     # ========== Table Bounding Box ==========
-    def _build_table_bbox(self, page, header_info: dict) -> tuple[float, float, float, float]:
+    def _build_table_bbox(self, page, header_info: dict[str, Any]) -> tuple[float, float, float, float]:
         page_width = page.width
         page_height = page.height
         y_top = header_info['y_bottom'] + 5
@@ -296,7 +297,7 @@ class LayoutAnalyzer:
         return transaction_line_count >= 2
 
     # ========== Column Detection from Header Row ==========
-    def _detect_columns_from_header_row(self, page, bbox: tuple, header_info: dict) -> tuple[dict, dict]:
+    def _detect_columns_from_header_row(self, page, bbox: tuple[Any, ...], header_info: dict[str, Any]) -> tuple[dict, dict]:
         """
         Extract header row characters, detect columns via gaps, then classify.
         """
@@ -407,7 +408,7 @@ class LayoutAnalyzer:
             return 'cashback'
         return None
 
-    def _default_columns(self, x0: float, x1: float) -> dict:
+    def _default_columns(self, x0: float, x1: float) -> dict[str, Any]:
         width = x1 - x0
         return {
             'date': {'x_start': x0, 'x_end': x0 + width * 0.15},
@@ -416,7 +417,7 @@ class LayoutAnalyzer:
         }
 
     # ========== Amount Structure Analysis (with data row check) ==========
-    def _analyze_amount_structure(self, page, bbox: tuple, columns: dict) -> dict:
+    def _analyze_amount_structure(self, page, bbox: tuple[Any, ...], columns: dict[str, Any]) -> dict[str, Any]:
         """
         Determine amount structure by scanning a few data rows.
         """
@@ -512,7 +513,7 @@ class LayoutAnalyzer:
                 }
         return metadata_region, metadata_fields
 
-    def _find_value_near_label(self, page, label_bbox: dict) -> dict | None:
+    def _find_value_near_label(self, page, label_bbox: dict[str, Any]) -> dict[str, Any] | None:
         label_x1 = label_bbox['x1']
         label_y = label_bbox['y_top']
         label_x0 = label_bbox['x0']
@@ -544,12 +545,12 @@ class LayoutAnalyzer:
         if self.debug:
             print(f"[LayoutAnalyzer] {message}")
 
-    def _format_bbox(self, bbox: tuple | None) -> str:
+    def _format_bbox(self, bbox: tuple[Any, ...] | None) -> str:
         if bbox is None:
             return "None"
         return f"({bbox[0]:.0f}, {bbox[1]:.0f}, {bbox[2]:.0f}, {bbox[3]:.0f})"
 
-    def _build_result(self) -> dict:
+    def _build_result(self) -> dict[str, Any]:
         clean_columns = {}
         if self.columns:
             for name, col_def in self.columns.items():
@@ -614,7 +615,7 @@ class LayoutAnalyzer:
                 print(f"✅ Debug image saved: {output_path}")
 
 
-def analyze_pdf(pdf_path: str, debug: bool = False) -> dict:
+def analyze_pdf(pdf_path: str, debug: bool = False) -> dict[str, Any]:
     analyzer = LayoutAnalyzer(pdf_path, debug=debug)
     result = analyzer.analyze()
     if debug:

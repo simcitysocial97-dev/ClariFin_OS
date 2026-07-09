@@ -1,4 +1,5 @@
 """Loan domain repository."""
+from typing import Any
 from src.models.loan import Loan
 from src.repositories.base import BaseRepository
 
@@ -66,7 +67,7 @@ class LoanRepository(BaseRepository):
             conn.commit()
         return cur.lastrowid or 0
 
-    def get_by_id(self, loan_id: int | str) -> dict | None:
+    def get_by_id(self, loan_id: int | str) -> dict[str, Any] | None:
         """Get a single loan by ID."""
         with self._get_conn() as conn:
             row = conn.execute(
@@ -74,7 +75,7 @@ class LoanRepository(BaseRepository):
             ).fetchone()
         return dict(row) if row else None
 
-    def update(self, loan_id: int | str, **kwargs: str | int | float | None) -> dict | None:
+    def update(self, loan_id: int | str, **kwargs: str | int | float | None) -> dict[str, Any] | None:
         """Update loan fields. Only updates provided fields."""
         allowed = {
             'name', 'lender', 'outstanding_paise', 'interest_rate',

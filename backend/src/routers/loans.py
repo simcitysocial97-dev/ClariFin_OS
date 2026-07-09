@@ -1,5 +1,6 @@
 """Loan management endpoints."""
 
+from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
@@ -44,7 +45,7 @@ class PrepaymentRequest(BaseModel):
 
 
 @router.get("/loans")
-def get_loans() -> dict:
+def get_loans() -> dict[str, Any]:
     """Get all active loans (domain models) with computed summary."""
     repo = LoanRepository()
     loans = repo.get_all_models()
@@ -66,7 +67,7 @@ def get_loans() -> dict:
 
 
 @router.post("/loans")
-def create_loan(loan: LoanCreate) -> dict:
+def create_loan(loan: LoanCreate) -> dict[str, Any]:
     """Create a new loan record."""
     repo = LoanRepository()
     created = repo.create(
@@ -89,7 +90,7 @@ def create_loan(loan: LoanCreate) -> dict:
 
 
 @router.put("/loans/{loan_id}")
-def update_loan(loan_id: str, loan: LoanUpdate) -> dict:
+def update_loan(loan_id: str, loan: LoanUpdate) -> dict[str, Any]:
     """Update loan outstanding or other fields."""
     repo = LoanRepository()
     updated = repo.update(
@@ -102,7 +103,7 @@ def update_loan(loan_id: str, loan: LoanUpdate) -> dict:
 
 
 @router.delete("/loans/{loan_id}")
-def delete_loan(loan_id: str) -> dict:
+def delete_loan(loan_id: str) -> dict[str, Any]:
     """Soft delete a loan."""
     repo = LoanRepository()
     success = repo.delete(loan_id)
@@ -112,7 +113,7 @@ def delete_loan(loan_id: str) -> dict:
 
 
 @router.get("/loans/{loan_id}/schedule")
-def get_loan_schedule(loan_id: str) -> dict:
+def get_loan_schedule(loan_id: str) -> dict[str, Any]:
     """Get amortization schedule for a loan."""
     from src.engines.loan_engine import compute_amortization_schedule
 
@@ -146,7 +147,7 @@ def get_loan_schedule(loan_id: str) -> dict:
 
 
 @router.post("/loans/{loan_id}/prepayment-simulation")
-def simulate_prepayment(loan_id: str, request: PrepaymentRequest) -> dict:
+def simulate_prepayment(loan_id: str, request: PrepaymentRequest) -> dict[str, Any]:
     """Simulate impact of a prepayment."""
     from src.engines.loan_engine import compute_prepayment_impact, compute_remaining_months
 

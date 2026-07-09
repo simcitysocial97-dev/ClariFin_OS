@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Any,  Literal
 
 from src.models.base import DomainModel, Money
 
@@ -21,7 +21,7 @@ class Account(DomainModel):
     initial_balance: Money
 
     @classmethod
-    def from_db_row(cls, row: dict) -> "Account":
+    def from_db_row(cls, row: dict[str, Any]) -> "Account":
         """Convert a database row into an Account model.
 
         Expects a row exposing `initial_balance_paise` (int) — the canonical

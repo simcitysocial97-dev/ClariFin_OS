@@ -27,46 +27,35 @@ ignore = [
 
 [tool.mypy]
 python_version = "3.12"
+strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
-disallow_incomplete_defs = true
+disallow_any_generics = true
 check_untyped_defs = true
-no_implicit_optional = true
+no_implicit_reexport = true
 warn_redundant_casts = true
 warn_unused_ignores = true
-strict_optional = true
+# Exclude archived code and tests from strict checking
+exclude = [
+    "_archived_reflex_dashboard",
+    "tests/",
+    "scripts/",
+]
 
 [[tool.mypy.overrides]]
-module = ["camelot.*", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "pandas.*", "uvicorn.*"]
+module = ["camelot.*", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "pandas.*", "uvicorn.*", "sqlite3"]
 ignore_missing_imports = true
 
-# Per-file overrides for type annotation issues
-[[tool.mypy.overrides]]
-module = ["src.categorizer", "src.statement_extractor", "src.csv_importer", "src.metadata_extractor", "src.db", "src.api", "src.engines.nudge_engine", "src.engines.insight_generator", "src.engines.behavior_engine", "src.engines.balance_engine", "src.errors"]
-disallow_untyped_defs = false
-check_untyped_defs = false
-ignore_errors = true
-
-# Common layer utilities (have mixed typing)
-[[tool.mypy.overrides]]
-module = ["src.common.*"]
-disallow_untyped_defs = false
-check_untyped_defs = false
-
-# Routers + health: allow missing imports and untyped defs for now
-[[tool.mypy.overrides]]
-module = ["src.routers.*", "src.health", "src.config", "src.logger"]
-disallow_untyped_defs = false
-check_untyped_defs = false
-ignore_missing_imports = true
-
-# Domain layer: enforce strict type checking (models, repositories)
+# Ignore missing imports for legacy modules that use sys.path manipulation
 [[tool.mypy.overrides]]
 module = [
-    "src.repositories",
-    "src.repositories.*",
-    "src.models",
-    "src.models.*",
+    "column_mapper",
+    "table_extractor",
+    "transaction_parser",
+    "categorizer",
+    "metadata_extractor",
+    "statement_extractor",
+    "structural.layout_analyzer",
 ]
-ignore_errors = false
+ignore_missing_imports = true

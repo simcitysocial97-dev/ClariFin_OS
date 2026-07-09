@@ -2,6 +2,7 @@
 Map PDF column names to standard transaction fields.
 Uses FUZZY MATCHING, not regex.
 """
+from typing import Any
 from difflib import SequenceMatcher
 
 
@@ -39,7 +40,7 @@ class ColumnMapper:
     # Similarity threshold for fuzzy matching
     SIMILARITY_THRESHOLD = 0.7
 
-    def map_columns(self, df_columns: list[str]) -> dict[str, str]:
+    def map_columns(self, df_columns: list[str]) -> dict[str, Any]:
         """
         Map DataFrame columns to standard field names.
         Returns dict: {standard_field: actual_column_name}

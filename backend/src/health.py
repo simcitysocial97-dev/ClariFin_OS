@@ -9,8 +9,9 @@ Endpoints:
   - /ready — confirms database connectivity and essential services
 """
 
-import sqlite3
+from typing import Any
 
+import sqlite3
 from fastapi import APIRouter, HTTPException
 
 from src.config import settings
@@ -20,7 +21,7 @@ router = APIRouter()
 
 
 @router.get("/health")
-def health_check():
+def health_check() -> dict[str, Any]:
     """
     Basic health check endpoint.
 
@@ -35,7 +36,7 @@ def health_check():
 
 
 @router.get("/ready")
-def readiness_check():
+def readiness_check() -> dict[str, Any]:
     """
     Readiness check endpoint.
 
@@ -46,12 +47,12 @@ def readiness_check():
 
     Returns 200 OK if all checks pass, 503 otherwise.
     """
-    checks = {
+    checks: dict[str, bool] = {
         "database": False,
         "upload_dir": False,
         "data_dir": False,
     }
-    errors = []
+    errors: list[str] = []
 
     # Check database connectivity
     try:
@@ -108,7 +109,7 @@ def readiness_check():
         )
 
 
-def register_health_routes(app):
+def register_health_routes(app) -> None:
     """
     Register health routes with the FastAPI app.
 

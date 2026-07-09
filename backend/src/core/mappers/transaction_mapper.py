@@ -8,8 +8,8 @@ This is the ONLY location where transaction API responses are constructed.
 
 from typing import Any
 
-from core.domain.money import Money
-from core.dtos.transaction_dto import (
+from src.core.domain.money import Money
+from src.core.dtos.transaction_dto import (
     CategorySummaryDTO,
     MoneyDTO,
     TransactionDTO,

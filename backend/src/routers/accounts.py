@@ -1,4 +1,5 @@
 """Account balance and running balance endpoints."""
+from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from src.services.account_service import AccountService
@@ -7,7 +8,7 @@ router = APIRouter(prefix="/api/accounts", tags=["accounts"])
 
 
 @router.get("")
-def api_get_accounts() -> dict:
+def api_get_accounts() -> dict[str, Any]:
     """Get all accounts with their computed balances."""
     try:
         service = AccountService()
@@ -18,7 +19,7 @@ def api_get_accounts() -> dict:
 
 
 @router.get("/{account_id}/balance")
-def api_get_account_balance(account_id: str) -> dict:
+def api_get_account_balance(account_id: str) -> dict[str, Any]:
     """Get current balance for a specific account."""
     try:
         service = AccountService()
@@ -32,7 +33,7 @@ def api_get_account_balance(account_id: str) -> dict:
 def api_get_running_balance(
     account_id: str,
     limit: int = Query(1, ge=1, le=1000),
-) -> dict:
+) -> dict[str, Any]:
     """Get running balance history for an account."""
     try:
         service = AccountService()

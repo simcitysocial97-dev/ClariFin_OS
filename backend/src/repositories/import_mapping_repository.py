@@ -1,11 +1,12 @@
 """Import mapping domain repository."""
+from typing import Any
 from src.repositories.base import BaseRepository
 
 
 class ImportMappingRepository(BaseRepository):
     """Repository for import mapping operations."""
 
-    def save(self, mapping: dict) -> int:
+    def save(self, mapping: dict[str, Any]) -> int:
         """Save a column mapping configuration for reuse."""
         with self._get_conn() as conn:
             cur = conn.execute(

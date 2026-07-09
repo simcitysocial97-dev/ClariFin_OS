@@ -8,8 +8,8 @@ This is the ONLY location where dashboard API responses are constructed.
 
 from typing import Any
 
-from core.domain.money import Money
-from core.dtos.dashboard_dto import CategoryBreakdownDTO, DashboardSummaryDTO, OverviewDTO
+from src.core.domain.money import Money
+from src.core.dtos.dashboard_dto import CategoryBreakdownDTO, DashboardSummaryDTO, OverviewDTO
 
 
 class DashboardMapper:

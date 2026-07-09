@@ -1,3 +1,4 @@
+from typing import Any
 from datetime import date
 
 from src.models.base import DomainModel, Money
@@ -15,7 +16,7 @@ class Loan(DomainModel):
     emi: Money
 
     @classmethod
-    def from_db_row(cls, row: dict) -> "Loan":
+    def from_db_row(cls, row: dict[str, Any]) -> "Loan":
         return cls(
             id=row["id"],
             name=row["name"],

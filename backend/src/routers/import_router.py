@@ -1,5 +1,6 @@
 """Statement upload and import endpoints."""
 # Import invalidate_cache from behavior_engine
+from typing import Any
 import sys
 from pathlib import Path
 
@@ -25,7 +26,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 class ImportExecute(BaseModel):
     """Pydantic model for import execute request."""
     filename: str
-    mapping: dict
+    mapping: dict[str, Any]
     member: str = "Self"
 
 
@@ -33,7 +34,7 @@ class ImportExecute(BaseModel):
 async def upload_statement(
     file: UploadFile = File(...),
     member: str = Form("Self"),
-) -> dict:
+) -> dict[str, Any]:
     """Upload and process a PDF statement."""
     try:
         stmt_repo = StatementRepository()
@@ -149,7 +150,7 @@ async def upload_statement(
 
 
 @router.post("/import/detect")
-async def import_detect(file: UploadFile = File(...)) -> dict:
+async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
     """Detect CSV/Excel format."""
     try:
         # Save file
@@ -181,7 +182,7 @@ async def import_detect(file: UploadFile = File(...)) -> dict:
 
 
 @router.post("/import/execute")
-def import_execute(data: ImportExecute) -> dict:
+def import_execute(data: ImportExecute) -> dict[str, Any]:
     """Execute CSV/Excel import."""
     try:
         txn_repo = TransactionRepository()

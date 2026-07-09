@@ -61,7 +61,7 @@ def percentage_change(current: float, previous: float) -> str:
     return f"{sign}{change:.1f}%"
 
 
-def compute_is_large(transactions: list) -> list:
+def compute_is_large(transactions: list[Any]) -> list:
     """Flag transactions that are >2.5x average debit."""
     debit_txns = [t for t in transactions if t.get("type") == "debit"]
     if not debit_txns:
@@ -76,7 +76,7 @@ def compute_is_large(transactions: list) -> list:
     return transactions
 
 
-def compute_behavioral_insights(transactions: list) -> list:
+def compute_behavioral_insights(transactions: list[Any]) -> list:
     """Generate behavioral insights from transactions."""
     insights = []
     debit_txns = [t for t in transactions if t.get("type") == "debit"]
@@ -93,7 +93,7 @@ def compute_behavioral_insights(transactions: list) -> list:
     month_keys[:-1]
 
     # Category drift (use amount_paise, convert to rupees for percentage)
-    cat_monthly: dict = defaultdict(lambda: defaultdict(float))
+    cat_monthly: dict[str, Any] = defaultdict(lambda: defaultdict(float))
     for t in debit_txns:
         mk = t.get("month_key", "")
         cat = t.get("category", "Uncategorized")
@@ -124,7 +124,7 @@ def compute_behavioral_insights(transactions: list) -> list:
                         })
 
     # Spending trend
-    monthly_totals: dict = defaultdict(float)
+    monthly_totals: dict[str, Any] = defaultdict(float)
     for t in debit_txns:
         mk = t.get("month_key", "")
         if mk:

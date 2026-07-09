@@ -1,9 +1,10 @@
 """Transaction enrichment utilities."""
+from typing import Any
 from .formatting import clean_description, format_date_display, format_inr
 from .parsing import get_weekday, parse_date
 
 
-def enrich_transaction(txn: dict) -> dict:
+def enrich_transaction(txn: dict[str, Any]) -> dict[str, Any]:
     """Add computed fields to a transaction."""
     dt = parse_date(txn.get("date", ""))
     # Use stored amount_paise as primary source (avoids float precision issues)

@@ -1,4 +1,5 @@
 """Audit and integrity verification endpoints."""
+from typing import Any
 from fastapi import APIRouter, HTTPException
 
 from src.services import AuditService
@@ -7,7 +8,7 @@ router = APIRouter(prefix="/api/audit", tags=["audit"])
 
 
 @router.get("/report")
-def api_audit_report() -> dict:
+def api_audit_report() -> dict[str, Any]:
     """
     Run full ledger audit and return combined report.
 

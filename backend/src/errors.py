@@ -13,11 +13,11 @@ Usage:
 import traceback
 from typing import Any
 
-from fastapi import HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from logger import log_error
+from src.logger import log_error
 
 # ============================================================
 # Custom Exception Classes
@@ -38,7 +38,7 @@ class AppError(Exception):
         message: str,
         status_code: int = 500,
         details: dict[str, Any] | None = None
-    ):
+    ) -> None:
         self.message = message
         self.status_code = status_code
         self.details = details or {}
@@ -48,35 +48,35 @@ class AppError(Exception):
 class ValidationError(AppError):
     """Input validation error."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         super().__init__(message, status_code=400, details=details)
 
 
 class DatabaseError(AppError):
     """Database operation error."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         super().__init__(message, status_code=500, details=details)
 
 
 class FileError(AppError):
     """File operation error."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         super().__init__(message, status_code=400, details=details)
 
 
 class ImportError(AppError):
     """Data import error."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         super().__init__(message, status_code=400, details=details)
 
 
 class NotFoundError(AppError):
     """Resource not found error."""
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None):
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
         super().__init__(message, status_code=404, details=details)
 
 
@@ -100,7 +100,7 @@ def format_error_response(
     Returns:
         Formatted error response dictionary
     """
-    response = {
+    response: dict[str, Any] = {
         "error": {
             "message": message,
             "status_code": status_code,
@@ -183,8 +183,8 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
 
     # In development, you might want to include the traceback
     # In production, keep it generic
-    details = {}
-    from config import settings
+    details: dict[str, Any] = {}
+    from src.config import settings
     if settings.log_level == "DEBUG":
         details["traceback"] = traceback.format_exc()
 
@@ -202,7 +202,7 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
 # Error Handler Registration
 # ============================================================
 
-def register_error_handlers(app) -> None:
+def register_error_handlers(app: FastAPI) -> None:
     """
     Register all error handlers with the FastAPI app.
 
@@ -229,7 +229,7 @@ async def validation_error_handler(
     Returns:
         JSON error response with field-level details
     """
-    errors = []
+    errors: list[dict[str, str]] = []
     for error in exc.errors():
         errors.append({
             "field": ".".join(str(loc) for loc in error["loc"]),

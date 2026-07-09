@@ -1,4 +1,5 @@
 """Managed accounts endpoints (DB-backed)."""
+from typing import Any
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -30,7 +31,7 @@ class AccountUpdate(BaseModel):
 
 
 @router.get("/accounts/manage")
-def api_get_managed_accounts() -> dict:
+def api_get_managed_accounts() -> dict[str, Any]:
     """Get all persistently stored accounts."""
     try:
         repo = AccountRepository()
@@ -41,7 +42,7 @@ def api_get_managed_accounts() -> dict:
 
 
 @router.post("/accounts/manage")
-def api_create_managed_account(account: AccountCreate) -> dict:
+def api_create_managed_account(account: AccountCreate) -> dict[str, Any]:
     """Create a new persistent account."""
     try:
         repo = AccountRepository()
@@ -59,7 +60,7 @@ def api_create_managed_account(account: AccountCreate) -> dict:
 
 
 @router.put("/accounts/manage/{account_id}")
-def api_update_managed_account(account_id: str, account: AccountUpdate) -> dict:
+def api_update_managed_account(account_id: str, account: AccountUpdate) -> dict[str, Any]:
     """Update an existing account."""
     try:
         repo = AccountRepository()
@@ -77,7 +78,7 @@ def api_update_managed_account(account_id: str, account: AccountUpdate) -> dict:
 
 
 @router.delete("/accounts/manage/{account_id}")
-def api_delete_managed_account(account_id: str) -> dict:
+def api_delete_managed_account(account_id: str) -> dict[str, Any]:
     """Soft delete an account."""
     try:
         repo = AccountRepository()
@@ -92,7 +93,7 @@ def api_delete_managed_account(account_id: str) -> dict:
 
 
 @router.get("/accounts/{account_id}/balance")
-def api_get_account_balance(account_id: str) -> dict:
+def api_get_account_balance(account_id: str) -> dict[str, Any]:
     """Get computed balance for an account."""
     try:
         service = AccountService()
