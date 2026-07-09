@@ -299,19 +299,6 @@ class FinanceDB:
                 INSERT OR IGNORE INTO members (name, color) VALUES ('Self', '#6366F1')
             """)
 
-            # Phase 2A: Migrate existing transactions to paise columns
-            # This runs once when the new columns are added
-            try:
-                conn.execute("""
-                    UPDATE transactions SET
-                        amount_paise = ROUND(amount * 100),
-                        debit = CASE WHEN type = 'debit' THEN ROUND(amount * 100) ELSE 0 END,
-                        credit = CASE WHEN type = 'credit' THEN ROUND(amount * 100) ELSE 0 END
-                    WHERE amount_paise = 0 AND amount IS NOT NULL
-                """)
-            except Exception:
-                pass  # Migration already done or no data
-
             # Phase 2A.1: Migrate date_iso column
             # Parse existing dates to ISO format (YYYY-MM-DD)
             try:
@@ -523,93 +510,6 @@ class FinanceDB:
         except Exception:
             # SQLite version may not support RENAME COLUMN, or already migrated
             pass
-
-        # Migration: Remove legacy amount float column
-        cursor.execute("PRAGMA table_info(transactions)")
-        columns = [row[1] for row in cursor.fetchall()]
-
-        if "amount" in columns and "amount_paise" in columns:
-            # Verify all rows have amount_paise populated
-            cursor.execute("""
-                SELECT COUNT(*) FROM transactions
-                WHERE amount_paise IS NULL OR amount_paise = 0
-            """)
-            null_count = cursor.fetchone()[0]
-
-            if null_count > 0:
-                raise Exception(
-                    f"Cannot drop amount column: {null_count} rows have null/zero amount_paise"
-                )
-
-            # Safe to drop - recreate table without amount column
-            cursor.execute("""
-                CREATE TABLE transactions_new AS
-                SELECT
-                    id,
-                    statement_id,
-                    sequence_num,
-                    date,
-                    description,
-                    amount_paise,
-                    type,
-                    category,
-                    subcategory,
-                    raw_description,
-                    created_at,
-                    date_iso,
-                    hash_signature,
-                    account_id,
-                    member,
-                    source,
-                    original_description,
-                    loan_id,
-                    investment_id,
-                    recurring_id,
-                    is_transfer,
-                    counterparty,
-                    nature
-                FROM transactions
-            """)
-
-            cursor.execute("DROP TABLE transactions")
-            cursor.execute("ALTER TABLE transactions_new RENAME TO transactions")
-
-            # Recreate indexes (they don't survive table recreation)
-            if "date" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_date ON transactions(date)")
-            if "category" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_category ON transactions(category)")
-            if "statement_id" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_statement ON transactions(statement_id)")
-            if "type" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_type ON transactions(type)")
-            if "date_iso" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_date_iso ON transactions(date_iso)")
-            if "account_id" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_txn_account_id ON transactions(account_id)")
-            if "account_id" in columns and "date_iso" in columns:
-                cursor.execute("CREATE INDEX IF NOT EXISTS idx_account_date_iso ON transactions(account_id, date_iso, id)")
-            if "hash_signature" in columns:
-                cursor.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_transaction_hash ON transactions(hash_signature)")
-
-            # Recreate triggers
-            cursor.execute("""
-                CREATE TRIGGER prevent_transaction_update
-                BEFORE UPDATE ON transactions
-                BEGIN
-                    SELECT RAISE(ABORT, 'Transactions are immutable');
-                END
-            """)
-
-            cursor.execute("""
-                CREATE TRIGGER prevent_transaction_delete
-                BEFORE DELETE ON transactions
-                BEGIN
-                    SELECT RAISE(ABORT, 'Transactions cannot be deleted');
-                END
-            """)
-
-            print("✅ Migration: Removed legacy amount column, kept amount_paise only")
 
         conn.commit()
 
