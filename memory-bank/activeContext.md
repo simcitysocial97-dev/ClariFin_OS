@@ -93,3 +93,19 @@
 - **TOOL_RESULT_LIMITS**: Already configured to limit responses (`find_code: 10`, `analyze_code_relationships: 10`, `execute_cypher_query: 20`)
 - **INDEX_SOURCE=true**: Source code already stored in graph for both Python and TypeScript
 - **SCIP_INDEXER=true**: Enabled for accurate call resolution in both languages
+
+---
+
+## Venv Auto-Activation Fix - COMPLETED
+
+### Problem
+After removing root `.venv`, Cursor/VS Code Python extension no longer auto-activated the virtual environment in new terminals.
+
+### Solution
+- **Created symlink**: `.venv -> backend/venv` at project root
+- **Updated .gitignore**: Removed `backend/venv/` entry was incorrect - kept existing entry to prevent committing venv
+- **Result**: Python extension now auto-activates the venv when opening terminals in Cursor
+
+### Technical Details
+- The Python extension prioritizes `.venv` > `venv/` for auto-activation
+- Symlink allows `backend/venv` to be recognized without duplicating files
