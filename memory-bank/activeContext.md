@@ -60,5 +60,6 @@
 - Created clean `backend/venv` with 45 packages from canonical requirements.txt
 - All imports verified: fastapi, pydantic, pandas, pdfplumber, camelot, cachetools, pytest
 - Fixed package.json to reference `backend/venv` instead of root `.venv`
+- Updated .gitignore with `env/` entry for completeness
 
 ### Next Steps
