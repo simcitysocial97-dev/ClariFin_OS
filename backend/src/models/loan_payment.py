@@ -2,6 +2,8 @@
 
 from typing import Any
 
+from pydantic import field_validator
+
 from src.models.base import DomainModel
 
 
@@ -10,13 +12,21 @@ class LoanPayment(DomainModel):
 
     id: int | None = None
     loan_id: int
-    payment_date: str
+    payment_date: str  # ISO 8601 date string
     amount_paise: int
     principal_paise: int
     interest_paise: int
     late_fee_paise: int = 0
     source_account_id: int | None = None
     created_at: str | None = None
+
+    @field_validator("amount_paise", "principal_paise", "interest_paise", "late_fee_paise")
+    @classmethod
+    def validate_non_negative(cls, v: int) -> int:
+        """Ensure monetary fields are non-negative."""
+        if v < 0:
+            raise ValueError("Monetary fields must be non-negative")
+        return v
 
     @classmethod
     def from_db_row(cls, row: dict[str, Any]) -> "LoanPayment":
@@ -37,7 +47,7 @@ class LoanPaymentCreate(DomainModel):
     """DTO for creating a loan payment."""
 
     loan_id: int
-    payment_date: str
+    payment_date: str  # ISO 8601 date string
     amount_paise: int
     principal_paise: int | None = None
     interest_paise: int | None = None
