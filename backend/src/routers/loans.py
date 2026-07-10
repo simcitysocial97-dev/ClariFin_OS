@@ -3,34 +3,46 @@
 from typing import Any
 
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from src.errors import NotFoundError
+from src.models.loan_payment import LoanPaymentCreate
 from src.repositories.loan_repository import LoanRepository
+from src.services import LoanService
 
 router = APIRouter(prefix="/api", tags=["loans"])
 
 
 class LoanCreate(BaseModel):
     """Loan creation request."""
+
     name: str
     lender: str
     loan_type: str  # personal | home | vehicle | education | gold | other
     principal_paise: int
     outstanding_paise: int
     interest_rate: float
-    disbursed_date: str
+    disbursed_date: str  # ISO 8601 date string
     tenure_months: int | None = None
     emi_paise: int | None = None
     next_emi_date: str | None = None
     gold_weight_grams: float | None = None
     gold_purity: str | None = None
-    interest_type: str = 'reducing'
+    interest_type: str = "reducing"
     notes: str | None = None
+
+    @field_validator("principal_paise", "outstanding_paise")
+    @classmethod
+    def validate_non_negative(cls, v: int) -> int:
+        """Ensure monetary fields are non-negative."""
+        if v < 0:
+            raise ValueError("Monetary fields must be non-negative")
+        return v
 
 
 class LoanUpdate(BaseModel):
     """Loan update request."""
+
     outstanding_paise: int | None = None
     interest_rate: float | None = None
     tenure_months: int | None = None
@@ -39,10 +51,36 @@ class LoanUpdate(BaseModel):
     notes: str | None = None
 
 
-class PrepaymentRequest(BaseModel):
+class PrepaymentSimulationRequest(BaseModel):
     """Prepayment simulation request."""
+
     prepayment_paise: int
-    mode: str = 'reduce_tenure'  # reduce_tenure | reduce_emi
+    mode: str = "reduce_tenure"  # reduce_tenure | reduce_emi
+
+    @field_validator("prepayment_paise")
+    @classmethod
+    def validate_positive(cls, v: int) -> int:
+        """Ensure prepayment amount is positive."""
+        if v <= 0:
+            raise ValueError("prepayment_paise must be positive")
+        return v
+
+
+class PrepaymentSimulationResponse(BaseModel):
+    """Prepayment simulation response model."""
+
+    original_schedule: list[dict[str, Any]]
+    new_schedule: list[dict[str, Any]]
+    savings: dict[str, int]
+    new_remaining_months: int
+    new_emi_paise: int | None
+
+
+class LoanHealthResponse(BaseModel):
+    """Loan health response model."""
+
+    loan_id: int
+    health_score: float
 
 
 @router.get("/loans")
@@ -52,7 +90,7 @@ def get_loans() -> dict[str, Any]:
     loans = repo.get_all_models()
     raw = repo.get_all()
 
-    total_outstanding = sum(r['outstanding_paise'] for r in raw)
+    total_outstanding = sum(r["outstanding_paise"] for r in raw)
     total_principal = sum(loan.principal.paise for loan in loans)
     total_emi = sum(loan.emi.paise for loan in loans)
 
@@ -63,7 +101,7 @@ def get_loans() -> dict[str, Any]:
             "total_outstanding_paise": total_outstanding,
             "total_principal_paise": total_principal,
             "total_monthly_emi_paise": total_emi,
-        }
+        },
     }
 
 
@@ -114,60 +152,48 @@ def delete_loan(loan_id: str) -> dict[str, Any]:
 
 
 @router.get("/loans/{loan_id}/schedule")
-def get_loan_schedule(loan_id: str) -> dict[str, Any]:
-    """Get amortization schedule for a loan."""
-    from src.engines.loan_engine import compute_amortization_schedule
-
-    repo = LoanRepository()
-    loan = repo.get_by_id(loan_id)
-    if not loan:
-        raise NotFoundError(f"Loan {loan_id} not found")
-
-    if loan['loan_type'] == 'gold':
-        return {"error": "Gold loans do not have fixed amortization schedules"}
-
-    if not loan['tenure_months'] or not loan['disbursed_date']:
-        return {"error": "Loan missing tenure or disbursed_date for schedule"}
-
-    schedule = compute_amortization_schedule(
-        principal_paise=loan['outstanding_paise'],
-        annual_rate=loan['interest_rate'],
-        tenure_months=loan['tenure_months'],
-        disbursed_date=loan['disbursed_date'],
-        emi_paise=loan['emi_paise'],
-    )
-
-    total_interest = sum(s['interest_paise'] for s in schedule)
-    return {
-        "loan_id": loan_id,
-        "schedule": schedule,
-        "total_payments": len(schedule),
-        "total_interest_paise": total_interest,
-        "total_payment_paise": sum(s['emi_paise'] for s in schedule),
-    }
+def get_loan_schedule(loan_id: int) -> dict[str, Any]:
+    """Get amortization schedule for a loan using LoanService."""
+    service = LoanService()
+    try:
+        return service.get_amortization_schedule(loan_id)
+    except ValueError as e:
+        raise NotFoundError(str(e)) from e
 
 
 @router.post("/loans/{loan_id}/prepayment-simulation")
-def simulate_prepayment(loan_id: str, request: PrepaymentRequest) -> dict[str, Any]:
-    """Simulate impact of a prepayment."""
-    from src.engines.loan_engine import compute_prepayment_impact, compute_remaining_months
+def simulate_prepayment(
+    loan_id: int,
+    request: PrepaymentSimulationRequest
+) -> PrepaymentSimulationResponse:
+    """Simulate impact of a prepayment using LoanService."""
+    service = LoanService()
+    try:
+        return service.simulate_prepayment(loan_id, request.prepayment_paise, request.mode)  # type: ignore
+    except ValueError as e:
+        raise NotFoundError(str(e)) from e
 
-    repo = LoanRepository()
-    loan = repo.get_by_id(loan_id)
-    if not loan:
-        raise NotFoundError(f"Loan {loan_id} not found")
 
-    remaining_months = compute_remaining_months(
-        loan['outstanding_paise'],
-        loan['interest_rate'],
-        loan['emi_paise']
-    ) if loan['emi_paise'] else loan['tenure_months'] or 0
+@router.post("/loans/{loan_id}/payments")
+def record_loan_payment(
+    loan_id: int,
+    payment: LoanPaymentCreate
+) -> dict[str, Any]:
+    """Record a loan payment."""
+    service = LoanService()
+    try:
+        payment_id = service.record_payment(payment)
+        return {"success": True, "payment_id": payment_id}
+    except ValueError as e:
+        raise NotFoundError(str(e)) from e
 
-    result = compute_prepayment_impact(
-        outstanding_paise=loan['outstanding_paise'],
-        annual_rate=loan['interest_rate'],
-        remaining_months=remaining_months,
-        prepayment_paise=request.prepayment_paise,
-        mode=request.mode,
-    )
-    return result
+
+@router.get("/loans/{loan_id}/health")
+def get_loan_health(loan_id: int) -> LoanHealthResponse:
+    """Get health score for a loan."""
+    service = LoanService()
+    try:
+        score = service.compute_health_score(loan_id)
+        return LoanHealthResponse(loan_id=loan_id, health_score=score)
+    except ValueError as e:
+        raise NotFoundError(str(e)) from e

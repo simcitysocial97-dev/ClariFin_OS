@@ -8,6 +8,14 @@
 - Added `SavingsSummary` model (non-negative interest validation)
 - Enhanced `Loan` model: changed `start_date` to `str` (ISO 8601), added validator
 - Enhanced `LoanPayment` model: added validators for non-negative paise amounts
+- Enhanced `LoanScenario` model: added validators for non-negative paise amounts
+
+### Router Integration
+- Wired `LoanService` into `/api/loans` endpoints
+- Added `GET /api/loans/{loan_id}/schedule` endpoint
+- Added `POST /api/loans/{loan_id}/prepayment-simulation` endpoint
+- Added `POST /api/loans/{loan_id}/payments` endpoint
+- Added `GET /api/loans/{loan_id}/health` endpoint
 
 ### Core Architecture Enhancements
 - **Dynamic Prepayment Engine**: Implemented comprehensive dynamic prepayment engine supporting:

@@ -3,9 +3,11 @@ Prepayment Analyzer
 ===================
 Simulates impact of prepayments on loan schedules.
 
-Supports two modes:
-- REDUCE_TENURE: Same EMI, shorter loan
-- REDUCE_EMI: Same tenure, lower payments
+Supports:
+- Single and multiple prepayments
+- Both reduce-tenure and reduce-EMI modes
+- Prepayment penalties
+- Dynamic schedule regeneration
 
 INVARIANT 3: Returns new schedule, never mutates existing
 """
@@ -17,9 +19,12 @@ from src.engines.loan_engine.amortization_builder import (
     generate_schedule,
     total_interest_paise,
 )
+from src.engines.loan_engine.dynamic_prepayment_engine import (
+    apply_prepayment_at_month,
+    apply_multiple_prepayments,
+)
 from src.engines.loan_engine.emi_calculator import compute_emi_fixed
 from src.engines.loan_engine.types import AmortizationRow, PrepaymentMode, PrepaymentResult
-
 
 def compute_remaining_months(
     principal_paise: int,
@@ -50,7 +55,6 @@ def compute_remaining_months(
     months_decimal = numerator.ln() / denominator.ln()
     return math.ceil(months_decimal)
 
-
 def apply_prepayment(
     outstanding_paise: int,
     annual_rate_bps: int,
@@ -58,6 +62,7 @@ def apply_prepayment(
     prepayment_paise: int,
     mode: PrepaymentMode | str = "reduce_tenure",
     start_date: str | None = None,
+    prepayment_penalty_bps: int = 0,
 ) -> PrepaymentResult:
     """
     Simulate impact of a prepayment on remaining loan term.
@@ -73,84 +78,103 @@ def apply_prepayment(
         prepayment_paise: Prepayment amount (paise)
         mode: "reduce_tenure" or "reduce_emi"
         start_date: ISO date string for schedule regeneration (optional)
+        prepayment_penalty_bps: Prepayment penalty in basis points (optional)
 
     Returns:
         PrepaymentResult with comparison of before/after scenarios
     """
-    # Validate inputs
-    if outstanding_paise <= 0:
-        raise ValueError("Outstanding must be positive")
-    if prepayment_paise <= 0:
-        raise ValueError("Prepayment must be positive")
-
-    # Normalize mode to PrepaymentMode enum
-    if isinstance(mode, str):
-        mode_enum = PrepaymentMode(mode)
-    else:
-        mode_enum = mode
-
-    original_emi_paise = compute_emi_fixed(outstanding_paise, annual_rate_bps, remaining_months)
-    new_principal_paise = outstanding_paise - prepayment_paise
-
-    # Full prepayment closes the loan
-    if new_principal_paise <= 0:
-        return PrepaymentResult(
-            prepayment_paise=prepayment_paise,
-            mode=mode_enum,
-            original_emi_paise=original_emi_paise,
-            new_emi_paise=0,
-            original_remaining_months=remaining_months,
-            new_remaining_months=0,
-            months_saved=remaining_months,
-            interest_saved_paise=outstanding_paise,  # All interest saved
-            loan_closed=True,
-        )
-
-    if mode == "reduce_tenure":
-        new_months = compute_remaining_months(new_principal_paise, annual_rate_bps, original_emi_paise)
-        new_emi_paise = original_emi_paise
-    else:  # reduce_emi
-        new_months = remaining_months
-        new_emi_paise = compute_emi_fixed(new_principal_paise, annual_rate_bps, remaining_months)
-
-    # Compute interest saved via schedule comparison
+    # Generate a temporary schedule for the original loan
     original_schedule = generate_schedule(
         principal_paise=outstanding_paise,
         annual_rate_bps=annual_rate_bps,
         tenure_months=remaining_months,
         start_date=start_date or "2025-01-01",
-    ) if start_date else None
-
-    new_schedule = generate_schedule(
-        principal_paise=new_principal_paise,
-        annual_rate_bps=annual_rate_bps,
-        tenure_months=new_months,
-        start_date=start_date or "2025-01-01",
-    ) if start_date else None
-
-    # If we have schedules, compute precise savings
-    if original_schedule and new_schedule:
-        original_interest = total_interest_paise(original_schedule)
-        new_interest = total_interest_paise(new_schedule)
-        interest_saved_paise = max(0, original_interest - new_interest - prepayment_paise)
-    else:
-        # Fallback: simple approximation
-        original_total = original_emi_paise * remaining_months
-        new_total = new_emi_paise * new_months + prepayment_paise
-        interest_saved_paise = max(0, original_total - new_total)
-
-    return PrepaymentResult(
-        prepayment_paise=prepayment_paise,
-        mode=mode_enum,
-        original_emi_paise=original_emi_paise,
-        new_emi_paise=new_emi_paise,
-        original_remaining_months=remaining_months,
-        new_remaining_months=new_months,
-        months_saved=remaining_months - new_months,
-        interest_saved_paise=interest_saved_paise,
-        loan_closed=False,
     )
 
+    # Apply prepayment at month 1 (beginning of the schedule)
+    _, result = apply_prepayment_at_month(
+        original_schedule,
+        1,
+        prepayment_paise,
+        annual_rate_bps,
+        prepayment_penalty_bps,
+        mode,
+        start_date,
+    )
+
+    return result
+
+def compute_savings(
+    outstanding_paise: int,
+    annual_rate_bps: int,
+    remaining_months: int,
+    prepayment_paise: int,
+    mode: PrepaymentMode | str = "reduce_tenure",
+    prepayment_penalty_bps: int = 0,
+) -> int:
+    """
+    Compute interest savings from a prepayment.
+
+    Convenience wrapper around apply_prepayment.
+    """
+    result = apply_prepayment(
+        outstanding_paise,
+        annual_rate_bps,
+        remaining_months,
+        prepayment_paise,
+        mode,
+        prepayment_penalty_bps=prepayment_penalty_bps,
+    )
+    return result.interest_saved_paise
+
+def compute_multiple_prepayment_savings(
+    outstanding_paise: int,
+    annual_rate_bps: int,
+    remaining_months: int,
+    prepayments: list[tuple[int, int]],  # (month, amount_paise)
+    mode: PrepaymentMode | str = "reduce_tenure",
+    prepayment_penalty_bps: int = 0,
+    start_date: str | None = None,
+) -> tuple[int, list[PrepaymentResult]]:
+    """
+    Compute interest savings from multiple prepayments.
+
+    Args:
+        outstanding_paise: Current loan outstanding (paise)
+        annual_rate_bps: Annual interest rate (basis points)
+        remaining_months: Months left on loan
+        prepayments: List of (month, amount_paise) tuples
+        mode: "reduce_tenure" or "reduce_emi"
+        prepayment_penalty_bps: Prepayment penalty in basis points
+        start_date: ISO date string for schedule start
+
+    Returns:
+        tuple of (total_interest_saved_paise, list_of_prepayment_results)
+    """
+    # Generate original schedule
+    original_schedule = generate_schedule(
+        principal_paise=outstanding_paise,
+        annual_rate_bps=annual_rate_bps,
+        tenure_months=remaining_months,
+        start_date=start_date or "2025-01-01",
+    )
+
+    # Apply multiple prepayments
+    new_schedule, results = apply_multiple_prepayments(
+        original_schedule,
+        prepayments,
+        annual_rate_bps,
+        prepayment_penalty_bps,
+        mode,
+        start_date,
+    )
+
+    # Calculate total interest saved
+    original_interest = total_interest_paise(original_schedule)
+    new_interest = total_interest_paise(new_schedule)
+    total_savings = original_interest - new_interest
+
+    return total_savings, results
 
 def compute_savings(
     original_schedule: list[AmortizationRow],

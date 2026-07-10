@@ -1,181 +1,251 @@
 """
-Payoff Strategies
-=================
-Implements Avalanche and Snowball debt payoff prioritization.
+Payoff Strategies Engine
+========================
+Simulates debt payoff strategies (Avalanche, Snowball) with accurate interest savings.
 
 INVARIANT 1-6 enforced throughout.
 """
 
-from dataclasses import dataclass
-from typing import Any
+from decimal import Decimal
+from typing import Literal
 
-
-@dataclass
-class LoanForPriority:
-    """Minimal loan data structure for priority sorting."""
-    loan_id: int
-    outstanding_paise: int
-    interest_rate_bps: int
-    remaining_months: int
-
-
-def avalanche_priority(loans: list[LoanForPriority]) -> list[int]:
-    """
-    Sort loans for avalanche payoff strategy.
-
-    Priority order:
-    1. Highest interest rate first
-    2. Within same rate: longest tenure first (more interest to save)
-    3. Minimum payment to others
-
-    Mathematical: Minimizes total interest paid.
-
-    Returns list of loan IDs in priority order.
-    """
-    sorted_loans = sorted(
-        loans,
-        key=lambda ln: (-ln.interest_rate_bps, -ln.remaining_months),
-    )
-    return [ln.loan_id for ln in sorted_loans]
-
-
-def snowball_priority(loans: list[LoanForPriority]) -> list[int]:
-    """
-    Sort loans for snowball payoff strategy.
-
-    Priority order:
-    1. Smallest principal first
-    2. Within same principal: highest rate first
-
-    Psychological: Quick wins motivate continued payoff.
-
-    Returns list of loan IDs in priority order.
-    """
-    sorted_loans = sorted(
-        loans,
-        key=lambda ln: (ln.outstanding_paise, -ln.interest_rate_bps),
-    )
-    return [ln.loan_id for ln in sorted_loans]
-
+from src.engines.loan_engine.amortization_builder import (
+    generate_schedule,
+    total_interest_paise,
+)
+from src.engines.loan_engine.dynamic_prepayment_engine import (
+    apply_multiple_prepayments,
+    apply_prepayment_at_month,
+)
+from src.engines.loan_engine.types import (
+    AmortizationRow,
+    LoanInfo,
+    PayoffResult,
+    PayoffStrategy,
+    PrepaymentResult,
+)
 
 def compute_snowball_timeline(
-    loans: list[LoanForPriority],
+    loans: list[LoanInfo],
     monthly_surplus_paise: int,
-    start_date: str = "2025-01-01",
-) -> dict[str, Any]:
+    strategy: Literal["snowball", "avalanche"] = "snowball",
+) -> PayoffResult:
     """
-    Compute payoff timeline using snowball method.
+    Compute payoff timeline for snowball or avalanche strategy.
 
-    Args:
-        loans: List of loans with balances and rates
-        monthly_surplus_paise: Extra amount available for prepayment
-        start_date: ISO date for timeline start
+    Uses dynamic prepayment engine to accurately simulate month-by-month payoff.
 
-    Returns:
-        Dict with payoff_order, total_months, interest_saved_paise
+    INVARIANT 1: All money values in paise
+    INVARIANT 3: Returns new data, never mutates input
     """
-    from src.engines.loan_engine.amortization_builder import generate_schedule
-    from src.engines.loan_engine.emi_calculator import compute_emi_fixed
-
-    priority_order = snowball_priority(loans)
-
-    timeline = []
-    total_interest_paise = 0
-
-    for loan_id in priority_order:
-        loan = next(ln for ln in loans if ln.loan_id == loan_id)
-
-        # Assume EMI is computed at original terms
-        compute_emi_fixed(
-            loan.outstanding_paise,
-            loan.interest_rate_bps,
-            loan.remaining_months,
+    if not loans:
+        return PayoffResult(
+            strategy=PayoffStrategy(strategy),
+            total_months=0,
+            total_interest_paise=0,
+            monthly_cash_flow=[],
+            loan_results=[],
         )
 
-        # With surplus, compute new timeline
+    # Create initial schedules for all loans
+    loan_schedules = []
+    for loan in loans:
         schedule = generate_schedule(
             principal_paise=loan.outstanding_paise,
-            annual_rate_bps=loan.interest_rate_bps,
+            annual_rate_bps=loan.annual_rate_bps,
             tenure_months=loan.remaining_months,
-            start_date=start_date,
+            start_date=loan.start_date,
         )
+        loan_schedules.append((loan, schedule))
 
-        # Find when loan pays off with extra payment
-        months_to_close = 0
-        running_balance = loan.outstanding_paise
-        total_interest = 0
+    # Track active loans and their current state
+    active_loans = loan_schedules.copy()
+    monthly_cash_flow = []
+    total_interest = 0
+    current_month = 0
+    loan_results = []
 
-        for row in schedule:
-            months_to_close += 1
-            total_interest += row.interest_paise
-            # Add surplus to principal
-            running_balance = row.balance_paise - monthly_surplus_paise
-            if running_balance <= 0:
-                break
+    # Sort loans based on strategy
+    if strategy == "avalanche":
+        # Highest interest rate first
+        active_loans.sort(key=lambda x: x[0].annual_rate_bps, reverse=True)
+    else:
+        # Smallest balance first (snowball)
+        active_loans.sort(key=lambda x: x[0].outstanding_paise)
 
-        total_interest_paise += total_interest
-        timeline.append({
-            "loan_id": loan_id,
-            "months_to_close": months_to_close,
-            "interest_paise": total_interest,
+    while active_loans:
+        current_month += 1
+        total_payment_this_month = 0
+        monthly_interest = 0
+
+        # Pay minimum payments on all active loans
+        for loan, schedule in active_loans:
+            if current_month <= len(schedule):
+                monthly_interest += schedule[current_month - 1].interest_paise
+                total_payment_this_month += schedule[current_month - 1].emi_paise
+
+        # Apply surplus to the first loan in the strategy
+        remaining_surplus = monthly_surplus_paise
+        new_active_loans = []
+
+        for i, (loan, schedule) in enumerate(active_loans):
+            if current_month > len(schedule):
+                # Loan is already paid off
+                loan_results.append({
+                    "loan_id": loan.loan_id,
+                    "months_to_payoff": current_month - 1,
+                    "total_interest_paise": total_interest_paise(schedule),
+                    "total_payment_paise": sum(row.emi_paise for row in schedule),
+                })
+                continue
+
+            # Apply minimum payment
+            min_payment = schedule[current_month - 1].emi_paise
+
+            if i == 0 and remaining_surplus > 0:
+                # This is the target loan for the strategy
+                additional_payment = min(remaining_surplus, schedule[current_month - 1].balance_paise)
+                total_payment = min_payment + additional_payment
+
+                # Apply prepayment to this loan
+                _, prepayment_result = apply_prepayment_at_month(
+                    schedule,
+                    current_month,
+                    additional_payment,
+                    loan.annual_rate_bps,
+                    loan.prepayment_penalty_bps,
+                    "reduce_tenure",
+                    loan.start_date,
+                )
+
+                # Check if loan is paid off
+                if prepayment_result.loan_closed:
+                    loan_results.append({
+                        "loan_id": loan.loan_id,
+                        "months_to_payoff": current_month,
+                        "total_interest_paise": total_interest_paise(prepayment_result.new_schedule),
+                        "total_payment_paise": sum(row.emi_paise for row in prepayment_result.new_schedule) + additional_payment,
+                    })
+                    # Add freed up EMI to surplus for next month
+                    remaining_surplus += min_payment
+                else:
+                    # Loan still active, update schedule
+                    new_active_loans.append((loan, prepayment_result.new_schedule))
+                    # Surplus is used up
+                    remaining_surplus = 0
+            else:
+                # Just pay minimum
+                new_active_loans.append((loan, schedule))
+
+        # Update active loans for next month
+        active_loans = new_active_loans
+
+        # Track monthly cash flow
+        monthly_cash_flow.append({
+            "month": current_month,
+            "total_payment_paise": total_payment_this_month + (monthly_surplus_paise - remaining_surplus),
+            "interest_paise": monthly_interest,
+            "principal_paise": (total_payment_this_month + (monthly_surplus_paise - remaining_surplus)) - monthly_interest,
         })
 
-    return {
-        "payoff_order": priority_order,
-        "timeline": timeline,
-        "total_months": sum(t["months_to_close"] for t in timeline),
-        "total_interest_paise": total_interest_paise,
-    }
+        # Update total interest
+        total_interest += monthly_interest
 
+    return PayoffResult(
+        strategy=PayoffStrategy(strategy),
+        total_months=current_month,
+        total_interest_paise=total_interest,
+        monthly_cash_flow=monthly_cash_flow,
+        loan_results=loan_results,
+    )
 
-def compute_avalanche_timeline(
-    loans: list[LoanForPriority],
-    monthly_surplus_paise: int,
-    start_date: str = "2025-01-01",
-) -> dict[str, Any]:
+def compute_minimum_payments_only(
+    loans: list[LoanInfo],
+) -> PayoffResult:
     """
-    Compute payoff timeline using avalanche method.
-
-    Same as snowball but with avalanche priority order.
+    Compute timeline for minimum payments only (baseline comparison).
     """
-    from src.engines.loan_engine.amortization_builder import generate_schedule
+    if not loans:
+        return PayoffResult(
+            strategy=PayoffStrategy("minimum"),
+            total_months=0,
+            total_interest_paise=0,
+            monthly_cash_flow=[],
+            loan_results=[],
+        )
 
-    priority_order = avalanche_priority(loans)
+    # Find the longest loan duration
+    max_months = max(loan.remaining_months for loan in loans)
+    total_interest = 0
+    monthly_cash_flow = []
+    loan_results = []
 
-    timeline = []
-    total_interest_paise = 0
+    for month in range(1, max_months + 1):
+        monthly_payment = 0
+        monthly_interest = 0
 
-    for loan_id in priority_order:
-        loan = next(ln for ln in loans if ln.loan_id == loan_id)
+        for loan in loans:
+            if month <= loan.remaining_months:
+                # Generate schedule for this loan to get exact payment
+                schedule = generate_schedule(
+                    principal_paise=loan.outstanding_paise,
+                    annual_rate_bps=loan.annual_rate_bps,
+                    tenure_months=loan.remaining_months,
+                    start_date=loan.start_date,
+                )
+                if month <= len(schedule):
+                    monthly_payment += schedule[month - 1].emi_paise
+                    monthly_interest += schedule[month - 1].interest_paise
 
+        total_interest += monthly_interest
+        monthly_cash_flow.append({
+            "month": month,
+            "total_payment_paise": monthly_payment,
+            "interest_paise": monthly_interest,
+            "principal_paise": monthly_payment - monthly_interest,
+        })
+
+    # Generate loan results
+    for loan in loans:
         schedule = generate_schedule(
             principal_paise=loan.outstanding_paise,
-            annual_rate_bps=loan.interest_rate_bps,
+            annual_rate_bps=loan.annual_rate_bps,
             tenure_months=loan.remaining_months,
-            start_date=start_date,
+            start_date=loan.start_date,
         )
-
-        months_to_close = 0
-        running_balance = loan.outstanding_paise
-        total_interest = 0
-
-        for row in schedule:
-            months_to_close += 1
-            total_interest += row.interest_paise
-            running_balance = row.balance_paise - monthly_surplus_paise
-            if running_balance <= 0:
-                break
-
-        total_interest_paise += total_interest
-        timeline.append({
-            "loan_id": loan_id,
-            "months_to_close": months_to_close,
-            "interest_paise": total_interest,
+        loan_results.append({
+            "loan_id": loan.loan_id,
+            "months_to_payoff": loan.remaining_months,
+            "total_interest_paise": total_interest_paise(schedule),
+            "total_payment_paise": sum(row.emi_paise for row in schedule),
         })
 
-    return {
-        "payoff_order": priority_order,
-        "timeline": timeline,
-        "total_months": sum(t["months_to_close"] for t in timeline),
-        "total_interest_paise": total_interest_paise,
-    }
+    return PayoffResult(
+        strategy=PayoffStrategy("minimum"),
+        total_months=max_months,
+        total_interest_paise=total_interest,
+        monthly_cash_flow=monthly_cash_flow,
+        loan_results=loan_results,
+    )
+
+def compare_payoff_strategies(
+    loans: list[LoanInfo],
+    monthly_surplus_paise: int,
+) -> dict[str, PayoffResult]:
+    """
+    Compare all payoff strategies side-by-side.
+
+    Returns dict with results for each strategy.
+    """
+    strategies = {}
+
+    # Minimum payments baseline
+    strategies["minimum"] = compute_minimum_payments_only(loans)
+
+    # Snowball strategy
+    strategies["snowball"] = compute_snowball_timeline(loans, monthly_surplus_paise, "snowball")
+
+    # Avalanche strategy
+    strategies["avalanche"] = compute_snowball_timeline(loans, monthly_surplus_paise, "avalanche")
+
+    return strategies

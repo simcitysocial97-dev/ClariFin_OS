@@ -1,7 +1,4 @@
-"""
-Amortization Schedule Builder
-=============================
-Generates immutable amortization schedules for loans.
+"""Generates immutable amortization schedules for loans.
 
 INVARIANT 3: Once generated, schedule is never modified in-place.
 INVARIANT 4: All dates are ISO 8601 strings.
@@ -53,7 +50,7 @@ def generate_schedule(
     Generate full amortization schedule for a reducing balance loan.
 
     Returns list of AmortizationRow models.
-    Schedule is immutable — returns a new list each time.
+    Schedule is immutable - returns a new list each time.
 
     INVARIANT 1: Money is integer paise
     INVARIANT 2: Rates stored as basis points
@@ -120,7 +117,7 @@ def regenerate_schedule(
     """
     Regenerate schedule after prepayment or rate change.
 
-    Returns NEW schedule — does not modify existing one (INVARIANT 3).
+    Returns NEW schedule - does not modify existing one (INVARIANT 3).
     """
     new_principal_paise = outstanding_paise - prepayment_paise
     if new_principal_paise <= 0:
