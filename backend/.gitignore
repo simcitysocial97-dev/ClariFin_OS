@@ -1,8 +1,10 @@
 Python
-pycache/
-*.py[cod]
-venv/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
 .pytest_cache/
+.mypy_cache/
 .ruff_cache/
 
 Database
@@ -15,4 +17,3 @@ test_.db
 Environment
 .env
 .env.local
-.venv/

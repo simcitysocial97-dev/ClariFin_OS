@@ -8,8 +8,13 @@ This is the ONLY location where transaction API responses are constructed.
 
 from typing import Any
 
-from core.domain.money import Money
-from core.dtos.transaction_dto import CategorySummaryDTO, TransactionDTO, TransactionListResponse
+from src.core.domain.money import Money
+from src.core.dtos.transaction_dto import (
+    CategorySummaryDTO,
+    MoneyDTO,
+    TransactionDTO,
+    TransactionListResponse,
+)
 
 
 class TransactionMapper:
@@ -34,7 +39,6 @@ class TransactionMapper:
         bank: str,
         transaction_type: str,
         reference_number: str | None = None,
-        include_rupees_field: bool = True
     ) -> TransactionDTO:
         """
         Convert transaction data to TransactionDTO.
@@ -50,29 +54,22 @@ class TransactionMapper:
             bank: Bank name
             transaction_type: Transaction type (debit/credit)
             reference_number: Bank reference number (optional)
-            include_rupees_field: If True, include deprecated amount_rupees field
 
         Returns:
             TransactionDTO instance
         """
-        dto_data = {
-            "id": txn_id,
-            "date": date,
-            "description": description,
-            "amount_paise": amount.paise,
-            "balance_paise": balance.paise if balance else None,
-            "category": category,
-            "subcategory": subcategory,
-            "bank": bank,
-            "transaction_type": transaction_type,
-            "reference_number": reference_number,
-        }
-
-        # TODO: Remove in Phase 2 - backward compatibility
-        if include_rupees_field:
-            dto_data["amount_rupees"] = amount.to_rupees()
-
-        return TransactionDTO(**dto_data)
+        return TransactionDTO(
+            id=txn_id,
+            date=date,
+            description=description,
+            amount=MoneyDTO(paise=amount.paise, rupees=amount.to_rupees()),
+            balance=MoneyDTO(paise=balance.paise, rupees=balance.to_rupees()) if balance else None,
+            category=category,
+            subcategory=subcategory,
+            bank=bank,
+            transaction_type=transaction_type,
+            reference_number=reference_number,
+        )
 
     @staticmethod
     def to_list_response(
@@ -80,7 +77,6 @@ class TransactionMapper:
         total: int,
         limit: int,
         offset: int,
-        include_rupees_field: bool = True
     ) -> TransactionListResponse:
         """
         Convert list of transaction dictionaries to TransactionListResponse.
@@ -90,7 +86,6 @@ class TransactionMapper:
             total: Total number of transactions
             limit: Number of transactions per page
             offset: Offset for pagination
-            include_rupees_field: If True, include deprecated amount_rupees field
 
         Returns:
             TransactionListResponse instance
@@ -126,7 +121,6 @@ class TransactionMapper:
                 bank=bank,
                 transaction_type=transaction_type,
                 reference_number=reference_number,
-                include_rupees_field=include_rupees_field
             )
             transaction_dtos.append(dto)
 
@@ -143,7 +137,6 @@ class TransactionMapper:
         amount_paise: int,
         count: int,
         percentage: float,
-        include_rupees_field: bool = True
     ) -> CategorySummaryDTO:
         """
         Convert category summary data to CategorySummaryDTO.
@@ -153,20 +146,14 @@ class TransactionMapper:
             amount_paise: Total amount in paise
             count: Number of transactions
             percentage: Percentage of total (0-100)
-            include_rupees_field: If True, include deprecated amount_rupees field
 
         Returns:
             CategorySummaryDTO instance
         """
-        dto_data = {
-            "category": category,
-            "amount_paise": amount_paise,
-            "count": count,
-            "percentage": percentage,
-        }
-
-        # TODO: Remove in Phase 2 - backward compatibility
-        if include_rupees_field:
-            dto_data["amount_rupees"] = Money(amount_paise).to_rupees()
-
-        return CategorySummaryDTO(**dto_data)
+        amount = Money(amount_paise)
+        return CategorySummaryDTO(
+            category=category,
+            amount=MoneyDTO(paise=amount.paise, rupees=amount.to_rupees()),
+            count=count,
+            percentage=percentage,
+        )

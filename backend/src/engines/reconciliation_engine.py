@@ -30,6 +30,7 @@ Usage:
 import sqlite3
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 # ============================================================
 # Date Utilities
@@ -132,7 +133,7 @@ def _simple_description_similarity(desc_a: str, desc_b: str) -> float:
 # Matching Rules (Deterministic Only)
 # ============================================================
 
-def _check_match(txn_a: dict, txn_b: dict, max_date_window_days: int = 3) -> dict | None:
+def _check_match(txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_days: int = 3) -> dict[str, Any] | None:
     """
     Check if two transactions match as potential transfer pair.
 
@@ -221,7 +222,7 @@ def _check_match(txn_a: dict, txn_b: dict, max_date_window_days: int = 3) -> dic
     }
 
 
-def _generate_explanation(debit_txn: dict, credit_txn: dict, amount_paise: int, date_diff: int) -> str:
+def _generate_explanation(debit_txn: dict[str, Any], credit_txn: dict[str, Any], amount_paise: int, date_diff: int) -> str:
     """Generate human-readable explanation for a match."""
     amount_rupees = amount_paise / 100
 
@@ -241,7 +242,7 @@ def _generate_explanation(debit_txn: dict, credit_txn: dict, amount_paise: int, 
 # Core Matching Functions
 # ============================================================
 
-def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[dict]:
+def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[dict[str, Any]]:
     """
     Find potential transfer matches across accounts.
 
@@ -303,7 +304,7 @@ def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[
     return matches
 
 
-def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days: int = 3) -> list[dict]:
+def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days: int = 3) -> list[dict[str, Any]]:
     """
     Find potential matches for a specific transaction.
 

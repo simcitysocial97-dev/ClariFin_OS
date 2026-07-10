@@ -25,15 +25,13 @@ from typing import Any
 import camelot
 import pdfplumber
 
-# Import LayoutAnalyzer from sibling package
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from structural.layout_analyzer import LayoutAnalyzer
+from src.structural.layout_analyzer import LayoutAnalyzer
 
 # ============================================================
 # Coordinate Conversion
 # ============================================================
 
-def _bbox_to_camelot(bbox: tuple, page_height: float) -> str:
+def _bbox_to_camelot(bbox: tuple[Any, ...], page_height: float) -> str:
     """
     Convert pdfplumber bbox (x0, y0, x1, y1) measured from top-left
     to Camelot table_areas format "x0,y0,x1,y1" measured from bottom-left.
@@ -55,7 +53,7 @@ def _bbox_to_camelot(bbox: tuple, page_height: float) -> str:
 # Strategy Selection
 # ============================================================
 
-def _count_vertical_lines_in_bbox(pdf_path: str, page_num: int, bbox: tuple) -> int:
+def _count_vertical_lines_in_bbox(pdf_path: str, page_num: int, bbox: tuple[Any, ...]) -> int:
     """Count vertical lines inside the table bbox on a given page."""
     try:
         with pdfplumber.open(pdf_path) as pdf:
@@ -79,7 +77,7 @@ def _count_vertical_lines_in_bbox(pdf_path: str, page_num: int, bbox: tuple) -> 
         return 0
 
 
-def _select_flavor(pdf_path: str, page_num: int, bbox: tuple) -> str:
+def _select_flavor(pdf_path: str, page_num: int, bbox: tuple[Any, ...]) -> str:
     """Select Camelot flavor based on vertical line count in bbox."""
     vlines = _count_vertical_lines_in_bbox(pdf_path, page_num, bbox)
     return 'lattice' if vlines >= 3 else 'stream'
@@ -89,7 +87,7 @@ def _select_flavor(pdf_path: str, page_num: int, bbox: tuple) -> str:
 # Column Separators
 # ============================================================
 
-def _get_sorted_x_starts(columns: dict, table_x0: float = 0.0) -> list[float]:
+def _get_sorted_x_starts(columns: dict[str, Any], table_x0: float = 0.0) -> list[float]:
     """
     Extract sorted internal column separator x positions from columns dict.
     Excludes the leftmost x_start (table boundary) since Camelot uses
@@ -153,15 +151,15 @@ def _split_amount_dr_cr(amount_str: str) -> tuple[str, str]:
 # pdfplumber Fallback Extractor
 # ============================================================
 
-def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: tuple,
-                        columns: dict, debug: bool = False) -> list[list[str]]:
+def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: tuple[Any, ...],
+                        columns: dict[str, Any], debug: bool = False) -> list[list[str]]:
     """
     Fallback: extract rows using pdfplumber character coordinates.
     - Collect chars inside bbox
     - Cluster by y coordinate (round to nearest 3–5 pixels)
     - Assign text to column bucket based on x coordinate
     """
-    rows = []
+    rows: list[list[str]] = []
     try:
         with pdfplumber.open(pdf_path) as pdf:
             if page_num >= len(pdf.pages):
@@ -177,7 +175,7 @@ def _pdfplumber_extract(pdf_path: str, page_num: int, bbox: tuple,
                 return rows
 
             # Group by Y (round to nearest 4px)
-            lines: dict[int, list] = defaultdict(list)
+            lines: dict[int, list[dict[str, Any]]] = defaultdict(list)
             for c in chars_in_bbox:
                 y_key = round(c.get('top', 0) / 4) * 4
                 lines[y_key].append(c)
@@ -231,23 +229,23 @@ class HybridExtractor:
         self.pdf_path = str(pdf_path)
         self.debug = debug
         self._analyzer: LayoutAnalyzer | None = None
-        self._layout: dict | None = None
+        self._layout: dict[str, Any] | None = None
 
-    def _log(self, message: str):
+    def _log(self, message: str) -> None:
         if self.debug:
             print(f"[HybridExtractor] {message}")
 
     # ========== Step 1: Layout Analysis ==========
 
-    def _run_layout_analysis(self) -> dict:
+    def _run_layout_analysis(self) -> dict[str, Any]:
         self._analyzer = LayoutAnalyzer(self.pdf_path, debug=self.debug)
         self._layout = self._analyzer.analyze()
         return self._layout
 
     # ========== Step 2: Camelot Extraction per Page ==========
 
-    def _extract_page_camelot(self, page_num: int, bbox: tuple,
-                               columns: dict, page_height: float) -> tuple[list[list[str]], str]:
+    def _extract_page_camelot(self, page_num: int, bbox: tuple[Any, ...],
+                               columns: dict[str, Any], page_height: float) -> tuple[list[list[str]], str]:
         """
         Extract table from one page using Camelot.
         Returns (rows_as_list_of_lists, strategy_used).
@@ -298,13 +296,14 @@ class HybridExtractor:
                 if len(tables) == 0:
                     continue
 
-                all_rows = []
+                all_rows: list[list[Any]] = []
                 for table in tables:
                     all_rows.extend(table.df.values.tolist())
 
                 if all_rows:
                     self._log(f"Page {page_num}: extracted {len(all_rows)} rows via {attempt['flavor']}")
-                    return all_rows, attempt['flavor']
+                    # Cast to correct return type
+                    return [list(str(c) for c in row) for row in all_rows], str(attempt['flavor'])
 
             except Exception as e:
                 self._log(f"Page {page_num}: {attempt['flavor']} (cols={attempt['use_cols']}) failed: {e}")
@@ -316,8 +315,8 @@ class HybridExtractor:
     # ========== Step 3: Post-Processing ==========
 
     def _post_process_rows(self, raw_rows: list[list[str]],
-                           columns: dict, bank: str,
-                           amount_structure: dict) -> list[dict]:
+                           columns: dict[str, Any], bank: str,
+                           amount_structure: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Clean raw rows into transaction dicts:
         - Remove empty rows
@@ -327,8 +326,8 @@ class HybridExtractor:
         - Include 'raw' field
         """
         col_names = list(columns.keys())
-        transactions: list[dict] = []
-        pending: dict | None = None
+        transactions: list[dict[str, Any]] = []
+        pending: dict[str, Any] | None = None
 
         for row in raw_rows:
             # Normalize row length
@@ -367,8 +366,8 @@ class HybridExtractor:
 
         return transactions
 
-    def _build_transaction(self, cell: dict, col_names: list[str],
-                           amount_structure: dict, raw_row: list[str]) -> dict:
+    def _build_transaction(self, cell: dict[str, Any], col_names: list[str],
+                           amount_structure: dict[str, Any], raw_row: list[str]) -> dict[str, Any]:
         txn: dict[str, Any] = {}
 
         # Date (always first column)
@@ -425,7 +424,7 @@ class HybridExtractor:
         ])
 
     def _infer_columns_from_rows(self, raw_rows: list[list[str]],
-                                  layout_columns: dict) -> dict:
+                                  layout_columns: dict[str, Any]) -> dict[str, Any]:
         """
         Determine effective column structure for post-processing.
 
@@ -517,7 +516,7 @@ class HybridExtractor:
 
     # ========== Step 4: Metadata Value Extraction ==========
 
-    def _extract_metadata_values(self, metadata_fields: dict) -> dict:
+    def _extract_metadata_values(self, metadata_fields: dict[str, Any]) -> dict[str, Any]:
         """Extract actual text values for metadata fields using pdfplumber."""
         values = {}
         try:
@@ -542,7 +541,7 @@ class HybridExtractor:
 
     # ========== Debug Visualization ==========
 
-    def _generate_debug_images(self, output_dir: str = 'debug'):
+    def _generate_debug_images(self, output_dir: str = 'debug') -> None:
         if self._analyzer is None:
             return
         try:
@@ -552,7 +551,7 @@ class HybridExtractor:
 
     # ========== Main Entry Point ==========
 
-    def extract(self) -> dict:
+    def extract(self) -> dict[str, Any]:
         """Full extraction pipeline."""
 
         # Step 1: Layout analysis
@@ -581,13 +580,13 @@ class HybridExtractor:
         # Step 2: Extract metadata values
         self._log("Step 2: Extracting metadata values...")
         metadata_values = self._extract_metadata_values(
-            self._analyzer.metadata_fields or {}
+            (self._analyzer and self._analyzer.metadata_fields) or {}
         )
 
         # Step 3: Extract rows from each page using Camelot
         self._log("Step 3: Extracting rows with Camelot...")
         all_raw_rows: list[list[str]] = []
-        strategies_used: set = set()
+        strategies_used: set[Any] = set()
 
         with pdfplumber.open(self.pdf_path) as pdf:
             for page_num in table_pages:
@@ -647,8 +646,8 @@ class HybridExtractor:
             'transactions': transactions,
             'table_pages': table_pages,
             'extraction_method': 'hybrid_camelot',
-            'strategies_used': list(strategies_used),
-            'column_names': list(columns.keys()),
+            'strategies_used': list[Any](strategies_used),
+            'column_names': list[Any](columns.keys()),
             'amount_structure': (amount_structure or {}).get('type', 'unknown'),
             'transaction_count': len(transactions),
         }
@@ -658,7 +657,7 @@ class HybridExtractor:
 # CLI Entry Point
 # ============================================================
 
-def main():
+def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python hybrid_extractor.py <pdf_path> [--debug]")
         sys.exit(1)

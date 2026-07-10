@@ -2,19 +2,16 @@
 Main entry point - orchestrates table extraction and parsing
 PURE TABLE EXTRACTION - NO REGEX FOR TRANSACTION MATCHING
 """
-import sys
+import json
 from pathlib import Path
+from typing import Any
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent))
-
-
-from column_mapper import ColumnMapper
-from table_extractor import TableExtractor
-from transaction_parser import TransactionParser
+from src.column_mapper import ColumnMapper
+from src.table_extractor import TableExtractor
+from src.transaction_parser import TransactionParser
 
 
-def extract_transactions(pdf_path: str, bank_name: str = None) -> list[dict]:
+def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[dict[str, Any]]:
     """
     Extract transactions from bank statement PDF.
     Uses PURE TABLE EXTRACTION - no regex patterns for transaction matching.
@@ -47,7 +44,7 @@ def extract_transactions(pdf_path: str, bank_name: str = None) -> list[dict]:
 
     print(f"✅ Found {len(transaction_tables)} transaction tables")
 
-    all_transactions = []
+    all_transactions: list[dict[str, Any]] = []
     mapper = ColumnMapper()
 
     for i, df in enumerate(transaction_tables):
@@ -56,7 +53,7 @@ def extract_transactions(pdf_path: str, bank_name: str = None) -> list[dict]:
         print(f"  Columns: {list(df.columns)}")
 
         # Step 2: Map columns to standard fields
-        column_map = mapper.map_columns(list(df.columns))
+        column_map: dict[str, Any] = mapper.map_columns(list(df.columns))
         print(f"  Mapping: {column_map}")
 
         if not mapper.has_required_fields(column_map):
@@ -74,10 +71,8 @@ def extract_transactions(pdf_path: str, bank_name: str = None) -> list[dict]:
     return all_transactions
 
 
-def test_bank(pdf_path: str, json_path: str, bank_name: str = None):
+def test_bank(pdf_path: str, json_path: str, bank_name: str | None = None) -> tuple[float, int, int]:
     """Test extraction for a single bank"""
-
-    import json
 
     # Extract
     transactions = extract_transactions(pdf_path, bank_name)
@@ -85,7 +80,7 @@ def test_bank(pdf_path: str, json_path: str, bank_name: str = None):
     # Load expected
     with open(json_path) as f:
         data = json.load(f)
-        expected = data.get('transactions', data) if isinstance(data, dict) else data
+        expected: list[dict[str, Any]] = data.get('transactions', data) if isinstance(data, dict) else data
 
     # Compare
     print("\n📈 Results:")
@@ -107,12 +102,12 @@ def test_bank(pdf_path: str, json_path: str, bank_name: str = None):
     return accuracy, matches, len(expected)
 
 
-def main():
+def main() -> None:
     """Test all banks"""
 
     base_path = Path(__file__).parent.parent.parent / 'backup-core' / 'test'
 
-    test_cases = [
+    test_cases: list[tuple[str, str, str]] = [
         ('hdfc_Apr.pdf', 'hdfc_Apr.json', 'HDFC Bank'),
         ('idfc_Aug.pdf', 'idfc_Aug.json', 'IDFC First Bank'),
         ('icici_feb.pdf', 'icici_feb.json', 'ICICI Bank'),
@@ -121,7 +116,7 @@ def main():
         ('Indusind_jun.pdf', 'Indusind_jun.json', 'IndusInd Bank'),
     ]
 
-    results = []
+    results: list[dict[str, Any]] = []
 
     for pdf_file, json_file, bank_name in test_cases:
         pdf_path = base_path / 'statements' / pdf_file

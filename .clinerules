@@ -1,0 +1,64 @@
+# ClariFin_OS — Autonomous Core Agent & Memory Rules
+
+I am Cline. My memory resets between sessions. To maximize token efficiency, I bypass legacy, bulk text-file workflows. I operate using a **Hybrid State Model** pairing a lean local state with a live Code Graph Context (CGC) MCP server connected to FalkorDB.
+
+---
+
+## 1. AUTOMATED MEMORY BANK LIFECYCLE (No Manual Commands Required)
+You must manage the memory bank autonomously. **Do not wait for the user to tell you to update it.**
+
+- **On Conversation Start (First Turn):** Quietly read *only* `memory-bank/projectbrief.md` and `memory-bank/activeContext.md` to establish current business intent. 
+- **During the Task:** DO NOT read or write to `systemPatterns.md`, `techContext.md`, or `progress.md` (They are DEPRECATED; use CGC graph queries instead).
+- **On Conversation End (Task Completion):** Right before declaring your task finished (and before running Git commands), you MUST automatically update `memory-bank/activeContext.md` with a 2-3 line bulleted summary of your changes and the next immediate steps. Keep this file under 50 lines by pruning old history.
+
+---
+
+## 2. WORKSPACE & CGC MCP PROTOCOL
+- **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) for ALL code discovery. CGC is configured with INDEX_SOURCE=true, meaning `find_code` returns COMPLETE source code in the `source` field. DO NOT call `read_file` after `find_code` - the source is already available.
+- **CGC Relationship Queries:** Use `analyze_code_relationships` to find callers/callees before reading files. This prevents reading multiple files to trace code flow.
+  - Use `find_callers` to find who calls a function
+  - Use `find_callees` to find what a function calls
+  - Use `class_hierarchy` to understand inheritance
+- **CGC Cypher Queries:** For complex queries (inheritance, module dependencies, cross-cutting concerns), use `execute_cypher_query` to extract precise data without file reads.
+  - Example: `MATCH (c:Class {name: 'FinanceDB'})-[:INHERITS]->(p:Class) RETURN p.name`
+  - Example: `MATCH (f:Function) WHERE f.name CONTAINS 'transaction' RETURN f.name, f.path`
+- **Git Commit Protocol:** After passing validation and updating `activeContext.md`, execute:
+  1. `git add -A`
+  2. `git commit -m "[type]: [description]"` (semantic style)
+  3. `git push origin [current-branch]`
+
+---
+
+## 3. MANDATORY 3-PHASE EXECUTION LOOP
+Wrap EVERY user request inside this strict execution pattern:
+- **Phase A (Schema Discovery):** Use CGC `find_code("SymbolName")` to locate and retrieve schemas. The `source` field in results contains the COMPLETE type definition - NO `read_file` call needed. Target specific symbols to get only what you need.
+  - Example: `find_code("TransactionDTO")` returns full class definition with source code (INDEX_SOURCE=true)
+- **Phase B (Delta-Only Generation):** Execute code modifications strictly matching the Phase A schemas. Enforce financial guardrails.
+- **Phase C (Autonomous Verification Gate):** Run full frontend and backend validation suites. Self-correct errors iteratively until logs clear cleanly.
+
+---
+
+## 4. BUILD VERIFICATION COMMANDS
+Run these terminal validation checks immediately after *any* file modification:
+- **Frontend Core & Gate:** `cd frontend && npm run type-check && npm run lint && npm test -- --run && npm run build`
+- **Backend Core (Virtual Env Isolated):**
+  `cd backend && ./venv/bin/python3 -m ruff check .`
+  `cd backend && ./venv/bin/python3 -m mypy .`
+
+---
+
+## 5. STRICT CODE GUARDRAILS
+- **Financial Metrics:** NEVER use loose floats for currency. Enforce integers representing absolute **Paise** (₹1.00 = 100 paise). Use safe decimal handlers for division.
+- **Next.js Conventions:** Prepend component files with `'use client'` *only* if they require state or user interaction hooks (e.g., onClick). Otherwise, default to lean Server Components. Use dynamic structural routing parameters (`app/reconciliation/[id]/page.tsx`).
+- **Strict Code Limitations:** 
+  - NEVER use `as any`, `@ts-ignore`, or `@ts-nocheck` in TypeScript.
+  - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`. Parse debug queries using: `./venv/bin/python3 -c "import sqlite3; ..."`
+
+---
+
+## 6. Repository Boundary Rule
+
+- ONLY files under src/repositories/ may import FinanceDB.
+- Routers MUST NOT import FinanceDB or get_db().
+- Engines MUST NOT import FinanceDB.
+- If FinanceDB import is detected outside repositories/, refactor immediately.

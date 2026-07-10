@@ -33,7 +33,7 @@ def setup_logging(name: str = "clarifin") -> logging.Logger:
 
     # Get settings
     try:
-        from config import settings
+        from src.config import settings
         log_level = settings.log_level
         log_format = settings.log_format
     except ImportError:

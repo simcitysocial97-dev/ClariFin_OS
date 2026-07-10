@@ -22,8 +22,9 @@ CLI:
 import json
 import re
 import sys
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import camelot
 import pdfplumber
@@ -138,6 +139,50 @@ def _split_dr_cr(amount: str) -> tuple[str, str]:
     return s, ""
 
 
+def _parse_amount_paise(amount_str: Any) -> int:
+    """
+    Parse amount to integer paise (1 rupee = 100 paise).
+    Raises ValueError on invalid input (no silent failures).
+
+    Accepts:
+        - String amounts: "Rs 1,234.56", "₹1234.56", "1234"
+        - Numeric amounts: 1234, 1234.56, 1234.0
+
+    Examples:
+        "Rs 1,234.56" -> 123456
+        "₹1234.56"    -> 123456
+        "1234"        -> 123400
+        1234          -> 123400
+        1234.56       -> 123456
+    """
+    # Convert to string if numeric
+    if isinstance(amount_str, (int, float)):
+        # For integers, treat as rupees
+        if isinstance(amount_str, int):
+            return amount_str * 100
+        # For floats, use Decimal to avoid precision loss
+        paise = Decimal(str(amount_str)) * Decimal('100')
+        return int(paise.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+
+    # Handle string input
+    cleaned = (str(amount_str)
+               .replace("Rs", "")
+               .replace("₹", "")
+               .replace(",", "")
+               .strip())
+
+    if not cleaned:
+        raise ValueError(f"Empty amount string: {amount_str!r}")
+
+    try:
+        rupees = Decimal(cleaned)
+        # Financial Standard: Use quantization to guarantee safe integer conversion
+        paise = (rupees * Decimal('100')).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        return int(paise)
+    except (ValueError, InvalidOperation) as e:
+        raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
+
+
 # ============================================================
 # StatementExtractor
 # ============================================================
@@ -199,7 +244,7 @@ class StatementExtractor:
     # Step 2: Extract Tables from Page
     # ----------------------------------------------------------
 
-    def extract_tables_from_page(self, page_number: int) -> list[dict]:
+    def extract_tables_from_page(self, page_number: int) -> list[dict[str, Any]]:
         """
         Extract all tables from a single page using Camelot.
         Fix 15: Try lattice first. If lattice returns a usable table (>=3 cols, >=5 rows),
@@ -265,7 +310,7 @@ class StatementExtractor:
     # Step 3: Score Table
     # ----------------------------------------------------------
 
-    def score_table(self, table_entry: dict) -> float:
+    def score_table(self, table_entry: dict[str, Any]) -> float:
         """
         Score a table candidate to determine if it's the transaction table.
 
@@ -342,7 +387,7 @@ class StatementExtractor:
     # Step 4: Select Best Table
     # ----------------------------------------------------------
 
-    def select_best_table(self) -> dict:
+    def select_best_table(self) -> dict[str, Any]:
         """
         Scan first MAX_PAGES_TO_SCAN pages.
         Score all tables. Return the highest-scoring one.
@@ -386,7 +431,7 @@ class StatementExtractor:
     # Step 5: Clean Rows + Header Capture
     # ----------------------------------------------------------
 
-    def _extract_header_row(self, rows: list[list]) -> list[str] | None:
+    def _extract_header_row(self, rows: list[list[Any]]) -> list[str] | None:
         """
         Fix 9: Scan first 5 rows for the one that best matches HEADER_PHRASES.
         Returns the header row as a list of strings, or None if not found.
@@ -400,7 +445,7 @@ class StatementExtractor:
                 return row
         return None
 
-    def clean_rows(self, rows: list[list]) -> list[list[str]]:
+    def clean_rows(self, rows: list[list[Any]]) -> list[list[str]]:
         """
         Convert raw Camelot rows to clean string lists.
         Remove: fully empty rows, header rows.
@@ -466,7 +511,7 @@ class StatementExtractor:
                         return i
 
         # Fallback: column with longest average text (excluding date and numeric cols)
-        avg_lengths = []
+        avg_lengths: list[float] = []
         for col_idx in range(col_count):
             if col_idx == date_col_idx:
                 avg_lengths.append(0)
@@ -490,7 +535,7 @@ class StatementExtractor:
         # Last resort: index 1 if date is 0, else 0
         return 1 if date_col_idx == 0 else 0
 
-    def _detect_amount_columns(self, rows: list[list[str]], date_col_idx: int) -> dict:
+    def _detect_amount_columns(self, rows: list[list[str]], date_col_idx: int) -> dict[str, Any]:
         """
         Fix 4: Find amount column(s) by scanning for the rightmost column(s)
         where >50% of cells match a currency/number pattern.
@@ -807,7 +852,7 @@ class StatementExtractor:
             return "debit"
         return ""
 
-    def _validate_transaction(self, txn: dict) -> bool:
+    def _validate_transaction(self, txn: dict[str, Any]) -> bool:
         """
         Fix 13: Validate a transaction dict before including in output.
         A valid transaction must have:
@@ -824,7 +869,7 @@ class StatementExtractor:
             return False
         return True
 
-    def _extract_embedded_amount(self, txn: dict) -> dict:
+    def _extract_embedded_amount(self, txn: dict[str, Any]) -> dict[str, Any]:
         """
         Fix 16: Extract amount from description when amount column is missing/empty.
 
@@ -876,7 +921,7 @@ class StatementExtractor:
 
     def normalize_transactions(
         self, rows: list[list[str]], date_col_idx: int
-    ) -> list[dict]:
+    ) -> list[dict[str, Any]]:
         """
         Build structured transaction dicts from merged rows.
 
@@ -922,7 +967,8 @@ class StatementExtractor:
 
             desc = row[desc_col].strip() if desc_col < len(row) else ""
 
-            if amount_structure == "separate_debit_credit" and debit_col is not None:
+            # debit_col and credit_col are guaranteed non-None here due to the outer check
+            if amount_structure == "separate_debit_credit" and debit_col is not None and credit_col is not None:
                 debit_val = row[debit_col].strip() if debit_col < len(row) else ""
                 credit_val = row[credit_col].strip() if credit_col < len(row) else ""
 
@@ -947,7 +993,7 @@ class StatementExtractor:
                 if not txn_type:
                     txn_type = self._detect_type_from_amount(raw_amount)
 
-            txn = {
+            txn: dict[str, Any] = {
                 "date": date,
                 "description": desc,
                 "amount": amount,
@@ -957,6 +1003,12 @@ class StatementExtractor:
 
             # Fix 16: Extract embedded amount from description (Axis Bank pattern)
             txn = self._extract_embedded_amount(txn)
+
+            # Add amount_paise (canonical integer representation)
+            try:
+                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))
+            except ValueError:
+                txn["amount_paise"] = 0
 
             # Fix 13: Validate before including
             if self._validate_transaction(txn):
@@ -1016,7 +1068,7 @@ class StatementExtractor:
             return min(pages_with_dates)
         return best_page
 
-    def _score_continuation(self, table) -> float:
+    def _score_continuation(self, table: Any) -> float:
         """
         Looser scoring for continuation pages.
         Requires only 1 date row (not 2), col_count >= 2, row_count >= 2.
@@ -1036,18 +1088,18 @@ class StatementExtractor:
         # Simple score: prefer more rows and more dates
         return (min(row_count, 100) * 1.5) + (date_rows / row_count * 30)
 
-    def _collect_all_pages(self, start_page: int, strategy: str) -> list[list]:
+    def _collect_all_pages(self, start_page: int, strategy: str) -> list[list[Any]]:
         """
         After finding the best table on start_page, collect rows from
         all subsequent pages. Uses strict scoring first; falls back to
         looser continuation scoring. Stops when no table with dates found.
         """
-        all_rows: list[list] = []
+        all_rows: list[list[Any]] = []
         consecutive_no_dates = 0
 
         for page_num in range(start_page, self._num_pages):
             page_str = str(page_num + 1)
-            page_tables = []
+            page_tables: list[Any] = []
 
             for flavor in (strategy, "stream" if strategy == "lattice" else "lattice"):
                 try:
@@ -1101,7 +1153,7 @@ class StatementExtractor:
     # Step 10: Text-based Fallback (for PDFs where Camelot finds no table)
     # ----------------------------------------------------------
 
-    def _extract_via_text_fallback(self, bank: str) -> dict:
+    def _extract_via_text_fallback(self, bank: str) -> dict[str, Any]:
         """
         Fallback for PDFs where Camelot cannot detect a transaction table.
         Uses pdfplumber text extraction to find lines starting with dates.
@@ -1111,7 +1163,7 @@ class StatementExtractor:
         - Axis Bank: DATE DESCRIPTION Cr_AMOUNT Cr Dr_AMOUNT Dr
         """
         self._log("Using pdfplumber text fallback...")
-        transactions = []
+        transactions: list[dict[str, Any]] = []
 
         try:
             with pdfplumber.open(self.pdf_path) as pdf:
@@ -1234,13 +1286,19 @@ class StatementExtractor:
                                 txn_type = "debit"
 
                         if date and (amount or desc):
-                            transactions.append({
+                            txn = {
                                 "date": date,
                                 "description": desc,
                                 "amount": self._normalize_amount(amount) if amount else "",
                                 "type": txn_type,
                                 "raw": tokens,
-                            })
+                            }
+                            # Add amount_paise (canonical integer representation)
+                            try:
+                                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))  # type: ignore[assignment]
+                            except ValueError:
+                                txn["amount_paise"] = 0  # type: ignore[assignment]
+                            transactions.append(txn)
         except Exception as e:
             self._log(f"Text fallback error: {e}")
 
@@ -1258,7 +1316,7 @@ class StatementExtractor:
     # Step 11: Full Extract Pipeline
     # ----------------------------------------------------------
 
-    def extract(self) -> dict:
+    def extract(self) -> dict[str, Any]:
         """
         Full extraction pipeline.
         Returns structured dict with bank, transactions, metadata.
@@ -1280,12 +1338,13 @@ class StatementExtractor:
 
         # Step 5: Scan backwards from best_page to find the true first page
         # with transaction data (handles cases where earlier pages also have txns)
-        actual_start = self._find_actual_start_page(start_page, strategy)
+        # start_page and strategy are guaranteed non-None after select_best_table() succeeds
+        actual_start = self._find_actual_start_page(cast(int, start_page), cast(str, strategy))
         self._log(f"Best page={start_page}, actual start={actual_start}")
 
         # Collect rows from actual start page onwards
         self._log(f"Collecting rows from page {actual_start} onwards...")
-        all_raw_rows = self._collect_all_pages(actual_start, strategy)
+        all_raw_rows = self._collect_all_pages(actual_start, cast(str, strategy))
         self._log(f"Total raw rows collected: {len(all_raw_rows)}")
 
         # Step 6: Clean rows
@@ -1318,7 +1377,7 @@ class StatementExtractor:
         self._log(f"Transactions extracted: {len(transactions)}")
 
         # Fix 14: Compute statement period from min/max dates
-        statement_period: dict = {}
+        statement_period: dict[str, Any] = {}
         if transactions:
             dates = [t["date"] for t in transactions if t.get("date")]
             if dates:

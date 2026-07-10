@@ -45,16 +45,16 @@ Testing
 coverage/
 .nyc_output/
 
-Python (backend)
-pycache/
-*.py[cod]
-*$py.class
-*.so
-.Python
+Python virtual environments
+backend/venv/
+backend/.venv/
+.venv/
 venv/
 env/
-ENV/
-*.egg-info/
+
+Python cache
+**/__pycache__/
+**/*.pyc
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -72,6 +72,3 @@ Misc
 .temp/
 temp/
 tmp/
-.venv/
-__pycache__/
-*.py[cod]

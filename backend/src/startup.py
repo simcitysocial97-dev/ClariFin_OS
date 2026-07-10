@@ -8,8 +8,8 @@ Fails early with clear diagnostics if critical dependencies are missing.
 
 import sys
 
-from config import settings, validate_startup
-from logger import log_error, log_info
+from src.config import settings, validate_startup
+from src.logger import log_error, log_info
 
 
 def run_startup_validation() -> bool:

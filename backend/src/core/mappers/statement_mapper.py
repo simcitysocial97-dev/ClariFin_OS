@@ -8,7 +8,7 @@ This is the ONLY location where statement API responses are constructed.
 
 from typing import Any
 
-from core.dtos.statement_dto import StatementDTO
+from src.core.dtos.statement_dto import StatementDTO
 
 
 def _format_inr(paise: int) -> str:
@@ -89,9 +89,9 @@ class StatementMapper:
         card_last4 = stmt.get("card_last4") or ""
 
         return StatementDTO(
-            id=stmt.get("id"),
-            bank=stmt.get("bank"),
-            file_name=stmt.get("file_name"),
+            id=stmt.get("id") or 0,
+            bank=stmt.get("bank") or "",
+            file_name=stmt.get("file_name") or "",
             card_last4=card_last4,
             card_display=f"****{card_last4}" if card_last4 else "",
             period_from=stmt.get("statement_period_from") or "",

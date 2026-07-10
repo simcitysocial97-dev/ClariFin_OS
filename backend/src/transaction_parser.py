@@ -3,6 +3,7 @@ Parse transactions from table rows.
 ONLY regex allowed: Date parsing (DD/MM/YYYY)
 """
 import re  # ONLY for date validation
+from typing import Any
 
 import pandas as pd
 
@@ -17,9 +18,9 @@ class TransactionParser:
         self.mapping = column_mapping
         self.bank_name = bank_name
 
-    def parse_dataframe(self, df: pd.DataFrame) -> list[dict]:
+    def parse_dataframe(self, df: pd.DataFrame) -> list[dict[str, Any]]:
         """Parse all rows in DataFrame"""
-        transactions = []
+        transactions: list[dict[str, Any]] = []
 
         for _idx, row in df.iterrows():
             tx = self.parse_row(row)
@@ -28,7 +29,7 @@ class TransactionParser:
 
         return transactions
 
-    def parse_row(self, row: pd.Series) -> dict | None:
+    def parse_row(self, row: pd.Series) -> dict[str, Any] | None:
         """Parse a single row into transaction dict"""
 
         # Get date
@@ -74,7 +75,7 @@ class TransactionParser:
         return {
             'date': date,
             'description': description,
-            'amount': round(amount, 2),
+            'amount_paise': int(amount * 100),
             'type': tx_type,
             'bank': self.bank_name,
             'category': 'Uncategorized'
@@ -106,7 +107,7 @@ class TransactionParser:
 
         return f"{day.zfill(2)}/{month.zfill(2)}/{year}"
 
-    def _parse_amount(self, value) -> float:
+    def _parse_amount(self, value: Any) -> float:
         """
         Parse amount from cell value.
         NO REGEX - just clean and convert.

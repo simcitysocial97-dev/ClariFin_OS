@@ -3,6 +3,7 @@ PURE TABLE EXTRACTION - NO REGEX ALLOWED
 Extract tables from PDF using pdfplumber's table detection
 """
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import pdfplumber
@@ -12,7 +13,7 @@ class TableExtractor:
     """Extract tables from PDF using pdfplumber's table detection"""
 
     # Table extraction settings to try
-    EXTRACTION_STRATEGIES = [
+    EXTRACTION_STRATEGIES: list[dict[str, Any]] = [
         {
             "name": "lines",
             "settings": {
@@ -59,7 +60,7 @@ class TableExtractor:
 
         return all_tables
 
-    def _extract_page_tables(self, page, page_num: int) -> list[pd.DataFrame]:
+    def _extract_page_tables(self, page: pdfplumber.page.Page, page_num: int) -> list[pd.DataFrame]:
         """Extract tables from a single page using multiple strategies"""
 
         dfs = []
@@ -80,7 +81,7 @@ class TableExtractor:
         # Remove duplicates (same table detected by multiple strategies)
         return self._deduplicate_tables(dfs)
 
-    def _table_to_dataframe(self, table: list, page_num: int) -> pd.DataFrame | None:
+    def _table_to_dataframe(self, table: list[Any], page_num: int) -> pd.DataFrame | None:
         """Convert raw table data to DataFrame"""
 
         if not table or len(table) < 1:
@@ -159,7 +160,7 @@ class TableExtractor:
         """
 
         # Find tables with similar column counts
-        col_counts = {}
+        col_counts: dict[int, list[pd.DataFrame]] = {}
         for df in tables:
             n_cols = len([c for c in df.columns if not c.startswith('_')])
             if n_cols not in col_counts:
@@ -261,7 +262,7 @@ class TableExtractor:
         except ValueError:
             return False
 
-    def debug_tables(self, output_dir: str = 'debug'):
+    def debug_tables(self, output_dir: str = 'debug') -> None:
         """Save visual debug images showing detected tables"""
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)

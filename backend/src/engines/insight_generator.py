@@ -27,7 +27,7 @@ def generate_behavioral_insights(profile: dict[str, Any]) -> list[dict[str, Any]
     - message: Detailed insight with numbers
     - metric: The key metric referenced
     """
-    insights = []
+    insights: list[dict[str, Any]] = []
 
     if not profile:
         return insights

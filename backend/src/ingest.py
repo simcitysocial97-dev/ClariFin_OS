@@ -31,22 +31,19 @@ Example output:
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import Any
 
-# Allow running from any directory by adding src/ to path
-_SRC_DIR = Path(__file__).parent
-if str(_SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(_SRC_DIR))
-
-from categorizer import categorize
-from db import FinanceDB
-from metadata_extractor import MetadataExtractor
-from statement_extractor import StatementExtractor
+from src.categorizer import categorize
+from src.metadata_extractor import MetadataExtractor
+from src.repositories.statement_repository import StatementRepository
+from src.repositories.transaction_repository import TransactionRepository
+from src.statement_extractor import StatementExtractor
 
 # ============================================================
 # Core Ingestion Logic
 # ============================================================
 
-def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
+def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = False) -> dict[str, Any]:
     """
     Process a single PDF file through the full pipeline:
       1. Check for duplicate (skip if already imported)
@@ -63,7 +60,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
         "inserted_count": int,
         "period_from": str,
         "period_to": str,
-        "categories": dict,
+        "categories": dict[str, Any],
         "error": str (only on error)
       }
     """
@@ -80,6 +77,9 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
         "error": "",
     }
 
+    stmt_repo = StatementRepository(db_path)
+    txn_repo = TransactionRepository(db_path)
+
     try:
         # Step 1: Extract
         extractor = StatementExtractor(pdf_path, debug=debug)
@@ -89,7 +89,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
         result["bank"] = bank
 
         # Step 2: Duplicate check (by bank + filename)
-        if db.get_duplicate_check(bank, file_name):
+        if stmt_repo.get_duplicate_check(bank, file_name):
             result["status"] = "skipped"
             return result
 
@@ -103,7 +103,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
         result["period_to"] = period_to
 
         # Step 3: Categorize
-        category_counts: Counter = Counter()
+        category_counts: Counter[Any] = Counter()
         for txn in transactions:
             desc = txn.get("description", "") or ""
             # Fix 4: Pass amount to categorize() for UPI small-transaction fallback
@@ -121,13 +121,13 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
         result["categories"] = dict(category_counts.most_common())
 
         # Step 4: Insert into DB
-        stmt_id = db.insert_statement(
+        stmt_id = stmt_repo.insert_statement(
             bank=bank,
             file_name=file_name,
             period_from=period_from,
             period_to=period_to,
         )
-        inserted = db.insert_transactions(stmt_id, transactions)
+        inserted = txn_repo.insert_transactions(stmt_id, transactions)
         result["inserted_count"] = inserted
         result["status"] = "imported"
 
@@ -135,7 +135,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
         try:
             meta_extractor = MetadataExtractor(pdf_path, bank=bank, debug=debug)
             metadata = meta_extractor.extract()
-            db.update_statement_metadata(stmt_id, metadata)
+            stmt_repo.update_statement_metadata(stmt_id, metadata)
 
             # Print metadata findings
             if metadata.get("card_last4"):
@@ -216,7 +216,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
                         status = "mismatch"
                         symbol = "❌"
 
-                db.update_validation_status(stmt_id, status, round(best_diff, 2))
+                stmt_repo.update_validation_status(stmt_id, status, round(best_diff, 2))
                 result["validation_status"] = status
                 result["validation_difference"] = round(best_diff, 2)
 
@@ -230,11 +230,11 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
 
             elif total_due is not None and total_due < 0:
                 # Credit balance - bank owes customer
-                db.update_validation_status(stmt_id, "credit_balance", abs(total_due))
+                stmt_repo.update_validation_status(stmt_id, "credit_balance", abs(total_due))
                 result["validation_status"] = "credit_balance"
                 print(f"  Validation: 💰 Credit balance (bank owes you ₹{abs(total_due):,.2f})")
             else:
-                db.update_validation_status(stmt_id, "no_metadata", 0.0)
+                stmt_repo.update_validation_status(stmt_id, "no_metadata", 0.0)
                 result["validation_status"] = "no_metadata"
                 print("  Validation: ⚠️ Total due not found in PDF")
 
@@ -244,7 +244,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
                 import traceback
                 traceback.print_exc()
             try:
-                db.update_validation_status(stmt_id, "error", 0.0)
+                stmt_repo.update_validation_status(stmt_id, "error", 0.0)
             except Exception:
                 pass
 
@@ -258,7 +258,7 @@ def ingest_pdf(pdf_path: str, db: FinanceDB, debug: bool = False) -> dict:
     return result
 
 
-def ingest_directory(dir_path: str, db: FinanceDB, debug: bool = False) -> list[dict]:
+def ingest_directory(dir_path: str, db_path: str = "data/finance.db", debug: bool = False) -> list[dict[str, Any]]:
     """Process all .pdf files in a directory. Returns list of result dicts."""
     pdf_files = sorted(Path(dir_path).glob("*.pdf"))
     if not pdf_files:
@@ -267,7 +267,7 @@ def ingest_directory(dir_path: str, db: FinanceDB, debug: bool = False) -> list[
 
     results = []
     for pdf_file in pdf_files:
-        result = ingest_pdf(str(pdf_file), db, debug=debug)
+        result = ingest_pdf(str(pdf_file), db_path, debug=debug)
         results.append(result)
     return results
 
@@ -276,7 +276,7 @@ def ingest_directory(dir_path: str, db: FinanceDB, debug: bool = False) -> list[
 # Output Formatting
 # ============================================================
 
-def _format_categories(categories: dict, top_n: int = 6) -> str:
+def _format_categories(categories: dict[str, Any], top_n: int = 6) -> str:
     """Format category counts as a compact string."""
     if not categories:
         return "None"
@@ -287,7 +287,7 @@ def _format_categories(categories: dict, top_n: int = 6) -> str:
     return ", ".join(parts)
 
 
-def _print_result(result: dict) -> None:
+def _print_result(result: dict[str, Any]) -> None:
     """Print a formatted result for one PDF."""
     file_name = result["file"]
     status = result["status"]
@@ -323,7 +323,7 @@ def _print_result(result: dict) -> None:
     print("  ✅ Imported")
 
 
-def _print_summary(results: list[dict]) -> None:
+def _print_summary(results: list[dict[str, Any]]) -> None:
     """Print final summary line."""
     imported = sum(1 for r in results if r["status"] == "imported")
     skipped = sum(1 for r in results if r["status"] == "skipped")
@@ -357,13 +357,13 @@ def main() -> None:
         print(f"Error: Path not found: {target}")
         sys.exit(1)
 
-    # Initialize database (relative to CWD)
-    db = FinanceDB()
+    # Database path (relative to CWD)
+    db_path = "data/finance.db"
 
     if target_path.is_dir():
-        results = ingest_directory(str(target_path), db, debug=debug)
+        results = ingest_directory(str(target_path), db_path, debug=debug)
     elif target_path.suffix.lower() == ".pdf":
-        result = ingest_pdf(str(target_path), db, debug=debug)
+        result = ingest_pdf(str(target_path), db_path, debug=debug)
         results = [result]
         _print_result(result)
         _print_summary(results)

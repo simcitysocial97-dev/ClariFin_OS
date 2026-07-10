@@ -10,26 +10,40 @@ All monetary fields use _paise suffix for explicit units.
 from pydantic import BaseModel, Field
 
 
+class MoneyDTO(BaseModel):
+    """
+    Money data transfer object.
+
+    Represents monetary value with explicit paise (integer) and rupees (float) fields.
+    This is the canonical API representation of the Money domain object.
+    """
+    paise: int = Field(description="Amount in paise (canonical integer representation)")
+    rupees: float = Field(description="Amount in rupees (for display purposes)")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "paise": 123456,
+                "rupees": 1234.56
+            }
+        }
+
+
 class TransactionDTO(BaseModel):
     """
     Transaction data transfer object.
 
     Monetary fields:
-    - amount_paise: Transaction amount in paise (canonical)
-    - amount_rupees: Transaction amount in rupees (temporary, for backward compatibility)
-    - balance_paise: Running balance after transaction in paise
+    - amount: MoneyDTO with paise and rupees (canonical)
+    - balance: MoneyDTO with paise and rupees (optional)
     """
-    id: str = Field(description="Unique transaction identifier")
+    id: int | str = Field(description="Unique transaction identifier")
     date: str = Field(description="Transaction date (ISO format)")
     description: str = Field(description="Transaction description")
-    amount_paise: int = Field(description="Transaction amount in paise (canonical)")
-    amount_rupees: float | None = Field(
+    amount: MoneyDTO = Field(description="Transaction amount as Money object")
+    balance: MoneyDTO | None = Field(
         default=None,
-        description="Transaction amount in rupees (DEPRECATED - use amount_paise)"
-    )
-    balance_paise: int | None = Field(
-        default=None,
-        description="Running balance after transaction in paise"
+        description="Running balance after transaction as Money object"
     )
     category: str = Field(description="Transaction category")
     subcategory: str | None = Field(default=None, description="Transaction subcategory")
@@ -43,9 +57,14 @@ class TransactionDTO(BaseModel):
                 "id": "txn_123",
                 "date": "2026-07-05",
                 "description": "Amazon Purchase",
-                "amount_paise": -150000,  # -₹1,500.00
-                "amount_rupees": -1500.0,  # TODO: Remove in Phase 2
-                "balance_paise": 850000,  # ₹8,500.00
+                "amount": {
+                    "paise": -150000,
+                    "rupees": -1500.0
+                },
+                "balance": {
+                    "paise": 850000,
+                    "rupees": 8500.0
+                },
                 "category": "Shopping",
                 "subcategory": "E-commerce",
                 "bank": "HDFC Bank",
@@ -76,11 +95,7 @@ class TransactionListResponse(BaseModel):
 class CategorySummaryDTO(BaseModel):
     """Category summary with monetary values."""
     category: str = Field(description="Category name")
-    amount_paise: int = Field(description="Total amount in paise")
-    amount_rupees: float | None = Field(
-        default=None,
-        description="Total amount in rupees (DEPRECATED)"
-    )
+    amount: MoneyDTO = Field(description="Total amount as Money object")
     count: int = Field(description="Number of transactions")
     percentage: float = Field(description="Percentage of total (0-100)")
 
@@ -88,8 +103,10 @@ class CategorySummaryDTO(BaseModel):
         json_schema_extra = {
             "example": {
                 "category": "Shopping",
-                "amount_paise": 500000,  # ₹5,000.00
-                "amount_rupees": 5000.0,  # TODO: Remove in Phase 2
+                "amount": {
+                    "paise": 500000,
+                    "rupees": 5000.0
+                },
                 "count": 15,
                 "percentage": 25.5
             }

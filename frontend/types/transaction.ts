@@ -8,6 +8,12 @@
  * All amounts are stored as INTEGER paise (1 rupee = 100 paise).
  */
 
+// ===== Money Type (matches backend MoneyDTO) =====
+export interface Money {
+  paise: number;  // Total paise (e.g., 123456 = ₹1,234.56)
+  rupees: number;  // Derived rupees value for display
+}
+
 export interface Transaction {
   // ===== Core Fields (always present) =====
   id: string | number;
@@ -19,9 +25,10 @@ export interface Transaction {
   cardId?: string;
 
   // ===== Canonical Monetary Fields (Phase 2) =====
-  amount_paise: number;  // Canonical: amount in paise (INTEGER)
-  // amount_rupees is DEPRECATED - for backward compatibility only
-  amount_rupees?: number;  // Deprecated: use amount_paise instead
+  amount?: Money;  // Money object with paise and rupees (canonical)
+  // amount_paise and amount_rupees are DEPRECATED - for backward compatibility only
+  amount_paise?: number;  // Deprecated: use amount.paise instead
+  amount_rupees?: number;  // Deprecated: use amount.rupees instead
 
   // ===== Extended Fields (from API) =====
   sequence_num?: number;

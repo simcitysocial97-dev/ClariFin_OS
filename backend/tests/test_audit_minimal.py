@@ -13,11 +13,11 @@ Tests:
 Run: python -m pytest tests/test_audit_minimal.py -v
 """
 
-import os
-import sys
-import sqlite3
-import tempfile
 import hashlib
+import os
+import sqlite3
+import sys
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -27,11 +27,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
 from engines.ledger_audit_engine import (
+    run_full_audit,
     validate_ledger_integrity,
     verify_hash_signatures,
-    run_full_audit,
 )
-
+from repositories.statement_repository import StatementRepository
+from repositories.transaction_repository import TransactionRepository
 
 # ============================================================
 # Fixtures
@@ -42,11 +43,11 @@ def temp_db():
     """Create a temporary database for testing."""
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     db = FinanceDB(db_path=db_path)
-    
+
     yield db, db_path
-    
+
     # Cleanup
     os.unlink(db_path)
 
@@ -55,16 +56,19 @@ def temp_db():
 def populated_db(temp_db):
     """Populate database with test transactions."""
     db, db_path = temp_db
-    
+
+    stmt_repo = StatementRepository(db_path)
+    txn_repo = TransactionRepository(db_path)
+
     # Insert a statement
-    stmt_id = db.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
-    
+    stmt_id = stmt_repo.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
+
     # Insert transactions
-    db.insert_transactions(stmt_id, [
-        {"date": "01/01/2025", "description": "Test debit", "amount": 100.0, "type": "debit"},
-        {"date": "02/01/2025", "description": "Test credit", "amount": 50.0, "type": "credit"},
+    txn_repo.insert_transactions(stmt_id, [
+        {"date": "01/01/2025", "description": "Test debit", "amount_paise": 10000, "type": "debit"},
+        {"date": "02/01/2025", "description": "Test credit", "amount_paise": 5000, "type": "credit"},
     ])
-    
+
     return db, db_path
 
 
@@ -75,9 +79,9 @@ def populated_db(temp_db):
 def test_integrity_passes_on_clean_db(populated_db):
     """Test that ledger integrity passes on a clean database."""
     db, db_path = populated_db
-    
+
     result = validate_ledger_integrity(db_path)
-    
+
     assert result["status"] == "PASS", f"Expected PASS, got {result}"
     assert result["violation_count"] == 0
     assert len(result["violations"]) == 0
@@ -86,9 +90,9 @@ def test_integrity_passes_on_clean_db(populated_db):
 def test_hash_verification_passes_on_clean_db(populated_db):
     """Test that hash verification passes on a clean database."""
     db, db_path = populated_db
-    
+
     result = verify_hash_signatures(db_path)
-    
+
     assert result["status"] == "PASS", f"Expected PASS, got {result}"
     assert result["tampered_count"] == 0
     assert len(result["tampered_transactions"]) == 0
@@ -97,9 +101,9 @@ def test_hash_verification_passes_on_clean_db(populated_db):
 def test_full_audit_passes_on_clean_db(populated_db):
     """Test that full audit passes on a clean database."""
     db, db_path = populated_db
-    
+
     result = run_full_audit(db_path)
-    
+
     assert result["overall_status"] == "PASS"
     assert result["ledger_integrity"]["status"] == "PASS"
     assert result["hash_verification"]["status"] == "PASS"
@@ -115,21 +119,21 @@ def test_update_prevented_by_trigger(populated_db):
     This confirms the immutability trigger is working correctly.
     """
     db, db_path = populated_db
-    
+
     # Get a transaction
     conn = sqlite3.connect(db_path)
     cur = conn.execute("SELECT id FROM transactions LIMIT 1")
     row = cur.fetchone()
     txn_id = row[0]
-    
+
     # Attempt to update - should raise exception
     with pytest.raises(sqlite3.IntegrityError) as exc_info:
         conn.execute(
-            "UPDATE transactions SET amount = 999.99 WHERE id = ?",
+            "UPDATE transactions SET amount_paise = 99999 WHERE id = ?",
             (txn_id,)
         )
         conn.commit()
-    
+
     assert "immutable" in str(exc_info.value).lower()
     conn.close()
 
@@ -140,18 +144,18 @@ def test_delete_prevented_by_trigger(populated_db):
     This confirms the immutability trigger is working correctly.
     """
     db, db_path = populated_db
-    
+
     # Get a transaction
     conn = sqlite3.connect(db_path)
     cur = conn.execute("SELECT id FROM transactions LIMIT 1")
     row = cur.fetchone()
     txn_id = row[0]
-    
+
     # Attempt to delete - should raise exception
     with pytest.raises(sqlite3.IntegrityError) as exc_info:
         conn.execute("DELETE FROM transactions WHERE id = ?", (txn_id,))
         conn.commit()
-    
+
     assert "immutable" in str(exc_info.value).lower()
     conn.close()
 
@@ -172,9 +176,9 @@ def test_tampered_hash_detected_via_recompute(populated_db):
     # Create a temporary database WITHOUT triggers
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(db_path)
-    
+
     # Create tables WITHOUT triggers
     conn.execute("""
         CREATE TABLE statements (
@@ -183,7 +187,7 @@ def test_tampered_hash_detected_via_recompute(populated_db):
             file_name TEXT NOT NULL
         )
     """)
-    
+
     conn.execute("""
         CREATE TABLE transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -200,35 +204,35 @@ def test_tampered_hash_detected_via_recompute(populated_db):
             hash_signature TEXT
         )
     """)
-    
+
     # Insert test data with valid hash
     hash_input = "TestBank|2025-01-01|Test debit|10000|0"
     valid_hash = hashlib.sha256(hash_input.encode()).hexdigest().lower()
-    
+
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, 
                                   debit, credit, account_id, hash_signature)
         VALUES (1, '01/01/2025', '2025-01-01', 'Test debit', 100.0, 'debit', 
                 10000, 0, 'TestBank', ?)
     """, (valid_hash,))
-    
+
     conn.commit()
-    
+
     # Verify hash passes
     result_before = verify_hash_signatures(db_path)
     assert result_before["status"] == "PASS"
-    
+
     # Now tamper with the hash (no trigger to stop us)
     conn.execute("UPDATE transactions SET hash_signature = 'tampered_hash'")
     conn.commit()
     conn.close()
-    
+
     # Verify detection
     result_after = verify_hash_signatures(db_path)
-    
+
     assert result_after["status"] == "FAIL"
     assert result_after["tampered_count"] >= 1
-    
+
     # Cleanup
     os.unlink(db_path)
 
@@ -240,10 +244,10 @@ def test_tampered_hash_detected_via_recompute(populated_db):
 def test_audit_deterministic(populated_db):
     """Test that running audit multiple times returns same result."""
     db, db_path = populated_db
-    
+
     # Run audit 3 times
     results = [run_full_audit(db_path) for _ in range(3)]
-    
+
     # All results should be identical
     for i in range(1, len(results)):
         assert results[i]["overall_status"] == results[0]["overall_status"]
@@ -254,10 +258,10 @@ def test_audit_deterministic(populated_db):
 def test_audit_idempotent_on_clean_db(populated_db):
     """Test that audit consistently returns PASS on clean database."""
     db, db_path = populated_db
-    
+
     # Run audit multiple times
     results = [run_full_audit(db_path) for _ in range(3)]
-    
+
     # All should pass
     for result in results:
         assert result["overall_status"] == "PASS"
@@ -273,9 +277,9 @@ def test_integrity_detects_null_account_id():
     """Test that integrity check detects NULL account_id."""
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(db_path)
-    
+
     # Create table without NOT NULL constraint
     conn.execute("""
         CREATE TABLE transactions (
@@ -291,7 +295,7 @@ def test_integrity_detects_null_account_id():
             hash_signature TEXT
         )
     """)
-    
+
     # Insert with NULL account_id
     conn.execute("""
         INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
@@ -299,12 +303,12 @@ def test_integrity_detects_null_account_id():
     """)
     conn.commit()
     conn.close()
-    
+
     result = validate_ledger_integrity(db_path)
-    
+
     assert result["status"] == "FAIL"
     assert any(v["type"] == "NULL_ACCOUNT_ID" for v in result["violations"])
-    
+
     os.unlink(db_path)
 
 
@@ -312,9 +316,9 @@ def test_integrity_detects_duplicate_hash():
     """Test that integrity check detects duplicate hash_signature."""
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
-    
+
     conn = sqlite3.connect(db_path)
-    
+
     conn.execute("""
         CREATE TABLE transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -329,7 +333,7 @@ def test_integrity_detects_duplicate_hash():
             hash_signature TEXT
         )
     """)
-    
+
     # Insert two transactions with same hash
     conn.execute("""
         INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
@@ -341,12 +345,12 @@ def test_integrity_detects_duplicate_hash():
     """)
     conn.commit()
     conn.close()
-    
+
     result = validate_ledger_integrity(db_path)
-    
+
     assert result["status"] == "FAIL"
     assert any(v["type"] == "DUPLICATE_HASH" for v in result["violations"])
-    
+
     os.unlink(db_path)
 
 

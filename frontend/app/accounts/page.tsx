@@ -4,10 +4,11 @@
  * Accounts Page - Personal Finance MVP v1.0.0
  * ==========================================
  * 
- * Simple CRUD for managing savings accounts.
- * Backend owns all balances - no localStorage.
+ * Two sections:
+ * 1. Computed Accounts - derived from transaction statements
+ * 2. Managed Accounts - persistent DB-backed accounts
  * 
- * Phase 1: Updated to use balance_paise (canonical) and formatINR formatter.
+ * Phase 4: Added managed accounts section with DB persistence.
  */
 
 import { useState, useEffect } from "react";
@@ -21,33 +22,38 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Pencil, Trash2, Building2, AlertCircle, Wallet } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
+import { useManagedAccounts, useCreateAccount, useUpdateAccount, useDeleteAccount, type Account } from "@/lib/hooks/use-accounts";
 
 // ============================================================
-// Types
+// Types for Computed Accounts (from /api/accounts)
 // ============================================================
 
-interface Account {
+interface ComputedAccount {
   id: string;
   name: string;
-  bank_name: string;
-  account_type: "Savings" | "Current" | "FD" | "RD";
-  balance_paise: number;  // Canonical field (in paise)
-  balance_rupees?: number;  // Deprecated - for backward compatibility
-  last_updated: string;
+  bank: string;
+  balance_paise: number;
+  transaction_count: number;
 }
 
-interface AccountFormData {
+// ============================================================
+// Types for Managed Accounts Form
+// ============================================================
+
+interface ManagedAccountFormData {
   name: string;
-  bank_name: string;
-  account_type: "Savings" | "Current" | "FD" | "RD";
+  bank: string;
+  account_type: "savings" | "current" | "salary" | "fd" | "nre" | "nro";
   balance: string;
+  account_number_last4: string;
+  notes: string;
 }
 
 // ============================================================
 // Components
 // ============================================================
 
-function AccountCard({ account, onEdit, onDelete }: { 
+function ManagedAccountCard({ account, onEdit, onDelete }: { 
   account: Account; 
   onEdit: (account: Account) => void;
   onDelete: (id: string) => void;
@@ -62,7 +68,7 @@ function AccountCard({ account, onEdit, onDelete }: {
              </div>
              <div>
                <h3 className="font-medium text-sm">{account.name}</h3>
-               <p className="text-xs text-gray-500">{account.bank_name}</p>
+               <p className="text-xs text-gray-500">{account.bank}</p>
                <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
                  {account.account_type}
                </span>
@@ -82,30 +88,34 @@ function AccountCard({ account, onEdit, onDelete }: {
              <span className="text-xs text-gray-500">Balance</span>
              <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
            </div>
-           <p className="text-xs text-gray-400 mt-1">
-             Updated: {new Date(account.last_updated).toLocaleDateString()}
-           </p>
+           {account.account_number_last4 && (
+             <p className="text-xs text-gray-400 mt-1">
+               ••••{account.account_number_last4}
+             </p>
+           )}
          </div>
        </CardContent>
      </Card>
    );
 }
 
-function AccountForm({ 
+function ManagedAccountForm({ 
   initialData, 
   onSubmit, 
   onCancel 
 }: { 
   initialData?: Account; 
-  onSubmit: (data: AccountFormData) => void;
+  onSubmit: (data: ManagedAccountFormData) => void;
   onCancel: () => void;
 }) {
-  const [formData, setFormData] = useState<AccountFormData>({
+  const [formData, setFormData] = useState<ManagedAccountFormData>({
     name: initialData?.name || "",
-    bank_name: initialData?.bank_name || "",
-    account_type: initialData?.account_type || "Savings",
+    bank: initialData?.bank || "",
+    account_type: (initialData?.account_type as any) || "savings",
     // Convert from paise to rupees for form display
     balance: initialData ? (initialData.balance_paise / 100).toString() : "",
+    account_number_last4: initialData?.account_number_last4 || "",
+    notes: initialData?.notes || "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -126,11 +136,11 @@ function AccountForm({
         />
       </div>
       <div>
-        <Label htmlFor="bank_name">Bank Name</Label>
+        <Label htmlFor="bank">Bank Name</Label>
         <Input
-          id="bank_name"
-          value={formData.bank_name}
-          onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
+          id="bank"
+          value={formData.bank}
+          onChange={(e) => setFormData({ ...formData, bank: e.target.value })}
           placeholder="e.g., HDFC Bank"
           required
         />
@@ -145,22 +155,44 @@ function AccountForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Savings">Savings</SelectItem>
-            <SelectItem value="Current">Current</SelectItem>
-            <SelectItem value="FD">Fixed Deposit (FD)</SelectItem>
-            <SelectItem value="RD">Recurring Deposit (RD)</SelectItem>
+            <SelectItem value="savings">Savings</SelectItem>
+            <SelectItem value="current">Current</SelectItem>
+            <SelectItem value="salary">Salary</SelectItem>
+            <SelectItem value="fd">Fixed Deposit (FD)</SelectItem>
+            <SelectItem value="nre">NRE</SelectItem>
+            <SelectItem value="nro">NRO</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
-        <Label htmlFor="balance">Current Balance</Label>
+        <Label htmlFor="balance">Current Balance (₹)</Label>
         <Input
           id="balance"
           type="number"
+          step="0.01"
           value={formData.balance}
           onChange={(e) => setFormData({ ...formData, balance: e.target.value })}
-          placeholder="0"
+          placeholder="0.00"
           required
+        />
+      </div>
+      <div>
+        <Label htmlFor="account_number_last4">Last 4 Digits (optional)</Label>
+        <Input
+          id="account_number_last4"
+          value={formData.account_number_last4}
+          onChange={(e) => setFormData({ ...formData, account_number_last4: e.target.value })}
+          placeholder="1234"
+          maxLength={4}
+        />
+      </div>
+      <div>
+        <Label htmlFor="notes">Notes (optional)</Label>
+        <Input
+          id="notes"
+          value={formData.notes}
+          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+          placeholder="Any notes"
         />
       </div>
       <div className="flex gap-2 pt-2">
@@ -180,102 +212,101 @@ function AccountForm({
 // ============================================================
 
 export default function AccountsPage() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Computed accounts state (from /api/accounts)
+  const [computedAccounts, setComputedAccounts] = useState<ComputedAccount[]>([]);
+  const [computedLoading, setComputedLoading] = useState(true);
+  const [computedError, setComputedError] = useState<string | null>(null);
+
+  // Managed accounts state (from /api/accounts/manage)
+  const { data: managedData, isLoading: managedLoading, error: managedError } = useManagedAccounts();
+  const createAccountMutation = useCreateAccount();
+  const updateAccountMutation = useUpdateAccount();
+  const deleteAccountMutation = useDeleteAccount();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
-  // Fetch accounts
+  // Fetch computed accounts
   useEffect(() => {
-    async function fetchAccounts() {
+    async function fetchComputedAccounts() {
       try {
         const response = await fetch("http://localhost:8000/api/accounts");
         if (!response.ok) throw new Error("Failed to fetch accounts");
         const data = await response.json();
-        setAccounts(data.accounts || []);
+        setComputedAccounts(data.accounts || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setComputedError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setLoading(false);
+        setComputedLoading(false);
       }
     }
-    fetchAccounts();
+    fetchComputedAccounts();
   }, []);
 
-  // Create account
-  const handleCreate = async (formData: AccountFormData) => {
+  // Managed account handlers
+  const handleCreateManaged = async (formData: ManagedAccountFormData) => {
     try {
-      const response = await fetch("http://localhost:8000/api/accounts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          balance: parseFloat(formData.balance),
-        }),
+      const balancePaise = Math.round(parseFloat(formData.balance) * 100);
+      await createAccountMutation.mutateAsync({
+        name: formData.name,
+        bank: formData.bank,
+        account_type: formData.account_type,
+        balance_paise: balancePaise,
+        account_number_last4: formData.account_number_last4 || undefined,
+        notes: formData.notes || undefined,
       });
-      if (!response.ok) throw new Error("Failed to create account");
-      const newAccount = await response.json();
-      setAccounts([...accounts, newAccount]);
       setDialogOpen(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create account");
+      // Error is handled by mutation
     }
   };
 
-  // Update account
-  const handleUpdate = async (formData: AccountFormData) => {
+  const handleUpdateManaged = async (formData: ManagedAccountFormData) => {
     if (!editingAccount) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/accounts/${editingAccount.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          balance: parseFloat(formData.balance),
-        }),
+      const balancePaise = Math.round(parseFloat(formData.balance) * 100);
+      await updateAccountMutation.mutateAsync({
+        id: editingAccount.id,
+        name: formData.name,
+        bank: formData.bank,
+        account_type: formData.account_type,
+        balance_paise: balancePaise,
+        account_number_last4: formData.account_number_last4 || undefined,
+        notes: formData.notes || undefined,
       });
-      if (!response.ok) throw new Error("Failed to update account");
-      const updatedAccount = await response.json();
-      setAccounts(accounts.map(a => a.id === updatedAccount.id ? updatedAccount : a));
       setEditingAccount(null);
       setDialogOpen(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update account");
+      // Error is handled by mutation
     }
   };
 
-  // Delete account
-  const handleDelete = async (id: string) => {
+  const handleDeleteManaged = async (id: string) => {
     if (!confirm("Are you sure you want to delete this account?")) return;
     try {
-      const response = await fetch(`http://localhost:8000/api/accounts/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete account");
-      setAccounts(accounts.filter(a => a.id !== id));
+      await deleteAccountMutation.mutateAsync(id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete account");
+      // Error is handled by mutation
     }
   };
 
-  // Edit handler
-  const handleEdit = (account: Account) => {
+  const handleEditManaged = (account: Account) => {
     setEditingAccount(account);
     setDialogOpen(true);
   };
 
-  // Add new handler
-  const handleAddNew = () => {
+  const handleAddNewManaged = () => {
     setEditingAccount(null);
     setDialogOpen(true);
   };
 
-  // Calculate total - use balance_paise (in paise)
-  const totalBalancePaise = accounts.reduce((sum, a) => sum + a.balance_paise, 0);
+  // Calculate totals
+  const computedTotalPaise = computedAccounts.reduce((sum, a) => sum + a.balance_paise, 0);
+  const managedTotalPaise = managedData?.accounts.reduce((sum, a) => sum + a.balance_paise, 0) || 0;
+  const totalBalancePaise = computedTotalPaise + managedTotalPaise;
 
   // Loading state
-  if (loading) {
+  if (computedLoading && managedLoading) {
     return (
       <div className="container mx-auto py-6 space-y-6">
         <Skeleton className="h-8 w-48" />
@@ -284,19 +315,6 @@ export default function AccountsPage() {
             <Skeleton key={i} className="h-40" />
           ))}
         </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="container mx-auto py-6">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
       </div>
     );
   }
@@ -311,7 +329,7 @@ export default function AccountsPage() {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleAddNew}>
+            <Button onClick={handleAddNewManaged}>
               <Plus className="mr-2 h-4 w-4" />
               Add Account
             </Button>
@@ -320,9 +338,9 @@ export default function AccountsPage() {
             <DialogHeader>
               <DialogTitle>{editingAccount ? "Edit Account" : "Add New Account"}</DialogTitle>
             </DialogHeader>
-            <AccountForm
+            <ManagedAccountForm
               initialData={editingAccount || undefined}
-              onSubmit={editingAccount ? handleUpdate : handleCreate}
+              onSubmit={editingAccount ? handleUpdateManaged : handleCreateManaged}
               onCancel={() => {
                 setEditingAccount(null);
                 setDialogOpen(false);
@@ -347,31 +365,83 @@ export default function AccountsPage() {
         </CardContent>
       </Card>
 
-      {/* Accounts Grid */}
-      {accounts.length === 0 ? (
-        <Card className="p-8 text-center">
-          <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-lg font-medium mb-2">No Accounts Yet</h3>
-          <p className="text-gray-500 mb-4">Add your first savings account to track your balances.</p>
-          <Button onClick={handleAddNew}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Account
-          </Button>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {accounts
-            .sort((a, b) => b.balance_paise - a.balance_paise)
-            .map((account) => (
-              <AccountCard
-                key={account.id}
-                account={account}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-        </div>
-      )}
+      {/* Section 1: Computed Accounts (from statements) */}
+      <div>
+        <h2 className="text-lg font-semibold mb-3">Detected Accounts</h2>
+        <p className="text-sm text-gray-500 mb-4">Accounts derived from imported statements</p>
+        {computedError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{computedError}</AlertDescription>
+          </Alert>
+        )}
+        {computedAccounts.length === 0 ? (
+          <Card className="p-6 text-center">
+            <p className="text-gray-500">No accounts detected from statements. Import a statement to see accounts here.</p>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {computedAccounts
+              .sort((a, b) => b.balance_paise - a.balance_paise)
+              .map((account) => (
+                <Card key={account.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gray-100 rounded-lg">
+                        <Building2 className="h-5 w-5 text-gray-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-sm">{account.name}</h3>
+                        <p className="text-xs text-gray-500">{account.bank}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-2 border-t">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-gray-500">Balance</span>
+                        <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {account.transaction_count} transactions
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+        )}
+      </div>
+
+      {/* Section 2: Managed Accounts (persistent) */}
+      <div>
+        <h2 className="text-lg font-semibold mb-3">Saved Accounts</h2>
+        <p className="text-sm text-gray-500 mb-4">Manually added accounts with persistent balances</p>
+        {managedError && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{managedError.message}</AlertDescription>
+          </Alert>
+        )}
+        {managedData?.accounts.length === 0 ? (
+          <Card className="p-6 text-center">
+            <p className="text-gray-500">No saved accounts. Add your first account above.</p>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {managedData?.accounts
+              .sort((a, b) => b.balance_paise - a.balance_paise)
+              .map((account) => (
+                <ManagedAccountCard
+                  key={account.id}
+                  account={account}
+                  onEdit={handleEditManaged}
+                  onDelete={handleDeleteManaged}
+                />
+              ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
