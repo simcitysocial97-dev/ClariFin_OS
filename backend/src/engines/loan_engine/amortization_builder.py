@@ -7,7 +7,7 @@ INVARIANT 3: Once generated, schedule is never modified in-place.
 INVARIANT 4: All dates are ISO 8601 strings.
 """
 
-from datetime import date
+from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
 
 from src.engines.loan_engine.emi_calculator import (
@@ -15,6 +15,31 @@ from src.engines.loan_engine.emi_calculator import (
     compute_principal_component,
 )
 from src.engines.loan_engine.types import AmortizationRow
+
+
+def _add_months(start: date, months: int) -> date:
+    """
+    Add months to a date, handling month-end and leap year edge cases.
+
+    For month-end dates, uses last day of target month.
+    For leap years, Feb 29 becomes Feb 28 in non-leap years.
+    """
+    total_months = start.month + months
+    year = start.year + (total_months - 1) // 12
+    month_idx = ((total_months - 1) % 12) + 1
+
+    # Try to keep same day, fallback to month end or 28 for Feb
+    try:
+        return date(year, month_idx, start.day)
+    except ValueError:
+        # Day doesn't exist in target month (e.g., Jan 31 -> Feb)
+        # Use last day of target month
+        if month_idx == 12:
+            next_month = date(year + 1, 1, 1)
+        else:
+            next_month = date(year, month_idx + 1, 1)
+        last_day = (next_month - timedelta(days=1)).day
+        return date(year, month_idx, min(start.day, last_day))
 
 
 def generate_schedule(
@@ -63,20 +88,14 @@ def generate_schedule(
         else:
             actual_emi_paise = emi_paise
 
+        # INVARIANT: Balance must never go negative
+        principal_component_paise = min(principal_component_paise, int(balance))
+
         balance -= Decimal(principal_component_paise)
         cumulative_interest += interest_paise
 
-        # Compute payment date
-        year = start.year + (start.month + month - 1) // 12
-        month_idx = (start.month + month - 1) % 12 or 12
-        payment_date: date = date(year, month_idx, start.day)
-
-        # Safety: ensure payment date doesn't overflow month
-        try:
-            payment_date = date(year, month_idx, start.day)
-        except ValueError:
-            # Handle Feb 30, 31 edge cases
-            payment_date = date(year, month_idx, 28)
+        # Compute payment date with proper edge case handling
+        payment_date: date = _add_months(start, month - 1)
 
         schedule.append(AmortizationRow(
             month_number=month,
@@ -138,3 +157,37 @@ def total_payment_paise(schedule: list[AmortizationRow]) -> int:
     if not schedule:
         return 0
     return sum(row.emi_paise for row in schedule)
+
+
+def validate_schedule_invariants(
+    schedule: list[AmortizationRow],
+    original_principal_paise: int,
+) -> bool:
+    """
+    Validate schedule invariants.
+
+    INVARIANT CHECKS:
+    1. Balance never negative
+    2. Sum of principal equals original principal
+    3. Final balance is zero
+    """
+    if not schedule:
+        return True
+
+    # Check balance never negative
+    for row in schedule:
+        if row.balance_paise < 0:
+            raise ValueError(f"Balance went negative at month {row.month_number}")
+
+    # Check last balance is zero
+    if schedule[-1].balance_paise != 0:
+        raise ValueError(f"Final balance must be zero, got {schedule[-1].balance_paise}")
+
+    # Check sum of principal equals original
+    total_principal = sum(row.principal_paise for row in schedule)
+    if total_principal != original_principal_paise:
+        raise ValueError(
+            f"Principal sum mismatch: {total_principal} != {original_principal_paise}"
+        )
+
+    return True

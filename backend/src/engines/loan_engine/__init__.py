@@ -10,6 +10,7 @@ All interest rates in basis points (integer).
 from src.engines.loan_engine.amortization_builder import (
     generate_schedule,
     regenerate_schedule,
+    validate_schedule_invariants,
 )
 from src.engines.loan_engine.emi_calculator import (
     compute_emi_fixed,
@@ -54,6 +55,7 @@ __all__ = [
     # Amortization
     "generate_schedule",
     "regenerate_schedule",
+    "validate_schedule_invariants",
     # Prepayment
     "apply_prepayment",
     "compute_savings",

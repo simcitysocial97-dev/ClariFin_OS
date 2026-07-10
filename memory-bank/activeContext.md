@@ -53,6 +53,14 @@
 
 ---
 
+## Amortization Schedule Generator Enhancement (Current)
+- **Fixed date edge cases**: Added `_add_months()` helper for leap years and month-end dates
+- **Added invariant validation**: `validate_schedule_invariants()` with negative balance check
+- **Ensured principal sum matches**: Last payment adjustment guarantees sum(principal) == original principal
+- **Created comprehensive tests**: `test_amortization.py` with 23 tests covering edge cases
+
+---
+
 ## Product Audit - COMPLETE
 
 ### Created Documentation
