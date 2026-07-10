@@ -5,7 +5,9 @@ from .base import BaseRepository
 from .cashflow_repository import CashflowRepository
 from .import_mapping_repository import ImportMappingRepository
 from .investment_repository import InvestmentRepository
+from .loan_payment_repository import LoanPaymentRepository
 from .loan_repository import LoanRepository
+from .loan_scenario_repository import LoanScenarioRepository
 from .member_repository import MemberRepository
 from .networth_repository import NetWorthRepository
 from .reconciliation_repository import ReconciliationRepository
@@ -18,7 +20,9 @@ __all__ = [
     "CashflowRepository",
     "ImportMappingRepository",
     "InvestmentRepository",
+    "LoanPaymentRepository",
     "LoanRepository",
+    "LoanScenarioRepository",
     "MemberRepository",
     "NetWorthRepository",
     "BankRepository",
