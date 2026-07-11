@@ -41,6 +41,9 @@ def compute_emi_fixed(
     if principal_paise <= 0:
         raise ValueError("Principal must be positive")
 
+    if annual_rate_bps < 0:
+        raise ValueError("Rate cannot be negative")
+
     # INVARIANT 2: basis points → monthly rate
     # 850 bps = 8.5% annual → 8.5/1200 = 0.007083 monthly
     monthly_rate: Decimal = bps_to_monthly_rate(annual_rate_bps)
