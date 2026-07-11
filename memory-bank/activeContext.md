@@ -2,36 +2,37 @@
 
 ## Summary of Recent Changes (2026-11-07)
 
-### Phase 3 Complete: Repository Layer Refactoring
-- **LoanRepository**: Refactored with clean persistence-only API
-  - New methods: `create_loan()`, `get_loan()`, `list_loans()`, `update_loan()`, `delete_loan()`
-  - New methods: `add_prepayment()`, `list_prepayments()`, `remove_prepayment()`
-  - New methods: `add_rate_change()`, `list_rate_changes()`, `remove_rate_change()`
-  - Legacy methods preserved for backward compatibility: `create()`, `get_by_id()`, `get_all()`, `update()`, `delete()`
+### Phase 4 Complete: Service Layer Implementation
+- **LoanService**: Built with CRUD operations and get_* methods
+  - Methods: `get_loan()`, `get_loans()`, `create_loan()`, `update_loan()`, `delete_loan()`
+  - Methods: `get_schedule()`, `get_current_balance()`, `get_loan_summary()`, `record_payment()`
+  - Accepts optional `db_path` for testability
+  - Delegates calculations to loan_engine (pure functions)
+  - Delegates persistence to repositories
 
-- **LoanPaymentRepository**: Refactored with renamed methods
-  - New methods: `create_payment()`, `list_payments()`, `get_latest_payment()`
-  - Removed: `get_total_paid()` (moved to service layer as financial aggregation)
-  - Loan ID now uses INTEGER type to match schema
+- **LoanSimulationService**: Created with read-only simulation methods
+  - Methods: `simulate_prepayment()`, `simulate_multiple_prepayments()`, `simulate_foreclosure()`, `simulate_rate_change()`
+  - All simulations are pure calculations - no database mutations
+  - Returns structured results for API responses
 
-- **LoanScenarioRepository**: Removed (scenarios are temporary calculations, not persisted)
+- **LoanAnalysisService**: Created for personal loan optimization recommendations
+  - Methods: `analyze_loan_priority()`, `analyze_prepayment_vs_foreclosure()`, `analyze_surplus_allocation()`
+  - Returns typed models: `LoanRecommendation`, `SurplusAllocationResult`
+  - Analyzes all active loans for prepayment priority
 
-- **Database Schema (`db.py`)**: Updated in `_run_migrations()`
-  - Loans table: `id INTEGER PRIMARY KEY AUTOINCREMENT` (fixed from TEXT)
-  - Added: `loan_payments`, `loan_prepayments`, `loan_rate_changes` tables
-  - All loan-related tables use INTEGER foreign keys
+- **loan_analysis.py Models**: Created DTOs for service responses
+  - `LoanRecommendation`: loan_id, action, reason, interest_saved_paise, tenure_saved_months
+  - `SurplusAllocationResult`: surplus_paise, recommendations, total_interest_saved_paise
 
-- **Dependency Boundaries Verified**:
-  - ✅ Only repositories import FinanceDB
-  - ✅ Engines never import repositories
-  - ✅ Services use repositories only
-  - ✅ Routers use services only
+- **Type Fixes**: Fixed mypy type errors in services
+  - Added `start_date` type handling (str | None → str with default "2025-01-01")
+  - Added explicit int() casts for return values
 
-- **Tests**: All 13 repository smoke tests pass
+- **Tests**: All 224 tests pass including new loan service tests
 
-## Next Steps: Phase 4
-- Verify all existing functionality works
-- Run full test suite
+## Next Steps
+- Continue with Phase 5: API Route Integration
+- Add more comprehensive analysis tests
 
 ## Financial Invariants Maintained
 - All monetary values in paise (integer)

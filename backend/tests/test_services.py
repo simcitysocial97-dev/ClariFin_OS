@@ -164,3 +164,201 @@ class TestBehaviorService:
         if profile is not None:
             assert isinstance(profile, dict)
             assert "financial_health_score" in profile
+
+
+# ============================================================
+# Loan Service Tests
+# ============================================================
+
+class TestLoanService:
+    """Tests for LoanService."""
+
+    def test_get_loan_not_found(self, temp_db):
+        """Test get_loan raises error for non-existent loan."""
+        from services.loan_service import LoanService
+
+        service = LoanService(db_path=temp_db)
+        with pytest.raises(ValueError, match="Loan .* not found"):
+            service.get_loan(99999)
+
+    def test_list_loans_returns_list(self, temp_db):
+        """Test list_loans returns a list."""
+        from services.loan_service import LoanService
+
+        service = LoanService(db_path=temp_db)
+        result = service.get_loans()
+        assert isinstance(result, list)
+
+    def test_create_and_get_loan(self, temp_db):
+        """Test loan creation and retrieval."""
+        from services.loan_service import LoanService
+
+        # Create loan
+        service = LoanService(db_path=temp_db)
+        loan_id = service.create_loan(
+            name="Test Loan",
+            lender="Test Bank",
+            loan_type="personal",
+            principal_paise=100000000,  # ₹10,00,000
+            outstanding_paise=100000000,
+            interest_rate=8.5,
+            disbursed_date="2025-01-01",
+            tenure_months=120,
+        )
+
+        assert loan_id > 0
+
+        # Get the loan
+        loan = service.get_loan(loan_id)
+        assert loan["name"] == "Test Loan"
+        assert loan["lender"] == "Test Bank"
+
+    def test_get_schedule_returns_schedule(self, temp_db):
+        """Test get_schedule returns amortization schedule."""
+        from services.loan_service import LoanService
+
+        service = LoanService(db_path=temp_db)
+        # First create a loan
+        loan_id = service.create_loan(
+            name="Test Loan",
+            lender="Test Bank",
+            loan_type="personal",
+            principal_paise=100000000,
+            outstanding_paise=100000000,
+            interest_rate=8.5,
+            disbursed_date="2025-01-01",
+            tenure_months=120,
+        )
+
+        result = service.get_schedule(loan_id)
+        assert "schedule" in result
+        assert "total_payments" in result
+        assert len(result["schedule"]) == 120
+
+
+# ============================================================
+# Loan Simulation Service Tests
+# ============================================================
+
+class TestLoanSimulationService:
+    """Tests for LoanSimulationService."""
+
+    def test_simulate_prepayment(self, temp_db):
+        """Test prepayment simulation returns correct structure."""
+        from services.loan_service import LoanService
+        from services.loan_simulation_service import LoanSimulationService
+
+        # Create a loan first
+        loan_service = LoanService(db_path=temp_db)
+        loan_id = loan_service.create_loan(
+            name="Test Loan",
+            lender="Test Bank",
+            loan_type="personal",
+            principal_paise=100000000,
+            outstanding_paise=100000000,
+            interest_rate=8.5,
+            disbursed_date="2025-01-01",
+            tenure_months=120,
+        )
+
+        sim_service = LoanSimulationService(db_path=temp_db)
+        result = sim_service.simulate_prepayment(loan_id, 10000000)  # ₹1,00,000
+
+        assert "interest_saved_paise" in result
+        assert "tenure_saved_months" in result
+        assert "new_schedule" in result
+        assert result["interest_saved_paise"] > 0
+
+    def test_simulate_foreclosure(self, temp_db):
+        """Test foreclosure simulation returns correct structure."""
+        from services.loan_service import LoanService
+        from services.loan_simulation_service import LoanSimulationService
+
+        # Create a loan first
+        loan_service = LoanService(db_path=temp_db)
+        loan_id = loan_service.create_loan(
+            name="Test Loan",
+            lender="Test Bank",
+            loan_type="personal",
+            principal_paise=100000000,
+            outstanding_paise=100000000,
+            interest_rate=8.5,
+            disbursed_date="2025-01-01",
+            tenure_months=120,
+        )
+
+        sim_service = LoanSimulationService(db_path=temp_db)
+        result = sim_service.simulate_foreclosure(loan_id)
+
+        assert "foreclosure_amount_paise" in result
+        assert "accrued_interest_paise" in result
+        assert "penalty_paise" in result
+
+    def test_simulate_rate_change(self, temp_db):
+        """Test rate change simulation returns correct structure."""
+        from services.loan_service import LoanService
+        from services.loan_simulation_service import LoanSimulationService
+
+        # Create a loan first
+        loan_service = LoanService(db_path=temp_db)
+        loan_id = loan_service.create_loan(
+            name="Test Loan",
+            lender="Test Bank",
+            loan_type="personal",
+            principal_paise=100000000,
+            outstanding_paise=100000000,
+            interest_rate=8.5,
+            disbursed_date="2025-01-01",
+            tenure_months=120,
+        )
+
+        sim_service = LoanSimulationService(db_path=temp_db)
+        result = sim_service.simulate_rate_change(loan_id, 12, 950)
+
+        assert "new_schedule" in result
+        assert "original_rate_bps" in result
+        assert "new_rate_bps" in result
+
+
+# ============================================================
+# Loan Analysis Service Tests
+# ============================================================
+
+class TestLoanAnalysisService:
+    """Tests for LoanAnalysisService."""
+
+    def test_analyze_surplus_allocation_no_surplus(self, temp_db):
+        """Test surplus allocation with zero surplus returns all NONE actions."""
+        from services.loan_analysis_service import LoanAnalysisService
+
+        service = LoanAnalysisService(db_path=temp_db)
+        result = service.analyze_surplus_allocation(0)
+
+        assert result.surplus_paise == 0
+        assert result.total_interest_saved_paise == 0
+        assert all(r.action == "NONE" for r in result.recommendations)
+
+    def test_analyze_prepayment_vs_foreclosure(self, temp_db):
+        """Test prepayment vs foreclosure comparison."""
+        from services.loan_analysis_service import LoanAnalysisService
+        from services.loan_service import LoanService
+
+        # Create a loan
+        loan_service = LoanService(db_path=temp_db)
+        loan_id = loan_service.create_loan(
+            name="Test Loan",
+            lender="Test Bank",
+            loan_type="personal",
+            principal_paise=100000000,
+            outstanding_paise=100000000,
+            interest_rate=8.5,
+            disbursed_date="2025-01-01",
+            tenure_months=120,
+        )
+
+        analysis_service = LoanAnalysisService(db_path=temp_db)
+        result = analysis_service.analyze_prepayment_vs_foreclosure(loan_id, 50000000)
+
+        assert result.loan_id == loan_id
+        assert result.action in ("PREPAY", "FORECLOSE", "NONE")
+        assert result.interest_saved_paise >= 0
