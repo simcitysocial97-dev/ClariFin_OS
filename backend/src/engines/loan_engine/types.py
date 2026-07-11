@@ -1,8 +1,10 @@
 """
-Domain models for Loan Engine
-==============================
+Domain models for Loan Engine - Out-of-scope types kept for backward compatibility.
 All monetary values in paise (integer).
 All interest rates in basis points (integer).
+
+NOTE: These types are DEPRECATED and will be removed.
+Use src.engines.loan_engine.models for core loan types.
 """
 
 from enum import StrEnum
@@ -10,22 +12,26 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+
 class InterestType(StrEnum):
     """Loan interest models supported."""
     FIXED = "fixed"
     FLOATING = "floating"
     HYBRID = "hybrid"
 
+
 class PrepaymentMode(StrEnum):
     """Prepayment behavior modes."""
     REDUCE_TENURE = "reduce_tenure"
     REDUCE_EMI = "reduce_emi"
 
+
 class PayoffStrategy(StrEnum):
-    """Debt payoff strategies."""
+    """Debt payoff strategies - DEPRECATED."""
     SNOWBALL = "snowball"
     AVALANCHE = "avalanche"
     MINIMUM = "minimum"
+
 
 class AmortizationRow(BaseModel):
     """Single row in amortization schedule."""
@@ -36,6 +42,7 @@ class AmortizationRow(BaseModel):
     interest_paise: int
     balance_paise: int
     cumulative_interest_paise: int
+
 
 class PrepaymentResult(BaseModel):
     """Result of a prepayment simulation."""
@@ -50,8 +57,9 @@ class PrepaymentResult(BaseModel):
     loan_closed: bool = False
     new_schedule: list[AmortizationRow] | None = None
 
+
 class RefinanceInput(BaseModel):
-    """Input for refinance evaluation."""
+    """Input for refinance evaluation - DEPRECATED."""
     current_outstanding_paise: int
     current_rate_bps: int
     remaining_months: int
@@ -64,8 +72,9 @@ class RefinanceInput(BaseModel):
     section_24_limit_paise: int = 20000000  # ₹2,00,000 default
     start_date: str | None = None
 
+
 class RefinanceResult(BaseModel):
-    """Result of refinance evaluation."""
+    """Result of refinance evaluation - DEPRECATED."""
     current_rate_bps: int
     new_rate_bps: int
     current_emi_paise: int
@@ -79,8 +88,9 @@ class RefinanceResult(BaseModel):
     tax_benefit_difference_paise: int
     net_savings_paise: int
 
+
 class LoanInfo(BaseModel):
-    """Loan information for payoff strategies."""
+    """Loan information for payoff strategies - DEPRECATED."""
     loan_id: int
     outstanding_paise: int
     annual_rate_bps: int
@@ -90,31 +100,38 @@ class LoanInfo(BaseModel):
     prepayment_penalty_bps: int = 0
     name: str = ""
     lender: str = ""
+    interest_type: InterestType = InterestType.FIXED
+    rate_changes: list[tuple[int, int]] = Field(default_factory=list)
+    processing_fees_paise: int = 0
+
 
 class PayoffLoanResult(BaseModel):
-    """Result for a single loan in payoff strategy."""
+    """Result for a single loan in payoff strategy - DEPRECATED."""
     loan_id: int
     months_to_payoff: int
     total_interest_paise: int
     total_payment_paise: int
 
+
 class MonthlyCashFlow(BaseModel):
-    """Monthly cash flow details."""
+    """Monthly cash flow details - DEPRECATED."""
     month: int
     total_payment_paise: int
     interest_paise: int
     principal_paise: int
 
+
 class PayoffResult(BaseModel):
-    """Result of payoff strategy simulation."""
+    """Result of payoff strategy simulation - DEPRECATED."""
     strategy: PayoffStrategy
     total_months: int
     total_interest_paise: int
     monthly_cash_flow: list[MonthlyCashFlow]
     loan_results: list[PayoffLoanResult]
 
+
 class HealthScoreResult(BaseModel):
-    """Comprehensive health score breakdown."""
+    """Comprehensive health score breakdown - DEPRECATED."""
     dti_score: float
     utilization_score: float
     stress_score: float
@@ -125,8 +142,9 @@ class HealthScoreResult(BaseModel):
     dti: float = 0.0
     missed_payment_rate: float = 0.0
 
+
 class TaxBenefitResult(BaseModel):
-    """Tax benefit calculation result."""
+    """Tax benefit calculation result - DEPRECATED."""
     interest_paise: int
     principal_paise: int
     section_24_benefit_paise: int
@@ -136,8 +154,9 @@ class TaxBenefitResult(BaseModel):
     stamp_duty_benefit_paise: int
     total_benefit_paise: int
 
+
 class LoanSummary(BaseModel):
-    """Loan summary for listing/display."""
+    """Loan summary for listing/display - DEPRECATED."""
     loan_id: int
     name: str
     lender: str
@@ -152,14 +171,16 @@ class LoanSummary(BaseModel):
     remaining_months: int | None = None
     start_date: str | None = None
 
+
 class FloatingRateChange(BaseModel):
     """Floating rate change event."""
     change_month: int
     new_rate_bps: int
     mode: Literal["adjust_emi", "adjust_tenure"]
 
+
 class LoanComparisonResult(BaseModel):
-    """Result of loan comparison."""
+    """Result of loan comparison - DEPRECATED."""
     loan_id: int
     total_cost_paise: int
     total_interest_paise: int

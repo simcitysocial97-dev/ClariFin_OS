@@ -6,7 +6,6 @@ Adds new columns and tables as per PRD.
 import sqlite3
 from pathlib import Path
 
-
 DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
 
 
@@ -14,7 +13,7 @@ def migrate() -> None:
     """Run loan engine migration."""
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys=ON")
-    
+
     # Extend loans table
     migrations = [
         "ALTER TABLE loans ADD COLUMN interest_type TEXT DEFAULT 'fixed'",
@@ -22,7 +21,7 @@ def migrate() -> None:
         "ALTER TABLE loans ADD COLUMN last_rate_reset_date TEXT",
         "ALTER TABLE loans ADD COLUMN prepayment_mode TEXT DEFAULT 'reduce_tenure'",
     ]
-    
+
     for migration in migrations:
         try:
             conn.execute(migration)
@@ -30,7 +29,7 @@ def migrate() -> None:
         except sqlite3.OperationalError as e:
             # Column may already exist
             print(f"⊘ {migration} - {e}")
-    
+
     # Create loan_payments table
     conn.execute("""
         CREATE TABLE IF NOT EXISTS loan_payments (
@@ -46,7 +45,7 @@ def migrate() -> None:
         )
     """)
     print("✓ loan_payments table created")
-    
+
     # Create loan_scenarios table
     conn.execute("""
         CREATE TABLE IF NOT EXISTS loan_scenarios (
@@ -63,7 +62,7 @@ def migrate() -> None:
         )
     """)
     print("✓ loan_scenarios table created")
-    
+
     conn.commit()
     conn.close()
     print("\nMigration complete!")

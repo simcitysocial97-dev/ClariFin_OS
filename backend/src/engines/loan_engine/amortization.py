@@ -1,4 +1,5 @@
-"""Generates immutable amortization schedules for loans.
+"""
+Generates immutable amortization schedules for loans.
 
 INVARIANT 3: Once generated, schedule is never modified in-place.
 INVARIANT 4: All dates are ISO 8601 strings.
@@ -7,11 +8,8 @@ INVARIANT 4: All dates are ISO 8601 strings.
 from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
 
-from src.engines.loan_engine.emi_calculator import (
-    compute_emi_fixed,
-    compute_principal_component,
-)
-from src.engines.loan_engine.types import AmortizationRow
+from .models import AmortizationRow
+from .utils import bps_to_monthly_rate
 
 
 def _add_months(start: date, months: int) -> date:
@@ -58,10 +56,12 @@ def generate_schedule(
     INVARIANT 4: All dates are ISO 8601 strings
     INVARIANT 6: Banker's rounding
     """
+    from .emi import compute_emi_fixed, compute_principal_component
+
     if emi_paise is None:
         emi_paise = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
 
-    monthly_rate: Decimal = Decimal(annual_rate_bps) / Decimal(120000)
+    monthly_rate: Decimal = bps_to_monthly_rate(annual_rate_bps)
     balance: Decimal = Decimal(principal_paise)
 
     schedule: list[AmortizationRow] = []
@@ -105,30 +105,6 @@ def generate_schedule(
         ))
 
     return schedule
-
-
-def regenerate_schedule(
-    outstanding_paise: int,
-    annual_rate_bps: int,
-    remaining_months: int,
-    start_date: str,
-    prepayment_paise: int = 0,
-) -> list[AmortizationRow]:
-    """
-    Regenerate schedule after prepayment or rate change.
-
-    Returns NEW schedule - does not modify existing one (INVARIANT 3).
-    """
-    new_principal_paise = outstanding_paise - prepayment_paise
-    if new_principal_paise <= 0:
-        return []
-
-    return generate_schedule(
-        principal_paise=new_principal_paise,
-        annual_rate_bps=annual_rate_bps,
-        tenure_months=remaining_months,
-        start_date=start_date,
-    )
 
 
 def find_schedule_row(

@@ -1,102 +1,76 @@
 """
-Loan Intelligence Engine Package
-=================================
-Modular loan calculation and optimization engine.
+Loan Engine - Pure calculation library
+======================================
+Modular loan calculation engine for personal loan management.
 
 All monetary values in paise (integer).
 All interest rates in basis points (integer).
 """
 
-from src.engines.loan_engine.amortization_builder import (
+# Types
+# Amortization
+from .amortization import (
     find_schedule_row,
     generate_schedule,
-    regenerate_schedule,
     total_interest_paise,
     total_payment_paise,
     validate_schedule_invariants,
 )
-from src.engines.loan_engine.comparison_engine import (
-    compare_loans,
-    compare_prepayment_scenarios,
-    generate_loan_summary,
-)
-from src.engines.loan_engine.dynamic_prepayment_engine import (
-    apply_floating_rate_change,
-    apply_multiple_prepayments,
-    apply_prepayment_at_month,
-    simulate_floating_rate_schedule,
-)
-from src.engines.loan_engine.emi_calculator import (
+
+# EMI calculations
+from .emi import (
     compute_emi_fixed,
     compute_emi_floating,
     compute_monthly_interest,
     compute_principal_component,
 )
-from src.engines.loan_engine.health_scorer import (
-    compute_health_score,
-    get_health_insights,
-    get_health_recommendations,
+
+# Floating Rate
+from .floating_rate import (
+    apply_floating_rate_change,
+    simulate_floating_rate_schedule,
 )
-from src.engines.loan_engine.payoff_strategies import (
-    compare_payoff_strategies,
-    compute_minimum_payments_only,
-    compute_snowball_timeline,
+
+# Foreclosure
+from .foreclosure import (
+    compute_foreclosure_amount,
+    compute_prepayment_breakup,
 )
-from src.engines.loan_engine.prepayment_analyzer import (
-    apply_prepayment,
-    compute_multiple_prepayment_savings,
-    compute_savings,
+
+# Metrics
+from .metrics import (
+    calculate_interest_saved,
+    calculate_tenure_saved,
+    compute_loan_metrics,
 )
-from src.engines.loan_engine.refinance_evaluator import (
-    compare_refinance_options,
-    evaluate_refinance,
-)
-from src.engines.loan_engine.tax_calculator import (
-    compare_tax_regimes,
-    compute_annual_benefits,
-    compute_section_24_benefit,
-    compute_section_80c_benefit,
-    compute_section_80ee_benefit,
-    compute_section_80eea_benefit,
-    compute_total_lifetime_tax_savings,
-)
-from src.engines.loan_engine.types import (
+from .models import (
     AmortizationRow,
     FloatingRateChange,
-    HealthScoreResult,
+    ForeclosureResult,
     InterestType,
-    LoanComparisonResult,
-    LoanInfo,
-    LoanSummary,
-    MonthlyCashFlow,
-    PayoffLoanResult,
-    PayoffResult,
-    PayoffStrategy,
+    LoanMetrics,
     PrepaymentMode,
     PrepaymentResult,
-    RefinanceInput,
-    RefinanceResult,
-    TaxBenefitResult,
+)
+
+# Prepayment
+from .prepayment import (
+    apply_multiple_prepayments,
+    apply_prepayment,
+    apply_prepayment_at_month,
+    compute_remaining_months,
+    regenerate_schedule,
 )
 
 __all__ = [
     # Types
     "AmortizationRow",
     "FloatingRateChange",
-    "HealthScoreResult",
+    "ForeclosureResult",
     "InterestType",
-    "LoanComparisonResult",
-    "LoanInfo",
-    "LoanSummary",
-    "MonthlyCashFlow",
-    "PayoffLoanResult",
-    "PayoffResult",
-    "PayoffStrategy",
+    "LoanMetrics",
     "PrepaymentMode",
     "PrepaymentResult",
-    "RefinanceInput",
-    "RefinanceResult",
-    "TaxBenefitResult",
     # EMI Calculator
     "compute_emi_fixed",
     "compute_emi_floating",
@@ -109,38 +83,19 @@ __all__ = [
     "total_interest_paise",
     "total_payment_paise",
     "validate_schedule_invariants",
-    # Prepayment Analyzer
+    # Prepayment
     "apply_prepayment",
-    "compute_multiple_prepayment_savings",
-    "compute_savings",
-    # Dynamic Prepayment Engine
-    "apply_floating_rate_change",
-    "apply_multiple_prepayments",
     "apply_prepayment_at_month",
+    "apply_multiple_prepayments",
+    "compute_remaining_months",
+    # Floating Rate
+    "apply_floating_rate_change",
     "simulate_floating_rate_schedule",
-    # Payoff Strategies
-    "avalanche_priority",
-    "compare_payoff_strategies",
-    "compute_minimum_payments_only",
-    "compute_snowball_timeline",
-    "snowball_priority",
-    # Refinance Evaluator
-    "compare_refinance_options",
-    "evaluate_refinance",
-    # Health Scorer
-    "compute_health_score",
-    "get_health_insights",
-    "get_health_recommendations",
-    # Tax Calculator
-    "compare_tax_regimes",
-    "compute_annual_benefits",
-    "compute_section_24_benefit",
-    "compute_section_80c_benefit",
-    "compute_section_80ee_benefit",
-    "compute_section_80eea_benefit",
-    "compute_total_lifetime_tax_savings",
-    # Comparison Engine
-    "compare_loans",
-    "compare_prepayment_scenarios",
-    "generate_loan_summary",
+    # Foreclosure
+    "compute_foreclosure_amount",
+    "compute_prepayment_breakup",
+    # Metrics
+    "calculate_interest_saved",
+    "calculate_tenure_saved",
+    "compute_loan_metrics",
 ]

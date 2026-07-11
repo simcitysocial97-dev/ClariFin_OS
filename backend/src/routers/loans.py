@@ -76,13 +76,6 @@ class PrepaymentSimulationResponse(BaseModel):
     new_emi_paise: int | None
 
 
-class LoanHealthResponse(BaseModel):
-    """Loan health response model."""
-
-    loan_id: int
-    health_score: float
-
-
 @router.get("/loans")
 def get_loans() -> dict[str, Any]:
     """Get all active loans (domain models) with computed summary."""
@@ -184,16 +177,5 @@ def record_loan_payment(
     try:
         payment_id = service.record_payment(payment)
         return {"success": True, "payment_id": payment_id}
-    except ValueError as e:
-        raise NotFoundError(str(e)) from e
-
-
-@router.get("/loans/{loan_id}/health")
-def get_loan_health(loan_id: int) -> LoanHealthResponse:
-    """Get health score for a loan."""
-    service = LoanService()
-    try:
-        score = service.compute_health_score(loan_id)
-        return LoanHealthResponse(loan_id=loan_id, health_score=score)
     except ValueError as e:
         raise NotFoundError(str(e)) from e
