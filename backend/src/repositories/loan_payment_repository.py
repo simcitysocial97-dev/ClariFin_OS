@@ -1,30 +1,17 @@
-"""Loan Payment Repository."""
+"""Loan Payment Repository - Persistence only.
 
+All methods handle payment record persistence.
+Financial aggregations belong in LoanService.
+"""
 
 from src.models.loan_payment import LoanPayment, LoanPaymentCreate
 from src.repositories.base import BaseRepository
 
 
 class LoanPaymentRepository(BaseRepository):
-    """Repository for loan payment operations."""
+    """Repository for loan payment persistence operations."""
 
-    def get_by_loan_id(self, loan_id: int) -> list[LoanPayment]:
-        """Get all payments for a loan."""
-        with self._get_conn() as conn:
-            rows = conn.execute(
-                """
-                SELECT id, loan_id, payment_date, amount_paise,
-                       principal_paise, interest_paise, late_fee_paise,
-                       source_account_id, created_at
-                FROM loan_payments
-                WHERE loan_id = ?
-                ORDER BY payment_date DESC
-                """,
-                (loan_id,),
-            ).fetchall()
-        return [LoanPayment.from_db_row(dict(r)) for r in rows]
-
-    def create(self, payment: LoanPaymentCreate) -> int:
+    def create_payment(self, payment: LoanPaymentCreate) -> int:
         """Create a new loan payment record."""
         with self._get_conn() as conn:
             cur = conn.execute(
@@ -36,7 +23,7 @@ class LoanPaymentRepository(BaseRepository):
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    payment.loan_id,
+                    int(payment.loan_id),
                     payment.payment_date,
                     payment.amount_paise,
                     payment.principal_paise or 0,
@@ -48,7 +35,23 @@ class LoanPaymentRepository(BaseRepository):
             conn.commit()
         return cur.lastrowid or 0
 
-    def get_latest_payment(self, loan_id: int) -> LoanPayment | None:
+    def list_payments(self, loan_id: int | str) -> list[LoanPayment]:
+        """Get all payments for a loan."""
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                """
+                SELECT id, loan_id, payment_date, amount_paise,
+                       principal_paise, interest_paise, late_fee_paise,
+                       source_account_id, created_at
+                FROM loan_payments
+                WHERE loan_id = ?
+                ORDER BY payment_date DESC
+                """,
+                (int(loan_id),),
+            ).fetchall()
+        return [LoanPayment.from_db_row(dict(r)) for r in rows]
+
+    def get_latest_payment(self, loan_id: int | str) -> LoanPayment | None:
         """Get the most recent payment for a loan."""
         with self._get_conn() as conn:
             row = conn.execute(
@@ -58,26 +61,18 @@ class LoanPaymentRepository(BaseRepository):
                 ORDER BY payment_date DESC
                 LIMIT 1
                 """,
-                (loan_id,),
+                (int(loan_id),),
             ).fetchone()
         return LoanPayment.from_db_row(dict(row)) if row else None
 
-    def get_total_paid(self, loan_id: int) -> dict[str, int]:
-        """Get total amounts paid for a loan."""
-        with self._get_conn() as conn:
-            row = conn.execute(
-                """
-                SELECT
-                    COALESCE(SUM(amount_paise), 0) as total_amount_paise,
-                    COALESCE(SUM(principal_paise), 0) as total_principal_paise,
-                    COALESCE(SUM(interest_paise), 0) as total_interest_paise
-                FROM loan_payments
-                WHERE loan_id = ?
-                """,
-                (loan_id,),
-            ).fetchone()
-        return {
-            "total_amount_paise": row["total_amount_paise"] if row else 0,
-            "total_principal_paise": row["total_principal_paise"] if row else 0,
-            "total_interest_paise": row["total_interest_paise"] if row else 0,
-        }
+    # ============================================================
+    # Legacy Compatibility Methods (deprecated)
+    # ============================================================
+
+    def create(self, payment: LoanPaymentCreate) -> int:
+        """Legacy method - use create_payment() instead."""
+        return self.create_payment(payment)
+
+    def get_by_loan_id(self, loan_id: int) -> list[LoanPayment]:
+        """Legacy method - use list_payments() instead."""
+        return self.list_payments(loan_id)

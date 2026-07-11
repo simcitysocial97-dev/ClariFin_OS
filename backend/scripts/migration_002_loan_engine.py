@@ -46,22 +46,8 @@ def migrate() -> None:
     """)
     print("✓ loan_payments table created")
 
-    # Create loan_scenarios table
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS loan_scenarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            loan_id TEXT NOT NULL REFERENCES loans(id),
-            scenario_name TEXT NOT NULL,
-            prepayment_paise INTEGER,
-            prepayment_date TEXT,
-            new_tenure_months INTEGER,
-            new_emi_paise INTEGER,
-            interest_saved_paise INTEGER,
-            months_saved INTEGER,
-            created_at TEXT DEFAULT (datetime('now'))
-        )
-    """)
-    print("✓ loan_scenarios table created")
+    # Note: loan_scenarios table removed - scenarios are temporary calculations
+    # and should not be persisted per Phase 3 architecture
 
     conn.commit()
     conn.close()

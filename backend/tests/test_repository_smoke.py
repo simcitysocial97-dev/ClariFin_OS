@@ -296,6 +296,160 @@ def test_statement_repository_insert():
 
 
 # ============================================================
+# Test: LoanRepository smoke tests
+# ============================================================
+
+from src.repositories.loan_repository import LoanRepository
+
+
+def test_loan_repository_create_and_get():
+    """Verify LoanRepository.create_loan() and get_loan() work."""
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+
+    try:
+        FinanceDB(db_path=db_path)
+        repo = LoanRepository(db_path=db_path)
+
+        # Create a loan
+        loan_id = repo.create_loan(
+            name="Test Loan",
+            lender="TestBank",
+            loan_type="personal",
+            principal_paise=1000000,  # 10000 rupees
+            outstanding_paise=950000,
+            interest_rate=12.5,
+            disbursed_date="2024-01-01",
+            tenure_months=24,
+        )
+
+        # Get the loan
+        loan = repo.get_loan(loan_id)
+        assert loan is not None, "Loan should be created"
+        assert loan["name"] == "Test Loan"
+        assert loan["lender"] == "TestBank"
+        assert loan["principal_paise"] == 1000000
+
+    finally:
+        os.unlink(db_path)
+
+
+def test_loan_repository_list_loans():
+    """Verify LoanRepository.list_loans() returns data correctly."""
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+
+    try:
+        FinanceDB(db_path=db_path)
+        repo = LoanRepository(db_path=db_path)
+
+        # Create two loans
+        repo.create_loan(
+            name="Loan 1",
+            lender="Bank A",
+            loan_type="personal",
+            principal_paise=500000,
+            outstanding_paise=450000,
+            interest_rate=10.0,
+            disbursed_date="2024-01-01",
+        )
+        repo.create_loan(
+            name="Loan 2",
+            lender="Bank B",
+            loan_type="home",
+            principal_paise=5000000,
+            outstanding_paise=4500000,
+            interest_rate=8.5,
+            disbursed_date="2024-02-01",
+        )
+
+        loans = repo.list_loans()
+        assert len(loans) == 2, "Should have 2 loans"
+
+    finally:
+        os.unlink(db_path)
+
+
+def test_loan_repository_add_and_list_prepayments():
+    """Verify LoanRepository prepayment methods work."""
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+
+    try:
+        FinanceDB(db_path=db_path)
+        repo = LoanRepository(db_path=db_path)
+
+        # Create a loan
+        loan_id = repo.create_loan(
+            name="Test Loan",
+            lender="TestBank",
+            loan_type="personal",
+            principal_paise=1000000,
+            outstanding_paise=950000,
+            interest_rate=12.0,
+            disbursed_date="2024-01-01",
+        )
+
+        # Add prepayments
+        prep_id1 = repo.add_prepayment(loan_id, 50000, "2024-06-01")
+        prep_id2 = repo.add_prepayment(loan_id, 100000, "2024-07-01", mode="reduce_emi")
+
+        # List prepayments
+        prepayments = repo.list_prepayments(loan_id)
+        assert len(prepayments) == 2, "Should have 2 prepayments"
+        assert prepayments[0]["amount_paise"] == 100000
+        assert prepayments[0]["mode"] == "reduce_emi"
+
+        # Remove a prepayment
+        repo.remove_prepayment(prep_id1)
+        prepayments = repo.list_prepayments(loan_id)
+        assert len(prepayments) == 1, "Should have 1 prepayment after removal"
+
+    finally:
+        os.unlink(db_path)
+
+
+def test_loan_repository_add_and_list_rate_changes():
+    """Verify LoanRepository rate change methods work."""
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+
+    try:
+        FinanceDB(db_path=db_path)
+        repo = LoanRepository(db_path=db_path)
+
+        # Create a loan (floating rate type)
+        loan_id = repo.create_loan(
+            name="Floating Loan",
+            lender="TestBank",
+            loan_type="personal",
+            principal_paise=1000000,
+            outstanding_paise=950000,
+            interest_rate=10.0,
+            disbursed_date="2024-01-01",
+            interest_type="floating",
+        )
+
+        # Add rate changes
+        rate_id1 = repo.add_rate_change(loan_id, "2024-06-01", 1100)  # 11%
+        rate_id2 = repo.add_rate_change(loan_id, "2024-09-01", 1050, mode="adjust_tenure")
+
+        # List rate changes (ordered by change_date ascending)
+        changes = repo.list_rate_changes(loan_id)
+        assert len(changes) == 2, "Should have 2 rate changes"
+        assert changes[0]["new_rate_bps"] == 1100  # June entry comes first
+        assert changes[1]["new_rate_bps"] == 1050  # September entry comes second
+
+        # Remove a rate change
+        repo.remove_rate_change(rate_id1)
+        changes = repo.list_rate_changes(loan_id)
+        assert len(changes) == 1, "Should have 1 rate change after removal"
+
+    finally:
+        os.unlink(db_path)
+
+
+# ============================================================
 # Run Tests
 # ============================================================
 

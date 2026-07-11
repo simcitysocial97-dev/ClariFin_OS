@@ -80,8 +80,8 @@ class PrepaymentSimulationResponse(BaseModel):
 def get_loans() -> dict[str, Any]:
     """Get all active loans (domain models) with computed summary."""
     repo = LoanRepository()
-    loans = repo.get_all_models()
-    raw = repo.get_all()
+    loans = repo.list_loans_models()
+    raw = repo.list_loans()
 
     total_outstanding = sum(r["outstanding_paise"] for r in raw)
     total_principal = sum(loan.principal.paise for loan in loans)

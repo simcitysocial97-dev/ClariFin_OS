@@ -19,7 +19,7 @@ class NetWorthRepository(BaseRepository):
 
         return {
             "accounts": AccountRepository(self.db_path).get_all_accounts(),
-            "loans": LoanRepository(self.db_path).get_all(),
+            "loans": LoanRepository(self.db_path).list_loans(),
             "investments": InvestmentRepository(self.db_path).get_all(),
             "statements": StatementRepository(self.db_path).get_all_statements(),
         }

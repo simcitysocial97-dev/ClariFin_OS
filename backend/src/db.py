@@ -436,7 +436,7 @@ class FinanceDB:
             );
 
             CREATE TABLE IF NOT EXISTS loans (
-                id TEXT PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 lender TEXT NOT NULL,
                 loan_type TEXT NOT NULL,
@@ -470,6 +470,36 @@ class FinanceDB:
                 notes TEXT,
                 created_at TEXT NOT NULL DEFAULT (datetime('now')),
                 updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+            );
+
+            CREATE TABLE IF NOT EXISTS loan_payments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                loan_id INTEGER NOT NULL REFERENCES loans(id),
+                payment_date TEXT NOT NULL,
+                amount_paise INTEGER NOT NULL,
+                principal_paise INTEGER,
+                interest_paise INTEGER,
+                late_fee_paise INTEGER DEFAULT 0,
+                source_account_id TEXT,
+                created_at TEXT DEFAULT (datetime('now'))
+            );
+
+            CREATE TABLE IF NOT EXISTS loan_prepayments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                loan_id INTEGER NOT NULL REFERENCES loans(id),
+                amount_paise INTEGER NOT NULL,
+                prepayment_date TEXT NOT NULL,
+                mode TEXT DEFAULT 'reduce_tenure',
+                created_at TEXT DEFAULT (datetime('now'))
+            );
+
+            CREATE TABLE IF NOT EXISTS loan_rate_changes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                loan_id INTEGER NOT NULL REFERENCES loans(id),
+                change_date TEXT NOT NULL,
+                new_rate_bps INTEGER NOT NULL,
+                mode TEXT DEFAULT 'adjust_emi',
+                created_at TEXT DEFAULT (datetime('now'))
             );
         """)
 
