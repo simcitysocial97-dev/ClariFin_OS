@@ -363,6 +363,24 @@ class FinanceDB:
             except Exception:
                 pass  # May fail if duplicates exist
 
+            # Phase 6C: Add loan-related indexes for query performance
+            _loan_indexes = [
+                "CREATE INDEX IF NOT EXISTS idx_loan_payments_loan_id ON loan_payments(loan_id)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_payments_date ON loan_payments(payment_date)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_prepayments_loan_id ON loan_prepayments(loan_id)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_prepayments_date ON loan_prepayments(prepayment_date)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_rate_changes_loan_id ON loan_rate_changes(loan_id)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_rate_changes_date ON loan_rate_changes(change_date)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_payments_loan_date ON loan_payments(loan_id, payment_date)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_prepayments_loan_date ON loan_prepayments(loan_id, prepayment_date)",
+                "CREATE INDEX IF NOT EXISTS idx_loan_rate_changes_loan_date ON loan_rate_changes(loan_id, change_date)",
+            ]
+            for idx_stmt in _loan_indexes:
+                try:
+                    conn.execute(idx_stmt)
+                except Exception:
+                    pass
+
             # Phase 2A.1: Add immutability triggers
             try:
                 conn.execute("""

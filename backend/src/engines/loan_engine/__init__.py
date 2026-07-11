@@ -14,6 +14,7 @@ from .amortization import (
     generate_schedule,
     total_interest_paise,
     total_payment_paise,
+    validate_schedule,
     validate_schedule_invariants,
 )
 
@@ -82,6 +83,7 @@ __all__ = [
     "regenerate_schedule",
     "total_interest_paise",
     "total_payment_paise",
+    "validate_schedule",
     "validate_schedule_invariants",
     # Prepayment
     "apply_prepayment",

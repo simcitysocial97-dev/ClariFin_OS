@@ -24,7 +24,7 @@ from .emi import compute_emi_fixed
 from .models import AmortizationRow, PrepaymentMode, PrepaymentResult
 
 
-def compute_remaining_months(
+def _compute_tenure_from_emi(
     principal_paise: int,
     annual_rate_bps: int,
     emi_paise: int,
@@ -33,7 +33,8 @@ def compute_remaining_months(
     Compute remaining months given principal, rate (bps), and fixed EMI.
 
     Uses logarithmic formula for precise calculation.
-    Returns integer months.
+    Shared helper used by compute_remaining_months and regenerate_schedule.
+    Returns integer months (ceiling).
     """
     if annual_rate_bps == 0:
         return math.ceil(principal_paise / emi_paise) if emi_paise > 0 else 999
@@ -54,6 +55,20 @@ def compute_remaining_months(
     return math.ceil(months_decimal)
 
 
+def compute_remaining_months(
+    principal_paise: int,
+    annual_rate_bps: int,
+    emi_paise: int,
+) -> int:
+    """
+    Compute remaining months given principal, rate (bps), and fixed EMI.
+
+    Uses logarithmic formula for precise calculation.
+    Returns integer months.
+    """
+    return _compute_tenure_from_emi(principal_paise, annual_rate_bps, emi_paise)
+
+
 def apply_prepayment(
     outstanding_paise: int,
     annual_rate_bps: int,
@@ -62,6 +77,7 @@ def apply_prepayment(
     mode: PrepaymentMode = PrepaymentMode.REDUCE_TENURE,
     start_date: str | None = None,
     prepayment_penalty_bps: int = 0,
+    existing_schedule: list[AmortizationRow] | None = None,
 ) -> PrepaymentResult:
     """
     Simulate impact of a prepayment on remaining loan term.
@@ -78,17 +94,20 @@ def apply_prepayment(
         mode: "reduce_tenure" or "reduce_emi"
         start_date: ISO date string for schedule regeneration (optional)
         prepayment_penalty_bps: Prepayment penalty in basis points (optional)
+        existing_schedule: Pre-generated schedule to avoid duplicate generation (optional)
 
     Returns:
         PrepaymentResult with comparison of before/after scenarios
     """
-    # Generate a temporary schedule for the original loan
-    original_schedule = generate_schedule(
-        principal_paise=outstanding_paise,
-        annual_rate_bps=annual_rate_bps,
-        tenure_months=remaining_months,
-        start_date=start_date or "2025-01-01",
-    )
+    # Use existing schedule if provided, otherwise generate one
+    original_schedule = existing_schedule
+    if original_schedule is None:
+        original_schedule = generate_schedule(
+            principal_paise=outstanding_paise,
+            annual_rate_bps=annual_rate_bps,
+            tenure_months=remaining_months,
+            start_date=start_date or "2025-01-01",
+        )
 
     # Apply prepayment at month 1 (beginning of the schedule)
     _, result = apply_prepayment_at_month(
@@ -281,17 +300,9 @@ def regenerate_schedule(
     # Calculate tenure based on mode
     if mode == "reduce_tenure":
         # Keep EMI same, calculate new tenure
-        if annual_rate_bps == 0:
-            calc_remaining_months = math.ceil(new_principal_paise / current_emi) if current_emi > 0 else 0
-        else:
-            monthly_rate = Decimal(annual_rate_bps) / Decimal(120000)
-            principal = Decimal(new_principal_paise)
-            emi = Decimal(current_emi)
-            if emi <= principal * monthly_rate:
-                return []
-            numerator = emi / (emi - principal * monthly_rate)
-            denominator = Decimal(1) + monthly_rate
-            calc_remaining_months = math.ceil(numerator.ln() / denominator.ln())
+        calc_remaining_months = _compute_tenure_from_emi(
+            new_principal_paise, annual_rate_bps, current_emi
+        )
     else:
         # Reduce EMI mode: keep original remaining tenure
         calc_remaining_months = remaining_months

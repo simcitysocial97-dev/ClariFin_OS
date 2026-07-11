@@ -64,15 +64,3 @@ class LoanPaymentRepository(BaseRepository):
                 (int(loan_id),),
             ).fetchone()
         return LoanPayment.from_db_row(dict(row)) if row else None
-
-    # ============================================================
-    # Legacy Compatibility Methods (deprecated)
-    # ============================================================
-
-    def create(self, payment: LoanPaymentCreate) -> int:
-        """Legacy method - use create_payment() instead."""
-        return self.create_payment(payment)
-
-    def get_by_loan_id(self, loan_id: int) -> list[LoanPayment]:
-        """Legacy method - use list_payments() instead."""
-        return self.list_payments(loan_id)

@@ -164,3 +164,103 @@ def validate_schedule_invariants(
         )
 
     return True
+
+
+def validate_schedule(
+    schedule: list[AmortizationRow],
+    original_principal_paise: int,
+    original_tenure_months: int | None = None,
+    debug_mode: bool = False,
+) -> bool:
+    """
+    Comprehensive financial invariant validation for amortization schedules.
+
+    Validates:
+    1. Balance never negative
+    2. Principal paid never exceeds original principal
+    3. Final balance reaches zero after final EMI
+    4. Sum(principal payments) == principal amount
+    5. EMI consistency maintained (same EMI for all rows except last)
+    6. Cumulative interest is monotonic non-decreasing
+    7. Month numbers are sequential (1..N)
+
+    Args:
+        schedule: Amortization schedule to validate
+        original_principal_paise: Original loan principal in paise
+        original_tenure_months: Expected tenure length (optional)
+        debug_mode: If True, raises on violation. If False, logs warning.
+
+    Returns:
+        True if all invariants pass
+
+    Raises:
+        ValueError: If debug_mode is True and any invariant fails
+    """
+    if not schedule:
+        return True
+
+    errors: list[str] = []
+
+    # 1. Balance never negative
+    for row in schedule:
+        if row.balance_paise < 0:
+            errors.append(f"Balance went negative at month {row.month_number}: {row.balance_paise}")
+
+    # 2. Principal paid never exceeds original principal
+    total_principal = sum(row.principal_paise for row in schedule)
+    if total_principal > original_principal_paise:
+        errors.append(
+            f"Total principal {total_principal} exceeds original {original_principal_paise}"
+        )
+
+    # 3. Final balance reaches zero
+    if schedule[-1].balance_paise != 0:
+        errors.append(f"Final balance {schedule[-1].balance_paise} != 0")
+
+    # 4. Sum(principal payments) == principal amount
+    if total_principal != original_principal_paise:
+        errors.append(
+            f"Principal sum {total_principal} != original {original_principal_paise}"
+        )
+
+    # 5. EMI consistency (same EMI for all rows except last)
+    if len(schedule) > 1:
+        first_emi = schedule[0].emi_paise
+        for row in schedule[:-1]:
+            if row.emi_paise != first_emi:
+                errors.append(
+                    f"EMI inconsistency at month {row.month_number}: "
+                    f"{row.emi_paise} != {first_emi}"
+                )
+
+    # 6. Cumulative interest is monotonic non-decreasing
+    prev_cumulative = -1
+    for row in schedule:
+        if row.cumulative_interest_paise < prev_cumulative:
+            errors.append(
+                f"Cumulative interest decreased at month {row.month_number}: "
+                f"{row.cumulative_interest_paise} < {prev_cumulative}"
+            )
+        prev_cumulative = row.cumulative_interest_paise
+
+    # 7. Month numbers are sequential
+    for i, row in enumerate(schedule, 1):
+        if row.month_number != i:
+            errors.append(
+                f"Month number {row.month_number} != expected {i}"
+            )
+
+    # 8. (Optional) Check tenure length if provided
+    if original_tenure_months is not None and len(schedule) != original_tenure_months:
+        errors.append(
+            f"Schedule length {len(schedule)} != expected {original_tenure_months}"
+        )
+
+    if errors:
+        msg = "Schedule invariant violations: " + "; ".join(errors)
+        if debug_mode:
+            raise ValueError(msg)
+        # In non-debug mode, we just return False (production safety)
+        return False
+
+    return True
