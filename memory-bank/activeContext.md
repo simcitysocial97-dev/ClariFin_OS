@@ -2,41 +2,48 @@
 
 ## Summary of Recent Changes (2026-11-07)
 
-### Phase 4 Complete: Service Layer Implementation
-- **LoanService**: Built with CRUD operations and get_* methods
-  - Methods: `get_loan()`, `get_loans()`, `create_loan()`, `update_loan()`, `delete_loan()`
-  - Methods: `get_schedule()`, `get_current_balance()`, `get_loan_summary()`, `record_payment()`
-  - Accepts optional `db_path` for testability
-  - Delegates calculations to loan_engine (pure functions)
-  - Delegates persistence to repositories
+### Phase 5 Complete: API Integration and Backend Contract Completion
 
-- **LoanSimulationService**: Created with read-only simulation methods
-  - Methods: `simulate_prepayment()`, `simulate_multiple_prepayments()`, `simulate_foreclosure()`, `simulate_rate_change()`
-  - All simulations are pure calculations - no database mutations
-  - Returns structured results for API responses
+#### Router Changes (`backend/src/routers/loans.py`)
+- Removed inline DTOs, now imports from `models.loan` and `models.loan_simulation`
+- `GET /api/loans` returns array directly (not wrapped in object)
+- `GET /api/loans/{loan_id}` uses `LoanResponse` model with `rate_bps`
+- All simulation endpoints use request bodies instead of query params
+- Added `GET /api/loans/{loan_id}` endpoint for individual loan retrieval
 
-- **LoanAnalysisService**: Created for personal loan optimization recommendations
-  - Methods: `analyze_loan_priority()`, `analyze_prepayment_vs_foreclosure()`, `analyze_surplus_allocation()`
-  - Returns typed models: `LoanRecommendation`, `SurplusAllocationResult`
-  - Analyzes all active loans for prepayment priority
+#### Models Created/Updated
+- **`loan.py`**: Added `LoanCreateRequest`, `LoanUpdateRequest`, `LoanResponse`, `ScheduleRow`, `ScheduleResponse`
+- **`loan_simulation.py`** (new): Added `PrepaymentSimulationRequest`, `PrepaymentSimulationResponse`, `ForeclosureSimulationResponse`, `RateChangeSimulationRequest`, `RateChangeSimulationResponse`, `PaymentRequest`, `PaymentResponse`
+- **`errors.py`**: Added standardized error constants (`LOAN_NOT_FOUND`, `INVALID_REQUEST`, `VALIDATION_ERROR`, `AMOUNT_INVALID`, `RATE_INVALID`, `TENURE_INVALID`)
 
-- **loan_analysis.py Models**: Created DTOs for service responses
-  - `LoanRecommendation`: loan_id, action, reason, interest_saved_paise, tenure_saved_months
-  - `SurplusAllocationResult`: surplus_paise, recommendations, total_interest_saved_paise
+#### Service Layer Updates
+- **`loan_service.py`**: `get_schedule()` returns spec-compliant format with `emi_paise`, `total_interest_paise`, `schedule`
+- **`loan_simulation_service.py`**: All simulation methods return spec formats with proper field names
 
-- **Type Fixes**: Fixed mypy type errors in services
-  - Added `start_date` type handling (str | None → str with default "2025-01-01")
-  - Added explicit int() casts for return values
+#### Tests Added (`tests/test_loan_routers.py`)
+- 11 tests covering CRUD, schedule, simulation, payment, and analysis endpoints
+- Full prepayment closure test
+- No database mutation verification for simulations
+- Schedule invariant validation
 
-- **Tests**: All 224 tests pass including new loan service tests
+#### API Schema
+- Updated `frontend/api-schema.json` with new loan endpoints
+
+## Acceptance Criteria Status
+- ✅ Routers only call services
+- ✅ No FinanceDB access outside repositories
+- ✅ All loan operations have validated APIs (`rate_bps: 0-5000`, `tenure_months: 1-360`, `principal_paise > 0`)
+- ✅ Simulation endpoints do not mutate data
+- ✅ Error responses are consistent (via NotFoundError)
+- ✅ API contracts ready for frontend integration
 
 ## Next Steps
-- Continue with Phase 5: API Route Integration
-- Add more comprehensive analysis tests
+- Phase 6: Frontend integration with OpenAPI schema
+- Monitor performance for large schedules (consider pagination if needed)
 
 ## Financial Invariants Maintained
 - All monetary values in paise (integer)
-- All interest rates in basis points (integer)
+- All interest rates in basis points (integer, stored as `rate_bps`: 0-5000)
 - Banker's rounding (ROUND_HALF_EVEN)
 - Immutable schedules (never modified in-place)
 - ISO 8601 date format

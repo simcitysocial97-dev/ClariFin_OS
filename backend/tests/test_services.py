@@ -214,7 +214,7 @@ class TestLoanService:
         assert loan["lender"] == "Test Bank"
 
     def test_get_schedule_returns_schedule(self, temp_db):
-        """Test get_schedule returns amortization schedule."""
+        """Test get_schedule returns amortization schedule matching Phase 5 spec."""
         from services.loan_service import LoanService
 
         service = LoanService(db_path=temp_db)
@@ -232,7 +232,7 @@ class TestLoanService:
 
         result = service.get_schedule(loan_id)
         assert "schedule" in result
-        assert "total_payments" in result
+        assert "total_interest_paise" in result
         assert len(result["schedule"]) == 120
 
 
@@ -244,7 +244,7 @@ class TestLoanSimulationService:
     """Tests for LoanSimulationService."""
 
     def test_simulate_prepayment(self, temp_db):
-        """Test prepayment simulation returns correct structure."""
+        """Test prepayment simulation returns correct structure matching Phase 5 spec."""
         from services.loan_service import LoanService
         from services.loan_simulation_service import LoanSimulationService
 
@@ -264,13 +264,14 @@ class TestLoanSimulationService:
         sim_service = LoanSimulationService(db_path=temp_db)
         result = sim_service.simulate_prepayment(loan_id, 10000000)  # ₹1,00,000
 
+        assert "original_interest_paise" in result
+        assert "new_interest_paise" in result
         assert "interest_saved_paise" in result
         assert "tenure_saved_months" in result
-        assert "new_schedule" in result
         assert result["interest_saved_paise"] > 0
 
     def test_simulate_foreclosure(self, temp_db):
-        """Test foreclosure simulation returns correct structure."""
+        """Test foreclosure simulation returns correct structure matching Phase 5 spec."""
         from services.loan_service import LoanService
         from services.loan_simulation_service import LoanSimulationService
 
@@ -290,9 +291,10 @@ class TestLoanSimulationService:
         sim_service = LoanSimulationService(db_path=temp_db)
         result = sim_service.simulate_foreclosure(loan_id)
 
-        assert "foreclosure_amount_paise" in result
-        assert "accrued_interest_paise" in result
+        # Phase 5 spec format: outstanding_paise, penalty_paise, foreclosure_amount_paise
+        assert "outstanding_paise" in result
         assert "penalty_paise" in result
+        assert "foreclosure_amount_paise" in result
 
     def test_simulate_rate_change(self, temp_db):
         """Test rate change simulation returns correct structure."""

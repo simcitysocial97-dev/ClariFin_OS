@@ -6,7 +6,7 @@ No direct database access - uses repositories only.
 
 from typing import Any
 
-from src.engines.loan_engine import generate_schedule
+from src.engines.loan_engine import generate_schedule, total_interest_paise
 from src.models.loan_payment import LoanPaymentCreate
 from src.repositories.loan_payment_repository import LoanPaymentRepository
 from src.repositories.loan_repository import LoanRepository
@@ -82,23 +82,54 @@ class LoanService:
     # ============================================================
 
     def get_schedule(self, loan_id: int) -> dict[str, Any]:
-        """Get amortization schedule for a loan."""
+        """Get amortization schedule for a loan.
+
+        Returns spec-compliant format:
+        {
+            "loan_id": int,
+            "emi_paise": int,
+            "total_interest_paise": int,
+            "schedule": [
+                {"month": int, "date": str, "emi_paise": int, "principal_paise": int, "interest_paise": int, "balance_paise": int},
+                ...
+            ]
+        }
+        """
         loan = self.loan_repo.get_loan(loan_id)
         if not loan:
             raise ValueError(f"Loan {loan_id} not found")
 
         rate_bps = int(loan["interest_rate"] * 100)
+        remaining_months = loan["tenure_months"] or 0
+
         schedule = generate_schedule(
             principal_paise=loan["outstanding_paise"],
             annual_rate_bps=rate_bps,
-            tenure_months=loan["tenure_months"],
-            start_date=loan["disbursed_date"],
+            tenure_months=remaining_months,
+            start_date=loan.get("disbursed_date") or "2025-01-01",
         )
 
+        # Calculate total interest using loan engine
+        total_interest = total_interest_paise(schedule)
+        emi_paise = schedule[0].emi_paise if schedule else 0
+
+        # Transform to spec format - map month_number to month
+        schedule_rows = [
+            {
+                "month": row.month_number,
+                "date": row.payment_date,
+                "emi_paise": row.emi_paise,
+                "principal_paise": row.principal_paise,
+                "interest_paise": row.interest_paise,
+                "balance_paise": row.balance_paise,
+            }
+            for row in schedule
+        ]
+
         return {
-            "loan_id": loan_id,
-            "schedule": [row.model_dump() for row in schedule],
-            "total_payments": len(schedule),
+            "emi_paise": emi_paise,
+            "total_interest_paise": total_interest,
+            "schedule": schedule_rows,
         }
 
     def get_current_balance(self, loan_id: int) -> int:
@@ -115,7 +146,6 @@ class LoanService:
         remaining_months = loan["tenure_months"] or 0
 
         # Generate schedule to validate loan state
-        # For now, return the stored outstanding as starting point
         _ = generate_schedule(
             principal_paise=loan["outstanding_paise"],
             annual_rate_bps=rate_bps,

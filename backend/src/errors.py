@@ -6,8 +6,8 @@ Standardized error responses for ClariFin_OS API.
 Provides consistent error formatting and logging.
 
 Usage:
-    from errors import AppError, DatabaseError, ValidationError
-    raise AppError("Something went wrong", status_code=400)
+    from src.errors import LOAN_NOT_FOUND, NotFoundError
+    raise NotFoundError(LOAN_NOT_FOUND, "Loan does not exist")
 """
 
 import traceback
@@ -18,6 +18,18 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from src.logger import log_error
+
+# ============================================================
+# Standardized Error Constants
+# ============================================================
+
+LOAN_NOT_FOUND = "LOAN_NOT_FOUND"
+INVALID_REQUEST = "INVALID_REQUEST"
+VALIDATION_ERROR = "VALIDATION_ERROR"
+AMOUNT_INVALID = "AMOUNT_INVALID"
+RATE_INVALID = "RATE_INVALID"
+TENURE_INVALID = "TENURE_INVALID"
+
 
 # ============================================================
 # Custom Exception Classes

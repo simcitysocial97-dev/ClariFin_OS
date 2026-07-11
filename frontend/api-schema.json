@@ -1,1 +1,3234 @@
-{"openapi":"3.1.0","info":{"title":"Personal Finance API","description":"REST API for personal finance tracker","version":"1.0.0"},"paths":{"/health":{"get":{"summary":"Health Check","description":"Basic health check endpoint.\n\nReturns 200 OK if the application is running.\nThis is a lightweight check that doesn't verify database connectivity.","operationId":"health_check_health_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/ready":{"get":{"summary":"Readiness Check","description":"Readiness check endpoint.\n\nVerifies:\n- Database is reachable\n- Required directories exist\n\nReturns 200 OK if all checks pass, 503 otherwise.","operationId":"readiness_check_ready_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/transactions":{"get":{"summary":"Get Transactions","description":"Get transactions with filters.","operationId":"get_transactions_api_transactions_get","parameters":[{"name":"search","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Search"}},{"name":"bank","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Bank"}},{"name":"category","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Category"}},{"name":"type","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Type"}},{"name":"member","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Member"}},{"name":"limit","in":"query","required":false,"schema":{"type":"integer","maximum":1000,"minimum":1,"default":100,"title":"Limit"}},{"name":"offset","in":"query","required":false,"schema":{"type":"integer","minimum":0,"default":0,"title":"Offset"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/overview":{"get":{"summary":"Get Overview","description":"Get overview metrics and charts.","operationId":"get_overview_api_overview_get","parameters":[{"name":"exclude_transfers","in":"query","required":false,"schema":{"type":"boolean","default":true,"title":"Exclude Transfers"}},{"name":"member","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Member"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/categories":{"get":{"summary":"Get Categories","description":"Get category summary and breakdown.","operationId":"get_categories_api_categories_get","parameters":[{"name":"exclude_transfers","in":"query","required":false,"schema":{"type":"boolean","default":true,"title":"Exclude Transfers"}},{"name":"member","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Member"}},{"name":"drill_category","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Drill Category"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/analytics":{"get":{"summary":"Get Analytics","description":"Get analytics data.","operationId":"get_analytics_api_analytics_get","parameters":[{"name":"exclude_transfers","in":"query","required":false,"schema":{"type":"boolean","default":true,"title":"Exclude Transfers"}},{"name":"member","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Member"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/statements":{"get":{"summary":"Get Statements","description":"Get all statements with metadata.","operationId":"get_statements_api_statements_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/cards":{"get":{"summary":"Get Cards","description":"Returns credit cards with their latest statement summary.\nGroups statements by card_last4 and bank.\nReturns one entry per unique card with latest statement data.","operationId":"get_cards_api_cards_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/banks":{"get":{"summary":"Get Banks","description":"Get list of banks.","operationId":"get_banks_api_banks_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/categories/list":{"get":{"summary":"Get Categories List","description":"Get list of categories.","operationId":"get_categories_list_api_categories_list_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/members":{"get":{"summary":"Get Members","description":"Get list of members.","operationId":"get_members_api_members_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}},"post":{"summary":"Create Member","description":"Add a new member.","operationId":"create_member_api_members_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/MemberCreate"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/cashflow/monthly":{"get":{"summary":"Get Cashflow Monthly","description":"Returns month-by-month income and expense aggregation.\nAll monetary values in paise (INTEGER).","operationId":"get_cashflow_monthly_api_cashflow_monthly_get","parameters":[{"name":"months","in":"query","required":false,"schema":{"type":"integer","maximum":12,"minimum":1,"default":6,"title":"Months"}},{"name":"member","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Member"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/upload":{"post":{"summary":"Upload Statement","description":"Upload and process a PDF statement.","operationId":"upload_statement_api_upload_post","requestBody":{"content":{"multipart/form-data":{"schema":{"$ref":"#/components/schemas/Body_upload_statement_api_upload_post"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/import/detect":{"post":{"summary":"Import Detect","description":"Detect CSV/Excel format.","operationId":"import_detect_api_import_detect_post","requestBody":{"content":{"multipart/form-data":{"schema":{"$ref":"#/components/schemas/Body_import_detect_api_import_detect_post"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/import/execute":{"post":{"summary":"Import Execute","description":"Execute CSV/Excel import.","operationId":"import_execute_api_import_execute_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ImportExecute"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/accounts":{"get":{"summary":"Api Get Accounts","description":"Get all accounts with their computed balances.","operationId":"api_get_accounts_api_accounts_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/accounts/{account_id}/balance":{"get":{"summary":"Api Get Account Balance","description":"Get current balance for a specific account.","operationId":"api_get_account_balance_api_accounts__account_id__balance_get","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","title":"Account Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/accounts/{account_id}/running-balance":{"get":{"summary":"Api Get Running Balance","description":"Get running balance history for an account.","operationId":"api_get_running_balance_api_accounts__account_id__running_balance_get","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","title":"Account Id"}},{"name":"limit","in":"query","required":false,"schema":{"type":"integer","maximum":1000,"minimum":1,"default":100,"title":"Limit"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/statements/{statement_id}/validate":{"get":{"summary":"Api Validate Statement","description":"Validate a statement's closing balance against computed balance.","operationId":"api_validate_statement_api_statements__statement_id__validate_get","parameters":[{"name":"statement_id","in":"path","required":true,"schema":{"type":"integer","title":"Statement Id"}},{"name":"claimed_balance_paise","in":"query","required":true,"schema":{"type":"integer","description":"Claimed closing balance in paise","title":"Claimed Balance Paise"},"description":"Claimed closing balance in paise"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/export/csv":{"get":{"summary":"Export Csv","description":"Export transactions to CSV.","operationId":"export_csv_api_export_csv_get","parameters":[{"name":"search","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Search"}},{"name":"bank","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Bank"}},{"name":"category","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Category"}},{"name":"type","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Type"}},{"name":"member","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"default":"All","title":"Member"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/reconciliations":{"get":{"summary":"Api Get Reconciliations","description":"Get all reconciliations with transaction details.\n\nPhase 2B: Metadata-only, no ledger mutation.\n\nArgs:\n    status: Optional filter ('pending', 'confirmed', 'rejected')","operationId":"api_get_reconciliations_api_reconciliations_get","parameters":[{"name":"status","in":"query","required":false,"schema":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Status"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/reconciliations/pending":{"get":{"summary":"Api Get Pending Reconciliations","description":"Get all pending reconciliations.","operationId":"api_get_pending_reconciliations_api_reconciliations_pending_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/reconciliations/scan":{"get":{"summary":"Api Scan Reconciliations","description":"Scan for potential transfer matches across accounts.\n\nPhase 2B.1: Deterministic matching with confidence scoring.\n\nReturns potential matches that can be saved as reconciliations.","operationId":"api_scan_reconciliations_api_reconciliations_scan_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/reconciliations/create":{"post":{"summary":"Api Create Reconciliation","description":"Create a reconciliation record between two transactions.\n\nPhase 2B: Metadata-only, no ledger mutation.\nUses INSERT OR IGNORE for idempotency.","operationId":"api_create_reconciliation_api_reconciliations_create_post","parameters":[{"name":"debit_txn_id","in":"query","required":true,"schema":{"type":"integer","description":"Debit transaction ID","title":"Debit Txn Id"},"description":"Debit transaction ID"},{"name":"credit_txn_id","in":"query","required":true,"schema":{"type":"integer","description":"Credit transaction ID","title":"Credit Txn Id"},"description":"Credit transaction ID"},{"name":"debit_account_id","in":"query","required":true,"schema":{"type":"string","description":"Debit account ID","title":"Debit Account Id"},"description":"Debit account ID"},{"name":"credit_account_id","in":"query","required":true,"schema":{"type":"string","description":"Credit account ID","title":"Credit Account Id"},"description":"Credit account ID"},{"name":"amount","in":"query","required":true,"schema":{"type":"number","description":"Matched amount in rupees","title":"Amount"},"description":"Matched amount in rupees"},{"name":"date_diff_days","in":"query","required":false,"schema":{"type":"integer","description":"Days between transaction dates","default":0,"title":"Date Diff Days"},"description":"Days between transaction dates"},{"name":"match_confidence","in":"query","required":true,"schema":{"type":"number","description":"Confidence score 0.0-1.0","title":"Match Confidence"},"description":"Confidence score 0.0-1.0"},{"name":"match_type","in":"query","required":false,"schema":{"type":"string","description":"'exact', 'window', 'fuzzy', or 'manual'","default":"exact","title":"Match Type"},"description":"'exact', 'window', 'fuzzy', or 'manual'"}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/reconciliations/batch-insert":{"post":{"summary":"Api Batch Insert Reconciliations","description":"Scan and insert all potential matches as pending reconciliations.\n\nUses INSERT OR IGNORE for idempotency - existing records are not duplicated.","operationId":"api_batch_insert_reconciliations_api_reconciliations_batch_insert_post","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/reconciliations/{reconciliation_id}/confirm":{"post":{"summary":"Api Confirm Reconciliation","description":"Confirm a pending reconciliation.\n\nPhase 2B: Updates reconciliation.status only. No ledger mutation.","operationId":"api_confirm_reconciliation_api_reconciliations__reconciliation_id__confirm_post","parameters":[{"name":"reconciliation_id","in":"path","required":true,"schema":{"type":"integer","title":"Reconciliation Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/reconciliations/{reconciliation_id}/reject":{"post":{"summary":"Api Reject Reconciliation","description":"Reject a pending reconciliation.\n\nPhase 2B: Updates reconciliation.status only. No ledger mutation.","operationId":"api_reject_reconciliation_api_reconciliations__reconciliation_id__reject_post","parameters":[{"name":"reconciliation_id","in":"path","required":true,"schema":{"type":"integer","title":"Reconciliation Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/audit/report":{"get":{"summary":"Api Audit Report","description":"Run full ledger audit and return combined report.\n\nPhase 2C: Read-only integrity verification.\n\nReturns:\n    {\n        \"overall_status\": \"PASS\" or \"FAIL\",\n        \"ledger_integrity\": {...},\n        \"hash_verification\": {...}\n    }","operationId":"api_audit_report_api_audit_report_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/behavior/summary":{"get":{"summary":"Api Behavior Summary","description":"Get comprehensive behavioral profile.\n\nPhase 3: Advanced Behavioral Intelligence Layer.\n\nReturns:\n    {\n        \"temporal_patterns\": {...},\n        \"behavioral_indices\": {...},\n        \"risk_signals\": {...},\n        \"confidence\": float (0–1),\n        \"financial_health_score\": float (0–100)\n    }","operationId":"api_behavior_summary_api_behavior_summary_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/behavior/score":{"get":{"summary":"Api Behavior Score","description":"Get financial health score with breakdown.\n\nPhase 3: Composite health score with component breakdown.\n\nReturns:\n    {\n        \"financial_health_score\": float (0–100),\n        \"confidence\": float (0–1),\n        \"components\": {...},\n        \"summary\": str\n    }","operationId":"api_behavior_score_api_behavior_score_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/behavior/insights":{"get":{"summary":"Api Behavior Insights","description":"Get behavioral insights and nudges.\n\nPhase 3: Evidence-based insights with actionable suggestions.\n\nReturns:\n    {\n        \"insights\": [...],\n        \"nudges\": [...],\n        \"top_nudge\": {...},\n        \"summary\": str\n    }","operationId":"api_behavior_insights_api_behavior_insights_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/dashboard/summary":{"get":{"summary":"Api Dashboard Summary","description":"Get simplified dashboard summary for MVP.\n\nReturns 4 key metrics:\n- Net Cash Flow\n- Savings Rate %\n- EMI Ratio %\n- Buffer Days","operationId":"api_dashboard_summary_api_dashboard_summary_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}},"/api/accounts/manage":{"get":{"summary":"Api Get Managed Accounts","description":"Get all persistently stored accounts.","operationId":"api_get_managed_accounts_api_accounts_manage_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}},"post":{"summary":"Api Create Managed Account","description":"Create a new persistent account.","operationId":"api_create_managed_account_api_accounts_manage_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AccountCreate"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/accounts/manage/{account_id}":{"put":{"summary":"Api Update Managed Account","description":"Update an existing account.","operationId":"api_update_managed_account_api_accounts_manage__account_id__put","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","title":"Account Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AccountUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"summary":"Api Delete Managed Account","description":"Soft delete an account.","operationId":"api_delete_managed_account_api_accounts_manage__account_id__delete","parameters":[{"name":"account_id","in":"path","required":true,"schema":{"type":"string","title":"Account Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/loans":{"get":{"summary":"Get Loans","description":"Get all active loans with computed summary.","operationId":"get_loans_api_loans_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}},"post":{"summary":"Create Loan","description":"Create a new loan record.","operationId":"create_loan_api_loans_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/LoanCreate"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/loans/{loan_id}":{"put":{"summary":"Update Loan","description":"Update loan outstanding or other fields.","operationId":"update_loan_api_loans__loan_id__put","parameters":[{"name":"loan_id","in":"path","required":true,"schema":{"type":"string","title":"Loan Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/LoanUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"summary":"Delete Loan","description":"Soft delete a loan.","operationId":"delete_loan_api_loans__loan_id__delete","parameters":[{"name":"loan_id","in":"path","required":true,"schema":{"type":"string","title":"Loan Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/loans/{loan_id}/schedule":{"get":{"summary":"Get Loan Schedule","description":"Get amortization schedule for a loan.","operationId":"get_loan_schedule_api_loans__loan_id__schedule_get","parameters":[{"name":"loan_id","in":"path","required":true,"schema":{"type":"string","title":"Loan Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/loans/{loan_id}/prepayment-simulation":{"post":{"summary":"Simulate Prepayment","description":"Simulate impact of a prepayment.","operationId":"simulate_prepayment_api_loans__loan_id__prepayment_simulation_post","parameters":[{"name":"loan_id","in":"path","required":true,"schema":{"type":"string","title":"Loan Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PrepaymentRequest"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/investments":{"get":{"summary":"Get Investments","operationId":"get_investments_api_investments_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}},"post":{"summary":"Create Investment","operationId":"create_investment_api_investments_post","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/InvestmentCreate"}}},"required":true},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/investments/{investment_id}":{"put":{"summary":"Update Investment","operationId":"update_investment_api_investments__investment_id__put","parameters":[{"name":"investment_id","in":"path","required":true,"schema":{"type":"string","title":"Investment Id"}}],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/InvestmentUpdate"}}}},"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}},"delete":{"summary":"Delete Investment","operationId":"delete_investment_api_investments__investment_id__delete","parameters":[{"name":"investment_id","in":"path","required":true,"schema":{"type":"string","title":"Investment Id"}}],"responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}},"422":{"description":"Validation Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/HTTPValidationError"}}}}}}},"/api/networth":{"get":{"summary":"Get Networth","description":"Compute net worth from all financial data.\n\nNet Worth = Assets - Liabilities\nAssets = account balances + investment current values\nLiabilities = loan outstanding + card outstanding","operationId":"get_networth_api_networth_get","responses":{"200":{"description":"Successful Response","content":{"application/json":{"schema":{}}}}}}}},"components":{"schemas":{"AccountCreate":{"properties":{"name":{"type":"string","title":"Name"},"bank":{"type":"string","title":"Bank"},"account_type":{"type":"string","title":"Account Type","default":"savings"},"balance_paise":{"type":"integer","title":"Balance Paise"},"account_number_last4":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Account Number Last4"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","required":["name","bank","balance_paise"],"title":"AccountCreate"},"AccountUpdate":{"properties":{"name":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Name"},"bank":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Bank"},"account_type":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Account Type"},"balance_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Balance Paise"},"account_number_last4":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Account Number Last4"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","title":"AccountUpdate"},"Body_import_detect_api_import_detect_post":{"properties":{"file":{"type":"string","contentMediaType":"application/octet-stream","title":"File"}},"type":"object","required":["file"],"title":"Body_import_detect_api_import_detect_post"},"Body_upload_statement_api_upload_post":{"properties":{"file":{"type":"string","contentMediaType":"application/octet-stream","title":"File"},"member":{"type":"string","title":"Member","default":"Self"}},"type":"object","required":["file"],"title":"Body_upload_statement_api_upload_post"},"HTTPValidationError":{"properties":{"detail":{"items":{"$ref":"#/components/schemas/ValidationError"},"type":"array","title":"Detail"}},"type":"object","title":"HTTPValidationError"},"ImportExecute":{"properties":{"filename":{"type":"string","title":"Filename"},"mapping":{"additionalProperties":true,"type":"object","title":"Mapping"},"member":{"type":"string","title":"Member","default":"Self"}},"type":"object","required":["filename","mapping"],"title":"ImportExecute"},"InvestmentCreate":{"properties":{"name":{"type":"string","title":"Name"},"investment_type":{"type":"string","title":"Investment Type"},"invested_paise":{"type":"integer","title":"Invested Paise"},"current_value_paise":{"type":"integer","title":"Current Value Paise"},"as_of_date":{"type":"string","title":"As Of Date"},"units":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Units"},"buy_price_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Buy Price Paise"},"current_price_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Current Price Paise"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","required":["name","investment_type","invested_paise","current_value_paise","as_of_date"],"title":"InvestmentCreate"},"InvestmentUpdate":{"properties":{"units":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Units"},"current_price_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Current Price Paise"},"current_value_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Current Value Paise"},"as_of_date":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"As Of Date"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","title":"InvestmentUpdate"},"LoanCreate":{"properties":{"name":{"type":"string","title":"Name"},"lender":{"type":"string","title":"Lender"},"loan_type":{"type":"string","title":"Loan Type"},"principal_paise":{"type":"integer","title":"Principal Paise"},"outstanding_paise":{"type":"integer","title":"Outstanding Paise"},"interest_rate":{"type":"number","title":"Interest Rate"},"disbursed_date":{"type":"string","title":"Disbursed Date"},"tenure_months":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Tenure Months"},"emi_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Emi Paise"},"next_emi_date":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Next Emi Date"},"gold_weight_grams":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Gold Weight Grams"},"gold_purity":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Gold Purity"},"interest_type":{"type":"string","title":"Interest Type","default":"reducing"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","required":["name","lender","loan_type","principal_paise","outstanding_paise","interest_rate","disbursed_date"],"title":"LoanCreate"},"LoanUpdate":{"properties":{"outstanding_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Outstanding Paise"},"interest_rate":{"anyOf":[{"type":"number"},{"type":"null"}],"title":"Interest Rate"},"tenure_months":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Tenure Months"},"emi_paise":{"anyOf":[{"type":"integer"},{"type":"null"}],"title":"Emi Paise"},"next_emi_date":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Next Emi Date"},"notes":{"anyOf":[{"type":"string"},{"type":"null"}],"title":"Notes"}},"type":"object","title":"LoanUpdate"},"MemberCreate":{"properties":{"name":{"type":"string","title":"Name"},"color":{"type":"string","title":"Color","default":"#6366F1"}},"type":"object","required":["name"],"title":"MemberCreate"},"PrepaymentRequest":{"properties":{"prepayment_paise":{"type":"integer","title":"Prepayment Paise"},"mode":{"type":"string","title":"Mode","default":"reduce_tenure"}},"type":"object","required":["prepayment_paise"],"title":"PrepaymentRequest"},"ValidationError":{"properties":{"loc":{"items":{"anyOf":[{"type":"string"},{"type":"integer"}]},"type":"array","title":"Location"},"msg":{"type":"string","title":"Message"},"type":{"type":"string","title":"Error Type"},"input":{"title":"Input"},"ctx":{"type":"object","title":"Context"}},"type":"object","required":["loc","msg","type"],"title":"ValidationError"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Personal Finance API",
+    "description": "REST API for personal finance tracker",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Basic health check endpoint.\n\nReturns 200 OK if the application is running.\nThis is a lightweight check that doesn't verify database connectivity.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Check Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "summary": "Readiness Check",
+        "description": "Readiness check endpoint.\n\nVerifies:\n- Database is reachable\n- Required directories exist\n- Essential files are present\n\nReturns 200 OK if all checks pass, 503 otherwise.",
+        "operationId": "readiness_check_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Readiness Check Ready Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Get Accounts",
+        "description": "Get all accounts with their computed balances.",
+        "operationId": "api_get_accounts_api_accounts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Get Accounts Api Accounts Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/{account_id}/balance": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Get Account Balance",
+        "description": "Get computed balance for an account.",
+        "operationId": "api_get_account_balance_api_accounts__account_id__balance_get",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Get Account Balance Api Accounts  Account Id  Balance Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/{account_id}/running-balance": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Get Account Running Balance",
+        "description": "Get running balance for an account.",
+        "operationId": "api_get_account_running_balance_api_accounts__account_id__running_balance_get",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "title": "Response Api Get Account Running Balance Api Accounts  Account Id  Running Balance Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audit/report": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Api Audit Report",
+        "description": "Run full ledger audit and return combined report.\n\nPhase 2C: Read-only integrity verification.\n\nReturns:\n    {\n        \"overall_status\": \"PASS\" or \"FAIL\",\n        \"ledger_integrity\": {...},\n        \"hash_verification\": {...}\n    }",
+        "operationId": "api_audit_report_api_audit_report_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Audit Report Api Audit Report Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/banks": {
+      "get": {
+        "tags": [
+          "banks"
+        ],
+        "summary": "Get Banks",
+        "description": "List all known banks from uploaded statements.\n\nReturns:\n    List of unique bank names",
+        "operationId": "get_banks_api_banks_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array",
+                  "title": "Response Get Banks Api Banks Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/behavior/summary": {
+      "get": {
+        "tags": [
+          "behavior"
+        ],
+        "summary": "Api Behavior Summary",
+        "description": "Get comprehensive behavioral profile.\n\nPhase 3: Advanced Behavioral Intelligence Layer.\n\nReturns:\n    {\n        \"temporal_patterns\": {...},\n        \"behavioral_indices\": {...},\n        \"risk_signals\": {...},\n        \"confidence\": float (0\u20131),\n        \"financial_health_score\": float (0\u2013100)\n    }",
+        "operationId": "api_behavior_summary_api_behavior_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Behavior Summary Api Behavior Summary Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/behavior/score": {
+      "get": {
+        "tags": [
+          "behavior"
+        ],
+        "summary": "Api Behavior Score",
+        "description": "Get financial health score with breakdown.\n\nPhase 3: Composite health score with component breakdown.\n\nReturns:\n    {\n        \"financial_health_score\": float (0\u2013100),\n        \"confidence\": float (0\u20131),\n        \"components\": {...},\n        \"summary\": str\n    }",
+        "operationId": "api_behavior_score_api_behavior_score_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Behavior Score Api Behavior Score Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/behavior/insights": {
+      "get": {
+        "tags": [
+          "behavior"
+        ],
+        "summary": "Api Behavior Insights",
+        "description": "Get behavioral insights and nudges.\n\nPhase 3: Evidence-based insights with actionable suggestions.\n\nReturns:\n    {\n        \"insights\": [...],\n        \"nudges\": [...],\n        \"top_nudge\": {...},\n        \"summary\": str\n    }",
+        "operationId": "api_behavior_insights_api_behavior_insights_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Behavior Insights Api Behavior Insights Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/statements": {
+      "get": {
+        "tags": [
+          "cards",
+          "statements"
+        ],
+        "summary": "Get Statements",
+        "description": "Get all statements with metadata.",
+        "operationId": "get_statements_api_statements_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Statements Api Statements Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cards": {
+      "get": {
+        "tags": [
+          "cards",
+          "statements"
+        ],
+        "summary": "Get Cards",
+        "description": "Returns credit cards with their latest statement summary.\nGroups statements by card_last4 and bank.\nReturns one entry per unique card with latest statement data.",
+        "operationId": "get_cards_api_cards_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Cards Api Cards Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/statements/{statement_id}/validate": {
+      "get": {
+        "tags": [
+          "cards",
+          "statements"
+        ],
+        "summary": "Api Validate Statement",
+        "description": "Validate a statement's closing balance against computed balance.",
+        "operationId": "api_validate_statement_api_statements__statement_id__validate_get",
+        "parameters": [
+          {
+            "name": "statement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Statement Id"
+            }
+          },
+          {
+            "name": "claimed_balance_paise",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Claimed closing balance in paise",
+              "title": "Claimed Balance Paise"
+            },
+            "description": "Claimed closing balance in paise"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Validate Statement Api Statements  Statement Id  Validate Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cashflow/monthly": {
+      "get": {
+        "tags": [
+          "cashflow"
+        ],
+        "summary": "Get Cashflow Monthly",
+        "description": "Returns month-by-month income and expense aggregation.\nAll monetary values in paise (INTEGER).",
+        "operationId": "get_cashflow_monthly_api_cashflow_monthly_get",
+        "parameters": [
+          {
+            "name": "months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "default": 6,
+              "title": "Months"
+            }
+          },
+          {
+            "name": "member",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Member"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Cashflow Monthly Api Cashflow Monthly Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/summary": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Api Dashboard Summary",
+        "description": "Get dashboard summary with behavior insights.\n\nReturns:\n- behavior_score: Financial health score (0-1)\n- spending_this_month: Total spending for current month\n- top_category: Most common spending category\n- insights: Personalized insights\n- nudges: Action recommendations\n- reconciliation_pending: Count of pending transfers\n- large_transactions: Significant transactions (>= \u20b910,000)",
+        "operationId": "api_dashboard_summary_api_dashboard_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/export/csv": {
+      "get": {
+        "tags": [
+          "export"
+        ],
+        "summary": "Export Csv",
+        "description": "Export transactions to CSV.",
+        "operationId": "export_csv_api_export_csv_get",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "bank",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Bank"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Type"
+            }
+          },
+          {
+            "name": "member",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Member"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "tags": [
+          "import"
+        ],
+        "summary": "Upload Statement",
+        "description": "Upload and process a PDF statement.",
+        "operationId": "upload_statement_api_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_statement_api_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Upload Statement Api Upload Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import/detect": {
+      "post": {
+        "tags": [
+          "import"
+        ],
+        "summary": "Import Detect",
+        "description": "Detect CSV/Excel format.",
+        "operationId": "import_detect_api_import_detect_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_detect_api_import_detect_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Import Detect Api Import Detect Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/import/execute": {
+      "post": {
+        "tags": [
+          "import"
+        ],
+        "summary": "Import Execute",
+        "description": "Execute CSV/Excel import.",
+        "operationId": "import_execute_api_import_execute_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportExecute"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Import Execute Api Import Execute Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/investments": {
+      "get": {
+        "tags": [
+          "investments"
+        ],
+        "summary": "Get Investments",
+        "description": "Get all investments with calculated returns.",
+        "operationId": "get_investments_api_investments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Investments Api Investments Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "investments"
+        ],
+        "summary": "Create Investment",
+        "description": "Create a new investment.",
+        "operationId": "create_investment_api_investments_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Investment Api Investments Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/investments/{investment_id}": {
+      "put": {
+        "tags": [
+          "investments"
+        ],
+        "summary": "Update Investment",
+        "description": "Update an investment.",
+        "operationId": "update_investment_api_investments__investment_id__put",
+        "parameters": [
+          {
+            "name": "investment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Investment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvestmentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Investment Api Investments  Investment Id  Put"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "investments"
+        ],
+        "summary": "Delete Investment",
+        "description": "Delete an investment.",
+        "operationId": "delete_investment_api_investments__investment_id__delete",
+        "parameters": [
+          {
+            "name": "investment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Investment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Delete Investment Api Investments  Investment Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans": {
+      "get": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Get Loans",
+        "description": "Get all active loans via LoanService.\n\nReturns array of loan objects directly (not wrapped in object).",
+        "operationId": "get_loans_api_loans_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Loans Api Loans Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Create Loan",
+        "description": "Create a new loan via LoanService.\n\nUses rate_bps as canonical field; converts to interest_rate for repository.",
+        "operationId": "create_loan_api_loans_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Loan Api Loans Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}": {
+      "get": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Get Loan",
+        "description": "Get loan details via LoanService.",
+        "operationId": "get_loan_api_loans__loan_id__get",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Loan Api Loans  Loan Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Update Loan",
+        "description": "Update loan via LoanService.",
+        "operationId": "update_loan_api_loans__loan_id__put",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Update Loan Api Loans  Loan Id  Put"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Delete Loan",
+        "description": "Soft delete loan via LoanService.",
+        "operationId": "delete_loan_api_loans__loan_id__delete",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Delete Loan Api Loans  Loan Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}/schedule": {
+      "get": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Get Loan Schedule",
+        "description": "Get amortization schedule via LoanService.\n\nReturns schedule with loan_id, emi_paise, total_interest_paise, and schedule rows.",
+        "operationId": "get_loan_schedule_api_loans__loan_id__schedule_get",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Loan Schedule Api Loans  Loan Id  Schedule Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}/prepayment-simulation": {
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Simulate Prepayment",
+        "description": "Simulate prepayment via LoanSimulationService.\n\nReturns spec-compliant response with original_interest_paise, new_interest_paise, etc.",
+        "operationId": "simulate_prepayment_api_loans__loan_id__prepayment_simulation_post",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PrepaymentSimulationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Simulate Prepayment Api Loans  Loan Id  Prepayment Simulation Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}/foreclosure-simulation": {
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Simulate Foreclosure",
+        "description": "Simulate foreclosure via LoanSimulationService.\n\nReturns spec-compliant response with outstanding_paise, penalty_paise, foreclosure_amount_paise.",
+        "operationId": "simulate_foreclosure_api_loans__loan_id__foreclosure_simulation_post",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Simulate Foreclosure Api Loans  Loan Id  Foreclosure Simulation Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}/rate-change-simulation": {
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Simulate Rate Change",
+        "description": "Simulate rate change via LoanSimulationService.\n\nUses request body instead of query params.",
+        "operationId": "simulate_rate_change_api_loans__loan_id__rate_change_simulation_post",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RateChangeSimulationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Simulate Rate Change Api Loans  Loan Id  Rate Change Simulation Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}/payments": {
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Record Loan Payment",
+        "description": "Record a loan payment via LoanService.",
+        "operationId": "record_loan_payment_api_loans__loan_id__payments_post",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Record Loan Payment Api Loans  Loan Id  Payments Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/analysis/priority": {
+      "get": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Get Loan Priority",
+        "description": "Get prepayment priority ranking via LoanAnalysisService.\n\nReturns array of recommendations matching spec format.",
+        "operationId": "get_loan_priority_api_loans_analysis_priority_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Get Loan Priority Api Loans Analysis Priority Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure": {
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Analyze Prepayment Vs Foreclosure",
+        "description": "Compare prepayment vs foreclosure via LoanAnalysisService.",
+        "operationId": "analyze_prepayment_vs_foreclosure_api_loans__loan_id__analysis_prepayment_vs_foreclosure_post",
+        "parameters": [
+          {
+            "name": "loan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Loan Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Analyze Prepayment Vs Foreclosure Api Loans  Loan Id  Analysis Prepayment Vs Foreclosure Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/loans/analysis/surplus-allocation": {
+      "post": {
+        "tags": [
+          "loans"
+        ],
+        "summary": "Analyze Surplus Allocation",
+        "description": "Analyze surplus allocation via LoanAnalysisService.",
+        "operationId": "analyze_surplus_allocation_api_loans_analysis_surplus_allocation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Analyze Surplus Allocation Api Loans Analysis Surplus Allocation Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/manage": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Get Managed Accounts",
+        "description": "Get all persistently stored accounts.",
+        "operationId": "api_get_managed_accounts_api_accounts_manage_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Get Managed Accounts Api Accounts Manage Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Create Managed Account",
+        "description": "Create a new persistent account.",
+        "operationId": "api_create_managed_account_api_accounts_manage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Create Managed Account Api Accounts Manage Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/accounts/manage/{account_id}": {
+      "put": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Update Managed Account",
+        "description": "Update an existing account.",
+        "operationId": "api_update_managed_account_api_accounts_manage__account_id__put",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Update Managed Account Api Accounts Manage  Account Id  Put"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Api Delete Managed Account",
+        "description": "Soft delete an account.",
+        "operationId": "api_delete_managed_account_api_accounts_manage__account_id__delete",
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Delete Managed Account Api Accounts Manage  Account Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/networth": {
+      "get": {
+        "tags": [
+          "networth"
+        ],
+        "summary": "Get Networth",
+        "description": "Compute net worth from all financial data.\n\nNet Worth = Assets - Liabilities\nAssets = account balances + investment current values\nLiabilities = loan outstanding + card outstanding",
+        "operationId": "get_networth_api_networth_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Networth Api Networth Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations": {
+      "get": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Get Reconciliations",
+        "description": "Get all reconciliations with transaction details.\n\nPhase 2B: Metadata-only, no ledger mutation.\n\nArgs:\n    status: Optional filter ('pending', 'confirmed', 'rejected')",
+        "operationId": "api_get_reconciliations_api_reconciliations_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Get Reconciliations Api Reconciliations Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations/pending": {
+      "get": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Get Pending Reconciliations",
+        "description": "Get all pending reconciliations.",
+        "operationId": "api_get_pending_reconciliations_api_reconciliations_pending_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Get Pending Reconciliations Api Reconciliations Pending Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations/scan": {
+      "get": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Scan Reconciliations",
+        "description": "Scan for potential transfer matches across accounts.\n\nPhase 2B.1: Deterministic matching with confidence scoring.\n\nReturns potential matches that can be saved as reconciliations.",
+        "operationId": "api_scan_reconciliations_api_reconciliations_scan_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Scan Reconciliations Api Reconciliations Scan Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations/create": {
+      "post": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Create Reconciliation",
+        "description": "Create a reconciliation record between two transactions.\n\nPhase 2B: Metadata-only, no ledger mutation.\nUses INSERT OR IGNORE for idempotency.",
+        "operationId": "api_create_reconciliation_api_reconciliations_create_post",
+        "parameters": [
+          {
+            "name": "debit_txn_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Debit transaction ID",
+              "title": "Debit Txn Id"
+            },
+            "description": "Debit transaction ID"
+          },
+          {
+            "name": "credit_txn_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "description": "Credit transaction ID",
+              "title": "Credit Txn Id"
+            },
+            "description": "Credit transaction ID"
+          },
+          {
+            "name": "debit_account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Debit account ID",
+              "title": "Debit Account Id"
+            },
+            "description": "Debit account ID"
+          },
+          {
+            "name": "credit_account_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Credit account ID",
+              "title": "Credit Account Id"
+            },
+            "description": "Credit account ID"
+          },
+          {
+            "name": "amount",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "description": "Matched amount in rupees",
+              "title": "Amount"
+            },
+            "description": "Matched amount in rupees"
+          },
+          {
+            "name": "date_diff_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "description": "Days between transaction dates",
+              "default": 0,
+              "title": "Date Diff Days"
+            },
+            "description": "Days between transaction dates"
+          },
+          {
+            "name": "match_confidence",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "description": "Confidence score 0.0-1.0",
+              "title": "Match Confidence"
+            },
+            "description": "Confidence score 0.0-1.0"
+          },
+          {
+            "name": "match_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "'exact', 'window', 'fuzzy', or 'manual'",
+              "default": "exact",
+              "title": "Match Type"
+            },
+            "description": "'exact', 'window', 'fuzzy', or 'manual'"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Create Reconciliation Api Reconciliations Create Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations/batch-insert": {
+      "post": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Batch Insert Reconciliations",
+        "description": "Scan and insert all potential matches as pending reconciliations.\n\nUses INSERT OR IGNORE for idempotency - existing records are not duplicated.",
+        "operationId": "api_batch_insert_reconciliations_api_reconciliations_batch_insert_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Batch Insert Reconciliations Api Reconciliations Batch Insert Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations/{reconciliation_id}/confirm": {
+      "post": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Confirm Reconciliation",
+        "description": "Confirm a pending reconciliation.\n\nPhase 2B: Updates reconciliation.status only. No ledger mutation.",
+        "operationId": "api_confirm_reconciliation_api_reconciliations__reconciliation_id__confirm_post",
+        "parameters": [
+          {
+            "name": "reconciliation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Reconciliation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Confirm Reconciliation Api Reconciliations  Reconciliation Id  Confirm Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliations/{reconciliation_id}/reject": {
+      "post": {
+        "tags": [
+          "reconciliation"
+        ],
+        "summary": "Api Reject Reconciliation",
+        "description": "Reject a pending reconciliation.\n\nPhase 2B: Updates reconciliation.status only. No ledger mutation.",
+        "operationId": "api_reject_reconciliation_api_reconciliations__reconciliation_id__reject_post",
+        "parameters": [
+          {
+            "name": "reconciliation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Reconciliation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Api Reject Reconciliation Api Reconciliations  Reconciliation Id  Reject Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "tags": [
+          "transactions"
+        ],
+        "summary": "Get Transactions",
+        "description": "Get transactions as Transaction domain models.\n\nFastAPI auto-serializes the Pydantic Transaction models (Money nested as paise).",
+        "operationId": "get_transactions_api_transactions_get",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "bank",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Bank"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Category"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Type"
+            }
+          },
+          {
+            "name": "member",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Member"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "title": "Response Get Transactions Api Transactions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/overview": {
+      "get": {
+        "tags": [
+          "transactions"
+        ],
+        "summary": "Get Overview",
+        "description": "Get overview metrics and charts.",
+        "operationId": "get_overview_api_overview_get",
+        "parameters": [
+          {
+            "name": "exclude_transfers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Exclude Transfers"
+            }
+          },
+          {
+            "name": "member",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Member"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Overview Api Overview Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": [
+          "transactions"
+        ],
+        "summary": "Get Categories",
+        "description": "Get category summary and breakdown.",
+        "operationId": "get_categories_api_categories_get",
+        "parameters": [
+          {
+            "name": "exclude_transfers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Exclude Transfers"
+            }
+          },
+          {
+            "name": "member",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Member"
+            }
+          },
+          {
+            "name": "drill_category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Drill Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Categories Api Categories Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/analytics": {
+      "get": {
+        "tags": [
+          "transactions"
+        ],
+        "summary": "Get Analytics",
+        "description": "Get analytics data.",
+        "operationId": "get_analytics_api_analytics_get",
+        "parameters": [
+          {
+            "name": "exclude_transfers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Exclude Transfers"
+            }
+          },
+          {
+            "name": "member",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "All",
+              "title": "Member"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Analytics Api Analytics Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members": {
+      "get": {
+        "tags": [
+          "members"
+        ],
+        "summary": "Get Members",
+        "description": "Get all members.\n\nReturns list of members who have transactions.",
+        "operationId": "get_members_api_members_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get Members Api Members Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "members"
+        ],
+        "summary": "Create Member",
+        "description": "Create a new member.\n\nArgs:\n    member: Member details\n\nReturns:\n    Success message and member id",
+        "operationId": "create_member_api_members_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Create Member Api Members Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "bank": {
+            "type": "string",
+            "title": "Bank"
+          },
+          "account_type": {
+            "type": "string",
+            "title": "Account Type",
+            "default": "savings"
+          },
+          "balance_paise": {
+            "type": "integer",
+            "title": "Balance Paise"
+          },
+          "account_number_last4": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number Last4"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "bank",
+          "balance_paise"
+        ],
+        "title": "AccountCreate",
+        "description": "Account creation request."
+      },
+      "AccountUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "bank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank"
+          },
+          "account_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Type"
+          },
+          "balance_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Balance Paise"
+          },
+          "account_number_last4": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number Last4"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "AccountUpdate",
+        "description": "Account update request."
+      },
+      "Body_import_detect_api_import_detect_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_import_detect_api_import_detect_post"
+      },
+      "Body_upload_statement_api_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "title": "File"
+          },
+          "member": {
+            "type": "string",
+            "title": "Member",
+            "default": "Self"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_statement_api_upload_post"
+      },
+      "DashboardSummary": {
+        "properties": {
+          "behavior_score": {
+            "type": "number",
+            "title": "Behavior Score"
+          },
+          "spending_this_month": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "top_category": {
+            "type": "string",
+            "title": "Top Category"
+          },
+          "insights": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Insights"
+          },
+          "nudges": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Nudges"
+          },
+          "reconciliation_pending": {
+            "type": "integer",
+            "title": "Reconciliation Pending"
+          },
+          "large_transactions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Large Transactions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "behavior_score",
+          "spending_this_month",
+          "top_category",
+          "insights",
+          "nudges",
+          "reconciliation_pending",
+          "large_transactions"
+        ],
+        "title": "DashboardSummary",
+        "description": "Dashboard summary response."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImportExecute": {
+        "properties": {
+          "filename": {
+            "type": "string",
+            "title": "Filename"
+          },
+          "mapping": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Mapping"
+          },
+          "member": {
+            "type": "string",
+            "title": "Member",
+            "default": "Self"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filename",
+          "mapping"
+        ],
+        "title": "ImportExecute",
+        "description": "Pydantic model for import execute request."
+      },
+      "InvestmentCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "investment_type": {
+            "type": "string",
+            "title": "Investment Type"
+          },
+          "invested_paise": {
+            "type": "integer",
+            "title": "Invested Paise"
+          },
+          "current_value_paise": {
+            "type": "integer",
+            "title": "Current Value Paise"
+          },
+          "as_of_date": {
+            "type": "string",
+            "title": "As Of Date"
+          },
+          "units": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Units"
+          },
+          "buy_price_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buy Price Paise"
+          },
+          "current_price_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Price Paise"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "investment_type",
+          "invested_paise",
+          "current_value_paise",
+          "as_of_date"
+        ],
+        "title": "InvestmentCreate",
+        "description": "Investment creation request."
+      },
+      "InvestmentUpdate": {
+        "properties": {
+          "units": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Units"
+          },
+          "current_price_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Price Paise"
+          },
+          "current_value_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Value Paise"
+          },
+          "as_of_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of Date"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "InvestmentUpdate",
+        "description": "Investment update request."
+      },
+      "LoanCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "lender": {
+            "type": "string",
+            "title": "Lender"
+          },
+          "loan_type": {
+            "type": "string",
+            "title": "Loan Type",
+            "description": "Loan type: personal | home | vehicle | education | gold | other",
+            "default": "personal"
+          },
+          "principal_paise": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Principal Paise",
+            "description": "Principal amount in paise (must be > 0)"
+          },
+          "rate_bps": {
+            "type": "integer",
+            "maximum": 5000.0,
+            "minimum": 0.0,
+            "title": "Rate Bps",
+            "description": "Annual interest rate in basis points (0-5000)"
+          },
+          "tenure_months": {
+            "type": "integer",
+            "maximum": 360.0,
+            "minimum": 1.0,
+            "title": "Tenure Months",
+            "description": "Tenure in months (1-360)"
+          },
+          "disbursed_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Disbursed Date",
+            "description": "ISO 8601 date string"
+          },
+          "emi_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emi Paise"
+          },
+          "outstanding_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outstanding Paise"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "lender",
+          "principal_paise",
+          "rate_bps",
+          "tenure_months",
+          "disbursed_date"
+        ],
+        "title": "LoanCreateRequest",
+        "description": "Loan creation request matching Phase 5 API spec."
+      },
+      "LoanUpdateRequest": {
+        "properties": {
+          "outstanding_paise": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outstanding Paise"
+          },
+          "rate_bps": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Bps"
+          },
+          "tenure_months": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 360.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tenure Months"
+          },
+          "emi_paise": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Emi Paise"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "title": "LoanUpdateRequest",
+        "description": "Loan update request matching Phase 5 API spec."
+      },
+      "MemberCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color",
+            "default": "#6366F1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "MemberCreate",
+        "description": "Member creation request."
+      },
+      "Money": {
+        "properties": {
+          "paise": {
+            "type": "integer",
+            "title": "Paise"
+          }
+        },
+        "type": "object",
+        "required": [
+          "paise"
+        ],
+        "title": "Money",
+        "description": "Money value in paise (\u20b91.00 = 100 paise)"
+      },
+      "PaymentRequest": {
+        "properties": {
+          "amount_paise": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount Paise",
+            "description": "Payment amount in paise"
+          },
+          "payment_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "title": "Payment Date",
+            "description": "ISO 8601 date"
+          },
+          "principal_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Principal Paise"
+          },
+          "interest_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Interest Paise"
+          },
+          "late_fee_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Late Fee Paise"
+          },
+          "source_account_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Account Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount_paise",
+          "payment_date"
+        ],
+        "title": "PaymentRequest",
+        "description": "Record payment request model."
+      },
+      "PrepaymentMode": {
+        "type": "string",
+        "enum": [
+          "reduce_tenure",
+          "reduce_emi"
+        ],
+        "title": "PrepaymentMode",
+        "description": "Prepayment behavior modes."
+      },
+      "PrepaymentSimulationRequest": {
+        "properties": {
+          "amount_paise": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Amount Paise",
+            "description": "Prepayment amount in paise"
+          },
+          "month": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Month",
+            "description": "Month number for prepayment",
+            "default": 1
+          },
+          "mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PrepaymentMode"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Mode",
+            "default": "reduce_tenure"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount_paise"
+        ],
+        "title": "PrepaymentSimulationRequest",
+        "description": "Prepayment simulation request."
+      },
+      "RateChangeSimulationRequest": {
+        "properties": {
+          "month": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Month",
+            "description": "Month number when rate changes"
+          },
+          "new_rate_bps": {
+            "type": "integer",
+            "maximum": 5000.0,
+            "minimum": 0.0,
+            "title": "New Rate Bps",
+            "description": "New annual rate in basis points (0-5000)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "new_rate_bps"
+        ],
+        "title": "RateChangeSimulationRequest",
+        "description": "Rate change simulation request."
+      },
+      "Transaction": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "statement_id": {
+            "type": "integer",
+            "title": "Statement Id"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
+          },
+          "member": {
+            "type": "string",
+            "title": "Member"
+          },
+          "bank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "statement_id",
+          "date",
+          "description",
+          "amount",
+          "category",
+          "member"
+        ],
+        "title": "Transaction",
+        "description": "Transaction domain entity"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
