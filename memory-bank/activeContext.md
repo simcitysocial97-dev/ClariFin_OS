@@ -91,4 +91,14 @@
 - All functions pure, integer paise inputs, Decimal outputs
 - Validation: 23 tests passing, ruff clean, mypy clean on source files
 
+### Behaviour Engine Phase 3 — Pattern Detection (COMPLETE)
+- Created `patterns.py` with 5 pattern detection functions:
+  - `detect_impulse_transactions` — weekend/night spending on shopping/food/entertainment
+  - `compute_weekend_spend_ratio` — ratio of weekend spending to total
+  - `compute_night_spend_ratio` — ratio of night-time spending (requires time_iso)
+  - `detect_recurring_merchants` — merchants appearing across multiple months
+  - `detect_subscription_patterns` — same-day/same-amount recurring patterns
+- All functions accept optional `time_iso` field for future time-based detection
+- Validation: 17 tests passing, ruff clean, mypy clean on source files
+
 ### Remaining Work
