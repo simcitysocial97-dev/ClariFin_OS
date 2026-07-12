@@ -1,4 +1,4 @@
-"""Behaviour Engine — Core, Debt and Pattern Detection.
+"""Behaviour Engine — Core, Debt, Pattern Detection, and Income Intelligence.
 
 Deterministic behavioural metrics for financial analysis.
 All monetary values are integers in paise (₹1.00 = 100 paise).
@@ -10,6 +10,7 @@ Structure:
 - lifestyle.py — Lifestyle inflation, lifestyle creep index
 - debt.py — Credit dependency, debt cycle, FOIR, revolver ratio
 - patterns.py — Impulse detection, weekend/night ratios, recurring merchants, subscriptions
+- income.py — Income source classification, diversification score
 - utils.py — Shared helper functions (median, variance, coefficient of variation)
 
 All functions are pure - no database access.
@@ -25,6 +26,13 @@ from .debt import (
     compute_credit_revolver_ratio,
     compute_debt_cycle_score,
     compute_foir,
+)
+from .income import (
+    classify_income_source,
+    compute_income_diversification_score,
+    compute_salary_dependence_ratio,
+    compute_true_income_total,
+    filter_true_income,
 )
 from .lifestyle import (
     compute_lifestyle_creep_index,
@@ -73,4 +81,10 @@ __all__ = [
     "compute_night_spend_ratio",
     "detect_recurring_merchants",
     "detect_subscription_patterns",
+    # Income Intelligence
+    "classify_income_source",
+    "compute_income_diversification_score",
+    "compute_salary_dependence_ratio",
+    "compute_true_income_total",
+    "filter_true_income",
 ]

@@ -101,4 +101,19 @@
 - All functions accept optional `time_iso` field for future time-based detection
 - Validation: 17 tests passing, ruff clean, mypy clean on source files
 
+### Behaviour Engine Phase 4 — Income Intelligence (COMPLETE)
+- Created `backend/src/engines/behaviour_engine/income.py` with income analysis functions:
+  - `classify_income_source()` — Classifies transactions into SALARY, BUSINESS, INVESTMENT, TRANSFER, REFUND, BORROWING, or UNKNOWN with confidence scoring
+  - `compute_salary_dependence_ratio()` — Ratio of salary income to total true income
+  - `compute_income_diversification_score()` — Score based on unique true income sources (salary/business/investment)
+  - `filter_true_income()` — Filters out TRANSFER/REFUND/BORROWING from income transactions
+  - `compute_true_income_total()` — Sum of true income amounts
+- Updated `backend/src/engines/behaviour_engine/__init__.py` to export income functions
+- Created `backend/tests/test_behaviour_engine_income.py` with 40 tests covering:
+  - All income classification categories
+  - Salary dependence ratio calculations
+  - Income diversification scoring (excludes non-true income)
+  - Edge cases and determinism
+- Validation: ruff clean, mypy clean on source files, 40 pytest tests passing
+
 ### Remaining Work
