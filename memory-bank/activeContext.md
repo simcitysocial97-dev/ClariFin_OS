@@ -129,4 +129,14 @@
   - Uneven balances (volatility and low balance risk tests)
 - Validation: ruff clean, mypy clean on source files, 33 pytest tests passing
 
+### Behaviour Engine Phase 6 — Financial Personality Classification (COMPLETE)
+- Created `backend/src/engines/behaviour_engine/profile.py` with personality classification
+- Implemented `classify_financial_personality()` returning (profile, confidence, explanation)
+- Five personality profiles: SAVER, BALANCED, SPENDER, DEBT_OPTIMIZER, DEBT_DEPENDENT
+- Classification priority: DEBT_DEPENDENT > SAVER > DEBT_OPTIMIZER > SPENDER > BALANCED
+- Confidence calculation based on strong conditions, secondary conditions, and transaction volume
+- Updated `backend/src/engines/behaviour_engine/__init__.py` to export the function
+- Created `backend/tests/test_behaviour_engine_profile.py` with 27 tests covering all profiles
+- Validation: ruff clean, mypy clean on source files, 27 pytest tests passing
+
 ### Remaining Work

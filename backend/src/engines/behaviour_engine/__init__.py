@@ -12,6 +12,7 @@ Structure:
 - patterns.py — Impulse detection, weekend/night ratios, recurring merchants, subscriptions
 - income.py — Income source classification, diversification score
 - account.py — Account concentration, idle cash, balance volatility, low balance risk
+- profile.py — Financial personality classification (SAVER, BALANCED, SPENDER, DEBT_OPTIMIZER, DEBT_DEPENDENT)
 - utils.py — Shared helper functions (median, variance, coefficient of variation)
 
 All functions are pure - no database access.
@@ -52,6 +53,7 @@ from .patterns import (
     detect_recurring_merchants,
     detect_subscription_patterns,
 )
+from .profile import classify_financial_personality
 from .resilience import (
     compute_liquidity_months,
     compute_resilience_index,
@@ -99,4 +101,6 @@ __all__ = [
     "compute_idle_cash_amount",
     "detect_balance_volatility",
     "detect_low_balance_risk",
+    # Profile Classification
+    "classify_financial_personality",
 ]
