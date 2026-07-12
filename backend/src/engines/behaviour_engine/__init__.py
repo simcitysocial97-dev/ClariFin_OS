@@ -1,4 +1,4 @@
-"""Behaviour Engine — Core, Debt, Pattern Detection, and Income Intelligence.
+"""Behaviour Engine — Core, Debt, Pattern Detection, Income Intelligence, and Account Intelligence.
 
 Deterministic behavioural metrics for financial analysis.
 All monetary values are integers in paise (₹1.00 = 100 paise).
@@ -11,11 +11,18 @@ Structure:
 - debt.py — Credit dependency, debt cycle, FOIR, revolver ratio
 - patterns.py — Impulse detection, weekend/night ratios, recurring merchants, subscriptions
 - income.py — Income source classification, diversification score
+- account.py — Account concentration, idle cash, balance volatility, low balance risk
 - utils.py — Shared helper functions (median, variance, coefficient of variation)
 
 All functions are pure - no database access.
 """
 
+from .account import (
+    compute_account_concentration,
+    compute_idle_cash_amount,
+    detect_balance_volatility,
+    detect_low_balance_risk,
+)
 from .cashflow import (
     compute_cashflow_stability_index,
     compute_expense_stability,
@@ -87,4 +94,9 @@ __all__ = [
     "compute_salary_dependence_ratio",
     "compute_true_income_total",
     "filter_true_income",
+    # Account Intelligence
+    "compute_account_concentration",
+    "compute_idle_cash_amount",
+    "detect_balance_volatility",
+    "detect_low_balance_risk",
 ]

@@ -116,4 +116,17 @@
   - Edge cases and determinism
 - Validation: ruff clean, mypy clean on source files, 40 pytest tests passing
 
+### Behaviour Engine Phase 5 — Account Intelligence (COMPLETE)
+- Created `backend/src/engines/behaviour_engine/account.py` with 4 account analysis functions:
+  - `compute_account_concentration()` — Ratio of largest liquid account balance to total liquid assets
+  - `compute_idle_cash_amount()` — Detects idle cash based on loan/deposit rate differential (default 300bps threshold)
+  - `detect_balance_volatility()` — Uses coefficient of variation on monthly balance history
+  - `detect_low_balance_risk()` — Risk score (0-1) based on essential expenses coverage
+- Updated `backend/src/engines/behaviour_engine/__init__.py` to export account functions
+- Created `backend/tests/test_behaviour_engine_account.py` with 33 tests covering:
+  - Multiple savings accounts (concentration analysis)
+  - Idle funds detection (opportunity cost scenarios)
+  - Uneven balances (volatility and low balance risk tests)
+- Validation: ruff clean, mypy clean on source files, 33 pytest tests passing
+
 ### Remaining Work
