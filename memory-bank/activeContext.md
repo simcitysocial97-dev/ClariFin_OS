@@ -1,6 +1,6 @@
 # Active Context
 
-## Current Phase: Phase 2 — Account Engine Persistence (COMPLETE)
+## Current Phase: Phase 3 — Service Layer (COMPLETE)
 
 ### Phase 1 Completion (Reference)
 **Engine Layer** (`src/engines/account_engine/`)
@@ -29,10 +29,25 @@
 - `test_institution_repository.py` — 7 tests for CRUD operations
 - `test_account_link_repository.py` — 7 tests for link operations
 
+### Phase 3 Implementation Summary
+
+**Service Layer** (`src/services/account_service.py`)
+- CRUD methods: `create_account()`, `get_account()`, `list_accounts()`, `update_account()`, `deactivate_account()`
+- Balance snapshot methods: `insert_balance_snapshot()` (with validation), `get_balance_history()`, `get_latest_balance()`
+- Balance analytics (engine delegation): `calculate_average_balance()`, `calculate_balance_change()`, `calculate_balance_growth()`, `calculate_balance_trend()`, `calculate_balance_velocity()`
+- Cash flow (engine delegation): `calculate_cash_flow()` with balance history proxy
+- Dormancy (engine delegation): `get_account_status()`, `is_account_dormant()`
+- Metrics (engine delegation): `get_account_metrics()`
+- Institution orchestration: `create_institution()`, `get_institution()`, `list_institutions()`, `update_institution()`
+- Account linking: `link_accounts()` (with validation), `unlink_accounts()`, `get_linked_accounts()`
+
+**Tests**
+- `test_account_service.py` — 17 mocked tests verifying repository and engine delegation
+
 ### Validation Results
 - ruff: All checks passed
-- mypy: No issues found in 4 source files
-- pytest: 21 repository tests passing
+- mypy: No issues found in 2 source files
+- pytest: 17 service tests passing
 
 ### Next Phase
-- Service Layer (AccountService, AccountHealthService)
+- Router Layer integration (account_router endpoints)
