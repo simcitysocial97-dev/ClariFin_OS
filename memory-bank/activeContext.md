@@ -1,9 +1,47 @@
 # Active Context
 
-## Current Phase: Behaviour Engine Phase 7 — Financial Wellness Score (COMPLETE)
+## Current Phase: Behaviour Engine Phase 8 — Persistence Layer (COMPLETE)
 
-### Phase 7 Implementation Summary
+### Phase 8 Implementation Summary
 
+**Database Schema Migration** (`backend/scripts/migration_005_behaviour_engine.py`)
+- Created 4 new tables: `behaviour_snapshots`, `behaviour_patterns`, `behaviour_alerts`, `financial_profiles`
+- All scores stored as INTEGER basis points (bps) for precision (10000 = 1.0)
+- Added version column to behaviour_snapshots for future schema changes
+- Added alert_code column to behaviour_alerts for unique alert identification
+- Added config_json and metadata_json fields for extensibility
+- Created comprehensive indexes for performance optimization
+- Migration is idempotent with IF NOT EXISTS clauses
+
+**Repository Layer** (`backend/src/repositories/`)
+- Created `alert_repository.py` for behaviour alert operations
+- Created `behaviour_repository.py` for behaviour snapshot operations
+- Created `pattern_repository.py` for behaviour pattern operations
+- All repositories inherit from BaseRepository and follow the same patterns
+- Implemented CRUD operations with proper data mapping and type conversion
+- Added household_id support with 'default' as the default value
+- Implemented basis points to Decimal conversion for all score fields
+- Added comprehensive query methods for different use cases
+
+**Test Coverage** (`backend/tests/`)
+- Created `test_behaviour_repository.py` with 6 comprehensive test functions
+- Created `test_alert_repository.py` with 7 comprehensive test functions
+- Created `test_pattern_repository.py` with 8 comprehensive test functions
+- Tests cover CRUD operations, constraints, isolation, and edge cases
+- All tests use temporary databases for isolation
+- Tests verify basis points conversion and data mapping
+
+### Key Design Decisions
+
+1. **Monetary Precision**: All monetary values stored as INTEGER paise, all scores stored as INTEGER basis points
+2. **Household Support**: Added household_id column with 'default' as default value for future multi-user support
+3. **Extensibility**: Added JSON fields (config_json, metadata_json) for additional configuration without schema changes
+4. **Versioning**: Added version column to behaviour_snapshots for future algorithm changes
+5. **Alert Management**: Added alert_code for unique alert identification and resolution tracking
+
+### Previous Phases (Reference)
+
+#### Phase 7 Completion (Reference)
 **Wellness Scoring Engine** (`backend/src/engines/behaviour_engine/wellness.py`)
 - Implemented `compute_wellness_score()` function with composite scoring formula:
   - 30% Cashflow Health: cashflow_stability (0-1)
@@ -22,51 +60,17 @@
 - All monetary values are integers in paise (₹1.00 = 100 paise)
 - Functions are pure - no database access
 
-**Tests**
-- Created `backend/tests/test_behaviour_engine_wellness.py` with 20 comprehensive tests
-- Test categories: score calculation, band classification, boundary conditions, determinism
-- All 20 tests passing, validation: ruff clean, mypy clean
-
-### Previous Phases (Reference)
-
-#### Phase 1 Completion (Reference)
-**Engine Layer** (`src/engines/account_engine/`)
-- `lifecycle.py` — Account status transitions (ACTIVE/DORMANT/CLOSED)
-- `dormant.py` — Dormancy detection (days since activity, configurable threshold)
-- `balance.py` — Average balance, balance change, growth percentage (basis points)
-- `cashflow.py` — Net flow, daily rate, income/expense ratio (basis points)
-- `history.py` — Balance trend (IMPROVING/STABLE/DECLINING), velocity (paise/day)
-- `metrics.py` — Aggregate deterministic account metrics
-
 #### Behaviour Engine Phase 0 — Architecture Preparation (COMPLETE)
 - Created `backend/docs/behaviour_engine_architecture.md` with input data sources, service boundaries, repository dependencies, and engine responsibilities
 - Created `backend/src/models/financial_event.py` with FinancialEvent DTO, EventType Literal, FinancialEventBatch, and BehaviourInput interfaces
 
-#### Behaviour Engine Phase 1 — Core Metrics (COMPLETE)
-- Created `backend/src/engines/behaviour_engine/` package with pure functions
-- Five metric modules: `utils.py`, `savings.py`, `cashflow.py`, `resilience.py`, `lifestyle.py`
-- 10 functions for savings, cashflow, resilience, and lifestyle analysis
-
-#### Behaviour Engine Phase 2 — Debt Intelligence (COMPLETE)
-- Added debt metrics: `compute_credit_dependency_ratio`, `compute_debt_cycle_score`, `compute_foir`, `compute_credit_revolver_ratio`
-
-#### Behaviour Engine Phase 3 — Pattern Detection (COMPLETE)
-- Created `patterns.py` with 5 pattern detection functions for impulse transactions, recurring merchants, and subscription patterns
-
-#### Behaviour Engine Phase 4 — Income Intelligence (COMPLETE)
-- Created `income.py` with income classification and diversification analysis functions
-
-#### Behaviour Engine Phase 5 — Account Intelligence (COMPLETE)
-- Created `account.py` with account concentration, idle cash detection, and balance volatility analysis
-
-#### Behaviour Engine Phase 6 — Financial Personality Classification (COMPLETE)
-- Created `profile.py` with `classify_financial_personality()` function for 5 personality profiles
-
 ### Next Steps
-- Integrate wellness scoring into the behaviour engine service layer
-- Create API endpoints for wellness score retrieval and classification
-- Update frontend dashboard to display wellness scores and bands
-- Implement wellness score trend analysis over time
+
+1. **Service Layer Integration**: Create BehaviourService to orchestrate repository calls and engine functions
+2. **API Endpoints**: Implement API endpoints for behaviour data retrieval and alert management
+3. **Frontend Integration**: Update frontend to display behaviour patterns, alerts, and financial profiles
+4. **Data Pipeline**: Create scheduled jobs to generate daily behaviour snapshots and detect patterns
+5. **Alert Processing**: Implement alert generation and notification system
 
 ### CGC MCP Verification (Completed)
 
