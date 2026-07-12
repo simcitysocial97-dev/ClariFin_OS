@@ -62,3 +62,23 @@ Run these terminal validation checks immediately after *any* file modification:
 - Routers MUST NOT import FinanceDB or get_db().
 - Engines MUST NOT import FinanceDB.
 - If FinanceDB import is detected outside repositories/, refactor immediately.
+
+---
+
+## 7. CGC MCP PRIORITY RULE (Token Efficiency)
+
+**ALWAYS use CGC MCP tools BEFORE read_file or grep for code discovery:**
+
+| When to Use | Tool | Reason |
+|-------------|------|--------|
+| Finding symbol definitions | `find_code("SymbolName")` | Returns full source code in `source` field (INDEX_SOURCE=true) |
+| Finding callers/callees | `analyze_code_relationships` | Traces code flow without reading multiple files |
+| Complex queries | `execute_cypher_query` | Extracts precise data via graph traversal |
+| Module dependencies | `module_deps` | Understands import relationships |
+| Inheritance | `class_hierarchy` | Shows parent/child class relationships |
+
+**Fallback only if CGC returns no results:**
+- Use `read_file` only when CGC explicitly fails to find the symbol
+- Use `grep`/`read_file` for non-code files (configs, docs, logs)
+
+**Scip indexer is enabled** for Python, TypeScript, JavaScript - AST-level precision.

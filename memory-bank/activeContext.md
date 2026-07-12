@@ -140,3 +140,30 @@
 - Validation: ruff clean, mypy clean on source files, 27 pytest tests passing
 
 ### Remaining Work
+
+---
+
+## CGC MCP Verification (Completed)
+
+**Status:** CodeGraphContext MCP server is fully operational.
+
+**Indexing Statistics:**
+- 358 files indexed
+- 2,790 functions parsed
+- 249 classes extracted
+- 1,590 parameters captured
+- TypeScript interfaces indexed (10+ including Transaction, Money, StatementValidation)
+
+**Tools Verified:**
+- ✅ `find_code("SymbolName")` - Returns full source code with INDEX_SOURCE=true
+- ✅ `execute_cypher_query` - Working for graph traversal
+- ✅ `find_dead_code` - Identifies potentially unused functions
+- ✅ `analyze_code_relationships` - NOW WORKING (was socket error, resolved automatically)
+
+**Relationship Graph Stats:**
+- 108 CALLS relationships between functions found
+- Relationship types available: CALLS, IMPORTS, HAS_PARAMETER, INHERITS, CONTAINS
+
+**Changes Applied:**
+- Added CGC MCP priority rule to `.clinerules` (Section 7)
+- Updated `servers/.mcp.json` with CGC MCP server configuration
