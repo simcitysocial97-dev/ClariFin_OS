@@ -77,8 +77,9 @@
 ### Behaviour Engine Phase 1 — Core Metrics (COMPLETE)
 - Created `backend/src/engines/behaviour_engine/` package with pure functions
 - Five metric modules: `utils.py`, `savings.py`, `cashflow.py`, `resilience.py`, `lifestyle.py`
-- 8 functions: `compute_true_savings_rate`, `compute_borrowed_lifestyle_ratio`, `compute_monthly_surplus`, `compute_income_stability`, `compute_expense_stability`, `compute_cashflow_stability_index`, `compute_liquidity_months`, `compute_resilience_index`, `compute_lifestyle_inflation`, `compute_lifestyle_creep_index`
+- 10 functions: `compute_true_savings_rate`, `compute_borrowed_lifestyle_ratio`, `compute_monthly_surplus`, `compute_income_stability`, `compute_expense_stability`, `compute_cashflow_stability_index`, `compute_liquidity_months`, `compute_resilience_index`, `compute_lifestyle_inflation`, `compute_lifestyle_creep_index`
 - All functions use integer paise for monetary inputs, Decimal for percentage outputs
 - Validation: ruff clean, mypy clean on source files, 54 pytest tests passing
 
 ### Remaining Work
+- Integration with Reconciliation layer for actual cash flow aggregation
