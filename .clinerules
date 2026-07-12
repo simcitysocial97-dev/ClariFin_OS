@@ -14,14 +14,20 @@ You must manage the memory bank autonomously. **Do not wait for the user to tell
 ---
 
 ## 2. WORKSPACE & CGC MCP PROTOCOL
+
 - **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) for ALL code discovery. CGC is configured with INDEX_SOURCE=true, meaning `find_code` returns COMPLETE source code in the `source` field. DO NOT call `read_file` after `find_code` - the source is already available.
+
+- **FalkorDB Query Rules:** The graph uses FalkorDB (NOT SQLite). NEVER use `sqlite3` commands, SQL syntax, or relational DB tools to query `~/.codegraphcontext/global/db/falkordb`. ALWAYS use Cypher syntax via `execute_cypher_query`.
+
 - **CGC Relationship Queries:** Use `analyze_code_relationships` to find callers/callees before reading files. This prevents reading multiple files to trace code flow.
   - Use `find_callers` to find who calls a function
   - Use `find_callees` to find what a function calls
   - Use `class_hierarchy` to understand inheritance
-- **CGC Cypher Queries:** For complex queries (inheritance, module dependencies, cross-cutting concerns), use `execute_cypher_query` to extract precise data without file reads.
-  - Example: `MATCH (c:Class {name: 'FinanceDB'})-[:INHERITS]->(p:Class) RETURN p.name`
-  - Example: `MATCH (f:Function) WHERE f.name CONTAINS 'transaction' RETURN f.name, f.path`
+
+- **CGC Cypher Queries:** For complex queries (inheritance, module dependencies, cross-cutting concerns), use `execute_cypher_query` with Cypher patterns:
+  - `MATCH (c:Class {name: 'FinanceDB'})-[:INHERITS]->(p:Class) RETURN p.name`
+  - `MATCH (f:Function)-[:CALLS]->(c) WHERE f.name CONTAINS 'transaction' RETURN c.name, c.path`
+
 - **Git Commit Protocol:** After passing validation and updating `activeContext.md`, execute:
   1. `git add -A`
   2. `git commit -m "[type]: [description]"` (semantic style)
@@ -52,7 +58,7 @@ Run these terminal validation checks immediately after *any* file modification:
 - **Next.js Conventions:** Prepend component files with `'use client'` *only* if they require state or user interaction hooks (e.g., onClick). Otherwise, default to lean Server Components. Use dynamic structural routing parameters (`app/reconciliation/[id]/page.tsx`).
 - **Strict Code Limitations:** 
   - NEVER use `as any`, `@ts-ignore`, or `@ts-nocheck` in TypeScript.
-  - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`. Parse debug queries using: `./venv/bin/python3 -c "import sqlite3; ..."`
+  - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`.
 
 ---
 
@@ -65,20 +71,16 @@ Run these terminal validation checks immediately after *any* file modification:
 
 ---
 
-## 7. CGC MCP PRIORITY RULE (Token Efficiency)
+## 7. GRAPH DATABASE & FALKORDB QUERY RULES
 
-**ALWAYS use CGC MCP tools BEFORE read_file or grep for code discovery:**
+The project utilizes **FalkorDB** via CodeGraphContext (CGC) for code relationships and semantic indexing.
 
-| When to Use | Tool | Reason |
-|-------------|------|--------|
-| Finding symbol definitions | `find_code("SymbolName")` | Returns full source code in `source` field (INDEX_SOURCE=true) |
-| Finding callers/callees | `analyze_code_relationships` | Traces code flow without reading multiple files |
-| Complex queries | `execute_cypher_query` | Extracts precise data via graph traversal |
-| Module dependencies | `module_deps` | Understands import relationships |
-| Inheritance | `class_hierarchy` | Shows parent/child class relationships |
-
-**Fallback only if CGC returns no results:**
-- Use `read_file` only when CGC explicitly fails to find the symbol
-- Use `grep`/`read_file` for non-code files (configs, docs, logs)
-
-**Scip indexer is enabled** for Python, TypeScript, JavaScript - AST-level precision.
+- ❌ **NEVER** attempt to use `sqlite3` commands, SQL syntax, or relational DB tools to query the code graph.
+- ⚠️ **DO NOT** assume standard SQL tables exist for codebase relationships.
+- ✅ **ALWAYS** use **Cypher query syntax** when interacting with the graph via `execute_cypher_query`.
+- ✅ **Nodes Available:** `Class`, `Interface`, `Function`, `Module`, `Variable`, `Parameter`, `File`, `Directory`, `Repository`.
+- ✅ **Relationship Types:** `CALLS`, `IMPORTS`, `HAS_PARAMETER`, `INHERITS`, `CONTAINS`.
+- ✅ **Example Cypher Patterns:**
+  - Find callers: `MATCH (f:Function)-[:CALLS]->(c:Function) WHERE f.name = 'FinanceDB' RETURN c`
+  - Find class relationships: `MATCH (c:Class)-[:INHERITS]->(p) RETURN c.name, p.name`
+  - Module imports: `MATCH (m:Module)-[:IMPORTS]->(m2) RETURN m.name, m2.name`
