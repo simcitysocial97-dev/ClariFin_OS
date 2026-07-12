@@ -152,13 +152,102 @@ class AccountRepository(BaseRepository):
         return self.get_account_by_id(account_id)
 
     def delete_account(self, account_id: int | str) -> bool:
-        """Soft delete an account."""
+        """Soft delete an account. Alias for deactivate_account()."""
+        return self.deactivate_account(account_id)
+
+    # ============================================================
+    # Additional Filtering Methods (Phase 2)
+    # ============================================================
+
+    def get_accounts_by_type(self, account_type: str) -> list[dict[str, Any]]:
+        """Get all active accounts filtered by account type."""
+        with self._get_conn() as conn:
+            cur = conn.execute("PRAGMA table_info(accounts)")
+            columns = [row[1] for row in cur.fetchall()]
+
+            if "bank" in columns:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank, account_type, account_number_last4,
+                           balance_paise, is_active, created_at, updated_at
+                    FROM accounts
+                    WHERE is_active = 1 AND account_type = ?
+                    ORDER BY bank, name
+                    """,
+                    (account_type,),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank_name, account_type, account_number_masked,
+                           balance_paise, is_active, created_at, updated_at
+                    FROM accounts
+                    WHERE is_active = 1 AND account_type = ?
+                    ORDER BY bank_name, name
+                    """,
+                    (account_type,),
+                ).fetchall()
+
+            result = []
+            for r in rows:
+                d = dict(r)
+                d["bank"] = d.pop("bank_name", d.get("bank"))
+                d["account_number_last4"] = d.pop(
+                    "account_number_masked", d.get("account_number_last4")
+                )
+                result.append(d)
+        return result
+
+    def get_accounts_by_institution(self, bank: str) -> list[dict[str, Any]]:
+        """Get all active accounts filtered by bank/institution."""
+        with self._get_conn() as conn:
+            cur = conn.execute("PRAGMA table_info(accounts)")
+            columns = [row[1] for row in cur.fetchall()]
+
+            if "bank" in columns:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank, account_type, account_number_last4,
+                           balance_paise, is_active, created_at, updated_at
+                    FROM accounts
+                    WHERE is_active = 1 AND bank = ?
+                    ORDER BY name
+                    """,
+                    (bank,),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank_name, account_type, account_number_masked,
+                           balance_paise, is_active, created_at, updated_at
+                    FROM accounts
+                    WHERE is_active = 1 AND bank_name = ?
+                    ORDER BY name
+                    """,
+                    (bank,),
+                ).fetchall()
+
+            result = []
+            for r in rows:
+                d = dict(r)
+                d["bank"] = d.pop("bank_name", d.get("bank"))
+                d["account_number_last4"] = d.pop(
+                    "account_number_masked", d.get("account_number_last4")
+                )
+                result.append(d)
+        return result
+
+    def get_active_accounts(self) -> list[dict[str, Any]]:
+        """Get all active accounts. Same as get_all_accounts() with explicit naming."""
+        return self.get_all_accounts()
+
+    def deactivate_account(self, account_id: int | str) -> bool:
+        """Soft delete an account (set is_active to 0)."""
         with self._get_conn() as conn:
             conn.execute(
                 "UPDATE accounts SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
-                (account_id,)
+                (account_id,),
             )
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()
         return bool(changes_row[0]) if changes_row else False
-
