@@ -12,11 +12,11 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from engines.loan_engine import (
-    compute_emi_fixed,
-    generate_schedule,
-    apply_prepayment,
     apply_floating_rate_change,
+    apply_prepayment,
+    compute_emi_fixed,
     compute_foreclosure_amount,
+    generate_schedule,
 )
 
 

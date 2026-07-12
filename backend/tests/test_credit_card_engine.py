@@ -2,11 +2,12 @@
 Credit Card Engine — Determinism and financial-correctness tests.
 """
 
-import pytest
-from decimal import Decimal
 from datetime import date
+from decimal import Decimal
 
-from src.engines.credit_card_engine import billing, interest, metrics, utilization, outstanding
+import pytest
+
+from src.engines.credit_card_engine import billing, interest, metrics, utilization
 from src.engines.credit_card_engine.emi import compute_emi_conversion
 from src.engines.credit_card_engine.foreclosure import compute_card_foreclosure
 from src.engines.credit_card_engine.outstanding import compute_outstanding

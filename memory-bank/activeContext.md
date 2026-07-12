@@ -1,44 +1,25 @@
 # Active Context
 
-## Current Phase: Phase 1 — Credit Card Engine (COMPLETE)
+## Current Phase: Phase 1 — Account Engine (COMPLETE)
 
 ### Implementation Summary
 
-All components of the Credit Card Engine have been successfully implemented and validated:
+**Engine Layer** (`src/engines/account_engine/`)
+- `lifecycle.py` — Account status transitions (ACTIVE/DORMANT/CLOSED)
+- `dormant.py` — Dormancy detection (days since activity, configurable threshold)
+- `balance.py` — Average balance, balance change, growth percentage (basis points)
+- `cashflow.py` — Net flow, daily rate, income/expense ratio (basis points)
+- `history.py` — Balance trend (IMPROVING/STABLE/DECLINING), velocity (paise/day)
+- `metrics.py` — Aggregate deterministic account metrics
 
-**Engine Layer** (`src/engines/credit_card_engine/`)
-- `billing.py` — Statement date generation, due date (fixed offset), minimum due computation
-- `interest.py` — Daily interest accrual (365-day convention), monthly interest aggregation
-- `outstanding.py` — Outstanding balance calculation
-- `utilization.py` — Credit utilization (basis points), available credit
-- `emi.py` — Thin wrapper delegating to `loan_engine.emi`
-- `foreclosure.py` — Thin wrapper delegating to `loan_engine.foreclosure`
-- `metrics.py` — Financial metrics aggregation
-
-**Models** (`src/models/credit_card*.py`)
-- `credit_card.py` — CreditCard entity, Create/Update/Response DTOs
-- `credit_card_statement.py` — Statement entity, StatementGenerate/PaymentRecord DTOs
-- `credit_card_emi.py` — EMI conversion request/response
-- `credit_card_foreclosure.py` — Foreclosure request/response
-
-**Repository Layer** (`src/repositories/credit_card*.py`)
-- `credit_card_repository.py` — CRUD operations for cards
-- `credit_card_statement_repository.py` — CRUD for statements with UNIQUE constraint
-
-**Service Layer** (`src/services/credit_card_service.py`)
-- Orchestration for all credit card operations including statement generation, payments, EMI conversion, foreclosure quotes
-
-**Router Layer** (`src/routers/credit_cards.py`)
-- 13 API endpoints registered in `src/api.py`
+**Tests** (`tests/test_account_engine.py`)
+- 73 tests covering all functions with edge cases
+- Lifecycle, Balance, Cashflow, Dormancy, History, Metrics, and Integration test suites
 
 ### Validation Results
-- 37 credit card engine tests passing
-- 289 total backend tests passing
-- ruff clean for credit card modules
-- mypy passes for credit card engine
+- ruff clean for account_engine modules
+- mypy passes for account_engine
+- 73 account engine tests passing
 
-### Known Future Enhancements
-- Transaction ledger integration for daily balance tracking (currently uses stored values)
-- Router tests (`test_credit_card_routers.py`) for API endpoint coverage
-- OpenAPI schema regeneration (api-schema.json needs update)
-- Frontend validation suite run
+### Next Phase
+- Persistence Layer (Repository, Service, Router)

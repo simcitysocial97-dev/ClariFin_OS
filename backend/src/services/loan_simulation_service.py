@@ -4,7 +4,6 @@ All methods perform calculations only - no database mutations.
 Use LoanRepository for persistence operations.
 """
 
-import time
 from typing import Any
 
 from src.engines.loan_engine import (

@@ -14,10 +14,9 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from engines.loan_engine import generate_schedule, validate_schedule_invariants
 from engines.loan_engine.amortization import _add_months
 from engines.loan_engine.emi import compute_emi_fixed
-
-from engines.loan_engine import generate_schedule, validate_schedule_invariants
 
 # ============================================================
 # Fixtures

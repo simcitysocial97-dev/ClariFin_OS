@@ -9,13 +9,11 @@ Run: python -m pytest tests/test_loan_engine_coverage.py -v --tb=short
 import sys
 from pathlib import Path
 
-import pytest
-
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from engines.loan_engine import (
-    compute_emi_floating,
     compute_emi_fixed,
+    compute_emi_floating,
     compute_loan_metrics,
     compute_monthly_interest,
     compute_principal_component,
@@ -193,13 +191,11 @@ class TestMetricsCoverage:
 
     def test_get_interest_component(self):
         """get_interest_component returns positive value."""
-        from engines.loan_engine.metrics import get_interest_component
         interest = get_interest_component(100000000, 850, 120)
         assert interest > 0
 
     def test_get_emi_component(self):
         """get_emi_component returns positive value."""
-        from engines.loan_engine.metrics import get_emi_component
         emi = get_emi_component(100000000, 850, 120)
         assert emi > 0
 
