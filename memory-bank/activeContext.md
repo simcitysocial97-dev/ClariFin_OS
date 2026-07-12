@@ -67,6 +67,13 @@
 - ruff: All checks passed (6 fixes applied)
 - pytest: 23 router tests passing
 
+### Behaviour Engine Phase 0 — Architecture Preparation (COMPLETE)
+- Created `backend/docs/behaviour_engine_architecture.md` with input data sources, service boundaries, repository dependencies, and engine responsibilities
+- Created `backend/src/models/financial_event.py` with FinancialEvent DTO, EventType Literal, FinancialEventBatch, and BehaviourInput interfaces
+- Identified transaction repositories (Transaction, Loan, CreditCard, Account, Cashflow, Reconciliation) with income/expense fields
+- Identified classification fields: `type` (credit/debit), `category`, `subcategory`
+- Validation passed: ruff and mypy clean
+
 ### Remaining Work
 - Account Intelligence Engine (deferred — will consume these APIs later)
 - Integration with Reconciliation layer for actual cash flow aggregation
