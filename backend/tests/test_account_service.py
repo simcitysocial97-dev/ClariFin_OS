@@ -345,6 +345,30 @@ def test_get_institution() -> None:
         assert result["name"] == "HDFC Bank"
 
 
+def test_list_institutions() -> None:
+    """Verify list_institutions delegates to repository."""
+    with patch("src.services.account_service.AccountRepository"), \
+         patch("src.services.account_service.AccountBalanceRepository"), \
+         patch("src.services.account_service.InstitutionRepository") as MockInstRepo, \
+         patch("src.services.account_service.AccountLinkRepository"):
+        mock_inst_repo = MockInstRepo.return_value
+        mock_inst_repo.list.return_value = [
+            {"institution_id": "HDFC", "name": "HDFC Bank"},
+            {"institution_id": "ICICI", "name": "ICICI Bank"},
+        ]
+
+        from src.services.account_service import AccountService
+        service = AccountService()
+
+        result = service.list_institutions()
+
+        mock_inst_repo.list.assert_called_once()
+        assert len(result) == 2
+        names = {inst["name"] for inst in result}
+        assert "HDFC Bank" in names
+        assert "ICICI Bank" in names
+
+
 # ============================================================
 # Test: Account Linking
 # ============================================================

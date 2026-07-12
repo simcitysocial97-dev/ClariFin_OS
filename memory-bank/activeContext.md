@@ -35,19 +35,19 @@
 - CRUD methods: `create_account()`, `get_account()`, `list_accounts()`, `update_account()`, `deactivate_account()`
 - Balance snapshot methods: `insert_balance_snapshot()` (with validation), `get_balance_history()`, `get_latest_balance()`
 - Balance analytics (engine delegation): `calculate_average_balance()`, `calculate_balance_change()`, `calculate_balance_growth()`, `calculate_balance_trend()`, `calculate_balance_velocity()`
-- Cash flow (engine delegation): `calculate_cash_flow()` with balance history proxy
+- Cash flow (engine delegation): `calculate_cash_flow()` uses balance history as proxy — will switch to actual transaction aggregation when Reconciliation layer integrates
 - Dormancy (engine delegation): `get_account_status()`, `is_account_dormant()`
 - Metrics (engine delegation): `get_account_metrics()`
-- Institution orchestration: `create_institution()`, `get_institution()`, `list_institutions()`, `update_institution()`
+- Institution orchestration: `create_institution()`, `get_institution()`, `list_institutions()`, `update_institution()` — pure delegation, no calculations
 - Account linking: `link_accounts()` (with validation), `unlink_accounts()`, `get_linked_accounts()`
 
 **Tests**
-- `test_account_service.py` — 17 mocked tests verifying repository and engine delegation
+- `test_account_service.py` — 18 mocked tests verifying repository and engine delegation
 
 ### Validation Results
 - ruff: All checks passed
 - mypy: No issues found in 2 source files
-- pytest: 17 service tests passing
+- pytest: 18 service tests passing (38 total account-related tests)
 
 ### Next Phase
 - Router Layer integration (account_router endpoints)
