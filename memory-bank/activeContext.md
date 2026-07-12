@@ -1,6 +1,6 @@
 # Active Context
 
-## Current Phase: Phase 3 — Service Layer (COMPLETE)
+## Current Phase: Phase 4 — API Layer (COMPLETE)
 
 ### Phase 1 Completion (Reference)
 **Engine Layer** (`src/engines/account_engine/`)
@@ -34,8 +34,8 @@
 **Service Layer** (`src/services/account_service.py`)
 - CRUD methods: `create_account()`, `get_account()`, `list_accounts()`, `update_account()`, `deactivate_account()`
 - Balance snapshot methods: `insert_balance_snapshot()` (with validation), `get_balance_history()`, `get_latest_balance()`
+- Added `get_days_since_activity()` method for dormancy endpoint
 - Balance analytics (engine delegation): `calculate_average_balance()`, `calculate_balance_change()`, `calculate_balance_growth()`, `calculate_balance_trend()`, `calculate_balance_velocity()`
-- Cash flow (engine delegation): `calculate_cash_flow()` uses balance history as proxy — will switch to actual transaction aggregation when Reconciliation layer integrates
 - Dormancy (engine delegation): `get_account_status()`, `is_account_dormant()`
 - Metrics (engine delegation): `get_account_metrics()`
 - Institution orchestration: `create_institution()`, `get_institution()`, `list_institutions()`, `update_institution()` — pure delegation, no calculations
@@ -44,10 +44,29 @@
 **Tests**
 - `test_account_service.py` — 18 mocked tests verifying repository and engine delegation
 
-### Validation Results
-- ruff: All checks passed
-- mypy: No issues found in 2 source files
-- pytest: 18 service tests passing (38 total account-related tests)
+### Phase 4 Implementation Summary
 
-### Next Phase
-- Router Layer integration (account_router endpoints)
+**DTO Models** (`src/models/`)
+- `account.py` — Extended with `AccountCreateRequest`, `AccountUpdateRequest`, `AccountResponse`, `AccountAnalytics`
+- `account_balance.py` — New: `BalanceSnapshotRequest`, `BalanceSnapshotResponse`
+- `institution.py` — New: `InstitutionCreateRequest`, `InstitutionUpdateRequest`, `InstitutionResponse`
+- `account_link.py` — New: `AccountLinkRequest`, `AccountLinkResponse`
+
+**Router Layer** (`src/routers/accounts.py`)
+- Extended existing router with all account endpoints
+- Account CRUD: `GET/POST /accounts`, `GET/PUT/DELETE /accounts/{account_id}`
+- Balance Snapshot: `POST/GET /accounts/{account_id}/balance-history`, `GET /accounts/{account_id}/balance-history/latest`
+- Analytics: `GET /accounts/{account_id}/analytics`, `GET /accounts/{account_id}/metrics`, `GET /accounts/{account_id}/status`, `GET /accounts/{account_id}/dormancy`
+- Institutions: `GET/POST /institutions`, `GET/PUT /institutions/{institution_id}`
+- Account Linking: `POST/DELETE/GET /accounts/{account_id}/links`
+
+**Tests**
+- `test_account_router.py` — 23 tests covering all endpoint categories (CRUD, balance, analytics, institutions, links)
+
+**Validation Results**
+- ruff: All checks passed (6 fixes applied)
+- pytest: 23 router tests passing
+
+### Remaining Work
+- Account Intelligence Engine (deferred — will consume these APIs later)
+- Integration with Reconciliation layer for actual cash flow aggregation

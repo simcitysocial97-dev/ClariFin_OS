@@ -262,6 +262,19 @@ class AccountService:
         days = compute_days_since_activity(last_activity, today)
         return is_account_dormant(days, threshold_days)
 
+    def get_days_since_activity(self, account_id: str) -> int:
+        """Get days since last activity for an account.
+
+        Returns 0 if no activity history exists.
+        """
+        history = self.balance_repo.get_balance_history(account_id, limit=1)
+        if not history:
+            return 0
+
+        last_activity = history[0]["date_iso"]
+        today = date.today().isoformat()
+        return compute_days_since_activity(last_activity, today)
+
     # ============================================================
     # Metrics (Engine Delegation)
     # ============================================================
