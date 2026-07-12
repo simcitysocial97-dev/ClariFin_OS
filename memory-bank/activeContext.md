@@ -81,5 +81,14 @@
 - All functions use integer paise for monetary inputs, Decimal for percentage outputs
 - Validation: ruff clean, mypy clean on source files, 54 pytest tests passing
 
+### Behaviour Engine Phase 2 — Debt Intelligence (COMPLETE)
+- Added `round_decimal()` helper to `utils.py` for 4-decimal precision output
+- Created `debt.py` with 4 debt metrics:
+  - `compute_credit_dependency_ratio` — credit-funded expenses / total expenses
+  - `compute_debt_cycle_score` — 0-100 score based on advances, revolving, and debt trend
+  - `compute_foir` — Fixed Obligation to Income Ratio with HEALTHY/MODERATE/WARNING/CRITICAL bands
+  - `compute_credit_revolver_ratio` — months with partial payment / active credit months
+- All functions pure, integer paise inputs, Decimal outputs
+- Validation: 23 tests passing, ruff clean, mypy clean on source files
+
 ### Remaining Work
-- Integration with Reconciliation layer for actual cash flow aggregation

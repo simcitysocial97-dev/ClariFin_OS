@@ -82,3 +82,11 @@ def to_basis_points(decimal_value: Decimal) -> int:
 def from_basis_points(bps: int) -> Decimal:
     """Convert basis points to decimal (e.g., 1234 -> 0.1234)."""
     return Decimal(str(bps)) / Decimal('10000')
+
+
+def round_decimal(value: Decimal, places: int = 4) -> Decimal:
+    """Round decimal to specified decimal places using ROUND_HALF_UP.
+
+    Used to ensure consistent precision in ratio outputs.
+    """
+    return value.quantize(Decimal('0.' + '0' * places), rounding=ROUND_HALF_UP)

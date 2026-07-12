@@ -1,4 +1,4 @@
-"""Behaviour Engine Phase 1 — Core Metrics.
+"""Behaviour Engine — Core and Debt Metrics.
 
 Deterministic behavioural metrics for financial analysis.
 All monetary values are integers in paise (₹1.00 = 100 paise).
@@ -8,6 +8,7 @@ Structure:
 - cashflow.py — Income/expense stability, cashflow stability index
 - resilience.py — Liquidity months, resilience index
 - lifestyle.py — Lifestyle inflation, lifestyle creep index
+- debt.py — Credit dependency, debt cycle, FOIR, revolver ratio
 - utils.py — Shared helper functions (median, variance, coefficient of variation)
 
 All functions are pure - no database access.
@@ -17,6 +18,12 @@ from .cashflow import (
     compute_cashflow_stability_index,
     compute_expense_stability,
     compute_income_stability,
+)
+from .debt import (
+    compute_credit_dependency_ratio,
+    compute_credit_revolver_ratio,
+    compute_debt_cycle_score,
+    compute_foir,
 )
 from .lifestyle import (
     compute_lifestyle_creep_index,
@@ -47,4 +54,9 @@ __all__ = [
     # Lifestyle
     "compute_lifestyle_inflation",
     "compute_lifestyle_creep_index",
+    # Debt Intelligence
+    "compute_credit_dependency_ratio",
+    "compute_debt_cycle_score",
+    "compute_foir",
+    "compute_credit_revolver_ratio",
 ]
