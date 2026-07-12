@@ -53,6 +53,7 @@ from src.routers import (
     behavior,
     cards_statements,
     cashflow,
+    credit_cards,
     dashboard,
     export,
     import_router,
@@ -70,6 +71,7 @@ app.include_router(audit.router)
 app.include_router(banks.router)
 app.include_router(behavior.router)
 app.include_router(cards_statements.router)
+app.include_router(credit_cards.router)
 app.include_router(cashflow.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)

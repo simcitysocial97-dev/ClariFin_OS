@@ -10,6 +10,54 @@ Transform loan tracking into proactive debt optimization. Users should understan
 
 ---
 
+## Architecture
+
+Strict layered separation. Data flows one direction; no layer reaches across boundaries.
+
+```
+Engine → Services → Repositories → Routers
+```
+
+- **Engine (calculation-only):** Pure financial math — EMI, amortization, prepayment recalculation, floating-rate simulation, foreclosure payoff, loan analysis. No I/O, no DB, no request objects. Fully unit-testable and deterministic.
+- **Services (orchestration):** Coordinate engines and repositories, apply business rules, and enforce invariants. Services call engines for math and repositories for persistence. Services never touch `FinanceDB` directly.
+- **Repositories (persistence-only):** The ONLY layer permitted to import `FinanceDB` / `get_db()`. CRUD and query execution only — no financial calculations, no business logic.
+- **Routers (transport):** Parse requests, delegate to services, serialize responses. Routers MUST NOT import `FinanceDB` or `get_db()`, and MUST NOT contain calculation logic.
+
+**Boundary rules:**
+- No `FinanceDB` import outside `src/repositories/`.
+- Engines never import repositories or routers.
+- Routers never call engines directly for computation (go through services).
+
+---
+
+## Implemented Features
+
+The following capabilities are implemented and supported:
+
+- **Loan CRUD** — Create, read, update, delete loans via the repository layer.
+- **EMI** — Fixed and floating EMI computation.
+- **Amortization** — Full schedule generation with principal/interest split and running balance.
+- **Prepayment** — Recurring, lump-sum, and annual-bonus strategies with `REDUCE_TENURE` / `REDUCE_EMI` modes.
+- **Floating-rate simulation** — Rate-reset modeling (MCLR annual / repo quarterly) with forward schedule projection.
+- **Foreclosure** — Outstanding payoff computation including accrued interest to the closure date.
+- **Loan analysis** — DTI, liability ratio, affordability, and interest-saved metrics (read-only analytics).
+- **Performance optimizations** — Cached schedules, validated schedule regeneration, indexed queries.
+- **Validation invariants** — Enforced at service/engine boundaries (non-negative balances, EMI reconciliation to the last paise, schedule sum-checks).
+
+---
+
+## Removed Features
+
+The following capabilities are **intentionally out of scope**. They are removed by design, not missing or pending. Do not reimplement without explicit product sign-off.
+
+- **Health scoring** — Loan health score and `LoanHealthService` removed.
+- **Tax calculations** — Section 24 / 80C / pre-EMI tax benefit modeling removed.
+- **Refinance analysis** — Break-even refinance evaluation removed.
+- **Payoff strategies** — Avalanche / snowball / custom-priority optimization removed.
+- **Comparison engine** — Cross-loan comparison engine removed.
+
+---
+
 ## Supported Loan Types
 
 | Type | Interest Model | Characteristics |
@@ -109,6 +157,8 @@ Optimize timing (before rate reset for floating)
 
 ## Refinance Evaluation
 
+> **REMOVED — Intentionally out of scope.** See [Removed Features](#removed-features). Not implemented; do not reimplement without sign-off.
+
 ### Break-Even Analysis
 ```
 Savings_per_month = Old_EMI - New_EMI
@@ -130,6 +180,8 @@ Net_savings = gross_savings + tax_benefit_difference
 ---
 
 ## Payoff Strategies
+
+> **REMOVED — Intentionally out of scope.** See [Removed Features](#removed-features). Not implemented; do not reimplement without sign-off.
 
 ### Avalanche Method
 ```
@@ -204,6 +256,8 @@ Interest_saved = Original_schedule_interest - Remaining_schedule_interest - prep
 
 ## Tax Benefit Calculations
 
+> **REMOVED — Intentionally out of scope.** See [Removed Features](#removed-features). Not implemented; do not reimplement without sign-off.
+
 ### Section 24 (Home Loan Interest)
 ```
 Deduction_limit = ₹2,00,000 (old regime) / ₹3,00,000 (new regime)
@@ -225,6 +279,8 @@ Deduction_available = true (max ₹50,000 under 80C + 24 combined)
 ---
 
 ## Loan Health Score
+
+> **REMOVED — Intentionally out of scope.** See [Removed Features](#removed-features). Not implemented; do not reimplement without sign-off.
 
 ### Formula
 ```
@@ -278,55 +334,71 @@ CREATE TABLE loan_scenarios (
 
 ---
 
-## Required APIs
+## API Contract
 
+All monetary values are in **paise** (₹1.00 = 100 paise) as `INTEGER`. All interest rates are in **basis points** (`rate_bps`, e.g. `875` = 8.75%). No loose floats for currency.
+
+### Request / Response DTOs
+- Loan create/update: `{ principal_paise: int, rate_bps: int, tenure_months: int, interest_type: "fixed"|"floating", ... }`
+- Schedule response: `{ rows: [{ month, date, emi_paise, principal_paise, interest_paise, balance_paise, cumulative_interest_paise }] }`
+- Prepayment simulation request: `{ prepayment_paise: int, mode: "reduce_tenure"|"reduce_emi", date: str }`
+- Floating-rate simulation request: `{ new_rate_bps: int, effective_date: str }`
+- Foreclosure request: `{ closure_date: str }` → `{ payoff_paise: int, accrued_interest_paise: int }`
+- Loan analysis response: `{ dti_pct: int, liability_ratio_pct: int, affordability_pct: int, interest_saved_paise: int }`
+
+### Endpoints
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/v1/loans` | GET | List all loans with health scores |
-| `/api/v1/loans` | POST | Create new loan |
+| `/api/v1/loans` | GET | List loans |
+| `/api/v1/loans` | POST | Create loan |
 | `/api/v1/loans/{id}` | GET | Loan details with amortization |
-| `/api/v1/loans/{id}/schedule` | GET | Monthly amortization |
+| `/api/v1/loans/{id}/schedule` | GET | Monthly amortization schedule |
 | `/api/v1/loans/{id}/prepayment-simulation` | POST | Simulate prepayment impact |
-| `/api/v1/loans/{id}/refinance-analysis` | POST | Refinance evaluation |
-| `/api/v1/loans/{id}/health` | GET | Detailed health breakdown |
-| `/api/v1/loans/{id}/scenarios` | GET | Saved scenarios |
+| `/api/v1/loans/{id}/floating-rate-simulation` | POST | Simulate floating-rate reset |
+| `/api/v1/loans/{id}/foreclosure` | POST | Foreclosure payoff quote |
+| `/api/v1/loans/{id}/analysis` | GET | Loan analysis metrics |
 | `/api/v1/loans/{id}/payments` | POST | Record payment |
+
+> Removed endpoints (out of scope): `/refinance-analysis`, `/health`, `/scenarios` (comparison).
 
 ---
 
 ## Services Required
+
+> `LoanHealthService` and health-score / refinance methods are **removed** (see [Removed Features](#removed-features)).
 
 ### LoanService
 ```python
 class LoanService:
     def get_amortization_schedule(loan_id) -> list[dict]
     def simulate_prepayment(loan_id, amount_paise, mode) -> dict
-    def evaluate_refinance(loan_id, new_rate, new_tenure) -> dict
-    def compute_health_score(loan_id) -> float
+    def simulate_floating_rate(loan_id, new_rate_bps, effective_date) -> dict
+    def quote_foreclosure(loan_id, closure_date) -> dict
+    def analyze_loan(loan_id) -> dict
     def get_dti_ratio(user_id) -> float
     def get_liability_ratio(user_id) -> float
     def record_payment(loan_id, payment_data) -> LoanPayment
 ```
 
-### LoanHealthService
-```python
-class LoanHealthService:
-    def compute_dti_score(user_id) -> float
-    def compute_utilization_score(loan_id) -> float
-    def compute_stress_score(loan_id) -> float
-    def compute_payment_score(loan_id) -> float
-    def get_recommendations(loan_id) -> list[str]
-```
+---
+
+## Performance
+
+- **Caching strategy** — Amortization schedules cached by `(loan_id, schedule_version)`; invalidated on prepayment or rate reset. Foreclosure/analysis results cached per request.
+- **Schedule validation** — Regenerated schedules are validated: `Σ principal_paise == original principal`, final `balance_paise == 0` within 1 paise, EMI reconciles. Validation failure aborts before persist.
+- **Benchmarks** — 360-row (30y) schedule generation and prepayment simulation are timed in `test_loan_engine_performance.py` and regression-gated.
+- **Indexes** — `loan_payments(loan_id)`, `loan_scenarios(loan_id)`, `loans(user_id)` for fast list/lookup paths.
 
 ---
 
 ## Testing Strategy
 
 ### Unit Tests
-- EMI calculation for all interest types
-- Prepayment impact math
-- Refinance break-even calculations
-- Health score components
+- EMI calculation for all interest types (fixed + floating)
+- Amortization schedule generation and reconciliation
+- Prepayment impact math (reduce-tenure / reduce-EMI)
+- Floating-rate reset and foreclosure payoff math
+- Loan analysis metrics (DTI, liability ratio, affordability, interest saved)
 
 ### Integration Tests
 - Schedule generation across tenures
@@ -335,8 +407,22 @@ class LoanHealthService:
 - DTI across multiple loans
 
 ### Acceptance Criteria
-- [ ] Floating rate reset works
-- [ ] Recurring prepayment supported
-- [ ] Refinance analysis accurate
-- [ ] Tax benefits calculated
-- [ ] Avalanche/snowball strategies computed
+- [x] Floating rate reset works
+- [x] Recurring prepayment supported
+- [x] Foreclosure payoff accurate
+- [x] Loan analysis metrics computed
+- [x] Schedule validation invariants hold
+
+---
+
+## Future Enhancements
+
+Ideas for later consideration (NOT current requirements; NOT in scope):
+
+- Multi-currency loan support
+- Hybrid / teaser-rate full tracking
+- Co-borrower split modeling
+- Restructuring / moratorium extension workflows
+- Bulk prepayment optimizer across a portfolio
+
+These are deferred until product sign-off and must not be treated as missing or incomplete work.
