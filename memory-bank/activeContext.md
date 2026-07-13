@@ -95,3 +95,79 @@
 
 **Tests (11/11 passing):**
 - `test_emi_detection.py`: Schedule generation, amount tolerance matching, bank statement override, detector purity, idempotency, household isolation
+
+### Phase 4 — Credit Card Payment Detection (COMPLETED)
+
+**Step 0 Findings:**
+- `statement_repository.py` exists with `bank`, `card_last4`, `total_amount_due`, `minimum_amount_due`, `payment_due_date`, `bill_cycle_start`, `bill_cycle_end` columns
+- Credit card payments identified via description patterns (XX1234, ****1234) or CC keywords
+- No structural account linkage between bank debits and CC statements — uses description matching
+- `_parse_amount_paise()` helper in `db.py` converts REAL rupee amounts to integer paise
+
+**Schema (`migration_cc_payment_detection.py`):**
+- Added `lifecycle_state` TEXT (supports: fully_paid, revolving, payment_received, unknown)
+- Added `outstanding_paise` INTEGER DEFAULT 0
+- Added `payment_channel` TEXT DEFAULT 'DIRECT' (support for Phase 5: CRED, CHEQ, SPAYLATER, NOBROKER)
+- Added `matched_statement_id` INTEGER
+
+**Repository Changes:**
+- `statement_repository.py`: Added `find_matching_statement(bank, card_last4, payment_date, grace_period_days=5)` method
+  - Primary match: payment_date ≤ payment_due_date + grace_period_days
+  - Fallback: payment_date within bill_cycle_start/bill_cycle_end window
+  - Returns latest statement for same bank+card combination
+- `transaction_classification_repository.py`: Extended `insert_classification()` with lifecycle_state, outstanding_paise, payment_channel, matched_statement_id parameters
+
+**Engine (`transaction_intelligence/cc_payment_detector.py`):**
+- Pure `extract_card_last4()` - extracts XX1234 or ****1234 patterns from descriptions
+- Pure `determine_payment_channel()` - identifies DIRECT, CRED, CHEQ, SPAYLATER payment channels
+- Pure `_convert_to_paise()` - converts REAL rupee amounts to integer paise
+- Pure `classify_cc_payment(debit_txn, statement_row, payment_channel)` - returns CCPaymentDetectionResult
+- Pure `detect_cc_payment(debit_txn, statement_row)` - orchestrates detection with keyword matching
+- Lifecycle states: fully_paid (9500 bps), revolving (8500 bps), payment_received (7000 bps), unknown (2000 bps)
+
+**Service Changes:**
+- `transaction_intelligence_service.py`: Added `classify_cc_payments(household_id, owner_id='self')` method
+  - Filters unclassified debits by member
+  - Extracts card_last4 and finds matching statement via repository
+  - Persists classification with lifecycle details
+
+**Tests (`test_cc_payment_detection.py` - 24/24 passing):**
+- Card extraction (XX/**** formats, none cases)
+- Payment channel detection (DIRECT, CRED, SPAYLATER)
+- Paise conversion (integer, float, string, None)
+- Classification logic (full payment, partial above minimum, below minimum, no statement)
+- Detector purity (no DB calls)
+- Repository matching (due_date, grace period, bill_cycle fallback, no match)
+- Service idempotency
+- Multiple statements deterministic selection
+- Persistence with new fields
+
+### Phase 5 — CRED/Cheq/Spaid/NoBroker Liquidity Extraction Detector (COMPLETED)
+
+**Schema (`migration_liquidity_patterns.py`):**
+- `liquidity_provider_patterns`: Stores provider regex patterns, fee ranges, typical settlement days
+- `liquidity_purpose_patterns`: Stores purpose categorization patterns for extracted cash
+
+**Repositories:**
+- `liquidity_pattern_repository.py`: `get_active_provider_patterns()`, `confirm_pattern()`, `insert_new_pattern()`
+
+**Engines (`transaction_intelligence/cash_conversion_detector.py`):**
+- Pure `detect()` function with no DB access
+- Provider matching via regex description patterns
+- Zone determination: `'auto'` (150-400 bps), `'review'` (50-800 bps outside auto), `'unmatched_provider'`
+- Fee calculation: `fee_paise * 10000 / debit_amount_paise` (basis points)
+- Unknown provider detection with liquidity keywords (cred, cheq, spaid, nobroker, liquidity, cash)
+- Household-aware matching for spouse accounts
+- Disambiguation via Hungarian-style sorting (prefers auto zone, then closest fee to midpoint)
+
+**Tests (`test_cash_conversion_detector.py` - 17/17 passing):**
+- Fee calculation correctness (basis points)
+- Zone determination (auto, review, discard boundaries)
+- Detection with known providers (CRED)
+- Unknown provider handling with keywords
+- Purpose tagging (Rent, Education, Settlement_Inbound)
+- Settlement window boundaries (typical_settlement_days + 2)
+- Inactive provider pattern filtering (service layer only passes active)
+- Engine purity verification (no DB calls)
+- Narrative format (fee amount and percentage)
+- Spouse account matching within same household

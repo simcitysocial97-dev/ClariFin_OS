@@ -19,20 +19,31 @@ class TransactionClassificationRepository(BaseRepository):
         source: str,
         classifier: str = "loan_emi_detector",
         classifier_version: int = 1,
+        lifecycle_state: str | None = None,
+        outstanding_paise: int = 0,
+        payment_channel: str = "DIRECT",
+        matched_statement_id: int | None = None,
     ) -> int:
         """
         Insert a classification record.
 
         Returns the classification ID.
         Uses INSERT OR IGNORE to prevent duplicates for same transaction+classification.
+
+        Args:
+            lifecycle_state: Current lifecycle state (fully_paid, revolving, etc.)
+            outstanding_paise: Remaining outstanding after payment
+            payment_channel: How payment was made (DIRECT, CRED, CHEQ, etc.)
+            matched_statement_id: ID of matched statement for CC payments
         """
         with self._get_conn() as conn:
             cur = conn.execute(
                 """
                 INSERT OR IGNORE INTO transaction_classifications
                     (transaction_id, classification, sub_classification,
-                     confidence_bps, source, classifier, classifier_version)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                     confidence_bps, source, classifier, classifier_version,
+                     lifecycle_state, outstanding_paise, payment_channel, matched_statement_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     transaction_id,
@@ -42,6 +53,10 @@ class TransactionClassificationRepository(BaseRepository):
                     source,
                     classifier,
                     classifier_version,
+                    lifecycle_state,
+                    outstanding_paise,
+                    payment_channel,
+                    matched_statement_id,
                 ),
             )
             conn.commit()

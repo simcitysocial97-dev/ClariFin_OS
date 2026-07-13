@@ -204,3 +204,108 @@ class StatementRepository(BaseRepository):
             cur = conn.execute("SELECT DISTINCT bank FROM statements ORDER BY bank")
             banks = [row[0] for row in cur.fetchall()]
         return banks
+
+    def find_matching_statement(
+        self,
+        bank: str,
+        card_last4: str,
+        payment_date: str,
+        grace_period_days: int = 5,
+    ) -> dict[str, Any] | None:
+        """
+        Find the matching statement for a credit card payment.
+
+        Matching strategy (in order):
+        1. Exact bank + card_last4 match
+        2. Payment date <= payment_due_date + grace_period_days
+        3. If multiple candidates, take the latest unpaid statement
+        4. Fallback to bill_cycle window matching if no due_date match
+
+        Args:
+            bank: Statement bank (e.g., 'HDFC Bank', 'ICICI Bank')
+            card_last4: Last 4 digits of credit card
+            payment_date: Payment date in ISO format (YYYY-MM-DD)
+            grace_period_days: Days after due_date to still match (default 5)
+
+        Returns:
+            Statement row dict or None if no match found.
+        """
+        with self._get_conn() as conn:
+            # Get ALL candidates for this bank + card
+            # We'll filter by due_date first, then fallback to bill_cycle
+            candidates = conn.execute(
+                """
+                SELECT id, bank, card_last4,
+                       total_amount_due, minimum_amount_due,
+                       payment_due_date, statement_date,
+                       bill_cycle_start, bill_cycle_end
+                FROM statements
+                WHERE bank = ? AND card_last4 = ?
+                ORDER BY statement_date DESC
+                """,
+                (bank, card_last4),
+            ).fetchall()
+
+        from datetime import datetime, timedelta
+
+        # Parse payment date to date object
+        try:
+            payment_dt = datetime.strptime(payment_date, "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            return None
+
+        matching_statements = []
+        bill_cycle_matches = []
+
+        for row in candidates:
+            row_dict = dict(row)
+            # Check payment_due_date match (primary)
+            due_date_str = row_dict.get("payment_due_date")
+            if due_date_str:
+                # Parse due date - try multiple formats
+                due_dt = None
+                for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"]:
+                    try:
+                        due_dt = datetime.strptime(due_date_str, fmt).date()
+                        break
+                    except ValueError:
+                        continue
+
+                if due_dt:
+                    # Payment is within grace period of due_date
+                    due_with_grace = due_dt + timedelta(days=grace_period_days)
+                    if payment_dt <= due_with_grace:
+                        matching_statements.append(row_dict)
+                        continue
+
+            # Fallback: bill_cycle matching
+            cycle_start = row_dict.get("bill_cycle_start")
+            cycle_end = row_dict.get("bill_cycle_end")
+
+            if cycle_start and cycle_end:
+                start_dt = end_dt = None
+                for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"]:
+                    try:
+                        if cycle_start:
+                            start_dt = datetime.strptime(cycle_start, fmt).date()
+                        if cycle_end:
+                            end_dt = datetime.strptime(cycle_end, fmt).date()
+                        if start_dt and end_dt:
+                            break
+                    except ValueError:
+                        continue
+
+                if start_dt and end_dt:
+                    # Payment falls within bill cycle window
+                    if start_dt <= payment_dt <= end_dt:
+                        bill_cycle_matches.append(row_dict)
+
+        # Prefer due_date matches over bill_cycle matches
+        if matching_statements:
+            # Return the latest unpaid statement (highest statement_date)
+            return matching_statements[0]
+
+        if bill_cycle_matches:
+            return bill_cycle_matches[0]
+
+        return None

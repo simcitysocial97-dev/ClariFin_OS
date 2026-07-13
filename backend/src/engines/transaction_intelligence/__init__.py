@@ -8,10 +8,16 @@ from src.engines.transaction_intelligence.loan_emi_detector import (
     detect_emi_payment,
     find_loan_candidates_for_account,
 )
+from src.engines.transaction_intelligence.cash_conversion_detector import (
+    CashConversionResult,
+    detect as detect_cash_conversion,
+)
 
 __all__ = [
+    "CashConversionResult",
     "DetectionResult",
     "EMIDetectionResult",
+    "detect_cash_conversion",
     "detect_emi_payment",
     "find_loan_candidates_for_account",
 ]

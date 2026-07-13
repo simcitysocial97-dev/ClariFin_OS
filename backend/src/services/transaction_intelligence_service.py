@@ -6,11 +6,18 @@ and persists classifications. Household-aware for multi-user support.
 from typing import Any
 
 from src.engines.transaction_intelligence import (
+    detect_cash_conversion,
     detect_emi_payment,
     find_loan_candidates_for_account,
 )
+from src.engines.transaction_intelligence.cc_payment_detector import (
+    detect_cc_payment,
+    extract_card_last4,
+)
 from src.repositories.account_repository import AccountRepository
+from src.repositories.liquidity_pattern_repository import LiquidityPatternRepository
 from src.repositories.loan_repository import LoanRepository
+from src.repositories.statement_repository import StatementRepository
 from src.repositories.transaction_classification_repository import (
     TransactionClassificationRepository,
 )
@@ -126,6 +133,284 @@ class TransactionIntelligenceService:
 
         return results
 
+    def classify_cc_payments(
+        self,
+        household_id: str | None = None,
+        owner_id: str = "self",
+    ) -> list[dict[str, Any]]:
+        """
+        Detect and classify credit card payments among unclassified transactions.
+
+        Args:
+            household_id: If provided, filter by household scope.
+            owner_id: Default 'self'. If 'self', only classify Self member transactions.
+
+        Returns:
+            List of classification results for successful matches.
+        """
+        results: list[dict[str, Any]] = []
+
+        # Get unclassified debit transactions
+        if household_id:
+            accounts = self.account_repo.get_household_accounts(household_id)
+            account_ids = [a["id"] for a in accounts] if accounts else []
+            txns = self._get_unclassified_debits_for_accounts(account_ids)
+        else:
+            txns = self._get_unclassified_debits()
+
+        # Filter by owner_id
+        if owner_id == "self":
+            txns = [t for t in txns if t.get("member", "Self") == "Self"]
+
+        stmt_repo = StatementRepository(self.db_path)
+
+        for txn in txns:
+            # Skip if already classified
+            if self.classification_repo.get_by_transaction_id(txn["id"]):
+                continue
+
+            description = txn.get("description", "")
+            date_iso = txn.get("date_iso", "")
+
+            # Extract card last4 from description
+            card_last4 = extract_card_last4(description)
+            if not card_last4:
+                continue
+
+            # Get bank from account (for now, use account_id as bank hint)
+            # In production, would need to map account to bank for CC statements
+            account_id = txn.get("account_id", "")
+
+            # Try to find matching statement for this card
+            statement = stmt_repo.find_matching_statement(
+                bank=account_id,  # Using account_id as bank hint
+                card_last4=card_last4,
+                payment_date=date_iso,
+            )
+
+            # Detect CC payment
+            detection = detect_cc_payment(txn, statement)
+            if not detection:
+                continue
+
+            # Persist classification with lifecycle details
+            self.classification_repo.insert_classification(
+                transaction_id=txn["id"],
+                classification=detection.classification,
+                sub_classification="cc_payment",
+                confidence_bps=detection.confidence_bps,
+                source=detection.source,
+                classifier="cc_payment_detector",
+                classifier_version=1,
+                lifecycle_state=detection.lifecycle_state,
+                outstanding_paise=detection.remaining_outstanding_paise,
+                payment_channel=detection.payment_channel,
+                matched_statement_id=detection.matched_statement_id,
+            )
+
+            results.append({
+                "transaction_id": txn["id"],
+                "matched_statement_id": detection.matched_statement_id,
+                "classification": detection.classification,
+                "lifecycle_state": detection.lifecycle_state,
+                "payment_channel": detection.payment_channel,
+                "confidence_bps": detection.confidence_bps,
+                "match_reason": detection.match_reason,
+            })
+
+        return results
+
+    def classify_cash_conversions(
+        self,
+        household_id: str | None = None,
+        owner_id: str = "self",
+    ) -> list[dict[str, Any]]:
+        """
+        Detect and classify cash conversions (liquidity extraction) among unclassified transactions.
+
+        Liquidity extraction: Debit from bank account via CRED/Cheq/Spaid/NoBroker
+        with a corresponding credit to savings/current account.
+
+        Args:
+            household_id: If provided, filter by household scope.
+            owner_id: Default 'self'. If 'self', only classify Self member transactions.
+
+        Returns:
+            List of classification results for successful matches.
+        """
+        results: list[dict[str, Any]] = []
+
+        # Initialize pattern repository
+        pattern_repo = LiquidityPatternRepository(self.db_path)
+
+        # Get active patterns
+        provider_patterns = pattern_repo.get_active_provider_patterns()
+        purpose_patterns = pattern_repo.get_active_purpose_patterns()
+
+        # Get unclassified debit transactions
+        if household_id:
+            accounts = self.account_repo.get_household_accounts(household_id)
+            account_ids = [a["id"] for a in accounts] if accounts else []
+            txns = self._get_unclassified_debits_for_accounts(account_ids)
+        else:
+            txns = self._get_unclassified_debits()
+
+        # Filter by owner_id
+        if owner_id == "self":
+            txns = [t for t in txns if t.get("member", "Self") == "Self"]
+
+        # Get household-scoped credit candidates (savings/current accounts only)
+        if household_id:
+            household_accounts = self.account_repo.get_household_accounts(household_id)
+            household_account_ids = [a["id"] for a in household_accounts] if household_accounts else []
+            credit_candidates = self._get_unclassified_credits_for_accounts(household_account_ids)
+        else:
+            credit_candidates = self._get_unclassified_credits()
+
+        # Build account context for household/id checks
+        account_context: dict[str, dict[str, Any]] = {}
+        for acc in household_accounts if household_id else self.account_repo.get_all_accounts():
+            account_context[acc["id"]] = acc
+
+        # Enrich transactions with household_id and account_type
+        for txn in txns:
+            acc = account_context.get(txn.get("account_id", ""), {})
+            txn["household_id"] = acc.get("household_id", household_id or "primary")
+            txn["account_type"] = acc.get("account_type", "savings")
+
+        for credit in credit_candidates:
+            acc = account_context.get(credit.get("account_id", ""), {})
+            credit["household_id"] = acc.get("household_id", household_id or "primary")
+            credit["account_type"] = acc.get("account_type", "savings")
+
+        stmt_repo = StatementRepository(self.db_path)
+
+        for txn in txns:
+            # Skip if already classified
+            if self.classification_repo.get_by_transaction_id(txn["id"]):
+                continue
+
+            # Check if this transaction looks like liquidity extraction
+            description = txn.get("description", "")
+            has_provider_pattern = any(
+                _match_description_pattern_for_detection(description, p["description_pattern"])
+                for p in provider_patterns
+            )
+
+            if not has_provider_pattern:
+                continue
+
+            # Try to find matching statement for due date bonus
+            account_id = txn.get("account_id", "")
+            date_iso = txn.get("date_iso", "")
+
+            # Get statement if available (for bonus)
+            statement_row = None
+            # Note: Statement lookup doesn't directly apply here since liquidity
+            # extraction isn't tied to CC statements, but we can check if there's
+            # a statement for this account near this date
+
+            # Detect cash conversion
+            detection = detect_cash_conversion(
+                cc_debit_txn=txn,
+                candidate_credits=credit_candidates,
+                provider_patterns=provider_patterns,
+                purpose_patterns=purpose_patterns,
+                statement_row=statement_row,
+            )
+
+            if not detection:
+                continue
+
+            # Persist classification
+            # For unknown providers, skip auto-classification
+            if detection.zone == "unmatched_provider":
+                results.append({
+                    "transaction_id": txn["id"],
+                    "classification": "cash_conversion",
+                    "sub_classification": "unmatched_provider",
+                    "confidence_bps": detection.confidence_bps,
+                    "zone": detection.zone,
+                    "provider_name": detection.provider_name,
+                    "purpose": detection.purpose,
+                    "fee_paise": detection.fee_paise,
+                    "fee_bps": detection.fee_bps,
+                    "match_reason": detection.match_reason,
+                    "narrative": detection.narrative,
+                })
+                continue  # Don't persist, just report
+
+            self.classification_repo.insert_classification(
+                transaction_id=txn["id"],
+                classification="cash_conversion",
+                sub_classification=detection.provider_name or "unknown",
+                confidence_bps=detection.confidence_bps,
+                source="computed",
+                classifier="cash_conversion_detector",
+                classifier_version=1,
+                lifecycle_state=detection.zone,
+                outstanding_paise=detection.fee_paise,  # Store fee as outstanding
+                payment_channel=detection.provider_name,
+            )
+
+            results.append({
+                "transaction_id": txn["id"],
+                "matched_credit_transaction_id": detection.matched_credit_transaction_id,
+                "classification": "cash_conversion",
+                "provider_name": detection.provider_name,
+                "purpose": detection.purpose,
+                "zone": detection.zone,
+                "confidence_bps": detection.confidence_bps,
+                "fee_paise": detection.fee_paise,
+                "fee_bps": detection.fee_bps,
+                "match_reason": detection.match_reason,
+                "narrative": detection.narrative,
+            })
+
+        return results
+
+    def _match_description_pattern_for_detection(self, description: str, pattern: str) -> bool:
+        """Check if description matches a regex pattern (case-insensitive)."""
+        import re
+        try:
+            return bool(re.search(pattern, description, re.IGNORECASE))
+        except re.error:
+            return False
+
+    def _get_unclassified_credits(self) -> list[dict[str, Any]]:
+        """Get unclassified credit transactions."""
+        with self.txn_repo._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, account_id, date_iso, credit, amount_paise, description
+                FROM transactions
+                WHERE (id NOT IN (
+                    SELECT DISTINCT transaction_id FROM transaction_classifications
+                ))
+                AND credit > 0
+                AND account_id IS NOT NULL AND account_id != ''
+                AND date_iso IS NOT NULL AND date_iso != ''
+            """).fetchall()
+        return [dict(r) for r in rows]
+
+    def _get_unclassified_credits_for_accounts(self, account_ids: list[str]) -> list[dict[str, Any]]:
+        """Get unclassified credit transactions for specific accounts."""
+        if not account_ids:
+            return []
+
+        with self.txn_repo._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, account_id, date_iso, credit, amount_paise, description
+                FROM transactions
+                WHERE (id NOT IN (
+                    SELECT DISTINCT transaction_id FROM transaction_classifications
+                ))
+                AND account_id IN ({})
+                AND credit > 0
+                AND account_id IS NOT NULL AND account_id != ''
+                AND date_iso IS NOT NULL AND date_iso != ''
+            """.format(",".join("?" for _ in account_ids)), account_ids).fetchall()
+        return [dict(r) for r in rows]
+
     def _get_unclassified_debits(self) -> list[dict[str, Any]]:
         """Get unclassified debit transactions."""
         classified_ids: list[int] = []
@@ -169,7 +454,7 @@ class TransactionIntelligenceService:
                   AND account_id IN ({placeholders})
                   AND debit > 0
                   AND date_iso IS NOT NULL AND date_iso != ''
-            """, classified_ids + account_ids).fetchall()
+            """, classified_ids + [str(aid) for aid in account_ids]).fetchall()
             return [dict(r) for r in rows]
 
     def _get_loan_schedule(self, loan_id: int) -> list[dict[str, Any]]:
