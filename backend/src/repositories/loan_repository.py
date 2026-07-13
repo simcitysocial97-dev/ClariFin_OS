@@ -194,3 +194,108 @@ class LoanRepository(BaseRepository):
             conn.commit()
             changes = conn.execute("SELECT changes()").fetchone()
         return bool(changes[0]) if changes else False
+
+    # ============================================================
+    # Amortization Schedule Persistence
+    # ============================================================
+
+    def get_schedule_rows(self, loan_id: int) -> list[dict[str, Any]]:
+        """
+        Get all schedule rows for a loan from cache.
+
+        Returns list of dicts with: id, loan_id, due_date, emi_amount_paise,
+            principal_paise, interest_paise, outstanding_after_paise, source.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT id, loan_id, due_date, emi_amount_paise,
+                       principal_paise, interest_paise, outstanding_after_paise, source
+                FROM loan_amortization_schedule
+                WHERE loan_id = ?
+                ORDER BY due_date ASC
+            """, (loan_id,)).fetchall()
+            return [dict(r) for r in rows]
+
+    def has_schedule_rows(self, loan_id: int) -> bool:
+        """Check if schedule rows exist for this loan."""
+        with self._get_conn() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM loan_amortization_schedule WHERE loan_id = ? LIMIT 1",
+                (loan_id,),
+            ).fetchone()
+            return row is not None
+
+    def persist_schedule_rows(self, loan_id: int, rows: list[dict[str, Any]], source: str = "computed") -> int:
+        """
+        Bulk insert schedule rows for a loan.
+
+        Args:
+            loan_id: The loan to associate rows with.
+            rows: List of dicts with schedule data.
+            source: Source of the schedule ('computed' or 'bank_statement').
+
+        Returns count of rows inserted.
+        """
+        if not rows:
+            return 0
+
+        inserted = 0
+        with self._get_conn() as conn:
+            for row in rows:
+                conn.execute("""
+                    INSERT OR REPLACE INTO loan_amortization_schedule
+                        (loan_id, due_date, emi_amount_paise, principal_paise,
+                         interest_paise, outstanding_after_paise, source)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    loan_id,
+                    row["due_date"],
+                    row["emi_paise"],
+                    row["principal_paise"],
+                    row["interest_paise"],
+                    row["balance_paise"],
+                    source,
+                ))
+                inserted += 1
+            conn.commit()
+        return inserted
+
+    def update_schedule_row_from_bank(
+        self,
+        loan_id: int,
+        due_date: str,
+        emi_paise: int,
+        principal_paise: int,
+        interest_paise: int,
+        outstanding_after_paise: int,
+    ) -> int:
+        """
+        Update or insert a schedule row from bank statement data.
+
+        Bank-provided rows take precedence over computed rows.
+        Returns the schedule row ID.
+
+        Stub for future statement-import feature. To be wired later.
+        """
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                INSERT INTO loan_amortization_schedule
+                    (loan_id, due_date, emi_amount_paise, principal_paise,
+                     interest_paise, outstanding_after_paise, source)
+                VALUES (?, ?, ?, ?, ?, ?, 'bank_statement')
+                ON CONFLICT(loan_id, due_date) DO UPDATE SET
+                    source = 'bank_statement',
+                    emi_amount_paise = excluded.emi_amount_paise,
+                    principal_paise = excluded.principal_paise,
+                    interest_paise = excluded.interest_paise,
+                    outstanding_after_paise = excluded.outstanding_after_paise
+            """, (
+                loan_id,
+                due_date,
+                emi_paise,
+                principal_paise,
+                interest_paise,
+                outstanding_after_paise,
+            ))
+            conn.commit()
+            return int(cur.lastrowid or 0)

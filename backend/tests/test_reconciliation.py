@@ -31,7 +31,7 @@ from engines.reconciliation_engine import (
     _calculate_confidence,
     _check_match,
     _date_difference_days,
-    find_potential_matches,
+    find_potential_matches_with_db,
 )
 from repositories.reconciliation_repository import ReconciliationRepository
 from repositories.statement_repository import StatementRepository
@@ -105,7 +105,7 @@ def test_exact_match_detection(populated_db):
     """Test that exact matches (same amount, same date, different accounts) are detected."""
     db, db_path = populated_db
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
 
     # Should find exact match: 1000 debit on 2025-01-01 in A matches 1000 credit on 2025-01-01 in B
     exact_matches = [m for m in matches if m["match_type"] == "exact"]
@@ -115,7 +115,8 @@ def test_exact_match_detection(populated_db):
     # Verify the match details
     exact_match = exact_matches[0]
     assert exact_match["match_type"] == "exact"
-    assert exact_match["match_confidence"] >= 0.8  # High confidence for exact match
+    # New formula: exact match gives 1.0 confidence (0.5 base + 0.4 date + 0.1 desc min = 1.0 capped)
+    assert exact_match["match_confidence"] >= 0.9
 
 
 # ============================================================
@@ -126,7 +127,7 @@ def test_date_window_detection(populated_db):
     """Test that date window matches (same amount, within 3 days) are detected."""
     db, db_path = populated_db
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
 
     # Should find date window match: 2000 debit on 2025-01-05 matches 2000 credit on 2025-01-07 (2 days apart)
     window_matches = [m for m in matches if m["match_type"] == "window"]
@@ -147,7 +148,7 @@ def test_no_false_positives_different_amounts(populated_db):
     """Test that transactions with different amounts are NOT matched."""
     db, db_path = populated_db
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
 
     # All matches should have matching amounts (debit == credit in paise)
     for m in matches:
@@ -168,7 +169,7 @@ def test_no_same_account_matches(populated_db):
     """Test that transactions in the same account are NOT matched."""
     db, db_path = populated_db
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
 
     # All matches should be between different accounts
     for m in matches:
@@ -186,7 +187,7 @@ def test_confirm_no_transaction_mutation(populated_db):
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
 
     # Create a reconciliation
@@ -240,7 +241,7 @@ def test_reject_no_transaction_mutation(populated_db):
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
 
     # Create a reconciliation
@@ -294,7 +295,7 @@ def test_prevent_duplicate_pairs(populated_db):
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
 
     # Create first reconciliation
@@ -330,7 +331,7 @@ def test_prevent_mirrored_pairs(populated_db):
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
 
     # Create first reconciliation
@@ -392,7 +393,8 @@ def test_check_match_valid():
 
     assert result is not None
     assert result["match_type"] == "exact"
-    assert result["match_confidence"] >= 0.8
+    # New formula gives 1.0 for exact match
+    assert result["match_confidence"] == 1.0
     assert result["amount"] == 1000.00  # Converted to rupees
 
 
@@ -418,18 +420,47 @@ def test_check_match_outside_window():
 
 
 def test_calculate_confidence():
-    """Test confidence calculation."""
-    # Exact date, exact amount
-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True)
-    assert conf == 0.8  # 0.4 (date) + 0.4 (amount)
+    """Test confidence calculation with new graduated formula."""
+    # Exact date, exact amount (no description similarity)
+    # 0.5 base + 0.4 date = 0.9
+    conf, bps = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.0)
+    assert conf == 0.9
+    assert bps == 9000
 
-    # Within 1 day, exact amount
-    conf = _calculate_confidence(date_diff_days=1, amount_exact=True)
-    assert conf == 0.7  # 0.3 (date) + 0.4 (amount)
+    # Exact date, exact amount, with description similarity > 0.7 -> 1.0 capped
+    conf, bps = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.8)
+    assert conf == 1.0
+    assert bps == 10000
 
-    # With description similarity
-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=1.0)
-    assert conf == 1.0  # 0.4 + 0.4 + 0.2 = 1.0 (capped)
+    # Date diff = 1, exact amount
+    # 0.5 base + 0.25 date = 0.75
+    conf, bps = _calculate_confidence(date_diff_days=1, amount_exact=True, description_similarity=0.0)
+    assert conf == 0.75
+    assert bps == 7500
+
+    # Date diff = 2, exact amount
+    # 0.5 base + 0.1 date = 0.6
+    conf, bps = _calculate_confidence(date_diff_days=2, amount_exact=True, description_similarity=0.0)
+    assert conf == 0.6
+    assert bps == 6000
+
+    # Date diff = 3, exact amount
+    # 0.5 base + max(0.4 - 0.45, 0.1) = 0.5 + 0.1 = 0.6
+    conf, bps = _calculate_confidence(date_diff_days=3, amount_exact=True, description_similarity=0.0)
+    assert conf == 0.6
+    assert bps == 6000
+
+    # Date diff = 4, exact amount - should still get minimum 0.1 date component
+    # 0.5 base + max(0.4 - 0.6, 0.1) = 0.5 + 0.1 = 0.6 (but dates > 3 are filtered in _check_match)
+    # This test is for the formula directly, not the matching logic
+    conf, bps = _calculate_confidence(date_diff_days=4, amount_exact=True, description_similarity=0.0)
+    assert conf == 0.6  # Minimum date component kicks in
+    assert bps == 6000
+
+    # No amount match - base is 0
+    conf, bps = _calculate_confidence(date_diff_days=0, amount_exact=False, description_similarity=0.0)
+    assert conf == 0.4
+    assert bps == 4000
 
 
 def test_date_difference_days():

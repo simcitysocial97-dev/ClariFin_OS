@@ -176,6 +176,58 @@ class LoanService:
         }
 
     # ============================================================
+    # Schedule Generation (for EMI detection)
+    # ============================================================
+
+    def get_or_generate_schedule(self, loan_id: int) -> list[dict[str, Any]]:
+        """
+        Get cached schedule or generate and persist if not exists.
+
+        Schedule is generated ONCE (lazily) and cached in loan_amortization_schedule.
+        Subsequent calls return cached rows without regeneration.
+
+        Returns list of dicts with: loan_id, due_date, emi_paise, principal_paise,
+            interest_paise, balance_paise, source.
+        """
+        # Check if schedule already cached
+        cached = self.loan_repo.get_schedule_rows(loan_id)
+        if cached:
+            return cached
+
+        # Generate schedule
+        loan = self.loan_repo.get_loan(loan_id)
+        if not loan:
+            raise ValueError(f"Loan {loan_id} not found")
+
+        # Use exact conversion from existing code: rate_bps = int(loan["interest_rate"] * 100)
+        rate_bps = int(loan["interest_rate"] * 100)
+        remaining_months = loan["tenure_months"] or 0
+
+        schedule = generate_schedule(
+            principal_paise=loan["outstanding_paise"],
+            annual_rate_bps=rate_bps,
+            tenure_months=remaining_months,
+            start_date=loan.get("disbursed_date") or "2025-01-01",
+        )
+
+        # Transform to dict format for persistence
+        schedule_dicts = [
+            {
+                "due_date": row.payment_date,
+                "emi_paise": row.emi_paise,
+                "principal_paise": row.principal_paise,
+                "interest_paise": row.interest_paise,
+                "balance_paise": row.balance_paise,
+            }
+            for row in schedule
+        ]
+
+        # Persist for future use
+        self.loan_repo.persist_schedule_rows(loan_id, schedule_dicts, source="computed")
+
+        return schedule_dicts
+
+    # ============================================================
     # Payment Operations
     # ============================================================
 

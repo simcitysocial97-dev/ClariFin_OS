@@ -44,17 +44,21 @@ def api_get_pending_reconciliations() -> dict[str, Any]:
 
 
 @router.get("/scan")
-def api_scan_reconciliations() -> dict[str, Any]:
+def api_scan_reconciliations(household_id: str | None = None) -> dict[str, Any]:
     """
     Scan for potential transfer matches across accounts.
 
     Phase 2B.1: Deterministic matching with confidence scoring.
+    Phase 3: Uses repository for data fetching, pure engine.
+
+    Args:
+        household_id: Optional household filter. If None, scans all households.
 
     Returns potential matches that can be saved as reconciliations.
     """
     try:
         service = ReconciliationService()
-        matches = service.scan_potential_matches()
+        matches = service.scan_potential_matches(household_id=household_id)
 
         # Enrich with display fields
         for m in matches:
@@ -72,28 +76,36 @@ def api_create_reconciliation(
     credit_txn_id: int = Query(..., description="Credit transaction ID"),
     debit_account_id: str = Query(..., description="Debit account ID"),
     credit_account_id: str = Query(..., description="Credit account ID"),
-    amount: float = Query(..., description="Matched amount in rupees"),
+    amount_paise: int = Query(..., description="Matched amount in paise (₹1.00 = 100)"),
     date_diff_days: int = Query(0, description="Days between transaction dates"),
-    match_confidence: float = Query(..., description="Confidence score 0.0-1.0"),
+    confidence_bps: int = Query(..., description="Confidence in basis points (0-10000)"),
     match_type: str = Query("exact", description="'exact', 'window', 'fuzzy', or 'manual'"),
 ) -> dict[str, Any]:
     """
     Create a reconciliation record between two transactions.
 
     Phase 2B: Metadata-only, no ledger mutation.
-    Uses INSERT OR IGNORE for idempotency.
+    Phase 3: Uses amount_paise and confidence_bps for precision.
+
+    Breaking change: amount_paise (int) replaces amount (float).
+    confidence_bps (int) replaces match_confidence (float).
     """
     try:
         repo = ReconciliationRepository()
+        # Convert paise to rupees for backward-compatible repository call
+        amount_rupees = amount_paise / 100.0
+        match_confidence = confidence_bps / 10000.0
+
         inserted = repo.insert_reconciliation(
             debit_txn_id=debit_txn_id,
             credit_txn_id=credit_txn_id,
             debit_account_id=debit_account_id,
             credit_account_id=credit_account_id,
-            amount=amount,
+            amount=amount_rupees,
             date_diff_days=date_diff_days,
             match_confidence=match_confidence,
             match_type=match_type,
+            confidence_bps=confidence_bps,
         )
         return {"success": True, "inserted": inserted}
     except Exception as e:
@@ -101,7 +113,7 @@ def api_create_reconciliation(
 
 
 @router.post("/batch-insert")
-def api_batch_insert_reconciliations() -> dict[str, Any]:
+def api_batch_insert_reconciliations(household_id: str | None = None) -> dict[str, Any]:
     """
     Scan and insert all potential matches as pending reconciliations.
 
@@ -109,7 +121,7 @@ def api_batch_insert_reconciliations() -> dict[str, Any]:
     """
     try:
         service = ReconciliationService()
-        matches = service.scan_potential_matches()
+        matches = service.scan_potential_matches(household_id=household_id)
 
         repo = ReconciliationRepository()
         inserted_count = 0
@@ -123,6 +135,7 @@ def api_batch_insert_reconciliations() -> dict[str, Any]:
                 date_diff_days=m["date_diff_days"],
                 match_confidence=m["match_confidence"],
                 match_type=m["match_type"],
+                confidence_bps=m.get("confidence_bps"),
             )
             if inserted:
                 inserted_count += 1
@@ -143,10 +156,11 @@ def api_confirm_reconciliation(reconciliation_id: int) -> dict[str, Any]:
     Confirm a pending reconciliation.
 
     Phase 2B: Updates reconciliation.status only. No ledger mutation.
+    Phase 3: Logs audit action.
     """
     try:
-        repo = ReconciliationRepository()
-        updated = repo.confirm_reconciliation(reconciliation_id)
+        service = ReconciliationService()
+        updated = service.confirm_reconciliation_with_audit(reconciliation_id)
         if not updated:
             raise HTTPException(status_code=404, detail="Reconciliation not found or not pending")
         return {"success": True, "status": "confirmed"}
@@ -162,13 +176,39 @@ def api_reject_reconciliation(reconciliation_id: int) -> dict[str, Any]:
     Reject a pending reconciliation.
 
     Phase 2B: Updates reconciliation.status only. No ledger mutation.
+    Phase 3: Logs audit action.
     """
     try:
-        repo = ReconciliationRepository()
-        updated = repo.reject_reconciliation(reconciliation_id)
+        service = ReconciliationService()
+        updated = service.reject_reconciliation_with_audit(reconciliation_id)
         if not updated:
             raise HTTPException(status_code=404, detail="Reconciliation not found or not pending")
         return {"success": True, "status": "rejected"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/{reconciliation_id}/undo")
+def api_undo_reconciliation(reconciliation_id: int) -> dict[str, Any]:
+    """
+    Revert a confirmed reconciliation back to pending status.
+
+    Phase 3: Only allowed if confirmed in the current month.
+    Logs an 'undo' audit action on success.
+    """
+    try:
+        repo = ReconciliationRepository()
+        updated = repo.undo_reconciliation(reconciliation_id)
+
+        if not updated:
+            # Check if it's a month boundary block
+            raise HTTPException(
+                status_code=400,
+                detail="Undo not allowed - reconciliation confirmed in a different month or not found",
+            )
+        return {"success": True, "status": "pending", "action": "undo"}
     except HTTPException:
         raise
     except Exception as e:

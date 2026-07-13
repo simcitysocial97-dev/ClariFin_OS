@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
 from engines.balance_engine import compute_account_balance
-from engines.reconciliation_engine import find_potential_matches
+from engines.reconciliation_engine import find_potential_matches_with_db
 from repositories.reconciliation_repository import ReconciliationRepository
 from repositories.statement_repository import StatementRepository
 
@@ -96,8 +96,8 @@ def test_deterministic_matching(populated_db):
     db, db_path = populated_db
 
     # Run matching twice
-    matches_1 = find_potential_matches(db_path)
-    matches_2 = find_potential_matches(db_path)
+    matches_1 = find_potential_matches_with_db(db_path)
+    matches_2 = find_potential_matches_with_db(db_path)
 
     # Should produce identical results
     assert len(matches_1) == len(matches_2), "Match count should be identical"
@@ -121,7 +121,7 @@ def test_deterministic_key_consistency(populated_db):
     """Test that deterministic keys are consistent across runs."""
     db, db_path = populated_db
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
 
     for m in matches:
         # Verify key format: "min_id:max_id"
@@ -149,7 +149,7 @@ def test_idempotent_insert(populated_db):
     db, db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     assert len(matches) > 0, "Should find matches"
 
     # Insert first match
@@ -190,7 +190,7 @@ def test_mirrored_pair_prevention(populated_db):
     db, db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0]
 
     # Insert with original order
@@ -229,7 +229,7 @@ def test_confirmed_row_immutable(populated_db):
     db, db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0]
 
     # Insert and confirm
@@ -265,7 +265,7 @@ def test_confirm_does_not_modify_transactions(populated_db):
     db, db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     m = matches[0]
 
     # Get transaction states before
@@ -314,7 +314,7 @@ def test_balance_unaffected_by_reconciliation(populated_db):
     balance_before = compute_account_balance(db_path, "Account_A")
 
     # Create and confirm reconciliations
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     for m in matches:
         rec_repo.insert_reconciliation(
             debit_txn_id=m["debit_txn_id"],
@@ -357,7 +357,7 @@ def test_replay_determinism_maintained(populated_db):
     conn.close()
 
     # Create and confirm reconciliations
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
     for m in matches:
         rec_repo.insert_reconciliation(
             debit_txn_id=m["debit_txn_id"],
@@ -405,7 +405,7 @@ def test_confidence_deterministic(populated_db):
     # Run matching multiple times
     all_confidences = []
     for _ in range(3):
-        matches = find_potential_matches(db_path)
+        matches = find_potential_matches_with_db(db_path)
         confidences = {m["deterministic_key"]: m["match_confidence"] for m in matches}
         all_confidences.append(confidences)
 
@@ -419,7 +419,7 @@ def test_confidence_bounds(populated_db):
     """Test that confidence scores are within bounds [0, 1]."""
     db, db_path = populated_db
 
-    matches = find_potential_matches(db_path)
+    matches = find_potential_matches_with_db(db_path)
 
     for m in matches:
         assert 0.0 <= m["match_confidence"] <= 1.0, \

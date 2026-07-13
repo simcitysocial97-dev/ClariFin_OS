@@ -257,6 +257,16 @@ class TransactionRepository(BaseRepository):
             conn.commit()
         return inserted
 
+    def get_transaction_by_id(self, txn_id: int) -> dict[str, Any] | None:
+        """Get a single transaction by ID as a plain dict."""
+        with self._get_conn() as conn:
+            cur = conn.execute(
+                "SELECT * FROM transactions WHERE id = ?",
+                (txn_id,),
+            )
+            row = cur.fetchone()
+        return dict(row) if row else None
+
     def get_transaction_count(self) -> int:
         """Get total count of transactions."""
         with self._get_conn() as conn:
