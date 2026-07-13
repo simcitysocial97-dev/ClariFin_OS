@@ -5,7 +5,7 @@ All ratios are Decimal for precision.
 """
 
 from decimal import Decimal
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -105,3 +105,28 @@ class BehaviourSnapshotCreate(DomainModel):
     resilience_index_bps: int
     wellness_score_bps: int
     version: int = 1
+
+
+# ============================================================
+# Recommendation Response Model
+# ============================================================
+
+
+class RecommendationResponse(BaseModel):
+    """Response model for a single recommendation."""
+
+    title: str = Field(..., description="Short title of the recommendation")
+    reason: str = Field(..., description="Human-readable explanation of the recommendation")
+    metric: str = Field(..., description="The metric value that triggered this recommendation")
+    severity: str = Field(..., description="Severity level (LOW, MEDIUM, HIGH, CRITICAL)")
+    suggested_action: str = Field(..., description="Actionable suggestion for the user")
+
+
+class RecommendationsResponse(BaseModel):
+    """Response model for a list of recommendations."""
+
+    recommendations: list[RecommendationResponse] = Field(
+        ..., description="List of triggered recommendations sorted by severity"
+    )
+    total_count: int = Field(..., description="Total number of recommendations")
+    snapshot_date: str = Field(..., description="Date of the snapshot used for recommendations")

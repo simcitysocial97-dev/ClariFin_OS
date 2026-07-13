@@ -37,6 +37,8 @@ from src.models.behaviour import (
     FinancialProfileResponse,
     MonthlySummaryResponse,
     ProfileType,
+    RecommendationResponse,
+    RecommendationsResponse,
     WellnessBand,
     WellnessScoreResponse,
 )
@@ -532,6 +534,115 @@ class BehaviourService:
             logger.error(f"Error generating monthly summary: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to generate monthly summary: {str(e)}",
+            )
+
+    def get_recommendations(
+        self,
+        household_id: str = "default",
+        limit: int = 10,
+        severity_filter: str | None = None,
+    ) -> RecommendationsResponse:
+        """Get financial recommendations based on current behaviour metrics.
+
+        Args:
+            household_id: Household identifier (default: "default")
+            limit: Maximum number of recommendations to return (default: 10)
+            severity_filter: Optional filter for severity (LOW, MEDIUM, HIGH, CRITICAL)
+
+        Returns:
+            RecommendationsResponse with triggered recommendations sorted by severity
+
+        Raises:
+            NotFoundError: If no snapshot is available
+            AppError: If recommendation generation fails
+        """
+        try:
+            # Get latest snapshot for context
+            snapshot = self.behaviour_repo.get_latest_snapshot(household_id)
+            if not snapshot:
+                raise NotFoundError("No behaviour snapshot available for recommendations")
+
+            # Get transactions for recommendation inputs
+            transactions = self.transaction_repo.get_all_transactions()
+            credit_cards = self.credit_card_repo.list_cards()
+            loans = self.loan_repo.list_loans()
+
+            # Calculate metrics needed for recommendations
+            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
+            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+
+            borrowed_lifestyle_ratio = compute_borrowed_lifestyle_ratio(
+                self._compute_credit_funded_expenses(transactions), total_expenses
+            )
+
+            foir, _ = compute_foir(
+                self._compute_fixed_obligations(loans, credit_cards),
+                self._compute_minimum_obligations(loans, credit_cards),
+                total_income,
+            )
+
+            # Calculate liquidity months
+            liquid_assets = self._compute_liquid_assets(self.account_repo.get_all_accounts())
+            essential_expenses = self._compute_essential_expenses(transactions)
+            liquidity_months = int(liquid_assets / essential_expenses) if essential_expenses > 0 else 0
+
+            # Get subscriptions for recommendation input
+            subscription_patterns = [
+                p for p in self.pattern_repo.get_recent_patterns(days=30, household_id=household_id)
+                if p["pattern_type"] == "SUBSCRIPTION"
+            ]
+            subscriptions = [
+                {"merchant": p["pattern_key"], "avg_amount_paise": p["total_amount_paise"] // max(1, p["transaction_count"])}
+                for p in subscription_patterns
+            ]
+
+            # Generate recommendations
+            from src.engines.recommendation_engine.recommendations import (
+                compute_recommendations,
+            )
+
+            recommendations = compute_recommendations(
+                borrowed_lifestyle_ratio=borrowed_lifestyle_ratio,
+                foir=foir,
+                liquidity_months=liquidity_months,
+                current_subscriptions=subscriptions,
+                previous_subscriptions=None,
+            )
+
+            # Apply severity filter if provided
+            if severity_filter:
+                recommendations = [
+                    r for r in recommendations
+                    if r.severity == severity_filter
+                ]
+
+            # Apply limit
+            recommendations = recommendations[:limit]
+
+            # Convert to response models
+            recommendation_responses = [
+                RecommendationResponse(
+                    title=r.title,
+                    reason=r.reason,
+                    metric=r.metric,
+                    severity=r.severity,
+                    suggested_action=r.suggested_action,
+                )
+                for r in recommendations
+            ]
+
+            return RecommendationsResponse(
+                recommendations=recommendation_responses,
+                total_count=len(recommendation_responses),
+                snapshot_date=snapshot["snapshot_date"],
+            )
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(f"Error getting recommendations: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get recommendations: {str(e)}",
             )
 
     # ============================================================

@@ -1,6 +1,12 @@
 # Active Context
 
-## Current Phase: Behaviour Engine Phase 8 — Persistence Layer + Service Layer (COMPLETE)
+## Current Phase: Behaviour Engine Phase 11 — API Layer (COMPLETE)
+
+### Phase 11 Implementation Summary
+- Created `backend/src/routers/behaviour.py` with 7 GET endpoints under `/api/v1/behaviour/` prefix
+- Added `RecommendationsResponse` and `RecommendationResponse` DTOs to `backend/src/models/behaviour.py`
+- Added `get_recommendations()` method to `BehaviourService` with severity filtering support
+- Created `backend/tests/test_behaviour_router.py` with 17 tests mocking BehaviourService
 
 ### Phase 8 + Service Layer Implementation Summary
 
