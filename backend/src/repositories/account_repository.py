@@ -251,3 +251,111 @@ class AccountRepository(BaseRepository):
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()
         return bool(changes_row[0]) if changes_row else False
+
+    # ============================================================
+    # Household / Multi-Owner Methods (Phase 1)
+    # ============================================================
+
+    def get_household_accounts(self, household_id: str) -> list[dict[str, Any]]:
+        """Get all active accounts belonging to a household."""
+        with self._get_conn() as conn:
+            cur = conn.execute("PRAGMA table_info(accounts)")
+            columns = [row[1] for row in cur.fetchall()]
+
+            if "bank" in columns:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank, account_type, account_number_last4,
+                           balance_paise, is_active, created_at, updated_at,
+                           owner_id, household_id
+                    FROM accounts
+                    WHERE is_active = 1 AND household_id = ?
+                    ORDER BY bank, name
+                    """,
+                    (household_id,),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank_name, account_type, account_number_masked,
+                           balance_paise, is_active, created_at, updated_at,
+                           owner_id, household_id
+                    FROM accounts
+                    WHERE is_active = 1 AND household_id = ?
+                    ORDER BY bank_name, name
+                    """,
+                    (household_id,),
+                ).fetchall()
+
+            result = []
+            for r in rows:
+                d = dict(r)
+                d["bank"] = d.pop("bank_name", d.get("bank"))
+                d["account_number_last4"] = d.pop(
+                    "account_number_masked", d.get("account_number_last4")
+                )
+                result.append(d)
+        return result
+
+    def get_accounts_by_owner(
+        self, owner_id: str, household_id: str = "primary"
+    ) -> list[dict[str, Any]]:
+        """Get all active accounts for a specific owner within a household."""
+        with self._get_conn() as conn:
+            cur = conn.execute("PRAGMA table_info(accounts)")
+            columns = [row[1] for row in cur.fetchall()]
+
+            if "bank" in columns:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank, account_type, account_number_last4,
+                           balance_paise, is_active, created_at, updated_at,
+                           owner_id, household_id
+                    FROM accounts
+                    WHERE is_active = 1 AND owner_id = ? AND household_id = ?
+                    ORDER BY bank, name
+                    """,
+                    (owner_id, household_id),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT id, name, bank_name, account_type, account_number_masked,
+                           balance_paise, is_active, created_at, updated_at,
+                           owner_id, household_id
+                    FROM accounts
+                    WHERE is_active = 1 AND owner_id = ? AND household_id = ?
+                    ORDER BY bank_name, name
+                    """,
+                    (owner_id, household_id),
+                ).fetchall()
+
+            result = []
+            for r in rows:
+                d = dict(r)
+                d["bank"] = d.pop("bank_name", d.get("bank"))
+                d["account_number_last4"] = d.pop(
+                    "account_number_masked", d.get("account_number_last4")
+                )
+                result.append(d)
+        return result
+
+    def is_same_household(
+        self, account_id_1: int | str, account_id_2: int | str
+    ) -> bool:
+        """Check if two accounts belong to the same household."""
+        with self._get_conn() as conn:
+            row = conn.execute(
+                """
+                SELECT
+                    (SELECT household_id FROM accounts WHERE id = ?) AS h1,
+                    (SELECT household_id FROM accounts WHERE id = ?) AS h2
+                """,
+                (account_id_1, account_id_2),
+            ).fetchone()
+        if not row:
+            return False
+        h1, h2 = row[0], row[1]
+        if h1 is None or h2 is None:
+            return False
+        return h1 == h2

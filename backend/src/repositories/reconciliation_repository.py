@@ -10,7 +10,13 @@ from src.repositories.base import BaseRepository
 
 
 class ReconciliationRepository(BaseRepository):
-    """Repository for reconciliation operations."""
+    """Repository for reconciliation operations.
+
+    DEPRECATED:
+        match_confidence (REAL) is retained only for backward compatibility.
+        confidence_bps (INTEGER basis points) is the authoritative confidence field.
+        All new writes must populate both fields until match_confidence is removed.
+    """
 
     def get_all_models(self) -> list[Reconciliation]:
         """
