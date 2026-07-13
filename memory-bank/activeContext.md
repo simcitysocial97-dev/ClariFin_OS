@@ -1,5 +1,33 @@
 # Active Context
 
+## Architecture Audit & Token Optimization (Completed)
+
+### What was done
+- **Comprehensive architecture audit** of all 182 Python files + 73 TS/TSX files across backend and frontend
+- **Generated `ARCHITECTURE.md`** with condensed topology, layer hierarchy (Router→Service→Engine→Repository→SQLite), database schema summary, technology stack, duplicate code registry, and an AI quick-reference section with rg/grep patterns and token budget rules
+- **Enhanced `.clinerules`** with Section 2a (Token-Efficient Discovery Protocol): rg/grep patterns for instant logic discovery, before-reading checklist, file-listing shortcuts, and call-chain tracing optimizations
+- **Added 2 new Cypher query templates** to `.clinerules` for deeper CGC graph lookups
+
+### Key findings
+- 20 routers, 15 services, 10+ engines, 24 repositories, 19 models — clean layered architecture
+- Repository Boundary Rule enforced (only `src/repositories/` touches DB)
+- Duplicate code identified: `behavior`/`behaviour` (US/UK spelling) across routers, services, and engines
+- Engine purity violations: some engines still call `sqlite3.connect()` directly
+- All monetary values stored as INTEGER paise per financial best practice
+
+### CGC Regressive Test (July 2026) — Completed
+- **Root cause found**: `TOOL_RESULT_LIMITS={"find_code":10,"analyze_code_relationships":10,"execute_cypher_query":20}` was truncating results — 10-result cap meant only 10 of 24 repositories appeared in queries
+- **Fix**: Limits raised to `find_code:50`, `analyze_code_relationships:50`, `execute_cypher_query:100` (5x increase) in `~/.codegraphcontext/.env`
+- **Verified**: `find_code("BaseRepository")` now returns 21 results (all repositories). Cross-layer call chain `transaction_intelligence_service.py → detect_cc_payment → classify_cc_payment` confirmed working at depth 5
+- **No AST failure**: Tree-sitter parsers pass, deepest files (depth 5 in `transaction_intelligence/`) are fully indexed with source
+- **`.clinerules` updated**: Added Section 9 (CGC Invariants) documenting the 4 known limitations, synchronization protocol, and 4-item verification checklist
+
+### Next immediate steps
+- Fix duplicate `behavior`/`behaviour` routers and services (rename to single canonical name)
+- Refactor `sqlite3.connect()` calls out of engines (pass data as function parameters instead)
+- Migrate `match_confidence REAL` → `confidence_bps INTEGER` fully across all code paths
+- Generate Python `.pyi` stubs for all backend modules to enable instant type discovery without reading source
+
 ## Phase 0 Discovery Complete — Reconciliation Engine v2 Analysis
 
 ### Discovery Findings Summary
@@ -171,3 +199,79 @@
 - Engine purity verification (no DB calls)
 - Narrative format (fee amount and percentage)
 - Spouse account matching within same household
+
+### Phase 6 — Financial Events Persistence (COMPLETED)
+
+**Model Changes (`models/financial_event.py`):**
+- Added new event types: `emi_payment`, `liability_repayment`, `credit_card_cash_advance`, `transfer_internal`
+- Added granular amount fields: `asset_change_paise`, `liability_change_paise`, `expense_paise`, `income_paise`
+- Added `sub_type`, `provider`, `lifecycle_state`, `outstanding_paise`, `superseded_by` fields
+- Added `confidence_bps` (authoritative) alongside deprecated legacy `confidence`
+- Added `reviewed_by_user` as bool (not user ID)
+- Added `month_bucket` derived via `@model_validator(mode='after')`
+- Extended `BehaviourInput` with `financial_events: list[dict[str, Any]]`
+
+**Schema (`scripts/migration_financial_events.py`):**
+- `financial_events` table with all event fields
+- `financial_event_links` table for settles/funds/rolls_over relationships
+- Indexes for month_bucket, household_id, account_id, lifecycle_state, event_type
+
+**Repository (`repositories/financial_event_repository.py`):**
+- `insert_event(FinancialEvent) -> int`
+- `get_events_for_month(month_bucket, household_id) -> list[dict]`
+- `get_open_events_for_account(account_id) -> list[dict]`
+- `update_lifecycle(event_id, lifecycle_state, outstanding_paise, settled_by_event_id) -> bool`
+- `insert_link(event_id, linked_event_id, link_type) -> int`
+- `get_links_for_event(event_id) -> list[dict]`
+
+**Engine (`engines/financial_events/lineage_walker.py`):**
+- `DEFAULT_ROLLOVER_LOOKBACK_DAYS = 90` constant
+- `LineageProposal` dataclass for structured results
+- `walk_lineage(events) -> LineageProposal` - detects 'settles' links
+- `detect_rollover_scenarios(events) -> LineageProposal`
+
+**Service (`services/transaction_intelligence_service.py` + `financial_events_service.py`):**
+- Added `event_repo` to TransactionIntelligenceService
+- Added `_emit_financial_event()` helper method
+- Wired `classify_emi_payments()` to emit `emi_payment` events
+- Ready for wiring `classify_cc_payments()` and `classify_cash_conversions()`
+
+**Tests (`tests/test_financial_events.py` - 13/13 passing):**
+- Model backward compatibility and new event types
+- Month bucket derivation
+- Repository CRUD operations
+- Lifecycle updates
+- Link creation and retrieval
+- Lineage walker purity (no DB calls)
+- Full/partial payment state transitions
+- Idempotency verification
+- BehaviourInput integration
+
+### Phase 7 — Cashflow Engine Implementation (COMPLETED)
+
+**Engine (`engines/cashflow_engine.py`):**
+- Pure `compute_monthly_cashflow(cash_summary, financial_events, scope, owner_id)` function
+- Sign conventions documented: asset_change positive=increase, liability_change positive=borrowing
+- Month classification: `surplus` | `deficit_covered_by_credit` | `deficit`
+- Cash surplus = income - expense + credit_received (cash basis)
+- True savings = income - expense - fees (accrual basis)
+- Liability-adjusted savings = true_savings - liability_increase
+- Net worth impact = asset_change - liability_change
+- Credit dependency ratio = credit_funded / expenses
+- Effective liquidity cost annualized = fee * 12
+
+**Service (`services/cashflow_service.py`):**
+- `CashflowService` orchestrates `CashflowRepository` + `FinancialEventRepository`
+- No SQL in service - uses repositories for data fetching
+- `get_monthly_analysis(month_bucket, scope, owner_id)` returns enriched cashflow
+
+**Router (`routers/cashflow.py`):**
+- Added `GET /api/v1/cashflow/monthly` endpoint (existing `/api/cashflow/monthly` preserved)
+- Parameters: month, scope, owner_id, basis
+- Returns all cashflow engine metrics
+
+**Tests (`tests/test_cashflow_engine.py` - 10/10 passing):**
+- Worked example: income 80000, expenses 110000, CRED net 30000/fee 1250 → cash_surplus=0, true_savings=-31250
+- Regression: empty events → cash/accrual converge to existing repository output
+- Household scope aggregates all owners
+- Individual scope receives pre-filtered events at service layer

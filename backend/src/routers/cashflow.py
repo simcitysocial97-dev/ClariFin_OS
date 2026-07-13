@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from src.repositories import CashflowRepository
+from src.services.cashflow_service import CashflowService
 
 router = APIRouter(prefix="/api", tags=["cashflow"])
 
@@ -68,5 +69,40 @@ def get_cashflow_monthly(
             "total_expense_paise": total_expense,
             "total_net_paise": total_income - total_expense,
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================
+# v1 Cashflow Analysis Endpoint (with financial events)
+# ============================================================
+
+@router.get("/v1/cashflow/monthly")
+def get_cashflow_monthly_analysis(
+    month: str = Query(..., description="Month in YYYY-MM format"),
+    scope: str = Query(default="household", description="household or individual"),
+    owner_id: str = Query(default="self", description="Owner ID for individual scope"),
+    basis: str = Query(default="cash", description="cash or accrual"),
+) -> dict[str, Any]:
+    """
+    Get enriched monthly cashflow analysis with financial events overlay.
+
+    Returns:
+        - cash_surplus: Raw income - expense (cash basis)
+        - true_savings: Income - expense - fees - liability_increase
+        - liability_adjusted_savings: true_savings adjusted for liability changes
+        - net_worth_impact: asset_change - liability_change
+        - month_classification: surplus / deficit_covered_by_credit / deficit
+        - credit_dependency_ratio: Credit-funded expenses / total expenses
+        - effective_liquidity_cost_annualized: Annualized fee estimate
+    """
+    try:
+        service = CashflowService()
+        result = service.get_monthly_analysis(
+            month_bucket=month,
+            scope=scope,
+            owner_id=owner_id,
+        )
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
