@@ -1,6 +1,19 @@
 # Active Context
 
-## Current Phase: Behaviour Engine Phase 11 — API Layer (COMPLETE)
+## Current Phase: Behaviour Engine Phase 12 — Integration Testing (COMPLETE)
+
+### Phase 12 Implementation Summary
+- Created `backend/tests/test_behaviour_engine_integration.py` with comprehensive end-to-end tests
+- Integration test scenario: Salary ₹80K, Expenses ₹110K, Credit conversion ₹30K, Loan EMI ₹25K
+- Verified:
+  - Income excludes borrowing (true income = salary only)
+  - Debt dependency detected (>20% borrowed lifestyle ratio triggers DEBT_DEPENDENT)
+  - FOIR calculated correctly from EMI + minimum credit due
+  - Financial personality = DEBT_DEPENDENT with high credit revolver ratio
+  - Wellness score reduced to Risk/Critical band (negative savings, high debt metrics)
+  - Recommendations generated (debt dependency, liquidity, FOIR alerts)
+- All 23 integration tests pass with ruff/mypy clean
+- Used engine thresholds for assertions (DEBT_DEPENDENT_MIN_BORROWED_RATIO, FOIR_THRESHOLD)
 
 ### Phase 11 Implementation Summary
 - Created `backend/src/routers/behaviour.py` with 7 GET endpoints under `/api/v1/behaviour/` prefix
