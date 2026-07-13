@@ -1,8 +1,8 @@
 # Active Context
 
-## Current Phase: Behaviour Engine Phase 8 — Persistence Layer (COMPLETE)
+## Current Phase: Behaviour Engine Phase 8 — Persistence Layer + Service Layer (COMPLETE)
 
-### Phase 8 Implementation Summary
+### Phase 8 + Service Layer Implementation Summary
 
 **Database Schema Migration** (`backend/scripts/migration_005_behaviour_engine.py`)
 - Created 4 new tables: `behaviour_snapshots`, `behaviour_patterns`, `behaviour_alerts`, `financial_profiles`
@@ -23,13 +23,27 @@
 - Implemented basis points to Decimal conversion for all score fields
 - Added comprehensive query methods for different use cases
 
-**Test Coverage** (`backend/tests/`)
-- Created `test_behaviour_repository.py` with 6 comprehensive test functions
-- Created `test_alert_repository.py` with 7 comprehensive test functions
-- Created `test_pattern_repository.py` with 8 comprehensive test functions
-- Tests cover CRUD operations, constraints, isolation, and edge cases
-- All tests use temporary databases for isolation
-- Tests verify basis points conversion and data mapping
+**Service Layer** (`backend/src/services/behaviour_service.py`)
+- Created `BehaviourService` class with dependency injection for repositories
+- Implemented 6 methods:
+  - `compute_financial_profile()`: Fetches data, calls engines, persists snapshots, returns profile
+  - `get_wellness_score()`: Returns latest wellness score with band and components
+  - `get_debt_health()`: Returns debt health metrics (FOIR, credit dependency, revolver ratio)
+  - `get_cashflow_health()`: Returns cashflow stability, surplus, income/expense stability
+  - `get_patterns()`: Returns recent behaviour patterns (IMPULSE, SUBSCRIPTION, etc.)
+  - `generate_monthly_summary()`: Generates comprehensive monthly financial summary
+- All calculations delegated to behaviour_engine pure functions
+- All persistence delegated to repositories
+- Proper error handling with AppError and NotFoundError
+- Added `_generate_alerts()` helper for financial alert generation
+
+**Test Coverage** (`backend/tests/test_behaviour_service.py`)
+- Created 12 comprehensive test functions covering all service methods
+- Tests use mocks for repositories to verify engine delegation
+- Tests cover success cases, error handling, and edge cases
+- All tests pass with correct assertion values matching model expectations
+- Fixed repository method call signatures (days parameter instead of limit)
+- Fixed snapshot field names to match repository output format
 
 ### Key Design Decisions
 
@@ -66,11 +80,10 @@
 
 ### Next Steps
 
-1. **Service Layer Integration**: Create BehaviourService to orchestrate repository calls and engine functions
-2. **API Endpoints**: Implement API endpoints for behaviour data retrieval and alert management
-3. **Frontend Integration**: Update frontend to display behaviour patterns, alerts, and financial profiles
-4. **Data Pipeline**: Create scheduled jobs to generate daily behaviour snapshots and detect patterns
-5. **Alert Processing**: Implement alert generation and notification system
+1. **API Endpoints**: Implement API endpoints for behaviour data retrieval and alert management
+2. **Frontend Integration**: Update frontend to display behaviour patterns, alerts, and financial profiles
+3. **Data Pipeline**: Create scheduled jobs to generate daily behaviour snapshots and detect patterns
+4. **Alert Processing**: Implement alert generation and notification system
 
 ### CGC MCP Verification (Completed)
 
