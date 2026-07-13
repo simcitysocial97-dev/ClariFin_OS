@@ -78,6 +78,25 @@
 - Created `backend/docs/behaviour_engine_architecture.md` with input data sources, service boundaries, repository dependencies, and engine responsibilities
 - Created `backend/src/models/financial_event.py` with FinancialEvent DTO, EventType Literal, FinancialEventBatch, and BehaviourInput interfaces
 
+### Phase 10 Completion: Recommendation Engine
+
+**Recommendation Engine** (`backend/src/engines/recommendation_engine/`)
+- Created `recommendations.py` with 4 deterministic recommendation rules:
+  - `check_debt_dependency()`: IF ratio > 20% → "Your lifestyle is partly funded by borrowed money"
+  - `check_foir()`: IF ratio > 50% → "Fixed obligations are high"
+  - `check_liquidity()`: IF months < 3 → "Emergency fund required"
+  - `detect_subscription_growth()`: Detects subscription changes for "Review subscriptions"
+
+**Recommendation Model** (in `recommendations.py`)
+- `Recommendation` class with title, reason, metric, severity, suggested_action
+- Severity levels: LOW, MEDIUM, HIGH, CRITICAL
+- All functions are pure - no database access
+
+**Test Coverage** (`backend/tests/test_recommendation_engine.py`)
+- 34 tests covering all rules with positive/negative cases
+- Tests for required fields, determinism, and sorting by severity
+- All tests pass
+
 ### Next Steps
 
 1. **API Endpoints**: Implement API endpoints for behaviour data retrieval and alert management
