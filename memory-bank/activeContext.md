@@ -57,3 +57,8 @@
 - Added `get_reconciliation_stats()` method to `ReconciliationService`
 - Added `GET /api/reconciliations/stats` endpoint to router
 - Added 4 tests in `test_reconciliation_stats.py` covering known fixture, zero-transactions, no-matched, and perfect-record scenarios
+
+### Completed Changes (CRED E2E Hardening — Current Session)
+- Created `test_cred_e2e_hardening.py` with 9 comprehensive tests for CRED cash conversion scenario
+- Added `outstanding_paise` parameter to `FinancialEventsService.create_and_persist_event()` for proper debt entry creation
+- Fixed schema mismatches in test fixtures (is_active column, financial_events table, join logic)

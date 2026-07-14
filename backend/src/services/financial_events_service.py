@@ -3,7 +3,6 @@
 Coordinates event creation, lineage walking, and persistence.
 No DB access in engines - this layer handles all database writes.
 """
-import json
 from typing import Any
 
 from src.engines.financial_events.lineage_walker import (
@@ -38,6 +37,7 @@ class FinancialEventsService:
         liability_change_paise: int = 0,
         expense_paise: int = 0,
         income_paise: int = 0,
+        outstanding_paise: int = 0,
         date_iso: str = "",
         category: str = "",
         sub_type: str | None = None,
@@ -59,6 +59,7 @@ class FinancialEventsService:
             liability_change_paise=liability_change_paise,
             expense_paise=expense_paise,
             income_paise=income_paise,
+            outstanding_paise=outstanding_paise,
             date_iso=date_iso,
             account_id=account_id,
             category=category,
