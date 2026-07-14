@@ -1,6 +1,6 @@
 # Active Context
 
-## Architecture Audit Complete — Principal Architect Review
+## Architecture Audit Complete — Principal Architect Review (Enhanced)
 
 ### Audit Phases Delivered
 - **Phase 1-3:** Topology, execution flows, financial formulas with Observed vs Inferred labels
@@ -17,6 +17,16 @@
 - **Phase 14:** Architecture Scorecard (9.4/10)
 - **Phase 15:** Mathematical Deep Dive — extended assumptions and edge cases
 - **Phase 16:** Repository Audit Details
+- **Phase 18:** Principal Architect Enhancements
+  - 18.1 Explicit Call Graphs
+  - 18.2 Dependency Cycle Analysis
+  - 18.3 Data Lifecycle
+  - 18.4 Mutation Matrix
+  - 18.5 Concurrency
+  - 18.6 Security Boundary
+  - 18.7 Test Coverage Matrix
+  - 18.8 Performance Hotspots
+  - 18.9 Domain Boundaries / Bounded Contexts
 
 ### Key Enhancements
 - Added Observed vs Inferred labels throughout
@@ -29,6 +39,7 @@
 - Added State Ownership analysis (persistence, lifecycle, read/write, owner)
 - Added Coupling Analysis and hidden coupling risks
 - Added Mathematical Deep Dive: forecasting stationarity risks, optimization decision logic verification, scenario impossible-balance risks
+- Added Principal Architect Enhancements: call graphs, dependency cycle analysis, data lifecycle, mutation matrix, concurrency, security boundary, test coverage matrix, performance hotspots, domain boundaries
 
 ### Overall Assessment
 - Layer Separation: 9.8/10
@@ -42,3 +53,6 @@
 - Remove behavior/behaviour duplicate aliases (Low severity)
 - Add correlation ID framework for observability
 - Consider adding stationarity tests and outlier handling to forecast engine
+- Close security gaps: auth, authorization, file upload validation, centralized audit logging
+- Validate dependency cycle absence with static analysis tool
+- Consider application-level locking for concurrent schedule regeneration

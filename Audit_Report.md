@@ -588,3 +588,255 @@ The ClariFin_OS backend achieves strong architectural integrity through layered 
 7. Instrument Hungarian implementation path verification.
 
 With the additions above, this audit would serve as a principal-architect-level reference for long-term maintenance.
+
+---
+
+## PHASE 18: Principal Architect Enhancements
+
+### 18.1 Explicit Call Graphs (Observed)
+
+```
+FinancialIntelligenceService
+├── ForecastEngine
+│   ├── utils.py
+│   │   ├── generate_month_sequence
+│   │   ├── project_running_balance
+│   │   └── find_stress_month
+│   └── confidence.py/compute_confidence_from_variance
+├── GoalPlanner
+│   └── utils.py (emergency fund target)
+├── Optimization
+│   ├── utils.py (thresholds, ratios)
+│   └── Conclusion: generate_optimization_plan composes
+│       ├── optimize_surplus_allocation
+│       ├── rank_debt_payoff_strategy
+│       └── calculate_financial_action_score
+├── Scenario
+│   ├── simulate_expense_reduction
+│   ├── simulate_income_change
+│   ├── simulate_debt_prepayment
+│   ├── simulate_new_loan
+│   └── simulate_credit_behaviour_change
+└── Intelligence
+    ├── build_financial_snapshot
+    ├── generate_financial_priorities
+    └── generate_financial_intelligence_report
+```
+
+**Observation:** `utils.py` is the central dependency for all Financial Intelligence engines. This is a design strength: constants and helper functions are centralized.
+
+---
+
+### 18.2 Dependency Cycle Analysis (Observed)
+
+**Circular dependencies:**
+- None observed in engine layer.
+- Services may depend on other services, but no evidence of cycles in the sampled orchestration graph.
+
+**Potential Risk (Inferred):**
+- `FinancialIntelligenceService` calls multiple services (CashflowService, LoanService, etc.). If any of those services call back to `FinancialIntelligenceService`, a cycle would exist.
+- **Verification Needed:** Run static analysis (`pydeps` or `importlab`) to confirm no cycles.
+
+---
+
+### 18.3 Data Lifecycle (Observed)
+
+```
+PDF / Excel / CSV
+    ↓
+Ingestion (CSVImporter / TableExtractor / StatementExtractor)
+    ↓
+Statement (persisted)
+    ↓
+Transactions (immutable)
+    ↓
+Categories / Classifications
+    ↓
+Cashflow (monthly aggregates)
+    ↓
+FinancialEvents (credit events)
+    ↓
+Forecasts
+    ↓
+Goals / Scenarios
+    ↓
+Optimization
+    ↓
+Recommendations
+    ↓
+API Response
+```
+
+**Lifecycle Notes:**
+- Ingestion is the only mutation point for raw data.
+- Transactions are immutable after ingestion.
+- Aggregates (cashflow, forecasts) are derived and transient.
+- Statements are the root persistence artifact for bank data.
+
+---
+
+### 18.4 Mutation Matrix (Observed)
+
+| Object | Can Mutate? | Where | Notes |
+|--------|-------------|-------|-------|
+| Transaction | No | Never | Immutable after confirmation |
+| Statement | No | Never | Immutable after ingestion |
+| Loan | Yes | LoanService | Balance, rate changes, prepayments |
+| LoanSchedule | Yes | LoanEngine | Regenerated on parameter changes |
+| Goal | Yes | GoalService | Progress updates, status changes |
+| Reconciliation | Yes | ReconciliationService | Mutable until confirmed |
+| Account | Yes | AccountService | Balance updates |
+| Forecast | No | Regenerated | Transient; each call produces new forecast |
+| OptimizationPlan | No | Regenerated | Transient |
+| ScenarioResult | No | Regenerated | Transient |
+| FinancialIntelligenceReport | No | Regenerated | Transient |
+
+**Audit Note:** Mutation is centralized in services. Engines never mutate persisted state.
+
+---
+
+### 18.5 Concurrency (Observed)
+
+**SQLite Configuration (Inferred):**
+- WAL mode is referenced in architecture docs.
+- Foreign keys are enabled.
+
+**Transaction Isolation (Observed):**
+- Repository writes use `sqlite3.Connection` context managers.
+- No explicit `BEGIN` / `COMMIT` found in sampled repositories; **Inferred** that autocommit or implicit transactions are used.
+
+**Concurrent Regeneration Risk:**
+- `LoanSchedule` regeneration could race if two requests trigger simultaneously for the same loan.
+- **Observation:** No application-level locking observed.
+- **Recommendation:** Add `UPDATE ... WHERE version = ?` or use `INSERT OR REPLACE` with deterministic keys to avoid lost updates.
+
+**Atomicity:**
+- Repository methods are single-statement or wrapped in `execute()`.
+- Multi-statement operations (e.g., schedule regeneration) should be reviewed for atomicity.
+
+---
+
+### 18.6 Security Boundary (Observed)
+
+**Authentication:**
+- FastAPI CORS configured. **Inferred** — no auth headers examined in routers.
+- **Gap:** No mention of OAuth, JWT, or session auth in architecture docs.
+
+**Authorization:**
+- Router layer does not enforce role-based access. **Inferred** — no decorator like `Depends(get_current_user)` observed in sampled routers.
+- **Gap:** Multi-tenant household isolation not reviewed.
+
+**SQL Injection Prevention:**
+- Parameterized queries via `cursor.execute(sql, params)`. **Observed** in repository pattern.
+- No string concatenation in SQL statements observed.
+
+**Pydantic Validation:**
+- Request models use Pydantic. **Observed** in routers.
+- Response models use Pydantic. **Observed** in models.
+
+**File Upload Validation:**
+- CSV/Excel/PDF ingest accepts user uploads.
+- **Gap:** Virus scanning, file size limits, and content-type validation not reviewed.
+
+**Statement Parsing Trust Boundaries:**
+- PDF parsing runs server-side with `pdfplumber` / `PyMuPDF`.
+- **Gap:** sandboxing and resource limits not reviewed.
+
+**PII Exposure:**
+- Account numbers stored as `account_number_last4` only. **Observed** — good practice.
+- Full account numbers may exist in parsed text; not reviewed.
+
+**Audit Logging:**
+- `reconciliation_audit_log` table exists.
+- **Gap:** centralized audit log for mutations not reviewed.
+
+---
+
+### 18.7 Test Coverage Matrix (Observed)
+
+| Layer | Unit | Integration | Property | Snapshot |
+|-------|------|-------------|----------|----------|
+| Engine | ✓ | | ✓ | |
+| Repository | | ✓ | | |
+| Service | ✓ | ✓ | | |
+| Router | | ✓ | | |
+| End-to-End | | ✓ | | |
+
+**Evidence:**
+- Engine tests: `test_financial_forecasting.py`, `test_optimization_engine.py`, `test_goal_planner.py`, `test_scenario_engine.py`.
+- Repository tests: `test_audit_repository.py`, `test_account_balance_repository.py`.
+- Service tests: `test_services.py`, `test_behaviour_service.py`.
+- Router tests: `test_account_router.py`, `test_behaviour_router.py`.
+- Integration: `test_financial_intelligence_integration.py`.
+
+**Coverage Assessment:**
+- Strong engine coverage with property-style tests (determinism, edge cases).
+- Integration tests validate service-orchestration flows.
+- Missing: snapshot tests for API contract stability.
+
+---
+
+### 18.8 Performance Hotspots (Inferred)
+
+| Operation | Complexity | Type | Risk |
+|-----------|------------|------|------|
+| Reconciliation matching | O(n³) Hungarian | CPU-bound | High for large transaction sets (n > 500) |
+| PDF parsing | O(pages) + I/O | I/O-bound | Large statements (>100 pages) could timeout |
+| Monthly aggregation | O(transactions) | CPU-bound | Acceptable for typical household data |
+| Forecasting | O(history) | CPU-bound | Negligible |
+| Dashboard generation | O(accounts + transactions) | CPU-bound | N+1 risks if not batched |
+
+**Mitigations Observed:**
+- Reconciliation uses `max_date_window_days` to limit candidate set.
+- Dashboard queries likely batched; not reviewed.
+
+**Recommendations:**
+- Add pagination to transaction queries.
+- Consider async I/O for PDF parsing.
+- Cache dashboard aggregates in memory if request volume grows.
+
+---
+
+### 18.9 Domain Boundaries / Bounded Contexts (Observed)
+
+| Context | Responsibility | Key Engines | Key Repositories |
+|---------|----------------|-------------|------------------|
+| Loans | Amortization, prepayment, foreclosure | loan_engine | LoanRepository |
+| Credit Cards | Interest, billing, utilization | credit_card_engine | CreditCardRepository |
+| Reconciliation | Match detection, confidence scoring | reconciliation_engine | ReconciliationRepository |
+| Behaviour | Spending patterns, risk detection | behaviour_engine | BehaviourRepository |
+| Financial Intelligence | Forecast, optimize, scenario, goal planning, intelligence | financial_intelligence | FinancialGoalRepository, FinancialEventRepository |
+| Cashflow | Monthly aggregation, events | cashflow_engine | CashflowRepository |
+| Transactions | Ingestion, parsing, immutability | account_engine | TransactionRepository |
+
+**Context Map Notes:**
+- Financial Intelligence is a top-level bounded context orchestrating others.
+- Cashflow aggregates serve as the bridge between Transactions and Financial Intelligence.
+- Behaviour and Financial Intelligence share `FinancialEventRepository` for credit dependency signals.
+
+---
+
+## PHASE 19: Final Assessment
+
+The ClariFin_OS backend achieves strong architectural integrity through layered separation, integer-based financial precision, and deterministic computation engines. The Financial Intelligence layer extends that architecture consistently.
+
+**Strengths:**
+- Clear separation of concerns across Router, Service, Engine, Repository.
+- Pure engine functions enable testing and reuse.
+- Financial correctness enforced via paise integers and Decimal arithmetic.
+- Well-defined data pipeline from transactions to intelligence report.
+- Explicit dependency matrices, call graphs, and lifecycle documentation for maintainability.
+
+**Improvement Areas:**
+1. Resolve 3 engine DB access violations.
+2. Consolidate behavior/behaviour naming.
+3. Migrate legacy `interest_rate REAL` column to bps.
+4. Add explicit Observed vs Inferred labels to all future audits.
+5. Expand engine-specific subsections with assumptions and failure modes.
+6. Add complexity analysis to documentation.
+7. Instrument Hungarian implementation path verification.
+8. Close security gaps: auth, authorization, file upload validation, centralized audit logging.
+9. Validate dependency cycle absence with static analysis tool.
+10. Consider application-level locking for concurrent schedule regeneration.
+
+With the additions above, this audit would serve as a principal-architect-level reference for long-term maintenance.
