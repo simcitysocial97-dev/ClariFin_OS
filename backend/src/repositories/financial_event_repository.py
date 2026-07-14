@@ -136,21 +136,38 @@ class FinancialEventRepository(BaseRepository):
         lifecycle_state: LifecycleState,
         outstanding_paise: int = 0,
         settled_by_event_id: int | None = None,
+        actor: str = "system",
+        caused_by_event_id: int | None = None,
     ) -> bool:
         """
-        Update lifecycle state of an event.
+        Update lifecycle state of an event and log the transition.
 
         Args:
             event_id: Database ID of the event
             lifecycle_state: New state (open, partially_settled, settled, rolls_over, superseded)
             outstanding_paise: Remaining outstanding amount after payment
             settled_by_event_id: ID of event that settled this one (optional)
+            actor: Who triggered this change (default: "system")
+            caused_by_event_id: ID of the settlement/repayment event that caused this transition
 
         Returns:
             True if updated, False if not found.
         """
         with self._get_conn() as conn:
+            # Fetch current state before update
             cur = conn.execute(
+                "SELECT lifecycle_state, outstanding_paise FROM financial_events WHERE id = ?",
+                (event_id,),
+            )
+            row = cur.fetchone()
+            if row is None:
+                return False
+
+            previous_state = row["lifecycle_state"]
+            previous_outstanding = row["outstanding_paise"]
+
+            # Perform the update
+            conn.execute(
                 """
                 UPDATE financial_events
                 SET lifecycle_state = ?, outstanding_paise = ?, settled_by_event_id = ?
@@ -158,9 +175,29 @@ class FinancialEventRepository(BaseRepository):
                 """,
                 (lifecycle_state, outstanding_paise, settled_by_event_id, event_id),
             )
-            updated = cur.rowcount > 0
+
+            # Log the lifecycle transition
+            conn.execute(
+                """
+                INSERT INTO financial_event_lifecycle_log (
+                    event_id, previous_lifecycle_state, new_lifecycle_state,
+                    previous_outstanding_paise, new_outstanding_paise,
+                    caused_by_event_id, actor
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    event_id,
+                    previous_state,
+                    lifecycle_state,
+                    previous_outstanding,
+                    outstanding_paise,
+                    caused_by_event_id,
+                    actor,
+                ),
+            )
+
             conn.commit()
-        return updated
+        return True
 
     def insert_link(
         self,
@@ -277,4 +314,35 @@ class FinancialEventRepository(BaseRepository):
                     """,
                     (household_id,),
                 ).fetchall()
+        return [dict(r) for r in rows]
+
+    def get_lifecycle_history(
+        self,
+        event_id: int,
+    ) -> list[dict[str, Any]]:
+        """
+        Get the lifecycle history for a financial event.
+
+        Args:
+            event_id: Database ID of the event
+
+        Returns:
+            List of lifecycle log entries ordered by created_at ascending.
+            Each entry contains: previous_lifecycle_state, new_lifecycle_state,
+            previous_outstanding_paise, new_outstanding_paise, caused_by_event_id,
+            actor, created_at.
+        """
+        with self._get_conn() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    id, event_id, previous_lifecycle_state, new_lifecycle_state,
+                    previous_outstanding_paise, new_outstanding_paise,
+                    caused_by_event_id, actor, created_at
+                FROM financial_event_lifecycle_log
+                WHERE event_id = ?
+                ORDER BY created_at ASC
+                """,
+                (event_id,),
+            ).fetchall()
         return [dict(r) for r in rows]

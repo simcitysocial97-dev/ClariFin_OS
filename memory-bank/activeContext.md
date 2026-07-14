@@ -86,3 +86,10 @@
 - Added missing end-to-end tests in `test_behaviour_credit_signals_e2e.py` (9 tests, all passing)
 
 ### Next Priority Actions
+
+### Completed Changes (Financial Event Lifecycle Logging)
+- Added `financial_event_lifecycle_log` table schema with event_id, previous/new state tracking, caused_by_event_id, actor
+- Modified `FinancialEventRepository.update_lifecycle()` to fetch current state and log transitions in same transaction
+- Added `FinancialEventRepository.get_lifecycle_history()` method to query audit trail by event_id
+- Updated `test_financial_events.py` fixture to create lifecycle log table
+- Added 4 tests: single update logging, multiple transitions, caused_by_event context, nonexistent event handling

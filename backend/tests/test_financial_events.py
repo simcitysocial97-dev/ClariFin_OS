@@ -15,12 +15,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from engines.financial_events.lineage_walker import (
     DEFAULT_ROLLOVER_LOOKBACK_DAYS,
-    LineageProposal,
     walk_lineage,
 )
 from models.financial_event import FinancialEvent
 from repositories.financial_event_repository import FinancialEventRepository
-
 
 # ============================================================
 # Fixtures
@@ -74,6 +72,21 @@ def temp_db():
             event_id INTEGER NOT NULL REFERENCES financial_events(id),
             linked_event_id INTEGER NOT NULL REFERENCES financial_events(id),
             link_type TEXT NOT NULL,
+            created_at TEXT DEFAULT (datetime('now'))
+        )
+    """)
+
+    # Create financial_event_lifecycle_log table
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS financial_event_lifecycle_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            event_id INTEGER NOT NULL REFERENCES financial_events(id),
+            previous_lifecycle_state TEXT,
+            new_lifecycle_state TEXT NOT NULL,
+            previous_outstanding_paise INTEGER,
+            new_outstanding_paise INTEGER,
+            caused_by_event_id INTEGER,
+            actor TEXT NOT NULL DEFAULT 'system',
             created_at TEXT DEFAULT (datetime('now'))
         )
     """)
@@ -255,7 +268,152 @@ def test_insert_link(temp_db):
 
 
 # ============================================================
-# Test 3: Lineage Walker - Pure Function Tests
+# Test 3: Lifecycle Logging Tests
+# ============================================================
+
+def test_lifecycle_update_creates_log_entry(temp_db):
+    """Test that update_lifecycle creates exactly one log entry with correct values."""
+    repo = FinancialEventRepository(temp_db)
+
+    event = FinancialEvent(
+        event_type="credit_card_cash_advance",
+        transaction_ids=[400],
+        date_iso="2025-01-15",
+        liability_change_paise=100000,
+        amount_paise=100000,
+        account_id="ICICI_CC",
+        outstanding_paise=100000,
+        household_id="primary",
+    )
+    event_id = repo.insert_event(event)
+
+    # Update lifecycle
+    updated = repo.update_lifecycle(
+        event_id=event_id,
+        lifecycle_state="partially_settled",
+        outstanding_paise=50000,
+        actor="system",
+    )
+    assert updated is True
+
+    # Verify exactly one log entry exists
+    log_entries = repo.get_lifecycle_history(event_id)
+    assert len(log_entries) == 1
+
+    # Verify log entry has correct previous/new values
+    entry = log_entries[0]
+    assert entry["event_id"] == event_id
+    assert entry["previous_lifecycle_state"] == "open"
+    assert entry["new_lifecycle_state"] == "partially_settled"
+    assert entry["previous_outstanding_paise"] == 100000
+    assert entry["new_outstanding_paise"] == 50000
+    assert entry["actor"] == "system"
+
+
+def test_lifecycle_update_multiple_transitions(temp_db):
+    """Test multiple sequential updates produce complete ordered history."""
+    repo = FinancialEventRepository(temp_db)
+
+    event = FinancialEvent(
+        event_type="credit_card_cash_advance",
+        transaction_ids=[500],
+        date_iso="2025-01-01",
+        liability_change_paise=150000,
+        amount_paise=150000,
+        account_id="ICICI_CC",
+        outstanding_paise=150000,
+        household_id="primary",
+    )
+    event_id = repo.insert_event(event)
+
+    # Transition 1: open -> partially_settled
+    repo.update_lifecycle(
+        event_id=event_id,
+        lifecycle_state="partially_settled",
+        outstanding_paise=75000,
+    )
+
+    # Transition 2: partially_settled -> settled
+    repo.update_lifecycle(
+        event_id=event_id,
+        lifecycle_state="settled",
+        outstanding_paise=0,
+    )
+
+    # Verify complete history
+    log_entries = repo.get_lifecycle_history(event_id)
+    assert len(log_entries) == 2
+
+    # Verify first entry (open -> partially_settled)
+    entry1 = log_entries[0]
+    assert entry1["previous_lifecycle_state"] == "open"
+    assert entry1["new_lifecycle_state"] == "partially_settled"
+    assert entry1["previous_outstanding_paise"] == 150000
+    assert entry1["new_outstanding_paise"] == 75000
+
+    # Verify second entry (partially_settled -> settled)
+    entry2 = log_entries[1]
+    assert entry2["previous_lifecycle_state"] == "partially_settled"
+    assert entry2["new_lifecycle_state"] == "settled"
+    assert entry2["previous_outstanding_paise"] == 75000
+    assert entry2["new_outstanding_paise"] == 0
+
+
+def test_lifecycle_log_with_caused_by_event(temp_db):
+    """Test that caused_by_event_id is logged correctly."""
+    repo = FinancialEventRepository(temp_db)
+
+    # Create a cash advance
+    advance = FinancialEvent(
+        event_type="credit_card_cash_advance",
+        transaction_ids=[600],
+        date_iso="2025-01-01",
+        liability_change_paise=100000,
+        amount_paise=100000,
+        account_id="ICICI_CC",
+        outstanding_paise=100000,
+        household_id="primary",
+    )
+    advance_id = repo.insert_event(advance)
+
+    # Create a payment event
+    payment = FinancialEvent(
+        event_type="liability_repayment",
+        transaction_ids=[601],
+        date_iso="2025-01-15",
+        liability_change_paise=-100000,
+        amount_paise=100000,
+        account_id="ICICI_CC",
+    )
+    payment_id = repo.insert_event(payment)
+
+    # Update with caused_by_event_id
+    repo.update_lifecycle(
+        event_id=advance_id,
+        lifecycle_state="settled",
+        outstanding_paise=0,
+        caused_by_event_id=payment_id,
+    )
+
+    log_entries = repo.get_lifecycle_history(advance_id)
+    assert len(log_entries) == 1
+    assert log_entries[0]["caused_by_event_id"] == payment_id
+
+
+def test_lifecycle_update_nonexistent_event_returns_false(temp_db):
+    """Test that updating nonexistent event returns False."""
+    repo = FinancialEventRepository(temp_db)
+
+    updated = repo.update_lifecycle(
+        event_id=99999,
+        lifecycle_state="settled",
+        outstanding_paise=0,
+    )
+    assert updated is False
+
+
+# ============================================================
+# Test 4: Lineage Walker - Pure Function Tests
 # ============================================================
 
 def test_lineage_walker_no_db_calls():

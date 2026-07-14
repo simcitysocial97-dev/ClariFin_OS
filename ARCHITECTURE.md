@@ -159,9 +159,10 @@ Some engines (`reconciliation_engine.py`, `behavior_engine.py`) still call `sqli
 | `liquidity_provider_patterns` | id, provider_name, regex_pattern, fee_range_bps | |
 | `members` | id, name, color | |
 | `import_mappings` | id, mapping_name, date_column, description_column, amount_column | |
-| `financial_events` | id, event_type, amount_paise, date_iso, month_bucket, account_id, lifecycle_state, outstanding_paise, confidence_bps | New Phase 6 table |
-| `financial_event_links` | id, event_id, linked_event_id, link_type | settles/funds/rolls_over relationships |
-| `financial_goals` | id, household_id, goal_type, name, target_amount_paise, current_amount_paise, target_date, priority, status | Phase 9.2 table |
+ | `financial_events` | id, event_type, amount_paise, date_iso, month_bucket, account_id, lifecycle_state, outstanding_paise, confidence_bps | Phase 6 table |
+ | `financial_event_links` | id, event_id, linked_event_id, link_type | settles/funds/rolls_over relationships |
+ | `financial_event_lifecycle_log` | id, event_id, previous_lifecycle_state, new_lifecycle_state, caused_by_event_id | Logs state transitions for audit trail |
+ | `financial_goals` | id, household_id, goal_type, name, target_amount_paise, current_amount_paise, target_date, priority, status | Phase 9.2 table |
 
 ---
 
