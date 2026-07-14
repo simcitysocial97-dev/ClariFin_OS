@@ -48,11 +48,17 @@
 - Repository Compliance: 9.4/10
 - See Audit_Report.md for full principal-architect-level reference
 
-### Completed Changes (Current Task)
-- Added `derive_cash_advance_debt_entry()` to `optimization.py` for converting credit_card_cash_advance events to debt entries
-- Added `get_open_cash_advance_events()` to `FinancialEventRepository` for fetching open/partially_settled cash advance events
-- Wired cash advance liabilities into `FinancialIntelligenceService.get_optimization_plan()` with 30-day default holding period
-- Added unit tests including regression test proving cash advance debt ranks above low-interest loans
+### Completed Changes (Current Task - Scope System Resolution)
+- Added `owner_id` and `household_id` columns to `accounts` table (database migration applied)
+- Fixed `financial_intelligence_service.py` to thread `household_id` parameter instead of hardcoding "default"/"primary"
+- Fixed `behaviour_service.py` to accept and use `household_id` in `get_stress_index`, `get_revolver_status`, `get_household_divergence`
+- Updated routers to accept `household_id` query parameters for scoping endpoints
+- Added regression tests in `test_scope_resolution.py` verifying signature correctness
+
+### Step 0 Investigation Findings
+- `transactions.member` is read in 5 locations: transaction_repository.py (SELECT/getAll), cashflow_repository.py (legacy method)
+- No usage of `member` in Financial Intelligence or Behaviour pipelines — these use account joins
+- Database schema required migration: added `owner_id` and `household_id` to accounts table
 
 ### Next Priority Actions
 - Refactor balance_engine.py and ledger_audit_engine.py (High severity)
@@ -60,4 +66,3 @@
 - Add correlation ID framework for observability
 - Consider adding stationarity tests and outlier handling to forecast engine
 - Close security gaps: auth, authorization, file upload validation, centralized audit logging
-- Validate dependency cycle absence with static analysis tool

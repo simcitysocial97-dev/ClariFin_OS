@@ -150,7 +150,7 @@ Some engines (`reconciliation_engine.py`, `behavior_engine.py`) still call `sqli
 |-------|-------------|---------------|
 | `statements` | id, bank, card_last4, total_amount_due, payment_due_date, source | PK for transactions |
 | `transactions` | id, statement_id, date, description, amount_paise, type, category, hash_signature | FK→statements, immutable (triggers) |
-| `accounts` | id, name, bank, balance_paise, account_number_last4 | |
+| `accounts` | id, name, bank, balance_paise, account_number_last4, owner_id, household_id | Multi-user scoping |
 | `loans` | id, name, lender, principal_paise, outstanding_paise, interest_rate (REAL) | |
 | `reconciliations` | id, debit_txn_id, credit_txn_id, amount_paise, confidence_bps, deterministic_key | FK→transactions(x2) |
 | `reconciliation_audit_log` | id, reconciliation_id, action, changed_fields | FK→reconciliations |

@@ -180,6 +180,7 @@ def get_financial_outlook(
         default=3000000,
         description="Emergency threshold in paise (default: 3,000,000 = ₹30,000)",
     ),
+    household_id: str = Query(default="primary", description="Household identifier"),
 ) -> dict[str, Any]:
     """Get comprehensive financial outlook.
 
@@ -188,6 +189,7 @@ def get_financial_outlook(
     Args:
         forecast_months: Number of months to forecast (1-12, default: 3)
         emergency_threshold_paise: Emergency threshold in paise (default: 3,000,000 paise = ₹30,000)
+        household_id: Household identifier
 
     Returns:
         Dict with cashflow, liquidity, credit forecasts and risk_flags
@@ -199,12 +201,13 @@ def get_financial_outlook(
         result = service.get_financial_outlook(
             forecast_months=forecast_months,
             emergency_threshold_paise=emergency_threshold_paise,
+            household_id=household_id,
         )
-        _timed_log("GET /financial-intelligence/outlook", "default", (time.monotonic() - start) * 1000)
+        _timed_log("GET /financial-intelligence/outlook", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
         _timed_log(
-            "GET /financial-intelligence/outlook", "default",
+            "GET /financial-intelligence/outlook", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise

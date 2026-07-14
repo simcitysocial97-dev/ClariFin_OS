@@ -773,12 +773,14 @@ class BehaviourService:
         self,
         month: str,
         scope: str = "household",
+        household_id: str = "primary",
     ) -> dict[str, Any]:
         """Get financial stress index with breakdown components.
 
         Args:
             month: Month in YYYY-MM format
             scope: "household" or "individual"
+            household_id: Household identifier (default: "primary")
 
         Returns:
             Dict with stress score, components, and flag
@@ -796,7 +798,7 @@ class BehaviourService:
             events_svc = FinancialEventsService(self.transaction_repo.db_path)
             financial_events = events_svc.get_events_with_links(
                 month_bucket=month,
-                household_id="primary",
+                household_id=household_id,
             )
 
             # Compute stress index using pure function
@@ -819,11 +821,13 @@ class BehaviourService:
     def get_revolver_status(
         self,
         card_account_id: str,
+        household_id: str = "primary",
     ) -> dict[str, Any]:
         """Get revolver classification for a credit card account.
 
         Args:
             card_account_id: Credit card account ID
+            household_id: Household identifier (default: "primary")
 
         Returns:
             Dict with type, confidence, and counts
@@ -838,7 +842,7 @@ class BehaviourService:
                 "liability_repayment", "credit_card_cash_advance", "transfer_internal"
             ]:
                 all_events.extend(
-                    events_svc.event_repo.get_events_by_type(event_type, "primary")
+                    events_svc.event_repo.get_events_by_type(event_type, household_id)
                 )
 
             # Filter to the specific account (simplified filtering)
@@ -862,11 +866,13 @@ class BehaviourService:
     def get_household_divergence(
         self,
         month: str,
+        household_id: str = "primary",
     ) -> dict[str, Any]:
         """Detect cross-owner funding within household.
 
         Args:
             month: Month in YYYY-MM format
+            household_id: Household identifier (default: "primary")
 
         Returns:
             Dict with flag and divergent links
@@ -876,7 +882,7 @@ class BehaviourService:
             events_svc = FinancialEventsService(self.transaction_repo.db_path)
             financial_events = events_svc.get_events_with_links(
                 month_bucket=month,
-                household_id="primary",
+                household_id=household_id,
             )
 
             # Compute divergence using pure function

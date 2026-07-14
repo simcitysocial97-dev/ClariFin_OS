@@ -309,6 +309,7 @@ def get_monthly_report(
 def get_stress_index(
     month: str = Query(..., description="Month in YYYY-MM format"),
     scope: str = Query("household", description="Scope: household or individual"),
+    household_id: str = Query("primary", description="Household identifier"),
 ) -> dict[str, Any]:
     """Get financial stress index with breakdown components.
 
@@ -318,6 +319,7 @@ def get_stress_index(
     Args:
         month: Month in YYYY-MM format
         scope: Scope for analysis (household or individual)
+        household_id: Household identifier
 
     Returns:
         Dict with stress score, components, and flag
@@ -326,12 +328,12 @@ def get_stress_index(
     service = BehaviourService()
 
     try:
-        result = service.get_stress_index(month=month, scope=scope)
-        _timed_log("GET /behaviour/stress-index", month, (time.monotonic() - start) * 1000)
+        result = service.get_stress_index(month=month, scope=scope, household_id=household_id)
+        _timed_log("GET /behaviour/stress-index", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
         _timed_log(
-            "GET /behaviour/stress-index", month,
+            "GET /behaviour/stress-index", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise
@@ -340,6 +342,7 @@ def get_stress_index(
 @router.get("/revolver-status")
 def get_revolver_status(
     card_account_id: str = Query(..., description="Credit card account ID"),
+    household_id: str = Query("primary", description="Household identifier"),
 ) -> dict[str, Any]:
     """Get revolver classification for a credit card account.
 
@@ -348,6 +351,7 @@ def get_revolver_status(
 
     Args:
         card_account_id: Credit card account ID to analyze
+        household_id: Household identifier
 
     Returns:
         Dict with type, confidence, and counts
@@ -356,12 +360,12 @@ def get_revolver_status(
     service = BehaviourService()
 
     try:
-        result = service.get_revolver_status(card_account_id=card_account_id)
-        _timed_log("GET /behaviour/revolver-status", card_account_id, (time.monotonic() - start) * 1000)
+        result = service.get_revolver_status(card_account_id=card_account_id, household_id=household_id)
+        _timed_log("GET /behaviour/revolver-status", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
         _timed_log(
-            "GET /behaviour/revolver-status", card_account_id,
+            "GET /behaviour/revolver-status", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise
@@ -370,6 +374,7 @@ def get_revolver_status(
 @router.get("/household-divergence")
 def get_household_divergence(
     month: str = Query(..., description="Month in YYYY-MM format"),
+    household_id: str = Query("primary", description="Household identifier"),
 ) -> dict[str, Any]:
     """Detect cross-owner funding within household.
 
@@ -378,6 +383,7 @@ def get_household_divergence(
 
     Args:
         month: Month in YYYY-MM format
+        household_id: Household identifier
 
     Returns:
         Dict with flag and divergent links
@@ -386,12 +392,12 @@ def get_household_divergence(
     service = BehaviourService()
 
     try:
-        result = service.get_household_divergence(month=month)
-        _timed_log("GET /behaviour/household-divergence", month, (time.monotonic() - start) * 1000)
+        result = service.get_household_divergence(month=month, household_id=household_id)
+        _timed_log("GET /behaviour/household-divergence", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
         _timed_log(
-            "GET /behaviour/household-divergence", month,
+            "GET /behaviour/household-divergence", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise
