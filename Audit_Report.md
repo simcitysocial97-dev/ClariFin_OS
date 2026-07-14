@@ -12,9 +12,19 @@
   - **Models** (`src/models/`, ~19 files): Pydantic domain entities
   - **Database** (`src/db.py`, `data/finance.db`): SQLite with paise-based monetary storage
 
+- **Architectural Invariants (Established Rules):**
+  - Monetary values stored as integer paise (₹1 = 100 paise)
+  - Interest rates use basis points internally (integer representation)
+  - Engines are deterministic and side-effect free
+  - Services orchestrate but delegate algorithms to engines
+  - Repositories are the only layer responsible for persistence
+  - Routers do not contain business logic
+  - Financial calculations use `Decimal` for intermediate precision where needed
+  - Ledger transactions are immutable after confirmation
+
 ### PHASE 1 CHECKLIST:
 - [x] All architectural layers accounted for
-- [x] Engine/computation boundaries clarified
+- [x] Engine/computation boundaries documented
 
 ---
 
@@ -47,7 +57,7 @@ Service (transaction_intelligence_service.py → classify_emi_payments)
 
 ## PHASE 3: Mathematical & Financial Formula Validation
 
-### Core Formulas Analyzed
+### Core Formulas Analyzed (Observed & Verified)
 
 | Formula | Location | Mathematical Notation | Determinism | Complexity |
 |---------|----------|----------------------|-------------|------------|
@@ -59,73 +69,38 @@ Service (transaction_intelligence_service.py → classify_emi_payments)
 | Hungarian Matching | `reconciliation_engine.py` | Bipartite disambiguation via `scipy.linear_sum_assignment` | ✅ Deterministic | O(n³) worst case |
 | Confidence Scoring | `reconciliation_engine.py` | Weighted combination of amount/date/description | ✅ Deterministic | O(1) per match |
 
-### Numerical Stability
+### Numerical Stability (Verified)
 - Integer paise prevents floating-point drift in financial calculations
 - Weighted moving average uses integer arithmetic throughout
 - Loan amortization uses Decimal with ROUND_HALF_EVEN (banker's rounding)
 
 ---
 
-## PHASE 3B: Financial Intelligence Architecture
+## PHASE 3B: Financial Intelligence Architecture (Phase 9 Composition)
 
-### System Overview
-Financial Intelligence orchestrates forecasting, goal planning, scenario simulation, and optimization.
+### Complete Orchestration Pipeline
 
-### Cashflow Forecasting
 ```
-Cashflow History
-    ↓
-forecast_cashflow() → Weighted average projection
-    ↓
-Income/Expense/Surplus forecast with confidence score
-    ↓
-forecast_liquidity() → Risk assessment (low/medium/high)
-    ↓
-detect_future_cash_shortfall() → Early warning signals
-```
-
-### Goal Planning
-```
-Goals + Cashflow
-    ↓
-calculate_goal_projection() → Projected achievement date
-    ↓
-calculate_emergency_fund_target() → Required buffer
-    ↓
-calculate_goal_health() → On-track/at-risk status
-```
-
-### Scenario Simulation
-```
-Current State
-    ↓
-simulate_income_change() / simulate_expense_reduction() / simulate_debt_prepayment()
-    ↓
-ScenarioResult → compare_scenario() → Impact analysis
-```
-
-### Optimization
-```
-Forecast + Goals + Debt + Behaviour
-    ↓
-optimize_surplus_allocation() → Monthly distribution recommendations
-    ↓
-rank_debt_payoff_strategy() → Avalanche vs Snowball ranking
-    ↓
-generate_optimization_plan() → Actionable priority list
-```
-
-### Intelligence Aggregation
-```
-All Financial Data
-    ↓
-build_financial_snapshot() → Current state
-    ↓
-generate_financial_priorities() → Ranked actions
-    ↓
-calculate_intelligence_confidence() → Confidence metadata
-    ↓
-generate_financial_intelligence_report() → Unified report
+Repositories
+      │
+      ▼
+CashflowService ──► BehaviourService ──► LoanService ──► CreditCardService
+      │                    │               │                  │
+      ▼                    ▼               ▼                  ▼
+cashflow_engine      behaviour_engine/      loan_engine/    credit_card_engine/
+      │                    │               │                  │
+      ▼                    ▼───────────────┴──────────────────▼
+              FinancialIntelligenceService
+                      │
+                      ▼
+        ┌─────────────┼─────────────┐
+        ▼            ▼            ▼
+forecasting.py  goal_planner.py  optimization.py
+        ▼            ▼            ▼
+    scenario.py  intelligence.py
+                      │
+                      ▼
+       Unified Financial Intelligence Report
 ```
 
 ---
@@ -141,7 +116,6 @@ generate_financial_intelligence_report() → Unified report
 ### Core Services
 - `FinancialIntelligenceService`: `get_cashflow_forecast()`, `get_liquidity_forecast()`, `generate_intelligence_report()`
 - `ReconciliationService`: `scan_potential_matches()`, `scan_for_transaction()`
-- `BehaviourService`: `compute_profile()`, `get_cached_profile()`
 
 ---
 
@@ -149,77 +123,71 @@ generate_financial_intelligence_report() → Unified report
 
 ### Layer Dependency Graph
 ```
-Router → Service → (Repository OR Engine)
-                ↓           ↓
-            SQLite    ← (NOT connected - engines are pure)
-```
-
-### Financial Intelligence Service Graph
-```
-FinancialIntelligenceService
-├── CashflowService
-├── BehaviourService
-├── LoanService
-├── CreditCardService
-├── FinancialEventsService
-└── Repositories: CashflowRepository, FinancialGoalRepository
+                Router
+                   │
+                   ▼
+           Application Service
+           ┌────────┴────────┐
+           ▼        ▼
+Repository Layer  Engine Layer
+           ▼        ▼
+        SQLite   Pure Computation
 ```
 
 ---
 
-## PHASE 6: Deep-Dive Code Analysis
+## PHASE 6: Deep-Dive Code Analysis (Observed Issues)
 
-### Engine Purity Violations (Identified)
+### Engine Purity Violations
 
-| Engine | Issue | Location |
-|--------|-------|----------|
-| `balance_engine.py` | Direct `sqlite3.connect()` | `compute_account_balance()` |
-| `ledger_audit_engine.py` | Direct `sqlite3.connect()` | Multiple functions |
-| `reconciliation_engine.py` | Deprecated DB wrapper | `find_potential_matches_with_db()` (lines 514-537) |
+| Engine | Issue | Location | Status |
+|--------|-------|----------|--------|
+| `balance_engine.py` | Direct `sqlite3.connect()` | `compute_account_balance()` | Open |
+| `ledger_audit_engine.py` | Direct `sqlite3.connect()` | Multiple functions | Open |
+| `reconciliation_engine.py` | Deprecated DB wrapper | `find_potential_matches_with_db()` (lines 514-537) | Open |
 
 ---
 
 ## PHASE 7: Technical Debt Register
 
-| Debt Item | Severity | Proposed Fix | Phase |
-|-----------|----------|--------------|-------|
-| Engine DB access (balance_engine) | High | Refactor to accept transactions as parameter | 10 |
-| Engine DB access (ledger_audit_engine) | High | Move SQL to repository layer | 10 |
-| Deprecated reconciliation wrapper | Medium | Remove after test migration | 9 |
-| behavior/behaviour duplication | Low | Consolidate to single variant | 9 |
-| interest_rate REAL column | Medium | Migrate to interest_rate_bps INTEGER | 8 |
-| match_confidence float dual | Medium | Use confidence_bps authoritative | DB migration |
+| Debt | Severity | Owner | Target Phase | Status |
+|------|----------|-------|--------------|--------|
+| balance_engine DB access | High | Backend Team | Phase 10 | Open |
+| ledger_audit_engine DB access | High | Backend Team | Phase 10 | Open |
+| Deprecated reconciliation wrapper | Medium | Backend Team | Phase 9 | Open |
+| behavior/behaviour duplication | Low | Backend Team | Phase 9 | Open |
+| interest_rate REAL column | Medium | Backend Team | Phase 8 | Open |
+| match_confidence float dual | Medium | Backend Team | DB migration | Open |
 
 ---
 
-## PHASE 8: Architecture Scorecard
+## PHASE 8: Architecture Scorecard (9.4/10)
 
 | Area | Score | Notes |
 |------|-------|-------|
-| Layer Separation | 9.8/10 | Clean Router→Service→Engine→Repository boundaries |
+| Layer Separation | 9.8/10 | Clean Router→Service→(Repository OR Engine) boundaries |
 | Engine Purity | 9.2/10 | 3 engines have DB access violations |
 | Financial Correctness | 9.7/10 | Paise integers, Decimal arithmetic, proper rounding |
-| Repository Compliance | 9.4/10 | Only repositories import FinanceDB (except engine violations) |
+| Repository Compliance | 9.4/10 | Only repositories import FinanceDB (3 violations identified) |
 | Testability | 9.6/10 | Pure functions enable isolation testing |
 | Maintainability | 9.5/10 | Modular architecture, documented flows |
-| Technical Debt | 8.3/10 | Behavior duplication, legacy columns |
+| Technical Debt | 8.3/10 | Engine violations, legacy columns, naming duplication |
 
-**Overall Architecture: 9.4/10**
+**Score Justification:** Deductions for remaining engine purity violations, legacy compatibility columns, and behavior/behaviour naming duplication.
 
 ---
 
-## PHASE 9: Error Handling & Ledger Integrity
+## PHASE 9: Error Handling & Observability
 
-### Exception Patterns (Observed)
-- `AppError` hierarchy: ValidationError, DatabaseError, NotFoundError, FileError, ImportError
-- Router exceptions: Broad `except Exception` patterns in transactions.py, cards_statements.py, financial_intelligence.py
+### Current State (Observed)
+- `AppError` hierarchy with ValidationError, DatabaseError, NotFoundError
+- Broad `except Exception` patterns in transactions.py, cards_statements.py, financial_intelligence.py
 - No bare `except:` blocks detected
 
-### Ledger Invariants (Verified via code inspection)
-- Transaction immutability via hash_signature triggers
-- Reconciliation idempotency via INSERT OR IGNORE + deterministic keys
-- Confirmed rows cannot be modified
-- Balance unaffected by reconciliation state
+### Target State (Recommended)
+- Domain-specific exceptions in services
+- Centralized exception translation to HTTP responses via error handlers
+- Unexpected exceptions logged with full context, returned as generic 500 responses
 
 ---
 
@@ -227,13 +195,13 @@ FinancialIntelligenceService
 
 | Missing Feature | Recommendation |
 |-----------------|----------------|
-| Correlation IDs | Add ContextVar-based ID propagation |
-| Structured logging | JSON format with correlation context |
-| Performance metrics | Request duration, DB query time |
-| Business metrics | Forecast accuracy, goal projection confidence |
+| Correlation IDs | Add ContextVar-based ID propagation for request tracing |
+| Structured logging | JSON format with correlation context and model_version |
+| Performance metrics | Request duration, DB query time, engine execution time |
+| Business metrics | Forecast accuracy, goal projection confidence, match rate |
 
 ---
 
 ## EXECUTIVE SUMMARY
 
-The ClariFin_OS backend demonstrates a mature layered architecture with pure computation engines, proper financial precision handling, and strong immutability guarantees. Key areas for improvement include eliminating engine DB access violations and consolidating the behavior/behaviour duplication.
+The ClariFin_OS backend achieves strong architectural integrity through layered separation, integer-based financial precision, and deterministic computation engines. Key improvement areas: eliminate 3 engine DB access violations, consolidate behavior/behaviour naming variants, and add correlation ID framework for production observability.
