@@ -57,6 +57,9 @@ from src.routers import (
     credit_cards,
     dashboard,
     export,
+    financial_intelligence,
+    goals,
+    health,
     import_router,
     investments,
     loans,
@@ -78,6 +81,9 @@ app.include_router(credit_cards.router)
 app.include_router(cashflow.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
+app.include_router(financial_intelligence.router)
+app.include_router(goals.router)
+app.include_router(health.router)
 app.include_router(import_router.router)
 app.include_router(investments.router)
 app.include_router(loans.router)

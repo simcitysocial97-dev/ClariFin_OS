@@ -490,6 +490,26 @@ class FinanceDB:
                 updated_at TEXT NOT NULL DEFAULT (datetime('now'))
             );
 
+            -- Phase 9.2: Financial Goals table
+            CREATE TABLE IF NOT EXISTS financial_goals (
+                id TEXT PRIMARY KEY,
+                household_id TEXT NOT NULL DEFAULT 'primary',
+                owner_id TEXT,
+                goal_type TEXT NOT NULL,
+                name TEXT NOT NULL,
+                target_amount_paise INTEGER NOT NULL,
+                current_amount_paise INTEGER NOT NULL DEFAULT 0,
+                target_date TEXT,
+                priority TEXT NOT NULL DEFAULT 'medium',
+                status TEXT NOT NULL DEFAULT 'active',
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                updated_at TEXT
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_financial_goals_household ON financial_goals(household_id);
+            CREATE INDEX IF NOT EXISTS idx_financial_goals_status ON financial_goals(status);
+
+            -- Phase 6B: Loan payment tracking tables
             CREATE TABLE IF NOT EXISTS loan_payments (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 loan_id INTEGER NOT NULL REFERENCES loans(id),

@@ -41,13 +41,13 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 
 ### Layer Details
 
-**Entry Point:** `backend/src/api.py` — FastAPI app, CORS, 20 routers registered
+**Entry Point:** `backend/src/api.py` — FastAPI app, CORS, 21 routers registered
 
-**Routers** (`src/routers/`, 21 files): `accounts`, `audit`, `banks`, `behavior`, `behaviour` (duplicate), `cards_statements`, `cashflow`, `credit_cards`, `dashboard`, `export`, `import_router`, `investments`, `loans`, `managed_accounts`, `members`, `networth`, `patterns`, `reconciliation`, `transactions`, `health`
+**Routers** (`src/routers/`, 23 files): `accounts`, `audit`, `banks`, `behavior`, `behaviour` (duplicate), `cards_statements`, `cashflow`, `credit_cards`, `dashboard`, `export`, `financial_intelligence`, `goals`, `import_router`, `investments`, `loans`, `managed_accounts`, `members`, `networth`, `patterns`, `reconciliation`, `transactions`, `health`
 
-**Services** (`src/services/`, 16 files): `AccountService`, `AuditService(BaseService)`, `BehaviorService(BaseService)`, `BehaviourService`, `CashflowService`, `CreditCardService`, `DashboardService(BaseService)`, `LoanAnalysisService`, `LoanService`, `LoanSimulationService`, `NetWorthService(BaseService)`, `ReconciliationService(BaseService)`, `StatementService(BaseService)`, `TransactionIntelligenceService`
+**Services** (`src/services/`, 17 files): `AccountService`, `AuditService(BaseService)`, `BehaviorService(BaseService)`, `BehaviourService`, `CashflowService`, `CreditCardService`, `DashboardService(BaseService)`, `FinancialIntelligenceService`, `LoanAnalysisService`, `LoanService`, `LoanSimulationService`, `NetWorthService(BaseService)`, `ReconciliationService(BaseService)`, `StatementService(BaseService)`, `TransactionIntelligenceService`
 
-**Engines** (`src/engines/`, 11+ files):
+**Engines** (`src/engines/`, 12+ packages):
 - `reconciliation_engine.py` — Hungarian algorithm bipartite matching
 - `balance_engine.py` — Running balance computation
 - `cashflow_engine.py` — Monthly cashflow analysis with financial events
@@ -56,14 +56,15 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 - `credit_card_engine/` — Outstanding/interest calculations
 - `account_engine/` — Account operations
 - `transaction_intelligence/` — EMI detection, CC payment detection, cash conversion detection
+- `financial_intelligence/` — Cashflow, liquidity, credit forecasting + goal planning (Phase 9.1/9.2)
 
-**Repository Rule (enforced):** Only files under `src/repositories/` may import FinanceDB. 24 repositories all extend `BaseRepository` which provides `_get_conn()` → sqlite3.Connection.
+**Repository Rule (enforced):** Only files under `src/repositories/` may import FinanceDB. 25 repositories all extend `BaseRepository` which provides `_get_conn()` → sqlite3.Connection.
 
-**Repositories** (`src/repositories/`, 25 files): `AccountBalanceRepository`, `AccountLinkRepository`, `AccountRepository`, `AlertRepository`, `BankRepository`, `BehaviourRepository`, `CashflowRepository`, `CreditCardRepository`, `CreditCardStatementRepository`, `FinancialEventRepository`, `ImportMappingRepository`, `InstitutionRepository`, `InvestmentRepository`, `LiquidityPatternRepository`, `LoanPaymentRepository`, `LoanRepository`, `MemberRepository`, `NetWorthRepository`, `PatternRepository`, `ReconciliationAuditRepository`, `ReconciliationRepository`, `StatementRepository`, `TransactionClassificationRepository`, `TransactionRepository`
+**Repositories** (`src/repositories/`, 26 files): `AccountBalanceRepository`, `AccountLinkRepository`, `AccountRepository`, `AlertRepository`, `BankRepository`, `BehaviourRepository`, `CashflowRepository`, `CreditCardRepository`, `CreditCardStatementRepository`, `FinancialEventRepository`, `FinancialGoalRepository`, `ImportMappingRepository`, `InstitutionRepository`, `InvestmentRepository`, `LiquidityPatternRepository`, `LoanPaymentRepository`, `LoanRepository`, `MemberRepository`, `NetWorthRepository`, `PatternRepository`, `ReconciliationAuditRepository`, `ReconciliationRepository`, `StatementRepository`, `TransactionClassificationRepository`, `TransactionRepository`
 
 **Models** (`src/models/`, 19 files): All extend `DomainModel(BaseModel)` with `from_db_row()` classmethods. Key models: `Account`, `CreditCard`, `CreditCardStatement`, `DashboardSummary`, `FinancialEvent`, `Institution`, `Investment`, `Loan`, `LoanPayment`, `Reconciliation`, `Statement`, `Transaction`, `BehaviourSnapshotCreate`
 
-**Database:** SQLite via `FinanceDB` class in `db.py`. Schemas: `statements`, `transactions` (with hash_signature immutability triggers), `accounts`, `loans`, `loan_payments`, `loan_prepayments`, `loan_rate_changes`, `investments`, `members`, `import_mappings`, `reconciliations`, `reconciliation_audit_log`, `loan_amortization_schedule`, `transaction_classifications`, `liquidity_provider_patterns`, `liquidity_purpose_patterns`, `financial_events`, `financial_event_links`
+**Database:** SQLite via `FinanceDB` class in `db.py`. Schemas: `statements`, `transactions` (with hash_signature immutability triggers), `accounts`, `loans`, `loan_payments`, `loan_prepayments`, `loan_rate_changes`, `investments`, `members`, `import_mappings`, `reconciliations`, `reconciliation_audit_log`, `loan_amortization_schedule`, `transaction_classifications`, `liquidity_provider_patterns`, `liquidity_purpose_patterns`, `financial_events`, `financial_event_links`, `financial_goals`
 
 **Financial Rule:** All monetary values stored as INTEGER paise (₹1 = 100 paise). Use `_parse_amount_paise()` for conversion. NEVER float for currency.
 
@@ -161,6 +162,7 @@ Some engines (`reconciliation_engine.py`, `behavior_engine.py`) still call `sqli
 | `import_mappings` | id, mapping_name, date_column, description_column, amount_column | |
 | `financial_events` | id, event_type, amount_paise, date_iso, month_bucket, account_id, lifecycle_state, outstanding_paise, confidence_bps | New Phase 6 table |
 | `financial_event_links` | id, event_id, linked_event_id, link_type | settles/funds/rolls_over relationships |
+| `financial_goals` | id, household_id, goal_type, name, target_amount_paise, current_amount_paise, target_date, priority, status | Phase 9.2 table |
 
 ---
 

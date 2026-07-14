@@ -8,6 +8,7 @@ from . import (
     cashflow,
     dashboard,
     export,
+    financial_intelligence,
     health,
     import_router,
     investments,
@@ -19,4 +20,4 @@ from . import (
     transactions,
 )
 
-__all__ = ["accounts", "audit", "banks", "behavior", "cards_statements", "cashflow", "dashboard", "export", "health", "import_router", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]
+__all__ = ["accounts", "audit", "banks", "behavior", "cards_statements", "cashflow", "dashboard", "export", "financial_intelligence", "health", "import_router", "investments", "loans", "managed_accounts", "networth", "reconciliation", "transactions", "members"]

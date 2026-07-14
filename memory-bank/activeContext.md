@@ -331,3 +331,58 @@
 **Tests (48/48 passing):**
 - All behaviour_service tests pass
 - All behavior_engine legacy tests pass with deprecation warning
+
+---
+
+## Phase 9.1 — Financial Forecasting Engine (COMPLETED)
+
+### Files Created
+- `backend/src/engines/financial_intelligence/__init__.py` - Package exports
+- `backend/src/engines/financial_intelligence/forecasting.py` - Pure forecasting functions
+- `backend/src/engines/financial_intelligence/utils.py` - Helper utilities (weighted average, variance, month generation)
+- `backend/src/services/financial_intelligence_service.py` - Orchestration layer (FinancialIntelligenceService)
+- `backend/src/routers/financial_intelligence.py` - HTTP endpoints
+- `backend/tests/test_financial_forecasting.py` - 15 tests covering all forecasting functions
+
+### Functions Implemented
+- `forecast_cashflow(cashflow_history, forecast_months)` - Weighted moving average projection
+- `forecast_liquidity(current_liquidity_paise, cashflow_forecast, emergency_threshold_paise)` - Liquidity stress detection
+- `forecast_credit_utilization(financial_events, credit_history)` - Credit dependency trend analysis
+- `detect_future_cash_shortfall(cashflow_forecast, liquidity_forecast)` - Early warning signals
+
+### API Endpoints Added
+- `GET /api/v1/financial-intelligence/cashflow-forecast?forecast_months=3`
+- `GET /api/v1/financial-intelligence/liquidity-forecast?forecast_months=3&emergency_threshold_paise=3000000`
+- `GET /api/v1/financial-intelligence/credit-forecast?month=&household_id=primary`
+- `GET /api/v1/financial-intelligence/outlook?forecast_months=3&emergency_threshold_paise=3000000`
+
+### Architecture Compliance
+- Engine package has zero sqlite3 imports (verified)
+- Engine package has zero repository imports (verified)
+- All monetary values are integers in paise
+- Confidence is variance-based Decimal (0-1 range)
+- All outputs include model_version metadata
+- Router has no calculation logic (delegates to service)
+- Service has no DB imports (uses CashflowRepository via dependency injection)
+
+---
+
+## Phase 9.2 — Financial Goal Planning Engine (COMPLETED)
+
+### Files Created
+- `backend/src/models/financial_goal.py` - FinancialGoal model + DTOs
+- `backend/src/repositories/financial_goal_repository.py` - CRUD operations
+- `backend/src/engines/financial_intelligence/goal_planner.py` - Pure calculation functions
+- `backend/src/routers/goals.py` - HTTP endpoints (POST /, GET /, GET /{goal_id}, GET /{goal_id}/projection, GET /{goal_id}/health, DELETE /{goal_id})
+- `backend/tests/test_goal_planner.py` - 14 tests (all passing)
+
+### Functions Implemented
+- `calculate_goal_projection()` - Projects completion timeline based on surplus
+- `calculate_emergency_fund_target()` - 6 months default, configurable
+- `calculate_debt_payoff_projection()` - Debt avalanche strategy
+- `calculate_goal_health()` - on_track/at_risk/behind status
+- `calculate_household_goal_summary()` - Aggregate summary
+
+### Next Immediate Steps
+- Build frontend goals UI with progress tracking and visualization
+- Add goal contribution tracking via recurring transaction detection
