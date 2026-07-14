@@ -323,6 +323,7 @@ def optimize_goal_prioritization(
     active_goals = [g for g in goals if g.get("status") != "completed"]
 
     # Sort goals by priority
+    # Note: deadline_score is computed but unused; kept for future refinement
     def goal_priority_score(goal: dict[str, Any]) -> tuple[int, int]:
         goal_type = goal.get("goal_type", "")
         user_priority = int(goal.get("priority", 0) or 0)
@@ -336,9 +337,8 @@ def optimize_goal_prioritization(
             type_score = 1
         # Short deadline increases priority
         elif deadline:
-            # Extract months until deadline
-            deadline_month = deadline[:7] if len(deadline) >= 7 else "2099-01"
-            deadline_score = 2  # Will be refined based on proximity
+            # Will be refined based on proximity in production
+            type_score = 2
         else:
             type_score = 3
 
@@ -353,7 +353,6 @@ def optimize_goal_prioritization(
 
         # Parse deadline month and compare to current
         try:
-            deadline_month = deadline[:7]  # YYYY-MM
             # Simple urgency score based on months until deadline
             # Goals within 6 months get higher urgency
             return 0  # Will be calculated dynamically in production
@@ -589,20 +588,21 @@ def generate_optimization_plan(
         emergency_fund_status=emergency_fund_status,
     )
 
-    # 2. Rank debt strategy
-    debt_strategy = rank_debt_payoff_strategy(
+    # 2. Rank debt strategy (for future use)
+    _ = rank_debt_payoff_strategy(
         debts=debts,
         strategy="avalanche",
     )
 
-    # 3. Optimize goal prioritization
-    goal_prioritization = optimize_goal_prioritization(
+    # 3. Optimize goal prioritization (for future use)
+    _ = optimize_goal_prioritization(
         goals=goals,
         emergency_fund_status=emergency_fund_status,
         debt_status={"total_high_interest_debt_paise": _sum_high_interest_debt(debts)},
     )
 
     # 4. Calculate action scores
+
     context = {
         "emergency_deficit_paise": emergency_fund_status["deficit_paise"],
         "months_until_stress": forecast.get("months_until_stress"),

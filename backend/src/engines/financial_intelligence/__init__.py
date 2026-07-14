@@ -22,8 +22,8 @@ from .forecasting import (
     forecast_liquidity,
 )
 from .goal_planner import (
-    DEFAULT_GOAL_ALLOCATION_RATIO,
     DEFAULT_EMERGENCY_MONTHS,
+    DEFAULT_GOAL_ALLOCATION_RATIO,
     calculate_debt_payoff_projection,
     calculate_emergency_fund_target,
     calculate_goal_health,
@@ -79,9 +79,9 @@ from .utils import (
     compute_confidence_from_variance,
     compute_trend_direction,
     compute_utilization_ratio,
+    find_stress_month,
     generate_month_sequence,
     project_running_balance,
-    find_stress_month,
 )
 
 __all__ = [
