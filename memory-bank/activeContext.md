@@ -77,8 +77,12 @@
   - `test_due_date_boundary_7_days_exactly`: Boundary inclusive → bonus applies
   - `test_due_date_alternate_format_parsing`: DD/MM/YYYY format parsed correctly
 
+### Step H5 Investigation Findings (Credit Signals Endpoint Wiring)
+- **DISCOVERY:** The wiring between `behaviour_engine/credit_dependency.py` → `behaviour_service.py` → `routers/behaviour.py` was ALREADY COMPLETE.
+- All 3 India-specific endpoints are implemented and callable:
+  - `GET /api/v1/behaviour/stress-index?month=&scope=&household_id=` (lines 308-339 in behaviour.py)
+  - `GET /api/v1/behaviour/revolver-status?card_account_id=&household_id=` (lines 342-371)
+  - `GET /api/v1/behaviour/household-divergence?month=&household_id=` (lines 374-403)
+- Added missing end-to-end tests in `test_behaviour_credit_signals_e2e.py` (9 tests, all passing)
+
 ### Next Priority Actions
-- Refactor balance_engine.py and ledger_audit_engine.py (High severity)
-- Remove behavior/behaviour duplicate aliases (Low severity)
-- Add correlation ID framework for observability
-- Consider adding stationarity tests and outlier handling to forecast engine
