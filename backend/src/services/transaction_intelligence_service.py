@@ -6,7 +6,7 @@ Also emits FinancialEvents for classified transactions.
 """
 from typing import Any
 
-from src.engines.financial_events.lineage_walker import DEFAULT_ROLLOVER_LOOKBACK_DAYS
+# DEFAULT_ROLLOVER_LOOKBACK_DAYS removed - unused in this file
 from src.engines.transaction_intelligence import (
     detect_cash_conversion,
     detect_emi_payment,
@@ -359,17 +359,20 @@ class TransactionIntelligenceService:
                 })
                 continue  # Don't persist, just report
 
-            self.classification_repo.insert_classification(
-                transaction_id=txn["id"],
-                classification="cash_conversion",
-                sub_classification=detection.provider_name or "unknown",
+            # Emit financial event for cash conversion
+            # Stores both debit and credit transaction IDs, plus fee/asset/liability details
+            event_id = self._emit_cash_advance_event(
+                debit_txn_id=txn["id"],
+                credit_txn_id=detection.matched_credit_transaction_id,
+                account_id=txn.get("account_id", ""),
+                amount_paise=txn.get("debit", 0) or 0,
+                fee_paise=detection.fee_paise,
+                date_iso=txn.get("date_iso", ""),
+                provider=detection.provider_name,
+                category="cash_conversion",
+                sub_type=detection.purpose,
                 confidence_bps=detection.confidence_bps,
-                source="computed",
-                classifier="cash_conversion_detector",
-                classifier_version=1,
-                lifecycle_state=detection.zone,
-                outstanding_paise=detection.fee_paise,  # Store fee as outstanding
-                payment_channel=detection.provider_name,
+                household_id=txn.get("household_id", "primary"),
             )
 
             results.append({
@@ -384,6 +387,7 @@ class TransactionIntelligenceService:
                 "fee_bps": detection.fee_bps,
                 "match_reason": detection.match_reason,
                 "narrative": detection.narrative,
+                "event_id": event_id,
             })
 
         return results
@@ -419,6 +423,61 @@ class TransactionIntelligenceService:
             confidence_bps=confidence_bps,
             household_id=household_id,
             outstanding_paise=outstanding_paise,
+        )
+        return self.event_repo.insert_event(event)
+
+    def _emit_cash_advance_event(
+        self,
+        debit_txn_id: int,
+        credit_txn_id: int,
+        account_id: str,
+        amount_paise: int,
+        fee_paise: int,
+        date_iso: str,
+        provider: str | None = None,
+        category: str = "cash_conversion",
+        sub_type: str | None = None,
+        confidence_bps: int = 0,
+        household_id: str = "primary",
+    ) -> int:
+        """
+        Create and persist a credit_card_cash_advance FinancialEvent.
+
+        Stores both debit and credit transaction IDs, along with the granular
+        fee/asset/liability details needed for true cashflow calculation.
+
+        Returns the database ID of the created event.
+        """
+        # asset_change_paise = credit received (positive)
+        # liability_change_paise = amount transacted (positive - borrowing)
+        # expense_paise = fee only
+        credit_txn_amount = None
+        with self.txn_repo._get_conn() as conn:
+            row = conn.execute(
+                "SELECT credit FROM transactions WHERE id = ?",
+                (credit_txn_id,),
+            ).fetchone()
+            if row:
+                credit_txn_amount = int(row["credit"]) if row["credit"] else 0
+
+        asset_change_paise = credit_txn_amount if credit_txn_amount else amount_paise - fee_paise
+        liability_change_paise = amount_paise
+        expense_paise = fee_paise
+
+        event = FinancialEvent(
+            event_type="credit_card_cash_advance",
+            transaction_ids=[debit_txn_id, credit_txn_id],
+            amount_paise=amount_paise,
+            asset_change_paise=asset_change_paise,
+            liability_change_paise=liability_change_paise,
+            expense_paise=expense_paise,
+            date_iso=date_iso,
+            account_id=account_id,
+            category=category,
+            sub_type=sub_type,
+            provider=provider,
+            confidence_bps=confidence_bps,
+            household_id=household_id,
         )
         return self.event_repo.insert_event(event)
 

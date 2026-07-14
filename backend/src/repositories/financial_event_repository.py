@@ -234,3 +234,47 @@ class FinancialEventRepository(BaseRepository):
                 (event_type, household_id),
             ).fetchall()
         return [dict(r) for r in rows]
+
+    def get_open_cash_advance_events(
+        self,
+        household_id: str = "primary",
+        owner_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """
+        Get open and partially_settled credit_card_cash_advance events.
+
+        These represent outstanding cash advance liabilities that should be
+        included in debt optimization ranking.
+
+        Args:
+            household_id: Household identifier (default: "primary")
+            owner_id: Optional owner filter (default None = all owners)
+
+        Returns:
+            List of cash advance event dicts with outstanding liability.
+        """
+        with self._get_conn() as conn:
+            if owner_id:
+                rows = conn.execute(
+                    """
+                    SELECT * FROM financial_events
+                    WHERE event_type = 'credit_card_cash_advance'
+                      AND household_id = ?
+                      AND owner_id = ?
+                      AND lifecycle_state IN ('open', 'partially_settled')
+                    ORDER BY date_iso DESC, id DESC
+                    """,
+                    (household_id, owner_id),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT * FROM financial_events
+                    WHERE event_type = 'credit_card_cash_advance'
+                      AND household_id = ?
+                      AND lifecycle_state IN ('open', 'partially_settled')
+                    ORDER BY date_iso DESC, id DESC
+                    """,
+                    (household_id,),
+                ).fetchall()
+        return [dict(r) for r in rows]

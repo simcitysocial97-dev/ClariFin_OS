@@ -48,6 +48,12 @@
 - Repository Compliance: 9.4/10
 - See Audit_Report.md for full principal-architect-level reference
 
+### Completed Changes (Current Task)
+- Added `derive_cash_advance_debt_entry()` to `optimization.py` for converting credit_card_cash_advance events to debt entries
+- Added `get_open_cash_advance_events()` to `FinancialEventRepository` for fetching open/partially_settled cash advance events
+- Wired cash advance liabilities into `FinancialIntelligenceService.get_optimization_plan()` with 30-day default holding period
+- Added unit tests including regression test proving cash advance debt ranks above low-interest loans
+
 ### Next Priority Actions
 - Refactor balance_engine.py and ledger_audit_engine.py (High severity)
 - Remove behavior/behaviour duplicate aliases (Low severity)
@@ -55,4 +61,3 @@
 - Consider adding stationarity tests and outlier handling to forecast engine
 - Close security gaps: auth, authorization, file upload validation, centralized audit logging
 - Validate dependency cycle absence with static analysis tool
-- Consider application-level locking for concurrent schedule regeneration

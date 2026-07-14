@@ -52,6 +52,7 @@ from .models import (
 from .optimization import (
     ActionImpact,
     calculate_financial_action_score,
+    derive_cash_advance_debt_entry,
     generate_optimization_plan,
     optimize_goal_prioritization,
     optimize_surplus_allocation,
@@ -112,6 +113,7 @@ __all__ = [
     "rank_debt_payoff_strategy",
     "optimize_goal_prioritization",
     "calculate_financial_action_score",
+    "derive_cash_advance_debt_entry",
     "generate_optimization_plan",
     "ActionImpact",
     # Intelligence functions

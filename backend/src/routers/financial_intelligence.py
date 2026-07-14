@@ -51,14 +51,19 @@ def _timed_log(
 @router.get("/cashflow-forecast")
 def get_cashflow_forecast(
     forecast_months: int = Query(default=3, ge=1, le=12, description="Number of months to forecast"),
+    household_id: str = Query(default="primary", description="Household identifier"),
+    owner_id: str = Query(default="self", description="Owner filter (self for individual, or different owner)"),
 ) -> dict[str, Any]:
     """Get cashflow forecast for the household.
 
     Projects future monthly income, expenses, and surplus using weighted moving average.
     Returns confidence score based on historical variance.
+    Uses TRUE cashflow adjusted for artificial income (cash advances, transfers).
 
     Args:
         forecast_months: Number of months to forecast (1-12, default: 3)
+        household_id: Household identifier (default: "primary")
+        owner_id: Owner filter - "self" for individual, None for household-wide
 
     Returns:
         Dict with forecast list and confidence score
@@ -67,12 +72,16 @@ def get_cashflow_forecast(
     service = FinancialIntelligenceService()
 
     try:
-        result = service.get_cashflow_forecast(forecast_months=forecast_months)
-        _timed_log("GET /financial-intelligence/cashflow-forecast", "default", (time.monotonic() - start) * 1000)
+        result = service.get_cashflow_forecast(
+            forecast_months=forecast_months,
+            household_id=household_id,
+            owner_id=owner_id,
+        )
+        _timed_log("GET /financial-intelligence/cashflow-forecast", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
         _timed_log(
-            "GET /financial-intelligence/cashflow-forecast", "default",
+            "GET /financial-intelligence/cashflow-forecast", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise
@@ -89,6 +98,8 @@ def get_liquidity_forecast(
         default=3000000,
         description="Emergency threshold in paise (default: 3,000,000 = ₹30,000)",
     ),
+    household_id: str = Query(default="primary", description="Household identifier"),
+    owner_id: str = Query(default="self", description="Owner filter (self for individual)"),
 ) -> dict[str, Any]:
     """Get liquidity forecast for the household.
 
@@ -97,6 +108,8 @@ def get_liquidity_forecast(
     Args:
         forecast_months: Number of months to forecast (1-12, default: 3)
         emergency_threshold_paise: Emergency threshold in paise (default: 3,000,000 paise = ₹30,000)
+        household_id: Household identifier (default: "primary")
+        owner_id: Owner filter - "self" for individual, None for household-wide
 
     Returns:
         Dict with months_until_stress, projected_min_balance_paise, and risk_level
@@ -108,12 +121,14 @@ def get_liquidity_forecast(
         result = service.get_liquidity_forecast(
             forecast_months=forecast_months,
             emergency_threshold_paise=emergency_threshold_paise,
+            household_id=household_id,
+            owner_id=owner_id,
         )
-        _timed_log("GET /financial-intelligence/liquidity-forecast", "default", (time.monotonic() - start) * 1000)
+        _timed_log("GET /financial-intelligence/liquidity-forecast", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
         _timed_log(
-            "GET /financial-intelligence/liquidity-forecast", "default",
+            "GET /financial-intelligence/liquidity-forecast", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise

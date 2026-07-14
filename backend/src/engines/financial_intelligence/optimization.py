@@ -24,6 +24,59 @@ ActionImpact = Literal["high", "medium", "low"]
 
 
 # ============================================================
+# Cash Advance Debt Entry Helper
+# ============================================================
+
+def derive_cash_advance_debt_entry(event: dict[str, Any], holding_period_days: int) -> dict[str, Any]:
+    """
+    Converts a credit_card_cash_advance financial_event into a debt-list entry
+    compatible with rank_debt_payoff_strategy()'s expected shape.
+
+    Args:
+        event: Financial event dict with liability_change_paise, expense_paise,
+               date_iso, provider, and optionally outstanding_paise
+        holding_period_days: Days the cash advance was/will be outstanding to
+                            compute effective annualized cost rate
+
+    Returns:
+        Debt entry dict compatible with optimization engine, containing:
+            - id: Unique identifier (prefixed with "cash_advance_")
+            - type: "cash_advance_liability"
+            - name: Provider name with "cash advance" suffix
+            - outstanding_paise: Remaining amount owed
+            - interest_rate_bps: Effective annual rate in basis points
+            - source_event_id: Original event ID for traceability
+    """
+    # Calculate effective annual rate: fee as percentage of principal, annualized
+    liability = event.get("liability_change_paise", 0) or 0
+    expense = event.get("expense_paise", 0) or 0
+
+    if liability > 0 and expense > 0:
+        # Effective annual rate = (fee/principal) * (365/days)
+        # Multiply by 10000 to convert to basis points
+        effective_annual_bps = round(
+            (expense / liability) * 10000 * (365 / max(holding_period_days, 1))
+        )
+    else:
+        effective_annual_bps = 0
+
+    # Use outstanding_paise if explicitly set (including 0 for settled),
+    # otherwise fall back to liability_change_paise
+    outstanding = event.get("outstanding_paise")
+    if outstanding is None:
+        outstanding = liability
+
+    return {
+        "id": f"cash_advance_{event.get('id', 'unknown')}",
+        "type": "cash_advance_liability",
+        "name": f"{event.get('provider', 'Unknown')} cash advance",
+        "outstanding_paise": outstanding,
+        "interest_rate_bps": effective_annual_bps,
+        "source_event_id": event.get("id"),
+    }
+
+
+# ============================================================
 # Function 1: optimize_surplus_allocation
 # ============================================================
 

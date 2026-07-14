@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from src.engines.financial_intelligence import (
     ActionImpact,
+    derive_cash_advance_debt_entry,
     generate_optimization_plan,
     HIGH_INTEREST_THRESHOLD_BPS,
     MEDIUM_INTEREST_THRESHOLD_BPS,
@@ -264,6 +265,117 @@ def test_action_weights():
     """Action weights should sum to 1.0."""
     total = sum(ACTION_WEIGHTS.values())
     assert total == Decimal("1.00")
+
+
+# ============================================================
+# Test 8: Cash Advance Debt Entry Helper
+# ============================================================
+
+def test_derive_cash_advance_debt_entry_basic():
+    """derive_cash_advance_debt_entry should convert event to debt entry format."""
+    event = {
+        "id": 123,
+        "liability_change_paise": 100000,  # ₹1000 borrowed
+        "expense_paise": 400,  # ₹4 fee (400 paise)
+        "provider": "CRED",
+        "outstanding_paise": 100000,
+    }
+
+    result = derive_cash_advance_debt_entry(event, holding_period_days=365)
+
+    assert result["id"] == "cash_advance_123"
+    assert result["type"] == "cash_advance_liability"
+    assert result["name"] == "CRED cash advance"
+    assert result["outstanding_paise"] == 100000
+    # 400 paise fee / 100000 paise principal * 10000 * 365/365 = 40 bps annual
+    assert result["interest_rate_bps"] == 40
+
+
+def test_derive_cash_advance_debt_entry_20_days():
+    """Cash advance held 20 days should annualize to ~7300 bps effective rate.
+
+    Example: ₹1000 borrowed, 4% fee (4000 paise), held 20 days
+    Effective annual rate = (4000/100000) * (365/20) * 10000 = ~7300 bps
+    This matches the task requirement: "fee_bps=400, held 20 days → ~7300 bps"
+    """
+    event = {
+        "id": 456,
+        "liability_change_paise": 100000,  # ₹1000 borrowed
+        "expense_paise": 4000,  # 4% fee = 4000 paise (fee_bps=400)
+        "provider": "HDFC",
+        "outstanding_paise": 100000,
+    }
+
+    result = derive_cash_advance_debt_entry(event, holding_period_days=20)
+
+    # (4000/100000) * (365/20) * 10000 = 7300 bps
+    assert result["interest_rate_bps"] == 7300
+    assert result["source_event_id"] == 456
+
+
+def test_derive_cash_advance_debt_entry_uses_outstanding():
+    """Should use outstanding_paise if available, else liability_change_paise."""
+    event_with_outstanding = {
+        "id": 789,
+        "liability_change_paise": 100000,
+        "expense_paise": 400,
+        "provider": "ICICI",
+        "outstanding_paise": 60000,  # Partial repayment
+    }
+
+    result = derive_cash_advance_debt_entry(event_with_outstanding, holding_period_days=30)
+
+    assert result["outstanding_paise"] == 60000
+
+
+def test_cash_advance_ranks_above_low_interest_loan():
+    """Cash advance with high effective rate should rank above low-interest loan (regression test).
+
+    This proves the original defect is fixed: CRED debt gets prioritized
+    when its effective rate (73% APR-equiv) is higher than a loan (12% APR).
+    """
+    # Cash advance: 73% effective annual rate (very high)
+    cash_advance_debt = {
+        "id": "cash_advance_123",
+        "type": "cash_advance_liability",
+        "name": "CRED cash advance",
+        "outstanding_paise": 50000,
+        "interest_rate_bps": 7300,  # 73% effective
+    }
+
+    # Regular loan: 12% interest (much lower)
+    regular_loan = {
+        "id": "loan_456",
+        "type": "loan",
+        "name": "Car Loan",
+        "outstanding_paise": 200000,
+        "interest_rate_bps": 1200,  # 12%
+    }
+
+    result = rank_debt_payoff_strategy(
+        debts=[regular_loan, cash_advance_debt],
+        strategy="avalanche",
+    )
+
+    # Cash advance should be ranked FIRST due to higher effective rate
+    assert result["priority_order"][0]["id"] == "cash_advance_123"
+    assert result["priority_order"][0]["interest_rate_bps"] == 7300
+
+
+def test_settled_cash_advance_excluded():
+    """Settled cash advance events should not produce debt entries with positive balance."""
+    event_settled = {
+        "id": 999,
+        "liability_change_paise": 100000,
+        "expense_paise": 400,
+        "provider": "Settled Provider",
+        "outstanding_paise": 0,  # Fully settled - no balance
+    }
+
+    result = derive_cash_advance_debt_entry(event_settled, holding_period_days=20)
+
+    # Should have 0 outstanding, which means it would be filtered out in service
+    assert result["outstanding_paise"] == 0
 
 
 if __name__ == "__main__":

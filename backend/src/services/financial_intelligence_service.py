@@ -4,7 +4,7 @@ Coordinates existing services to provide financial forecasts and goal projection
 No calculation logic - delegates to financial_intelligence engine functions.
 """
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, cast
 
@@ -16,6 +16,7 @@ from src.engines.financial_intelligence import (
     calculate_household_goal_summary,
     compare_scenario,
     detect_future_cash_shortfall,
+    derive_cash_advance_debt_entry,
     forecast_cashflow,
     forecast_credit_utilization,
     forecast_liquidity,
@@ -28,6 +29,7 @@ from src.engines.financial_intelligence import (
     simulate_new_loan,
 )
 from src.repositories import CashflowRepository
+from src.repositories.financial_event_repository import FinancialEventRepository
 from src.repositories.financial_goal_repository import FinancialGoalRepository
 from src.services.behaviour_service import BehaviourService
 from src.services.cashflow_service import CashflowService
@@ -72,17 +74,25 @@ class FinancialIntelligenceService:
     def get_cashflow_forecast(
         self,
         forecast_months: int = 3,
+        household_id: str = "primary",
+        owner_id: str = "self",
     ) -> dict[str, Any]:
         """Get cashflow forecast for the household.
 
         Args:
             forecast_months: Number of months to forecast (1-12, default: 3)
+            household_id: Household identifier (default: "primary")
+            owner_id: Owner filter - "self" for individual, None for household-wide
 
         Returns:
             Forecast result from engine with model_version metadata
         """
-        # Get historical cashflow data
-        monthly_data = self.cashflow_repo.get_monthly_cashflow(months=12)
+        # Get TRUE historical cashflow data (adjusted for artificial income)
+        monthly_data = self.cashflow_repo.get_true_monthly_cashflow(
+            months=12,
+            household_id=household_id,
+            owner_id=owner_id,
+        )
 
         # Convert to engine input format
         cashflow_history = [
@@ -90,10 +100,7 @@ class FinancialIntelligenceService:
                 "month": row.get("month_key", ""),
                 "income_paise": int(row.get("income_paise", 0) or 0),
                 "expense_paise": int(row.get("expense_paise", 0) or 0),
-                "surplus_paise": int(
-                    (row.get("income_paise", 0) or 0)
-                    - (row.get("expense_paise", 0) or 0)
-                ),
+                "surplus_paise": int(row.get("surplus_paise", 0) or 0),
             }
             for row in monthly_data
             if row.get("month_key")
@@ -105,25 +112,33 @@ class FinancialIntelligenceService:
         self,
         forecast_months: int = 3,
         emergency_threshold_paise: int | None = None,
+        household_id: str = "primary",
+        owner_id: str = "self",
     ) -> dict[str, Any]:
         """Get liquidity forecast for the household.
 
         Args:
             forecast_months: Number of months to forecast (1-12, default: 3)
             emergency_threshold_paise: Custom emergency threshold (default: 3,000,000 paise)
+            household_id: Household identifier (default: "primary")
+            owner_id: Owner filter - "self" for individual, None for household-wide
 
         Returns:
             Liquidity forecast result from engine with model_version metadata
         """
-        # Get cashflow forecast first
-        cashflow_result = self.get_cashflow_forecast(forecast_months)
+        # Get cashflow forecast first (now uses true cashflow)
+        cashflow_result = self.get_cashflow_forecast(forecast_months=forecast_months, household_id=household_id, owner_id=owner_id)
         cashflow_forecast = cashflow_result.get("forecast", [])
 
         # Get current liquidity from accounts
         # Note: In production, this would use AccountService to aggregate liquid assets
         current_liquidity = 0
-        # For now, estimate from most recent cash surplus
-        monthly_data = self.cashflow_repo.get_monthly_cashflow(months=1)
+        # For now, estimate from most recent cash surplus (use true cashflow)
+        monthly_data = self.cashflow_repo.get_true_monthly_cashflow(
+            months=1,
+            household_id=household_id,
+            owner_id=owner_id,
+        )
         if monthly_data:
             # Rough estimate: assume 2x monthly surplus as buffer
             income_p = int(monthly_data[0].get("income_paise", 0) or 0)
@@ -649,6 +664,45 @@ class FinancialIntelligenceService:
     # Optimization Methods
     # ============================================================
 
+    def _compute_holding_period(
+        self,
+        event_repo: FinancialEventRepository,
+        event: dict[str, Any],
+    ) -> int:
+        """Compute holding period for a cash advance event.
+
+        Checks for settlement links to determine actual holding period.
+        Falls back to 30 days if no settlement link found.
+
+        Args:
+            event_repo: FinancialEventRepository instance
+            event: The cash advance event dict
+
+        Returns:
+            Holding period in days (30 as default estimate)
+        """
+        DEFAULT_HOLDING_DAYS = 30
+
+        # Check for settlement links
+        links = event_repo.get_links_for_event(event["id"])
+        for link in links:
+            if link.get("link_type") == "settles":
+                linked_event_id = link.get("linked_event_id")
+                if linked_event_id:
+                    with event_repo._get_conn() as conn:
+                        row = conn.execute(
+                            "SELECT date_iso FROM financial_events WHERE id = ?",
+                            (linked_event_id,),
+                        ).fetchone()
+                    if row and row["date_iso"]:
+                        advance_date = datetime.fromisoformat(event.get("date_iso", "2025-01-01"))
+                        settle_date = datetime.fromisoformat(row["date_iso"])
+                        days = (settle_date - advance_date).days
+                        if days > 0:
+                            return days
+
+        return DEFAULT_HOLDING_DAYS
+
     def get_optimization_plan(
         self,
         household_id: str = "primary",
@@ -659,6 +713,7 @@ class FinancialIntelligenceService:
         - CashflowService → surplus
         - LoanService → loans
         - CreditCardService → credit card liabilities
+        - FinancialEventRepository → cash advance liabilities
         - BehaviourService → risk indicators
         - FinancialGoalRepository → goals
 
@@ -703,6 +758,22 @@ class FinancialIntelligenceService:
             }
             for card in credit_cards
         ]
+
+        # Fetch open cash advance liabilities
+        event_repo = FinancialEventRepository(self.db_path)
+        cash_advance_events = event_repo.get_open_cash_advance_events(household_id=household_id)
+
+        for event in cash_advance_events:
+            # Determine holding period by checking for settlement link
+            holding_period_days = self._compute_holding_period(event_repo, event)
+
+            # Convert to debt entry format and append
+            cash_advance_debt = derive_cash_advance_debt_entry(
+                event=event,
+                holding_period_days=holding_period_days,
+            )
+            if cash_advance_debt["outstanding_paise"] > 0:
+                debts.append(cash_advance_debt)
 
         # Fetch goals
         goals = self.get_household_goals(household_id=household_id, status=None)
