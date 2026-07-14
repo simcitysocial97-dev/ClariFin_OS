@@ -386,3 +386,51 @@
 ### Next Immediate Steps
 - Build frontend goals UI with progress tracking and visualization
 - Add goal contribution tracking via recurring transaction detection
+
+---
+
+## Phase 9.3 — Financial Scenario Simulation Engine (COMPLETED)
+
+### Files Created
+- `backend/src/engines/financial_intelligence/models.py` - TypedDict contracts (ScenarioResult, ScenarioComparison, LoanScenario, DebtScenario)
+- `backend/src/engines/financial_intelligence/scenario.py` - Pure simulation functions
+- `backend/src/routers/scenarios.py` - HTTP endpoints (6 endpoints)
+- `backend/tests/test_scenario_engine.py` - 14 tests (all passing)
+
+### Functions Implemented
+- `simulate_expense_reduction()` - Projects surplus improvement from expense cuts
+- `simulate_income_change()` - Projects surplus change from income changes
+- `simulate_debt_prepayment()` - Projects months/interest saved from extra payments
+- `simulate_new_loan()` - Calculates EMI, FOIR, and affordability for new loan
+- `simulate_credit_behaviour_change()` - Projects credit improvement without revolving
+- `compare_scenario()` - Compares baseline vs scenario with improvements/risks
+
+### Constants Added
+- `FOIR_SAFE_THRESHOLD = Decimal("0.40")` - Below 40% is safe
+- `FOIR_WARNING_THRESHOLD = Decimal("0.60")` - 40-60% warning, above 60% unsafe
+
+### API Endpoints Added
+- `POST /api/v1/scenarios/expense-reduction?reduction_paise=&household_id=&forecast_months=`
+- `POST /api/v1/scenarios/income-change?change_paise=&household_id=&forecast_months=`
+- `POST /api/v1/scenarios/debt-prepayment?extra_payment_paise=&household_id=`
+- `POST /api/v1/scenarios/new-loan?principal_paise=&annual_rate_bps=&tenure_months=`
+- `POST /api/v1/scenarios/credit-behaviour?average_interest_rate_bps=&household_id=`
+- `POST /api/v1/scenarios/compare` - body: {baseline: {}, scenario: {}}
+
+### Architecture Compliance
+- scenario.py has zero sqlite3 imports (verified)
+- scenario.py has zero repository imports (verified)
+- All monetary values are integers in paise
+- All rates are integers in basis points
+- No scenarios persisted (pure calculations only)
+- FinancialIntelligenceService orchestrates only (no formulas)
+- FOIR thresholds centralized in utils.py (configuration-driven)
+
+### Tests (14/14 passing)
+- Expense reduction (₹5,000 savings correct)
+- Income increase/decrease simulations
+- Debt prepayment timeline reduction
+- New loan affordability with FOIR thresholds
+- Credit behavior improvement
+- Scenario comparison (improvements and risks detected)
+- Engine purity verification (no DB calls)

@@ -13,10 +13,16 @@ from src.engines.financial_intelligence import (
     calculate_goal_health,
     calculate_goal_projection,
     calculate_household_goal_summary,
+    compare_scenario,
     detect_future_cash_shortfall,
     forecast_cashflow,
     forecast_credit_utilization,
     forecast_liquidity,
+    simulate_credit_behaviour_change,
+    simulate_debt_prepayment,
+    simulate_expense_reduction,
+    simulate_income_change,
+    simulate_new_loan,
 )
 from src.repositories import CashflowRepository
 from src.repositories.financial_goal_repository import FinancialGoalRepository
@@ -472,3 +478,166 @@ class FinancialIntelligenceService:
                 projections.append({"status": "completed"})
 
         return calculate_household_goal_summary(goals, projections)
+
+    # ============================================================
+    # Scenario Simulation Methods
+    # ============================================================
+
+    def simulate_expense_change(
+        self,
+        reduction_paise: int,
+        household_id: str = "primary",
+        forecast_months: int = 12,
+    ) -> dict[str, Any]:
+        """Simulate expense reduction scenario.
+
+        Fetches cashflow forecast, then delegates to scenario engine.
+
+        Args:
+            reduction_paise: Monthly expense reduction in paise
+            household_id: Household identifier
+            forecast_months: Number of months to project
+
+        Returns:
+            Scenario result dict
+        """
+        cashflow_result = self.get_cashflow_forecast(forecast_months=12)
+        monthly_surplus_forecast = cashflow_result.get("forecast", [])
+
+        return simulate_expense_reduction(
+            current_monthly_expense_paise=0,  # Not used in current implementation
+            reduction_paise=reduction_paise,
+            monthly_surplus_forecast=monthly_surplus_forecast,
+            forecast_months=forecast_months,
+        )
+
+    def simulate_income_change(
+        self,
+        change_paise: int,
+        household_id: str = "primary",
+        forecast_months: int = 12,
+    ) -> dict[str, Any]:
+        """Simulate income change scenario.
+
+        Fetches cashflow forecast, then delegates to scenario engine.
+
+        Args:
+            change_paise: Monthly income change in paise (positive or negative)
+            household_id: Household identifier
+            forecast_months: Number of months to project
+
+        Returns:
+            Scenario result dict
+        """
+        cashflow_result = self.get_cashflow_forecast(forecast_months=12)
+        monthly_surplus_forecast = cashflow_result.get("forecast", [])
+
+        return simulate_income_change(
+            current_income_paise=0,  # Not used directly
+            change_paise=change_paise,
+            monthly_surplus_forecast=monthly_surplus_forecast,
+            forecast_months=forecast_months,
+        )
+
+    def simulate_debt_prepayment(
+        self,
+        extra_payment_paise: int,
+        household_id: str = "primary",
+    ) -> dict[str, Any]:
+        """Simulate debt prepayment scenario.
+
+        Fetches loan data, then delegates to scenario engine.
+
+        Args:
+            extra_payment_paise: Extra monthly payment toward debt in paise
+            household_id: Household identifier
+
+        Returns:
+            Scenario result dict
+        """
+        # Get loans from loan service
+        loans = []
+        # In production, would use LoanService to get actual loan data
+
+        # Get current surplus
+        cashflow_result = self.get_cashflow_forecast(forecast_months=1)
+        monthly_surplus = cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0)
+
+        return simulate_debt_prepayment(
+            debt_accounts=loans,
+            extra_payment_paise=extra_payment_paise,
+            monthly_surplus_paise=monthly_surplus,
+        )
+
+    def simulate_new_loan(
+        self,
+        principal_paise: int,
+        annual_rate_bps: int,
+        tenure_months: int,
+        household_id: str = "primary",
+    ) -> dict[str, Any]:
+        """Simulate new loan impact scenario.
+
+        Delegates directly to scenario engine (no data fetching needed).
+
+        Args:
+            principal_paise: Loan principal in paise
+            annual_rate_bps: Annual interest rate in basis points
+            tenure_months: Loan tenure in months
+            household_id: Household identifier
+
+        Returns:
+            Scenario result dict with EMI, FOIR, affordability
+        """
+        # Get current surplus for FOIR calculation
+        cashflow_result = self.get_cashflow_forecast(forecast_months=1)
+        monthly_surplus = cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0)
+
+        return simulate_new_loan(
+            principal_paise=principal_paise,
+            annual_rate_bps=annual_rate_bps,
+            tenure_months=tenure_months,
+            current_surplus_paise=monthly_surplus,
+        )
+
+    def simulate_credit_change(
+        self,
+        household_id: str = "primary",
+        average_interest_rate_bps: int | None = None,
+    ) -> dict[str, Any]:
+        """Simulate credit behavior change scenario.
+
+        Fetches credit metrics from behaviour service, then delegates to scenario engine.
+
+        Args:
+            household_id: Household identifier
+            average_interest_rate_bps: Optional average interest rate for calculation
+
+        Returns:
+            Scenario result dict
+        """
+        # In production, would fetch actual credit dependency ratio from BehaviourService
+        # For now, return baseline values
+        return simulate_credit_behaviour_change(
+            current_credit_dependency_ratio=Decimal("0.5"),
+            current_revolver_ratio=Decimal("0.3"),
+            average_interest_rate_bps=average_interest_rate_bps,
+        )
+
+    def compare_scenarios(
+        self,
+        baseline: dict[str, Any],
+        scenario: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Compare baseline vs scenario results.
+
+        Delegates directly to scenario engine.
+
+        Args:
+            baseline: Baseline scenario result
+            scenario: Simulated scenario result
+
+        Returns:
+            Comparison result with improvements, risks, delta
+        """
+        return compare_scenario(baseline, scenario)

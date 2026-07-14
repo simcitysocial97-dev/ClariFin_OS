@@ -15,6 +15,13 @@ DEFAULT_EMERGENCY_THRESHOLD_PAISE = 3000000  # ₹30,000 emergency buffer
 DEFAULT_FORECAST_MONTHS = 3
 MAX_FORECAST_MONTHS = 12
 
+# ============================================================
+# FOIR Thresholds for Loan Affordability
+# ============================================================
+
+FOIR_SAFE_THRESHOLD = Decimal("0.40")  # Below 40% - safe
+FOIR_WARNING_THRESHOLD = Decimal("0.60")  # 40-60% - warning, above 60% - unsafe
+
 
 # ============================================================
 # Date/Month Utilities
