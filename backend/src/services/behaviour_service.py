@@ -111,6 +111,100 @@ class BehaviourService:
         """Cache a behaviour profile."""
         _behaviour_cache[household_id] = profile
 
+    def compute_profile(self, db_path: str | None = None) -> dict[str, Any]:
+        """Compute comprehensive behavioral profile for legacy compatibility.
+
+        Canonical implementation that replaces compute_behavior_profile(db_path).
+        Uses repository methods for data access and delegates to pure engines.
+
+        Args:
+            db_path: Database path (optional, uses self.transaction_repo.db_path)
+
+        Returns:
+            Dict with temporal_patterns, behavioral_indices, risk_signals, confidence, financial_health_score
+        """
+        # Use provided db_path or fall back to repo's db_path
+        target_db = db_path or self.transaction_repo.db_path
+
+        # Create a repo instance with the target db_path
+        txn_repo = TransactionRepository(target_db)
+
+        # Fetch transactions using repository methods
+        transactions_90d = txn_repo.get_transactions_last_90_days()
+        recent_transactions = txn_repo.get_recent_transactions(500)
+
+        txn_set = transactions_90d if len(transactions_90d) >= 30 else recent_transactions
+
+        # Delegate to pure functions in behaviour_engine package
+        from src.engines.behaviour_engine.stress import (
+            detect_risk_patterns,
+            financial_stress_index,
+            habit_stability_score,
+            impulsivity_score,
+            loss_aversion_index,
+            savings_discipline_score,
+        )
+        from src.engines.behaviour_engine.temporal import compute_temporal_patterns
+
+        temporal = compute_temporal_patterns(txn_set)
+
+        loss_aversion = loss_aversion_index(txn_set)
+        impulsivity = impulsivity_score(txn_set)
+        habit_stability = habit_stability_score(txn_set)
+        financial_stress = financial_stress_index(txn_set)
+        savings_discipline = savings_discipline_score(txn_set)
+
+        india_risks = detect_risk_patterns(txn_set)
+
+        confidence = min(1.0, len(txn_set) / 200)
+
+        # Compute buffer score (using internal utility)
+        buffer_score = self._normalize_score(financial_stress.get("buffer_days", 0), 0, 30)
+
+        # Health score calculation (same as legacy)
+        health_score = (
+            0.20 * savings_discipline["score"] +
+            0.18 * habit_stability["score"] +
+            0.18 * (1 - impulsivity["score"]) +
+            0.18 * (1 - financial_stress["score"]) +
+            0.13 * (1 - loss_aversion["score"]) +
+            0.13 * buffer_score
+        ) * 100
+
+        return {
+            "temporal_patterns": {
+                "trend": temporal["trend"],
+                "seasonality": temporal["seasonality"],
+                "volatility": temporal["residual_volatility"],
+                "weekly_pattern": temporal["weekly_pattern"],
+            },
+            "behavioral_indices": {
+                "loss_aversion": loss_aversion,
+                "impulsivity": impulsivity,
+                "habit_stability": habit_stability,
+                "financial_stress": financial_stress,
+                "savings_discipline": savings_discipline,
+            },
+            "risk_signals": {
+                "india_specific": india_risks,
+                "high_impulsivity": impulsivity["score"] > 0.7,
+                "high_stress": financial_stress["score"] > 0.6,
+                "low_savings": savings_discipline["score"] < 0.3,
+            },
+            "confidence": round(confidence, 2),
+            "financial_health_score": round(health_score, 1),
+            "data_quality": {
+                "transactions_analyzed": len(txn_set),
+            },
+        }
+
+    def _normalize_score(self, value: float, min_val: float = 0.0, max_val: float = 1.0) -> float:
+        """Normalize a value to 0-1 range with clamping (internal utility)."""
+        if max_val == min_val:
+            return 0.5
+        normalized = (value - min_val) / (max_val - min_val)
+        return max(0.0, min(1.0, normalized))
+
     def compute_financial_profile(self, household_id: str = "default") -> FinancialProfileResponse:
         """Compute and persist a comprehensive financial behaviour profile.
 
