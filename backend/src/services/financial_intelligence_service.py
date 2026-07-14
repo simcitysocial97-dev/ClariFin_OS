@@ -6,10 +6,11 @@ No calculation logic - delegates to financial_intelligence engine functions.
 
 from datetime import date
 from decimal import Decimal
-from typing import Any
+from typing import Any, cast
 
 from src.common import DB_PATH
 from src.engines.financial_intelligence import (
+    ScenarioComparison,
     calculate_goal_health,
     calculate_goal_projection,
     calculate_household_goal_summary,
@@ -18,10 +19,8 @@ from src.engines.financial_intelligence import (
     forecast_cashflow,
     forecast_credit_utilization,
     forecast_liquidity,
+    generate_financial_intelligence_report,
     generate_optimization_plan,
-    optimize_surplus_allocation,
-    optimize_goal_prioritization,
-    rank_debt_payoff_strategy,
     simulate_credit_behaviour_change,
     simulate_debt_prepayment,
     simulate_expense_reduction,
@@ -560,7 +559,7 @@ class FinancialIntelligenceService:
             Scenario result dict
         """
         # Get loans from loan service
-        loans = []
+        loans: list[dict[str, Any]] = []
         # In production, would use LoanService to get actual loan data
 
         # Get current surplus
@@ -632,7 +631,7 @@ class FinancialIntelligenceService:
         self,
         baseline: dict[str, Any],
         scenario: dict[str, Any],
-    ) -> dict[str, Any]:
+    ) -> ScenarioComparison:
         """Compare baseline vs scenario results.
 
         Delegates directly to scenario engine.
@@ -726,3 +725,102 @@ class FinancialIntelligenceService:
         }
 
         return generate_optimization_plan(financial_state)
+
+    # ============================================================
+    # Financial Intelligence Report Methods
+    # ============================================================
+
+    def get_financial_intelligence_report(
+        self,
+        household_id: str = "primary",
+    ) -> dict[str, Any]:
+        """Get comprehensive financial intelligence report.
+
+        Orchestrates data fetching from:
+        - BehaviourService → behaviour profile, wellness score
+        - CashflowService → monthly analysis
+        - LoanService → loans
+        - CreditCardService → credit cards
+        - FinancialGoalRepository → goals
+        - Forecasting engine → cashflow, liquidity, credit forecasts
+        - Optimization engine → optimization plan
+
+        Then delegates to generate_financial_intelligence_report() in the engine.
+
+        Args:
+            household_id: Household identifier (default: "primary")
+
+        Returns:
+            IntelligenceReport with snapshot, health_score, priorities, risks, opportunities, confidence
+        """
+        # 1. Fetch behaviour data using wellness and debt health endpoints
+        wellness_response = self.behaviour_service.get_wellness_score(household_id="default")
+        debt_response = self.behaviour_service.get_debt_health(household_id="default")
+
+        behaviour = {
+            "wellness_score": wellness_response.score,
+            "credit_revolver_ratio": debt_response.credit_revolver_ratio,
+            "debt_cycle_score": debt_response.debt_cycle_score,
+        }
+
+        # 2. Fetch cashflow data
+        cashflow_result = self.get_cashflow_forecast(forecast_months=3)
+        cashflow = {
+            "income_paise": cashflow_result.get("income_paise", 0),
+            "expense_paise": cashflow_result.get("expense_paise", 0),
+            "monthly_surplus_paise": cashflow_result.get("monthly_surplus_paise", 0),
+        }
+
+        # 3. Fetch liquidity forecast
+        liquidity = self.get_liquidity_forecast(forecast_months=3)
+
+        # 4. Fetch debt data
+        loans = self.loan_service.get_loans()
+        credit_cards = self.credit_card_service.list_cards()
+
+        debts = [
+            {
+                "id": loan.get("id"),
+                "type": "loan",
+                "outstanding_paise": int(loan.get("outstanding_paise", 0) or 0),
+                "interest_rate_bps": int(loan.get("interest_rate_bps", 0) or 0),
+            }
+            for loan in loans
+        ] + [
+            {
+                "id": card.get("id"),
+                "type": "credit_card",
+                "outstanding_paise": int(card.get("outstanding_paise", 0) or 0),
+                "interest_rate_bps": int(card.get("interest_rate_bps", 0) or 0),
+            }
+            for card in credit_cards
+        ]
+
+        # 5. Fetch goals
+        goals = self.get_household_goals(household_id=household_id, status=None)
+
+        # 6. Fetch forecasts
+        credit_forecast = self.get_credit_forecast()
+        forecasts = {
+            "cashflow": cashflow_result,
+            "liquidity": liquidity,
+            "credit": credit_forecast,
+        }
+
+        # 7. Fetch optimization plan
+        optimisation = self.get_optimization_plan(household_id=household_id)
+
+        # 8. Build financial state for intelligence engine
+        financial_state = {
+            "cashflow": cashflow,
+            "liquidity": liquidity,
+            "debts": debts,
+            "goals": goals,
+            "behaviour": behaviour,
+            "forecasts": forecasts,
+            "optimization": optimisation,
+        }
+
+        # 9. Delegate to intelligence engine
+        result = generate_financial_intelligence_report(financial_state)
+        return cast(dict[str, Any], result)

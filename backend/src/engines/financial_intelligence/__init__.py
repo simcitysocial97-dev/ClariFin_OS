@@ -1,14 +1,15 @@
-"""Financial Intelligence Engine - Forecasting and Prediction.
+"""Financial Intelligence Engine - Forecasting, Optimization, and Intelligence Aggregation.
 
-Deterministic forecasting functions for financial planning.
+Deterministic functions for financial planning and intelligence aggregation.
 All monetary values are integers in paise (₹1.00 = 100 paise).
 
 Structure:
+- intelligence.py — Financial intelligence orchestration (snapshot, priorities, confidence, report)
 - forecasting.py — Cashflow, liquidity, credit forecasting functions
 - goal_planner.py — Financial goal projection and health scoring
 - optimization.py — Surplus allocation and action prioritization
 - scenario.py — Financial scenario simulation functions
-- models.py — TypedDict contracts for scenario results
+- models.py — TypedDict contracts for scenario and intelligence results
 - utils.py — Shared helper functions
 
 All functions are pure - no database access.
@@ -29,10 +30,22 @@ from .goal_planner import (
     calculate_goal_projection,
     calculate_household_goal_summary,
 )
+from .intelligence import (
+    build_financial_snapshot,
+    calculate_intelligence_confidence,
+    generate_financial_intelligence_report,
+    generate_financial_priorities,
+)
 from .models import (
     COMPARE_METRICS,
+    ConfidenceMetadata,
     DebtScenario,
+    FinancialSnapshot,
+    IntelligenceReport,
     LoanScenario,
+    Opportunity,
+    PriorityAction,
+    RiskFlag,
     ScenarioComparison,
     ScenarioResult,
 )
@@ -101,6 +114,11 @@ __all__ = [
     "calculate_financial_action_score",
     "generate_optimization_plan",
     "ActionImpact",
+    # Intelligence functions
+    "build_financial_snapshot",
+    "generate_financial_priorities",
+    "calculate_intelligence_confidence",
+    "generate_financial_intelligence_report",
     # Scenario functions
     "simulate_expense_reduction",
     "simulate_income_change",
@@ -114,6 +132,12 @@ __all__ = [
     "LoanScenario",
     "DebtScenario",
     "COMPARE_METRICS",
+    "FinancialSnapshot",
+    "IntelligenceReport",
+    "PriorityAction",
+    "ConfidenceMetadata",
+    "RiskFlag",
+    "Opportunity",
     # Utility functions
     "compute_confidence_from_variance",
     "compute_trend_direction",

@@ -193,3 +193,108 @@ def get_financial_outlook(
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise
+
+
+# ============================================================
+# Financial Intelligence Report Endpoint
+# ============================================================
+
+@router.get("/report")
+def get_financial_intelligence_report(
+    household_id: str = Query(default="primary", description="Household identifier"),
+) -> dict[str, Any]:
+    """Get comprehensive financial intelligence report.
+
+    Aggregates data from all financial domains:
+    - Behaviour (wellness, credit dependency)
+    - Cashflow (monthly surplus)
+    - Liquidity (forecast)
+    - Debts (loans, credit cards)
+    - Goals (active goals)
+    - Optimization (recommended actions)
+
+    Args:
+        household_id: Household identifier (default: "primary")
+
+    Returns:
+        IntelligenceReport with snapshot, health_score, priorities, risks, opportunities, confidence
+    """
+    start = time.monotonic()
+    service = FinancialIntelligenceService()
+
+    try:
+        result = service.get_financial_intelligence_report(household_id=household_id)
+        _timed_log("GET /financial-intelligence/report", household_id, (time.monotonic() - start) * 1000)
+        return result
+    except Exception as e:
+        _timed_log(
+            "GET /financial-intelligence/report", household_id,
+            (time.monotonic() - start) * 1000, success=False, error=str(e),
+        )
+        raise
+
+
+# ============================================================
+# Financial Intelligence Priorities Endpoint
+# ============================================================
+
+@router.get("/priorities")
+def get_financial_intelligence_priorities(
+    household_id: str = Query(default="primary", description="Household identifier"),
+) -> dict[str, Any]:
+    """Get ranked financial priorities.
+
+    Returns only the priority actions from the intelligence report.
+
+    Args:
+        household_id: Household identifier (default: "primary")
+
+    Returns:
+        Dict with priorities list
+    """
+    start = time.monotonic()
+    service = FinancialIntelligenceService()
+
+    try:
+        result = service.get_financial_intelligence_report(household_id=household_id)
+        _timed_log("GET /financial-intelligence/priorities", household_id, (time.monotonic() - start) * 1000)
+        return {"priorities": result.get("priorities", [])}
+    except Exception as e:
+        _timed_log(
+            "GET /financial-intelligence/priorities", household_id,
+            (time.monotonic() - start) * 1000, success=False, error=str(e),
+        )
+        raise
+
+
+# ============================================================
+# Financial Intelligence Confidence Endpoint
+# ============================================================
+
+@router.get("/confidence")
+def get_financial_intelligence_confidence(
+    household_id: str = Query(default="primary", description="Household identifier"),
+) -> dict[str, Any]:
+    """Get intelligence data quality and confidence.
+
+    Returns only the confidence metadata from the intelligence report.
+
+    Args:
+        household_id: Household identifier (default: "primary")
+
+    Returns:
+        Confidence metadata with confidence score and data quality label
+    """
+    start = time.monotonic()
+    service = FinancialIntelligenceService()
+
+    try:
+        result = service.get_financial_intelligence_report(household_id=household_id)
+        _timed_log("GET /financial-intelligence/confidence", household_id, (time.monotonic() - start) * 1000)
+        return {"confidence": result.get("confidence", {})}
+    except Exception as e:
+        _timed_log(
+            "GET /financial-intelligence/confidence", household_id,
+            (time.monotonic() - start) * 1000, success=False, error=str(e),
+        )
+        raise
