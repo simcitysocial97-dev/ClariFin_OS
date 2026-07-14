@@ -22,6 +22,36 @@ MAX_FORECAST_MONTHS = 12
 FOIR_SAFE_THRESHOLD = Decimal("0.40")  # Below 40% - safe
 FOIR_WARNING_THRESHOLD = Decimal("0.60")  # 40-60% - warning, above 60% - unsafe
 
+# ============================================================
+# Debt Interest Rate Thresholds (basis points)
+# ============================================================
+
+HIGH_INTEREST_THRESHOLD_BPS = 1800  # 18% APR
+MEDIUM_INTEREST_THRESHOLD_BPS = 800  # 8% APR
+
+# ============================================================
+# Financial Policy Constants
+# ============================================================
+
+# Emergency fund
+EMERGENCY_FUND_MIN_MONTHS = 6
+
+# Debt allocation default
+DEFAULT_DEBT_ALLOCATION_RATIO = Decimal("0.60")  # 60% of surplus to debt when high-interest exists
+
+# Goal allocation for long-term goals
+LONG_TERM_GOAL_ALLOCATION_RATIO = Decimal("0.40")  # 40% of remaining to long-term goals
+
+# ============================================================
+# Action Scoring Weights
+# ============================================================
+
+ACTION_WEIGHTS = {
+    "interest_saving": Decimal("0.35"),
+    "risk_reduction": Decimal("0.30"),
+    "urgency": Decimal("0.20"),
+    "goal_alignment": Decimal("0.15"),
+}
 
 # ============================================================
 # Date/Month Utilities

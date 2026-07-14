@@ -41,9 +41,9 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 
 ### Layer Details
 
-**Entry Point:** `backend/src/api.py` — FastAPI app, CORS, 21 routers registered
+**Entry Point:** `backend/src/api.py` — FastAPI app, CORS, 22 routers registered
 
-**Routers** (`src/routers/`, 24 files): `accounts`, `audit`, `banks`, `behavior`, `behaviour` (duplicate), `cards_statements`, `cashflow`, `credit_cards`, `dashboard`, `export`, `financial_intelligence`, `goals`, `import_router`, `investments`, `loans`, `managed_accounts`, `members`, `networth`, `patterns`, `reconciliation`, `scenarios`, `transactions`, `health`
+**Routers** (`src/routers/`, 25 files): `accounts`, `audit`, `banks`, `behavior`, `behaviour` (duplicate), `cards_statements`, `cashflow`, `credit_cards`, `dashboard`, `export`, `financial_intelligence`, `goals`, `health`, `import_router`, `investments`, `loans`, `managed_accounts`, `members`, `networth`, `optimization`, `patterns`, `reconciliation`, `scenarios`, `transactions`
 
 **Services** (`src/services/`, 17 files): `AccountService`, `AuditService(BaseService)`, `BehaviorService(BaseService)`, `BehaviourService`, `CashflowService`, `CreditCardService`, `DashboardService(BaseService)`, `FinancialIntelligenceService`, `LoanAnalysisService`, `LoanService`, `LoanSimulationService`, `NetWorthService(BaseService)`, `ReconciliationService(BaseService)`, `StatementService(BaseService)`, `TransactionIntelligenceService`
 
@@ -56,7 +56,6 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 - `credit_card_engine/` — Outstanding/interest calculations
 - `account_engine/` — Account operations
 - `transaction_intelligence/` — EMI detection, CC payment detection, cash conversion detection
-- `financial_intelligence/` — Cashflow, liquidity, credit forecasting + goal planning (Phase 9.1/9.2)
 
 **Repository Rule (enforced):** Only files under `src/repositories/` may import FinanceDB. 25 repositories all extend `BaseRepository` which provides `_get_conn()` → sqlite3.Connection.
 

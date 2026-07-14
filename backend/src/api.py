@@ -66,6 +66,7 @@ from src.routers import (
     managed_accounts,
     members,
     networth,
+    optimization,
     patterns,
     reconciliation,
     scenarios,
@@ -89,6 +90,7 @@ app.include_router(import_router.router)
 app.include_router(investments.router)
 app.include_router(loans.router)
 app.include_router(managed_accounts.router)
+app.include_router(optimization.router)
 app.include_router(networth.router)
 app.include_router(patterns.router)
 app.include_router(reconciliation.router)

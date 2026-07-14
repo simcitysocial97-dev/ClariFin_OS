@@ -434,3 +434,42 @@
 - Credit behavior improvement
 - Scenario comparison (improvements and risks detected)
 - Engine purity verification (no DB calls)
+
+---
+
+## Phase 9.4 — Financial Optimization Engine (COMPLETED)
+
+### Files Created
+- `backend/src/engines/financial_intelligence/optimization.py` - Pure optimization functions
+- `backend/src/routers/optimization.py` - HTTP endpoints (4 endpoints)
+- `backend/tests/test_optimization_engine.py` - 17 tests (all passing)
+
+### Functions Implemented
+- `optimize_surplus_allocation()` - Allocates surplus across emergency fund, debt, goals, investment
+- `rank_debt_payoff_strategy()` - Avalanche/snowball/balanced debt ordering (requires projection for interest savings)
+- `optimize_goal_prioritization()` - Ranks goals by urgency, risk reduction, user priority
+- `calculate_financial_action_score()` - Scores actions (0.0-1.0) with drivers for AI explanation layer
+- `generate_optimization_plan()` - Master orchestrator (composition only, consumes financial_state)
+
+### Constants Added (utils.py)
+- `HIGH_INTEREST_THRESHOLD_BPS = 1800` (18% APR)
+- `MEDIUM_INTEREST_THRESHOLD_BPS = 800` (8% APR)
+- `ACTION_WEIGHTS` - Scoring weights (interest_saving: 35%, risk_reduction: 30%, urgency: 20%, goal_alignment: 15%)
+
+### API Endpoints Added
+- `GET /api/v1/optimization/plan` - Master optimization plan
+- `GET /api/v1/optimization/debt-strategy?strategy=avalanche` - Debt payoff ranking
+- `GET /api/v1/optimization/goal-priority` - Goal prioritization
+- `GET /api/v1/optimization/surplus-allocation` - Surplus distribution
+
+### Architecture Compliance
+- optimization.py has zero sqlite3 imports (verified)
+- optimization.py has zero repository imports (verified)
+- optimization.py has zero service imports (verified)
+- All monetary values are integers in paise
+- All rates are integers in basis points
+- FinancialIntelligenceService orchestrates only (no formulas)
+- Router only delegates to service (no calculation logic)
+
+### Next Immediate Steps
+- Add frontend optimization UI with allocation visualization

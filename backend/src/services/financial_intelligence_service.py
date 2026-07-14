@@ -18,6 +18,10 @@ from src.engines.financial_intelligence import (
     forecast_cashflow,
     forecast_credit_utilization,
     forecast_liquidity,
+    generate_optimization_plan,
+    optimize_surplus_allocation,
+    optimize_goal_prioritization,
+    rank_debt_payoff_strategy,
     simulate_credit_behaviour_change,
     simulate_debt_prepayment,
     simulate_expense_reduction,
@@ -641,3 +645,84 @@ class FinancialIntelligenceService:
             Comparison result with improvements, risks, delta
         """
         return compare_scenario(baseline, scenario)
+
+    # ============================================================
+    # Optimization Methods
+    # ============================================================
+
+    def get_optimization_plan(
+        self,
+        household_id: str = "primary",
+    ) -> dict[str, Any]:
+        """Get optimization plan for the household.
+
+        Orchestrates data fetching from:
+        - CashflowService → surplus
+        - LoanService → loans
+        - CreditCardService → credit card liabilities
+        - BehaviourService → risk indicators
+        - FinancialGoalRepository → goals
+
+        Then delegates to generate_optimization_plan() in the engine.
+
+        Args:
+            household_id: Household identifier (default: "primary")
+
+        Returns:
+            Optimization plan with recommended_actions, allocation_plan, warnings, confidence
+        """
+        # Fetch surplus data
+        cashflow_result = self.get_cashflow_forecast(forecast_months=1)
+        monthly_surplus = (
+            cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0) or 0
+        )
+
+        # Fetch debt data (loans)
+        loans = self.loan_service.get_loans()
+
+        # Fetch credit card data
+        credit_cards = self.credit_card_service.list_cards()
+
+        # Combine debts in engine format
+        debts = [
+            {
+                "id": loan.get("id"),
+                "type": "loan",
+                "name": loan.get("name", "Unknown Loan"),
+                "outstanding_paise": int(loan.get("outstanding_paise", 0) or 0),
+                "interest_rate_bps": int(loan.get("interest_rate_bps", 0) or 0),
+            }
+            for loan in loans
+        ] + [
+            {
+                "id": card.get("id"),
+                "type": "credit_card",
+                "name": card.get("name", "Unknown Card"),
+                "outstanding_paise": int(card.get("outstanding_paise", 0) or 0),
+                "interest_rate_bps": int(card.get("interest_rate_bps", 0) or 0),
+                "minimum_due_paise": int(card.get("minimum_due_paise", 0) or 0),
+            }
+            for card in credit_cards
+        ]
+
+        # Fetch goals
+        goals = self.get_household_goals(household_id=household_id, status=None)
+
+        # Fetch liquidity forecast for emergency fund status
+        liquidity_result = self.get_liquidity_forecast(forecast_months=3)
+
+        # Fetch credit risk indicators
+        credit_result = self.get_credit_forecast()
+
+        # Build financial state for engine
+        financial_state = {
+            "surplus": {"monthly_surplus_paise": monthly_surplus},
+            "debts": debts,
+            "goals": goals,
+            "forecast": liquidity_result,
+            "risk": {
+                "credit_revolver_ratio": credit_result.get("current_dependency_ratio", Decimal("0")),
+            },
+        }
+
+        return generate_optimization_plan(financial_state)
