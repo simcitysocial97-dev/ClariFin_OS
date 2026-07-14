@@ -473,3 +473,31 @@
 
 ### Next Immediate Steps
 - Add frontend optimization UI with allocation visualization
+
+---
+
+## Phase 9.5 — Financial Intelligence Integration Layer (COMPLETED)
+
+### Files Created
+- `backend/src/engines/financial_intelligence/intelligence.py` - 4 pure functions (snapshot, priorities, confidence, report)
+- `backend/tests/test_intelligence_engine.py` - 12 unit tests (all passing)
+- `backend/tests/test_financial_intelligence_integration.py` - 3 integration tests (all passing)
+
+### Functions Implemented
+- `build_financial_snapshot()` - Normalizes inputs into stable internal contract
+- `generate_financial_priorities()` - Converts optimization + behaviour signals into ranked actions  
+- `calculate_intelligence_confidence()` - Measures reliability from data quality metrics
+- `generate_financial_intelligence_report()` - Master composition function
+
+### API Endpoints Added
+- `GET /api/v1/financial-intelligence/report` - Full intelligence report
+- `GET /api/v1/financial-intelligence/priorities` - Ranked priorities only
+- `GET /api/v1/financial-intelligence/confidence` - Data quality and confidence metadata
+
+### Architecture Compliance
+- intelligence.py has zero sqlite3 imports (verified)
+- intelligence.py has zero repository imports (verified)
+- intelligence.py has zero service imports (verified)
+- All monetary values are integers in paise
+- FinancialIntelligenceService orchestrates only (no formulas)
+- Router only delegates to service (no calculation logic)
