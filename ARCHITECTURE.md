@@ -43,7 +43,7 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 
 **Entry Point:** `backend/src/api.py` — FastAPI app, CORS, 21 routers registered
 
-**Routers** (`src/routers/`, 23 files): `accounts`, `audit`, `banks`, `behavior`, `behaviour` (duplicate), `cards_statements`, `cashflow`, `credit_cards`, `dashboard`, `export`, `financial_intelligence`, `goals`, `import_router`, `investments`, `loans`, `managed_accounts`, `members`, `networth`, `patterns`, `reconciliation`, `transactions`, `health`
+**Routers** (`src/routers/`, 24 files): `accounts`, `audit`, `banks`, `behavior`, `behaviour` (duplicate), `cards_statements`, `cashflow`, `credit_cards`, `dashboard`, `export`, `financial_intelligence`, `goals`, `import_router`, `investments`, `loans`, `managed_accounts`, `members`, `networth`, `patterns`, `reconciliation`, `scenarios`, `transactions`, `health`
 
 **Services** (`src/services/`, 17 files): `AccountService`, `AuditService(BaseService)`, `BehaviorService(BaseService)`, `BehaviourService`, `CashflowService`, `CreditCardService`, `DashboardService(BaseService)`, `FinancialIntelligenceService`, `LoanAnalysisService`, `LoanService`, `LoanSimulationService`, `NetWorthService(BaseService)`, `ReconciliationService(BaseService)`, `StatementService(BaseService)`, `TransactionIntelligenceService`
 
