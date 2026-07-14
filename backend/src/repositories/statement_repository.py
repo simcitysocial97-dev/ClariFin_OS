@@ -10,6 +10,29 @@ from src.models.statement import Statement
 from src.repositories.base import BaseRepository
 
 
+def _normalize_to_iso(date_str: str) -> str:
+    """
+    Normalize date string to canonical YYYY-MM-DD ISO format.
+
+    Handles common Indian date formats from bank statements:
+    - DD/MM/YYYY
+    - DD-MM-YYYY
+    - Already ISO YYYY-MM-DD (returns unchanged)
+
+    If no format matches, returns original string.
+    """
+    if not date_str:
+        return ""
+
+    for fmt in ["%d/%m/%Y", "%d-%m-%Y", "%Y-%m-%d"]:
+        try:
+            dt = datetime.strptime(date_str, fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    return date_str
+
+
 class StatementRepository(BaseRepository):
     """Repository for statement operations."""
 
@@ -121,7 +144,15 @@ class StatementRepository(BaseRepository):
         return int(count)
 
     def update_statement_metadata(self, statement_id: int, metadata: dict[str, Any]) -> None:
-        """Update statement with all extracted metadata."""
+        """Update statement with all extracted metadata. Normalizes date fields to ISO format."""
+        # Normalize all date fields to YYYY-MM-DD format on write
+        normalized = {
+            "payment_due_date": _normalize_to_iso(metadata.get("due_date", "")),
+            "statement_date": _normalize_to_iso(metadata.get("statement_date", "")),
+            "bill_cycle_start": _normalize_to_iso(metadata.get("bill_cycle_start", "")),
+            "bill_cycle_end": _normalize_to_iso(metadata.get("bill_cycle_end", "")),
+        }
+
         with self._get_conn() as conn:
             conn.execute("""
                 UPDATE statements SET
@@ -138,13 +169,13 @@ class StatementRepository(BaseRepository):
             """, (
                 metadata.get("total_amount_due"),
                 metadata.get("minimum_amount_due"),
-                metadata.get("due_date"),
-                metadata.get("statement_date"),
+                normalized["payment_due_date"],
+                normalized["statement_date"],
                 metadata.get("card_last4"),
                 metadata.get("credit_limit"),
                 metadata.get("opening_balance"),
-                metadata.get("bill_cycle_start"),
-                metadata.get("bill_cycle_end"),
+                normalized["bill_cycle_start"],
+                normalized["bill_cycle_end"],
                 statement_id,
             ))
             conn.commit()
