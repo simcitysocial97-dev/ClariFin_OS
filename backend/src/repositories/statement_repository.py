@@ -233,6 +233,68 @@ class StatementRepository(BaseRepository):
             ).fetchone()
             return dict(row) if row else None
 
+    def get_statement_covering_date(
+        self, bank: str, card_last4: str, txn_date: str
+    ) -> dict[str, Any] | None:
+        """
+        Get the statement covering a specific transaction date using billing cycle window.
+
+        Uses bill_cycle_start <= txn_date <= bill_cycle_end for reliable matching,
+        avoiding fragile statement_month string matching across month boundaries.
+
+        Args:
+            bank: Statement bank (e.g., 'HDFC Bank', 'ICICI Bank')
+            card_last4: Last 4 digits of credit card
+            txn_date: Transaction date in ISO format (YYYY-MM-DD)
+
+        Returns:
+            Statement row dict or None if no match found.
+        """
+        with self._get_conn() as conn:
+            # Get candidates where txn_date falls within bill cycle window
+            # Uses ISO date string comparison (YYYY-MM-DD format)
+            rows = conn.execute(
+                """
+                SELECT id, bank, card_last4,
+                       total_amount_due, minimum_amount_due,
+                       payment_due_date, statement_date,
+                       bill_cycle_start, bill_cycle_end
+                FROM statements
+                WHERE bank = ? AND card_last4 = ?
+                  AND bill_cycle_start IS NOT NULL
+                  AND bill_cycle_end IS NOT NULL
+                  AND ? >= bill_cycle_start
+                  AND ? <= bill_cycle_end
+                ORDER BY statement_date DESC
+                LIMIT 1
+                """,
+                (bank, card_last4, txn_date, txn_date),
+            ).fetchone()
+
+            if rows:
+                return dict(rows)
+
+            # Fallback: no bill_cycle dates available, try matching by payment_due_date
+            # with a ±7 day window around the transaction date
+            rows = conn.execute(
+                """
+                SELECT id, bank, card_last4,
+                       total_amount_due, minimum_amount_due,
+                       payment_due_date, statement_date,
+                       bill_cycle_start, bill_cycle_end
+                FROM statements
+                WHERE bank = ? AND card_last4 = ?
+                  AND payment_due_date IS NOT NULL
+                  AND payment_due_date >= date(?, '-7 days')
+                  AND payment_due_date <= date(?, '+7 days')
+                ORDER BY statement_date DESC
+                LIMIT 1
+                """,
+                (bank, card_last4, txn_date, txn_date),
+            ).fetchone()
+
+            return dict(rows) if rows else None
+
     def find_matching_statement(
         self,
         bank: str,

@@ -18,6 +18,7 @@ from src.engines.transaction_intelligence.cc_payment_detector import (
 )
 from src.models.financial_event import FinancialEvent
 from src.repositories.account_repository import AccountRepository
+from src.repositories.credit_card_repository import CreditCardRepository
 from src.repositories.financial_event_repository import FinancialEventRepository
 from src.repositories.liquidity_pattern_repository import LiquidityPatternRepository
 from src.repositories.loan_repository import LoanRepository
@@ -279,16 +280,19 @@ class TransactionIntelligenceService:
             txns = [t for t in txns if t.get("member", "Self") == "Self"]
 
         # Get household-scoped credit candidates (savings/current accounts only)
+        # Also build account context for statement lookup
+        all_accounts_for_context: list[dict[str, Any]] = []
         if household_id:
-            household_accounts = self.account_repo.get_household_accounts(household_id)
-            household_account_ids = [a["id"] for a in household_accounts] if household_accounts else []
+            all_accounts_for_context = self.account_repo.get_household_accounts(household_id)
+            household_account_ids = [a["id"] for a in all_accounts_for_context] if all_accounts_for_context else []
             credit_candidates = self._get_unclassified_credits_for_accounts(household_account_ids)
         else:
+            all_accounts_for_context = self.account_repo.get_all_accounts()
             credit_candidates = self._get_unclassified_credits()
 
         # Build account context for household/id checks
         account_context: dict[str, dict[str, Any]] = {}
-        for acc in household_accounts if household_id else self.account_repo.get_all_accounts():
+        for acc in all_accounts_for_context:
             account_context[acc["id"]] = acc
 
         # Enrich transactions with household_id and account_type
@@ -302,6 +306,7 @@ class TransactionIntelligenceService:
             credit["household_id"] = acc.get("household_id", household_id or "primary")
             credit["account_type"] = acc.get("account_type", "savings")
 
+        card_repo = CreditCardRepository(self.db_path)
         stmt_repo = StatementRepository(self.db_path)
 
         for txn in txns:
@@ -320,14 +325,25 @@ class TransactionIntelligenceService:
                 continue
 
             # Try to find matching statement for due date bonus
+            # Only applies to credit card account types (CC cash advances)
             account_id = txn.get("account_id", "")
             date_iso = txn.get("date_iso", "")
+            account_info = account_context.get(account_id, {})
 
-            # Get statement if available (for bonus)
             statement_row = None
-            # Note: Statement lookup doesn't directly apply here since liquidity
-            # extraction isn't tied to CC statements, but we can check if there's
-            # a statement for this account near this date
+            if account_info.get("account_type") == "credit_card":
+                # Get CC info for this account
+                cards = card_repo.list_cards(account_id)
+                if cards:
+                    card = cards[0]  # Take first active card if multiple
+                    bank = card.get("bank", "")
+                    card_last4 = card.get("card_last4", "")
+                    if bank and card_last4:
+                        statement_row = stmt_repo.get_statement_covering_date(
+                            bank=bank,
+                            card_last4=card_last4,
+                            txn_date=date_iso,
+                        )
 
             # Detect cash conversion
             detection = detect_cash_conversion(

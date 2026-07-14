@@ -332,14 +332,28 @@ def detect(
         due_date_str = statement_row.get("payment_due_date", "")
         debit_date_str = cc_debit_txn.get("date_iso", "")
         if due_date_str and debit_date_str:
-            try:
-                due_date = datetime.strptime(due_date_str, "%Y-%m-%d").date()
-                debit_date = datetime.strptime(debit_date_str, "%Y-%m-%d").date()
+            # Parse due date with multiple format support
+            due_date = None
+            for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"]:
+                try:
+                    due_date = datetime.strptime(due_date_str, fmt).date()
+                    break
+                except ValueError:
+                    continue
+
+            # Parse debit date with multiple format support
+            debit_date = None
+            for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"]:
+                try:
+                    debit_date = datetime.strptime(debit_date_str, fmt).date()
+                    break
+                except ValueError:
+                    continue
+
+            if due_date and debit_date:
                 days_to_due = (due_date - debit_date).days
                 if 0 <= days_to_due <= 7:
                     confidence_bps += 1000
-            except ValueError:
-                pass
 
     confidence_bps = min(confidence_bps, 9900)
 

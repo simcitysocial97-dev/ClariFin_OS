@@ -60,9 +60,25 @@
 - No usage of `member` in Financial Intelligence or Behaviour pipelines — these use account joins
 - Database schema required migration: added `owner_id` and `household_id` to accounts table
 
+### Completed Changes (Due Date Bonus Fix - Current Task)
+- Added `get_statement_covering_date(bank, card_last4, txn_date)` method to `StatementRepository`
+  - Uses `bill_cycle_start <= txn_date <= bill_cycle_end` for reliable billing cycle matching
+  - Includes fallback for ±7 day window around `payment_due_date` when cycle dates unavailable
+- Fixed `cash_conversion_detector.py` due date parsing
+  - Added multi-format date parsing support (YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY)
+  - Properly handles boundary condition (7 days exactly inclusive)
+- Wired statement lookup into `classify_cash_conversions` in `TransactionIntelligenceService`
+  - For CC account type transactions, fetches card info and looks up matching statement
+  - Passes statement_row to detector so due-date bonus can fire
+- Added 4 regression tests in `test_cash_conversion_detector.py`:
+  - `test_due_date_bonus_3_days_after_txn`: Within window (3 days) → bonus applies
+  - `test_due_date_bonus_20_days_after_txn`: Outside window (20 days) → no bonus
+  - `test_due_date_bonus_negative_days_rejected`: Due before txn → no bonus
+  - `test_due_date_boundary_7_days_exactly`: Boundary inclusive → bonus applies
+  - `test_due_date_alternate_format_parsing`: DD/MM/YYYY format parsed correctly
+
 ### Next Priority Actions
 - Refactor balance_engine.py and ledger_audit_engine.py (High severity)
 - Remove behavior/behaviour duplicate aliases (Low severity)
 - Add correlation ID framework for observability
 - Consider adding stationarity tests and outlier handling to forecast engine
-- Close security gaps: auth, authorization, file upload validation, centralized audit logging

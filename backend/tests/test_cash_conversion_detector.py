@@ -3,27 +3,25 @@
 Run: python -m pytest tests/test_cash_conversion_detector.py -v
 """
 import os
-import sqlite3
+
+# Ensure src is on path
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
 import pytest
 
-# Ensure src is on path
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from scripts.migration_liquidity_patterns import run_migration
+from scripts.seed_liquidity_patterns import run_seed
 from src.db import FinanceDB
 from src.engines.transaction_intelligence.cash_conversion_detector import (
-    CashConversionResult,
     _calculate_fee_bps,
     _determine_zone,
     detect,
 )
-from scripts.migration_liquidity_patterns import run_migration
-from scripts.seed_liquidity_patterns import run_seed
-
 
 # ============================================================
 # Fixtures
@@ -635,6 +633,302 @@ def test_narrative_includes_fee_percentage():
     # Should contain fee percentage
     assert "3.0%" in narrative or "3%" in narrative  # 3000 paise fee = 3%
     assert "Rs30" in narrative  # Fee amount (3000 paise = Rs30)
+
+
+# ============================================================
+# Test 10: Due Date Bonus (regression - wiring fix)
+# ============================================================
+
+def test_due_date_bonus_3_days_after_txn():
+    """
+    Due date 3 days after transaction -> confidence_bps = 9900 (8000 base + 1000 + 1000, capped).
+
+    Regression test: reproduces the CRED-RENT scenario from verification report.
+    Before fix: confidence_bps = 8000 (statement_row was None, bonus never fired).
+    After fix: confidence_bps = 9900 (bonus applies when within 7 days of due date).
+    """
+    provider_patterns = [
+        {
+            "id": 1,
+            "provider_name": "CRED",
+            "description_pattern": "(DREAMPLUG|CRED)",
+            "fee_min_bps": 150,
+            "fee_max_bps": 400,
+            "review_fee_min_bps": 50,
+            "review_fee_max_bps": 800,
+            "typical_settlement_days": 2,
+            "confirmed_by_user": 1,
+        }
+    ]
+    purpose_patterns = []
+
+    debit_txn = {
+        "id": 1,
+        "account_id": "HDFC_CC",
+        "date_iso": "2025-07-01",
+        "debit": 3125000,  # ₹31,250 in paise
+        "description": "CRED RENT PAYMENT",
+        "household_id": "primary",
+    }
+
+    credit_txn = {
+        "id": 2,
+        "account_id": "HDFC_SAVINGS",
+        "date_iso": "2025-07-01",
+        "credit": 3000000,  # ₹30,000 in paise (fee = 4% = 125000 paise)
+        "household_id": "primary",
+    }
+
+    # Statement with due_date 3 days after transaction (within 7-day window)
+    statement_row = {
+        "id": 100,
+        "bank": "HDFC",
+        "card_last4": "1234",
+        "payment_due_date": "2025-07-04",  # 3 days after 2025-07-01
+        "total_amount_due": 3125000,
+        "minimum_amount_due": 100000,
+        "bill_cycle_start": "2025-06-15",
+        "bill_cycle_end": "2025-07-14",
+    }
+
+    result = detect(debit_txn, [credit_txn], provider_patterns, purpose_patterns, statement_row)
+
+    assert result is not None
+    assert result.zone == "auto"
+    # Base auto confidence: 8000
+    # confirmed_by_user bonus: +1000
+    # due_date proximity bonus: +1000
+    # Total before cap: 10000, after cap: 9900
+    assert result.confidence_bps == 9900
+
+
+def test_due_date_bonus_20_days_after_txn():
+    """
+    Due date 20 days after transaction -> confidence_bps = 8000 (no bonus, outside window).
+
+    Regression test: confirms bonus does NOT apply when outside 7-day window.
+    """
+    provider_patterns = [
+        {
+            "id": 1,
+            "provider_name": "CRED",
+            "description_pattern": "(DREAMPLUG|CRED)",
+            "fee_min_bps": 150,
+            "fee_max_bps": 400,
+            "review_fee_min_bps": 50,
+            "review_fee_max_bps": 800,
+            "typical_settlement_days": 2,
+            "confirmed_by_user": 1,
+        }
+    ]
+    purpose_patterns = []
+
+    debit_txn = {
+        "id": 1,
+        "account_id": "HDFC_CC",
+        "date_iso": "2025-07-01",
+        "debit": 100000,
+        "description": "CRED Payment",
+        "household_id": "primary",
+    }
+
+    credit_txn = {
+        "id": 2,
+        "account_id": "HDFC_SAVINGS",
+        "date_iso": "2025-07-01",
+        "credit": 96000,
+        "household_id": "primary",
+    }
+
+    # Statement with due_date 20 days after transaction (outside 7-day window)
+    statement_row = {
+        "id": 100,
+        "bank": "HDFC",
+        "card_last4": "1234",
+        "payment_due_date": "2025-07-21",  # 20 days after 2025-07-01
+        "total_amount_due": 100000,
+        "minimum_amount_due": 10000,
+        "bill_cycle_start": "2025-06-01",
+        "bill_cycle_end": "2025-06-30",
+    }
+
+    result = detect(debit_txn, [credit_txn], provider_patterns, purpose_patterns, statement_row)
+
+    assert result is not None
+    assert result.zone == "auto"
+    # Base auto confidence: 8000
+    # confirmed_by_user bonus: +1000
+    # due_date proximity bonus: NOT applied (20 days > 7)
+    # Total: 9000
+    assert result.confidence_bps == 9000
+
+
+def test_due_date_bonus_negative_days_rejected():
+    """
+    Due date before transaction date -> bonus does NOT apply.
+
+    If due_date < txn_date, this is not a valid proximity match.
+    """
+    provider_patterns = [
+        {
+            "id": 1,
+            "provider_name": "CRED",
+            "description_pattern": "(DREAMPLUG|CRED)",
+            "fee_min_bps": 150,
+            "fee_max_bps": 400,
+            "review_fee_min_bps": 50,
+            "review_fee_max_bps": 800,
+            "typical_settlement_days": 2,
+            "confirmed_by_user": 0,  # Not confirmed
+        }
+    ]
+    purpose_patterns = []
+
+    debit_txn = {
+        "id": 1,
+        "account_id": "HDFC_CC",
+        "date_iso": "2025-07-10",
+        "debit": 100000,
+        "description": "CRED Payment",
+        "household_id": "primary",
+    }
+
+    credit_txn = {
+        "id": 2,
+        "account_id": "HDFC_SAVINGS",
+        "date_iso": "2025-07-10",
+        "credit": 96000,
+        "household_id": "primary",
+    }
+
+    # Statement with due_date before transaction
+    statement_row = {
+        "id": 100,
+        "bank": "HDFC",
+        "card_last4": "1234",
+        "payment_due_date": "2025-07-05",  # 5 days BEFORE transaction
+        "total_amount_due": 100000,
+        "minimum_amount_due": 10000,
+    }
+
+    result = detect(debit_txn, [credit_txn], provider_patterns, purpose_patterns, statement_row)
+
+    assert result is not None
+    assert result.zone == "auto"
+    # Base auto confidence: 8000
+    # confirmed_by_user: 0 (no bonus)
+    # due_date proximity bonus: NOT applied (negative days)
+    assert result.confidence_bps == 8000
+
+
+def test_due_date_boundary_7_days_exactly():
+    """
+    Due date exactly 7 days after transaction -> bonus applies (boundary inclusive).
+    """
+    provider_patterns = [
+        {
+            "id": 1,
+            "provider_name": "CRED",
+            "description_pattern": "(DREAMPLUG|CRED)",
+            "fee_min_bps": 150,
+            "fee_max_bps": 400,
+            "review_fee_min_bps": 50,
+            "review_fee_max_bps": 800,
+            "typical_settlement_days": 2,
+            "confirmed_by_user": 0,
+        }
+    ]
+    purpose_patterns = []
+
+    debit_txn = {
+        "id": 1,
+        "account_id": "HDFC_CC",
+        "date_iso": "2025-07-01",
+        "debit": 100000,
+        "description": "CRED Payment",
+        "household_id": "primary",
+    }
+
+    credit_txn = {
+        "id": 2,
+        "account_id": "HDFC_SAVINGS",
+        "date_iso": "2025-07-01",
+        "credit": 96000,
+        "household_id": "primary",
+    }
+
+    # Statement with due_date exactly 7 days after transaction
+    statement_row = {
+        "id": 100,
+        "bank": "HDFC",
+        "card_last4": "1234",
+        "payment_due_date": "2025-07-08",  # Exactly 7 days after
+        "total_amount_due": 100000,
+        "minimum_amount_due": 10000,
+    }
+
+    result = detect(debit_txn, [credit_txn], provider_patterns, purpose_patterns, statement_row)
+
+    assert result is not None
+    assert result.zone == "auto"
+    # Base auto confidence: 8000
+    # due_date proximity bonus: +1000 (boundary inclusive)
+    assert result.confidence_bps == 9000
+
+
+def test_due_date_alternate_format_parsing():
+    """
+    Due date in DD/MM/YYYY format should be parsed correctly.
+    """
+    provider_patterns = [
+        {
+            "id": 1,
+            "provider_name": "CRED",
+            "description_pattern": "(DREAMPLUG|CRED)",
+            "fee_min_bps": 150,
+            "fee_max_bps": 400,
+            "review_fee_min_bps": 50,
+            "review_fee_max_bps": 800,
+            "typical_settlement_days": 2,
+            "confirmed_by_user": 0,
+        }
+    ]
+    purpose_patterns = []
+
+    debit_txn = {
+        "id": 1,
+        "account_id": "HDFC_CC",
+        "date_iso": "2025-07-01",
+        "debit": 100000,
+        "description": "CRED Payment",
+        "household_id": "primary",
+    }
+
+    credit_txn = {
+        "id": 2,
+        "account_id": "HDFC_SAVINGS",
+        "date_iso": "2025-07-01",
+        "credit": 96000,
+        "household_id": "primary",
+    }
+
+    # Statement with due_date in DD/MM/YYYY format
+    statement_row = {
+        "id": 100,
+        "bank": "HDFC",
+        "card_last4": "1234",
+        "payment_due_date": "04/07/2025",  # DD/MM/YYYY format, 3 days after
+        "total_amount_due": 100000,
+        "minimum_amount_due": 10000,
+    }
+
+    result = detect(debit_txn, [credit_txn], provider_patterns, purpose_patterns, statement_row)
+
+    assert result is not None
+    assert result.zone == "auto"
+    # Base auto confidence: 8000
+    # due_date proximity bonus: +1000 (should parse DD/MM/YYYY)
+    assert result.confidence_bps == 9000
 
 
 if __name__ == "__main__":
