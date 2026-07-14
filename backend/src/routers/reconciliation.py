@@ -213,3 +213,27 @@ def api_undo_reconciliation(reconciliation_id: int) -> dict[str, Any]:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/stats")
+def api_get_reconciliation_stats(
+    household_id: str | None = Query(None, description="Household identifier"),
+) -> dict[str, Any]:
+    """
+    Get reconciliation statistics for health score calculation.
+
+    Computes coverage ratio, accuracy score, and health score.
+
+    Args:
+        household_id: Optional household filter. If None, computes stats for all transactions.
+
+    Returns:
+        Dict with coverage_ratio, accuracy_score, health_score, total_transactions,
+        matched_transactions, confirmed_count, rejected_count
+    """
+    try:
+        service = ReconciliationService()
+        stats = service.get_reconciliation_stats(household_id=household_id)
+        return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

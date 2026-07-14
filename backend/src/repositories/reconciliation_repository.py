@@ -433,3 +433,106 @@ class ReconciliationRepository(BaseRepository):
                 new_state=json.dumps({"id": reconciliation_id, "status": "pending"}),
             )
         return updated
+
+    # ============================================================
+    # Phase 3: Reconciliation Stats Endpoint (PRD Acceptance Criteria)
+    # ============================================================
+
+    def get_reconciliation_stats(
+        self, household_id: str | None = None
+    ) -> dict[str, int | float]:
+        """
+        Get reconciliation statistics for health score calculation.
+
+        Computes:
+        - total_transactions: COUNT(*) from transactions (optionally filtered by household)
+        - matched_transactions: COUNT of distinct txn IDs in confirmed reconciliations
+        - coverage_ratio: matched_transactions / total_transactions (0 if total=0)
+        - confirmed_count: COUNT(status='confirmed')
+        - rejected_count: COUNT(status='rejected')
+        - accuracy_score: confirmed / (confirmed + rejected) (1.0 if no rejections and has confirms, else 0 if none)
+        - health_score: round((coverage * 0.6 + accuracy * 0.4) * 100, 2)
+
+        Args:
+            household_id: Optional household filter. If None, computes stats for all transactions.
+
+        Returns:
+            Dict with coverage_ratio, accuracy_score, health_score, total_transactions,
+            matched_transactions, confirmed_count, rejected_count
+        """
+        with self._get_conn() as conn:
+            # Count total transactions (optionally filtered by household)
+            if household_id:
+                total_row = conn.execute("""
+                    SELECT COUNT(*) as cnt
+                    FROM transactions t
+                    JOIN accounts a ON t.account_id = a.bank
+                    WHERE a.household_id = ?
+                """, (household_id,)).fetchone()
+            else:
+                total_row = conn.execute("SELECT COUNT(*) as cnt FROM transactions").fetchone()
+            total_transactions = total_row["cnt"] if total_row else 0
+
+            # Count matched transactions (distinct IDs in confirmed reconciliations)
+            if household_id:
+                matched_row = conn.execute("""
+                    SELECT COUNT(DISTINCT txn_id) as cnt
+                    FROM (
+                        SELECT r.debit_txn_id as txn_id FROM reconciliations r
+                        JOIN transactions t ON r.debit_txn_id = t.id
+                        JOIN accounts a ON t.account_id = a.bank
+                        WHERE r.status = 'confirmed' AND a.household_id = ?
+                        UNION
+                        SELECT r.credit_txn_id as txn_id FROM reconciliations r
+                        JOIN transactions t ON r.credit_txn_id = t.id
+                        JOIN accounts a ON t.account_id = a.bank
+                        WHERE r.status = 'confirmed' AND a.household_id = ?
+                    )
+                """, (household_id, household_id)).fetchone()
+            else:
+                matched_row = conn.execute("""
+                    SELECT COUNT(DISTINCT txn_id) as cnt
+                    FROM (
+                        SELECT debit_txn_id as txn_id FROM reconciliations WHERE status = 'confirmed'
+                        UNION
+                        SELECT credit_txn_id as txn_id FROM reconciliations WHERE status = 'confirmed'
+                    )
+                """).fetchone()
+            matched_transactions = matched_row["cnt"] if matched_row else 0
+
+            # Count confirmed and rejected reconciliations
+            confirmed_row = conn.execute(
+                "SELECT COUNT(*) as cnt FROM reconciliations WHERE status = 'confirmed'"
+            ).fetchone()
+            rejected_row = conn.execute(
+                "SELECT COUNT(*) as cnt FROM reconciliations WHERE status = 'rejected'"
+            ).fetchone()
+            confirmed_count = confirmed_row["cnt"] if confirmed_row else 0
+            rejected_count = rejected_row["cnt"] if rejected_row else 0
+
+            # Calculate coverage ratio
+            coverage_ratio = matched_transactions / total_transactions if total_transactions > 0 else 0.0
+
+            # Calculate accuracy score per the specified logic
+            # Case A (No activity): confirmed_count == 0 and rejected_count == 0 -> 0.0
+            # Case B (Perfect record): confirmed_count > 0 and rejected_count == 0 -> 1.0
+            # Case C (Mixed activity): confirmed_count + rejected_count > 0 -> confirmed / (confirmed + rejected)
+            if confirmed_count == 0 and rejected_count == 0:
+                accuracy_score = 0.0
+            elif rejected_count == 0 and confirmed_count > 0:
+                accuracy_score = 1.0
+            else:
+                accuracy_score = confirmed_count / (confirmed_count + rejected_count)
+
+            # Calculate health score
+            health_score = round((coverage_ratio * 0.6 + accuracy_score * 0.4) * 100, 2)
+
+            return {
+                "coverage_ratio": coverage_ratio,
+                "accuracy_score": accuracy_score,
+                "health_score": health_score,
+                "total_transactions": total_transactions,
+                "matched_transactions": matched_transactions,
+                "confirmed_count": confirmed_count,
+                "rejected_count": rejected_count,
+            }

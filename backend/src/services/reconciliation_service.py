@@ -7,8 +7,8 @@ import json
 from typing import Any
 
 from src.engines.reconciliation_engine import (
-    find_potential_matches,
     find_matches_for_transaction,
+    find_potential_matches,
 )
 from src.repositories.account_repository import AccountRepository
 from src.repositories.reconciliation_repository import ReconciliationRepository
@@ -159,6 +159,23 @@ class ReconciliationService(BaseService):
                 )
 
         return result
+
+    def get_reconciliation_stats(
+        self, household_id: str | None = None
+    ) -> dict[str, int | float]:
+        """
+        Get reconciliation statistics for health score calculation.
+
+        Delegates to repository for data fetching and computes statistics.
+
+        Args:
+            household_id: Optional household filter. If None, computes stats for all transactions.
+
+        Returns:
+            Dict with coverage_ratio, accuracy_score, health_score, total_transactions,
+            matched_transactions, confirmed_count, rejected_count
+        """
+        return self.repo.get_reconciliation_stats(household_id=household_id)
 
     def reject_reconciliation_with_audit(
         self,
