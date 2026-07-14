@@ -12,13 +12,14 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from scripts.migration_cc_payment_detection import run_migration as run_cc_migration
+from scripts.migration_emi_detection import run_migration as run_emi_migration
 from src.db import FinanceDB
 from src.engines.transaction_intelligence.cc_payment_detector import (
-    CCPaymentDetectionResult,
     _convert_to_paise,
     classify_cc_payment,
-    determine_payment_channel,
     detect_cc_payment,
+    determine_payment_channel,
     extract_card_last4,
 )
 from src.repositories.statement_repository import StatementRepository
@@ -26,9 +27,6 @@ from src.repositories.transaction_classification_repository import (
     TransactionClassificationRepository,
 )
 from src.services.transaction_intelligence_service import TransactionIntelligenceService
-from scripts.migration_emi_detection import run_migration as run_emi_migration
-from scripts.migration_cc_payment_detection import run_migration as run_cc_migration
-
 
 # ============================================================
 # Fixtures

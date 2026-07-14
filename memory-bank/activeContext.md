@@ -1,64 +1,44 @@
 # Active Context
 
-## Architecture Audit Complete — Principal Architect Review (Enhanced)
+## Architecture Validation Created
+- **Memory Bank**: Created `architecture.md`, `service-map.md`, `dependency-map.md`, `database-map.md`, `testing-strategy.md`
+- **Architecture Tests**: Created `tests/architecture/test_layer_boundaries.py` (10 tests) + `README.md`
+- **Violations Found**: 
+  - `engines/balance_engine.py`, `ledger_audit_engine.py`, `reconciliation_engine.py` import sqlite3 (forbidden)
 
-### Audit Phases Delivered
-- **Phase 1-3:** Topology, execution flows, financial formulas with Observed vs Inferred labels
-- **Phase 4:** Financial Intelligence deep dive (forecasting, optimization, scenario, goal planner, intelligence)
-- **Phase 5:** Engine Dependency Matrix
-- **Phase 6:** Repository Ownership Matrix
-- **Phase 7:** Database Table Ownership Map
-- **Phase 8:** Financial Decision Pipeline
-- **Phase 9:** Technical Debt Register
-- **Phase 10:** Complexity Analysis
-- **Phase 11:** State Ownership Analysis
-- **Phase 12:** Coupling Analysis
-- **Phase 13:** Extensibility Review
-- **Phase 14:** Architecture Scorecard (9.4/10)
-- **Phase 15:** Mathematical Deep Dive — extended assumptions and edge cases
-- **Phase 16:** Repository Audit Details
-- **Phase 18:** Principal Architect Enhancements
-  - 18.1 Explicit Call Graphs
-  - 18.2 Dependency Cycle Analysis
-  - 18.3 Data Lifecycle
-  - 18.4 Mutation Matrix
-  - 18.5 Concurrency
-  - 18.6 Security Boundary
-  - 18.7 Test Coverage Matrix
-  - 18.8 Performance Hotspots
-  - 18.9 Domain Boundaries / Bounded Contexts
+## Invariants Testing Created
+- **Invariants**: Created `tests/invariants/test_money.py`, `test_cashflow.py`, `test_loan.py`
+  - `test_money.py`: `assert_all_paise_integers()` - validates integer paise
+  - `test_cashflow.py`: `assert_surplus_balances()` - income - expense == surplus
+  - `test_loan.py`: `assert_schedule_valid()` - principal decreases, final balance == 0
 
-### Key Enhancements
-- Added Observed vs Inferred labels throughout
-- Added per-engine subsections: inputs, outputs, assumptions, edge cases, failure modes, confidence model, time complexity
-- Added Engine Dependency Matrix with Reads/Writes/Depends On/Pure columns
-- Added Repository Ownership Matrix with table ownership, cohesion, N+1 risks
-- Added Database Table Ownership Map (table → repository → service → engine)
-- Added Financial Decision Pipeline (transactions → cashflow → forecast → goals → scenario → optimization → intelligence → API)
-- Added Complexity Analysis for all major engines
-- Added State Ownership analysis (persistence, lifecycle, read/write, owner)
-- Added Coupling Analysis and hidden coupling risks
-- Added Mathematical Deep Dive: forecasting stationarity risks, optimization decision logic verification, scenario impossible-balance risks
-- Added Principal Architect Enhancements: call graphs, dependency cycle analysis, data lifecycle, mutation matrix, concurrency, security boundary, test coverage matrix, performance hotspots, domain boundaries
+## Adaptive Test Selection Configured
+- **pytest-testmon**: Already installed (v2.2.0)
+- **verify-local.sh**: Updated with adaptive selection fallback logic
+- **When testmon runs**: When `.testmondata` exists and pytest-testmon importable
+- **When full suite runs**: Fallback when testmon unavailable or cache missing
 
-### Overall Assessment
-- Layer Separation: 9.8/10
-- Engine Purity: 9.2/10 (3 violations)
-- Financial Correctness: 9.7/10 (paise integers verified)
-- Repository Compliance: 9.4/10
-- See Audit_Report.md for full principal-architect-level reference
+## Golden Dataset Regression Framework Created
+- Created `tests/golden/datasets/` with 4 JSON scenario files
+- Created `tests/golden/test_regression.py` with semantic comparison
+- `_normalize_for_comparison()` ignores timestamps/IDs for stable assertions
 
-### Completed Changes (Reconciliation Stats Endpoint — PRD Completion)
-- Added `get_reconciliation_stats()` method to `ReconciliationRepository`
-  - Computes total_transactions, matched_transactions, confirmed_count, rejected_count
-  - Calculates coverage_ratio (matched/total, 0 if total=0)
-  - Calculates accuracy_score (1.0 if perfect record, else confirmed/(confirmed+rejected), 0 if no activity)
-  - Calculates health_score (round((coverage*0.6 + accuracy*0.4)*100, 2))
-- Added `get_reconciliation_stats()` method to `ReconciliationService`
-- Added `GET /api/reconciliations/stats` endpoint to router
-- Added 4 tests in `test_reconciliation_stats.py` covering known fixture, zero-transactions, no-matched, and perfect-record scenarios
+## Enterprise CI Pipeline Created (8 stages)
+- `.github/workflows/quality-gate.yml` created:
+  1. **fast**: ruff + pyright static analysis
+  2. **architecture**: layer boundary tests (parallel with properties)
+  3. **properties**: hypothesis property tests (parallel with architecture)
+  4. **integration**: docker + API validation
+  5. **contract**: schemathesis against OpenAPI
+  6. **golden**: golden dataset validation
+  7. **snapshot**: golden dataset change detection
+  8. **mutation**: mutmut on engines/ only
+- Mutation testing: verifies properties catch wrong logic by introducing mutations
+## ADF Framework Completed
+- Created `tests/domain/` structure with invariants, generators, builders
+- Created 6 invariant modules: `tests/domain/invariants/*.py`
+- Created Hypothesis strategies in `tests/properties/conftest.py`
+- Written 26 property tests covering Cashflow, Loan, Forecast, Credit engines
+- All tests pass ✅ | ruff check ✅ | mypy check ✅
 
-### Completed Changes (CRED E2E Hardening — Current Session)
-- Created `test_cred_e2e_hardening.py` with 9 comprehensive tests for CRED cash conversion scenario
-- Added `outstanding_paise` parameter to `FinancialEventsService.create_and_persist_event()` for proper debt entry creation
-- Fixed schema mismatches in test fixtures (is_active column, financial_events table, join logic)
+## Next Steps

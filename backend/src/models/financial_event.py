@@ -5,7 +5,6 @@ These will be used by the Behaviour Engine in future phases for accurate
 classification of income, expenses, transfers, and liability changes.
 """
 
-from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
@@ -58,44 +57,44 @@ class FinancialEvent(DomainModel):
 
     event_type: EventType
     transaction_ids: list[int] = Field(default_factory=list)
-    
+
     # Legacy field - primary amount for original event types
     amount_paise: int = 0
-    
+
     # Granular change fields for new event types
     asset_change_paise: int = 0
     liability_change_paise: int = 0
     expense_paise: int = 0
     income_paise: int = 0
-    
+
     # Temporal fields
     date_iso: str
     month_bucket: str = ""  # Derived from date_iso via validator
-    
+
     # Account fields
     account_id: str = ""
     counterparty_account_id: str | None = None
-    
+
     # Categorization
     category: str = ""
     subcategory: str | None = None
     sub_type: str | None = None  # For sub-classification (e.g., "cash_conversion", "emi")
     provider: str | None = None  # Source of the event (e.g., "CRED", "Cheq", "HDFC")
-    
+
     # Confidence (deprecated float kept for backward compatibility)
     confidence: float = 0.0
     confidence_bps: int | None = None
-    
+
     # Lifecycle tracking
     lifecycle_state: LifecycleState = "open"
     settled_by_event_id: int | None = None
     outstanding_paise: int = 0
     superseded_by: int | None = None
-    
+
     # Audit fields
     reviewed_by_user: bool = False
     notes: str | None = None
-    
+
     # Multi-user support
     household_id: str = "primary"
     owner_id: str = "self"

@@ -1,0 +1,21 @@
+{
+  "scenario": "normal_household",
+  "household": {
+    "id": "primary",
+    "members": [{"id": "m1", "name": "Primary"}]
+  },
+  "accounts": [
+    {"id": "a1", "name": "Salary Account", "balance_paise": 5000000}
+  ],
+  "transactions": [
+    {"date_iso": "2025-01", "income_paise": 8000000, "expense_paise": 5000000, "surplus_paise": 3000000}
+  ],
+  "loans": [],
+  "credit_cards": [],
+  "expected_output": {
+    "monthly_surplus_paise": 3000000,
+    "confidence_bps": 8500,
+    "risk_flags": [],
+    "opportunities": []
+  }
+}

@@ -13,14 +13,11 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from src.engines.financial_intelligence import (
-    DEFAULT_EMERGENCY_THRESHOLD_PAISE,
-    DEFAULT_FORECAST_MONTHS,
-    forecast_cashflow,
-    forecast_liquidity,
-    forecast_credit_utilization,
     detect_future_cash_shortfall,
+    forecast_cashflow,
+    forecast_credit_utilization,
+    forecast_liquidity,
 )
-
 
 # ============================================================
 # Test 1: Stable income/expense history produces stable forecast

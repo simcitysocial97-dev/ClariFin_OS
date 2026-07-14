@@ -12,15 +12,12 @@ All monetary values are integers in paise.
 
 from decimal import Decimal
 
-import pytest
-
 from src.engines.financial_intelligence.intelligence import (
     build_financial_snapshot,
     calculate_intelligence_confidence,
     generate_financial_intelligence_report,
     generate_financial_priorities,
 )
-
 
 # ============================================================
 # Tests for build_financial_snapshot

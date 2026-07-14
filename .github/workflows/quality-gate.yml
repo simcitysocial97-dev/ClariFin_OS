@@ -1,0 +1,299 @@
+name: Quality Gate
+
+on:
+  push:
+    branches: [main, "feat/*"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── STAGE 1: Fast Static Analysis ───────────────────────────────────────────
+  fast:
+    name: Fast — Ruff + Pyright
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install ruff pyright -r backend/requirements.txt
+
+      - name: Ruff lint
+        run: ruff check backend/src/
+
+      - name: Ruff format check
+        run: ruff format --check backend/src/
+
+      - name: Pyright type check
+        run: pyright backend/src/
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fast-analysis-failures
+          path: |
+            backend/src/**/*.py
+          retention-days: 7
+
+  # ─── STAGE 2: Architecture Tests ─────────────────────────────────────────────
+  architecture:
+    name: Architecture Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: fast
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install pytest -r backend/requirements.txt
+
+      - name: Run architecture tests
+        run: pytest backend/tests/architecture -v --tb=short
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-failures
+          path: backend/tests/architecture/
+          retention-days: 7
+
+  # ─── STAGE 3: Property Tests (Hypothesis) ──────────────────────────────────────
+  properties:
+    name: Property Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: fast
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install pytest hypothesis -r backend/requirements.txt
+
+      - name: Run property tests
+        run: pytest backend/tests/properties -v --tb=short --hypothesis-seed=12345
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: property-failures
+          path: backend/tests/properties/
+          retention-days: 7
+
+  # ─── STAGE 4: Integration Tests (Docker) ──────────────────────────────────────
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [architecture, properties]
+
+    services:
+      sqlite:
+        image: nouchka/sqlite3
+        env:
+          SQLITE_DB: /data/finance.db
+        options: >-
+          --health-cmd "sqlite3 --version"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        volumes:
+          - ./backend/data:/data
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install backend dependencies
+        run: pip install pytest pytest-cov -r backend/requirements.txt
+
+      - name: Start backend API
+        run: |
+          cd backend/src
+          python api.py &
+          echo "Waiting for backend..."
+          timeout 60 bash -c 'until curl -sf http://localhost:8000/health; do sleep 2; done'
+          echo "Backend ready"
+
+      - name: Run integration tests
+        run: pytest backend/tests/ -v --tb=short --ignore=backend/tests/architecture --ignore=backend/tests/properties --ignore=backend/tests/golden
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pytest-coverage
+          path: backend/.coverage
+          retention-days: 7
+
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-failures
+          path: backend/tests/
+          retention-days: 7
+
+  # ─── STAGE 5: Contract Tests (Schemathesis) ───────────────────────────────────
+  contract:
+    name: Contract Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: integration
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install schemathesis requests -r backend/requirements.txt
+
+      - name: Wait for backend
+        run: |
+          timeout 60 bash -c 'until curl -sf http://localhost:8000/health; do sleep 2; done' || true
+
+      - name: Run Schemathesis tests
+        run: |
+          st run --checks all --hypothesis-seed=12345 http://localhost:8000/openapi.json
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schemathesis-failures
+          path: ./*.json
+          retention-days: 7
+
+  # ─── STAGE 6: Golden Dataset Validation ───────────────────────────────────────
+  golden:
+    name: Golden Dataset Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: integration
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install pytest -r backend/requirements.txt
+
+      - name: Run golden dataset tests
+        run: pytest backend/tests/golden -v --tb=short
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-failures
+          path: backend/tests/golden/
+          retention-days: 7
+
+  # ─── STAGE 7: Snapshot Comparison ─────────────────────────────────────────────
+  snapshot:
+    name: Snapshot Comparison
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: golden
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install pytest -r backend/requirements.txt
+
+      - name: Check for snapshot changes
+        run: |
+          # Any changes to golden datasets should trigger explicit commit
+          if git diff --exit-code --quiet backend/tests/golden/datasets/; then
+            echo "No golden dataset changes"
+          else
+            echo "::warning::Golden datasets have changed - verify intentional updates"
+          fi
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshot-changes
+          path: backend/tests/golden/datasets/
+          retention-days: 7
+
+  # ─── STAGE 8: Mutation Testing ─────────────────────────────────────────────
+  mutation:
+    name: Mutation Testing
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: integration
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install mutmut
+        run: pip install mutmut pytest -r backend/requirements.txt
+
+      - name: Run mutation tests on engines
+        run: |
+          mutmut run --paths-to-mutate=backend/src/engines/ --runner="pytest backend/tests/ -q --tb=short --ignore=backend/tests/architecture --ignore=backend/tests/properties --ignore=backend/tests/golden" --use-coverage=false || true
+
+      - name: Upload mutation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-results
+          path: .mutmut-cache/
+          retention-days: 7
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-failures
+          path: backend/src/engines/
+          retention-days: 7

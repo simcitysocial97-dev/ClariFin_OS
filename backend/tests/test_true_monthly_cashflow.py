@@ -12,18 +12,18 @@ This test file verifies:
 """
 import os
 import sqlite3
+
+# Ensure src is on path
+import sys
 import tempfile
 from pathlib import Path
 
 import pytest
 
-# Ensure src is on path
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from src.repositories.cashflow_repository import CashflowRepository
 from src.repositories.financial_event_repository import FinancialEventRepository
-
 
 # ============================================================
 # Fixtures
@@ -498,7 +498,7 @@ def test_cashflow_repository_purity():
             imports.append(module)
 
     # Verify no sqlite3 imports (should use BaseRepository)
-    assert "sqlite3" not in imports, f"sqlite3 import found in cashflow_repository.py"
+    assert "sqlite3" not in imports, "sqlite3 import found in cashflow_repository.py"
 
 
 if __name__ == "__main__":

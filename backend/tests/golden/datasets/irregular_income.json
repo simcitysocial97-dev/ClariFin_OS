@@ -1,0 +1,20 @@
+{
+  "scenario": "irregular_income",
+  "household": {"id": "primary"},
+  "accounts": [{"id": "a1", "balance_paise": 2000000}],
+  "transactions": [
+    {"date_iso": "2025-01", "income_paise": 15000000, "expense_paise": 8000000, "surplus_paise": 7000000},
+    {"date_iso": "2025-02", "income_paise": 3000000, "expense_paise": 8000000, "surplus_paise": -5000000},
+    {"date_iso": "2025-03", "income_paise": 2000000, "expense_paise": 7000000, "surplus_paise": -5000000}
+  ],
+  "loans": [],
+  "credit_cards": [
+    {"id": "c1", "name": "Card", "outstanding_paise": 5000000, "interest_rate_bps": 3600}
+  ],
+  "expected_output": {
+    "avg_surplus_paise": 700000,
+    "income_volatility": "high",
+    "confidence_bps": 4000,
+    "risk_flags": ["irregular_income", "deficit_risk"]
+  }
+}

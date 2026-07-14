@@ -27,24 +27,24 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+# Legacy function for API compatibility testing
+from engines.behavior_engine import (
+    compute_behavior_profile,
+)
 from engines.behaviour_engine.stress import (
     _coefficient_of_variation,
     _normalize_score,
+    detect_risk_patterns,
     financial_stress_index,
     habit_stability_score,
     impulsivity_score,
     loss_aversion_index,
     savings_discipline_score,
-    detect_risk_patterns,
 )
 from engines.behaviour_engine.temporal import (
     _moving_average,
-    compute_temporal_patterns,
 )
-# Legacy function for API compatibility testing
-from engines.behavior_engine import (
-    compute_behavior_profile,
-)
+
 # Map old function names to new ones for backward compatibility in tests
 _compute_financial_stress_index = financial_stress_index
 _compute_habit_stability_score = habit_stability_score

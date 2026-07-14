@@ -13,18 +13,16 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from src.engines.financial_intelligence import (
-    ActionImpact,
-    derive_cash_advance_debt_entry,
-    generate_optimization_plan,
+    ACTION_WEIGHTS,
     HIGH_INTEREST_THRESHOLD_BPS,
     MEDIUM_INTEREST_THRESHOLD_BPS,
+    calculate_financial_action_score,
+    derive_cash_advance_debt_entry,
+    generate_optimization_plan,
     optimize_goal_prioritization,
     optimize_surplus_allocation,
     rank_debt_payoff_strategy,
-    ACTION_WEIGHTS,
-    calculate_financial_action_score,
 )
-
 
 # ============================================================
 # Test 1: optimize_surplus_allocation - Emergency fund priority

@@ -4,10 +4,7 @@ Tests for credit_dependency.py functions.
 
 Run: python -m pytest tests/test_behaviour_engine_credit_dependency.py -v
 """
-import os
-import sqlite3
 import sys
-import tempfile
 from decimal import Decimal
 from pathlib import Path
 
@@ -26,7 +23,6 @@ from engines.behaviour_engine.credit_dependency import (
     revolver_ratio,
     transactor_vs_revolver,
 )
-
 
 # ============================================================
 # Fixtures

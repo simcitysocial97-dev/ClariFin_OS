@@ -27,11 +27,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from db import FinanceDB
 from engines.reconciliation_engine import (
     _check_match,
-    find_potential_matches,
     find_matches_for_transaction,
+    find_potential_matches,
 )
 from repositories.reconciliation_repository import ReconciliationRepository
-from repositories.statement_repository import StatementRepository
 
 # ============================================================
 # Fixtures

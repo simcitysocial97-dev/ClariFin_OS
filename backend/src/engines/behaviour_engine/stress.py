@@ -15,9 +15,7 @@ Transactions are expected as dicts with keys:
 import math
 from collections import defaultdict
 from datetime import datetime
-from decimal import Decimal
 from typing import Any
-
 
 # ============================================================
 # Utility Functions (internal)

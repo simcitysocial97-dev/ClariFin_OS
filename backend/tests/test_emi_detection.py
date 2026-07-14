@@ -13,15 +13,18 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from src.db import FinanceDB
-from src.engines.loan_engine import generate_schedule
-from src.engines.transaction_intelligence import detect_emi_payment, find_loan_candidates_for_account
-from src.repositories.loan_repository import LoanRepository
-from src.repositories.transaction_classification_repository import TransactionClassificationRepository
-from src.services.transaction_intelligence_service import TransactionIntelligenceService
 from scripts.migration_emi_detection import run_migration
 from scripts.migration_financial_events import migrate as migrate_financial_events
-
+from src.db import FinanceDB
+from src.engines.transaction_intelligence import (
+    detect_emi_payment,
+    find_loan_candidates_for_account,
+)
+from src.repositories.loan_repository import LoanRepository
+from src.repositories.transaction_classification_repository import (
+    TransactionClassificationRepository,
+)
+from src.services.transaction_intelligence_service import TransactionIntelligenceService
 
 # ============================================================
 # Fixtures
