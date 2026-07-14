@@ -9,6 +9,8 @@ from datetime import date
 from decimal import Decimal
 from typing import Any, cast
 
+from cachetools import TTLCache
+
 from src.engines.behaviour_engine import (
     classify_financial_personality,
     compute_borrowed_lifestyle_ratio,
@@ -24,6 +26,9 @@ from src.engines.behaviour_engine import (
     compute_resilience_index,
     compute_true_savings_rate,
     detect_impulse_transactions,
+    financial_stress_index,
+    household_divergence,
+    transactor_vs_revolver,
 )
 from src.engines.behaviour_engine.income import classify_income_source
 from src.errors import AppError, NotFoundError
@@ -48,6 +53,16 @@ from src.repositories.credit_card_repository import CreditCardRepository
 from src.repositories.loan_repository import LoanRepository
 from src.repositories.pattern_repository import PatternRepository
 from src.repositories.transaction_repository import TransactionRepository
+from src.services.cashflow_service import CashflowService
+from src.services.financial_events_service import FinancialEventsService
+
+# Global cache for behaviour profiles: max 10 entries, 5-minute expiration
+_behaviour_cache: TTLCache[str, dict[str, Any]] = TTLCache(maxsize=10, ttl=300)
+
+
+def invalidate_behaviour_cache() -> None:
+    """Clear the behaviour profile cache. Call after data changes."""
+    _behaviour_cache.clear()
 
 
 class BehaviourService:
@@ -55,6 +70,7 @@ class BehaviourService:
 
     Delegates calculations to behaviour_engine (pure functions).
     Delegates persistence to repositories.
+    Cache is managed at module level for singleton access.
     """
 
     def __init__(
@@ -84,6 +100,16 @@ class BehaviourService:
         self.credit_card_repo = credit_card_repo or CreditCardRepository(db_path)
         self.behaviour_repo = behaviour_repo or BehaviourRepository(db_path)
         self.pattern_repo = pattern_repo or PatternRepository(db_path)
+
+    @staticmethod
+    def get_cached_profile(household_id: str = "default") -> dict[str, Any] | None:
+        """Get behaviour profile from cache if available."""
+        return _behaviour_cache.get(household_id)
+
+    @staticmethod
+    def set_cached_profile(household_id: str, profile: dict[str, Any]) -> None:
+        """Cache a behaviour profile."""
+        _behaviour_cache[household_id] = profile
 
     def compute_financial_profile(self, household_id: str = "default") -> FinancialProfileResponse:
         """Compute and persist a comprehensive financial behaviour profile.
@@ -482,7 +508,7 @@ class BehaviourService:
                 credit_dependency_ratio=Decimal(str(latest_snapshot["credit_dependency_ratio"])),
                 debt_cycle_score=latest_snapshot["debt_cycle_score"],
                 credit_revolver_ratio=Decimal(str(latest_snapshot["credit_revolver_ratio"])),
-                band=cast(DebtHealthBand, "MODERATE"),  # Simplified - would compute from latest data
+                band="MODERATE",  # Simplified - would compute from latest data
                 snapshot_date=latest_snapshot["snapshot_date"],
             )
 
@@ -646,6 +672,136 @@ class BehaviourService:
             )
 
     # ============================================================
+    # India-Specific Signal Methods (Phase 6/7)
+    # ============================================================
+
+    def get_stress_index(
+        self,
+        month: str,
+        scope: str = "household",
+    ) -> dict[str, Any]:
+        """Get financial stress index with breakdown components.
+
+        Args:
+            month: Month in YYYY-MM format
+            scope: "household" or "individual"
+
+        Returns:
+            Dict with stress score, components, and flag
+        """
+        try:
+            # Use CashflowService to get enhanced cashflow analysis
+            cashflow_svc = CashflowService(self.transaction_repo.db_path)
+            cashflow_results = cashflow_svc.get_monthly_analysis(
+                month_bucket=month,
+                scope=scope,
+                owner_id="self",  # Use default owner for household scope
+            )
+
+            # Use FinancialEventsService to get events with links
+            events_svc = FinancialEventsService(self.transaction_repo.db_path)
+            financial_events = events_svc.get_events_with_links(
+                month_bucket=month,
+                household_id="primary",
+            )
+
+            # Compute stress index using pure function
+            result = financial_stress_index(financial_events, cashflow_results)
+
+            return {
+                "score": result["score"],
+                "components": result["components"],
+                "flag": result["flag"],
+                "month": month,
+                "scope": scope,
+            }
+
+        except Exception as e:
+            logger.error(f"Error getting stress index: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get stress index: {str(e)}",
+            )
+
+    def get_revolver_status(
+        self,
+        card_account_id: str,
+    ) -> dict[str, Any]:
+        """Get revolver classification for a credit card account.
+
+        Args:
+            card_account_id: Credit card account ID
+
+        Returns:
+            Dict with type, confidence, and counts
+        """
+        try:
+            # Get all events for the card across all months
+            events_svc = FinancialEventsService(self.transaction_repo.db_path)
+            all_events = []
+            for event_type in [
+                "income", "expense", "transfer", "liability_increase",
+                "liability_decrease", "cash_advance", "emi_payment",
+                "liability_repayment", "credit_card_cash_advance", "transfer_internal"
+            ]:
+                all_events.extend(
+                    events_svc.event_repo.get_events_by_type(event_type, "primary")
+                )
+
+            # Filter to the specific account (simplified filtering)
+            # In production, would filter via SQL query
+            result = transactor_vs_revolver(all_events, card_account_id)
+
+            return {
+                "type": result["type"],
+                "confidence": result["confidence"],
+                "settled_count": result["settled_count"],
+                "revolving_count": result["revolving_count"],
+                "card_account_id": card_account_id,
+            }
+
+        except Exception as e:
+            logger.error(f"Error getting revolver status: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get revolver status: {str(e)}",
+            )
+
+    def get_household_divergence(
+        self,
+        month: str,
+    ) -> dict[str, Any]:
+        """Detect cross-owner funding within household.
+
+        Args:
+            month: Month in YYYY-MM format
+
+        Returns:
+            Dict with flag and divergent links
+        """
+        try:
+            # Get events with links for the month
+            events_svc = FinancialEventsService(self.transaction_repo.db_path)
+            financial_events = events_svc.get_events_with_links(
+                month_bucket=month,
+                household_id="primary",
+            )
+
+            # Compute divergence using pure function
+            result = household_divergence(financial_events)
+
+            return {
+                "flag": result["flag"],
+                "divergent_links": result["divergent_links"],
+                "count": result["count"],
+                "month": month,
+            }
+
+        except Exception as e:
+            logger.error(f"Error getting household divergence: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get household divergence: {str(e)}",
+            )
+
+    # ============================================================
     # Helper Methods
     # ============================================================
 
@@ -735,7 +891,7 @@ class BehaviourService:
 
     def _compute_fixed_obligations(self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]) -> int:
         """Compute total fixed obligations from loans and credit cards."""
-        loan_obligations = sum(loan.get("emi_paise", 0) for loan in loans)
+        loan_obligations = sum(int(loan.get("emi_paise", 0)) for loan in loans)
         card_obligations = sum(
             self._compute_minimum_due(card) for card in credit_cards
         )
@@ -743,7 +899,7 @@ class BehaviourService:
 
     def _compute_minimum_obligations(self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]) -> int:
         """Compute minimum obligations (minimum due amounts)."""
-        loan_minimums = sum(loan.get("minimum_due_paise", 0) for loan in loans)
+        loan_minimums = sum(int(loan.get("minimum_due_paise", 0)) for loan in loans)
         card_minimums = sum(
             self._compute_minimum_due(card) for card in credit_cards
         )

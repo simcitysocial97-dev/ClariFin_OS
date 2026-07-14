@@ -20,6 +20,7 @@ from src.repositories.loan_repository import LoanRepository
 from src.repositories.transaction_classification_repository import TransactionClassificationRepository
 from src.services.transaction_intelligence_service import TransactionIntelligenceService
 from scripts.migration_emi_detection import run_migration
+from scripts.migration_financial_events import migrate as migrate_financial_events
 
 
 # ============================================================
@@ -37,6 +38,9 @@ def temp_db():
 
     # Run EMI detection migration
     run_migration(db_path)
+
+    # Run Financial Events migration
+    migrate_financial_events(db_path)
 
     yield db, db_path
 
@@ -365,6 +369,7 @@ def test_household_isolation():
     try:
         FinanceDB(db_path=db_path)
         run_migration(db_path)
+        migrate_financial_events(db_path)
 
         conn = sqlite3.connect(db_path)
 

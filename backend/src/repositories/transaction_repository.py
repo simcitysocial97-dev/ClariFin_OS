@@ -257,6 +257,212 @@ class TransactionRepository(BaseRepository):
             conn.commit()
         return inserted
 
+    # ============================================================
+    # Behaviour Engine Aggregation Methods
+    # ============================================================
+
+    def get_recent_transactions(self, limit: int = 500) -> list[dict[str, Any]]:
+        """Get most recent N transactions for performance.
+
+        Used by behaviour engine for temporal pattern analysis.
+
+        Args:
+            limit: Maximum number of transactions to return (default 500).
+
+        Returns:
+            List of transaction dicts sorted by date ascending.
+        """
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                SELECT
+                    t.id, t.date, t.date_iso, t.description, t.amount_paise,
+                    t.type, t.category, t.debit, t.credit, t.account_id
+                FROM transactions t
+                ORDER BY t.date_iso DESC
+                LIMIT ?
+            """, (limit,))
+
+            rows = [dict(row) for row in cur.fetchall()]
+
+        # Return in ascending order for time-series calculations
+        return sorted(rows, key=lambda r: r.get("date_iso", ""))
+
+    def get_transactions_last_90_days(self) -> list[dict[str, Any]]:
+        """Get transactions from last 90 days for temporal analysis.
+
+        Returns:
+            List of transaction dicts from the last 90 days.
+        """
+        from datetime import datetime, timedelta
+
+        cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                SELECT
+                    t.id, t.date, t.date_iso, t.description, t.amount_paise,
+                    t.type, t.category, t.debit, t.credit, t.account_id
+                FROM transactions t
+                WHERE t.date_iso >= ?
+                ORDER BY t.date_iso ASC
+            """, (cutoff,))
+
+            rows = [dict(row) for row in cur.fetchall()]
+
+        return rows
+
+    def get_daily_spending(self, cutoff_date: str) -> dict[str, float]:
+        """Get daily spending totals using SQL aggregation.
+
+        Much faster than Python loops for large datasets.
+
+        Args:
+            cutoff_date: Date string (YYYY-MM-DD) to filter from.
+
+        Returns:
+            Dict mapping date_iso to daily total in paise.
+        """
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                SELECT
+                    date_iso,
+                    SUM(amount_paise) as daily_total_paise
+                FROM transactions
+                WHERE type = 'debit' AND date_iso >= ?
+                GROUP BY date_iso
+                ORDER BY date_iso ASC
+            """, (cutoff_date,))
+
+            rows = [dict(row) for row in cur.fetchall()]
+
+        return {row["date_iso"]: float(row["daily_total_paise"] or 0) for row in rows}
+
+    def get_monthly_category_totals(self, cutoff_date: str) -> dict[str, dict[str, float]]:
+        """Get monthly category spending using SQL aggregation.
+
+        Returns: {month: {category: total_paise}}
+
+        Args:
+            cutoff_date: Date string (YYYY-MM-DD) to filter from.
+
+        Returns:
+            Dict of monthly category spending totals.
+        """
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                SELECT
+                    substr(date_iso, 1, 7) as month,
+                    category,
+                    SUM(amount_paise) as category_total_paise
+                FROM transactions
+                WHERE type = 'debit' AND date_iso >= ?
+                GROUP BY month, category
+                ORDER BY month ASC
+            """, (cutoff_date,))
+
+            rows = [dict(row) for row in cur.fetchall()]
+
+        result: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+        for row in rows:
+            month = row["month"]
+            category = row["category"] or "Uncategorized"
+            result[month][category] = float(row["category_total_paise"] or 0)
+
+        return dict(result)
+
+    def get_monthly_income_expenses(self, cutoff_date: str) -> dict[str, dict[str, int]]:
+        """Get monthly income vs expenses using SQL aggregation.
+
+        Returns: {month: {"income_paise": total, "expenses_paise": total}}
+
+        Args:
+            cutoff_date: Date string (YYYY-MM-DD) to filter from.
+
+        Returns:
+            Dict of monthly income/expense totals.
+        """
+        with self._get_conn() as conn:
+            cur = conn.execute("""
+                SELECT
+                    substr(date_iso, 1, 7) as month,
+                    type,
+                    SUM(amount_paise) as total_paise
+                FROM transactions
+                WHERE date_iso >= ?
+                GROUP BY month, type
+                ORDER BY month ASC
+            """, (cutoff_date,))
+
+            rows = [dict(row) for row in cur.fetchall()]
+
+        result: dict[str, dict[str, int]] = defaultdict(lambda: {"income_paise": 0, "expenses_paise": 0})
+        for row in rows:
+            month = row["month"]
+            txn_type = row["type"]
+            total = int(row["total_paise"] or 0)
+            if txn_type == "credit":
+                result[month]["income_paise"] = total
+            else:
+                result[month]["expenses_paise"] = total
+
+        return dict(result)
+
+    def get_transaction_stats(self, cutoff_date: str) -> dict[str, Any]:
+        """Get transaction statistics using SQL aggregation.
+
+        Returns counts and totals for various metrics.
+
+        Args:
+            cutoff_date: Date string (YYYY-MM-DD) to filter from.
+
+        Returns:
+            Dict with transaction statistics including weekend/weekday splits.
+        """
+        with self._get_conn() as conn:
+
+            # Get basic stats
+            cur = conn.execute("""
+                SELECT
+                    COUNT(*) as total_count,
+                    SUM(CASE WHEN type = 'debit' THEN 1 ELSE 0 END) as debit_count,
+                    SUM(CASE WHEN type = 'credit' THEN 1 ELSE 0 END) as credit_count,
+                    SUM(CASE WHEN type = 'debit' AND amount_paise < 50000 THEN 1 ELSE 0 END) as micro_txn_count,
+                    SUM(CASE WHEN type = 'debit' THEN amount_paise ELSE 0 END) as total_debit_paise,
+                    SUM(CASE WHEN type = 'credit' THEN amount_paise ELSE 0 END) as total_credit_paise
+                FROM transactions
+                WHERE date_iso >= ?
+            """, (cutoff_date,))
+
+            row = cur.fetchone()
+            stats: dict[str, Any] = {
+                "total_count": int(row["total_count"] or 0),
+                "debit_count": int(row["debit_count"] or 0),
+                "credit_count": int(row["credit_count"] or 0),
+                "micro_txn_count": int(row["micro_txn_count"] or 0),
+                "total_debit_paise": int(row["total_debit_paise"] or 0),
+                "total_credit_paise": int(row["total_credit_paise"] or 0),
+            }
+
+            # Get weekend vs weekday spending
+            cur = conn.execute("""
+                SELECT
+                    CASE WHEN CAST(substr(date_iso, 9, 2) AS INTEGER) % 7 >= 5 THEN 'weekend' ELSE 'weekday' END as day_type,
+                    SUM(amount_paise) as total_paise
+                FROM transactions
+                WHERE type = 'debit' AND date_iso >= ?
+                GROUP BY day_type
+            """, (cutoff_date,))
+
+            weekend_stats = {"weekend": 0, "weekday": 0}
+            for row in cur.fetchall():
+                day_type = row["day_type"]
+                weekend_stats[day_type] = int(row["total_paise"] or 0)
+
+            stats["weekend_spend_paise"] = weekend_stats["weekend"]
+            stats["weekday_spend_paise"] = weekend_stats["weekday"]
+
+            return stats
+
     def get_transaction_by_id(self, txn_id: int) -> dict[str, Any] | None:
         """Get a single transaction by ID as a plain dict."""
         with self._get_conn() as conn:

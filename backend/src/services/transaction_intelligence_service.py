@@ -2,9 +2,11 @@
 
 Filters to unclassified debits, generates loan schedules, invokes EMI detector,
 and persists classifications. Household-aware for multi-user support.
+Also emits FinancialEvents for classified transactions.
 """
 from typing import Any
 
+from src.engines.financial_events.lineage_walker import DEFAULT_ROLLOVER_LOOKBACK_DAYS
 from src.engines.transaction_intelligence import (
     detect_cash_conversion,
     detect_emi_payment,
@@ -14,7 +16,9 @@ from src.engines.transaction_intelligence.cc_payment_detector import (
     detect_cc_payment,
     extract_card_last4,
 )
+from src.models.financial_event import FinancialEvent
 from src.repositories.account_repository import AccountRepository
+from src.repositories.financial_event_repository import FinancialEventRepository
 from src.repositories.liquidity_pattern_repository import LiquidityPatternRepository
 from src.repositories.loan_repository import LoanRepository
 from src.repositories.statement_repository import StatementRepository
@@ -42,6 +46,7 @@ class TransactionIntelligenceService:
         self.loan_repo = LoanRepository(db_path)
         self.classification_repo = TransactionClassificationRepository(db_path)
         self.account_repo = AccountRepository(db_path)
+        self.event_repo = FinancialEventRepository(db_path)
 
         # Cache for schedule lookups per loan (avoids regenerating same schedule)
         self._schedule_cache: dict[int, list[dict[str, Any]]] = {}
@@ -122,6 +127,19 @@ class TransactionIntelligenceService:
                 classifier_version=1,
             )
 
+            # Emit FinancialEvent for EMI payment
+            event_id = self._emit_financial_event(
+                event_type="emi_payment",
+                transaction_id=txn["id"],
+                account_id=txn.get("account_id", ""),
+                amount_paise=txn.get("amount_paise", 0),
+                date_iso=txn.get("date_iso", ""),
+                category=detection.classification,
+                sub_type=detection.sub_classification,
+                confidence_bps=detection.confidence_bps,
+                household_id=household_id or "primary",
+            )
+
             results.append({
                 "transaction_id": txn["id"],
                 "loan_id": detection.matched_entity_id,
@@ -129,6 +147,7 @@ class TransactionIntelligenceService:
                 "sub_classification": detection.sub_classification,
                 "confidence_bps": detection.confidence_bps,
                 "match_reason": detection.match_reason,
+                "event_id": event_id,
             })
 
         return results
@@ -293,7 +312,7 @@ class TransactionIntelligenceService:
             # Check if this transaction looks like liquidity extraction
             description = txn.get("description", "")
             has_provider_pattern = any(
-                _match_description_pattern_for_detection(description, p["description_pattern"])
+                self._match_description_pattern_for_detection(description, p["description_pattern"])
                 for p in provider_patterns
             )
 
@@ -368,6 +387,40 @@ class TransactionIntelligenceService:
             })
 
         return results
+
+    def _emit_financial_event(
+        self,
+        event_type: str,
+        transaction_id: int,
+        account_id: str,
+        amount_paise: int,
+        date_iso: str,
+        category: str = "",
+        sub_type: str | None = None,
+        provider: str | None = None,
+        confidence_bps: int = 0,
+        household_id: str = "primary",
+        outstanding_paise: int = 0,
+    ) -> int:
+        """
+        Create and persist a FinancialEvent from a classification result.
+
+        Returns the database ID of the created event.
+        """
+        event = FinancialEvent(
+            event_type=event_type,  # type: ignore[arg-type]
+            transaction_ids=[transaction_id],
+            amount_paise=amount_paise,
+            date_iso=date_iso,
+            account_id=account_id,
+            category=category,
+            sub_type=sub_type,
+            provider=provider,
+            confidence_bps=confidence_bps,
+            household_id=household_id,
+            outstanding_paise=outstanding_paise,
+        )
+        return self.event_repo.insert_event(event)
 
     def _match_description_pattern_for_detection(self, description: str, pattern: str) -> bool:
         """Check if description matches a regex pattern (case-insensitive)."""

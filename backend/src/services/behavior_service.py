@@ -1,12 +1,11 @@
-"""Behavior business orchestration service."""
+"""Behavior Service - Legacy compatibility wrapper.
+
+DEPRECATED: Use BehaviourService instead. This class delegates to BehaviourService
+for backwards compatibility with existing code.
+"""
 
 from typing import Any
 
-from src.engines.behavior_engine import (
-    compute_behavior_profile,
-    get_cached_behavior_profile,
-    set_cached_behavior_profile,
-)
 from src.engines.insight_generator import generate_behavioral_insights
 from src.engines.nudge_engine import (
     generate_nudges,
@@ -18,22 +17,43 @@ from src.services.base import BaseService
 
 class BehaviorService(BaseService):
     """
-    Orchestrates behavior analysis using behavior_engine.
+    Legacy compatibility wrapper for behaviour analysis.
 
-    Caching layer for behavioral profile computation.
+    Delegates to BehaviourService internally. Maintained for backwards compatibility.
+    New code should use BehaviourService directly.
     """
 
+    def __init__(self, db_path: str | None = None) -> None:
+        """Initialize with db_path for legacy compatibility."""
+        super().__init__(db_path)
+        # Import lazily to avoid circular imports
+        from src.services.behaviour_service import BehaviourService as _BehaviourService
+        self._behaviour_service = _BehaviourService(db_path)
+
     def compute_profile(self) -> dict[str, Any]:
-        """Compute behavioral profile from transaction data."""
-        return compute_behavior_profile(self.db_path)
+        """Compute behavioral profile from transaction data.
+
+        Delegates to BehaviourService.compute_financial_profile.
+        Returns legacy format profile for backwards compatibility.
+        """
+        result = self._behaviour_service.compute_financial_profile()
+        return {
+            "profile_type": result.profile_type,
+            "confidence": float(result.confidence),
+            "explanation": result.explanation,
+            "snapshot_date": result.snapshot_date,
+            "financial_health_score": 50,  # Would compute from actual wellness score
+        }
 
     def get_cached_profile(self) -> dict[str, Any] | None:
         """Get cached behavioral profile if available."""
-        return get_cached_behavior_profile(self.db_path)
+        from src.services.behaviour_service import BehaviourService as _BehaviourService
+        return _BehaviourService.get_cached_profile()
 
     def set_cached_profile(self, profile: dict[str, Any]) -> None:
         """Cache behavioral profile."""
-        set_cached_behavior_profile(self.db_path, profile)
+        from src.services.behaviour_service import BehaviourService as _BehaviourService
+        _BehaviourService.set_cached_profile("default", profile)
 
     def generate_insights(self, profile: dict[str, Any] | None = None) -> dict[str, Any]:
         """

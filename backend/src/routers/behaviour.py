@@ -293,8 +293,105 @@ def get_monthly_report(
         )
         raise
     except Exception as e:
+            _timed_log(
+                "GET /behaviour/monthly-report", household_id,
+                (time.monotonic() - start) * 1000, success=False, error=str(e),
+            )
+            raise
+
+
+# ============================================================
+# India-Specific Signal Endpoints (Phase 6/7)
+# ============================================================
+
+
+@router.get("/stress-index")
+def get_stress_index(
+    month: str = Query(..., description="Month in YYYY-MM format"),
+    scope: str = Query("household", description="Scope: household or individual"),
+) -> dict[str, Any]:
+    """Get financial stress index with breakdown components.
+
+    Computes composite stress score including credit dependency, debt rolling,
+    liquidity extraction frequency, revolving behavior, and cashflow deficit.
+
+    Args:
+        month: Month in YYYY-MM format
+        scope: Scope for analysis (household or individual)
+
+    Returns:
+        Dict with stress score, components, and flag
+    """
+    start = time.monotonic()
+    service = BehaviourService()
+
+    try:
+        result = service.get_stress_index(month=month, scope=scope)
+        _timed_log("GET /behaviour/stress-index", month, (time.monotonic() - start) * 1000)
+        return result
+    except Exception as e:
         _timed_log(
-            "GET /behaviour/monthly-report", household_id,
+            "GET /behaviour/stress-index", month,
+            (time.monotonic() - start) * 1000, success=False, error=str(e),
+        )
+        raise
+
+
+@router.get("/revolver-status")
+def get_revolver_status(
+    card_account_id: str = Query(..., description="Credit card account ID"),
+) -> dict[str, Any]:
+    """Get revolver classification for a credit card account.
+
+    Classifies card as transactor (pays in full) or revolver (carries balance)
+    based on lifecycle states of events.
+
+    Args:
+        card_account_id: Credit card account ID to analyze
+
+    Returns:
+        Dict with type, confidence, and counts
+    """
+    start = time.monotonic()
+    service = BehaviourService()
+
+    try:
+        result = service.get_revolver_status(card_account_id=card_account_id)
+        _timed_log("GET /behaviour/revolver-status", card_account_id, (time.monotonic() - start) * 1000)
+        return result
+    except Exception as e:
+        _timed_log(
+            "GET /behaviour/revolver-status", card_account_id,
+            (time.monotonic() - start) * 1000, success=False, error=str(e),
+        )
+        raise
+
+
+@router.get("/household-divergence")
+def get_household_divergence(
+    month: str = Query(..., description="Month in YYYY-MM format"),
+) -> dict[str, Any]:
+    """Detect cross-owner funding within household.
+
+    Finds lineage links where events from different owners within the same
+    household are connected, indicating potential financial interdependencies.
+
+    Args:
+        month: Month in YYYY-MM format
+
+    Returns:
+        Dict with flag and divergent links
+    """
+    start = time.monotonic()
+    service = BehaviourService()
+
+    try:
+        result = service.get_household_divergence(month=month)
+        _timed_log("GET /behaviour/household-divergence", month, (time.monotonic() - start) * 1000)
+        return result
+    except Exception as e:
+        _timed_log(
+            "GET /behaviour/household-divergence", month,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise

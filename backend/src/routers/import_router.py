@@ -14,7 +14,7 @@ from src.repositories import StatementRepository, TransactionRepository
 from src.statement_extractor import StatementExtractor
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from src.engines.behavior_engine import invalidate_behavior_cache as invalidate_cache
+from src.services.behaviour_service import invalidate_behaviour_cache as invalidate_cache
 
 router = APIRouter(prefix="/api", tags=["import"])
 

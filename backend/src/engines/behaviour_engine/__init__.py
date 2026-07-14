@@ -13,6 +13,8 @@ Structure:
 - income.py — Income source classification, diversification score
 - account.py — Account concentration, idle cash, balance volatility, low balance risk
 - profile.py — Financial personality classification (SAVER, BALANCED, SPENDER, DEBT_OPTIMIZER, DEBT_DEPENDENT)
+- temporal.py — Temporal pattern analysis (daily/weekly trends, seasonality)
+- stress.py — Stress indices (loss aversion, impulsivity, habit stability, savings discipline)
 - utils.py — Shared helper functions (median, variance, coefficient of variation)
 
 All functions are pure - no database access.
@@ -28,6 +30,16 @@ from .cashflow import (
     compute_cashflow_stability_index,
     compute_expense_stability,
     compute_income_stability,
+)
+from .credit_dependency import (
+    artificial_income_flag,
+    credit_dependency_ratio as credit_dependency_ratio_events,
+    debt_rolling_flag,
+    financial_stress_index,
+    household_divergence,
+    liquidity_extraction_frequency,
+    revolver_ratio,
+    transactor_vs_revolver,
 )
 from .debt import (
     compute_credit_dependency_ratio,
@@ -62,6 +74,22 @@ from .savings import (
     compute_borrowed_lifestyle_ratio,
     compute_monthly_surplus,
     compute_true_savings_rate,
+)
+from .temporal import (
+    compute_daily_spending,
+    compute_seasonality,
+    compute_temporal_patterns,
+    compute_trend,
+    compute_weekly_pattern,
+    compute_residual_volatility,
+)
+from .stress import (
+    detect_risk_patterns,
+    financial_stress_index as financial_stress_index_txns,
+    habit_stability_score,
+    impulsivity_score,
+    loss_aversion_index,
+    savings_discipline_score,
 )
 
 __all__ = [
@@ -103,4 +131,27 @@ __all__ = [
     "detect_low_balance_risk",
     # Profile Classification
     "classify_financial_personality",
+    # India-Specific Signals (Phase 6/7)
+    "artificial_income_flag",
+    "credit_dependency_ratio_events",
+    "debt_rolling_flag",
+    "financial_stress_index",
+    "household_divergence",
+    "liquidity_extraction_frequency",
+    "revolver_ratio",
+    "transactor_vs_revolver",
+    # Temporal Analysis
+    "compute_temporal_patterns",
+    "compute_daily_spending",
+    "compute_weekly_pattern",
+    "compute_trend",
+    "compute_seasonality",
+    "compute_residual_volatility",
+    # Stress Indices
+    "loss_aversion_index",
+    "impulsivity_score",
+    "habit_stability_score",
+    "savings_discipline_score",
+    "detect_risk_patterns",
+    "financial_stress_index_txns",
 ]

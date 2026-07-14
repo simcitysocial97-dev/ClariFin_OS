@@ -31,7 +31,7 @@ def run_migration(db_path: str) -> None:
         ON loan_amortization_schedule(loan_id, due_date)
     """)
 
-    # Create transaction_classifications table
+    # Create transaction_classifications table (extended for CC payment detection)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS transaction_classifications (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,6 +42,10 @@ def run_migration(db_path: str) -> None:
             classifier_version INTEGER DEFAULT 1,
             confidence_bps INTEGER NOT NULL,
             source TEXT NOT NULL,
+            lifecycle_state TEXT,
+            outstanding_paise INTEGER DEFAULT 0,
+            payment_channel TEXT DEFAULT 'DIRECT',
+            matched_statement_id INTEGER,
             created_at TEXT DEFAULT (datetime('now')),
             UNIQUE(transaction_id, classification)
         )

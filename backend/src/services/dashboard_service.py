@@ -4,23 +4,18 @@ from collections import Counter
 from datetime import datetime
 
 from src.common import enrich_transaction
-from src.engines.behavior_engine import (
-    compute_behavior_profile,
-    get_cached_behavior_profile,
-    set_cached_behavior_profile,
-)
 from src.models.base import Money
 from src.models.dashboard import DashboardSummary
 from src.repositories.reconciliation_repository import ReconciliationRepository
 from src.repositories.transaction_repository import TransactionRepository
-from src.services.base import BaseService
+from src.services.behaviour_service import BehaviourService
 
 
-class DashboardService(BaseService):
+class DashboardService:
     """Service for dashboard orchestration."""
 
-    def __init__(self, db_path: str | None = None):
-        super().__init__(db_path)
+    def __init__(self, db_path: str | None = None) -> None:
+        self.db_path = db_path or "data/finance.db"
         self.txn_repo = TransactionRepository(self.db_path)
         self.recon_repo = ReconciliationRepository(self.db_path)
 
@@ -30,13 +25,20 @@ class DashboardService(BaseService):
 
         Returns a typed DashboardSummary with behavior insights.
         """
-        # Check cache first
-        cached = get_cached_behavior_profile(self.db_path)
+        # Use BehaviourService for profile computation
+        behaviour_svc = BehaviourService(self.db_path)
+        cached = behaviour_svc.get_cached_profile()
+
         if cached is not None:
             profile = cached
         else:
-            profile = compute_behavior_profile(self.db_path)
-            set_cached_behavior_profile(self.db_path, profile)
+            profile_result = behaviour_svc.compute_financial_profile()
+            profile = {
+                "profile_type": profile_result.profile_type,
+                "confidence": float(profile_result.confidence),
+                "financial_health_score": 50,
+            }
+            behaviour_svc.set_cached_profile(profile)
 
         # Get transactions
         raw = self.txn_repo.get_all_transactions_with_bank({})
@@ -68,15 +70,12 @@ class DashboardService(BaseService):
         insights: list[str] = []
         nudges: list[str] = []
 
-        indices = profile.get("behavioral_indices", {})
-        savings_discipline = indices.get("savings_discipline", {})
-
         if profile.get("risk_signals", {}).get("low_savings"):
             nudges.append("Consider setting aside more for savings this month.")
-        if profile.get("risk_signals", {}).get("high_impulsivity"):
-            nudges.append("High impulsivity detected. Review discretionary spending.")
 
-        if savings_discipline.get("savings_rate", 0) > 0.2:
+        # Use profile type from BehaviourService result
+        profile_type = profile.get("profile_type", "INSUFFICIENT_DATA")
+        if profile_type == "SAVER":
             insights.append("Great job! Your savings rate exceeds 20%.")
 
         return DashboardSummary(

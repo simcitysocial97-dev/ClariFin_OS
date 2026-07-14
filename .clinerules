@@ -1,86 +1,366 @@
-# ClariFin_OS — Autonomous Core Agent & Memory Rules
+ # ClariFin_OS — Autonomous Core Agent & Memory Rules
+
 
 I am Cline. My memory resets between sessions. To maximize token efficiency, I bypass legacy, bulk text-file workflows. I operate using a **Hybrid State Model** pairing a lean local state with a live Code Graph Context (CGC) MCP server connected to FalkorDB.
 
+
 ---
+
 
 ## 1. AUTOMATED MEMORY BANK LIFECYCLE (No Manual Commands Required)
+
 You must manage the memory bank autonomously. **Do not wait for the user to tell you to update it.**
 
+
 - **On Conversation Start (First Turn):** Quietly read *only* `memory-bank/projectbrief.md` and `memory-bank/activeContext.md` to establish current business intent. 
+
 - **During the Task:** DO NOT read or write to `systemPatterns.md`, `techContext.md`, or `progress.md` (They are DEPRECATED; use CGC graph queries instead).
+
 - **On Conversation End (Task Completion):** Right before declaring your task finished (and before running Git commands), you MUST automatically update `memory-bank/activeContext.md` with a 2-3 line bulleted summary of your changes and the next immediate steps. Keep this file under 50 lines by pruning old history.
 
+
 ---
+
 
 ## 2. WORKSPACE & CGC MCP PROTOCOL
 
+
 - **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) for ALL code discovery. CGC is configured with INDEX_SOURCE=true, meaning `find_code` returns COMPLETE source code in the `source` field. DO NOT call `read_file` after `find_code` - the source is already available.
+
 
 - **FalkorDB Query Rules:** The graph uses FalkorDB (NOT SQLite). NEVER use `sqlite3` commands, SQL syntax, or relational DB tools to query `~/.codegraphcontext/global/db/falkordb`. ALWAYS use Cypher syntax via `execute_cypher_query`.
 
+
 - **CGC Relationship Queries:** Use `analyze_code_relationships` to find callers/callees before reading files. This prevents reading multiple files to trace code flow.
+
   - Use `find_callers` to find who calls a function
+
   - Use `find_callees` to find what a function calls
+
   - Use `class_hierarchy` to understand inheritance
 
+
 - **CGC Cypher Queries:** For complex queries (inheritance, module dependencies, cross-cutting concerns), use `execute_cypher_query` with Cypher patterns:
+
   - `MATCH (c:Class {name: 'FinanceDB'})-[:INHERITS]->(p:Class) RETURN p.name`
+
   - `MATCH (f:Function)-[:CALLS]->(c) WHERE f.name CONTAINS 'transaction' RETURN c.name, c.path`
 
+  - `MATCH (f:Function {name: 'find_potential_matches'})-[:CALLS]->(called) RETURN called.name, called.path`
+
+  - `MATCH (m:Module)-[:IMPORTS]->(i) WHERE m.path CONTAINS 'routers' RETURN m.name, i.name`
+
+
 - **Git Commit Protocol:** After passing validation and updating `activeContext.md`, execute:
+
   1. `git add -A`
+
   2. `git commit -m "[type]: [description]"` (semantic style)
+
   3. `git push origin [current-branch]`
 
+
 ---
+
+
+## 2a. TOKEN-EFFICIENT DISCOVERY PROTOCOL (rg/grep First, Read Never)
+
+
+Before reading ANY file, run these patterns to extract only what you need:
+
+
+### Find a class definition (returns 1 line + line number):
+
+```bash
+
+rg -n "^class " backend/src/  | grep "ClassName"
+
+```
+
+Or for exact: `rg "^class ClassName" --type py backend/src/`
+
+
+### Find all functions in a file (returns names only):
+
+```bash
+
+rg "^    def " backend/src/routers/reconciliation.py
+
+rg "^async def " --type py backend/src/  # async endpoints
+
+```
+
+
+### Find all API routes (returns decorators):
+
+```bash
+
+rg "^@router\.(get|post|put|delete)" --type py backend/src/routers/
+
+```
+
+
+### Find which files import a symbol:
+
+```bash
+
+rg "from.*import.*FinanceDB" --type py backend/src/
+
+rg "from .* import.*BaseRepository" --type py
+
+```
+
+
+### Find where a function/class is referenced:
+
+```bash
+
+rg "find_potential_matches" --type py backend/src/ | grep -v test
+
+rg "BaseService" --type py backend/src/
+
+```
+
+
+### Count lines in a file before reading (decide if read_file needed):
+
+```bash
+
+wc -l backend/src/services/reconciliation_service.py
+
+```
+
+
+### Quick file listing by purpose:
+
+```bash
+
+# All test files
+
+find backend/tests -name "test_*.py" | sort
+
+
+# All engine files
+
+ls backend/src/engines/
+
+
+# All models
+
+ls backend/src/models/*.py | grep -v __init__
+
+
+# All repositories
+
+ls backend/src/repositories/*.py | grep -v __init__ | grep -v __pycache__
+
+```
+
+
+### Before-reading checklist (MANDATORY):
+
+1. [ ] Have I checked if CGC `find_code()` already returns the source? (INDEX_SOURCE=true)
+
+2. [ ] Can `rg` give me what I need in 1-2 lines?
+
+3. [ ] Am I about to read a file >200 lines? (Use rg targeting instead)
+
+4. [ ] Have I checked ARCHITECTURE.md for this class/module summary?
+
+5. [ ] Can I trace the call chain with `analyze_code_relationships` instead?
+
+
+---
+
 
 ## 3. MANDATORY 3-PHASE EXECUTION LOOP
+
 Wrap EVERY user request inside this strict execution pattern:
+
 - **Phase A (Schema Discovery):** Use CGC `find_code("SymbolName")` to locate and retrieve schemas. The `source` field in results contains the COMPLETE type definition - NO `read_file` call needed. Target specific symbols to get only what you need.
+
   - Example: `find_code("TransactionDTO")` returns full class definition with source code (INDEX_SOURCE=true)
+
 - **Phase B (Delta-Only Generation):** Execute code modifications strictly matching the Phase A schemas. Enforce financial guardrails.
+
 - **Phase C (Autonomous Verification Gate):** Run full frontend and backend validation suites. Self-correct errors iteratively until logs clear cleanly.
 
+
 ---
+
 
 ## 4. BUILD VERIFICATION COMMANDS
+
 Run these terminal validation checks immediately after *any* file modification:
+
 - **Frontend Core & Gate:** `cd frontend && npm run type-check && npm run lint && npm test -- --run && npm run build`
+
 - **Backend Core (Virtual Env Isolated):**
+
   `cd backend && ./venv/bin/python3 -m ruff check .`
+
   `cd backend && ./venv/bin/python3 -m mypy .`
 
+
 ---
+
 
 ## 5. STRICT CODE GUARDRAILS
+
 - **Financial Metrics:** NEVER use loose floats for currency. Enforce integers representing absolute **Paise** (₹1.00 = 100 paise). Use safe decimal handlers for division.
+
 - **Next.js Conventions:** Prepend component files with `'use client'` *only* if they require state or user interaction hooks (e.g., onClick). Otherwise, default to lean Server Components. Use dynamic structural routing parameters (`app/reconciliation/[id]/page.tsx`).
+
 - **Strict Code Limitations:** 
+
   - NEVER use `as any`, `@ts-ignore`, or `@ts-nocheck` in TypeScript.
+
   - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`.
 
+
 ---
+
 
 ## 6. Repository Boundary Rule
 
+
 - ONLY files under src/repositories/ may import FinanceDB.
+
 - Routers MUST NOT import FinanceDB or get_db().
+
 - Engines MUST NOT import FinanceDB.
+
 - If FinanceDB import is detected outside repositories/, refactor immediately.
+
 
 ---
 
+
 ## 7. GRAPH DATABASE & FALKORDB QUERY RULES
+
 
 The project utilizes **FalkorDB** via CodeGraphContext (CGC) for code relationships and semantic indexing.
 
+
 - ❌ **NEVER** attempt to use `sqlite3` commands, SQL syntax, or relational DB tools to query the code graph.
+
 - ⚠️ **DO NOT** assume standard SQL tables exist for codebase relationships.
+
 - ✅ **ALWAYS** use **Cypher query syntax** when interacting with the graph via `execute_cypher_query`.
+
 - ✅ **Nodes Available:** `Class`, `Interface`, `Function`, `Module`, `Variable`, `Parameter`, `File`, `Directory`, `Repository`.
+
 - ✅ **Relationship Types:** `CALLS`, `IMPORTS`, `HAS_PARAMETER`, `INHERITS`, `CONTAINS`.
+
 - ✅ **Example Cypher Patterns:**
+
   - Find callers: `MATCH (f:Function)-[:CALLS]->(c:Function) WHERE f.name = 'FinanceDB' RETURN c`
+
   - Find class relationships: `MATCH (c:Class)-[:INHERITS]->(p) RETURN c.name, p.name`
+
   - Module imports: `MATCH (m:Module)-[:IMPORTS]->(m2) RETURN m.name, m2.name`
+
+
+---
+
+
+## 8. ARCHITECTURE.md SYNC RULE (Living Document Mandate)
+
+
+ARCHITECTURE.md is NOT a static artifact. It must be updated whenever changes affect the project's structure.
+
+
+### Trigger Events (automatic update required):
+
+1. **Schema changes**: New table, column, FK, or index added/removed/modified
+
+2. **Layer map changes**: New router, service, engine, repository, or model file added/deleted/renamed
+
+3. **Dependency chain changes**: Layer boundary violations fixed (e.g., engine purity, repository rule)
+
+4. **Technology stack changes**: New package/dependency added, Python/Framework version bumped
+
+5. **Duplicate code resolution**: `behavior`/`behaviour` dedup, dead code removal
+
+6. **API contract changes**: New route/endpoint added, request/response shapes changed
+
+
+### Update Protocol (execute after Phase C, before git commit):
+
+1. Check if the change matches any trigger event above
+
+2. If YES:
+
+   - Update table registry in ARCHITECTURE.md §4 if schema changed
+
+   - Update layer file counts in ARCHITECTURE.md §1 if files added/removed
+
+   - Update dependency chain in ARCHITECTURE.md §3 if layer relationships changed
+
+   - Update technology stack in ARCHITECTURE.md §6 if packages/versions changed
+
+   - Mark resolved technical debt as `[RESOLVED]` in §3 duplicate table
+
+3. If NO to ALL triggers: skip ARCHITECTURE.md update (no unnecessary churn)
+
+
+### Quick schema verification command:
+
+```bash
+
+# Compare current DB tables against ARCHITECTURE.md table list
+
+sqlite3 backend/data/finance.db ".tables" 2>/dev/null | tr ' ' '\n' | sort
+
+grep -oP '^\| `\w+' ARCHITECTURE.md | sort
+
+```
+
+
+### Token Savings Rationale:
+
+Each ARCHITECTURE.md update costs ~200-500 tokens in context.
+
+Each missed update (stale map) costs ~5,000-15,000 tokens in wasted exploration.
+
+Keep it accurate. The 10x savings compound.
+
+
+---
+
+
+## 9. CGC INVARIANTS & GRAPH SYNCHRONIZATION
+
+
+These invariants MUST be checked before assuming any CGC query result is authoritative.
+
+
+### Known Limitations (from deep-nesting regressive test, July 2026):
+
+1. **TOOL_RESULT_LIMITS cap**: Config at `~/.codegraphcontext/.env` — currently `find_code: 50`, `analyze_code_relationships: 50`, `execute_cypher_query: 100`. Any query may return partial results if the true match count exceeds these limits. Solution: Use multiple targeted queries instead of one broad query.
+
+2. **`find_all_callers` depth-3 transitivity**: The depth-3 transitive caller search may return false negatives for deep call chains. Use `find_callers` (depth 1) iteratively for reliable transitive tracing.
+
+3. **Interactive CLI commands**: `cgc delete --all` requires typing "delete all" interactively and cannot be automated via stdin pipe. Use MCP `delete_repository` tool instead.
+
+4. **Index freshness**: `ENABLE_AUTO_WATCH=true` keeps graph live for single-file edits. After branch switches, git pulls, or schema migrations, run `cgc index .` to force refresh.
+
+
+### Queries that bypass the result cap (safe for large result sets):
+
+- `rg "class " --type py backend/src/` — returns ALL class definitions, no truncation
+
+- `rg "^def " --type py backend/src/` — returns ALL function definitions
+
+- `wc -l` combined with `rg` patterns — counts before reading
+
+
+### Verification checklist before trusting CGC results:
+
+1. [ ] Is the symbol in a file at depth 5+ (transaction_intelligence/)? CGC indexes all depths, but verify.
+
+2. [ ] Did my query return exactly 50 results? If so, the cap may be truncating.
+
+3. [ ] Did I try `rg` as a fallback? It has no result limits.
+
+4. [ ] Is the graph stale? Check last index time or run a known-symbol query as control. 

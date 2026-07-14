@@ -275,3 +275,59 @@
 - Regression: empty events → cash/accrual converge to existing repository output
 - Household scope aggregates all owners
 - Individual scope receives pre-filtered events at service layer
+
+### Phase 8 — India-Specific Signals (COMPLETED)
+
+**Engine (`behaviour_engine/credit_dependency.py`):**
+- New pure functions consuming financial_events (Phase 6) and cashflow_results (Phase 7)
+- `artificial_income_flag` - detects credit-card cash advances as fake income, excludes them from trend analysis
+- `credit_dependency_ratio` - ratio of credit-funded expenses to total expenses
+- `transactor_vs_revolver` - classifies cards as transactor (settled) or revolver (open/partial)
+- `revolver_ratio` - proportion of months with revolving credit behavior
+- `debt_rolling_flag` - detects rolls_over lifecycle state and links
+- `liquidity_extraction_frequency` - count and spacing of cash advances
+- `financial_stress_index` - composite with explicit weights (credit_dependency 30%, debt_rolling 25%, liquidity_extraction 20%, revolving 15%, cashflow_deficit 10%)
+- `household_divergence` - cross-owner funding via lineage links between different owners in same household
+
+**Service (`services/behaviour_service.py`):**
+- Added `get_stress_index(month, scope)` - orchestrates CashflowService + FinancialEventsService
+- Added `get_revolver_status(card_account_id)` - fetches events via FinancialEventsService
+- Added `get_household_divergence(month)` - detects cross-owner funding patterns
+
+**Router (`routers/behaviour.py` - UK only):**
+- Added `GET /api/v1/behaviour/stress-index?month=&scope=`
+- Added `GET /api/v1/behaviour/revolver-status?card_account_id=`
+- Added `GET /api/v1/behaviour/household-divergence?month=`
+- DID NOT modify US router `routers/behavior.py` (confirmed LIVE)
+
+**Tests (`tests/test_behaviour_engine_credit_dependency.py` - 26/26 passing):**
+- Purity tests: zero DB calls inside credit_dependency.py
+- Regression test: empty financial events → neutral values for all signals
+- Component independence test for stress index
+
+### Phase 8.5 — Behaviour Consolidation (COMPLETED)
+
+**Canonical Implementation Created:**
+- `src/engines/behaviour_engine/__init__.py` - exports organized by category (savings, cashflow, resilience, lifestyle, debt, patterns, income, account, profile, temporal, stress)
+- `src/engines/behaviour_engine/stress.py` - Pure stress indices (loss_aversion_index, impulsivity_score, habit_stability_score, financial_stress_index, savings_discipline_score, detect_risk_patterns)
+- `src/engines/behaviour_engine/temporal.py` - Pure temporal analysis functions
+
+**Service Layer Changes:**
+- `src/services/behaviour_service.py` - Added TTLCache (max 10 entries, 5-min expiration), static `get_cached_profile()`/`set_cached_profile()` methods
+- `src/services/behavior_service.py` - Converted to compatibility wrapper that delegates to BehaviourService
+- `src/services/dashboard_service.py` - Updated to use BehaviourService instead of legacy behavior_engine
+
+**Repository Updates:**
+- `src/routers/import_router.py` - Updated to use `invalidate_behaviour_cache` from behaviour_service
+
+**Legacy Module Updates:**
+- `src/engines/behavior_engine.py` - Added deprecation warnings, maintained for backwards compatibility
+
+**Architecture Compliance:**
+- Router → BehaviourService → Repositories + CashflowService + FinancialEventsService pattern established
+- All engines remain pure (no DB access)
+- Repository Boundary Rule maintained
+
+**Tests (48/48 passing):**
+- All behaviour_service tests pass
+- All behavior_engine legacy tests pass with deprecation warning

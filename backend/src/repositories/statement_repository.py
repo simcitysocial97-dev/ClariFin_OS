@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+from datetime import datetime, timedelta
 from typing import Any
 
 from src.models.statement import Statement
@@ -205,6 +206,33 @@ class StatementRepository(BaseRepository):
             banks = [row[0] for row in cur.fetchall()]
         return banks
 
+    def get_statement_for_card(self, bank: str, card_last4: str) -> dict[str, Any] | None:
+        """
+        Get the latest statement for a specific credit card.
+
+        Args:
+            bank: Statement bank (e.g., 'HDFC Bank', 'ICICI Bank')
+            card_last4: Last 4 digits of credit card
+
+        Returns:
+            Most recent statement row dict or None if no match found.
+        """
+        with self._get_conn() as conn:
+            row = conn.execute(
+                """
+                SELECT id, bank, card_last4,
+                       total_amount_due, minimum_amount_due,
+                       payment_due_date, statement_date,
+                       bill_cycle_start, bill_cycle_end
+                FROM statements
+                WHERE bank = ? AND card_last4 = ?
+                ORDER BY statement_date DESC
+                LIMIT 1
+                """,
+                (bank, card_last4),
+            ).fetchone()
+            return dict(row) if row else None
+
     def find_matching_statement(
         self,
         bank: str,
@@ -232,7 +260,6 @@ class StatementRepository(BaseRepository):
         """
         with self._get_conn() as conn:
             # Get ALL candidates for this bank + card
-            # We'll filter by due_date first, then fallback to bill_cycle
             candidates = conn.execute(
                 """
                 SELECT id, bank, card_last4,
@@ -245,8 +272,6 @@ class StatementRepository(BaseRepository):
                 """,
                 (bank, card_last4),
             ).fetchall()
-
-        from datetime import datetime, timedelta
 
         # Parse payment date to date object
         try:
