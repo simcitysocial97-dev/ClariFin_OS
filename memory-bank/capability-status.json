@@ -1,0 +1,15 @@
+{
+  "capabilities": [
+    {"id": "household_cashflow", "name": "Household Cashflow", "smoke_tests": 3, "property_tests": 2, "golden_datasets": 4, "invariants": 2, "status": "PASS"},
+    {"id": "debt_management", "name": "Debt Management", "smoke_tests": 2, "property_tests": 2, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "credit_cards", "name": "Credit Cards", "smoke_tests": 2, "property_tests": 2, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "financial_health", "name": "Financial Health", "smoke_tests": 2, "property_tests": 2, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "forecasting", "name": "Forecasting", "smoke_tests": 2, "property_tests": 2, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "transaction_intelligence", "name": "Transaction Intelligence", "smoke_tests": 2, "property_tests": 1, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "reconciliation", "name": "Reconciliation", "smoke_tests": 2, "property_tests": 3, "golden_datasets": 2, "invariants": 2, "status": "PASS"},
+    {"id": "financial_events", "name": "Financial Events", "smoke_tests": 2, "property_tests": 1, "golden_datasets": 2, "invariants": 2, "status": "PASS"},
+    {"id": "recommendations", "name": "Recommendations", "smoke_tests": 2, "property_tests": 2, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "account_management", "name": "Account Management", "smoke_tests": 2, "property_tests": 2, "golden_datasets": 3, "invariants": 2, "status": "PASS"},
+    {"id": "pattern_analysis", "name": "Pattern Analysis", "smoke_tests": 2, "property_tests": 1, "golden_datasets": 2, "invariants": 2, "status": "PASS"}
+  ]
+}

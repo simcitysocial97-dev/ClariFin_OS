@@ -1,0 +1,50 @@
+id: forecasting
+name: Forecasting
+description: >
+  Project future cashflow, liquidity, and financial goals using deterministic forecasting
+  models, scenario analysis, and optimization algorithms.
+criticality: medium
+risk: low
+routers:
+  - src/routers/financial_intelligence.py
+  - src/routers/scenarios.py
+  - src/routers/goals.py
+services:
+  - src/services/financial_intelligence_service.py
+engines:
+  - src/engines/financial_intelligence/forecasting.py
+  - src/engines/financial_intelligence/goal_planner.py
+  - src/engines/financial_intelligence/intelligence.py
+  - src/engines/financial_intelligence/optimization.py
+  - src/engines/financial_intelligence/scenario.py
+repositories:
+  - src/repositories/financial_goal_repository.py
+  - src/repositories/forecast_repository.py
+tables:
+  - financial_goals
+  - forecasts
+  - scenarios
+  - financial_events
+golden_datasets:
+  - tests/golden/datasets/salary_only.json
+  - tests/golden/datasets/salary_plus_loan.json
+  - tests/golden/datasets/irregular_income.json
+property_tests:
+  - tests/properties/test_forecast.py
+  - tests/properties/forecasting/test_engine_properties.py
+invariants:
+  - tests/invariants/test_forecast.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - GET /api/financial-intelligence/forecast
+  - POST /api/financial-intelligence/scenario
+  - GET /api/goals
+  - POST /api/goals
+dependencies:
+  - household_cashflow
+  - debt_management
+  - credit_cards
+failure_impact: >
+  Long-term planning becomes unreliable. Users cannot project liquidity, set achievable
+  financial goals, or evaluate what-if scenarios for major decisions.

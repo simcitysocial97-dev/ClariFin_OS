@@ -1,0 +1,39 @@
+id: pattern_analysis
+name: Pattern Analysis
+description: >
+  Identify spending patterns, liquidity patterns, and recurring transaction categories
+  to improve cashflow classification and financial insights.
+criticality: medium
+risk: low
+routers:
+  - src/routers/patterns.py
+services:
+  - src/services/pattern_service.py
+engines:
+  - src/engines/insight_generator.py
+repositories:
+  - src/repositories/pattern_repository.py
+  - src/repositories/liquidity_pattern_repository.py
+tables:
+  - patterns
+  - liquidity_patterns
+  - transactions
+golden_datasets:
+  - tests/golden/datasets/irregular_income.json
+  - tests/golden/datasets/normal_household.json
+property_tests:
+  - tests/test_pattern_repository.py
+invariants:
+  - tests/invariants/test_transaction.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - GET /api/patterns
+  - GET /api/patterns/liquidity
+  - POST /api/patterns/detect
+dependencies:
+  - household_cashflow
+  - transaction_intelligence
+failure_impact: >
+  Pattern detection breaks. Users lose automated categorization and recurring transaction
+  identification, reducing cashflow accuracy and insight generation.

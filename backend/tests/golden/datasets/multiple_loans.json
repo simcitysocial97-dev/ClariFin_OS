@@ -1,0 +1,73 @@
+{
+  "scenario": "multiple_loans",
+  "description": "Borrower with two concurrent loans — personal loan and car loan. Dual EMI obligations.",
+  "household": {
+    "id": "hh_ml_001",
+    "name": "Multiple Loans Household",
+    "members": [
+      {"id": "mem_001", "name": "Borrower", "role": "primary"}
+    ]
+  },
+  "accounts": [
+    {
+      "id": "acct_ml_001",
+      "name": "Salary Account",
+      "type": "savings",
+      "bank": "HDFC",
+      "balance_paise": 3000000,
+      "owner_id": "mem_001",
+      "household_id": "hh_ml_001"
+    }
+  ],
+  "transactions": [
+    {"date_iso": "2026-01-01", "description": "Salary Credit", "amount_paise": 8000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-05", "description": "Personal Loan EMI", "amount_paise": -450000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-01-06", "description": "Car Loan EMI", "amount_paise": -350000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-01-10", "description": "Groceries", "amount_paise": -300000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-01-15", "description": "Rent", "amount_paise": -1800000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit", "amount_paise": 8000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-05", "description": "Personal Loan EMI", "amount_paise": -450000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-02-06", "description": "Car Loan EMI", "amount_paise": -350000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-02-10", "description": "Groceries", "amount_paise": -320000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-02-15", "description": "Rent", "amount_paise": -1800000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-03-01", "description": "Salary Credit", "amount_paise": 8000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-03-05", "description": "Personal Loan EMI", "amount_paise": -450000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-03-06", "description": "Car Loan EMI", "amount_paise": -350000, "type": "debit", "category": "loan"}
+  ],
+  "loans": [
+    {
+      "id": "loan_pl_001",
+      "name": "Personal Loan",
+      "lender": "ICICI",
+      "principal_paise": 100000000,
+      "outstanding_paise": 60000000,
+      "interest_rate_bps": 1400,
+      "tenure_months": 60,
+      "emi_paise": 450000,
+      "start_date": "2024-03-01"
+    },
+    {
+      "id": "loan_cl_001",
+      "name": "Car Loan",
+      "lender": "HDFC",
+      "principal_paise": 60000000,
+      "outstanding_paise": 35000000,
+      "interest_rate_bps": 950,
+      "tenure_months": 84,
+      "emi_paise": 350000,
+      "start_date": "2025-01-01"
+    }
+  ],
+  "credit_cards": [],
+  "financial_events": [],
+  "expected_output": {
+    "monthly_income_paise": 8000000,
+    "monthly_expense_paise": 3670000,
+    "monthly_surplus_paise": 4330000,
+    "has_multiple_loans": true,
+    "total_emi_paise": 800000,
+    "total_outstanding_paise": 95000000,
+    "confidence_bps": 6500,
+    "risk_flags": ["multiple_loans", "high_debt_burden"]
+  }
+}

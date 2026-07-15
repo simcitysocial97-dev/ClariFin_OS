@@ -1,0 +1,51 @@
+{
+  "scenario": "salary_only",
+  "description": "Single income source, no debt. Salaried employee with rent and living expenses.",
+  "household": {
+    "id": "hh_salary_001",
+    "name": "Single Salaried",
+    "members": [
+      {"id": "mem_001", "name": "Primary Earner", "role": "primary"}
+    ]
+  },
+  "accounts": [
+    {
+      "id": "acct_salary_001",
+      "name": "Salary Account",
+      "type": "savings",
+      "bank": "HDFC",
+      "balance_paise": 2500000,
+      "owner_id": "mem_001",
+      "household_id": "hh_salary_001"
+    }
+  ],
+  "transactions": [
+    {"date_iso": "2026-01-01", "description": "Salary Credit", "amount_paise": 7500000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-03", "description": "Rent Payment", "amount_paise": -1500000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-01-05", "description": "Groceries", "amount_paise": -300000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-01-07", "description": "Electricity Bill", "amount_paise": -120000, "type": "debit", "category": "utilities"},
+    {"date_iso": "2026-01-10", "description": "Internet Bill", "amount_paise": -50000, "type": "debit", "category": "utilities"},
+    {"date_iso": "2026-01-15", "description": "Dining Out", "amount_paise": -80000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-01-20", "description": "Fuel", "amount_paise": -60000, "type": "debit", "category": "transport"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit", "amount_paise": 7500000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-03", "description": "Rent Payment", "amount_paise": -1500000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-02-05", "description": "Groceries", "amount_paise": -350000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-02-10", "description": "Mobile Recharge", "amount_paise": -25000, "type": "debit", "category": "utilities"},
+    {"date_iso": "2026-02-15", "description": "Insurance Premium", "amount_paise": -500000, "type": "debit", "category": "insurance"},
+    {"date_iso": "2026-03-01", "description": "Salary Credit", "amount_paise": 7500000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-03-03", "description": "Rent Payment", "amount_paise": -1500000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-03-05", "description": "Groceries", "amount_paise": -280000, "type": "debit", "category": "food"}
+  ],
+  "loans": [],
+  "credit_cards": [],
+  "financial_events": [],
+  "expected_output": {
+    "monthly_income_paise": 7500000,
+    "monthly_expense_paise": 2210000,
+    "monthly_surplus_paise": 5290000,
+    "income_volatility": "low",
+    "has_debt": false,
+    "confidence_bps": 8500,
+    "risk_flags": []
+  }
+}
