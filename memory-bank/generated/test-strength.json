@@ -1,0 +1,245 @@
+{
+  "generated_at": "2026-07-15T09:55:42.305134+00:00",
+  "capabilities": [
+    {
+      "id": "account_management",
+      "name": "Account Management",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "credit_cards",
+      "name": "Credit Cards",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 1,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "debt_management",
+      "name": "Debt Management",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 1,
+        "architecture_tests": 1
+      },
+      "weighted_score": 20,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "financial_events",
+      "name": "Financial Events",
+      "criticality": "medium",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 1,
+        "golden_tests": 2,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "financial_health",
+      "name": "Financial Health",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "forecasting",
+      "name": "Forecasting",
+      "criticality": "medium",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "household_cashflow",
+      "name": "Household Cashflow",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 4,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 1,
+        "architecture_tests": 1
+      },
+      "weighted_score": 20,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "pattern_analysis",
+      "name": "Pattern Analysis",
+      "criticality": "medium",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 1,
+        "golden_tests": 2,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "recommendations",
+      "name": "Recommendations",
+      "criticality": "medium",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "reconciliation",
+      "name": "Reconciliation",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 3,
+        "golden_tests": 2,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "transaction_intelligence",
+      "name": "Transaction Intelligence",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 1,
+        "property_tests": 2,
+        "golden_tests": 3,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 1
+      },
+      "weighted_score": 17,
+      "strength": "Critical",
+      "gaps": [
+        "No contract tests",
+        "No invariant tests"
+      ],
+      "invariant_count": 0
+    }
+  ]
+}

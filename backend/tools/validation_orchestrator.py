@@ -147,7 +147,6 @@ class FastStage(ValidationStage):
             text=True,
         )
         if result.returncode != 0:
-            # Check if it's just lint warnings (not failures)
             pass
 
         # Run ruff format check
@@ -157,7 +156,6 @@ class FastStage(ValidationStage):
             capture_output=True,
             text=True,
         )
-        # Format check failures are warnings, not blockers
 
         metrics.duration = time.time() - start
         metrics.status = "PASS"
@@ -441,6 +439,67 @@ class ContractStage(ValidationStage):
 
 
 # =============================================================================
+# Mutation Readiness Stage (RMVF)
+# =============================================================================
+
+class MutationReadinessStage(ValidationStage):
+    """Mutation readiness analysis - discovers and analyzes mutation candidates.
+
+    Runs mutation_discovery.py and test_strength.py to generate reports.
+    Does NOT execute actual mutations - only analysis and reporting.
+    Estimated runtime: <3 seconds.
+    """
+
+    @property
+    def stage_id(self) -> str:
+        return "mutation_readiness"
+
+    @property
+    def estimated_time(self) -> float:
+        return 2.5
+
+    @property
+    def dependencies(self) -> list[str]:
+        return ["coverage", "change_intelligence"]
+
+    def plan(self, manifest: ValidationManifest) -> None:
+        manifest.commands_executed.append("python backend/tools/mutation_discovery.py")
+        manifest.commands_executed.append("python backend/tools/test_strength.py")
+
+    def execute(self) -> tuple[int, ValidationMetrics]:
+        metrics = ValidationMetrics()
+        start = time.time()
+
+        # Run mutation discovery
+        result = subprocess.run(
+            [sys.executable, str(BACKEND_DIR / "tools" / "mutation_discovery.py")],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+        )
+
+        # Run test strength analyzer
+        result2 = subprocess.run(
+            [sys.executable, str(BACKEND_DIR / "tools" / "test_strength.py")],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+        )
+
+        metrics.duration = time.time() - start
+        if result.returncode != 0 or result2.returncode != 0:
+            metrics.status = "FAIL"
+            if result.stderr:
+                print(f"mutation_discovery stderr: {result.stderr}")
+            if result2.stderr:
+                print(f"test_strength stderr: {result2.stderr}")
+            return 1, metrics
+
+        metrics.status = "PASS"
+        return 0, metrics
+
+
+# =============================================================================
 # Validation Graph
 # =============================================================================
 
@@ -455,7 +514,7 @@ class ValidationGraph:
         """Register all default validation stages."""
         for stage_cls in [FastStage, CoverageStage, ChangeIntelligenceStage,
                           ArchitectureStage, CapabilityStage, PropertyStage,
-                          GoldenStage, MetaStage, ContractStage]:
+                          GoldenStage, MetaStage, ContractStage, MutationReadinessStage]:
             stage = stage_cls()  # type: ignore[abstract]
             self.stages[stage.stage_id] = stage
 
@@ -469,14 +528,12 @@ class ValidationGraph:
 
     def get_full_pipeline(self) -> list[str]:
         """Get stage IDs for full verification pipeline."""
-        return ["fast", "coverage", "change_intelligence", "architecture",
-                "capability", "property", "golden", "contract", "meta"]
+        return ["fast", "coverage", "change_intelligence", "mutation_readiness",
+                "architecture", "capability", "property", "golden", "contract", "meta"]
 
     def get_selective_pipeline(self, selective_plan: dict[str, Any] | None = None) -> list[str]:
         """Get stage IDs for selective verification."""
-        # Always run fast + coverage + change_intelligence
-        # Then conditionally run affected tests
-        pipeline = ["fast", "coverage", "change_intelligence"]
+        pipeline = ["fast", "coverage", "change_intelligence", "mutation_readiness"]
 
         if selective_plan:
             affected = selective_plan.get("affected", {})
@@ -514,41 +571,30 @@ def load_risk_rules() -> dict[str, Any]:
 
 def match_pattern(file_path: str, pattern: str) -> bool:
     """Check if file path matches a glob pattern."""
-    # Normalize patterns
     if "**" in pattern:
-        # Convert ** glob to fnmatch pattern
         pattern = pattern.replace("**/", "").replace("**", "*")
     return fnmatch.fnmatch(file_path, pattern) or fnmatch.fnmatch(file_path, "*/" + pattern)
 
 
 def determine_strategy(changed_files: list[str]) -> tuple[str, str, str]:
-    """Determine validation strategy based on changed files.
-
-    Returns (strategy, reason, risk).
-    """
+    """Determine validation strategy based on changed files."""
     if not changed_files:
         return "fast", "no changes detected", RISK_LOW
 
     rules = load_risk_rules()
     rules_list = rules.get("rules", [])
-
-    # Track highest risk and matching strategies
-    # Skip the default "*" fallback rule - it should only be used as last resort
     highest_risk = RISK_LOW
     matching_strategies: list[str] = []
 
     for file_path in changed_files:
         for rule in rules_list:
             pattern = rule.get("pattern", "")
-            # Skip the default catch-all rule unless no specific rules match
             if pattern == "*":
                 continue
             if match_pattern(file_path, pattern):
                 strategy = rule.get("strategy", "fast")
                 risk = rule.get("risk", RISK_LOW)
                 matching_strategies.append(strategy)
-
-                # Prioritize higher risk
                 risk_priority = {RISK_LOW: 1, RISK_MEDIUM: 2, RISK_HIGH: 3, RISK_CRITICAL: 4, RISK_UNKNOWN: 5}
                 if risk_priority.get(risk, 0) > risk_priority.get(highest_risk, 0):
                     highest_risk = risk
@@ -556,7 +602,6 @@ def determine_strategy(changed_files: list[str]) -> tuple[str, str, str]:
     if not matching_strategies:
         return "full", "unknown file types", RISK_UNKNOWN
 
-    # Map strategy to priority and use the highest priority strategy
     strategy_priority = {"fast": 1, "coverage": 2, "selective": 3, "full": 4}
     strategy = max(matching_strategies, key=lambda s: strategy_priority.get(s, 0))
     reason = f"{len(changed_files)} files matched rules, max risk: {highest_risk}"
@@ -692,8 +737,6 @@ def get_changed_files() -> list[str]:
 def load_selective_plan() -> dict[str, Any] | None:
     """Load selective plan from SVF output."""
     change_report_path = GENERATED_DIR / "change-report.json"
-
-    # Return the change report for determining affected capabilities
     if change_report_path.exists():
         with open(change_report_path) as f:
             return json.load(f)
@@ -713,11 +756,9 @@ def run_pipeline(stage_ids: list[str], strategy: str) -> tuple[int, dict[str, Va
         strategy=strategy,
     )
 
-    # Build manifest
     changed_files = get_changed_files()
     manifest.changed_files = changed_files
 
-    # Get selective plan for capability mapping
     selective_plan = load_selective_plan()
     if selective_plan and strategy == "selective":
         for change in selective_plan.get("changes", []):
@@ -726,7 +767,6 @@ def run_pipeline(stage_ids: list[str], strategy: str) -> tuple[int, dict[str, Va
                 if cap not in manifest.affected_capabilities and cap != "UNKNOWN":
                     manifest.affected_capabilities.append(cap)
 
-    # Execute stages
     for stage_id in stage_ids:
         stage = graph.get_stage(stage_id)
         if stage and stage.enabled:
@@ -743,14 +783,11 @@ def run_pipeline(stage_ids: list[str], strategy: str) -> tuple[int, dict[str, Va
 def run_auto_mode() -> tuple[int, dict[str, ValidationMetrics], ValidationManifest]:
     """Auto mode: determine strategy and run pipeline."""
     changed_files = get_changed_files()
-
-    # Check cache first
     strategy, reason, risk = determine_strategy(changed_files)
     cached = check_cached_run(changed_files, strategy)
 
     if cached:
         print("[CACHE HIT] Reusing previous validation plan")
-        # Run cached pipeline...
         return run_pipeline(["fast", "coverage", "change_intelligence"], strategy)[0:2] + (ValidationManifest(
             timestamp=cached.get("timestamp", ""),
             strategy=cached.get("strategy", strategy),
@@ -762,8 +799,7 @@ def run_auto_mode() -> tuple[int, dict[str, ValidationMetrics], ValidationManife
     elif strategy == "coverage":
         stages = ["fast", "coverage"]
     elif strategy == "selective":
-        stages = ["fast", "coverage", "change_intelligence"]
-        # Selective verify will generate its own artifacts when needed
+        stages = ["fast", "coverage", "change_intelligence", "mutation_readiness"]
     elif strategy == "full":
         stages = ValidationGraph().get_full_pipeline()
     else:
@@ -778,24 +814,22 @@ def explain_decision(tree: bool = False) -> None:
     strategy, reason, risk = determine_strategy(changed_files)
 
     print("Changed files")
-    for f in changed_files[:10]:  # Limit output
+    for f in changed_files[:10]:
         print(f"  - {f}")
     if len(changed_files) > 10:
         print(f"  ... and {len(changed_files) - 10} more")
 
     print("\n↓\n")
 
-    # Load change report for capabilities
     change_report_path = GENERATED_DIR / "change-report.json"
     if change_report_path.exists():
         with open(change_report_path) as f:
-            report: dict[str, Any] = json.load(f)  # type: ignore[arg-type]
+            report: dict[str, Any] = json.load(f)
         caps = set()
         for c in report.get("changes", []):
             for cap in c.get("capabilities", []):
                 if cap != "UNKNOWN":
                     caps.add(cap)
-
         if caps:
             print("Capability")
             for cap in sorted(caps):
@@ -803,16 +837,14 @@ def explain_decision(tree: bool = False) -> None:
             print("\n↓\n")
 
     print(f"Risk\n{risk}\n")
-
     print(f"Selected Strategy\n{strategy.upper()}\n")
 
-    # Show stages
     if strategy == "fast":
         stages = ["fast"]
     elif strategy == "full":
         stages = ValidationGraph().get_full_pipeline()
     else:
-        stages = ["fast", "coverage", "change_intelligence"]
+        stages = ["fast", "coverage", "change_intelligence", "mutation_readiness"]
 
     print("Stages")
     for s in stages:
@@ -838,12 +870,10 @@ def main() -> None:
     parser.add_argument("--tree", action="store_true", help="Show full validation graph")
     args = parser.parse_args()
 
-    # Handle --explain
     if args.explain:
         explain_decision(tree=args.tree)
         sys.exit(0)
 
-    # Determine mode
     strategy = "full"
     if args.fast:
         strategy = "fast"
@@ -854,7 +884,6 @@ def main() -> None:
     elif args.auto:
         strategy, _, _ = determine_strategy(get_changed_files())
 
-    # --plan mode
     if args.plan:
         graph = ValidationGraph()
         if strategy == "fast":
@@ -862,7 +891,7 @@ def main() -> None:
         elif strategy == "coverage":
             stages = ["fast", "coverage"]
         elif strategy == "selective":
-            stages = ["fast", "coverage", "change_intelligence"]
+            stages = ["fast", "coverage", "change_intelligence", "mutation_readiness"]
         else:
             stages = graph.get_full_pipeline()
 
@@ -887,7 +916,6 @@ def main() -> None:
             print(json.dumps(manifest.to_dict(), indent=2))
         sys.exit(0)
 
-    # Execute
     exit_code, metrics, manifest = run_auto_mode() if args.auto else run_pipeline(
         ["fast"] if strategy == "fast" else
         ["fast", "coverage"] if strategy == "coverage" else
@@ -895,11 +923,9 @@ def main() -> None:
         strategy
     )
 
-    # Save artifacts
     save_manifest(manifest)
     save_metrics(metrics)
 
-    # Update history
     history = load_history()
     history.append({
         "timestamp": manifest.timestamp,

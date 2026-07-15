@@ -521,6 +521,44 @@ def main() -> None:
         impact = analyze_change(file_path, file_graph, registry)
         impacts.append(impact)
 
+    # Load mutation artifacts for enhanced reporting
+    mutation_map: dict[str, Any] = {}
+    mutation_readiness: dict[str, Any] = {}
+    test_strength: dict[str, Any] = {}
+
+    mutation_map_path = GENERATED_DIR / "mutation-map.json"
+    if mutation_map_path.exists():
+        with open(mutation_map_path) as f:
+            mutation_map = json.load(f)
+
+    mutation_readiness_path = GENERATED_DIR / "mutation-readiness.json"
+    if mutation_readiness_path.exists():
+        with open(mutation_readiness_path) as f:
+            mutation_readiness = json.load(f)
+
+    test_strength_path = GENERATED_DIR / "test-strength.json"
+    if test_strength_path.exists():
+        with open(test_strength_path) as f:
+            test_strength = json.load(f)
+
+    # Collect affected mutation candidates per file
+    affected_mutation_candidates: dict[str, list[str]] = {}
+    for file_path in changed_files:
+        lookup_path = file_path.replace("backend/", "")
+        for func in mutation_map.get("functions", []):
+            if func.get("module") == lookup_path or lookup_path.endswith(func.get("module", "")):
+                if func.get("purity") == "PURE":
+                    candidate_name = f"{func.get('module', '')}:{func.get('function', '')}"
+                    affected_mutation_candidates.setdefault(file_path, []).append(candidate_name)
+
+    # Build mutation readiness per capability
+    mutation_readiness_by_cap: dict[str, str] = {}
+    for cap in test_strength.get("capabilities", []):
+        cap_id = cap.get("id")
+        cap_strength = cap.get("strength", "Weak")
+        if cap_id:
+            mutation_readiness_by_cap[cap_id] = cap_strength
+
     # Generate reports
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -530,7 +568,7 @@ def main() -> None:
         f.write(md_report)
     print("Generated: change-report.md")
 
-    # JSON report
+    # JSON report with mutation data
     json_report: dict[str, Any] = {
         "generated_at": datetime.now(UTC).isoformat(),
         "git_sha": os.popen("git rev-parse HEAD 2>/dev/null || echo 'unknown'").read().strip() or "unknown",
@@ -549,6 +587,9 @@ def main() -> None:
             "risk": compute_overall_risk(impacts)[0],
             "score": compute_overall_risk(impacts)[1],
         },
+        "mutation_readiness": mutation_readiness_by_cap,
+        "affected_mutation_candidates": affected_mutation_candidates,
+        "test_strength": {cap.get("id"): cap.get("strength", "Weak") for cap in test_strength.get("capabilities", [])},
     }
     with open(GENERATED_DIR / "change-report.json", "w") as f:
         json.dump(json_report, f, indent=2)
