@@ -20,6 +20,9 @@ echo "[Stage] Coverage Integrity Tests"
 cd "$BACKEND_DIR"
 pytest tests/meta/test_coverage_integrity.py -q --tb=short --maxfail=3
 
+echo "[Stage] Change Intelligence"
+./backend/venv/bin/python3 backend/tools/change_intelligence.py || true
+
 echo "[Stage] pytest architecture"
 pytest tests/architecture -q --tb=short --maxfail=3
 

@@ -1,0 +1,28 @@
+{
+  "generated_at": "2026-07-15T02:48:07.465223+00:00",
+  "git_sha": "49457e6c9cbb42220bfa9c5b13bfbacec67b04ef",
+  "changes": [
+    {
+      "file": "some_random_file.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    }
+  ],
+  "overall": {
+    "risk": "LOW",
+    "score": 1
+  }
+}
