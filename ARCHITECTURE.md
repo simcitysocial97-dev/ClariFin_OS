@@ -170,10 +170,10 @@ Some engines (`reconciliation_engine.py`, `behavior_engine.py`) still call `sqli
 
 - **Frontend:** `npm run type-check` (tsc --noEmit) + `npm run lint` (eslint) + `npm test` (vitest) + `npm run build` (next build)
 - **Backend:** `./venv/bin/python3 -m ruff check .` + `./venv/bin/python3 -m mypy .`
+- **Selective Verification:** `VERIFY_MODE=selective ./scripts/verify-local.sh` - runs only impacted tests
 - **Capability Smoke Tests:** `pytest tests/capabilities/` - validates 11 business capabilities import and golden dataset loading
 - **Monetary:** All amounts INTEGER paise, never float. `_parse_amount_paise()` converts safely.
 - **API Contract:** OpenAPI schema → `openapi-typescript` generates `types/api-generated.ts`
-- **Capability Validation:** See `memory-bank/capabilities/*.yaml` manifests and `memory-bank/capability-registry.yaml`
 
 
 ## 6. Technology Stack

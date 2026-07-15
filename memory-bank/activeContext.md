@@ -32,6 +32,21 @@
 - **Pipeline**: Updated `scripts/verify-local.sh`
   - Added CIF stage after coverage integrity
 
+## Selective Verification Framework (SVF) — Completed
+
+- **SVF Tool**: Created `backend/tools/selective_verify.py`
+  - Executes only tests impacted by changed files
+  - Auto-regenerates stale change-report.json
+  - Supports --plan, --run, --json, --full flags
+  - Generates selective-plan.md, selective-summary.json, verification-matrix.md, selective-history.json
+- **Meta Tests**: Created `backend/tests/meta/test_selective_verify.py` (8 tests passing)
+  - Validates plan generation and duplicate removal
+  - Tests invalid path handling and JSON parsing
+  - Verifies verification matrix output
+- **Pipeline**: Updated `scripts/verify-local.sh`
+  - Added VERIFY_MODE=selective environment variable support
+  - Full verification remains default behavior
+
 ## Verification Flow
 
 ```
@@ -41,16 +56,17 @@ verify-fast
     ↓
 Coverage Scanner
     ↓
-Change Intelligence → change-report.md → test-plan.md
+Change Intelligence → change-report.json
     ├── What changed?
     ├── What's affected?
     ├── How risky is it?
-    └── What should be tested?
+    └── What should be tested? (SVF uses this)
     ↓
-Architecture → Capabilities → Properties → Golden → Adaptive
+[VERIFY_MODE=full] Full pipeline: Architecture → Capabilities → Properties → Golden → Adaptive
+[VERIFY_MODE=selective] Selective: Only impacted test suites
 ```
 
 ## Status: COMPLETED ✓
 
-All 10 CIF meta tests passing. CIF generates reports for changed files using structured artifacts (capability-registry.yaml) as input. Risk scoring uses weighted sums (LOW=1, MEDIUM=2, HIGH=4, CRITICAL=8).
+All CIF/SVF meta tests passing. Risk scoring uses weighted sums (LOW=1, MEDIUM=2, HIGH=4, CRITICAL=8).
 Orphan modules detected: 10 routers, 6 services, 15 engines, 10 repositories, 1 property test, 11 invariants.
