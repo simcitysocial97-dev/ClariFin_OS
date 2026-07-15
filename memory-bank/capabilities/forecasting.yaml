@@ -19,7 +19,6 @@ engines:
   - src/engines/financial_intelligence/scenario.py
 repositories:
   - src/repositories/financial_goal_repository.py
-  - src/repositories/forecast_repository.py
 tables:
   - financial_goals
   - forecasts

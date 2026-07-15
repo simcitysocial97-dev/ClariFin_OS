@@ -1,22 +1,29 @@
 # Capability Index
 
-> Auto-generated from `capability-registry.yaml`. Do not edit manually.
+> See `memory-bank/generated/coverage.md` for the auto-generated coverage matrix.
+> This file is deprecated; capability-registry.yaml is now generated from manifests.
 
-## Summary
+## Source of Truth
 
-| Capability | Risk | Coverage | Golden | Properties | Architecture | Contracts | Status |
-|------------|------|----------|--------|-----------|--------------|-----------|--------|
-| household_cashflow | low | 3/3 | 4 | 2 | ✅ | 2 | PASS |
-| debt_management | medium | 3/3 | 3 | 2 | ✅ | 4 | PASS |
-| credit_cards | medium | 3/3 | 3 | 2 | ✅ | 4 | PASS |
-| financial_health | low | 3/3 | 3 | 2 | ✅ | 4 | PASS |
-| forecasting | low | 3/3 | 3 | 2 | ✅ | 4 | PASS |
-| transaction_intelligence | low | 3/3 | 3 | 1 | ✅ | 3 | PASS |
-| reconciliation | medium | 3/3 | 2 | 3 | ✅ | 3 | PASS |
-| financial_events | low | 3/3 | 2 | 1 | ✅ | 3 | PASS |
-| recommendations | low | 3/3 | 3 | 2 | ✅ | 2 | PASS |
-| account_management | low | 3/3 | 3 | 2 | ✅ | 4 | PASS |
-| pattern_analysis | low | 3/3 | 2 | 1 | ✅ | 3 | PASS |
+Capability manifests are in `memory-bank/capabilities/*.yaml`.
+The registry is auto-generated at `memory-bank/generated/capability-registry.yaml`.
+Coverage reports are at `memory-bank/generated/coverage.md` and `coverage.json`.
+
+## Quick Links
+
+| Capability | Link |
+|------------|------|
+| Household Cashflow | [coverage.md#household_cashflow](generated/coverage.md#household_cashflow) |
+| Debt Management | [coverage.md#debt_management](generated/coverage.md#debt_management) |
+| Credit Cards | [coverage.md#credit_cards](generated/coverage.md#credit_cards) |
+| Financial Health | [coverage.md#financial_health](generated/coverage.md#financial_health) |
+| Forecasting | [coverage.md#forecasting](generated/coverage.md#forecasting) |
+| Transaction Intelligence | [coverage.md#transaction_intelligence](generated/coverage.md#transaction_intelligence) |
+| Reconciliation | [coverage.md#reconciliation](generated/coverage.md#reconciliation) |
+| Financial Events | [coverage.md#financial_events](generated/coverage.md#financial_events) |
+| Recommendations | [coverage.md#recommendations](generated/coverage.md#recommendations) |
+| Account Management | [coverage.md#account_management](generated/coverage.md#account_management) |
+| Pattern Analysis | [coverage.md#pattern_analysis](generated/coverage.md#pattern_analysis) |
 
 ## Capability Details
 

@@ -13,8 +13,14 @@ echo "=== Running verify-local ==="
 echo "[Stage] verify-fast (ruff/mypy)"
 ./scripts/verify-fast.sh || echo "[WARN] verify-fast reported lint findings; continuing to validation stages"
 
-echo "[Stage] pytest architecture"
+echo "[Stage] Coverage Scanner"
+./backend/venv/bin/python3 backend/tools/check_coverage.py
+
+echo "[Stage] Coverage Integrity Tests"
 cd "$BACKEND_DIR"
+pytest tests/meta/test_coverage_integrity.py -q --tb=short --maxfail=3
+
+echo "[Stage] pytest architecture"
 pytest tests/architecture -q --tb=short --maxfail=3
 
 echo "[Stage] pytest capabilities (smoke)"
@@ -23,15 +29,15 @@ pytest tests/capabilities -q --tb=short --maxfail=3
 echo "[Stage] pytest properties"
 pytest tests/properties -q --tb=short --maxfail=3
 
+echo "[Stage] pytest golden"
+pytest tests/golden -q --tb=short --maxfail=3
+
 echo "[Stage] pytest (adaptive)"
 # Try testmon first; fall back to full suite if unavailable or .testmondata missing
 if [ -f ".testmondata" ] && python3 -c "import pytest_testmon" 2>/dev/null; then
-    pytest --testmon tests/ -q --tb=short --maxfail=3 --ignore=tests/architecture --ignore=tests/properties --ignore=tests/golden
+    pytest --testmon tests/ -q --tb=short --maxfail=3 --ignore=tests/architecture --ignore=tests/properties --ignore=tests/generated --ignore=tests/meta --ignore=tests/golden
 else
-    pytest tests/ -q --tb=short --maxfail=3 --ignore=tests/architecture --ignore=tests/properties --ignore=tests/golden
+    pytest tests/ -q --tb=short --maxfail=3 --ignore=tests/architecture --ignore=tests/properties --ignore=tests/generated --ignore=tests/meta --ignore=tests/golden
 fi
-
-echo "[Stage] pytest golden"
-pytest tests/golden -q --tb=short --maxfail=3
 
 echo "Completed in $(( $(date +%s)-START )) seconds"

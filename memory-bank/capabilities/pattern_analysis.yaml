@@ -7,8 +7,7 @@ criticality: medium
 risk: low
 routers:
   - src/routers/patterns.py
-services:
-  - src/services/pattern_service.py
+services: []
 engines:
   - src/engines/insight_generator.py
 repositories:

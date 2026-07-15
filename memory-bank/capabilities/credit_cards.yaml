@@ -31,7 +31,6 @@ golden_datasets:
   - tests/golden/datasets/cash_advance.json
   - tests/golden/datasets/cc_statement_scenario.json
 property_tests:
-  - tests/properties/test_credit_card_engine.py
   - tests/properties/credit_cards/test_engine_properties.py
 invariants:
   - tests/invariants/test_credit.py

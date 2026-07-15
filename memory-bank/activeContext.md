@@ -1,24 +1,26 @@
 # Active Context
 
-## Capability Validation Framework (CVF) — Completed
+## Coverage & Traceability Framework (CTF) — Completed
 
-- **Memory Bank**: Created `capabilities/` directory with 11 YAML manifests
-  - household_cashflow, debt_management, credit_cards, financial_health, forecasting
-  - transaction_intelligence, reconciliation, financial_events, recommendations
-  - account_management, pattern_analysis
-- **Registry**: Created canonical `capability-registry.yaml`
-- **Index**: Generated `capability-index.md` with coverage table
-- **Capability Smoke Tests**: Created 11 capability directories under `tests/capabilities/`
-  - Each directory contains `capability.yaml` and `test_capability.py`
-  - 3 tests per capability: import/bootstrap, minimal execution, invariant validation
-  - All tests reuse existing builders, golden datasets, and invariant functions
-- **Test Pipeline**: Updated `scripts/verify-local.sh` to include capability smoke tests
-  - New stage: `pytest tests/capabilities` runs after architecture, before properties
-- **Coverage**: 11 capabilities, each with 3 smoke tests, golden datasets, invariants
-- **Total Artifacts**: 11 YAML manifests + 11 test files + registry + index
+- **Coverage Scanner**: Created `backend/tools/check_coverage.py`
+  - Scans capability manifests and validates all referenced paths
+  - Detects orphan modules and tests (53 found)
+  - Generates all coverage artifacts
+- **Generated Artifacts** in `memory-bank/generated/`:
+  - `coverage.md` - Human-readable maturity matrix
+  - `coverage.json` - Machine-readable JSON
+  - `capability-registry.yaml` - Generated from manifests
+  - `traceability.md` - Per-capability dependency chains
+  - `change-impact.md` - What breaks if you modify a file
+  - `README.md` - Documentation
+- **Meta Tests**: Created `backend/tests/meta/test_coverage_integrity.py`
+  - Validates generated artifacts exist and are valid
+  - Verifies all referenced paths in manifests exist
+- **Pipeline**: Updated `scripts/verify-local.sh`
+  - verify-fast → coverage scanner → coverage integrity → architecture → capabilities → properties → golden → adaptive
 
 ## Status: COMPLETED ✓
 
-All 23 capability smoke tests passing. Fixed mypy and ruff issues in CVF files.
-Pre-existing test failures in test_services.py (missing credit_cards table - schema issue).
-CVF is ready for use - new capabilities can follow the established pattern.
+All 9 meta tests passing. Capability manifests are the source of truth.
+Orphan modules detected: 10 routers, 6 services, 15 engines, 10 repositories, 1 property test, 11 invariants.
+These represent either legacy code or work-in-progress.

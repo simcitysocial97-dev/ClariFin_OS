@@ -35,7 +35,7 @@ golden_datasets:
   - tests/golden/datasets/high_debt_household.json
   - tests/golden/datasets/irregular_income.json
 property_tests:
-  - tests/properties/test_behavior_engine.py
+  - tests/properties/test_behaviour.py
   - tests/properties/behaviour/test_engine_properties.py
 invariants:
   - tests/invariants/test_behaviour.py
