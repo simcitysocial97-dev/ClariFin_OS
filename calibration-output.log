@@ -1,0 +1,76 @@
+[1/37] Running ARITH-001: Interest calculation uses wrong operator
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[2/37] Running ARITH-002: EMI calculation off-by-one in denominator
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[3/37] Running ARITH-003: Balance update subtracts wrong amount
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[4/37] Running ARITH-004: Rounding error in paise conversion
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[5/37] Running ARITH-005: Cashflow sum uses addition instead of net
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[6/37] Running INT-001: Annual rate not converted to daily
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[7/37] Running INT-002: Simple interest instead of compound
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[8/37] Running INT-003: Interest applied to wrong principal balance
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[9/37] Running EMI-001: EMI rounded down instead of to nearest
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[10/37] Running EMI-002: Final EMI adjusted incorrectly
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[11/37] Running OFF-001: Date range excludes last day
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[12/37] Running OFF-002: Array index off-by-one in transaction list
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[13/37] Running OFF-003: Month iteration off-by-one
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[14/37] Running DATE-001: Statement period end exclusive instead of inclusive
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[15/37] Running DATE-002: Due date validation uses wrong timezone
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[16/37] Running DATE-003: Month-end date rolls over incorrectly
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[17/37] Running REC-001: Recommendation priority reversed
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[18/37] Running REC-002: Duplicate recommendations not filtered
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[19/37] Running CASH-001: Salary classified as reimbursement
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[20/37] Running CASH-002: EMI payment classified as transfer
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[21/37] Running CASH-003: Cashflow direction inverted
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[22/37] Running RECON-001: Reconciliation tolerance too tight
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[23/37] Running RECON-002: Reconciliation tolerance too loose
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[24/37] Running FCST-001: Forecast ignores seasonality
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[25/37] Running FCST-002: Forecast horizon truncated
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[26/37] Running CON-001: API returns wrong type for balance
+  ✓ applied=True restored=True failing=[] fp=[] missed=['contract']
+[27/37] Running CON-002: API endpoint missing required field
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[28/37] Running CON-003: Request validation accepts invalid enum value
+  ✗ applied=False restored=False failing=[] fp=[] missed=[]
+[29/37] Running PROP-001: Balance invariant violated
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[30/37] Running PROP-002: Debt-to-income ratio not enforced
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[31/37] Running PROP-003: Transaction amount sign invariant broken
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[32/37] Running PROP-004: Reconciliation sum constraint violated
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[33/37] Running SEM-001: Recommendation category threshold changed
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[34/37] Running CC-001: Credit utilization calculation wrong denominator
+  ✗ applied=False restored=False failing=[] fp=[] missed=[]
+[35/37] Running CC-002: Minimum amount due percentage wrong
+  ✗ applied=False restored=False failing=[] fp=[] missed=[]
+[36/37] Running INV-001: Liquidity ratio ignores pending transactions
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+[37/37] Running DET-001: Duplicate transaction detector uses strict equality
+  ✗ applied=False restored=True failing=[] fp=[] missed=[]
+
+Calibration complete. Reports written to /home/vasantha/AI-Projects/ClariFin_OS/memory-bank/generated
