@@ -70,3 +70,55 @@ Change Intelligence → change-report.json
 
 All CIF/SVF meta tests passing. Risk scoring uses weighted sums (LOW=1, MEDIUM=2, HIGH=4, CRITICAL=8).
 Orphan modules detected: 10 routers, 6 services, 15 engines, 10 repositories, 1 property test, 11 invariants.
+
+## Validation Orchestrator Framework (VOF) — Completed
+
+- **VOF Tool**: Created `backend/tools/validation_orchestrator.py`
+  - Single orchestration layer for all validation workflows
+  - Plugin-based ValidationStage architecture with 8 stages
+  - Risk rules driven by `risk-rules.yaml` (configurable policies)
+  - Caching support via `.memory-cache/validation-cache.json`
+  - `--plan`, `--auto`, `--fast`, `--selective`, `--full`, `--coverage`, `--json`, `--explain` modes
+
+- **Configuration**: Created `memory-bank/generated/risk-rules.yaml`
+  - Pattern-based strategy selection (yaml-driven, not hardcoded)
+  - Risk levels: LOW/MEDIUM/HIGH/CRITICAL mapped to strategies
+
+- **Artifacts Generated**:
+  - `validation-manifest.json` - Rich manifest with strategy, stages, capabilities
+  - `validation-metrics.json` - Per-stage timing and status
+  - `validation-history.json` - Last 200 validation runs
+  - `validation-workflows.md` - Developer UX documentation
+
+- **Shell Wrapper**: Updated `scripts/verify-local.sh`
+  - Now delegates to orchestrator: `python backend/tools/validation_orchestrator.py --full`
+
+- **Meta Tests**: Created `backend/tests/meta/test_validation_orchestrator.py`
+    - 14 tests passing for decision logic, history, manifest, stages
+
+## Contract Validation Framework (CoVF) — Completed
+
+- **CoVF Discovery Tool**: Created `backend/tools/coVF_discover.py`
+  - Discovers endpoints from live FastAPI OpenAPI schema
+  - Maps endpoints to capabilities via router manifests
+  - Generates api-map.json (126 endpoints discovered)
+  - Generates contract-registry.json (per-router schemas)
+  - Generates contract-coverage.json (coverage metrics)
+- **Contract Tests**: Created `backend/tests/contracts/`
+  - Router-based organization: accounts, cashflow, credit_cards, loans, forecasting
+  - Uses real FastAPI TestClient without mocks
+  - Validates request/response contracts (46 tests total)
+- **ContractStage**: Added to ValidationOrchestrator
+  - Positioned after golden stage, before meta
+  - Estimated runtime: 12 seconds
+  - Dependencies: fast, coverage
+- **Generated Artifacts**:
+  - `api-map.json` - All endpoints with metadata
+  - `contract-registry.json` - Per-router endpoint schemas
+  - `contract-coverage.json` - Per-router coverage metrics
+  - `contract-maturity.md` - Engineering KPI table
+  - `contracts.md` - Human-readable documentation
+- **Meta Tests**: Created `backend/tests/meta/test_contract_registry.py`
+  - 10 tests passing for registry validation
+  - Verifies ContractStage registration
+  - Validates snapshot normalization

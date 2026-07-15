@@ -1,0 +1,4946 @@
+{
+  "endpoints": [
+    {
+      "router": "health",
+      "endpoint": "/health",
+      "method": "GET",
+      "tags": [],
+      "summary": "Health Check",
+      "operation_id": "health_check_health_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Health Check Health Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "ready",
+      "endpoint": "/ready",
+      "method": "GET",
+      "tags": [],
+      "summary": "Readiness Check",
+      "operation_id": "readiness_check_ready_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Readiness Check Ready Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Accounts",
+      "operation_id": "list_accounts_api_v1_accounts_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response List Accounts Api V1 Accounts Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Account",
+      "operation_id": "create_account_api_v1_accounts_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/AccountCreateRequest"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Create Account Api V1 Accounts Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account",
+      "operation_id": "get_account_api_v1_accounts__account_id__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Account Api V1 Accounts  Account Id  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Account",
+      "operation_id": "update_account_api_v1_accounts__account_id__put",
+      "request_schema": {
+        "$ref": "#/components/schemas/AccountUpdateRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Update Account Api V1 Accounts  Account Id  Put"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Deactivate Account",
+      "operation_id": "deactivate_account_api_v1_accounts__account_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Deactivate Account Api V1 Accounts  Account Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Insert Balance Snapshot",
+      "operation_id": "insert_balance_snapshot_api_v1_accounts__account_id__balance_history_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/BalanceSnapshotRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Insert Balance Snapshot Api V1 Accounts  Account Id  Balance History Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/balance-history",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Balance History",
+      "operation_id": "get_balance_history_api_v1_accounts__account_id__balance_history_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response Get Balance History Api V1 Accounts  Account Id  Balance History Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 365,
+            "minimum": 1,
+            "default": 90,
+            "title": "Limit"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/balance-history/latest",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Latest Balance",
+      "operation_id": "get_latest_balance_api_v1_accounts__account_id__balance_history_latest_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Latest Balance Api V1 Accounts  Account Id  Balance History Latest Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/analytics",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Analytics",
+      "operation_id": "get_account_analytics_api_v1_accounts__account_id__analytics_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Account Analytics Api V1 Accounts  Account Id  Analytics Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/metrics",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Metrics",
+      "operation_id": "get_account_metrics_api_v1_accounts__account_id__metrics_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Account Metrics Api V1 Accounts  Account Id  Metrics Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/status",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Status",
+      "operation_id": "get_account_status_api_v1_accounts__account_id__status_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Response Get Account Status Api V1 Accounts  Account Id  Status Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/dormancy",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Account Dormancy",
+      "operation_id": "get_account_dormancy_api_v1_accounts__account_id__dormancy_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Account Dormancy Api V1 Accounts  Account Id  Dormancy Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/institutions",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "List Institutions",
+      "operation_id": "list_institutions_api_v1_institutions_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response List Institutions Api V1 Institutions Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/institutions",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Create Institution",
+      "operation_id": "create_institution_api_v1_institutions_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/InstitutionCreateRequest"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Create Institution Api V1 Institutions Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/institutions/{institution_id}",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Institution",
+      "operation_id": "get_institution_api_v1_institutions__institution_id__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Institution Api V1 Institutions  Institution Id  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "institution_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Institution Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/institutions/{institution_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Update Institution",
+      "operation_id": "update_institution_api_v1_institutions__institution_id__put",
+      "request_schema": {
+        "$ref": "#/components/schemas/InstitutionUpdateRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Update Institution Api V1 Institutions  Institution Id  Put"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "institution_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Institution Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/links",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Link Accounts",
+      "operation_id": "link_accounts_api_v1_accounts__account_id__links_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/AccountLinkRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Link Accounts Api V1 Accounts  Account Id  Links Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/links",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Get Linked Accounts",
+      "operation_id": "get_linked_accounts_api_v1_accounts__account_id__links_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response Get Linked Accounts Api V1 Accounts  Account Id  Links Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Unlink Accounts",
+      "operation_id": "unlink_accounts_api_v1_accounts__account_id__links__linked_account_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Unlink Accounts Api V1 Accounts  Account Id  Links  Linked Account Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        },
+        {
+          "name": "linked_account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Linked Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "audit",
+      "endpoint": "/api/audit/report",
+      "method": "GET",
+      "tags": [
+        "audit"
+      ],
+      "summary": "Api Audit Report",
+      "operation_id": "api_audit_report_api_audit_report_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Audit Report Api Audit Report Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "banks",
+      "endpoint": "/api/banks",
+      "method": "GET",
+      "tags": [
+        "banks"
+      ],
+      "summary": "Get Banks",
+      "operation_id": "get_banks_api_banks_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array",
+        "title": "Response Get Banks Api Banks Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "behavior",
+      "endpoint": "/api/behavior/summary",
+      "method": "GET",
+      "tags": [
+        "behavior"
+      ],
+      "summary": "Api Behavior Summary",
+      "operation_id": "api_behavior_summary_api_behavior_summary_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Behavior Summary Api Behavior Summary Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behavior",
+      "endpoint": "/api/behavior/score",
+      "method": "GET",
+      "tags": [
+        "behavior"
+      ],
+      "summary": "Api Behavior Score",
+      "operation_id": "api_behavior_score_api_behavior_score_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Behavior Score Api Behavior Score Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behavior",
+      "endpoint": "/api/behavior/insights",
+      "method": "GET",
+      "tags": [
+        "behavior"
+      ],
+      "summary": "Api Behavior Insights",
+      "operation_id": "api_behavior_insights_api_behavior_insights_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Behavior Insights Api Behavior Insights Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/profile",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Financial Profile",
+      "operation_id": "get_financial_profile_api_v1_behaviour_profile_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Financial Profile Api V1 Behaviour Profile Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/wellness-score",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Wellness Score",
+      "operation_id": "get_wellness_score_api_v1_behaviour_wellness_score_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Wellness Score Api V1 Behaviour Wellness Score Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/debt-health",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Debt Health",
+      "operation_id": "get_debt_health_api_v1_behaviour_debt_health_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Debt Health Api V1 Behaviour Debt Health Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/cashflow-health",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Cashflow Health",
+      "operation_id": "get_cashflow_health_api_v1_behaviour_cashflow_health_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Cashflow Health Api V1 Behaviour Cashflow Health Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/patterns",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Patterns",
+      "operation_id": "get_patterns_api_v1_behaviour_patterns_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response Get Patterns Api V1 Behaviour Patterns Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "pattern_type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION)",
+            "title": "Pattern Type"
+          },
+          "description": "Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION)"
+        },
+        {
+          "name": "days",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 365,
+            "minimum": 1,
+            "description": "Number of days to look back for patterns",
+            "default": 30,
+            "title": "Days"
+          },
+          "description": "Number of days to look back for patterns"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/recommendations",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Recommendations",
+      "operation_id": "get_recommendations_api_v1_behaviour_recommendations_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Recommendations Api V1 Behaviour Recommendations Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 50,
+            "minimum": 1,
+            "description": "Maximum number of recommendations to return",
+            "default": 10,
+            "title": "Limit"
+          },
+          "description": "Maximum number of recommendations to return"
+        },
+        {
+          "name": "severity",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)",
+            "title": "Severity"
+          },
+          "description": "Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/monthly-report",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Monthly Report",
+      "operation_id": "get_monthly_report_api_v1_behaviour_monthly_report_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Monthly Report Api V1 Behaviour Monthly Report Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "period",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Period in YYYY-MM format (default: current month)",
+            "title": "Period"
+          },
+          "description": "Period in YYYY-MM format (default: current month)"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "default",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/stress-index",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Stress Index",
+      "operation_id": "get_stress_index_api_v1_behaviour_stress_index_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Stress Index Api V1 Behaviour Stress Index Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "month",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Month in YYYY-MM format",
+            "title": "Month"
+          },
+          "description": "Month in YYYY-MM format"
+        },
+        {
+          "name": "scope",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Scope: household or individual",
+            "default": "household",
+            "title": "Scope"
+          },
+          "description": "Scope: household or individual"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/revolver-status",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Revolver Status",
+      "operation_id": "get_revolver_status_api_v1_behaviour_revolver_status_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Revolver Status Api V1 Behaviour Revolver Status Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_account_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Credit card account ID",
+            "title": "Card Account Id"
+          },
+          "description": "Credit card account ID"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "behaviour",
+      "endpoint": "/api/v1/behaviour/household-divergence",
+      "method": "GET",
+      "tags": [
+        "behaviour"
+      ],
+      "summary": "Get Household Divergence",
+      "operation_id": "get_household_divergence_api_v1_behaviour_household_divergence_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Household Divergence Api V1 Behaviour Household Divergence Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "month",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Month in YYYY-MM format",
+            "title": "Month"
+          },
+          "description": "Month in YYYY-MM format"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "financial_health"
+    },
+    {
+      "router": "cards",
+      "endpoint": "/api/statements",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Get Statements",
+      "operation_id": "get_statements_api_statements_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response Get Statements Api Statements Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "cards",
+      "endpoint": "/api/cards",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Get Cards",
+      "operation_id": "get_cards_api_cards_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Get Cards Api Cards Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "cards",
+      "endpoint": "/api/statements/{statement_id}/validate",
+      "method": "GET",
+      "tags": [
+        "cards",
+        "statements"
+      ],
+      "summary": "Api Validate Statement",
+      "operation_id": "api_validate_statement_api_statements__statement_id__validate_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Validate Statement Api Statements  Statement Id  Validate Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "statement_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Statement Id"
+          }
+        },
+        {
+          "name": "claimed_balance_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Claimed closing balance in paise",
+            "title": "Claimed Balance Paise"
+          },
+          "description": "Claimed closing balance in paise"
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "List Cards",
+      "operation_id": "list_cards_api_v1_credit_cards_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response List Cards Api V1 Credit Cards Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Create Card",
+      "operation_id": "create_card_api_v1_credit_cards_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/CreditCardCreateRequest"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Create Card Api V1 Credit Cards Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Card",
+      "operation_id": "get_card_api_v1_credit_cards__card_id__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Card Api V1 Credit Cards  Card Id  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}",
+      "method": "PUT",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Update Card",
+      "operation_id": "update_card_api_v1_credit_cards__card_id__put",
+      "request_schema": {
+        "$ref": "#/components/schemas/CreditCardUpdateRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Update Card Api V1 Credit Cards  Card Id  Put"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}",
+      "method": "DELETE",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Deactivate Card",
+      "operation_id": "deactivate_card_api_v1_credit_cards__card_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Deactivate Card Api V1 Credit Cards  Card Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "List Statements",
+      "operation_id": "list_statements_api_v1_credit_cards__card_id__statements_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response List Statements Api V1 Credit Cards  Card Id  Statements Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 12,
+            "title": "Limit"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/statements",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Generate Statement",
+      "operation_id": "generate_statement_api_v1_credit_cards__card_id__statements_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/StatementGenerateRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Generate Statement Api V1 Credit Cards  Card Id  Statements Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/outstanding",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Outstanding",
+      "operation_id": "get_outstanding_api_v1_credit_cards__card_id__outstanding_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Response Get Outstanding Api V1 Credit Cards  Card Id  Outstanding Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/utilization",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Utilization",
+      "operation_id": "get_utilization_api_v1_credit_cards__card_id__utilization_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Response Get Utilization Api V1 Credit Cards  Card Id  Utilization Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/metrics",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Metrics",
+      "operation_id": "get_metrics_api_v1_credit_cards__card_id__metrics_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Response Get Metrics Api V1 Credit Cards  Card Id  Metrics Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/next-statement-date",
+      "method": "GET",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Get Next Statement Date",
+      "operation_id": "get_next_statement_date_api_v1_credit_cards__card_id__next_statement_date_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Response Get Next Statement Date Api V1 Credit Cards  Card Id  Next Statement Date Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/payments",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Record Payment",
+      "operation_id": "record_payment_api_v1_credit_cards__card_id__payments_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/PaymentRecordRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Record Payment Api V1 Credit Cards  Card Id  Payments Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/emi-conversion",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Convert To Emi",
+      "operation_id": "convert_to_emi_api_v1_credit_cards__card_id__emi_conversion_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/EmiConversionRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Response Convert To Emi Api V1 Credit Cards  Card Id  Emi Conversion Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "credit_cards",
+      "endpoint": "/api/v1/credit-cards/{card_id}/foreclosure",
+      "method": "POST",
+      "tags": [
+        "credit-cards"
+      ],
+      "summary": "Quote Foreclosure",
+      "operation_id": "quote_foreclosure_api_v1_credit_cards__card_id__foreclosure_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/ForeclosureRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Response Quote Foreclosure Api V1 Credit Cards  Card Id  Foreclosure Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "card_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Card Id"
+          }
+        }
+      ],
+      "capability": "credit_cards"
+    },
+    {
+      "router": "cashflow",
+      "endpoint": "/api/cashflow/monthly",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Monthly",
+      "operation_id": "get_cashflow_monthly_api_cashflow_monthly_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Cashflow Monthly Api Cashflow Monthly Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "months",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 12,
+            "minimum": 1,
+            "default": 6,
+            "title": "Months"
+          }
+        },
+        {
+          "name": "member",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member"
+          }
+        }
+      ],
+      "capability": "household_cashflow"
+    },
+    {
+      "router": "cashflow",
+      "endpoint": "/api/v1/cashflow/monthly",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Monthly Analysis",
+      "operation_id": "get_cashflow_monthly_analysis_api_v1_cashflow_monthly_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Cashflow Monthly Analysis Api V1 Cashflow Monthly Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "month",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Month in YYYY-MM format",
+            "title": "Month"
+          },
+          "description": "Month in YYYY-MM format"
+        },
+        {
+          "name": "scope",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "household or individual",
+            "default": "household",
+            "title": "Scope"
+          },
+          "description": "household or individual"
+        },
+        {
+          "name": "owner_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Owner ID for individual scope",
+            "default": "self",
+            "title": "Owner Id"
+          },
+          "description": "Owner ID for individual scope"
+        },
+        {
+          "name": "basis",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "cash or accrual",
+            "default": "cash",
+            "title": "Basis"
+          },
+          "description": "cash or accrual"
+        }
+      ],
+      "capability": "household_cashflow"
+    },
+    {
+      "router": "dashboard",
+      "endpoint": "/api/dashboard/summary",
+      "method": "GET",
+      "tags": [
+        "dashboard"
+      ],
+      "summary": "Api Dashboard Summary",
+      "operation_id": "api_dashboard_summary_api_dashboard_summary_get",
+      "request_schema": {},
+      "response_schema": {
+        "$ref": "#/components/schemas/DashboardSummary"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "export",
+      "endpoint": "/api/export/csv",
+      "method": "GET",
+      "tags": [
+        "export"
+      ],
+      "summary": "Export Csv",
+      "operation_id": "export_csv_api_export_csv_get",
+      "request_schema": {},
+      "response_schema": {
+        "$ref": "#/components/schemas/HTTPValidationError"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search"
+          }
+        },
+        {
+          "name": "bank",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Bank"
+          }
+        },
+        {
+          "name": "category",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Category"
+          }
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Type"
+          }
+        },
+        {
+          "name": "member",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Member"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/cashflow-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Cashflow Forecast",
+      "operation_id": "get_cashflow_forecast_api_v1_financial_intelligence_cashflow_forecast_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Cashflow Forecast Api V1 Financial Intelligence Cashflow Forecast Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "forecast_months",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 12,
+            "minimum": 1,
+            "description": "Number of months to forecast",
+            "default": 3,
+            "title": "Forecast Months"
+          },
+          "description": "Number of months to forecast"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "owner_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Owner filter (self for individual, or different owner)",
+            "default": "self",
+            "title": "Owner Id"
+          },
+          "description": "Owner filter (self for individual, or different owner)"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/liquidity-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Liquidity Forecast",
+      "operation_id": "get_liquidity_forecast_api_v1_financial_intelligence_liquidity_forecast_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Liquidity Forecast Api V1 Financial Intelligence Liquidity Forecast Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "forecast_months",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 12,
+            "minimum": 1,
+            "description": "Number of months to forecast",
+            "default": 3,
+            "title": "Forecast Months"
+          },
+          "description": "Number of months to forecast"
+        },
+        {
+          "name": "emergency_threshold_paise",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)",
+            "default": 3000000,
+            "title": "Emergency Threshold Paise"
+          },
+          "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "owner_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Owner filter (self for individual)",
+            "default": "self",
+            "title": "Owner Id"
+          },
+          "description": "Owner filter (self for individual)"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/credit-forecast",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Credit Forecast",
+      "operation_id": "get_credit_forecast_api_v1_financial_intelligence_credit_forecast_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Credit Forecast Api V1 Financial Intelligence Credit Forecast Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "month",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Month in YYYY-MM format (default: current month)",
+            "title": "Month"
+          },
+          "description": "Month in YYYY-MM format (default: current month)"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/outlook",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Outlook",
+      "operation_id": "get_financial_outlook_api_v1_financial_intelligence_outlook_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Financial Outlook Api V1 Financial Intelligence Outlook Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "forecast_months",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 12,
+            "minimum": 1,
+            "description": "Number of months to forecast",
+            "default": 3,
+            "title": "Forecast Months"
+          },
+          "description": "Number of months to forecast"
+        },
+        {
+          "name": "emergency_threshold_paise",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)",
+            "default": 3000000,
+            "title": "Emergency Threshold Paise"
+          },
+          "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/report",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Report",
+      "operation_id": "get_financial_intelligence_report_api_v1_financial_intelligence_report_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Financial Intelligence Report Api V1 Financial Intelligence Report Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/priorities",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Priorities",
+      "operation_id": "get_financial_intelligence_priorities_api_v1_financial_intelligence_priorities_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Financial Intelligence Priorities Api V1 Financial Intelligence Priorities Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "financial_intelligence",
+      "endpoint": "/api/v1/financial-intelligence/confidence",
+      "method": "GET",
+      "tags": [
+        "financial-intelligence"
+      ],
+      "summary": "Get Financial Intelligence Confidence",
+      "operation_id": "get_financial_intelligence_confidence_api_v1_financial_intelligence_confidence_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Financial Intelligence Confidence Api V1 Financial Intelligence Confidence Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "goals",
+      "endpoint": "/api/v1/goals/",
+      "method": "POST",
+      "tags": [
+        "goals"
+      ],
+      "summary": "Create Goal",
+      "operation_id": "create_goal_api_v1_goals__post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Create Goal Api V1 Goals  Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "goal_type",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Goal type (emergency_fund, debt_payoff, purchase, investment, education, retirement)",
+            "title": "Goal Type"
+          },
+          "description": "Goal type (emergency_fund, debt_payoff, purchase, investment, education, retirement)"
+        },
+        {
+          "name": "name",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Goal name",
+            "title": "Name"
+          },
+          "description": "Goal name"
+        },
+        {
+          "name": "target_amount_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Target amount in paise",
+            "title": "Target Amount Paise"
+          },
+          "description": "Target amount in paise"
+        },
+        {
+          "name": "current_amount_paise",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Current saved amount in paise",
+            "default": 0,
+            "title": "Current Amount Paise"
+          },
+          "description": "Current saved amount in paise"
+        },
+        {
+          "name": "target_date",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Target date (YYYY-MM-DD)",
+            "title": "Target Date"
+          },
+          "description": "Target date (YYYY-MM-DD)"
+        },
+        {
+          "name": "priority",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Priority: critical, high, medium, low",
+            "default": "medium",
+            "title": "Priority"
+          },
+          "description": "Priority: critical, high, medium, low"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Status: active, completed, paused",
+            "default": "active",
+            "title": "Status"
+          },
+          "description": "Status: active, completed, paused"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "goals",
+      "endpoint": "/api/v1/goals/",
+      "method": "GET",
+      "tags": [
+        "goals"
+      ],
+      "summary": "List Goals",
+      "operation_id": "list_goals_api_v1_goals__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response List Goals Api V1 Goals  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Filter by status: active, completed, paused",
+            "title": "Status"
+          },
+          "description": "Filter by status: active, completed, paused"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "goals",
+      "endpoint": "/api/v1/goals/{goal_id}",
+      "method": "GET",
+      "tags": [
+        "goals"
+      ],
+      "summary": "Get Goal",
+      "operation_id": "get_goal_api_v1_goals__goal_id__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Goal Api V1 Goals  Goal Id  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "goal_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Goal Id"
+          }
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "goals",
+      "endpoint": "/api/v1/goals/{goal_id}",
+      "method": "DELETE",
+      "tags": [
+        "goals"
+      ],
+      "summary": "Delete Goal",
+      "operation_id": "delete_goal_api_v1_goals__goal_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Delete Goal Api V1 Goals  Goal Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "goal_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Goal Id"
+          }
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "goals",
+      "endpoint": "/api/v1/goals/{goal_id}/projection",
+      "method": "GET",
+      "tags": [
+        "goals"
+      ],
+      "summary": "Get Goal Projection",
+      "operation_id": "get_goal_projection_api_v1_goals__goal_id__projection_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Goal Projection Api V1 Goals  Goal Id  Projection Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "goal_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Goal Id"
+          }
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "goals",
+      "endpoint": "/api/v1/goals/{goal_id}/health",
+      "method": "GET",
+      "tags": [
+        "goals"
+      ],
+      "summary": "Get Goal Health",
+      "operation_id": "get_goal_health_api_v1_goals__goal_id__health_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Goal Health Api V1 Goals  Goal Id  Health Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "goal_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Goal Id"
+          }
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "import",
+      "endpoint": "/api/upload",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Upload Statement",
+      "operation_id": "upload_statement_api_upload_post",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Upload Statement Api Upload Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "import",
+      "endpoint": "/api/import/detect",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Detect",
+      "operation_id": "import_detect_api_import_detect_post",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Import Detect Api Import Detect Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "import",
+      "endpoint": "/api/import/execute",
+      "method": "POST",
+      "tags": [
+        "import"
+      ],
+      "summary": "Import Execute",
+      "operation_id": "import_execute_api_import_execute_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/ImportExecute"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Import Execute Api Import Execute Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "investments",
+      "endpoint": "/api/investments",
+      "method": "GET",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Get Investments",
+      "operation_id": "get_investments_api_investments_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Get Investments Api Investments Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "investments",
+      "endpoint": "/api/investments",
+      "method": "POST",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Create Investment",
+      "operation_id": "create_investment_api_investments_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/InvestmentCreate"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Create Investment Api Investments Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "investments",
+      "endpoint": "/api/investments/{investment_id}",
+      "method": "PUT",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Update Investment",
+      "operation_id": "update_investment_api_investments__investment_id__put",
+      "request_schema": {
+        "$ref": "#/components/schemas/InvestmentUpdate"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Update Investment Api Investments  Investment Id  Put"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "investment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Investment Id"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "investments",
+      "endpoint": "/api/investments/{investment_id}",
+      "method": "DELETE",
+      "tags": [
+        "investments"
+      ],
+      "summary": "Delete Investment",
+      "operation_id": "delete_investment_api_investments__investment_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Delete Investment Api Investments  Investment Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "investment_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Investment Id"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loans",
+      "operation_id": "get_loans_api_loans_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response Get Loans Api Loans Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Create Loan",
+      "operation_id": "create_loan_api_loans_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/LoanCreateRequest"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Create Loan Api Loans Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan",
+      "operation_id": "get_loan_api_loans__loan_id__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Loan Api Loans  Loan Id  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}",
+      "method": "PUT",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Update Loan",
+      "operation_id": "update_loan_api_loans__loan_id__put",
+      "request_schema": {
+        "$ref": "#/components/schemas/LoanUpdateRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Update Loan Api Loans  Loan Id  Put"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}",
+      "method": "DELETE",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Delete Loan",
+      "operation_id": "delete_loan_api_loans__loan_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Delete Loan Api Loans  Loan Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}/schedule",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Schedule",
+      "operation_id": "get_loan_schedule_api_loans__loan_id__schedule_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Loan Schedule Api Loans  Loan Id  Schedule Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}/prepayment-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Prepayment",
+      "operation_id": "simulate_prepayment_api_loans__loan_id__prepayment_simulation_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/PrepaymentSimulationRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Prepayment Api Loans  Loan Id  Prepayment Simulation Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}/foreclosure-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Foreclosure",
+      "operation_id": "simulate_foreclosure_api_loans__loan_id__foreclosure_simulation_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Foreclosure Api Loans  Loan Id  Foreclosure Simulation Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}/rate-change-simulation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Simulate Rate Change",
+      "operation_id": "simulate_rate_change_api_loans__loan_id__rate_change_simulation_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/RateChangeSimulationRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Rate Change Api Loans  Loan Id  Rate Change Simulation Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}/payments",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Record Loan Payment",
+      "operation_id": "record_loan_payment_api_loans__loan_id__payments_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/PaymentRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Record Loan Payment Api Loans  Loan Id  Payments Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/analysis/priority",
+      "method": "GET",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Get Loan Priority",
+      "operation_id": "get_loan_priority_api_loans_analysis_priority_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response Get Loan Priority Api Loans Analysis Priority Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Prepayment Vs Foreclosure",
+      "operation_id": "analyze_prepayment_vs_foreclosure_api_loans__loan_id__analysis_prepayment_vs_foreclosure_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/PaymentRequest"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Analyze Prepayment Vs Foreclosure Api Loans  Loan Id  Analysis Prepayment Vs Foreclosure Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Loan Id"
+          }
+        }
+      ],
+      "capability": "debt_management"
+    },
+    {
+      "router": "loans",
+      "endpoint": "/api/loans/analysis/surplus-allocation",
+      "method": "POST",
+      "tags": [
+        "loans"
+      ],
+      "summary": "Analyze Surplus Allocation",
+      "operation_id": "analyze_surplus_allocation_api_loans_analysis_surplus_allocation_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/PaymentRequest"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Analyze Surplus Allocation Api Loans Analysis Surplus Allocation Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "debt_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/accounts/manage",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Managed Accounts",
+      "operation_id": "api_get_managed_accounts_api_accounts_manage_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Get Managed Accounts Api Accounts Manage Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/accounts/manage",
+      "method": "POST",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Create Managed Account",
+      "operation_id": "api_create_managed_account_api_accounts_manage_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/AccountCreate"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Create Managed Account Api Accounts Manage Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/accounts/manage/{account_id}",
+      "method": "PUT",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Update Managed Account",
+      "operation_id": "api_update_managed_account_api_accounts_manage__account_id__put",
+      "request_schema": {
+        "$ref": "#/components/schemas/AccountUpdate"
+      },
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Update Managed Account Api Accounts Manage  Account Id  Put"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/accounts/manage/{account_id}",
+      "method": "DELETE",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Delete Managed Account",
+      "operation_id": "api_delete_managed_account_api_accounts_manage__account_id__delete",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Delete Managed Account Api Accounts Manage  Account Id  Delete"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/accounts/{account_id}/balance",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Balance",
+      "operation_id": "api_get_account_balance_api_accounts__account_id__balance_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Get Account Balance Api Accounts  Account Id  Balance Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "accounts",
+      "endpoint": "/api/accounts/{account_id}/running-balance",
+      "method": "GET",
+      "tags": [
+        "accounts"
+      ],
+      "summary": "Api Get Account Running Balance",
+      "operation_id": "api_get_account_running_balance_api_accounts__account_id__running_balance_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response Api Get Account Running Balance Api Accounts  Account Id  Running Balance Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Account Id"
+          }
+        }
+      ],
+      "capability": "account_management"
+    },
+    {
+      "router": "optimization",
+      "endpoint": "/api/v1/optimization/plan",
+      "method": "GET",
+      "tags": [
+        "optimization"
+      ],
+      "summary": "Get Optimization Plan",
+      "operation_id": "get_optimization_plan_api_v1_optimization_plan_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Optimization Plan Api V1 Optimization Plan Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "recommendations"
+    },
+    {
+      "router": "optimization",
+      "endpoint": "/api/v1/optimization/debt-strategy",
+      "method": "GET",
+      "tags": [
+        "optimization"
+      ],
+      "summary": "Get Debt Strategy",
+      "operation_id": "get_debt_strategy_api_v1_optimization_debt_strategy_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Debt Strategy Api V1 Optimization Debt Strategy Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "strategy",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Strategy: avalanche, snowball, or balanced",
+            "default": "avalanche",
+            "title": "Strategy"
+          },
+          "description": "Strategy: avalanche, snowball, or balanced"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "recommendations"
+    },
+    {
+      "router": "optimization",
+      "endpoint": "/api/v1/optimization/goal-priority",
+      "method": "GET",
+      "tags": [
+        "optimization"
+      ],
+      "summary": "Get Goal Priority",
+      "operation_id": "get_goal_priority_api_v1_optimization_goal_priority_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Goal Priority Api V1 Optimization Goal Priority Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "recommendations"
+    },
+    {
+      "router": "optimization",
+      "endpoint": "/api/v1/optimization/surplus-allocation",
+      "method": "GET",
+      "tags": [
+        "optimization"
+      ],
+      "summary": "Get Surplus Allocation",
+      "operation_id": "get_surplus_allocation_api_v1_optimization_surplus_allocation_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Surplus Allocation Api V1 Optimization Surplus Allocation Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "recommendations"
+    },
+    {
+      "router": "networth",
+      "endpoint": "/api/networth",
+      "method": "GET",
+      "tags": [
+        "networth"
+      ],
+      "summary": "Get Networth",
+      "operation_id": "get_networth_api_networth_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Get Networth Api Networth Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "patterns",
+      "endpoint": "/api/v1/patterns/confirm",
+      "method": "POST",
+      "tags": [
+        "patterns"
+      ],
+      "summary": "Confirm Pattern",
+      "operation_id": "confirm_pattern_api_v1_patterns_confirm_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Confirm Pattern Api V1 Patterns Confirm Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "pattern_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Pattern Id"
+          }
+        }
+      ],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "patterns",
+      "endpoint": "/api/v1/patterns/new",
+      "method": "POST",
+      "tags": [
+        "patterns"
+      ],
+      "summary": "Create Pattern",
+      "operation_id": "create_pattern_api_v1_patterns_new_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Create Pattern Api V1 Patterns New Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "provider_name",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Provider Name"
+          }
+        },
+        {
+          "name": "description_pattern",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Description Pattern"
+          }
+        },
+        {
+          "name": "fee_min_bps",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 150,
+            "title": "Fee Min Bps"
+          }
+        },
+        {
+          "name": "fee_max_bps",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 400,
+            "title": "Fee Max Bps"
+          }
+        },
+        {
+          "name": "review_fee_min_bps",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 50,
+            "title": "Review Fee Min Bps"
+          }
+        },
+        {
+          "name": "review_fee_max_bps",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 800,
+            "title": "Review Fee Max Bps"
+          }
+        },
+        {
+          "name": "typical_settlement_days",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 2,
+            "title": "Typical Settlement Days"
+          }
+        }
+      ],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "patterns",
+      "endpoint": "/api/v1/patterns/providers",
+      "method": "GET",
+      "tags": [
+        "patterns"
+      ],
+      "summary": "List Providers",
+      "operation_id": "list_providers_api_v1_patterns_providers_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response List Providers Api V1 Patterns Providers Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "patterns",
+      "endpoint": "/api/v1/patterns/purposes",
+      "method": "GET",
+      "tags": [
+        "patterns"
+      ],
+      "summary": "List Purposes",
+      "operation_id": "list_purposes_api_v1_patterns_purposes_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response List Purposes Api V1 Patterns Purposes Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Get Reconciliations",
+      "operation_id": "api_get_reconciliations_api_reconciliations_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Get Reconciliations Api Reconciliations Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "status",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/pending",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Get Pending Reconciliations",
+      "operation_id": "api_get_pending_reconciliations_api_reconciliations_pending_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Api Get Pending Reconciliations Api Reconciliations Pending Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/scan",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Scan Reconciliations",
+      "operation_id": "api_scan_reconciliations_api_reconciliations_scan_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Scan Reconciliations Api Reconciliations Scan Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Household Id"
+          }
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/create",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Create Reconciliation",
+      "operation_id": "api_create_reconciliation_api_reconciliations_create_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Create Reconciliation Api Reconciliations Create Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "debit_txn_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Debit transaction ID",
+            "title": "Debit Txn Id"
+          },
+          "description": "Debit transaction ID"
+        },
+        {
+          "name": "credit_txn_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Credit transaction ID",
+            "title": "Credit Txn Id"
+          },
+          "description": "Credit transaction ID"
+        },
+        {
+          "name": "debit_account_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Debit account ID",
+            "title": "Debit Account Id"
+          },
+          "description": "Debit account ID"
+        },
+        {
+          "name": "credit_account_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "description": "Credit account ID",
+            "title": "Credit Account Id"
+          },
+          "description": "Credit account ID"
+        },
+        {
+          "name": "amount_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Matched amount in paise (\u20b91.00 = 100)",
+            "title": "Amount Paise"
+          },
+          "description": "Matched amount in paise (\u20b91.00 = 100)"
+        },
+        {
+          "name": "date_diff_days",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "description": "Days between transaction dates",
+            "default": 0,
+            "title": "Date Diff Days"
+          },
+          "description": "Days between transaction dates"
+        },
+        {
+          "name": "confidence_bps",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Confidence in basis points (0-10000)",
+            "title": "Confidence Bps"
+          },
+          "description": "Confidence in basis points (0-10000)"
+        },
+        {
+          "name": "match_type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "'exact', 'window', 'fuzzy', or 'manual'",
+            "default": "exact",
+            "title": "Match Type"
+          },
+          "description": "'exact', 'window', 'fuzzy', or 'manual'"
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/batch-insert",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Batch Insert Reconciliations",
+      "operation_id": "api_batch_insert_reconciliations_api_reconciliations_batch_insert_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Batch Insert Reconciliations Api Reconciliations Batch Insert Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Household Id"
+          }
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/{reconciliation_id}/confirm",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Confirm Reconciliation",
+      "operation_id": "api_confirm_reconciliation_api_reconciliations__reconciliation_id__confirm_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Confirm Reconciliation Api Reconciliations  Reconciliation Id  Confirm Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "reconciliation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Reconciliation Id"
+          }
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/{reconciliation_id}/reject",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Reject Reconciliation",
+      "operation_id": "api_reject_reconciliation_api_reconciliations__reconciliation_id__reject_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Reject Reconciliation Api Reconciliations  Reconciliation Id  Reject Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "reconciliation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Reconciliation Id"
+          }
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/{reconciliation_id}/undo",
+      "method": "POST",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Undo Reconciliation",
+      "operation_id": "api_undo_reconciliation_api_reconciliations__reconciliation_id__undo_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Undo Reconciliation Api Reconciliations  Reconciliation Id  Undo Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "reconciliation_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "title": "Reconciliation Id"
+          }
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "reconciliation",
+      "endpoint": "/api/reconciliations/stats",
+      "method": "GET",
+      "tags": [
+        "reconciliation"
+      ],
+      "summary": "Api Get Reconciliation Stats",
+      "operation_id": "api_get_reconciliation_stats_api_reconciliations_stats_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Api Get Reconciliation Stats Api Reconciliations Stats Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Household identifier",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "reconciliation"
+    },
+    {
+      "router": "scenarios",
+      "endpoint": "/api/v1/scenarios/expense-reduction",
+      "method": "POST",
+      "tags": [
+        "scenarios"
+      ],
+      "summary": "Simulate Expense Reduction",
+      "operation_id": "simulate_expense_reduction_api_v1_scenarios_expense_reduction_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Expense Reduction Api V1 Scenarios Expense Reduction Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "reduction_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Monthly expense reduction in paise",
+            "title": "Reduction Paise"
+          },
+          "description": "Monthly expense reduction in paise"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "forecast_months",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 12,
+            "minimum": 1,
+            "description": "Forecast horizon",
+            "default": 12,
+            "title": "Forecast Months"
+          },
+          "description": "Forecast horizon"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "scenarios",
+      "endpoint": "/api/v1/scenarios/income-change",
+      "method": "POST",
+      "tags": [
+        "scenarios"
+      ],
+      "summary": "Simulate Income Change",
+      "operation_id": "simulate_income_change_api_v1_scenarios_income_change_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Income Change Api V1 Scenarios Income Change Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "change_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Monthly income change in paise (positive/negative)",
+            "title": "Change Paise"
+          },
+          "description": "Monthly income change in paise (positive/negative)"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        },
+        {
+          "name": "forecast_months",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 12,
+            "minimum": 1,
+            "description": "Forecast horizon",
+            "default": 12,
+            "title": "Forecast Months"
+          },
+          "description": "Forecast horizon"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "scenarios",
+      "endpoint": "/api/v1/scenarios/debt-prepayment",
+      "method": "POST",
+      "tags": [
+        "scenarios"
+      ],
+      "summary": "Simulate Debt Prepayment",
+      "operation_id": "simulate_debt_prepayment_api_v1_scenarios_debt_prepayment_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Debt Prepayment Api V1 Scenarios Debt Prepayment Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "extra_payment_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Extra monthly payment toward debt in paise",
+            "title": "Extra Payment Paise"
+          },
+          "description": "Extra monthly payment toward debt in paise"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "scenarios",
+      "endpoint": "/api/v1/scenarios/new-loan",
+      "method": "POST",
+      "tags": [
+        "scenarios"
+      ],
+      "summary": "Simulate New Loan",
+      "operation_id": "simulate_new_loan_api_v1_scenarios_new_loan_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate New Loan Api V1 Scenarios New Loan Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "principal_paise",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Loan principal in paise",
+            "title": "Principal Paise"
+          },
+          "description": "Loan principal in paise"
+        },
+        {
+          "name": "annual_rate_bps",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Annual interest rate in basis points",
+            "title": "Annual Rate Bps"
+          },
+          "description": "Annual interest rate in basis points"
+        },
+        {
+          "name": "tenure_months",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "description": "Loan tenure in months",
+            "title": "Tenure Months"
+          },
+          "description": "Loan tenure in months"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "scenarios",
+      "endpoint": "/api/v1/scenarios/credit-behaviour",
+      "method": "POST",
+      "tags": [
+        "scenarios"
+      ],
+      "summary": "Simulate Credit Behaviour",
+      "operation_id": "simulate_credit_behaviour_api_v1_scenarios_credit_behaviour_post",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Simulate Credit Behaviour Api V1 Scenarios Credit Behaviour Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "average_interest_rate_bps",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Average credit interest rate in basis points (optional)",
+            "title": "Average Interest Rate Bps"
+          },
+          "description": "Average credit interest rate in basis points (optional)"
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "description": "Household identifier",
+            "default": "primary",
+            "title": "Household Id"
+          },
+          "description": "Household identifier"
+        }
+      ],
+      "capability": "forecasting"
+    },
+    {
+      "router": "scenarios",
+      "endpoint": "/api/v1/scenarios/compare",
+      "method": "POST",
+      "tags": [
+        "scenarios"
+      ],
+      "summary": "Compare Scenarios",
+      "operation_id": "compare_scenarios_api_v1_scenarios_compare_post",
+      "request_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Request"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Compare Scenarios Api V1 Scenarios Compare Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "forecasting"
+    },
+    {
+      "router": "transactions",
+      "endpoint": "/api/transactions",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Transactions",
+      "operation_id": "get_transactions_api_transactions_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Transaction"
+        },
+        "title": "Response Get Transactions Api Transactions Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "search",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Search"
+          }
+        },
+        {
+          "name": "bank",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Bank"
+          }
+        },
+        {
+          "name": "category",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Category"
+          }
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Type"
+          }
+        },
+        {
+          "name": "member",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Member"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 1000,
+            "minimum": 1,
+            "default": 100,
+            "title": "Limit"
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "title": "Offset"
+          }
+        }
+      ],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "transactions",
+      "endpoint": "/api/overview",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Overview",
+      "operation_id": "get_overview_api_overview_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Overview Api Overview Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "exclude_transfers",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true,
+            "title": "Exclude Transfers"
+          }
+        },
+        {
+          "name": "member",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Member"
+          }
+        }
+      ],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "transactions",
+      "endpoint": "/api/categories",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Categories",
+      "operation_id": "get_categories_api_categories_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Categories Api Categories Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "exclude_transfers",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true,
+            "title": "Exclude Transfers"
+          }
+        },
+        {
+          "name": "member",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Member"
+          }
+        },
+        {
+          "name": "drill_category",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drill Category"
+          }
+        }
+      ],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "transactions",
+      "endpoint": "/api/analytics",
+      "method": "GET",
+      "tags": [
+        "transactions"
+      ],
+      "summary": "Get Analytics",
+      "operation_id": "get_analytics_api_analytics_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Analytics Api Analytics Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "exclude_transfers",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "boolean",
+            "default": true,
+            "title": "Exclude Transfers"
+          }
+        },
+        {
+          "name": "member",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "All",
+            "title": "Member"
+          }
+        }
+      ],
+      "capability": "transaction_intelligence"
+    },
+    {
+      "router": "members",
+      "endpoint": "/api/members",
+      "method": "GET",
+      "tags": [
+        "members"
+      ],
+      "summary": "Get Members",
+      "operation_id": "get_members_api_members_get",
+      "request_schema": {},
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Get Members Api Members Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "members",
+      "endpoint": "/api/members",
+      "method": "POST",
+      "tags": [
+        "members"
+      ],
+      "summary": "Create Member",
+      "operation_id": "create_member_api_members_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/MemberCreate"
+      },
+      "response_schema": {
+        "additionalProperties": true,
+        "type": "object",
+        "title": "Response Create Member Api Members Post"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    }
+  ],
+  "generated_at": "1784104116.602396"
+}

@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-07-15T08:40:52.208519+00:00",
+  "changed_files": [
+    "backend/src/data/finance.db",
+    "backend/tests/meta/test_validation_orchestrator.py",
+    "backend/tools/validation_orchestrator.py",
+    "memory-bank/activeContext.md",
+    "memory-bank/generated/change-report.json",
+    "memory-bank/generated/change-report.md",
+    "memory-bank/generated/risk-rules.yaml",
+    "memory-bank/generated/selective-history.json",
+    "memory-bank/generated/selective-plan.md",
+    "memory-bank/generated/selective-summary.json",
+    "memory-bank/generated/test-plan.md",
+    "memory-bank/generated/validation-history.json",
+    "memory-bank/generated/validation-manifest.json",
+    "memory-bank/generated/validation-metrics.json",
+    "memory-bank/generated/validation-workflows.md",
+    "memory-bank/generated/verification-matrix.md",
+    "scripts/verify-local.sh",
+    "servers"
+  ],
+  "strategy": "full",
+  "reason": "",
+  "confidence": "HIGH",
+  "affected_capabilities": [],
+  "stages": [
+    "fast",
+    "coverage",
+    "change_intelligence",
+    "architecture",
+    "capability",
+    "property",
+    "golden",
+    "contract",
+    "meta"
+  ],
+  "estimated_runtime": 0.0,
+  "commands_executed": [
+    "ruff check --fix src/",
+    "python backend/tools/check_coverage.py",
+    "python backend/tools/change_intelligence.py",
+    "pytest tests/architecture -q --tb=short --maxfail=3",
+    "pytest tests/capabilities -q --tb=short --maxfail=3",
+    "pytest tests/properties -q --tb=short --maxfail=3",
+    "pytest tests/golden -q --tb=short --maxfail=3",
+    "pytest tests/contracts -q --tb=short --maxfail=3",
+    "pytest tests/meta -q --tb=short --maxfail=3"
+  ]
+}

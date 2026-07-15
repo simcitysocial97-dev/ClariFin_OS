@@ -1,28 +1,45 @@
 {
-  "generated_at": "2026-07-15T02:48:07.465223+00:00",
-  "git_sha": "49457e6c9cbb42220bfa9c5b13bfbacec67b04ef",
+  "generated_at": "2026-07-15T03:40:49.346553+00:00",
+  "git_sha": "ea96b3a70a70cff62bc78eb258d838e89d421b41",
   "changes": [
     {
-      "file": "some_random_file.py",
-      "risk": "LOW",
-      "confidence": "LOW",
+      "file": "backend/src/engines/cashflow_engine.py",
+      "risk": "CRITICAL",
+      "confidence": "HIGH",
       "capabilities": [
-        "UNKNOWN"
+        "household_cashflow"
       ],
       "affected": {
         "services": [],
         "engines": [],
         "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
+        "property_tests": [
+          "tests/properties",
+          "tests/properties/cashflow"
+        ],
+        "golden_tests": [
+          "family_household",
+          "normal_household",
+          "salary_only",
+          "salary_plus_loan"
+        ],
+        "invariants": [
+          "tests/invariants/test_cashflow.py"
+        ],
+        "capability_tests": [
+          "tests/capabilities/household_cashflow"
+        ]
       },
-      "recommended_commands": []
+      "recommended_commands": [
+        "pytest tests/capabilities/household_cashflow -q",
+        "pytest tests/properties -q",
+        "pytest tests/properties/cashflow -q",
+        "pytest tests/golden -k 'family_household,normal_household,salary_only' -q"
+      ]
     }
   ],
   "overall": {
-    "risk": "LOW",
-    "score": 1
+    "risk": "CRITICAL",
+    "score": 8
   }
 }
