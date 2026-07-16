@@ -37,4 +37,5 @@ export function useNetWorth() {
     queryFn: fetchNetWorth,
     staleTime: 2 * 60 * 1000,
   })
+
 }

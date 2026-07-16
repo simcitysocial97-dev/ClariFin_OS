@@ -1,168 +1,39 @@
 # Active Context
 
-## Coverage & Traceability Framework (CTF) — Completed
-
-- **Coverage Scanner**: Created `backend/tools/check_coverage.py`
-  - Scans capability manifests and validates all referenced paths
-  - Detects orphan modules and tests (53 found)
-  - Generates all coverage artifacts
-- **Generated Artifacts** in `memory-bank/generated/`:
-  - `coverage.md` - Human-readable maturity matrix
-  - `coverage.json` - Machine-readable JSON
-  - `capability-registry.yaml` - Generated from manifests
-  - `traceability.md` - Per-capability dependency chains
-  - `change-impact.md` - What breaks if you modify a file
-  - `README.md` - Documentation
-- **Meta Tests**: Created `backend/tests/meta/test_coverage_integrity.py`
-  - Validates generated artifacts exist and are valid
-  - Verifies all referenced paths in manifests exist
-
-## Change Intelligence Framework (CIF) — Completed
-
-- **CIF Tool**: Created `backend/tools/change_intelligence.py`
-  - Analyzes changed files via git diff or CLI arguments
-  - Builds in-memory graph from capability-registry.yaml
-  - Classifies risk levels (LOW/MEDIUM/HIGH/CRITICAL)
-  - Computes weighted risk scores for multi-file changes
-  - Generates change-report.md, change-report.json, and test-plan.md
-- **Meta Tests**: Created `backend/tests/meta/test_change_intelligence.py`
-  - Validates report generation and JSON schema
-  - Verifies risk/confidence values are valid
-  - Tests UNKNOWN capability handling for untracked files
-- **Pipeline**: Updated `scripts/verify-local.sh`
-  - Added CIF stage after coverage integrity
-
-## Selective Verification Framework (SVF) — Completed
-
-- **SVF Tool**: Created `backend/tools/selective_verify.py`
-  - Executes only tests impacted by changed files
-  - Auto-regenerates stale change-report.json
-  - Supports --plan, --run, --json, --full flags
-  - Generates selective-plan.md, selective-summary.json, verification-matrix.md, selective-history.json
-- **Meta Tests**: Created `backend/tests/meta/test_selective_verify.py` (8 tests passing)
-  - Validates plan generation and duplicate removal
-  - Tests invalid path handling and JSON parsing
-  - Verifies verification matrix output
-- **Pipeline**: Updated `scripts/verify-local.sh`
-  - Added VERIFY_MODE=selective environment variable support
-  - Full verification remains default behavior
-
-## Verification Flow
-
-```
-Developer changes code
-    ↓
-verify-fast
-    ↓
-Coverage Scanner
-    ↓
-Change Intelligence → change-report.json
-    ├── What changed?
-    ├── What's affected?
-    ├── How risky is it?
-    └── What should be tested? (SVF uses this)
-    ↓
-[VERIFY_MODE=full] Full pipeline: Architecture → Capabilities → Properties → Golden → Adaptive
-[VERIFY_MODE=selective] Selective: Only impacted test suites
-```
-
-## Status: COMPLETED ✓
-
-All CIF/SVF meta tests passing. Risk scoring uses weighted sums (LOW=1, MEDIUM=2, HIGH=4, CRITICAL=8).
-Orphan modules detected: 10 routers, 6 services, 15 engines, 10 repositories, 1 property test, 11 invariants.
-
-## Validation Orchestrator Framework (VOF) — Completed
-
-- **VOF Tool**: Created `backend/tools/validation_orchestrator.py`
-  - Single orchestration layer for all validation workflows
-  - Plugin-based ValidationStage architecture with 8 stages
-  - Risk rules driven by `risk-rules.yaml` (configurable policies)
-  - Caching support via `.memory-cache/validation-cache.json`
-  - `--plan`, `--auto`, `--fast`, `--selective`, `--full`, `--coverage`, `--json`, `--explain` modes
-
-- **Configuration**: Created `memory-bank/generated/risk-rules.yaml`
-  - Pattern-based strategy selection (yaml-driven, not hardcoded)
-  - Risk levels: LOW/MEDIUM/HIGH/CRITICAL mapped to strategies
-
-- **Artifacts Generated**:
-  - `validation-manifest.json` - Rich manifest with strategy, stages, capabilities
-  - `validation-metrics.json` - Per-stage timing and status
-  - `validation-history.json` - Last 200 validation runs
-  - `validation-workflows.md` - Developer UX documentation
-
-- **Shell Wrapper**: Updated `scripts/verify-local.sh`
-  - Now delegates to orchestrator: `python backend/tools/validation_orchestrator.py --full`
-
-- **Meta Tests**: Created `backend/tests/meta/test_validation_orchestrator.py`
-    - 14 tests passing for decision logic, history, manifest, stages
-
-## Contract Validation Framework (CoVF) — Completed
-
-- **CoVF Discovery Tool**: Created `backend/tools/coVF_discover.py`
-  - Discovers endpoints from live FastAPI OpenAPI schema
-  - Maps endpoints to capabilities via router manifests
-  - Generates api-map.json (126 endpoints discovered)
-  - Generates contract-registry.json (per-router schemas)
-  - Generates contract-coverage.json (coverage metrics)
-- **Contract Tests**: Created `backend/tests/contracts/`
-  - Router-based organization: accounts, cashflow, credit_cards, loans, forecasting
-  - Uses real FastAPI TestClient without mocks
-  - Validates request/response contracts (46 tests total)
-- **ContractStage**: Added to ValidationOrchestrator
-  - Positioned after golden stage, before meta
-  - Estimated runtime: 12 seconds
-  - Dependencies: fast, coverage
-- **Generated Artifacts**:
-  - `api-map.json` - All endpoints with metadata
-  - `contract-registry.json` - Per-router endpoint schemas
-  - `contract-coverage.json` - Per-router coverage metrics
-  - `contract-maturity.md` - Engineering KPI table
-  - `contracts.md` - Human-readable documentation
-- **Meta Tests**: Created `backend/tests/meta/test_contract_registry.py`
-  - 10 tests passing for registry validation
-  - Verifies ContractStage registration
-  - Validates snapshot normalization
-
-## Validation Consolidation Phase (Audit) — Completed
-
-- **Audit Script**: Created `backend/tools/validation_audit.py`
-  - Measures stage runtime (architecture: 2.6s, golden: 0.42s, capability: 0.43s, property: 0.32s)
-  - Audits 24 generated artifacts for consumption patterns
-  - Validates capability coverage across all 10 capabilities
-
-- **Generated Reports**:
-  - `validation-architecture.md` - Complete validation flow documentation
-  - `validation-review.md` - Strengths, weaknesses, and action items
-  - `audit-metrics.json` - Machine-readable audit data
-
-- **CIF/SVF Accuracy (Measured)**:
-  - Engine/router changes: Correctly detects capability (household_cashflow)
-  - Documentation changes: False positive (UNKNOWN capability)
-  - Runtime estimate error: Overestimates by ~20x (65s estimated vs ~3s actual)
-
-- **Coverage Gaps Identified**:
-  - recommendations: Missing property tests
-  - pattern_analysis: Missing property tests
-  - One flaky test in credit_cards properties
-
-## Frontend Validation Framework (FVF) — Production Ready ✓
+## Frontend Development — Financial Operating System Dashboard (In Progress)
 
 ### Changes Made (July 2026)
-- Fixed TS2802/TS2345/TS6133 type errors in FVF tools
-- Fixed false positive: `headers` variable detection in Architecture Audit
-- Fixed duplicate issue reporting in Query Audit (was reporting same issue 50x)
-- Fixed tool self-auditing (tools directory excluded from audits)
-- Downgraded `forwardRef` detection to warning (appropriate for UI libraries)
-- Added proper directory filtering (dist, tests) to Import Graph Audit
+
+**Widget Infrastructure Created:**
+- `types/widget.ts` - Widget contract types (BaseWidgetProps, WidgetStatus, WidgetQueryState)
+- `components/dashboard/shared/widget-shell.tsx` - Consistent container with loading/error/empty states
+- `components/dashboard/widgets/financial-health-hero.tsx` - Conversation-first health score widget
+- `components/dashboard/widgets/financial-inbox-widget.tsx` - Actionable items feed (alerts, nudges, insights)
+- `components/dashboard/widgets/money-position-widget.tsx` - Net Worth & assets summary
+- `components/dashboard/widgets/borrowing-widget.tsx` - Loans & credit cards summary
+
+**Spending Intelligence Module (Completed):**
+- `components/dashboard/widgets/spending/schema.ts` - Zod validation for /api/categories and /api/analytics
+- `components/dashboard/widgets/spending/types.ts` - TypeScript interfaces (SpendingInsight, MerchantSpending)
+- `components/dashboard/widgets/spending/hook.ts` - useSpending() React Query hook
+- `components/dashboard/widgets/spending/SpendingWidget.tsx` - "Where is my money going?" with category breakdown
+- `components/dashboard/widgets/spending/MerchantWidget.tsx` - "Who receives my money?" with top merchants
+- `components/dashboard/widgets/widget-registry.ts` - Centralized widget registry
 
 ### Validation Status
-- All 6 core stages: PASS (0 errors)
-- Meta tests: 20/20 passing
-- TypeScript check: Clean
-- ESLint: Clean
+- Next.js build: ✓ SUCCESS
+- TypeScript check: ✓ CLEAN
+- FVF Framework: Toolchain Lock PASS, ESLint clean on new files
 
-### Report Location
-- Full review: `frontend/FVF_REVIEW_REPORT.md`
-- Validation output: `frontend/generated/` (validation-report.md, validation-manifest.json)
+### Next Steps
+- Integrate SpendingWidget and MerchantWidget into dashboard/page.tsx
+- Verify ARCHITECTURE.md updates for layer file counts
 
-- **Framework Status**: VALIDATED AND STABLE - FVF is production-ready.
+### OpenAPI Schema Exported (July 2026)
+- Exported complete OpenAPI schema to `backend/clarifin_openapi.json`
+- Contains 105 unique paths with 126 total endpoints
+- All 22 routers included (accounts, audit, banks, behavior, behaviour, cards_statements, cashflow, credit_cards, dashboard, export, financial_intelligence, goals, health, import, investments, loans, managed_accounts, members, networth, optimization, patterns, reconciliation, scenarios, transactions)
+- File size: 235 KB (7941 lines)
+- Generated TypeScript types: `backend/api_types.ts` (7331 lines)
+- Created `backend/CAPABILITY_INVENTORY.md` with domain-organized endpoints (159 lines)
+```

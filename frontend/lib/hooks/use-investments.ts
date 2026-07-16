@@ -112,4 +112,5 @@ export function useDeleteInvestment() {
     mutationFn: deleteInvestment,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['investments'] }),
   })
+
 }

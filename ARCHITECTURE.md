@@ -10,7 +10,7 @@ ClariFin_OS/                          # Monorepo root
 │   └── src/ (9 layers)
 │
 ├── frontend/         (Next.js 16)    # React 19 + shadcn/ui
-│   ├── 73 .ts/.tsx files
+│   ├── 79 .ts/.tsx files
 │   ├── App Router (9 routes)
 │   └── OpenAPI types via openapi-typescript
 │
@@ -108,6 +108,8 @@ app/layout.tsx → ThemeProvider → QueryProvider → MemberProvider → ErrorB
 ```
 
 **Key Dashboard Components:** `DashboardSkeleton`, `CashflowChart`, `CategorySpendChart`, `BehaviorScoreCard`, `InsightsPanel`, `AnalyticsSummaryBar`, `RecurringChargesWidget`, `TopMerchantsWidget`, `RecentTransactions`
+
+**Widget Stack:** `FinancialHealthHero`, `FinancialInboxWidget`, `MoneyPositionWidget`, `BorrowingWidget`, `SpendingWidget`, `MerchantWidget`
 
 **Libraries:** TanStack React Query, Zustand (state), Zod (validation), date-fns, recharts, lucide-react, radix-ui, shadcn/ui
 

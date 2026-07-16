@@ -42,7 +42,7 @@ async function fetchDashboardSummary(): Promise<DashboardData> {
 
 export function useDashboardMetrics(): HookState<DashboardData> {
   const queryClient = useQueryClient();
-  
+
   const result = useQuery<DashboardData, Error>({
     queryKey: ['dashboard', 'summary'],
     queryFn: fetchDashboardSummary,
@@ -60,4 +60,5 @@ export function useDashboardMetrics(): HookState<DashboardData> {
     refetch,
     dataUpdatedAt: result.dataUpdatedAt,
   }), [result, refetch]);
+
 }
