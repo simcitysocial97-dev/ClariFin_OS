@@ -44,6 +44,10 @@
 
 ### [AD-002] Invariant Testing Over Snapshot Testing
 
+**Status:** Accepted  
+**Date:** 2024-07  
+**Deciders:** Lead Engineer
+
 **Context:** Snapshot tests drift with legitimate changes; financial correctness requires verification against mathematical identities.
 
 **Decision:** Use property/invariant tests (Hypothesis) for all financial logic, supplemented by golden master tests for known formulas.
@@ -71,6 +75,10 @@
 ---
 
 ### [AD-004] Explainability-first Philosophy
+
+**Status:** Accepted  
+**Date:** 2024-07  
+**Deciders:** Lead Engineer
 
 **Context:** Financial AI must be auditable. Black-box models create trust issues.
 

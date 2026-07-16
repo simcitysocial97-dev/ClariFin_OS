@@ -79,7 +79,6 @@
 
 **Advancement Rules:**
 - Must pass L1, L2
-- Each metric MUST have explainable derivation (per ARCHITECTURE_CONSTRAINTS.md)
 
 ---
 
