@@ -8,7 +8,7 @@ only loads and validates it.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 
@@ -82,7 +82,11 @@ class CapabilityRegistry:
                 errors.append(f"Capability '{cap.get('id')}' has invalid status: {status}")
 
         # Detect duplicate IDs
-        ids: list[str] = [cap.get("id") for cap in capabilities if isinstance(cap.get("id"), str)]
+        ids: list[str] = []
+        for cap in capabilities:
+            cap_id_raw = cap.get("id")
+            if isinstance(cap_id_raw, str):
+                ids.append(cap_id_raw)
         seen_ids: set[str] = set()
         dup_ids: list[str] = []
         for i in ids:
@@ -161,13 +165,16 @@ class CapabilityRegistry:
         caps = data.get("capabilities", [])
         for cap in caps:
             if cap.get("id") == capability_id:
-                return cap
+                return cast(Capability, cap)
         raise CapabilityNotFoundError(f"Capability '{capability_id}' not found")
 
     def all(self) -> list[Capability]:
         """Get all capabilities."""
         data = self._load()
-        return data.get("capabilities", [])  # type: ignore[return-value]
+        caps = data.get("capabilities", [])
+        if isinstance(caps, list):
+            return cast(list[Capability], caps)
+        return []
 
     def ids(self) -> list[str]:
         """Get all capability IDs."""

@@ -11,14 +11,13 @@ import pytest
 
 from src.core.capability_registry import (
     CapabilityNotFoundError,
-    RegistryValidationError,
-    get_registry,
-    get_capability,
     all_capabilities,
-    capability_ids,
-    capability_dependencies,
-    frontend_routes,
     backend_routes,
+    capability_dependencies,
+    capability_ids,
+    frontend_routes,
+    get_capability,
+    get_registry,
     query_keys,
     validate_registry,
 )

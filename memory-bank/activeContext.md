@@ -39,4 +39,9 @@
 - ✅ Registry validation passes (11 capabilities, 22 query keys)
 - ✅ All 14 registry tests pass
 - ✅ ruff check passes
+- ✅ mypy check passes (fixed type casting with `cast()`)
 - ✅ verify-change.sh passes
+
+### Next Steps
+- Integrate registry queries into capability smoke tests
+- Add registry-based dependency checking in build pipeline
