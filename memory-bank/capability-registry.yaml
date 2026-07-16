@@ -1,10 +1,33 @@
 # Capability Registry — canonical source of truth for ClariFin_OS business capabilities
+# Schema:
+# - id: unique identifier
+# - name: human-readable name
+# - maturity: functional|analytical|explainable|optimized (L1-L4)
+# - status: active|deprecated|maintenance
+# - frontend_routes: page routes in Next.js
+# - backend_routes: API routes from routers
+# - query_keys: React Query keys (hierarchical, e.g., dashboard.summary)
 capabilities:
   - id: household_cashflow
     name: Household Cashflow
     description: >
       Compute monthly household cashflow analysis including income, expenses, surplus/deficit,
       true savings adjusted for financial events, and credit dependency ratios.
+    maturity: functional
+    status: active
+    frontend_routes:
+      - /dashboard
+    backend_routes:
+      - /api/cashflow/monthly
+      - /api/cashflow/trends
+    query_keys:
+      - dashboard.summary
+      - cashflow.monthly
+    explainability:
+      summary: true
+      evidence: true
+      calculation: true
+      source: true
     criticality: high
     risk: low
     routers:
@@ -45,6 +68,24 @@ capabilities:
     description: >
       Compute loan schedules, EMI calculations, foreclosure amounts, prepayment simulations,
       and loan health metrics for personal loans and other debt instruments.
+    maturity: explainable
+    status: active
+    frontend_routes:
+      - /loans
+    backend_routes:
+      - /api/loans
+      - /api/loans/{loan_id}/schedule
+      - /api/loans/{loan_id}/prepayment-simulation
+      - /api/loans/{loan_id}/foreclosure-simulation
+    query_keys:
+      - loans.list
+      - loans.schedule
+      - loans.prepayment-simulation
+    explainability:
+      summary: true
+      evidence: true
+      calculation: true
+      source: true
     criticality: high
     risk: medium
     routers:
@@ -96,6 +137,25 @@ capabilities:
     description: >
       Analyze credit card statements, compute utilization ratios, track outstanding balances,
       detect EMI conversions and cash advances, and optimize credit card repayment strategies.
+    maturity: explainable
+    status: active
+    frontend_routes:
+      - /cards
+    backend_routes:
+      - /api/statements
+      - /api/cards
+      - /api/statements/{statement_id}/validate
+      - /api/v1/credit-cards
+      - /api/v1/credit-cards/{card_id}/statement
+      - /api/v1/credit-cards/{card_id}/emi-conversion
+    query_keys:
+      - cards.list
+      - cards.statements
+    explainability:
+      summary: true
+      evidence: true
+      calculation: true
+      source: true
     criticality: high
     risk: medium
     routers:
@@ -146,13 +206,28 @@ capabilities:
     description: >
       Assess financial health through behaviour profiling, resilience scoring, stress detection,
       savings rate analysis, and wellness metrics derived from transaction patterns.
+    maturity: analytical
+    status: active
+    frontend_routes:
+      - /dashboard
+    backend_routes:
+      - /api/v1/behaviour/profile
+      - /api/v1/behaviour/wellness-score
+      - /api/v1/behaviour/debt-health
+      - /api/v1/behaviour/cashflow-health
+    query_keys:
+      - behavior.insights
+      - behavior.score
+    explainability:
+      summary: true
+      evidence: true
+      calculation: false
+      source: false
     criticality: high
     risk: low
     routers:
-      - src/routers/behavior.py
       - src/routers/behaviour.py
     services:
-      - src/services/behavior_service.py
       - src/services/behaviour_service.py
     engines:
       - src/engines/behaviour_engine/account.py
@@ -178,7 +253,7 @@ capabilities:
       - tests/golden/datasets/high_debt_household.json
       - tests/golden/datasets/irregular_income.json
     property_tests:
-      - tests/properties/test_behavior_engine.py
+      - tests/properties/test_behaviour.py
       - tests/properties/behaviour/test_engine_properties.py
     invariants:
       - tests/invariants/test_behaviour.py
@@ -201,6 +276,23 @@ capabilities:
     description: >
       Project future cashflow, liquidity, and financial goals using deterministic forecasting
       models, scenario analysis, and optimization algorithms.
+    maturity: analytical
+    status: active
+    frontend_routes:
+      - /dashboard
+    backend_routes:
+      - /api/v1/financial-intelligence/forecast
+      - /api/v1/financial-intelligence/liquidity-forecast
+      - /api/v1/financial-intelligence/credit-forecast
+      - /api/v1/financial-intelligence/outlook
+    query_keys:
+      - forecasting.overview
+      - optimization.plan
+    explainability:
+      summary: true
+      evidence: false
+      calculation: true
+      source: false
     criticality: medium
     risk: low
     routers:
@@ -252,6 +344,24 @@ capabilities:
     description: >
       Detect hidden financial patterns in transactions including credit card payments, loan EMIs,
       and cash conversion cycles to improve cashflow accuracy and spending classification.
+    maturity: functional
+    status: active
+    frontend_routes:
+      - /transactions
+    backend_routes:
+      - /api/transactions
+      - /api/transactions/detect-patterns
+      - /api/patterns/credit-card-payments
+      - /api/patterns/loan-emis
+    query_keys:
+      - transactions.list
+      - statements.list
+      - banks.list
+    explainability:
+      summary: true
+      evidence: true
+      calculation: true
+      source: true
     criticality: high
     risk: low
     routers:
@@ -300,6 +410,25 @@ capabilities:
     description: >
       Match debit and credit transactions across accounts to identify matched pairs, unmatched items,
       and settlement patterns using deterministic bipartite matching algorithms.
+    maturity: explainable
+    status: active
+    frontend_routes:
+      - /reconciliation
+    backend_routes:
+      - /api/reconciliations
+      - /api/reconciliations/pending
+      - /api/reconciliations/scan
+      - /api/reconciliations/{id}/confirm
+      - /api/reconciliations/{id}/reject
+    query_keys:
+      - reconciliations.list
+      - reconciliations.pending
+      - reconciliations.scan
+    explainability:
+      summary: true
+      evidence: true
+      calculation: true
+      source: true
     criticality: high
     risk: medium
     routers:
@@ -342,6 +471,20 @@ capabilities:
     description: >
       Track lifecycle of financial events across accounts including settlements, rollovers,
       refunds, and transfers with full lineage and audit trail.
+    maturity: functional
+    status: active
+    frontend_routes:
+      - /dashboard
+    backend_routes:
+      - /api/financial-events
+      - /api/financial-events/{event_id}/lineage
+    query_keys:
+      - events.overview
+    explainability:
+      summary: true
+      evidence: true
+      calculation: false
+      source: true
     criticality: medium
     risk: low
     routers:
@@ -380,6 +523,21 @@ capabilities:
     description: >
       Generate personalized financial recommendations based on account state, behaviour scores,
       cashflow patterns, and optimization algorithms.
+    maturity: analytical
+    status: active
+    frontend_routes:
+      - /dashboard
+    backend_routes:
+      - /api/optimization/recommendations
+      - /api/optimization/nudges
+    query_keys:
+      - optimization.recommendations
+      - optimization.nudges
+    explainability:
+      summary: true
+      evidence: false
+      calculation: true
+      source: false
     criticality: medium
     risk: low
     routers:
@@ -424,6 +582,21 @@ capabilities:
     description: >
       Manage bank accounts and linked accounts, track balances, detect dormant accounts,
       compute account metrics, and maintain account lifecycle state.
+    maturity: functional
+    status: active
+    frontend_routes:
+      - /accounts
+    backend_routes:
+      - /api/v1/accounts
+      - /api/accounts/manage
+      - /api/accounts/{account_id}/balance
+    query_keys:
+      - accounts.managed
+    explainability:
+      summary: true
+      evidence: true
+      calculation: true
+      source: true
     criticality: high
     risk: low
     routers:
@@ -472,6 +645,21 @@ capabilities:
     description: >
       Identify spending patterns, liquidity patterns, and recurring transaction categories
       to improve cashflow classification and financial insights.
+    maturity: analytical
+    status: active
+    frontend_routes:
+      - /dashboard
+    backend_routes:
+      - /api/patterns
+      - /api/patterns/liquidity
+      - /api/patterns/detect
+    query_keys:
+      - patterns.list
+    explainability:
+      summary: true
+      evidence: false
+      calculation: false
+      source: true
     criticality: medium
     risk: low
     routers:

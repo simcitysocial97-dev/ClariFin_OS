@@ -14,3 +14,29 @@
 - Consistent paise-integer convention across all docs
 - No duplicated validation tooling
 - Practical Transaction Exploration example provided
+
+## Stage 1.1 — Capability Registry (July 17, 2026)
+
+### Changes Made
+- Extended `memory-bank/capability-registry.yaml` with schema fields:
+  - `maturity` (functional|analytical|explainable|optimized)
+  - `frontend_routes` (Next.js page routes)
+  - `backend_routes` (API endpoints)
+  - `query_keys` (hierarchical React Query keys)
+  - `explainability` (summary/evidence/calculation/source flags)
+  - `status` (active|deprecated|maintenance)
+- Created `backend/src/core/capability_registry.py` — runtime loader with validation
+- Created `scripts/validate-registry.py` — CLI validation for registry integrity
+- Created `backend/tests/test_capability_registry.py` — 14 unit tests
+
+### Validation Added
+- Duplicate ID detection
+- Duplicate query key detection
+- Missing dependency detection
+- Circular dependency detection
+
+### Verification
+- ✅ Registry validation passes (11 capabilities, 22 query keys)
+- ✅ All 14 registry tests pass
+- ✅ ruff check passes
+- ✅ verify-change.sh passes
