@@ -21,7 +21,7 @@ import { ReportGenerator } from './report-generator';
 // Report Types
 // ============================================================================
 
-interface FinancialAccuracyMetrics {
+interface _FinancialAccuracyMetrics {
   ledgerIntegrity: boolean;
   balanceMatching: boolean;
   cashflowAccuracy: boolean;
@@ -29,14 +29,14 @@ interface FinancialAccuracyMetrics {
   uiBackendMatch: boolean;
 }
 
-interface DebtCycleMetrics {
+interface _DebtCycleMetrics {
   patternsDetected: number;
   falsePositives: number;
   extractionAmount: number;
   cyclesIdentified: number;
 }
 
-interface DeterminismMetrics {
+interface _DeterminismMetrics {
   scoreVariance: number;
   hashConsistency: boolean;
   repeatRuns: number;

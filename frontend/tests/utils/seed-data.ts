@@ -2,7 +2,7 @@
  * Seed Data Utility - Deterministic test data for Playwright tests
  */
 
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 const APP_STORAGE_KEY = 'bank-parser-storage';
 const MODE_STORAGE_KEY = 'clariFin_dashboard_mode';

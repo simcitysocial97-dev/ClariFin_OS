@@ -8,7 +8,7 @@
  * - localStorage validation
  */
 
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 // ============================================================================
 // Types
@@ -21,7 +21,7 @@ export interface ModeState {
   transactionCount: number;
   cardCount: number;
   totalSpend: number;
-  localStorageData: Record<string, any>;
+  localStorageData: Record<string, unknown>;
 }
 
 // ============================================================================
@@ -150,10 +150,10 @@ export async function verifyModeIsolation(
   if (personalData?.state && familyData?.state) {
     // Check for transaction overlap
     const personalTxns = new Set(
-      (personalData.state.transactions || []).map((t: any) => t.id)
+      (personalData.state.transactions || []).map((t: { id: string }) => t.id)
     );
     const familyTxns = new Set(
-      (familyData.state.transactions || []).map((t: any) => t.id)
+      (familyData.state.transactions || []).map((t: { id: string }) => t.id)
     );
     
     // In a properly isolated system, there should be no overlap
@@ -162,7 +162,7 @@ export async function verifyModeIsolation(
     if (overlap.length > 0) {
       // This might be expected if transactions are shared
       // Log but don't fail
-      console.log(`Note: ${overlap.length} transactions appear in both modes`);
+      // console.log(`Note: ${overlap.length} transactions appear in both modes`);
     }
   }
   
@@ -189,8 +189,8 @@ export async function seedTestData(
   page: Page,
   mode: DashboardMode,
   data: {
-    transactions?: any[];
-    cards?: any[];
+    transactions?: Array<{ id: string; [key: string]: unknown }>;
+    cards?: Array<{ id: string; [key: string]: unknown }>;
   }
 ): Promise<void> {
   await page.evaluate(

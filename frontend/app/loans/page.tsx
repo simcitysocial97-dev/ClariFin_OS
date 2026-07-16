@@ -427,9 +427,9 @@ export default function LoansPage() {
   const [scheduleLoan, setScheduleLoan] = useState<Loan | null>(null);
   // Prepayment state (for future use)
   const [prepaymentOpen, setPrepaymentOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const [prepaymentLoan, setPrepaymentLoan] = useState<Loan | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   void setPrepaymentLoan;
 
   const handleCreateLoan = async (formData: LoanFormData) => {

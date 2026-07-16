@@ -1,4 +1,5 @@
-import { useAsyncQuery, HookState } from './use-async-query'
+import type { HookState } from './use-async-query';
+import { useAsyncQuery } from './use-async-query'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
 

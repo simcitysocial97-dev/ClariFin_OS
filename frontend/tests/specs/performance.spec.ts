@@ -11,6 +11,18 @@
 
 import { test, expect } from '../fixtures/test-fixtures';
 
+interface LayoutShift {
+  entryType: string;
+  hadRecentInput: boolean;
+  value: number;
+}
+
+interface PerformanceWithMemory extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+  };
+}
+
 // ============================================================================
 // Performance Thresholds
 // ============================================================================
@@ -36,7 +48,7 @@ test.describe('Page Load Performance', () => {
     await page.waitForLoadState('networkidle');
     const loadTime = Date.now() - startTime;
     
-    console.log(`Home page load time: ${loadTime}ms`);
+    // console.log(`Home page load time: ${loadTime}ms`);
     expect(loadTime).toBeLessThan(THRESHOLDS.pageLoad);
   });
 
@@ -49,7 +61,7 @@ test.describe('Page Load Performance', () => {
     await page.waitForLoadState('networkidle');
     const loadTime = Date.now() - startTime;
     
-    console.log(`Dashboard page load time: ${loadTime}ms`);
+    // console.log(`Dashboard page load time: ${loadTime}ms`);
     expect(loadTime).toBeLessThan(THRESHOLDS.pageLoad);
   });
 
@@ -62,7 +74,7 @@ test.describe('Page Load Performance', () => {
     await page.waitForLoadState('networkidle');
     const loadTime = Date.now() - startTime;
     
-    console.log(`Transactions page load time: ${loadTime}ms`);
+    // console.log(`Transactions page load time: ${loadTime}ms`);
     expect(loadTime).toBeLessThan(THRESHOLDS.pageLoad);
   });
 });
@@ -95,7 +107,7 @@ test.describe('Web Vitals', () => {
       });
     });
     
-    console.log(`First Contentful Paint: ${fcp.toFixed(2)}ms`);
+    // console.log(`First Contentful Paint: ${fcp.toFixed(2)}ms`);
     expect(fcp).toBeLessThan(THRESHOLDS.firstContentfulPaint);
   });
 
@@ -122,7 +134,7 @@ test.describe('Web Vitals', () => {
       });
     });
     
-    console.log(`Largest Contentful Paint: ${lcp.toFixed(2)}ms`);
+    // console.log(`Largest Contentful Paint: ${lcp.toFixed(2)}ms`);
     expect(lcp).toBeLessThan(THRESHOLDS.largestContentfulPaint);
   });
 
@@ -142,8 +154,8 @@ test.describe('Web Vitals', () => {
         try {
           const observer = new PerformanceObserver((list) => {
             for (const entry of list.getEntries()) {
-              if (entry.entryType === 'layout-shift' && !(entry as any).hadRecentInput) {
-                clsValue += (entry as any).value;
+              if (entry.entryType === 'layout-shift' && !(entry as LayoutShift).hadRecentInput) {
+                clsValue += (entry as LayoutShift).value;
               }
             }
           });
@@ -160,7 +172,7 @@ test.describe('Web Vitals', () => {
       });
     });
     
-    console.log(`Cumulative Layout Shift: ${cls.toFixed(4)}`);
+    // console.log(`Cumulative Layout Shift: ${cls.toFixed(4)}`);
     // CLS should be less than 0.1 (good) or 0.25 (needs improvement)
     expect(cls).toBeLessThan(0.25);
   });
@@ -187,12 +199,12 @@ test.describe('API Response Time', () => {
     });
     const responseTime = Date.now() - startTime;
     
-    console.log(`Overview API response time: ${responseTime}ms`);
+    // console.log(`Overview API response time: ${responseTime}ms`);
     
     if (response.ok) {
       expect(responseTime).toBeLessThan(THRESHOLDS.apiResponse);
     } else {
-      console.log('API not available, skipping assertion');
+      // console.log('API not available, skipping assertion');
     }
   });
 
@@ -212,7 +224,7 @@ test.describe('API Response Time', () => {
     });
     const responseTime = Date.now() - startTime;
     
-    console.log(`Transactions API response time: ${responseTime}ms`);
+    // console.log(`Transactions API response time: ${responseTime}ms`);
     
     if (response.ok) {
       expect(responseTime).toBeLessThan(THRESHOLDS.apiResponse);
@@ -237,7 +249,7 @@ test.describe('API Response Time', () => {
     });
     const responseTime = Date.now() - startTime;
     
-    console.log(`Behavior API response time: ${responseTime}ms`);
+    // console.log(`Behavior API response time: ${responseTime}ms`);
     
     if (response.ok) {
       expect(responseTime).toBeLessThan(THRESHOLDS.apiResponse);
@@ -261,7 +273,7 @@ test.describe('Dashboard Render Performance', () => {
     await page.waitForSelector('main', { state: 'visible' });
     const renderTime = Date.now() - startTime;
     
-    console.log(`Dashboard render time: ${renderTime}ms`);
+    // console.log(`Dashboard render time: ${renderTime}ms`);
     expect(renderTime).toBeLessThan(THRESHOLDS.dashboardRender);
   });
 
@@ -332,7 +344,7 @@ test.describe('Resource Loading', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    console.log(`Potentially blocking resources: ${blockingResources.length}`);
+    // console.log(`Potentially blocking resources: ${blockingResources.length}`);
     // Should not have many blocking resources
     expect(blockingResources.length).toBeLessThan(5);
   });
@@ -351,7 +363,7 @@ test.describe('Resource Loading', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    console.log(`Total images loaded: ${imageCount.length}`);
+    // console.log(`Total images loaded: ${imageCount.length}`);
     
     // Should not load excessive images
     expect(imageCount.length).toBeLessThan(50);
@@ -371,7 +383,7 @@ test.describe('Memory Usage', () => {
     
     // Get initial memory
     const initialMemory = await page.evaluate(() => {
-      return (performance as any).memory?.usedJSHeapSize || 0;
+      return (performance as PerformanceWithMemory).memory?.usedJSHeapSize || 0;
     });
     
     // Navigate multiple times
@@ -384,16 +396,16 @@ test.describe('Memory Usage', () => {
     
     // Get final memory
     const finalMemory = await page.evaluate(() => {
-      return (performance as any).memory?.usedJSHeapSize || 0;
+      return (performance as PerformanceWithMemory).memory?.usedJSHeapSize || 0;
     });
     
-    console.log(`Initial memory: ${(initialMemory / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`Final memory: ${(finalMemory / 1024 / 1024).toFixed(2)}MB`);
+    // console.log(`Initial memory: ${(initialMemory / 1024 / 1024).toFixed(2)}MB`);
+    // console.log(`Final memory: ${(finalMemory / 1024 / 1024).toFixed(2)}MB`);
     
     // Memory should not grow excessively (allow 50% growth)
     if (initialMemory > 0) {
       const growth = (finalMemory - initialMemory) / initialMemory;
-      console.log(`Memory growth: ${(growth * 100).toFixed(2)}%`);
+      // console.log(`Memory growth: ${(growth * 100).toFixed(2)}%`);
       expect(growth).toBeLessThan(0.5);
     }
   });
@@ -422,7 +434,7 @@ test.describe('Bundle Size', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    console.log(`Total JavaScript size: ${(totalJSSize / 1024).toFixed(2)}KB`);
+    // console.log(`Total JavaScript size: ${(totalJSSize / 1024).toFixed(2)}KB`);
     
     // JS bundle should be less than 2MB (reasonable for a Next.js app)
     expect(totalJSSize).toBeLessThan(2 * 1024 * 1024);
@@ -446,7 +458,7 @@ test.describe('Bundle Size', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     
-    console.log(`Total CSS size: ${(totalCSSSize / 1024).toFixed(2)}KB`);
+    // console.log(`Total CSS size: ${(totalCSSSize / 1024).toFixed(2)}KB`);
     
     // CSS bundle should be less than 500KB
     expect(totalCSSSize).toBeLessThan(500 * 1024);

@@ -10,7 +10,7 @@
  */
 
 import { expect } from '@playwright/test';
-import { FinancialTransaction, Account } from './financial-scenarios';
+import type { FinancialTransaction, Account } from './financial-scenarios';
 
 // ============================================================================
 // Ledger Integrity Assertions
@@ -291,7 +291,7 @@ export function assertDebtLoopDetected(
  * Assert debt loop warning in UI
  */
 export async function assertDebtLoopWarningVisible(
-  page: any // Playwright Page
+  page: Page
 ): Promise<void> {
   const warning = page.locator('text=/debt trap|debt cycle|warning|risk/i').first();
   await expect(warning).toBeVisible();
@@ -362,7 +362,7 @@ export function assertResponseTime(
  * Assert no UI freeze (frame drops)
  */
 export async function assertNoUIFreeze(
-  page: any,
+  page: Page,
   durationMs: number = 1000
 ): Promise<void> {
   const frames = await page.evaluate((duration: number) => {

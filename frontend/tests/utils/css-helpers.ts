@@ -9,7 +9,7 @@
  * - Responsive breakpoints
  */
 
-import { Page, Locator } from '@playwright/test';
+import type { Page, Locator } from '@playwright/test';
 
 // ============================================================================
 // Types
@@ -32,6 +32,12 @@ export interface ResponsiveBreakpoint {
   name: string;
   width: number;
   height: number;
+}
+
+interface LayoutShift {
+  entryType: string;
+  hadRecentInput: boolean;
+  value: number;
 }
 
 // ============================================================================
@@ -314,8 +320,8 @@ export async function measureLayoutShift(
       
       const observer = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (entry.entryType === 'layout-shift' && !(entry as any).hadRecentInput) {
-            clsValue += (entry as any).value;
+          if (entry.entryType === 'layout-shift' && !(entry as LayoutShift).hadRecentInput) {
+            clsValue += (entry as LayoutShift).value;
           }
         }
       });

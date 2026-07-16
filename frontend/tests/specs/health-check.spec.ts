@@ -6,7 +6,8 @@
  * Tests that every page loads without errors and displays meaningful content.
  */
 
-import { test, expect, Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 // Helper to capture console errors - commented out as unused
 // async function captureConsoleErrors(page: Page): Promise<string[]> {

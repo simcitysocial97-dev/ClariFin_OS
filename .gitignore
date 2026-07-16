@@ -66,6 +66,9 @@ Database
 data/
 uploads/
 
+# Generated (ephemeral validation artifacts)
+frontend/generated/
+
 Misc
 .vercel
 .expo/

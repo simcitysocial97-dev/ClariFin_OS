@@ -9,7 +9,8 @@
  * - Performance metrics
  */
 
-import { test as base, Page, BrowserContext } from '@playwright/test';
+import type { Page} from '@playwright/test';
+import { test as base, BrowserContext } from '@playwright/test';
 
 // ============================================================================
 // Types

@@ -25,6 +25,8 @@
     "gen:types": "openapi-typescript http://localhost:8000/openapi.json -o ./types/api-generated.ts",
     "dev:safe": "concurrently --names 'next,tsc' --prefix-colors 'cyan,yellow' 'next dev --turbopack' 'tsc --watch --noEmit --preserveWatchOutput'",
     "type-check": "tsc --noEmit",
+    "fvf": "npx tsx tools/validate.ts --all",
+    "fvf:fast": "npx tsx tools/validate.ts --fast",
     "validate": "npm run type-check && npm run lint && npm run test"
   },
   "dependencies": {

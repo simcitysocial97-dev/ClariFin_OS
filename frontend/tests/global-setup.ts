@@ -8,7 +8,8 @@
  * - Prepares test environment
  */
 
-import { FullConfig, request } from '@playwright/test';
+import type { FullConfig} from '@playwright/test';
+import { request } from '@playwright/test';
 import { spawn, execSync } from 'child_process';
 import { existsSync } from 'fs';
 import { resolve } from 'path';

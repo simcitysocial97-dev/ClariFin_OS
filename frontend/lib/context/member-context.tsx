@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchMembers, createMember, type Member } from '@/lib/api/client';
 
 interface MemberContextType {
