@@ -1,6 +1,6 @@
 # Active Context
 
-## Current Sprint: Stage 1.12 — Architecture Freeze & Verification
+## Current Sprint: Stage 2.5 — Explainability Contract Freeze
 
 ### Completed
 - Built reusable ExplainabilityDrawer UI runtime consuming Explanation objects
@@ -9,6 +9,13 @@
 - Created ExplainabilityProvider with Zustand store for global state management
 - Integrated drawer into NetWorth widget as reference implementation
 - Updated SourceReference contract to canonical provenance model
+
+### Stage 2.4.5-2.5 — Explainability Contract Freeze (COMPLETE)
+- Created `docs/STAGE2_CONTRACT_FREEZE.md` with canonical contract analysis
+- Identified: `/api/networth` missing response_model causes `unknown` types in OpenAPI
+- Identified: SourceReference has field name mismatch (`type` vs `sourceType`)
+- Identified: Technical provenance fields in frontend have no production consumer
+- Next: Stage 2.5 implementation to fix these issues
 
 ### Recently Completed: Stage 1.8 — Chart Runtime Extraction
 - Created shared chart modules: `lib/chart/recharts.ts`, `chart-config.ts`, `chart-colors.ts`
