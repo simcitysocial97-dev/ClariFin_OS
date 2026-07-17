@@ -7,6 +7,7 @@ Living checklist tracking incremental architectural migrations. Prevents duplica
 | Area | Status | Notes |
 |------|--------|-------|
 | DTO → ViewModel | 🔄 In Progress | Net Worth completed |
+| Chart Runtime | ✅ Complete | Shared modules created, CashflowChart migrated |
 | Query Factory | ⏳ Pending | Starts S1.3 |
 | Explainability Runtime | ⏳ Pending | Starts S1.4 |
 | Workspace Runtime | ⏳ Pending | Starts S1.5 |
@@ -98,4 +99,64 @@ The NetWorth capability demonstrates the pattern:
 
 ---
 
-*Updated: Stage 1.2 complete - Net Worth reference implementation verified*
+## Stage 1.8 — Chart Runtime Extraction
+
+### Completed Work
+
+- [x] Created `frontend/lib/chart/recharts.ts` - Shared dynamic imports for Recharts components
+- [x] Created `frontend/lib/chart/chart-config.ts` - Shared chart constants (margins, heights, grid, axis, tooltip, legend)
+- [x] Created `frontend/lib/chart/chart-colors.ts` - Semantic color tokens for charts
+- [x] Updated `frontend/lib/utils/format.ts` - Fixed `formatINRCompact()` to use integer precision (no decimals)
+- [x] Migrated `frontend/components/dashboard/cashflow-chart.tsx` - Now uses shared chart modules
+- [x] Updated `frontend/lib/utils/__tests__/format.test.ts` - Fixed test expectations for compact format
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `lib/chart/recharts.ts` | Dynamic imports for Recharts components (SSR-safe) |
+| `lib/chart/chart-config.ts` | Shared chart configuration constants |
+| `lib/chart/chart-colors.ts` | Semantic color tokens for chart series |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `lib/utils/format.ts` | Fixed `formatINRCompact()` integer precision |
+| `components/dashboard/cashflow-chart.tsx` | Migrated to use shared chart modules |
+| `lib/utils/__tests__/format.test.ts` | Updated test expectations |
+
+### Reference Implementation: CashflowChart
+
+The CashflowChart demonstrates the chart runtime pattern:
+
+1. **Dynamic Imports**: All Recharts components imported from `lib/chart/recharts.ts`
+2. **Shared Config**: Margins, heights, grid, axis props from `lib/chart/chart-config.ts`
+3. **Color Tokens**: Semantic colors from `lib/chart/chart-colors.ts`
+4. **Formatter**: Uses `formatINR()` from `lib/utils/format.ts`
+
+### Duplication Eliminated
+
+| Pattern | Before | After |
+|---------|--------|-------|
+| Recharts imports | 11 inline `dynamic()` calls | 1 import from `recharts.ts` |
+| Chart margins | Repeated `{top: 20, right: 30, ...}` | `CHART_MARGINS.default` |
+| Grid config | Repeated `strokeDasharray='3 3'` | `CARTESIAN_GRID_PROPS` |
+| Axis styling | Repeated tick styles | `AXIS_TICK_STYLE` |
+| Tooltip style | Repeated contentStyle objects | `TOOLTIP_CONTENT_STYLE` |
+| Legend config | Repeated wrapper styles | `LEGEND_WRAPPER_STYLE` |
+
+### Validation Results
+
+- ✅ Type-check: `tsc --noEmit` passes
+- ✅ Unit tests: 94/94 tests pass
+- ✅ Build: Next.js production build succeeds
+
+### Next Steps
+
+- [ ] Migrate remaining charts to use shared modules (NetWorth, Spending, etc.)
+- [ ] Extract shared tooltip component if custom tooltips are needed
+- [ ] Add chart-specific formatters (dates, percentages) to `format.ts`
+
+---
+*Updated: Stage 1.8 complete - Chart runtime extracted, CashflowChart migrated*

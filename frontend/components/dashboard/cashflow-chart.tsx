@@ -1,57 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { formatINR } from '@/lib/utils/format';
+import { formatINR, formatINRCompact } from '@/lib/utils/format';
 import { ChartContainer } from '@/components/ui/chart-container';
 import { useCashflow } from '@/lib/hooks/use-cashflow';
-
-// Dynamically import recharts to avoid SSR issues
-import dynamic from 'next/dynamic';
-
-// Type-safe dynamic imports for recharts components
-const ComposedChart = dynamic(() => import('recharts').then((mod) => mod.ComposedChart), { ssr: false, loading: () => null }) as typeof import('recharts').ComposedChart;
-const Bar = dynamic(() => import('recharts').then((mod) => mod.Bar), { ssr: false, loading: () => null }) as typeof import('recharts').Bar;
-const Line = dynamic(() => import('recharts').then((mod) => mod.Line), { ssr: false, loading: () => null }) as typeof import('recharts').Line;
-const XAxis = dynamic(() => import('recharts').then((mod) => mod.XAxis), { ssr: false, loading: () => null }) as typeof import('recharts').XAxis;
-const YAxis = dynamic(() => import('recharts').then((mod) => mod.YAxis), { ssr: false, loading: () => null }) as typeof import('recharts').YAxis;
-const CartesianGrid = dynamic(() => import('recharts').then((mod) => mod.CartesianGrid), { ssr: false, loading: () => null }) as typeof import('recharts').CartesianGrid;
-const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { ssr: false, loading: () => null }) as typeof import('recharts').Tooltip;
-const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false, loading: () => null }) as typeof import('recharts').ResponsiveContainer;
-const Legend = dynamic(() => import('recharts').then((mod) => mod.Legend), { ssr: false, loading: () => null }) as typeof import('recharts').Legend;
+import {
+  ComposedChart,
+  Bar,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from '@/lib/chart/recharts';
+import {
+  CHART_MARGINS,
+  CARTESIAN_GRID_PROPS,
+  TOOLTIP_CONTENT_STYLE,
+  LEGEND_WRAPPER_STYLE,
+  LEGEND_ICON_SIZE,
+  BAR_SIZE,
+  BAR_RADIUS,
+} from '@/lib/chart/chart-config';
+import { CHART_COLORS, CHART_GRADIENTS, getGradientFill } from '@/lib/chart/chart-colors';
 
 interface CashflowChartProps {
   months?: number;
 }
 
 export function CashflowChart({ months = 6 }: CashflowChartProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const { data, isLoading, isError, refetch } = useCashflow(months);
 
-  // Format paise value for chart display
-  const formatPaiseForChart = (paise: number) => {
-    const rupees = paise / 100;
-    if (rupees >= 100000) {
-      return `₹${(rupees / 100000).toFixed(0)}L`;
-    }
-    if (rupees >= 1000) {
-      return `₹${(rupees / 1000).toFixed(0)}K`;
-    }
-    return `₹${rupees}`;
-  };
-
-  // Check for empty data safely utilizing Zod structural parameters
+  // Check for empty data
   const isEmpty = !data || !data.months || data.months.length === 0;
-
-  if (!mounted) {
-    return (
-      <ChartContainer isLoading={true} isError={false} isEmpty={false} children={null} />
-    );
-  }
 
   return (
     <ChartContainer
@@ -66,72 +48,66 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={data.months}
-              margin={{ top: 20, right: 30, left: 80, bottom: 20 }}
+              margin={CHART_MARGINS.default}
             >
               <defs>
-                <linearGradient id="incomeBar" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
+                <linearGradient id={CHART_GRADIENTS.income.id} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={CHART_GRADIENTS.income.startColor} stopOpacity={CHART_GRADIENTS.income.startOpacity} />
+                  <stop offset="95%" stopColor={CHART_GRADIENTS.income.endColor} stopOpacity={CHART_GRADIENTS.income.endOpacity} />
                 </linearGradient>
-                <linearGradient id="expenseBar" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--destructive))" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="hsl(var(--destructive))" stopOpacity={0.6} />
+                <linearGradient id={CHART_GRADIENTS.expense.id} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={CHART_GRADIENTS.expense.startColor} stopOpacity={CHART_GRADIENTS.expense.startOpacity} />
+                  <stop offset="95%" stopColor={CHART_GRADIENTS.expense.endColor} stopOpacity={CHART_GRADIENTS.expense.endOpacity} />
                 </linearGradient>
               </defs>
               <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="hsl(var(--muted-foreground) / 0.2)"
-                vertical={false}
+                strokeDasharray={CARTESIAN_GRID_PROPS.strokeDasharray}
+                stroke={CARTESIAN_GRID_PROPS.stroke}
+                vertical={CARTESIAN_GRID_PROPS.vertical}
               />
               <XAxis
                 dataKey="month_label"
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                tick={{ fill: CHART_COLORS.mutedForeground, fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                tick={{ fill: CHART_COLORS.mutedForeground, fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={formatPaiseForChart}
+                tickFormatter={formatINRCompact}
                 domain={[0, 'dataMax + 100000']}
               />
               <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  color: 'hsl(var(--popover-foreground))',
-                  fontSize: '12px',
-                }}
+                contentStyle={TOOLTIP_CONTENT_STYLE}
                 formatter={(value) => [formatINR(Number(value)), '']}
               />
               <Legend
-                wrapperStyle={{ fontSize: '12px' }}
-                iconSize={10}
+                wrapperStyle={LEGEND_WRAPPER_STYLE}
+                iconSize={LEGEND_ICON_SIZE}
               />
               <Bar
                 dataKey="income_paise"
                 name="Income"
-                fill="url(#incomeBar)"
-                radius={[4, 4, 0, 0]}
-                barSize={20}
+                fill={getGradientFill(CHART_GRADIENTS.income.id)}
+                radius={BAR_RADIUS}
+                barSize={BAR_SIZE}
               />
               <Bar
                 dataKey="expense_paise"
                 name="Expense"
-                fill="url(#expenseBar)"
-                radius={[4, 4, 0, 0]}
-                barSize={20}
+                fill={getGradientFill(CHART_GRADIENTS.expense.id)}
+                radius={BAR_RADIUS}
+                barSize={BAR_SIZE}
               />
               <Line
                 type="monotone"
                 dataKey="net_paise"
                 name="Net"
-                stroke="hsl(var(--green-600))"
+                stroke={CHART_COLORS.success}
                 strokeWidth={2}
-                dot={{ r: 4, fill: 'hsl(var(--green-600))' }}
-                activeDot={{ r: 6, fill: 'hsl(var(--green-600))' }}
+                dot={{ r: 4, fill: CHART_COLORS.success }}
+                activeDot={{ r: 6, fill: CHART_COLORS.success }}
               />
             </ComposedChart>
           </ResponsiveContainer>

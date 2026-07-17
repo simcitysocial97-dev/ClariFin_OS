@@ -174,6 +174,132 @@ export const RETRY_POLICY = {
 
 ---
 
+## Runtime State Pattern
+
+The `DataStateWrapper` is the **ONLY approved pattern** for rendering queried data. It connects React Query → Runtime Adapter → Loading/Error/Empty runtime → Capability UI.
+
+### Architecture Flow
+
+```
+React Query Result
+       ↓
+fromQuery() Adapter
+       ↓
+RuntimeState (loading/error/empty/offline/permission/stale/success)
+       ↓
+DataStateWrapper
+       ↓
+Override or Default State Component
+       ↓
+Capability UI (children/render prop)
+```
+
+### Usage
+
+```typescript
+import { DataStateWrapper } from '@/components/runtime'
+import { useNetWorth } from '@/lib/hooks/use-networth'
+
+export function MoneyPositionWidget() {
+  const query = useNetWorth()
+
+  return (
+    <DataStateWrapper
+      query={query}
+      loadingVariant="spinner"
+      loadingMessage="Loading net worth..."
+    >
+      {(data) => <MoneyPositionContent data={data} />}
+    </DataStateWrapper>
+  )
+}
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `query` | `UseQueryResult` | TanStack Query result (required) |
+| `children` | `(data: T) => ReactNode` | Render prop for success state |
+| `render` | `(data: T) => ReactNode` | Alternative render prop (normalized with children) |
+| `loading` | `ReactNode` | Custom loading component override |
+| `error` | `ReactNode` | Custom error component override |
+| `empty` | `ReactNode` | Custom empty component override |
+| `offline` | `ReactNode` | Custom offline component override |
+| `permission` | `ReactNode` | Custom permission component override |
+| `stale` | `ReactNode` | Stale indicator (renders alongside data) |
+| `fallback` | `ReactNode` | Default fallback for unknown states |
+| `isEmpty` | `(data: T) => boolean` | Custom empty detection function |
+| `loadingVariant` | `LoadingVariant` | Loading display variant |
+| `loadingMessage` | `string` | Custom loading message |
+
+### Override Behavior
+
+If an override prop is provided, it takes precedence over the default state component:
+
+```typescript
+<DataStateWrapper
+  query={query}
+  loading={<MyLoading />}
+  error={<MyError />}
+  empty={<MyEmpty />}
+>
+  {(data) => <Content data={data} />}
+</DataStateWrapper>
+```
+
+### State Components
+
+| State | Default Component |
+|-------|-------------------|
+| `loading` | `LoadingState` |
+| `error` | `ErrorState` |
+| `empty` | `EmptyState` |
+| `offline` | `OfflineState` |
+| `permission` | `PermissionState` |
+| `stale` | Renders children with optional stale indicator |
+| `success` | Renders children |
+
+### Explainability Integration
+
+When an error contains an `Explanation` object, `ErrorState` automatically shows an "Explain" button that opens the `ExplainabilityDrawer`:
+
+```typescript
+// Error with explanation
+const error = new Error('Calculation failed') as Error & {
+  explanation: Explanation
+}
+
+// ErrorState will show "Explain" button
+<DataStateWrapper query={query} />
+```
+
+### Loading Variants
+
+```typescript
+// Available variants
+<LoadingState variant="spinner" />    // Full spinner with message
+<LoadingState variant="skeleton" />   // Skeleton rows
+<LoadingState variant="inline" />     // Inline spinner
+<LoadingState variant="fullscreen" />  // Full screen overlay
+<LoadingState variant="compact" />    // Small centered spinner
+```
+
+### Testing
+
+All runtime components have tests in `frontend/tests/components/runtime/`:
+
+- `DataStateWrapper.test.tsx` - Wrapper rendering, state transitions, overrides
+- `LoadingState.test.tsx` - Loading variants and accessibility
+- `ErrorState.test.tsx` - Error display and retry behavior
+
+Run tests with:
+```bash
+cd frontend && npm run test -- --run
+```
+
+---
+
 ## Hook Layer Responsibilities
 
 | Layer | Responsibility |

@@ -9,10 +9,15 @@
 - Created ExplainabilityProvider with Zustand store for global state management
 - Integrated drawer into NetWorth widget as reference implementation
 - Updated SourceReference contract to canonical provenance model
+
+### Recently Completed: Stage 1.8 — Chart Runtime Extraction
+- Created shared chart modules: `lib/chart/recharts.ts`, `chart-config.ts`, `chart-colors.ts`
+- Migrated CashflowChart to use shared chart runtime
+- Fixed `formatINRCompact()` precision and updated tests
 - All validation passing: type-check ✓, tests (94/94) ✓, build ✓
 
 ### Next Steps
 - Extend explainability to remaining features: accounts, loans, cards, investments
+- Migrate remaining charts to use shared chart modules
 - Add explanation UI components to display confidence and evidence
 - Implement explanation aggregation for dashboard views
-- Add explanation filtering and search capabilities

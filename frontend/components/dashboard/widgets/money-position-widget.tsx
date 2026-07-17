@@ -2,6 +2,7 @@
  * Money Position Widget - Net Worth and Assets Summary
  *
  * Shows where your money is: Net Worth, Cash, Accounts, Investments
+ * Uses DataStateWrapper for consistent loading/error/empty handling.
  */
 
 'use client'
@@ -11,12 +12,14 @@ import { formatINRCompact } from '@/lib/utils/format'
 import { useNetWorth } from '@/lib/hooks/use-networth'
 import { useExplainabilityDrawer } from '@/components/explainability'
 import { Button } from '@/components/ui/button'
+import { DataStateWrapper } from '@/components/runtime'
+import type { NetWorthModel } from '@/lib/models/networth'
 
-export function MoneyPositionWidget() {
-  const { data, isLoading } = useNetWorth()
+/**
+ * Widget content - only renders when data is available
+ */
+function MoneyPositionContent({ data }: { data: NetWorthModel }) {
   const { showExplanation } = useExplainabilityDrawer()
-
-  if (isLoading || !data) return null
 
   // Use derived trend flag from ViewModel
   const trendColor =
@@ -86,5 +89,22 @@ export function MoneyPositionWidget() {
         </p>
       </div>
     </div>
+  )
+}
+
+/**
+ * Money Position Widget - Uses DataStateWrapper for state management
+ */
+export function MoneyPositionWidget() {
+  const query = useNetWorth()
+
+  return (
+    <DataStateWrapper
+      query={query}
+      loadingVariant="spinner"
+      loadingMessage="Loading net worth..."
+    >
+      {(data) => <MoneyPositionContent data={data} />}
+    </DataStateWrapper>
   )
 }

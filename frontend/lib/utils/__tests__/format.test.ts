@@ -53,12 +53,12 @@ describe('formatINR', () => {
 describe('formatINRCompact', () => {
   it('formats thousands as K', () => {
     // 100000 paise = ₹1,000 = ₹1.0K
-    expect(formatINRCompact(100000)).toBe('₹1.0K')
+    expect(formatINRCompact(100000)).toBe('₹1K')
   })
 
   it('formats lakhs correctly', () => {
     // 10000000 paise = ₹1,00,000 = ₹1.0L
-    expect(formatINRCompact(10000000)).toBe('₹1.0L')
+    expect(formatINRCompact(10000000)).toBe('₹1L')
   })
 
   it('handles null gracefully', () => {

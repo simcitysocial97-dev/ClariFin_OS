@@ -155,16 +155,17 @@ export function formatDateDisplay(dateStr: string | null | undefined): string {
 
 
 /**
- * Format paise to compact INR display (e.g., "₹12.5K" or "₹2.4L")
+ * Format paise to compact INR display (e.g., "₹12K" or "₹2L")
+ * Uses integer precision for K/L values (no decimal places).
  */
 export function formatINRCompact(paise: number | null | undefined): string {
   if (paise === null || paise === undefined) return '—';
   const rupees = paise / 100;
   if (Math.abs(rupees) >= 100000) {
-    return `₹${(rupees / 100000).toFixed(1)}L`;
+    return `₹${(rupees / 100000).toFixed(0)}L`;
   }
   if (Math.abs(rupees) >= 1000) {
-    return `₹${(rupees / 1000).toFixed(1)}K`;
+    return `₹${(rupees / 1000).toFixed(0)}K`;
   }
   return formatINR(paise);
 }
