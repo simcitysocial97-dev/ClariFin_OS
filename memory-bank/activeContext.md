@@ -4,17 +4,9 @@
 
 ### Completed
 - **Stage 2.6 Implementation**: All explainability contracts canonicalized
-- Added `NetWorthResponse` Pydantic model to `backend/src/models/explanation.py`
-- Updated `backend/src/routers/networth.py` with `response_model=NetWorthResponse`
-- Updated `backend/src/services/networth_service.py` to return `NetWorthResponse`
-- Regenerated `backend/clarifin_openapi.json` with proper schema reference
-- Regenerated `backend/api_types.ts` with strong typing
-- Regenerated `frontend/api-schema.json` from OpenAPI
-- Updated `frontend/lib/explainability/contracts/SourceReference.ts` to match backend
-- Updated `frontend/lib/contracts/api/networth.ts` to align with backend
-- Updated `frontend/lib/explainability/flattenExplanation.ts` to use `type`/`id`
-- Updated `frontend/components/explainability/components/SourceCard.tsx` to use business fields
-- Updated `frontend/components/explainability/panels/SourcesPanel.tsx` to simplify columns
+- **CGC Workflow Optimization**: Optimized .clinerules from 322→66 lines (80% reduction)
+- **Tool Priority Order**: Enforced Memory Bank → CGC → rg → read_file sequence
+- **CGC Limitations Documented**: Function call detection incomplete for TS/JS
 
 ### Validation Status
 - Frontend type-check: ✓ PASSING
@@ -25,9 +17,4 @@
 - Stage 2.6 complete. Ready for Stage 3.
 - All API endpoints now have proper response models
 - SourceReference is now aligned between backend and frontend
-
-### CGC Optimization Analysis (Current Task)
-- **Completed**: CGC optimization analysis on `frontend/lib/` directory
-- **Result**: CGC successfully answers 80 files, 175 functions, 20 interfaces
-- **File reads**: Only 5 targeted reads (barrel files) - no recursive exploration
-- **Report**: See `CGC_OPTIMIZATION_REPORT.md` for full analysis
+- CGC optimization complete - see CGC_OPTIMIZATION_REPORT.md for details
