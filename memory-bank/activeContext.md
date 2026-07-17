@@ -1,6 +1,6 @@
 # Active Context
 
-## Current Sprint: Stage 1.6 — Universal Explainability Drawer
+## Current Sprint: Stage 1.12 — Architecture Freeze & Verification
 
 ### Completed
 - Built reusable ExplainabilityDrawer UI runtime consuming Explanation objects
@@ -24,8 +24,19 @@
 - Kept old hook as compatibility shim for backward compatibility
 - All validation passing: type-check ✓, tests (94/94) ✓, build ✓
 
+### Completed: Stage 1.12 — Architecture Verification
+- Verified backend layer boundaries: Router → Service → Engine → Repository → SQLite
+- Verified FinanceDB import boundary: Only in repositories/
+- Verified frontend capability pattern: Accounts, Cashflow follow contracts→services→mappers→models→hooks
+- Created `docs/COMPATIBILITY_LAYERS.md` cataloging all compatibility shims
+- Created `docs/TECHNICAL_DEBT.md` with 6 entries (TD-001 to TD-006)
+- Updated `ARCHITECTURE.md` with runtime layers documentation
+- Frontend validation: type-check ✓, tests (94/94) ✓, build ✓
+- Backend validation: ruff (160 pre-existing style issues), mypy (pre-existing test issues), pytest (1184 passed, 15 pre-existing failures)
+
 ### Next Steps
-- Extend explainability to remaining features: accounts, loans, cards, investments
-- Migrate remaining charts to use shared chart modules
-- Add explanation UI components to display confidence and evidence
-- Implement explanation aggregation for dashboard views
+- Stage 1 complete. Ready for Stage 2.
+- Address technical debt items in Stage 2.0:
+  - Remove duplicate behavior/behaviour modules
+  - Migrate remaining frontend hooks to capability pattern
+  - Refactor legacy engine DB access (optional)

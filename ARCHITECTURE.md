@@ -199,7 +199,93 @@ Some engines (`reconciliation_engine.py`, `behavior_engine.py`) still call `sqli
 
 ---
 
-## 7. Quick Reference (for AI Context Optimization)
+## 8. Runtime Layers
+
+### Capability Runtime (Frontend)
+
+Provides structured data flow for each business capability:
+
+```
+lib/capabilities/<capability>/
+├── contracts/     # Zod schemas for DTO validation
+├── services/    # API client functions
+├── mappers/     # Pure DTO → Model transformations
+├── models/      # ViewModels for UI consumption
+└── hooks/       # React Query hooks using shared query runtime
+```
+
+**Implemented Capabilities:** `accounts`, `cashflow`
+
+**Pattern:** Components consume `Model` types, never `DTO` types directly.
+
+### Explainability Runtime (Frontend)
+
+Universal explanation infrastructure for all financial metrics:
+
+```
+lib/explainability/
+├── contracts/   # Explanation, Evidence, SourceReference types
+├── createExplanation.ts
+├── useExplainability.ts
+└── confidenceToBadge.ts
+```
+
+**Components:** `ExplainabilityDrawer` with Overview, Calculation, Evidence, Sources panels.
+
+### Query Runtime (Frontend)
+
+Shared React Query infrastructure:
+
+```
+lib/query/
+├── useAppQuery.ts
+├── useAppMutation.ts
+├── queryKeys.ts
+└── queryOptions.ts
+```
+
+**Features:** Standardized stale times, retry policies, error normalization.
+
+### Chart Runtime (Frontend)
+
+Shared Recharts components with SSR handling:
+
+```
+lib/chart/
+├── recharts.ts
+├── chart-config.ts
+└── chart-colors.ts
+```
+
+### State Runtime (Frontend)
+
+Zustand stores for global UI state:
+
+```
+lib/store/
+├── explainability-store.ts
+└── use-app-store.ts
+```
+
+**Purpose:** Ephemeral UI state (selected explanation, active tab, expanded steps).
+
+---
+
+## 9. Architecture Verification Status
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| Router → Service → Engine → Repository | ✅ PASS | No violations detected |
+| FinanceDB import boundary | ✅ PASS | Only in repositories/ |
+| Engine purity (no DB) | ⚠️ PARTIAL | `balance_engine.py`, `ledger_audit_engine.py` have DB access (acceptable per §9) |
+| Frontend capability pattern | ✅ PASS | Accounts, Cashflow follow contracts→services→mappers→models→hooks |
+| Component DTO consumption | ✅ PASS | Components use Model types |
+| Mapper purity | ✅ PASS | No side effects, pure transformations |
+| Hook transformation logic | ✅ PASS | Delegated to mappers |
+
+---
+
+## 10. Quick Reference (for AI Context Optimization)
 
 ### To find a class definition:
 ```bash
