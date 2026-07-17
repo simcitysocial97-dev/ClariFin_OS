@@ -26,6 +26,7 @@ describe('mapNetworthToModel', () => {
     },
     is_partial: false,
     partial_reason: null,
+    last_updated: null,
   }
 
   it('transforms DTO to Model with correct values', () => {
@@ -120,6 +121,7 @@ describe('mapNetworthToModel', () => {
       },
       is_partial: true,
       partial_reason: 'No financial data',
+      last_updated: null,
     }
     const result = mapNetworthToModel(zeroDto)
 

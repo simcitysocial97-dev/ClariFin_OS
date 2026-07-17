@@ -7,6 +7,7 @@
 - **CGC Workflow Optimization**: Optimized .clinerules from 322→65 lines (80% reduction)
 - **Tool Priority Order**: Enforced Memory Bank → CGC → rg → read_file sequence
 - **CGC Limitations Documented**: Function call detection incomplete for TS/JS
+- **Realistic Coding Benchmark**: Added `last_updated` field to NetWorthResponse (6 read_file calls, all justified)
 
 ### Validation Status
 - Frontend type-check: ✓ PASSING

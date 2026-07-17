@@ -43,6 +43,9 @@ export interface NetWorthModel {
   isPartial: boolean
   partialReason: string | null
 
+  // Last updated timestamp
+  lastUpdated: string | null
+
   // Explanation (preserved from backend, not generated)
   explanation: NetWorthExplanation | null
 }

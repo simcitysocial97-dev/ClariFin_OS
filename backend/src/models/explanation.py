@@ -79,4 +79,5 @@ class NetWorthResponse(BaseModel):
     liabilities: dict[str, int]
     is_partial: bool
     partial_reason: str | None = None
+    last_updated: str | None = None
     explanation: NetWorthExplanation | None = None

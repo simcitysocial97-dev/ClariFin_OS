@@ -96,6 +96,7 @@ export const NetWorthResponseSchema = z.object({
   }),
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
+  last_updated: z.string().nullable(),
   explanation: NetWorthExplanationSchema.optional(),
 })
 

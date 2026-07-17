@@ -61,6 +61,9 @@ export function mapNetworthToModel(dto: NetWorthDto): NetWorthModel {
     isPartial: dto.is_partial,
     partialReason: dto.partial_reason,
 
+    // Last updated timestamp
+    lastUpdated: dto.last_updated,
+
     // Explanation (preserved from backend)
     explanation,
   }

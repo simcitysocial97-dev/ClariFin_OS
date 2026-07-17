@@ -1,5 +1,6 @@
 """Net worth business orchestration service."""
 
+from datetime import datetime
 from src.models.explanation import (
     Evidence,
     SourceReference,
@@ -90,6 +91,7 @@ class NetWorthService(BaseService):
                 if len(accounts) == 0
                 else None
             ),
+            last_updated=datetime.now().isoformat(),
         )
 
     def calculate_with_explanation(self) -> NetWorthResponse:
@@ -340,5 +342,6 @@ class NetWorthService(BaseService):
                 if len(accounts) == 0
                 else None
             ),
+            last_updated=datetime.now().isoformat(),
             explanation=networth_explanation,
         )

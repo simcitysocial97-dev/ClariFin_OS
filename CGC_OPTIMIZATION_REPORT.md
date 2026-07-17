@@ -143,6 +143,40 @@ This report documents the CodeGraphContext (CGC) optimization analysis performed
 
 **Conclusion**: CGC `find_code` found the class definition and all usages. No `read_file` needed.
 
+## Validation: Realistic End-to-End Coding Task
+
+### Task: Add 'last_updated' field to NetWorthResponse (backend → frontend)
+
+**Tool Call Timeline:**
+
+| # | Tool | Query | Justification |
+|---|------|-------|---------------|
+| 1 | CGC `find_code` | NetWorthResponse | Find symbol definition (source returned) |
+| 2 | CGC `find_code` | return NetWorthResponse | Find all return sites |
+| 3 | `read_file` | frontend/lib/contracts/api/networth.ts | CGC returned source, but need full file for edit |
+| 4 | `read_file` | backend/src/models/explanation.py | CGC returned source, but need full file for edit |
+| 5 | `read_file` | backend/src/services/networth_service.py | CGC returned source, but need full file for edit |
+| 6 | `read_file` | frontend/lib/mappers/networth.ts | CGC returned source, but need full file for edit |
+| 7 | `read_file` | frontend/lib/models/networth.ts | CGC returned source, but need full file for edit |
+| 8 | `read_file` | frontend/lib/mappers/__tests__/networth.test.ts | Test file needed for type fix |
+
+**Total Tool Calls: 8**
+**Total read_file calls: 6** (all necessary for file modifications)
+
+**Analysis:**
+- CGC `find_code` successfully found all relevant symbols
+- `read_file` was used AFTER CGC identified the files, not before
+- All `read_file` calls were necessary for actual code modifications
+- No unnecessary file reads occurred
+
+**Comparison to Original Workflow (Estimated):**
+| Metric | Original | Optimized | Reduction |
+|--------|----------|-----------|-----------|
+| read_file calls | 15-25 | 6 | 60%+ |
+| list_files calls | 5-10 | 0 | 100% |
+| rg calls | 3-5 | 0 | 100% |
+| CGC calls | 0-2 | 2 | N/A (new capability) |
+
 ## Verification Checklist
 
 - [x] CGC `find_code()` returns source code (INDEX_SOURCE=true works)
@@ -153,3 +187,5 @@ This report documents the CodeGraphContext (CGC) optimization analysis performed
 - [x] Test with backend/src/ for Python patterns
 - [x] Tool priority order is clear and enforceable
 - [x] Rules are language-agnostic
+- [x] Realistic coding task completed with minimal file reads
+- [x] All read_file calls were justified (needed for edits)
