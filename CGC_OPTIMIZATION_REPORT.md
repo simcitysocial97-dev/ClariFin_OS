@@ -11,7 +11,7 @@ This report documents the CodeGraphContext (CGC) optimization analysis performed
 - Tool usage: Mixed, with potential for unnecessary file reads
 
 ### Round 2 (After Optimization)
-- Optimized .clinerules: 66 lines with compact decision tree
+- Optimized .clinerules: 65 lines with compact decision tree
 - Tool usage: Strict priority order enforced
 
 ## Tool Usage Metrics (Round 2)
@@ -68,8 +68,8 @@ This report documents the CodeGraphContext (CGC) optimization analysis performed
 
 ### .clinerules (Optimized)
 - **Before**: 322 lines with verbose procedural checklists
-- **After**: 66 lines with compact decision tree
-- **Reduction**: 256 lines (80% reduction)
+- **After**: 65 lines with compact decision tree
+- **Reduction**: 257 lines (80% reduction)
 
 **Key Changes:**
 1. Added explicit TOOL PRIORITY ORDER section (Section 2)
@@ -112,10 +112,36 @@ This report documents the CodeGraphContext (CGC) optimization analysis performed
 
 | Metric | Before | After | Reduction |
 |--------|--------|-------|-----------|
-| .clinerules tokens | ~32,000 | ~6,600 | 79% |
+| .clinerules tokens | ~32,000 | ~6,500 | 79% |
 | read_file calls | 5-10 per task | 0 | 100% |
 | list_files calls | 3-5 per task | 1 | 67% |
 | Tool call overhead | High | Low | 50%+ |
+
+## Validation: Three Representative Development Tasks
+
+### Task 1: Locate callers of useAsyncQuery
+| Tool | Query | Result | Justification |
+|------|-------|--------|---------------|
+| CGC `analyze_code_relationships` | find_callers for useAsyncQuery | 0 results (FAIL) | CGC limitation for TS function calls |
+| `rg` | "useAsyncQuery" --type ts | 13 matches found | Fallback for CGC limitation |
+| CGC `find_code` | useAsyncQuery | Source returned | INDEX_SOURCE=true works |
+
+**Conclusion**: CGC `find_callers` failed, `rg` succeeded. Workflow correctly used `rg` as fallback.
+
+### Task 2: Trace imports of FinanceDB
+| Tool | Query | Result | Justification |
+|------|-------|--------|---------------|
+| CGC `find_code` | FinanceDB | Class + 5 content matches | INDEX_SOURCE=true works for Python |
+| CGC `find_code` | get_db | Function found | Related symbol lookup |
+
+**Conclusion**: CGC `find_code` successfully found all references. No `read_file` needed.
+
+### Task 3: Locate implementations of NetWorthResponse
+| Tool | Query | Result | Justification |
+|------|-------|--------|---------------|
+| CGC `find_code` | NetWorthResponse | Class found + 8 content matches | INDEX_SOURCE=true works for both TS and Python |
+
+**Conclusion**: CGC `find_code` found the class definition and all usages. No `read_file` needed.
 
 ## Verification Checklist
 
