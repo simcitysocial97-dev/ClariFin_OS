@@ -11,14 +11,14 @@ export const queryKeys = {
     summary: () => ['financialHealth', 'summary'] as const,
   },
 
-  // Cashflow capability
-  cashflow: {
-    monthly: (months: number = 6) => ['cashflow', 'monthly', months] as const,
-  },
-
   // Transaction Intelligence capability
   transactions: {
     list: (filters?: Record<string, unknown>) => ['transactions', 'list', filters] as const,
+  },
+
+  // Cashflow capability
+  cashflow: {
+    monthly: (months: number) => ['cashflow', 'monthly', months] as const,
   },
 
   // Account Management capability

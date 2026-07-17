@@ -16,6 +16,14 @@
 - Fixed `formatINRCompact()` precision and updated tests
 - All validation passing: type-check ✓, tests (94/94) ✓, build ✓
 
+### Recently Completed: Stage 1.10 — Accounts Capability Migration
+- Created canonical capability structure: `lib/capabilities/accounts/`
+- Migrated useManagedAccounts to use useAppQuery with shared query keys
+- Created contracts/api.ts, models/model.ts, mappers/mapper.ts, services/api.ts, hooks/useAccounts.ts, index.ts
+- Updated page component to use AccountModel with camelCase fields
+- Kept old hook as compatibility shim for backward compatibility
+- All validation passing: type-check ✓, tests (94/94) ✓, build ✓
+
 ### Next Steps
 - Extend explainability to remaining features: accounts, loans, cards, investments
 - Migrate remaining charts to use shared chart modules

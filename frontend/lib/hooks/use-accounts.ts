@@ -1,27 +1,21 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { z } from 'zod'
+/**
+ * Accounts Hook - Compatibility layer
+ *
+ * Re-exports migrated useManagedAccounts from capability module.
+ * Mutation hooks (create/update/delete) remain here until migrated.
+ */
+
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+// Re-export migrated hook and type from capability
+export { useManagedAccounts } from '@/lib/capabilities/accounts'
+export type { AccountModel as Account } from '@/lib/capabilities/accounts'
+
+// ============================================================
+// Mutation hooks (not yet migrated)
+// ============================================================
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
-
-const AccountSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  bank: z.string(),
-  account_type: z.string(),
-  balance_paise: z.number().int(),
-  account_number_last4: z.string().nullable(),
-  is_active: z.number(),
-  notes: z.string().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
-})
-
-const AccountsResponseSchema = z.object({
-  accounts: z.array(AccountSchema),
-  total: z.number().int(),
-})
-
-export type Account = z.infer<typeof AccountSchema>
 
 export interface CreateAccountInput {
   name: string
@@ -30,13 +24,6 @@ export interface CreateAccountInput {
   balance_paise: number
   account_number_last4?: string
   notes?: string
-}
-
-async function fetchManagedAccounts() {
-  const res = await fetch(`${API_BASE}/api/accounts/manage`)
-  if (!res.ok) throw new Error('Failed to fetch accounts')
-  const raw = await res.json()
-  return AccountsResponseSchema.parse(raw)
 }
 
 async function createAccount(input: CreateAccountInput) {
@@ -65,14 +52,6 @@ async function deleteAccount(id: string) {
   })
   if (!res.ok) throw new Error('Failed to delete account')
   return res.json()
-}
-
-export function useManagedAccounts() {
-  return useQuery({
-    queryKey: ['accounts', 'managed'],
-    queryFn: fetchManagedAccounts,
-    staleTime: 5 * 60 * 1000,
-  })
 }
 
 export function useCreateAccount() {

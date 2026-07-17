@@ -69,9 +69,9 @@ function ManagedAccountCard({ account, onEdit, onDelete }: {
              <div>
                <h3 className="font-medium text-sm">{account.name}</h3>
                <p className="text-xs text-gray-500">{account.bank}</p>
-               <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
-                 {account.account_type}
-               </span>
+<span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
+                  {account.accountType}
+                </span>
              </div>
            </div>
            <div className="flex items-center gap-1">
@@ -86,11 +86,11 @@ function ManagedAccountCard({ account, onEdit, onDelete }: {
          <div className="mt-3 pt-2 border-t">
            <div className="flex items-center justify-between">
              <span className="text-xs text-gray-500">Balance</span>
-             <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+             <span className="text-lg font-semibold">{formatINR(account.balancePaise)}</span>
            </div>
-           {account.account_number_last4 && (
+           {account.accountNumberLast4 && (
              <p className="text-xs text-gray-400 mt-1">
-               ••••{account.account_number_last4}
+               ••••{account.accountNumberLast4}
              </p>
            )}
          </div>
@@ -111,10 +111,10 @@ function ManagedAccountForm({
   const [formData, setFormData] = useState<ManagedAccountFormData>({
     name: initialData?.name || "",
     bank: initialData?.bank || "",
-    account_type: (initialData?.account_type as any) || "savings",
+    account_type: (initialData?.accountType as any) || "savings",
     // Convert from paise to rupees for form display
-    balance: initialData ? (initialData.balance_paise / 100).toString() : "",
-    account_number_last4: initialData?.account_number_last4 || "",
+    balance: initialData ? (initialData.balancePaise / 100).toString() : "",
+    account_number_last4: initialData?.accountNumberLast4 || "",
     notes: initialData?.notes || "",
   });
 
@@ -302,7 +302,7 @@ export default function AccountsPage() {
 
   // Calculate totals
   const computedTotalPaise = computedAccounts.reduce((sum, a) => sum + a.balance_paise, 0);
-  const managedTotalPaise = managedData?.accounts.reduce((sum, a) => sum + a.balance_paise, 0) || 0;
+  const managedTotalPaise = managedData?.accounts.reduce((sum, a) => sum + a.balancePaise, 0) || 0;
   const totalBalancePaise = computedTotalPaise + managedTotalPaise;
 
   // Loading state
@@ -430,7 +430,7 @@ export default function AccountsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {managedData?.accounts
-              .sort((a, b) => b.balance_paise - a.balance_paise)
+              .sort((a, b) => b.balancePaise - a.balancePaise)
               .map((account) => (
                 <ManagedAccountCard
                   key={account.id}

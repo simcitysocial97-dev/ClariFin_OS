@@ -2,7 +2,7 @@
 
 import { formatINR, formatINRCompact } from '@/lib/utils/format';
 import { ChartContainer } from '@/components/ui/chart-container';
-import { useCashflow } from '@/lib/hooks/use-cashflow';
+import { useCashflow } from '@/lib/capabilities/cashflow';
 import {
   ComposedChart,
   Bar,
@@ -66,7 +66,7 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
                 vertical={CARTESIAN_GRID_PROPS.vertical}
               />
               <XAxis
-                dataKey="month_label"
+                dataKey="monthLabel"
                 tick={{ fill: CHART_COLORS.mutedForeground, fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
@@ -87,14 +87,14 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
                 iconSize={LEGEND_ICON_SIZE}
               />
               <Bar
-                dataKey="income_paise"
+                dataKey="incomePaise"
                 name="Income"
                 fill={getGradientFill(CHART_GRADIENTS.income.id)}
                 radius={BAR_RADIUS}
                 barSize={BAR_SIZE}
               />
               <Bar
-                dataKey="expense_paise"
+                dataKey="expensePaise"
                 name="Expense"
                 fill={getGradientFill(CHART_GRADIENTS.expense.id)}
                 radius={BAR_RADIUS}
@@ -102,7 +102,7 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
               />
               <Line
                 type="monotone"
-                dataKey="net_paise"
+                dataKey="netPaise"
                 name="Net"
                 stroke={CHART_COLORS.success}
                 strokeWidth={2}
