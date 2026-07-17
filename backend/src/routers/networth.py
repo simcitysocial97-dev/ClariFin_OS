@@ -16,6 +16,16 @@ def get_networth() -> dict[str, Any]:
     Net Worth = Assets - Liabilities
     Assets = account balances + investment current values
     Liabilities = loan outstanding + card outstanding
+
+    Returns:
+        {
+            net_worth_paise: int,
+            assets: {...},
+            liabilities: {...},
+            is_partial: bool,
+            partial_reason: str | None,
+            explanation: NetWorthExplanation
+        }
     """
     service = NetWorthService()
-    return service.calculate()
+    return service.calculate_with_explanation()

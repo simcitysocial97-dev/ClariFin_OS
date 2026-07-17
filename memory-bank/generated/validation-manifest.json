@@ -1,9 +1,10 @@
 {
-  "timestamp": "2026-07-16T23:02:09.618000+00:00",
+  "timestamp": "2026-07-17T01:19:40.624538+00:00",
   "changed_files": [
-    "backend/src/core/capability_registry.py",
     "backend/src/data/finance.db",
-    "backend/tests/test_capability_registry.py",
+    "frontend/components/dashboard/widgets/money-position-widget.tsx",
+    "frontend/components/layout/sidebar.tsx",
+    "frontend/lib/hooks/use-networth.ts",
     "memory-bank/generated/change-report.json",
     "memory-bank/generated/change-report.md",
     "memory-bank/generated/coverage.json",
@@ -12,12 +13,16 @@
     "memory-bank/generated/mutation-readiness.json",
     "memory-bank/generated/mutation-readiness.md",
     "memory-bank/generated/mutation-registry.json",
+    "memory-bank/generated/selective-history.json",
+    "memory-bank/generated/selective-plan.md",
+    "memory-bank/generated/selective-summary.json",
     "memory-bank/generated/test-plan.md",
     "memory-bank/generated/test-strength.json",
     "memory-bank/generated/test-strength.md",
     "memory-bank/generated/validation-history.json",
     "memory-bank/generated/validation-manifest.json",
     "memory-bank/generated/validation-metrics.json",
+    "memory-bank/generated/verification-matrix.md",
     "servers"
   ],
   "strategy": "full",
@@ -31,8 +36,23 @@
     "mutation_readiness",
     "architecture",
     "capability",
-    "property"
+    "property",
+    "golden",
+    "contract",
+    "meta"
   ],
-  "estimated_runtime": 37.0,
-  "commands_executed": []
+  "estimated_runtime": 0.0,
+  "commands_executed": [
+    "ruff check --fix src/",
+    "python backend/tools/check_coverage.py",
+    "python backend/tools/change_intelligence.py",
+    "python backend/tools/mutation_discovery.py",
+    "python backend/tools/test_strength.py",
+    "pytest tests/architecture -q --tb=short --maxfail=3",
+    "pytest tests/capabilities -q --tb=short --maxfail=3",
+    "pytest tests/properties -q --tb=short --maxfail=3",
+    "pytest tests/golden -q --tb=short --maxfail=3",
+    "pytest tests/contracts -q --tb=short --maxfail=3",
+    "pytest tests/meta -q --tb=short --maxfail=3"
+  ]
 }

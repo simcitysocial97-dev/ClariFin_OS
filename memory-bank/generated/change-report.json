@@ -1,335 +1,46 @@
 {
-  "generated_at": "2026-07-16T23:02:10.193639+00:00",
-  "git_sha": "0ac7e711057cddcf98b4713bcd1b5c5debe68ed7",
+  "generated_at": "2026-07-17T01:19:39.501137+00:00",
+  "git_sha": "72ab09f821fbba395339c914b0a9d26108120f9d",
   "changes": [
     {
-      "file": "backend/src/core/capability_registry.py",
-      "risk": "LOW",
-      "confidence": "LOW",
+      "file": "backend/src/engines/cashflow_engine.py",
+      "risk": "CRITICAL",
+      "confidence": "HIGH",
       "capabilities": [
-        "UNKNOWN"
+        "household_cashflow"
       ],
       "affected": {
         "services": [],
         "engines": [],
         "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
+        "property_tests": [
+          "tests/properties",
+          "tests/properties/cashflow"
+        ],
+        "golden_tests": [
+          "family_household",
+          "normal_household",
+          "salary_only",
+          "salary_plus_loan"
+        ],
+        "invariants": [
+          "tests/invariants/test_cashflow.py"
+        ],
+        "capability_tests": [
+          "tests/capabilities/household_cashflow"
+        ]
       },
-      "recommended_commands": []
-    },
-    {
-      "file": "backend/src/data/finance.db",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "backend/tests/test_capability_registry.py",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/change-report.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/change-report.md",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/coverage.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/mutation-gaps.md",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/mutation-map.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/mutation-readiness.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/mutation-readiness.md",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/mutation-registry.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/test-plan.md",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/test-strength.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/test-strength.md",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/validation-history.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/validation-manifest.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "memory-bank/generated/validation-metrics.json",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
-    },
-    {
-      "file": "servers",
-      "risk": "LOW",
-      "confidence": "LOW",
-      "capabilities": [
-        "UNKNOWN"
-      ],
-      "affected": {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
-      },
-      "recommended_commands": []
+      "recommended_commands": [
+        "pytest tests/capabilities/household_cashflow -q",
+        "pytest tests/properties -q",
+        "pytest tests/properties/cashflow -q",
+        "pytest tests/golden -k 'family_household,normal_household,salary_only' -q"
+      ]
     }
   ],
   "overall": {
     "risk": "CRITICAL",
-    "score": 18
+    "score": 8
   },
   "mutation_readiness": {
     "account_management": "Critical",
@@ -344,7 +55,11 @@
     "reconciliation": "Critical",
     "transaction_intelligence": "Critical"
   },
-  "affected_mutation_candidates": {},
+  "affected_mutation_candidates": {
+    "backend/src/engines/cashflow_engine.py": [
+      "src/engines/cashflow_engine.py:compute_monthly_cashflow"
+    ]
+  },
   "test_strength": {
     "account_management": "Critical",
     "credit_cards": "Critical",

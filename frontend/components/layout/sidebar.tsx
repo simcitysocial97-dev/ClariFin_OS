@@ -64,12 +64,12 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
                 Net Worth
               </span>
               <span className="text-sm font-semibold">
-                {netWorthData?.net_worth_paise ? formatINR(netWorthData.net_worth_paise) : ' — '}
+                {netWorthData?.netWorthPaise ? formatINR(netWorthData.netWorthPaise) : ' — '}
               </span>
             </div>
           ) : (
             <span className="text-sm font-semibold">
-              {netWorthData?.net_worth_paise ? formatINR(netWorthData.net_worth_paise) : ' — '}
+              {netWorthData?.netWorthPaise ? formatINR(netWorthData.netWorthPaise) : ' — '}
             </span>
           )}
         </div>
