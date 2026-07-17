@@ -4,21 +4,34 @@
  * Shows where your money is: Net Worth, Cash, Accounts, Investments
  */
 
-'use client';
-import { Wallet, TrendingUp } from 'lucide-react';
-import { formatINRCompact } from '@/lib/utils/format';
-import { useNetWorth } from '@/lib/hooks/use-networth';
+'use client'
+
+import { Wallet, TrendingUp, Info } from 'lucide-react'
+import { formatINRCompact } from '@/lib/utils/format'
+import { useNetWorth } from '@/lib/hooks/use-networth'
+import { useExplainabilityDrawer } from '@/components/explainability'
+import { Button } from '@/components/ui/button'
 
 export function MoneyPositionWidget() {
-  const { data, isLoading } = useNetWorth();
+  const { data, isLoading } = useNetWorth()
+  const { showExplanation } = useExplainabilityDrawer()
 
-  if (isLoading || !data) return null;
+  if (isLoading || !data) return null
 
   // Use derived trend flag from ViewModel
-  const trendColor = 
-    data.trend === 'up' ? 'text-green-500' : 
-    data.trend === 'down' ? 'text-red-500' : 
-    'text-muted-foreground';
+  const trendColor =
+    data.trend === 'up'
+      ? 'text-green-500'
+      : data.trend === 'down'
+        ? 'text-red-500'
+        : 'text-muted-foreground'
+
+  // Handle explain button click
+  const handleExplain = () => {
+    if (data.explanation?.netWorth) {
+      showExplanation(data.explanation.netWorth)
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -28,10 +41,21 @@ export function MoneyPositionWidget() {
           <Wallet className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm">Net Worth</span>
         </div>
-        <div className="text-right">
+        <div className="text-right flex items-center gap-2">
           <p className="font-semibold">{formatINRCompact(data.netWorthPaise)}</p>
+          {data.explanation?.netWorth && (
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={handleExplain}
+              aria-label="Explain Net Worth calculation"
+            >
+              <Info className="h-3 w-3" />
+            </Button>
+          )}
           <p className={`text-xs ${trendColor}`}>
-            {data.trend === 'up' ? '+' : ''}{formatINRCompact(data.assetsTotalPaise - data.liabilitiesTotalPaise)} this month
+            {data.trend === 'up' ? '+' : ''}
+            {formatINRCompact(data.assetsTotalPaise - data.liabilitiesTotalPaise)} this month
           </p>
         </div>
       </div>
@@ -62,5 +86,5 @@ export function MoneyPositionWidget() {
         </p>
       </div>
     </div>
-  );
+  )
 }

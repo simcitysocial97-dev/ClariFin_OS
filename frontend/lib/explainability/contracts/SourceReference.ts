@@ -1,32 +1,56 @@
 /**
- * Source Reference - Business provenance for explainability
+ * Source Reference - Canonical provenance model for explainability
  *
- * Describes the business source of data, not implementation details.
- * Same source can support multiple evidence items.
+ * Describes the exact origin of data for full traceability.
+ * This is the source of truth for "Where exactly did this number come from?"
  */
 
 /**
- * Source types for financial data
+ * Source types for provenance tracking
  */
 export type SourceType =
+  | 'database'
+  | 'engine'
+  | 'service'
+  | 'repository'
   | 'statement'
-  | 'account'
-  | 'loan'
-  | 'investment'
   | 'transaction'
-  | 'recommendation_engine'
-  | 'cashflow_engine'
-  | 'behaviour_engine'
-  | 'user_input'
+  | 'manual'
+  | 'external'
 
 /**
  * Source reference for evidence provenance
+ *
+ * Provides full traceability from UI to source code.
  */
 export interface SourceReference {
-  readonly type: SourceType
-  readonly id: string | number
-  readonly name?: string
-  readonly date?: string
+  // Source type classification
+  sourceType: SourceType
+
+  // Database provenance
+  table?: string
+  recordId?: string | number
+
+  // Backend layer provenance
+  repository?: string
+  service?: string
+  engine?: string
+
+  // API provenance
+  router?: string
+  endpoint?: string
+
+  // Code-level provenance
+  function?: string
+  file?: string
+  line?: number
+
+  // Statement/transaction provenance
+  statementId?: string
+  transactionId?: string
+
+  // Human-readable description
+  description?: string
 }
 
 /**

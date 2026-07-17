@@ -6,16 +6,44 @@
 
 import { z } from 'zod'
 
-// Source reference schema
+// Source reference schema - canonical provenance model
 const SourceReferenceSchema = z.object({
-  type: z.enum([
-    'statement', 'account', 'loan', 'investment',
-    'transaction', 'recommendation_engine', 'cashflow_engine',
-    'behaviour_engine', 'user_input',
+  // Source type classification
+  sourceType: z.enum([
+    'database',
+    'engine',
+    'service',
+    'repository',
+    'statement',
+    'transaction',
+    'manual',
+    'external',
   ]),
-  id: z.union([z.string(), z.number()]),
-  name: z.string().optional(),
-  date: z.string().optional(),
+
+  // Database provenance
+  table: z.string().optional(),
+  recordId: z.union([z.string(), z.number()]).optional(),
+
+  // Backend layer provenance
+  repository: z.string().optional(),
+  service: z.string().optional(),
+  engine: z.string().optional(),
+
+  // API provenance
+  router: z.string().optional(),
+  endpoint: z.string().optional(),
+
+  // Code-level provenance
+  function: z.string().optional(),
+  file: z.string().optional(),
+  line: z.number().optional(),
+
+  // Statement/transaction provenance
+  statementId: z.string().optional(),
+  transactionId: z.string().optional(),
+
+  // Human-readable description
+  description: z.string().optional(),
 })
 
 // Evidence schema
@@ -31,10 +59,7 @@ const EvidenceSchema = z.object({
 const CalculationStepSchema = z.object({
   stepId: z.string(),
   description: z.string(),
-  operation: z.enum([
-    'ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE',
-    'AVERAGE', 'LOOKUP', 'FILTER', 'GROUP', 'MATCH',
-  ]),
+  operation: z.enum(['ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE', 'AVERAGE', 'LOOKUP', 'FILTER', 'GROUP', 'MATCH']),
   inputIds: z.array(z.string()),
   outputId: z.string(),
   order: z.number().int(),

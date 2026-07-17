@@ -51,9 +51,9 @@ export function flattenExplanation(
   // Add sources
   for (const source of explanation.sources) {
     result.push({
-      id: `source-${source.type}-${source.id}`,
+      id: `source-${source.sourceType}-${source.recordId ?? source.statementId ?? source.transactionId ?? 'unknown'}`,
       type: 'source',
-      description: source.name ?? `${source.type}:${source.id}`,
+      description: source.description ?? `${source.sourceType}:${source.recordId ?? source.statementId ?? source.transactionId ?? 'unknown'}`,
     })
   }
 
@@ -99,9 +99,9 @@ export function flattenRecommendationExplanation(
   // Add sources
   for (const source of explanation.sources) {
     result.push({
-      id: `source-${source.type}-${source.id}`,
+      id: `source-${source.sourceType}-${source.recordId ?? source.statementId ?? source.transactionId ?? 'unknown'}`,
       type: 'source',
-      description: source.name ?? `${source.type}:${source.id}`,
+      description: source.description ?? `${source.sourceType}:${source.recordId ?? source.statementId ?? source.transactionId ?? 'unknown'}`,
     })
   }
 
