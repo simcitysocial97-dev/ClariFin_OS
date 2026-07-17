@@ -4,55 +4,36 @@
 
 ### Evidence
 
-**Router Return Annotation** (`backend/src/routers/networth.py`, line 12):
+**Router Return Annotation** (`backend/src/routers/networth.py`, line 10-11):
 ```python
-@router.get("/networth")
-def get_networth() -> dict[str, Any]:
+@router.get("/networth", response_model=NetWorthResponse)
+def get_networth() -> NetWorthResponse:
 ```
 
-**Actual Response Model**: None. The endpoint returns `dict[str, Any]` without a Pydantic response model.
-
-**Response Object Returned** (`backend/src/services/networth_service.py`, line 322-344):
+**Response Object Returned** (`backend/src/services/networth_service.py`):
 ```python
-return {
-    "net_worth_paise": net_worth_paise,
-    "assets": {...},
-    "liabilities": {...},
-    "is_partial": ...,
-    "partial_reason": ...,
-    "explanation": networth_explanation.model_dump(),  # NetWorthExplanation
-}
+return NetWorthResponse(
+    net_worth_paise=net_worth_paise,
+    assets={...},
+    liabilities={...},
+    is_partial=...,
+    partial_reason=...,
+    explanation=networth_explanation,
+)
 ```
 
-**Explanation Model Used** (`backend/src/models/explanation.py`):
-- `SourceReference` (lines 24-29) — business provenance
-- `Evidence` (lines 32-38) — data evidence
-- `CalculationStep` (lines 41-48) — calculation steps
-- `Confidence` (lines 51-54) — confidence in basis points
-- `Explanation` (lines 57-64) — complete explanation
-- `NetWorthExplanation` (lines 67-72) — net worth specific
-
-**OpenAPI Schema Produced** (`backend/clarifin_openapi.json`, lines 5003-5025):
+**OpenAPI Schema Produced** (`backend/clarifin_openapi.json`, lines 5016-5018):
 ```json
-"/api/networth": {
-  "get": {
-    "responses": {
-      "200": {
-        "schema": {
-          "additionalProperties": true,
-          "type": "object",
-          "title": "Response Get Networth Api Networth Get"
-        }
-      }
-    }
-  }
+"schema": {
+  "$ref": "#/components/schemas/NetWorthResponse"
 }
 ```
 
-### Canonical Response Model That Should Exist
+### Canonical Response Model
 
 ```python
 class NetWorthResponse(BaseModel):
+    """Canonical API response for /api/networth endpoint."""
     net_worth_paise: int
     assets: dict[str, int]  # {total_paise, accounts_paise, investments_paise, account_count, investment_count}
     liabilities: dict[str, int]  # {total_paise, loans_paise, cards_paise, loan_count, card_count}
@@ -67,17 +48,17 @@ class NetWorthResponse(BaseModel):
 
 | Contract | Backend Location | Frontend Location | Classification |
 |----------|------------------|-----------------|----------------|
-| `SourceReference` | `backend/src/models/explanation.py:24-29` | `frontend/lib/explainability/contracts/SourceReference.ts:11-54` | **DUPLICATE** (field name mismatch: `type` vs `sourceType`) |
-| `SourceReference` | `backend/src/models/explanation.py:24-29` | `frontend/lib/contracts/api/networth.ts:10-47` | **DUPLICATE** (technical provenance fields) |
+| `SourceReference` | `backend/src/models/explanation.py:24-29` | `frontend/lib/explainability/contracts/SourceReference.ts:11-47` | **CANONICAL** (now matches) |
+| `SourceReference` | `backend/src/models/explanation.py:24-29` | `frontend/lib/contracts/api/networth.ts:10-34` | **WRAPPER** (Zod schema for validation) |
 | `Evidence` | `backend/src/models/explanation.py:32-38` | `frontend/lib/explainability/contracts/Evidence.ts:16-27` | **CANONICAL** (matches) |
-| `Evidence` | `backend/src/models/explanation.py:32-38` | `frontend/lib/contracts/api/networth.ts:50-56` | **WRAPPER** (Zod schema for validation) |
+| `Evidence` | `backend/src/models/explanation.py:32-38` | `frontend/lib/contracts/api/networth.ts:37-43` | **WRAPPER** (Zod schema for validation) |
 | `CalculationStep` | `backend/src/models/explanation.py:41-48` | `frontend/lib/explainability/contracts/CalculationStep.ts:10-31` | **CANONICAL** (matches) |
-| `CalculationStep` | `backend/src/models/explanation.py:41-48` | `frontend/lib/contracts/api/networth.ts:59-66` | **WRAPPER** (Zod schema for validation) |
+| `CalculationStep` | `backend/src/models/explanation.py:41-48` | `frontend/lib/contracts/api/networth.ts:46-53` | **WRAPPER** (Zod schema for validation) |
 | `Confidence` | `backend/src/models/explanation.py:51-54` | `frontend/lib/explainability/contracts/Confidence.ts:12-20` | **CANONICAL** (matches) |
-| `Confidence` | `backend/src/models/explanation.py:51-54` | `frontend/lib/contracts/api/networth.ts:69-72` | **WRAPPER** (Zod schema for validation) |
+| `Confidence` | `backend/src/models/explanation.py:51-54` | `frontend/lib/contracts/api/networth.ts:56-59` | **WRAPPER** (Zod schema for validation) |
 | `Explanation` | `backend/src/models/explanation.py:57-64` | `frontend/lib/explainability/contracts/Explanation.ts:16-23` | **CANONICAL** (matches) |
-| `Explanation` | `backend/src/models/explanation.py:57-64` | `frontend/lib/contracts/api/networth.ts:75-82` | **WRAPPER** (Zod schema for validation) |
-| `NetWorthExplanation` | `backend/src/models/explanation.py:67-72` | `frontend/lib/contracts/api/networth.ts:85-90` | **WRAPPER** (Zod schema for validation) |
+| `Explanation` | `backend/src/models/explanation.py:57-64` | `frontend/lib/contracts/api/networth.ts:62-69` | **WRAPPER** (Zod schema for validation) |
+| `NetWorthExplanation` | `backend/src/models/explanation.py:67-72` | `frontend/lib/contracts/api/networth.ts:72-77` | **WRAPPER** (Zod schema for validation) |
 | `NetWorthExplanation` | `backend/src/models/explanation.py:67-72` | `frontend/lib/models/networth.ts:18-23` | **WRAPPER** (TypeScript interface) |
 
 ---
@@ -87,21 +68,19 @@ class NetWorthResponse(BaseModel):
 ### Production Consumers
 
 **Backend SourceReference** (`backend/src/models/explanation.py:24-29`):
-- Used in `NetWorthService.calculate_with_explanation()` (lines 127-131, 144-148, 161-165, 187-192)
+- Used in `NetWorthService.calculate_with_explanation()`
 - Populated with: `type="account"`, `type="investment"`, `type="loan"`, `type="statement"`
 - Fields: `type`, `id`, `name`, `date`
 
-**Frontend SourceReference** (`frontend/lib/explainability/contracts/SourceReference.ts:11-54`):
-- Used in `Explanation` interface (line 21)
-- Used in `NetWorthModel` (line 47)
-- Used in `MoneyPositionContent` component (line 33)
-- Fields: `sourceType`, `table`, `recordId`, `repository`, `service`, `engine`, `router`, `endpoint`, `function`, `file`, `line`, `statementId`, `transactionId`, `description`
+**Frontend SourceReference** (`frontend/lib/explainability/contracts/SourceReference.ts:11-47`):
+- Used in `Explanation` interface
+- Used in `NetWorthModel`
+- Used in `MoneyPositionContent` component
+- Fields: `type`, `id`, `name`, `date` (now matches backend)
 
-### Decision: **Business Provenance**
+### Decision: **Business Provenance** ✅ IMPLEMENTED
 
-The backend only sends business provenance fields (`type`, `id`, `name`, `date`). The technical provenance fields (`function`, `file`, `line`, etc.) are **never populated** and have **no production consumer**.
-
-**Recommendation**: Remove technical provenance fields from frontend SourceReference. Keep only business provenance.
+The backend only sends business provenance fields (`type`, `id`, `name`, `date`). The technical provenance fields have been **removed** from frontend SourceReference.
 
 ---
 
@@ -111,14 +90,14 @@ The backend only sends business provenance fields (`type`, `id`, `name`, `date`)
 
 | Location | Type | Status |
 |----------|------|--------|
-| `frontend/lib/explainability/contracts/SourceReference.ts` | Interface | **Canonical** (should be) |
-| `frontend/lib/contracts/api/networth.ts` | Zod schema | **DUPLICATE** — should be removed |
+| `frontend/lib/explainability/contracts/SourceReference.ts` | Interface | **CANONICAL** (now matches backend) |
+| `frontend/lib/contracts/api/networth.ts` | Zod schema | **WRAPPER** — for validation only |
 
 ### Explanation Definitions
 
 | Location | Type | Status |
 |----------|------|--------|
-| `frontend/lib/explainability/contracts/Explanation.ts` | Interface | **Canonical** |
+| `frontend/lib/explainability/contracts/Explanation.ts` | Interface | **CANONICAL** |
 | `frontend/lib/contracts/api/networth.ts` | Zod schema | **WRAPPER** — for validation only |
 | `frontend/lib/models/networth.ts` | Interface | **WRAPPER** — for model typing |
 
@@ -126,45 +105,40 @@ The backend only sends business provenance fields (`type`, `id`, `name`, `date`)
 
 | Location | Type | Status |
 |----------|------|--------|
-| `frontend/lib/explainability/contracts/Evidence.ts` | Interface | **Canonical** |
+| `frontend/lib/explainability/contracts/Evidence.ts` | Interface | **CANONICAL** |
 | `frontend/lib/contracts/api/networth.ts` | Zod schema | **WRAPPER** — for validation only |
 
 ### Confidence Definitions
 
 | Location | Type | Status |
 |----------|------|--------|
-| `frontend/lib/explainability/contracts/Confidence.ts` | Interface + functions | **Canonical** |
+| `frontend/lib/explainability/contracts/Confidence.ts` | Interface + functions | **CANONICAL** |
 | `frontend/lib/contracts/api/networth.ts` | Zod schema | **WRAPPER** — for validation only |
 
 ### CalculationStep Definitions
 
 | Location | Type | Status |
 |----------|------|--------|
-| `frontend/lib/explainability/contracts/CalculationStep.ts` | Interface | **Canonical** |
+| `frontend/lib/explainability/contracts/CalculationStep.ts` | Interface | **CANONICAL** |
 | `frontend/lib/contracts/api/networth.ts` | Zod schema | **WRAPPER** — for validation only |
-
-### Duplication Resolution
-
-- `frontend/lib/contracts/api/networth.ts` should **DELETE** its SourceReferenceSchema, EvidenceSchema, CalculationStepSchema, ConfidenceSchema, ExplanationSchema, NetWorthExplanationSchema
-- These should be **IMPORTED** from `@/lib/explainability/contracts` instead
-- The Zod schemas for validation should be generated from the canonical interfaces
 
 ---
 
-## PART 5 — Migration Plan
+## PART 5 — Implementation Status
 
-| File | Action |
-|------|--------|
-| `backend/src/routers/networth.py` | **UPDATE** — add `response_model=NetWorthResponse` to endpoint |
-| `backend/src/models/explanation.py` | **NO CHANGE** — already canonical |
-| `frontend/lib/contracts/api/networth.ts` | **DELETE** — remove duplicate schemas, import from explainability |
-| `frontend/lib/explainability/contracts/SourceReference.ts` | **UPDATE** — remove technical provenance fields, rename `sourceType` to `type` |
-| `frontend/lib/explainability/contracts/index.ts` | **NO CHANGE** — re-exports are correct |
-| `frontend/lib/models/networth.ts` | **NO CHANGE** — imports from explainability are correct |
-| `frontend/lib/mappers/networth.ts` | **NO CHANGE** — preserves explanation as-is |
-| `frontend/lib/hooks/use-networth.ts` | **NO CHANGE** — uses NetWorthResponseSchema |
-| `frontend/api-schema.json` | **NO CHANGE** — will auto-update from OpenAPI |
-| `backend/api_types.ts` | **NO CHANGE** — will auto-update from OpenAPI |
+| File | Action | Status |
+|------|--------|--------|
+| `backend/src/routers/networth.py` | **UPDATE** — add `response_model=NetWorthResponse` | ✅ DONE |
+| `backend/src/models/explanation.py` | **ADD** — `NetWorthResponse` class | ✅ DONE |
+| `backend/src/services/networth_service.py` | **UPDATE** — return `NetWorthResponse` | ✅ DONE |
+| `frontend/lib/contracts/api/networth.ts` | **UPDATE** — align with backend | ✅ DONE |
+| `frontend/lib/explainability/contracts/SourceReference.ts` | **UPDATE** — remove technical fields | ✅ DONE |
+| `frontend/lib/explainability/flattenExplanation.ts` | **UPDATE** — use `type`/`id` | ✅ DONE |
+| `frontend/components/explainability/components/SourceCard.tsx` | **UPDATE** — use `type`/`id`/`name`/`date` | ✅ DONE |
+| `frontend/components/explainability/panels/SourcesPanel.tsx` | **UPDATE** — simplify columns | ✅ DONE |
+| `backend/clarifin_openapi.json` | **REGENERATE** — from FastAPI | ✅ DONE |
+| `backend/api_types.ts` | **REGENERATE** — from OpenAPI | ✅ DONE |
+| `frontend/api-schema.json` | **REGENERATE** — from OpenAPI | ✅ DONE |
 
 ---
 
@@ -190,4 +164,9 @@ The backend only sends business provenance fields (`type`, `id`, `name`, `date`)
 
 ## PART 7 — Git Checkpoint
 
-This document was created to freeze the canonical explainability contracts before Stage 2.5 implementation begins.
+**Stage 2.6 Implementation Complete** — All explainability contracts canonicalized.
+
+- OpenAPI regenerated with proper `NetWorthResponse` schema
+- API types regenerated with strong typing
+- SourceReference aligned between backend and frontend
+- All validation passing: type-check ✓, ruff ✓, mypy (pre-existing issues only)

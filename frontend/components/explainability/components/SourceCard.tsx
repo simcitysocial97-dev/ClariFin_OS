@@ -19,22 +19,16 @@ export function SourceCard({ source }: SourceCardProps) {
   return (
     <TableRow>
       <TableCell className="font-mono text-xs">
-        {source.sourceType ?? '—'}
+        {source.type ?? '—'}
       </TableCell>
       <TableCell>
-        {source.recordId ?? source.statementId ?? source.transactionId ?? '—'}
+        {source.id ?? '—'}
       </TableCell>
       <TableCell>
-        {source.function ?? '—'}
+        {source.name ?? '—'}
       </TableCell>
       <TableCell>
-        {source.file ?? '—'}
-      </TableCell>
-      <TableCell>
-        {source.router ?? '—'}
-      </TableCell>
-      <TableCell>
-        {source.repository ?? '—'}
+        {source.date ?? '—'}
       </TableCell>
     </TableRow>
   )

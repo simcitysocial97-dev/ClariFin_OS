@@ -5,7 +5,7 @@ All monetary values are in paise (₹1.00 = 100 paise).
 All confidence values are in basis points (0-10000).
 """
 
-from typing import Any, Literal
+from typing import Literal
 from pydantic import BaseModel, Field
 
 # Type aliases
@@ -70,3 +70,13 @@ class NetWorthExplanation(BaseModel):
     assets: Explanation
     liabilities: Explanation
     confidenceReason: str | None = None
+
+
+class NetWorthResponse(BaseModel):
+    """Canonical API response for /api/networth endpoint."""
+    net_worth_paise: int
+    assets: dict[str, int]
+    liabilities: dict[str, int]
+    is_partial: bool
+    partial_reason: str | None = None
+    explanation: NetWorthExplanation | None = None

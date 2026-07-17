@@ -2030,6 +2030,16 @@ export interface paths {
          *     Net Worth = Assets - Liabilities
          *     Assets = account balances + investment current values
          *     Liabilities = loan outstanding + card outstanding
+         *
+         *     Returns:
+         *         {
+         *             net_worth_paise: int,
+         *             assets: {...},
+         *             liabilities: {...},
+         *             is_partial: bool,
+         *             partial_reason: str | None,
+         *             explanation: NetWorthExplanation
+         *         }
          */
         get: operations["get_networth_api_networth_get"];
         put?: never;
@@ -2754,6 +2764,37 @@ export interface components {
             member: string;
         };
         /**
+         * CalculationStep
+         * @description Single step in a calculation chain.
+         */
+        CalculationStep: {
+            /** Stepid */
+            stepId: string;
+            /** Description */
+            description: string;
+            /**
+             * Operation
+             * @enum {string}
+             */
+            operation: "ADD" | "SUBTRACT" | "MULTIPLY" | "DIVIDE" | "AVERAGE" | "LOOKUP" | "FILTER" | "GROUP" | "MATCH";
+            /** Inputids */
+            inputIds: string[];
+            /** Outputid */
+            outputId: string;
+            /** Order */
+            order: number;
+        };
+        /**
+         * Confidence
+         * @description Confidence in basis points (0-10000).
+         */
+        Confidence: {
+            /** Value */
+            value: number;
+            /** Reason */
+            reason?: string | null;
+        };
+        /**
          * CreditCardCreateRequest
          * @description Credit card creation request.
          */
@@ -2852,6 +2893,42 @@ export interface components {
              * @description Override annual rate in basis points. Uses card rate if not provided.
              */
             annual_rate_bps?: number | null;
+        };
+        /**
+         * Evidence
+         * @description Evidence for a calculation.
+         */
+        Evidence: {
+            /** Id */
+            id: string;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "data" | "calculation" | "source";
+            /** Description */
+            description: string;
+            /** Value */
+            value: number | string | boolean | null;
+            /** Sourceid */
+            sourceId?: string | number | null;
+        };
+        /**
+         * Explanation
+         * @description Complete explanation for a financial metric.
+         */
+        Explanation: {
+            /** Metric */
+            metric: string;
+            /** Value */
+            value: number;
+            confidence: components["schemas"]["Confidence"];
+            /** Evidence */
+            evidence: components["schemas"]["Evidence"][];
+            /** Sources */
+            sources: components["schemas"]["SourceReference"][];
+            /** Calculationsteps */
+            calculationSteps: components["schemas"]["CalculationStep"][];
         };
         /**
          * ForeclosureRequest
@@ -3044,6 +3121,38 @@ export interface components {
             paise: number;
         };
         /**
+         * NetWorthExplanation
+         * @description Explanation for net worth calculation.
+         */
+        NetWorthExplanation: {
+            netWorth: components["schemas"]["Explanation"];
+            assets: components["schemas"]["Explanation"];
+            liabilities: components["schemas"]["Explanation"];
+            /** Confidencereason */
+            confidenceReason?: string | null;
+        };
+        /**
+         * NetWorthResponse
+         * @description Canonical API response for /api/networth endpoint.
+         */
+        NetWorthResponse: {
+            /** Net Worth Paise */
+            net_worth_paise: number;
+            /** Assets */
+            assets: {
+                [key: string]: number;
+            };
+            /** Liabilities */
+            liabilities: {
+                [key: string]: number;
+            };
+            /** Is Partial */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            explanation?: components["schemas"]["NetWorthExplanation"] | null;
+        };
+        /**
          * PaymentRecordRequest
          * @description Request to record a payment on a statement.
          */
@@ -3126,6 +3235,23 @@ export interface components {
              * @description New annual rate in basis points (0-5000)
              */
             new_rate_bps: number;
+        };
+        /**
+         * SourceReference
+         * @description Business source reference for evidence provenance.
+         */
+        SourceReference: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "statement" | "account" | "loan" | "investment" | "transaction" | "recommendation_engine" | "cashflow_engine" | "behaviour_engine" | "user_input";
+            /** Id */
+            id: string | number;
+            /** Name */
+            name?: string | null;
+            /** Date */
+            date?: string | null;
         };
         /**
          * StatementGenerateRequest
@@ -6481,9 +6607,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["NetWorthResponse"];
                 };
             };
         };

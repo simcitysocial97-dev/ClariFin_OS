@@ -1,7 +1,5 @@
 """Net worth business orchestration service."""
 
-from typing import Any
-
 from src.models.explanation import (
     Evidence,
     SourceReference,
@@ -9,6 +7,7 @@ from src.models.explanation import (
     Confidence,
     Explanation,
     NetWorthExplanation,
+    NetWorthResponse,
 )
 from src.repositories import NetWorthRepository
 from src.services.base import BaseService
@@ -21,7 +20,7 @@ class NetWorthService(BaseService):
         super().__init__(db_path)
         self.repo = NetWorthRepository(self.db_path)
 
-    def calculate(self) -> dict[str, Any]:
+    def calculate(self) -> NetWorthResponse:
         """
         Compute net worth from all financial data.
 
@@ -69,31 +68,31 @@ class NetWorthService(BaseService):
         total_liabilities_paise = loan_outstanding_paise + card_outstanding_paise
         net_worth_paise = total_assets_paise - total_liabilities_paise
 
-        return {
-            "net_worth_paise": net_worth_paise,
-            "assets": {
+        return NetWorthResponse(
+            net_worth_paise=net_worth_paise,
+            assets={
                 "total_paise": total_assets_paise,
                 "accounts_paise": account_balance_paise,
                 "investments_paise": investment_value_paise,
                 "account_count": len(accounts),
                 "investment_count": len(investments),
             },
-            "liabilities": {
+            liabilities={
                 "total_paise": total_liabilities_paise,
                 "loans_paise": loan_outstanding_paise,
                 "cards_paise": card_outstanding_paise,
                 "loan_count": len(loans),
                 "card_count": len(seen_cards),
             },
-            "is_partial": len(accounts) == 0 and len(investments) == 0,
-            "partial_reason": (
+            is_partial=len(accounts) == 0 and len(investments) == 0,
+            partial_reason=(
                 "Add accounts and investments for complete net worth"
                 if len(accounts) == 0
                 else None
             ),
-        }
+        )
 
-    def calculate_with_explanation(self) -> dict[str, Any]:
+    def calculate_with_explanation(self) -> NetWorthResponse:
         """
         Compute net worth with full explainability.
 
@@ -319,27 +318,27 @@ class NetWorthService(BaseService):
             confidenceReason=", ".join(confidence_reasons) if confidence_reasons else None,
         )
 
-        return {
-            "net_worth_paise": net_worth_paise,
-            "assets": {
+        return NetWorthResponse(
+            net_worth_paise=net_worth_paise,
+            assets={
                 "total_paise": total_assets_paise,
                 "accounts_paise": account_balance_paise,
                 "investments_paise": investment_value_paise,
                 "account_count": len(accounts),
                 "investment_count": len(investments),
             },
-            "liabilities": {
+            liabilities={
                 "total_paise": total_liabilities_paise,
                 "loans_paise": loan_outstanding_paise,
                 "cards_paise": card_outstanding_paise,
                 "loan_count": len(loans),
                 "card_count": len(seen_cards),
             },
-            "is_partial": len(accounts) == 0 and len(investments) == 0,
-            "partial_reason": (
+            is_partial=len(accounts) == 0 and len(investments) == 0,
+            partial_reason=(
                 "Add accounts and investments for complete net worth"
                 if len(accounts) == 0
                 else None
             ),
-            "explanation": networth_explanation.model_dump(),
-        }
+            explanation=networth_explanation,
+        )

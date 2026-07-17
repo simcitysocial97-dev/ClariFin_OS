@@ -5006,7 +5006,7 @@
           "networth"
         ],
         "summary": "Get Networth",
-        "description": "Compute net worth from all financial data.\n\nNet Worth = Assets - Liabilities\nAssets = account balances + investment current values\nLiabilities = loan outstanding + card outstanding",
+        "description": "Compute net worth from all financial data.\n\nNet Worth = Assets - Liabilities\nAssets = account balances + investment current values\nLiabilities = loan outstanding + card outstanding\n\nReturns:\n    {\n        net_worth_paise: int,\n        assets: {...},\n        liabilities: {...},\n        is_partial: bool,\n        partial_reason: str | None,\n        explanation: NetWorthExplanation\n    }",
         "operationId": "get_networth_api_networth_get",
         "responses": {
           "200": {
@@ -5014,9 +5014,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Get Networth Api Networth Get"
+                  "$ref": "#/components/schemas/NetWorthResponse"
                 }
               }
             }
@@ -6894,6 +6892,86 @@
         ],
         "title": "Body_upload_statement_api_upload_post"
       },
+      "CalculationStep": {
+        "properties": {
+          "stepId": {
+            "type": "string",
+            "title": "Stepid"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "ADD",
+              "SUBTRACT",
+              "MULTIPLY",
+              "DIVIDE",
+              "AVERAGE",
+              "LOOKUP",
+              "FILTER",
+              "GROUP",
+              "MATCH"
+            ],
+            "title": "Operation"
+          },
+          "inputIds": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Inputids"
+          },
+          "outputId": {
+            "type": "string",
+            "title": "Outputid"
+          },
+          "order": {
+            "type": "integer",
+            "title": "Order"
+          }
+        },
+        "type": "object",
+        "required": [
+          "stepId",
+          "description",
+          "operation",
+          "inputIds",
+          "outputId",
+          "order"
+        ],
+        "title": "CalculationStep",
+        "description": "Single step in a calculation chain."
+      },
+      "Confidence": {
+        "properties": {
+          "value": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Value"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "Confidence",
+        "description": "Confidence in basis points (0-10000)."
+      },
       "CreditCardCreateRequest": {
         "properties": {
           "name": {
@@ -7166,6 +7244,114 @@
         ],
         "title": "EmiConversionRequest",
         "description": "Request to convert a purchase to EMI."
+      },
+      "Evidence": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "data",
+              "calculation",
+              "source"
+            ],
+            "title": "Type"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "sourceId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceid"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "description",
+          "value"
+        ],
+        "title": "Evidence",
+        "description": "Evidence for a calculation."
+      },
+      "Explanation": {
+        "properties": {
+          "metric": {
+            "type": "string",
+            "title": "Metric"
+          },
+          "value": {
+            "type": "integer",
+            "title": "Value"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceReference"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "calculationSteps": {
+            "items": {
+              "$ref": "#/components/schemas/CalculationStep"
+            },
+            "type": "array",
+            "title": "Calculationsteps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "metric",
+          "value",
+          "confidence",
+          "evidence",
+          "sources",
+          "calculationSteps"
+        ],
+        "title": "Explanation",
+        "description": "Complete explanation for a financial metric."
       },
       "ForeclosureRequest": {
         "properties": {
@@ -7668,6 +7854,94 @@
         "title": "Money",
         "description": "Money value in paise (\u20b91.00 = 100 paise)"
       },
+      "NetWorthExplanation": {
+        "properties": {
+          "netWorth": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "assets": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "liabilities": {
+            "$ref": "#/components/schemas/Explanation"
+          },
+          "confidenceReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidencereason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "netWorth",
+          "assets",
+          "liabilities"
+        ],
+        "title": "NetWorthExplanation",
+        "description": "Explanation for net worth calculation."
+      },
+      "NetWorthResponse": {
+        "properties": {
+          "net_worth_paise": {
+            "type": "integer",
+            "title": "Net Worth Paise"
+          },
+          "assets": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Assets"
+          },
+          "liabilities": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Liabilities"
+          },
+          "is_partial": {
+            "type": "boolean",
+            "title": "Is Partial"
+          },
+          "partial_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partial Reason"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NetWorthExplanation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "net_worth_paise",
+          "assets",
+          "liabilities",
+          "is_partial"
+        ],
+        "title": "NetWorthResponse",
+        "description": "Canonical API response for /api/networth endpoint."
+      },
       "PaymentRecordRequest": {
         "properties": {
           "payment_date": {
@@ -7832,6 +8106,65 @@
         ],
         "title": "RateChangeSimulationRequest",
         "description": "Rate change simulation request."
+      },
+      "SourceReference": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "statement",
+              "account",
+              "loan",
+              "investment",
+              "transaction",
+              "recommendation_engine",
+              "cashflow_engine",
+              "behaviour_engine",
+              "user_input"
+            ],
+            "title": "Type"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "id"
+        ],
+        "title": "SourceReference",
+        "description": "Business source reference for evidence provenance."
       },
       "StatementGenerateRequest": {
         "properties": {

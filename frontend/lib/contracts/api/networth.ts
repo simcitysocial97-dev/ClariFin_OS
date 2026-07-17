@@ -2,48 +2,34 @@
  * NetWorth API Contract - Zod schemas for DTO validation
  *
  * These schemas validate raw API responses before mapping to ViewModels.
+ * SourceReference schema mirrors backend model exactly.
  */
 
 import { z } from 'zod'
 
-// Source reference schema - canonical provenance model
+// Source reference schema - mirrors backend SourceReference
 const SourceReferenceSchema = z.object({
   // Source type classification
-  sourceType: z.enum([
-    'database',
-    'engine',
-    'service',
-    'repository',
+  type: z.enum([
     'statement',
+    'account',
+    'loan',
+    'investment',
     'transaction',
-    'manual',
-    'external',
+    'recommendation_engine',
+    'cashflow_engine',
+    'behaviour_engine',
+    'user_input',
   ]),
 
-  // Database provenance
-  table: z.string().optional(),
-  recordId: z.union([z.string(), z.number()]).optional(),
+  // Source identifier
+  id: z.union([z.string(), z.number()]),
 
-  // Backend layer provenance
-  repository: z.string().optional(),
-  service: z.string().optional(),
-  engine: z.string().optional(),
+  // Human-readable name
+  name: z.string().nullable().optional(),
 
-  // API provenance
-  router: z.string().optional(),
-  endpoint: z.string().optional(),
-
-  // Code-level provenance
-  function: z.string().optional(),
-  file: z.string().optional(),
-  line: z.number().optional(),
-
-  // Statement/transaction provenance
-  statementId: z.string().optional(),
-  transactionId: z.string().optional(),
-
-  // Human-readable description
-  description: z.string().optional(),
+  // Source date (for statements)
+  date: z.string().nullable().optional(),
 })
 
 // Evidence schema

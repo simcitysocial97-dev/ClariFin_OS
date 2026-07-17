@@ -3,54 +3,43 @@
  *
  * Describes the exact origin of data for full traceability.
  * This is the source of truth for "Where exactly did this number come from?"
+ *
+ * Business provenance only - no technical implementation details.
  */
 
 /**
  * Source types for provenance tracking
+ * Must match backend SourceType in src/models/explanation.py
  */
 export type SourceType =
-  | 'database'
-  | 'engine'
-  | 'service'
-  | 'repository'
   | 'statement'
+  | 'account'
+  | 'loan'
+  | 'investment'
   | 'transaction'
-  | 'manual'
-  | 'external'
+  | 'recommendation_engine'
+  | 'cashflow_engine'
+  | 'behaviour_engine'
+  | 'user_input'
 
 /**
  * Source reference for evidence provenance
  *
- * Provides full traceability from UI to source code.
+ * Provides business-level traceability for financial data.
+ * Mirrors backend SourceReference model exactly.
  */
 export interface SourceReference {
   // Source type classification
-  sourceType: SourceType
+  type: SourceType
 
-  // Database provenance
-  table?: string
-  recordId?: string | number
+  // Source identifier
+  id: string | number
 
-  // Backend layer provenance
-  repository?: string
-  service?: string
-  engine?: string
+  // Human-readable name
+  name?: string | null
 
-  // API provenance
-  router?: string
-  endpoint?: string
-
-  // Code-level provenance
-  function?: string
-  file?: string
-  line?: number
-
-  // Statement/transaction provenance
-  statementId?: string
-  transactionId?: string
-
-  // Human-readable description
-  description?: string
+  // Source date (for statements)
+  date?: string | null
 }
 
 /**

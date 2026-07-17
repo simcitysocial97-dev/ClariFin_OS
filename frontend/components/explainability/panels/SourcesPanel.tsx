@@ -38,16 +38,14 @@ export function SourcesPanel({ explanation }: SourcesPanelProps) {
       <TableHeader>
         <TableRow>
           <TableHead>Type</TableHead>
-          <TableHead>Record ID</TableHead>
-          <TableHead>Function</TableHead>
-          <TableHead>File</TableHead>
-          <TableHead>Router</TableHead>
-          <TableHead>Repository</TableHead>
+          <TableHead>ID</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Date</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {sources.map((source, index) => (
-          <SourceCard key={`${source.sourceType}-${source.recordId ?? index}`} source={source} />
+          <SourceCard key={`${source.type}-${source.id ?? index}`} source={source} />
         ))}
       </TableBody>
     </Table>

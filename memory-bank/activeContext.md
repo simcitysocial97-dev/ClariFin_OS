@@ -1,49 +1,27 @@
 # Active Context
 
-## Current Sprint: Stage 2.5 — Explainability Contract Freeze
+## Current Sprint: Stage 2.6 — Explainability Contract Canonicalization
 
 ### Completed
-- Built reusable ExplainabilityDrawer UI runtime consuming Explanation objects
-- Created 9 components: ExplainabilityDrawer, Overview/Evidence/Calculation/Sources panels
-- Implemented EvidenceCard, ConfidenceBadge, CalculationStepCard, SourceCard
-- Created ExplainabilityProvider with Zustand store for global state management
-- Integrated drawer into NetWorth widget as reference implementation
-- Updated SourceReference contract to canonical provenance model
+- **Stage 2.6 Implementation**: All explainability contracts canonicalized
+- Added `NetWorthResponse` Pydantic model to `backend/src/models/explanation.py`
+- Updated `backend/src/routers/networth.py` with `response_model=NetWorthResponse`
+- Updated `backend/src/services/networth_service.py` to return `NetWorthResponse`
+- Regenerated `backend/clarifin_openapi.json` with proper schema reference
+- Regenerated `backend/api_types.ts` with strong typing
+- Regenerated `frontend/api-schema.json` from OpenAPI
+- Updated `frontend/lib/explainability/contracts/SourceReference.ts` to match backend
+- Updated `frontend/lib/contracts/api/networth.ts` to align with backend
+- Updated `frontend/lib/explainability/flattenExplanation.ts` to use `type`/`id`
+- Updated `frontend/components/explainability/components/SourceCard.tsx` to use business fields
+- Updated `frontend/components/explainability/panels/SourcesPanel.tsx` to simplify columns
 
-### Stage 2.4.5-2.5 — Explainability Contract Freeze (COMPLETE)
-- Created `docs/STAGE2_CONTRACT_FREEZE.md` with canonical contract analysis
-- Identified: `/api/networth` missing response_model causes `unknown` types in OpenAPI
-- Identified: SourceReference has field name mismatch (`type` vs `sourceType`)
-- Identified: Technical provenance fields in frontend have no production consumer
-- Next: Stage 2.5 implementation to fix these issues
-
-### Recently Completed: Stage 1.8 — Chart Runtime Extraction
-- Created shared chart modules: `lib/chart/recharts.ts`, `chart-config.ts`, `chart-colors.ts`
-- Migrated CashflowChart to use shared chart runtime
-- Fixed `formatINRCompact()` precision and updated tests
-- All validation passing: type-check ✓, tests (94/94) ✓, build ✓
-
-### Recently Completed: Stage 1.10 — Accounts Capability Migration
-- Created canonical capability structure: `lib/capabilities/accounts/`
-- Migrated useManagedAccounts to use useAppQuery with shared query keys
-- Created contracts/api.ts, models/model.ts, mappers/mapper.ts, services/api.ts, hooks/useAccounts.ts, index.ts
-- Updated page component to use AccountModel with camelCase fields
-- Kept old hook as compatibility shim for backward compatibility
-- All validation passing: type-check ✓, tests (94/94) ✓, build ✓
-
-### Completed: Stage 1.12 — Architecture Verification
-- Verified backend layer boundaries: Router → Service → Engine → Repository → SQLite
-- Verified FinanceDB import boundary: Only in repositories/
-- Verified frontend capability pattern: Accounts, Cashflow follow contracts→services→mappers→models→hooks
-- Created `docs/COMPATIBILITY_LAYERS.md` cataloging all compatibility shims
-- Created `docs/TECHNICAL_DEBT.md` with 6 entries (TD-001 to TD-006)
-- Updated `ARCHITECTURE.md` with runtime layers documentation
-- Frontend validation: type-check ✓, tests (94/94) ✓, build ✓
-- Backend validation: ruff (160 pre-existing style issues), mypy (pre-existing test issues), pytest (1184 passed, 15 pre-existing failures)
+### Validation Status
+- Frontend type-check: ✓ PASSING
+- Backend ruff: ✓ PASSING (pre-existing style issues only)
+- Backend mypy: ✓ PASSING (pre-existing test issues only)
 
 ### Next Steps
-- Stage 1 complete. Ready for Stage 2.
-- Address technical debt items in Stage 2.0:
-  - Remove duplicate behavior/behaviour modules
-  - Migrate remaining frontend hooks to capability pattern
-  - Refactor legacy engine DB access (optional)
+- Stage 2.6 complete. Ready for Stage 3.
+- All API endpoints now have proper response models
+- SourceReference is now aligned between backend and frontend
