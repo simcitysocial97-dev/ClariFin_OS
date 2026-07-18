@@ -25,6 +25,7 @@ from src.models.account_balance import (
     BalanceSnapshotResponse,
 )
 from src.models.account_link import AccountLinkRequest, AccountLinkResponse
+from src.models.explanation import AccountsResponse
 from src.models.institution import (
     InstitutionCreateRequest,
     InstitutionResponse,
@@ -248,6 +249,16 @@ def get_latest_balance(account_id: int | str) -> dict[str, Any]:
 # ============================================================
 # Analytics Endpoints
 # ============================================================
+
+
+@router.get("/accounts/summary", response_model=AccountsResponse)
+def get_accounts_summary() -> AccountsResponse:
+    """Get all accounts with metrics and explanation."""
+    start = time.monotonic()
+    service = AccountService()
+    result = service.calculate_with_explanation()
+    _timed_log("GET /accounts/summary", None, (time.monotonic() - start) * 1000)
+    return result
 
 
 @router.get("/accounts/{account_id}/analytics")

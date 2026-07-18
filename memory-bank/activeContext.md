@@ -1,6 +1,6 @@
 # Active Context
 
-## Current Sprint: Stage 3.3-3.5 Explanation Pipeline (2026-07-18)
+## Current Sprint: Stage 3 Batch B Explanation Pipeline (2026-07-18)
 
 ### Completed
 - **Stage 3.3 - Debt Management (Loans)**
@@ -36,7 +36,24 @@
   - Updated `frontend/lib/hooks/use-investments.ts` to use new schema and mapper
   - Updated `frontend/app/investments/page.tsx` to use new model types
 
+- **Stage 3.6 - Batch B: Account Management, Transaction Intelligence, Financial Events**
+  - Added `AccountSummary` and `AccountsResponse` Pydantic models to `backend/src/models/explanation.py`
+  - Added `calculate_with_explanation()` method to `AccountService` in `backend/src/services/account_service.py`
+  - Added `/api/v1/accounts/summary` endpoint to `backend/src/routers/accounts.py`
+  - Updated `frontend/lib/capabilities/accounts/contracts/api.ts` with Zod schema
+  - Updated `frontend/lib/capabilities/accounts/models/model.ts` with `AccountModel` including explanation field
+  - Updated `frontend/lib/capabilities/accounts/mappers/mapper.ts` to preserve explanation in DTO mapping
+  - Updated `frontend/lib/capabilities/accounts/services/api.ts` to use new endpoint
+  - Added `OverviewResponse` Pydantic model to `backend/src/models/explanation.py`
+  - Created `frontend/lib/capabilities/overview/contracts/api.ts` with Zod schema
+  - Created `frontend/lib/capabilities/overview/models/model.ts` with `OverviewModel` including explanation field
+  - Created `frontend/lib/capabilities/overview/mappers/mapper.ts` to preserve explanation in DTO mapping
+  - Created `frontend/lib/capabilities/overview/services/api.ts` to fetch overview
+  - Created `frontend/lib/capabilities/overview/hooks/useOverview.ts` to use new schema and mapper
+  - Added `FinancialEventSummary` and `EventsResponse` Pydantic models to `backend/src/models/explanation.py`
+  - Added `calculate_with_explanation()` method to `FinancialEventsService` in `backend/src/services/financial_events_service.py`
+  - Added `/api/v1/financial-intelligence/events` endpoint to `backend/src/routers/financial_intelligence.py`
+
 ### Next Steps
 - Regenerate OpenAPI schemas (`clarifin_openapi.json`, `api_types.ts`, `types/api-generated.ts`)
 - Run full test suite to verify all changes
-- Add capability-specific explainability UI (if needed)

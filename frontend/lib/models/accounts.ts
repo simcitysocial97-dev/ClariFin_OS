@@ -6,30 +6,31 @@
  * This keeps the mapper pure and presentation-agnostic.
  */
 
+import type { Explanation } from '@/lib/explainability'
+
 /**
- * Account data for UI consumption
+ * Account summary for UI consumption
  */
-export interface AccountModel {
-  id: string
+export interface AccountSummaryModel {
   accountId: string
   name: string
   bank: string
   accountType: string
   balancePaise: number
-  accountNumberLast4: string | null
   averageBalancePaise: number
   trend: string
   velocityPaisePerDay: number
-  isActive: number
-  notes: string | null
-  createdAt: string
-  updatedAt: string
+  isActive: boolean
 }
 
 /**
  * Accounts response for UI consumption
  */
 export interface AccountsModel {
-  accounts: AccountModel[]
-  total: number
+  accounts: AccountSummaryModel[]
+  totalBalancePaise: number
+  isPartial: boolean
+  partialReason: string | null
+  lastUpdated: string | null
+  explanation: Explanation | null
 }

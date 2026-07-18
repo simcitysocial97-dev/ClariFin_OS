@@ -386,3 +386,187 @@ class AccountService:
     def get_linked_accounts(self, account_id: str) -> list[dict[str, Any]]:
         """Get all accounts linked to the given account."""
         return self.link_repo.get_linked_accounts(account_id)
+
+    # ============================================================
+    # Explanation Pipeline
+    # ============================================================
+
+    def calculate_with_explanation(self) -> AccountsResponse:
+        """
+        Compute accounts summary with full explainability.
+
+        Returns:
+            AccountsResponse with explanation containing:
+            - Evidence for each account (balance, average, trend, velocity)
+            - Source references for each account
+            - Calculation steps: load-accounts, compute-average, compute-trend, compute-velocity, sum-balance
+            - Confidence based on data availability
+        """
+        from datetime import datetime
+
+        from src.models.explanation import (
+            AccountSummary,
+            AccountsResponse,
+            CalculationStep,
+            Confidence,
+            Evidence,
+            Explanation,
+            SourceReference,
+        )
+
+        # Fetch all accounts
+        accounts = self.account_repo.get_all_accounts()
+
+        # Build evidence and sources for each account
+        account_evidence: list[Evidence] = []
+        account_sources: list[SourceReference] = []
+        account_summaries: list[AccountSummary] = []
+
+        for account in accounts:
+            account_id = str(account.get("id", "unknown"))
+            balance = account.get("balance_paise", 0) or 0
+
+            # Calculate metrics for this account
+            avg_balance = self.calculate_average_balance(account_id)
+            trend = self.calculate_balance_trend(account_id)
+            velocity = self.calculate_balance_velocity(account_id)
+
+            # Evidence for balance
+            if balance > 0:
+                account_evidence.append(Evidence(
+                    id=f"account-{account_id}-balance",
+                    type="data",
+                    description=f"Current balance for {account.get('name', account_id)}",
+                    value=balance,
+                    sourceId=account_id,
+                ))
+
+            # Evidence for average balance
+            if avg_balance > 0:
+                account_evidence.append(Evidence(
+                    id=f"account-{account_id}-avg-balance",
+                    type="data",
+                    description=f"Average balance for {account.get('name', account_id)}",
+                    value=avg_balance,
+                    sourceId=account_id,
+                ))
+
+            # Evidence for trend
+            account_evidence.append(Evidence(
+                id=f"account-{account_id}-trend",
+                type="data",
+                description=f"Balance trend for {account.get('name', account_id)}",
+                value=trend,
+                sourceId=account_id,
+            ))
+
+            # Evidence for velocity
+            if velocity != 0:
+                account_evidence.append(Evidence(
+                    id=f"account-{account_id}-velocity",
+                    type="data",
+                    description=f"Balance velocity for {account.get('name', account_id)}",
+                    value=velocity,
+                    sourceId=account_id,
+                ))
+
+            # Source reference
+            account_sources.append(SourceReference(
+                type="account",
+                id=account_id,
+                name=account.get("name", f"Account {account_id}"),
+                date=None,
+            ))
+
+            # Build account summary
+            account_summaries.append(AccountSummary(
+                account_id=account_id,
+                name=account.get("name", ""),
+                bank=account.get("bank", "unknown"),
+                account_type=account.get("account_type", "savings"),
+                balance_paise=balance,
+                average_balance_paise=avg_balance,
+                trend=trend,
+                velocity_paise_per_day=velocity,
+                is_active=bool(account.get("is_active", True)),
+            ))
+
+        # Calculate totals
+        total_balance = sum(
+            int(e.value) for e in account_evidence
+            if isinstance(e.value, int) and "balance" in e.id and "avg" not in e.id
+        )
+
+        # Calculate confidence
+        confidence_bps = 10000
+        confidence_reasons: list[str] = []
+
+        if len(account_evidence) == 0:
+            confidence_bps -= 2000
+            confidence_reasons.append("No account data available")
+
+        # Build calculation steps
+        calculation_steps: list[CalculationStep] = [
+            CalculationStep(
+                stepId="load-accounts",
+                description="Load all accounts from repository",
+                operation="LOOKUP",
+                inputIds=[s.account_id for s in account_summaries],
+                outputId="accounts-loaded",
+                order=1,
+            ),
+            CalculationStep(
+                stepId="compute-average",
+                description="Compute average balance for each account",
+                operation="AVERAGE",
+                inputIds=[e.id for e in account_evidence if "avg-balance" in e.id],
+                outputId="averages-computed",
+                order=2,
+            ),
+            CalculationStep(
+                stepId="compute-trend",
+                description="Compute balance trend for each account",
+                operation="LOOKUP",
+                inputIds=[e.id for e in account_evidence if "trend" in e.id],
+                outputId="trends-computed",
+                order=3,
+            ),
+            CalculationStep(
+                stepId="compute-velocity",
+                description="Compute balance velocity for each account",
+                operation="LOOKUP",
+                inputIds=[e.id for e in account_evidence if "velocity" in e.id],
+                outputId="velocities-computed",
+                order=4,
+            ),
+            CalculationStep(
+                stepId="sum-balance",
+                description="Sum all account balances",
+                operation="ADD",
+                inputIds=[e.id for e in account_evidence if "balance" in e.id and "avg" not in e.id],
+                outputId="total-balance",
+                order=5,
+            ),
+        ]
+
+        # Build explanation
+        explanation = Explanation(
+            metric="accounts",
+            value=total_balance,
+            confidence=Confidence(
+                value=confidence_bps,
+                reason=", ".join(confidence_reasons) if confidence_reasons else "Complete account data available",
+            ),
+            evidence=account_evidence,
+            sources=account_sources,
+            calculationSteps=calculation_steps,
+        )
+
+        return AccountsResponse(
+            accounts=account_summaries,
+            total_balance_paise=total_balance,
+            is_partial=len(account_evidence) == 0,
+            partial_reason="No account data available" if len(account_evidence) == 0 else None,
+            last_updated=datetime.now().isoformat(),
+            explanation=explanation,
+        )

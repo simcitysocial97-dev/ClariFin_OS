@@ -8,32 +8,26 @@
  * The backend is the source of truth for all explainability data.
  */
 
-import type { AccountsResponseDto, AccountDto } from '../contracts/api'
-import type { AccountsModel, AccountModel } from '../models/model'
+import type { AccountsDto, AccountSummaryDto } from '../contracts/api/accounts'
+import type { AccountsModel, AccountSummaryModel } from '../models/accounts'
 
 /**
- * Map Account DTO to Model
+ * Map AccountSummary DTO to Model
  *
  * Transformation rules:
  * - Rename fields to camelCase for consistency
- * - Include all fields for backward compatibility
  */
-export function mapAccountToModel(dto: AccountDto): AccountModel {
+export function mapAccountSummaryToModel(dto: AccountSummaryDto): AccountSummaryModel {
   return {
-    id: dto.account_id,
     accountId: dto.account_id,
     name: dto.name,
     bank: dto.bank,
     accountType: dto.account_type,
     balancePaise: dto.balance_paise,
-    accountNumberLast4: null, // Not in summary endpoint, set to null
     averageBalancePaise: dto.average_balance_paise,
     trend: dto.trend,
     velocityPaisePerDay: dto.velocity_paise_per_day,
-    isActive: dto.is_active ? 1 : 0, // Convert boolean to number for compatibility
-    notes: null, // Not in summary endpoint, set to null
-    createdAt: '', // Not in summary endpoint, set to empty
-    updatedAt: '', // Not in summary endpoint, set to empty
+    isActive: dto.is_active,
   }
 }
 
@@ -41,16 +35,19 @@ export function mapAccountToModel(dto: AccountDto): AccountModel {
  * Map Accounts DTO to Model
  *
  * Transformation rules:
- * - Map each account to ViewModel
  * - Rename fields to camelCase for consistency
  * - Preserve explanation unchanged
  */
-export function mapAccountsDtoToModel(dto: AccountsResponseDto): AccountsModel {
+export function mapAccountsToModel(dto: AccountsDto): AccountsModel {
   return {
-    accounts: dto.accounts.map(mapAccountToModel),
-    total: dto.total_balance_paise,
+    accounts: dto.accounts.map(mapAccountSummaryToModel),
+    totalBalancePaise: dto.total_balance_paise,
+    isPartial: dto.is_partial,
+    partialReason: dto.partial_reason,
+    lastUpdated: dto.last_updated,
+    explanation: dto.explanation ?? null,
   }
 }
 
 // Re-export types for convenience
-export type { AccountsModel, AccountModel }
+export type { AccountsModel, AccountSummaryModel }

@@ -13,6 +13,8 @@ from typing import Any
 
 from fastapi import APIRouter, Query
 
+from src.models.explanation import EventsResponse
+from src.services.financial_events_service import FinancialEventsService
 from src.services.financial_intelligence_service import FinancialIntelligenceService
 
 logger = logging.getLogger(__name__)
@@ -313,6 +315,38 @@ def get_financial_intelligence_confidence(
     except Exception as e:
         _timed_log(
             "GET /financial-intelligence/confidence", household_id,
+            (time.monotonic() - start) * 1000, success=False, error=str(e),
+        )
+        raise
+
+
+# ============================================================
+# Financial Events Endpoint
+# ============================================================
+
+@router.get("/events", response_model=EventsResponse)
+def get_financial_events(
+    month_bucket: str | None = Query(default=None, description="Month in YYYY-MM format (default: all months)"),
+    household_id: str = Query(default="primary", description="Household identifier"),
+) -> EventsResponse:
+    """Get financial events with explanation.
+
+    Returns:
+        EventsResponse with events list and explanation
+    """
+    start = time.monotonic()
+    service = FinancialEventsService()
+
+    try:
+        result = service.calculate_with_explanation(
+            month_bucket=month_bucket,
+            household_id=household_id,
+        )
+        _timed_log("GET /financial-intelligence/events", household_id, (time.monotonic() - start) * 1000)
+        return result
+    except Exception as e:
+        _timed_log(
+            "GET /financial-intelligence/events", household_id,
             (time.monotonic() - start) * 1000, success=False, error=str(e),
         )
         raise

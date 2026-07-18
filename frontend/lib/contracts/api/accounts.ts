@@ -2,6 +2,7 @@
  * Accounts API Contract - Zod schemas for DTO validation
  *
  * These schemas validate raw API responses before mapping to ViewModels.
+ * SourceReference schema mirrors backend model exactly.
  */
 
 import { z } from 'zod'
@@ -13,12 +14,10 @@ export type {
   CalculationStepSchema,
   ConfidenceSchema,
   ExplanationSchema,
-} from '../../../contracts/api/networth'
+} from './networth'
 
-/**
- * Account schema - matches backend /api/v1/accounts/summary response
- */
-export const AccountSchema = z.object({
+// Account summary schema
+const AccountSummarySchema = z.object({
   account_id: z.string(),
   name: z.string(),
   bank: z.string(),
@@ -30,11 +29,9 @@ export const AccountSchema = z.object({
   is_active: z.boolean(),
 })
 
-/**
- * Accounts response schema - matches backend /api/v1/accounts/summary
- */
+// Accounts response schema - matches backend /api/v1/accounts/summary
 export const AccountsResponseSchema = z.object({
-  accounts: z.array(AccountSchema),
+  accounts: z.array(AccountSummarySchema),
   total_balance_paise: z.number().int(),
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
@@ -42,5 +39,5 @@ export const AccountsResponseSchema = z.object({
   explanation: z.any().optional(),
 })
 
-export type AccountDto = z.infer<typeof AccountSchema>
-export type AccountsResponseDto = z.infer<typeof AccountsResponseSchema>
+export type AccountSummaryDto = z.infer<typeof AccountSummarySchema>
+export type AccountsDto = z.infer<typeof AccountsResponseSchema>

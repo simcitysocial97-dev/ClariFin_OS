@@ -218,3 +218,85 @@ class InvestmentsResponse(BaseModel):
     partial_reason: str | None = None
     last_updated: str | None = None
     explanation: Explanation | None = None
+
+
+# ============================================================
+# Accounts Response Models
+# ============================================================
+
+class AccountSummary(BaseModel):
+    """Single account summary for API response."""
+    account_id: str
+    name: str
+    bank: str
+    account_type: str
+    balance_paise: int
+    average_balance_paise: int
+    trend: str
+    velocity_paise_per_day: int
+    is_active: bool = True
+
+
+class AccountsResponse(BaseModel):
+    """Canonical API response for /api/v1/accounts/summary endpoint."""
+    accounts: list[AccountSummary]
+    total_balance_paise: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Overview Response Models
+# ============================================================
+
+class OverviewResponse(BaseModel):
+    """Canonical API response for /api/overview endpoint."""
+    total_spend: float
+    total_spend_display: str
+    this_month: float
+    this_month_display: str
+    last_month: float
+    last_month_display: str
+    month_change: str
+    transaction_count: int
+    card_count: int
+    months_of_data: int
+    monthly_average: float
+    monthly_average_display: str
+    above_below_avg: str
+    above_avg_is_bad: bool
+    monthly_chart: list[dict[str, Any]]
+    category_chart: list[dict[str, Any]]
+    behavioral_insights: list[dict[str, Any]]
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Financial Events Response Models
+# ============================================================
+
+class FinancialEventSummary(BaseModel):
+    """Single financial event summary for API response."""
+    id: int
+    event_type: str
+    amount_paise: int
+    date_iso: str
+    account_id: str
+    category: str
+    lifecycle_state: str
+    confidence_bps: int
+
+
+class EventsResponse(BaseModel):
+    """Canonical API response for /api/v1/financial-events endpoint."""
+    events: list[FinancialEventSummary]
+    total_events: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None

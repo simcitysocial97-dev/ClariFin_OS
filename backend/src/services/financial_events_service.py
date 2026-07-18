@@ -132,3 +132,142 @@ class FinancialEventsService:
             event["links"] = links
 
         return events
+
+    # ============================================================
+    # Explanation Pipeline
+    # ============================================================
+
+    def calculate_with_explanation(
+        self,
+        month_bucket: str | None = None,
+        household_id: str = "primary",
+    ) -> EventsResponse:
+        """
+        Compute financial events summary with full explainability.
+
+        Returns:
+            EventsResponse with explanation containing:
+            - Evidence for each event (type, amount, lifecycle)
+            - Source references for each event
+            - Calculation steps: load-events, walk-lineage, compute-summary
+            - Confidence based on event completeness
+        """
+        from datetime import datetime
+
+        from src.models.explanation import (
+            CalculationStep,
+            Confidence,
+            Evidence,
+            EventsResponse,
+            Explanation,
+            FinancialEventSummary,
+            SourceReference,
+        )
+
+        # Fetch events
+        if month_bucket:
+            events = self.event_repo.get_events_for_month(month_bucket, household_id)
+        else:
+            # Get all events for household
+            events = []
+            for event_type in [
+                "income", "expense", "transfer", "liability_increase",
+                "liability_decrease", "cash_advance", "emi_payment",
+                "liability_repayment", "credit_card_cash_advance", "transfer_internal"
+            ]:
+                events.extend(self.event_repo.get_events_by_type(event_type, household_id))
+
+        # Build evidence and sources for each event
+        event_evidence: list[Evidence] = []
+        event_sources: list[SourceReference] = []
+        event_summaries: list[FinancialEventSummary] = []
+
+        for event in events:
+            event_id = str(event.get("id", "unknown"))
+
+            # Evidence for event
+            event_evidence.append(Evidence(
+                id=f"event-{event_id}",
+                type="data",
+                description=f"Event: {event.get('event_type', 'unknown')} - {event.get('category', 'uncategorized')}",
+                value=event.get("amount_paise", 0),
+                sourceId=event_id,
+            ))
+
+            # Source reference
+            event_sources.append(SourceReference(
+                type="transaction",
+                id=event_id,
+                name=event.get("category", "Unknown"),
+                date=event.get("date_iso"),
+            ))
+
+            # Build event summary
+            event_summaries.append(FinancialEventSummary(
+                id=int(event.get("id", 0)),
+                event_type=event.get("event_type", "unknown"),
+                amount_paise=event.get("amount_paise", 0),
+                date_iso=event.get("date_iso", ""),
+                account_id=event.get("account_id", ""),
+                category=event.get("category", ""),
+                lifecycle_state=event.get("lifecycle_state", "open"),
+                confidence_bps=event.get("confidence_bps", 0) or 0,
+            ))
+
+        # Calculate confidence
+        confidence_bps = 10000
+        confidence_reasons: list[str] = []
+
+        if len(event_evidence) == 0:
+            confidence_bps -= 2000
+            confidence_reasons.append("No events available")
+
+        # Build calculation steps
+        calculation_steps: list[CalculationStep] = [
+            CalculationStep(
+                stepId="load-events",
+                description="Load financial events from repository",
+                operation="LOOKUP",
+                inputIds=[e.id for e in event_evidence],
+                outputId="events-loaded",
+                order=1,
+            ),
+            CalculationStep(
+                stepId="walk-lineage",
+                description="Walk event lineage for relationships",
+                operation="MATCH",
+                inputIds=["events-loaded"],
+                outputId="lineage-walked",
+                order=2,
+            ),
+            CalculationStep(
+                stepId="compute-summary",
+                description="Compute event summary with confidence",
+                operation="LOOKUP",
+                inputIds=["events-loaded", "lineage-walked"],
+                outputId="events-summary",
+                order=3,
+            ),
+        ]
+
+        # Build explanation
+        explanation = Explanation(
+            metric="financial_events",
+            value=len(event_summaries),
+            confidence=Confidence(
+                value=confidence_bps,
+                reason=", ".join(confidence_reasons) if confidence_reasons else "Complete event data available",
+            ),
+            evidence=event_evidence,
+            sources=event_sources,
+            calculationSteps=calculation_steps,
+        )
+
+        return EventsResponse(
+            events=event_summaries,
+            total_events=len(event_summaries),
+            is_partial=len(event_evidence) == 0,
+            partial_reason="No events available" if len(event_evidence) == 0 else None,
+            last_updated=datetime.now().isoformat(),
+            explanation=explanation,
+        )
