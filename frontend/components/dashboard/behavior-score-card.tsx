@@ -1,6 +1,7 @@
 'use client';
 
 import { ChartContainer } from '@/components/ui/chart-container';
+import { ExplainButton } from '@/components/ui/explain-button';
 import { useBehaviorScore } from '@/lib/hooks/use-behavior-score';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -51,91 +52,99 @@ export function BehaviorScoreCard() {
   const isEmpty = !data || data.financial_health_score === undefined;
 
   return (
-    <ChartContainer
-      isLoading={isLoading}
-      isError={isError}
-      isEmpty={isEmpty}
-      onRetry={refetch}
-      title="Financial Health Score"
-    >
-      {data && (
-        <div className="space-y-4">
-          {/* Score display with ring */}
-          <div className="flex items-center justify-center">
-            <div className="relative">
-              <svg className="w-32 h-32" viewBox="0 0 100 100">
-                {/* Background ring */}
-                <circle
-                  className="stroke-muted"
-                  cx="50"
-                  cy="50"
-                  r="45"
-                  strokeWidth="8"
-                  fill="none"
-                />
-                {/* Progress ring */}
-                <circle
-                  className={cn("transition-all", getRingColor(data.financial_health_score))}
-                  cx="50"
-                  cy="50"
-                  r="45"
-                  strokeWidth="8"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeDasharray={`${(data.financial_health_score / 100) * 283} 283`}
-                  transform="rotate(-90 50 50)"
-                />
-                {/* Score text */}
-                <text
-                  x="50"
-                  y="50"
-                  dominantBaseline="middle"
-                  textAnchor="middle"
-                  className={cn("text-3xl font-bold", getScoreColor(data.financial_health_score))}
-                >
-                  {Math.round(data.financial_health_score)}
-                </text>
-              </svg>
+    <div className="w-full">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-sm font-medium text-muted-foreground">Financial Health Score</h3>
+        <ExplainButton
+          title="Financial Health Score"
+          explanation="Your financial behavior score (0-100) based on savings discipline, habit stability, and spending patterns. Higher scores indicate healthier financial habits."
+        />
+      </div>
+      <ChartContainer
+        isLoading={isLoading}
+        isError={isError}
+        isEmpty={isEmpty}
+        onRetry={refetch}
+      >
+        {data && (
+          <div className="space-y-4">
+            {/* Score display with ring */}
+            <div className="flex items-center justify-center">
+              <div className="relative">
+                <svg className="w-32 h-32" viewBox="0 0 100 100">
+                  {/* Background ring */}
+                  <circle
+                    className="stroke-muted"
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    strokeWidth="8"
+                    fill="none"
+                  />
+                  {/* Progress ring */}
+                  <circle
+                    className={cn("transition-all", getRingColor(data.financial_health_score))}
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    strokeWidth="8"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeDasharray={`${(data.financial_health_score / 100) * 283} 283`}
+                    transform="rotate(-90 50 50)"
+                  />
+                  {/* Score text */}
+                  <text
+                    x="50"
+                    y="50"
+                    dominantBaseline="middle"
+                    textAnchor="middle"
+                    className={cn("text-3xl font-bold", getScoreColor(data.financial_health_score))}
+                  >
+                    {Math.round(data.financial_health_score)}
+                  </text>
+                </svg>
+              </div>
             </div>
-          </div>
 
-          {/* Component scores */}
-          <div className="space-y-2">
-            <ComponentBar label="Savings Discipline" value={data.components.savings_discipline} />
-            <ComponentBar label="Habit Stability" value={data.components.habit_stability} />
-            <ComponentBar label="Impulsivity" value={data.components.impulsivity} invert />
-          </div>
+            {/* Component scores */}
+            <div className="space-y-2">
+              <ComponentBar label="Savings Discipline" value={data.components.savings_discipline} />
+              <ComponentBar label="Habit Stability" value={data.components.habit_stability} />
+              <ComponentBar label="Impulsivity" value={data.components.impulsivity} invert />
+            </div>
 
-          {/* Risk flags */}
-          <div className="flex flex-wrap gap-1.5">
-            {data.risk_flags.india_specific.loan_app_pattern_flag && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                Loan App Activity
-              </Badge>
-            )}
-            {data.risk_flags.high_impulsivity && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                High Impulsivity
-              </Badge>
-            )}
-            {data.risk_flags.high_stress && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                Financial Stress
-              </Badge>
-            )}
-            {data.risk_flags.low_savings && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                Low Savings
-              </Badge>
-            )}
-          </div>
+            {/* Risk flags */}
+            <div className="flex flex-wrap gap-1.5">
+              {data.risk_flags.india_specific.loan_app_pattern_flag && (
+                <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+                  Loan App Activity
+                </Badge>
+              )}
+              {data.risk_flags.high_impulsivity && (
+                <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+                  High Impulsivity
+                </Badge>
+              )}
+              {data.risk_flags.high_stress && (
+                <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+                  Financial Stress
+                </Badge>
+              )}
+              {data.risk_flags.low_savings && (
+                <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
+                  Low Savings
+                </Badge>
+              )}
+            </div>
 
-          {/* Summary */}
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            {data.summary}
-          </p>
-        </div>
-      )}
-    </ChartContainer>
+            {/* Summary */}
+            <p className="text-xs text-muted-foreground text-center mt-2">
+              {data.summary}
+            </p>
+          </div>
+        )}
+      </ChartContainer>
+    </div>
   );
 }

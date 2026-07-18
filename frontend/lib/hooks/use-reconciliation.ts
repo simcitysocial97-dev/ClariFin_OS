@@ -1,48 +1,8 @@
 import { useAsyncQuery, HookState } from './use-async-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { ReconciliationsDataSchema, type ReconciliationsData, type ReconciliationMatch, type TransactionDetail } from '@/lib/schemas/reconciliation'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
-
-// Types based on /api/reconciliations response
-export interface TransactionDetail {
-  id: number
-  date: string
-  date_iso: string
-  description: string
-  amount_paise: number
-  type: 'debit' | 'credit'
-  bank: string
-}
-
-export interface ReconciliationMatch {
-  id: number
-  debit_txn_id: number
-  credit_txn_id: number
-  debit_account_id: string
-  credit_account_id: string
-  amount_paise: number  // In paise (canonical)
-  date_diff_days: number
-  match_confidence_bps: number  // In basis points (0-10000)
-  match_type: 'exact' | 'window' | 'fuzzy' | 'manual'
-  status: 'pending' | 'confirmed' | 'rejected'
-  created_at: string
-  confirmed_at: string | null
-  // Transaction details from join
-  debit_date: string
-  debit_date_iso: string
-  debit_description: string
-  debit_amount_paise: number
-  debit_bank: string
-  credit_date: string
-  credit_date_iso: string
-  credit_description: string
-  credit_amount_paise: number
-  credit_bank: string
-}
-
-export interface ReconciliationsData {
-  reconciliations: ReconciliationMatch[]
-}
 
 // Convert rupees to paise at the hook boundary
 function rupeesToPaise(rupees: number): number {
@@ -54,9 +14,12 @@ function confidenceToBps(confidence: number): number {
   return Math.round(confidence * 10000)
 }
 
+// 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchReconciliations(): Promise<ReconciliationsData> {
   const response = await fetch(`${API_BASE}/api/reconciliations`)
   if (!response.ok) throw new Error(`Reconciliations fetch failed: ${response.status}`)
+  
+  // This is unverified raw payload from the network
   const raw = await response.json()
   
   // Convert all amounts and confidence to canonical units
@@ -66,12 +29,24 @@ async function fetchReconciliations(): Promise<ReconciliationsData> {
     match_confidence_bps: confidenceToBps(r.match_confidence || 0),
   }))
   
-  return { reconciliations }
+  const converted = { reconciliations }
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = ReconciliationsDataSchema.safeParse(converted)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Reconciliations API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 async function fetchPendingReconciliations(): Promise<ReconciliationsData> {
   const response = await fetch(`${API_BASE}/api/reconciliations/pending`)
   if (!response.ok) throw new Error(`Pending reconciliations fetch failed: ${response.status}`)
+  
   const raw = await response.json()
   
   const reconciliations = (raw.reconciliations || []).map((r: any) => ({
@@ -80,12 +55,22 @@ async function fetchPendingReconciliations(): Promise<ReconciliationsData> {
     match_confidence_bps: confidenceToBps(r.match_confidence || 0),
   }))
   
-  return { reconciliations }
+  const converted = { reconciliations }
+  
+  const parsed = ReconciliationsDataSchema.safeParse(converted)
+  
+  if (!parsed.success) {
+    console.error('❌ Pending reconciliations API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 async function scanReconciliations(): Promise<{ matches: ReconciliationMatch[]; count: number }> {
   const response = await fetch(`${API_BASE}/api/reconciliations/scan`)
   if (!response.ok) throw new Error(`Scan reconciliations failed: ${response.status}`)
+  
   const raw = await response.json()
   
   const matches = (raw.matches || []).map((m: any) => ({
@@ -153,3 +138,6 @@ export function useRejectReconciliation() {
     },
   })
 }
+
+// Re-export types for backward compatibility
+export type { ReconciliationsData, ReconciliationMatch, TransactionDetail }

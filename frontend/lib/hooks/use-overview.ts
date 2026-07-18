@@ -1,53 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
+import { OverviewSchema, type Overview } from '@/lib/schemas/overview'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
-
-// Types based on ACTUAL /api/overview response fields
-interface BehavioralInsight {
-  title: string
-  description: string
-  severity: 'warning' | 'positive' | 'neutral'
-  icon: string
-}
-
-interface MonthlyChartPoint {
-  month: string
-  amount: number  // In paise (canonical)
-}
-
-interface CategoryChartPoint {
-  name: string
-  value: number  // In paise (canonical)
-}
-
-interface OverviewData {
-  total_spend: number
-  total_spend_display: string
-  this_month: number
-  this_month_display: string
-  last_month: number
-  last_month_display: string
-  month_change: string
-  transaction_count: number
-  card_count: number
-  months_of_data: number
-  monthly_average: number
-  monthly_average_display: string
-  above_below_avg: string
-  above_avg_is_bad: boolean
-  monthly_chart: MonthlyChartPoint[]
-  category_chart: CategoryChartPoint[]
-  behavioral_insights: BehavioralInsight[]
-}
 
 // Convert rupees to paise at the hook boundary
 function rupeesToPaise(rupees: number): number {
   return Math.round(rupees * 100)
 }
 
-async function fetchOverview(): Promise<OverviewData> {
+// 🛡️ Data fetching function utilizing Zod runtime parsing
+async function fetchOverview(): Promise<Overview> {
   const response = await fetch(`${API_BASE}/api/overview`)
   if (!response.ok) throw new Error(`Overview fetch failed: ${response.status}`)
+  
+  // This is unverified raw payload from the network
   const raw = await response.json()
   
   // Convert category_chart values from rupees to paise (canonical)
@@ -62,11 +28,22 @@ async function fetchOverview(): Promise<OverviewData> {
     amount: rupeesToPaise(item.amount),
   }))
   
-  return {
+  const converted = {
     ...raw,
     category_chart,
     monthly_chart,
   }
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = OverviewSchema.safeParse(converted)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Overview API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 export function useOverview() {

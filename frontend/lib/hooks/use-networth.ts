@@ -28,7 +28,20 @@ export type NetWorth = z.infer<typeof NetWorthSchema>
 async function fetchNetWorth() {
   const res = await fetch(`${API_BASE}/api/networth`)
   if (!res.ok) throw new Error('Failed to fetch net worth')
-  return NetWorthSchema.parse(await res.json())
+  
+  // This is unverified raw payload from the network
+  const raw = await res.json()
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = NetWorthSchema.safeParse(raw)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Net worth API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 export function useNetWorth() {

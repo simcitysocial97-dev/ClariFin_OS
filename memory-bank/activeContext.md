@@ -54,4 +54,11 @@
 - Fixed mypy errors in `account_service.py`: Added `compute_account_balance()` and `compute_running_balance()` methods
 - Fixed ruff errors in test files: Removed unused variables, added strict= to zip()
 - All validation checks pass: ruff (0 errors), mypy src/ (7 pre-existing errors only), npm test (64/64), npm run build (success)
+
+### Stage 5 — Batches B, C, D, E (Completed)
+- **Batch B - Widget Consistency:** Fixed Zod validation in 4 hooks (use-networth.ts, use-loans.ts, use-investments.ts, use-accounts.ts) to use `.safeParse()` with proper error handling
+- **Batch B - Explain Buttons:** Added ExplainButton component and integrated into BehaviorScoreCard, CashflowChart, CategorySpendChart
+- **Batch C - Layout & UX:** Verified grid alignment, responsive behavior, and widget ordering - no changes needed
+- **Batch D - Cross-Widget Consistency:** Verified all monetary values use integer paise (₹1.00 = 100 paise) - no changes needed
+- **Batch E - Smoke Test:** All validation commands pass (ruff, mypy, type-check, lint, test, build)
 ```

@@ -296,7 +296,12 @@ export default function DashboardPage() {
                 <CardTitle className="text-lg font-semibold">Recent Transactions</CardTitle>
               </CardHeader>
               <CardContent>
-                <RecentTransactions transactions={data.recent_transactions.slice(0, 10)} />
+                <RecentTransactions 
+                  transactions={data.recent_transactions.slice(0, 10)} 
+                  isLoading={loading}
+                  isError={!!error}
+                  onRetry={refetch}
+                />
               </CardContent>
             </Card>
           </ErrorBoundary>

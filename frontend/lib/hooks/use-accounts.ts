@@ -35,8 +35,20 @@ export interface CreateAccountInput {
 async function fetchManagedAccounts() {
   const res = await fetch(`${API_BASE}/api/accounts/manage`)
   if (!res.ok) throw new Error('Failed to fetch accounts')
+  
+  // This is unverified raw payload from the network
   const raw = await res.json()
-  return AccountsResponseSchema.parse(raw)
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = AccountsResponseSchema.safeParse(raw)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Accounts API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 async function createAccount(input: CreateAccountInput) {

@@ -1,44 +1,26 @@
 import { useQuery } from '@tanstack/react-query'
+import { BehaviorScoreSchema, type BehaviorScore } from '@/lib/schemas/behavior-score'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
 
-// Types based on ACTUAL /api/behavior/score response
-interface BehaviorComponents {
-  savings_discipline: number
-  habit_stability: number
-  impulsivity: number
-  financial_stress: number
-  loss_aversion: number
-}
-
-interface IndiaRiskFlags {
-  upi_micro_spend_flag: boolean
-  gambling_flag: boolean
-  loan_app_pattern_flag: boolean
-  loan_credit_count: number
-  emi_ratio: number
-  monthly_emi_total: number
-}
-
-interface RiskFlags {
-  india_specific: IndiaRiskFlags
-  high_impulsivity: boolean
-  high_stress: boolean
-  low_savings: boolean
-}
-
-interface BehaviorScoreData {
-  financial_health_score: number
-  confidence: number
-  components: BehaviorComponents
-  risk_flags: RiskFlags
-  summary: string
-}
-
-async function fetchBehaviorScore(): Promise<BehaviorScoreData> {
+// 🛡️ Data fetching function utilizing Zod runtime parsing
+async function fetchBehaviorScore(): Promise<BehaviorScore> {
   const response = await fetch(`${API_BASE}/api/behavior/score`)
   if (!response.ok) throw new Error(`Behavior score fetch failed: ${response.status}`)
-  return response.json()
+  
+  // This is unverified raw payload from the network
+  const raw = await response.json()
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = BehaviorScoreSchema.safeParse(raw)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Behavior score API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 export function useBehaviorScore() {

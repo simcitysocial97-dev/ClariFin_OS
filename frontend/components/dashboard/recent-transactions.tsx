@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DataStateWrapper } from '@/components/ui/data-state-wrapper';
 
 const categoryColors: Record<string, string> = {
   'Food & Dining': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
@@ -36,69 +37,79 @@ interface TransactionItem {
 
 interface RecentTransactionsProps {
   transactions: TransactionItem[];
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
 }
 
-export function RecentTransactions({ transactions }: RecentTransactionsProps) {
-  if (transactions.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground text-sm">
-        No transactions yet. Upload a statement to get started.
-      </div>
-    );
-  }
+export function RecentTransactions({ 
+  transactions, 
+  isLoading = false, 
+  isError = false, 
+  onRetry 
+}: RecentTransactionsProps) {
+  const isEmpty = !isLoading && !isError && transactions.length === 0;
 
   return (
-    <div className="space-y-4">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="w-[120px]">Category</TableHead>
-            <TableHead className="w-[100px] text-right">Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions.map((transaction) => (
-            <TableRow 
-              key={transaction.id}
-              className="hover:bg-muted/50 transition-colors"
-            >
-              <TableCell className="text-sm">{transaction.date}</TableCell>
-              <TableCell className="max-w-[200px] truncate text-sm">
-                {transaction.description_display || transaction.description}
-              </TableCell>
-              <TableCell>
-                <Badge 
-                  variant="secondary" 
-                  className={cn(
-                    "text-xs",
-                    categoryColors[transaction.category] || categoryColors['Other']
-                  )}
-                >
-                  {transaction.category}
-                </Badge>
-              </TableCell>
-              <TableCell className={cn(
-                "text-right font-mono tabular-nums text-sm",
-                transaction.type === 'debit' ? 'text-red-600' : 'text-green-600',
-                transaction.is_large && "font-bold text-amber-600"
-              )}>
-                {transaction.amount_display || `${transaction.type === 'debit' ? '-' : '+'}₹${(transaction.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
-              </TableCell>
+    <DataStateWrapper
+      isLoading={isLoading}
+      isError={isError}
+      isEmpty={isEmpty}
+      emptyMessage="No transactions yet. Upload a statement to get started."
+      onRetry={onRetry}
+    >
+      <div className="space-y-4">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Date</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead className="w-[120px]">Category</TableHead>
+              <TableHead className="w-[100px] text-right">Amount</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      
-      <div className="flex justify-end">
-        <Link href="/transactions">
-          <Button variant="ghost" size="sm">
-            View all transactions
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
+          </TableHeader>
+          <TableBody>
+            {transactions.map((transaction) => (
+              <TableRow 
+                key={transaction.id}
+                className="hover:bg-muted/50 transition-colors"
+              >
+                <TableCell className="text-sm">{transaction.date}</TableCell>
+                <TableCell className="max-w-[200px] truncate text-sm">
+                  {transaction.description_display || transaction.description}
+                </TableCell>
+                <TableCell>
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      "text-xs",
+                      categoryColors[transaction.category] || categoryColors['Other']
+                    )}
+                  >
+                    {transaction.category}
+                  </Badge>
+                </TableCell>
+                <TableCell className={cn(
+                  "text-right font-mono tabular-nums text-sm",
+                  transaction.type === 'debit' ? 'text-red-600' : 'text-green-600',
+                  transaction.is_large && "font-bold text-amber-600"
+                )}>
+                  {transaction.amount_display || `${transaction.type === 'debit' ? '-' : '+'}₹${(transaction.amount_paise / 100).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        
+        <div className="flex justify-end">
+          <Link href="/transactions">
+            <Button variant="ghost" size="sm">
+              View all transactions
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
-    </div>
+    </DataStateWrapper>
   );
 }
