@@ -12,12 +12,12 @@
 - Created Grouping system with group header component (S3-GRP-001-020)
 - Created Sorting system with sort header component (S3-SRT-001-020)
 - Created Selection Model with types, hook, and components (S3-SEL-001-020)
-- Created Evidence System with types, hook, and components (S3-EVD-001-009)
+- Created Evidence System with types, hook, and components (S3-EVD-001-014)
 - All TypeScript checks passing
 
 ### Next Steps
-- Continue Evidence System implementation (S3-EVD-010)
-- Add evidence for categorization, import, adjustment, balance, reconciliation
+- Continue Evidence System implementation (S3-EVD-015)
+- Add evidence drawer tests, performance tests, documentation
 - Create workspace page component
 
 ### Key Constraints

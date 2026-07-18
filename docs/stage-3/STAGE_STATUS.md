@@ -3,11 +3,11 @@
 ## Overall Progress
 
 - **Total TODOs:** 360
-- **Completed:** 169
+- **Completed:** 183
 - **In Progress:** 0
 - **Blocked:** 0
-- **Pending:** 191
-- **Overall %:** 46.9%
+- **Pending:** 177
+- **Overall %:** 50.8%
 
 ## Capability Progress
 
@@ -21,7 +21,7 @@
 | Grouping | 20 | 20 | 0 | 0 | 100% |
 | Sorting | 20 | 20 | 0 | 0 | 100% |
 | Selection Model | 20 | 20 | 0 | 0 | 100% |
-| Evidence System | 20 | 9 | 0 | 0 | 45% |
+| Evidence System | 20 | 14 | 0 | 0 | 70% |
 | Workspace Layout | 20 | 0 | 0 | 0 | 0% |
 | Toolbar | 20 | 0 | 0 | 0 | 0% |
 | Transaction Table | 20 | 0 | 0 | 0 | 0% |
@@ -34,9 +34,9 @@
 
 ## Current TODO
 
-**S3-EVD-010: Add evidence for categorization**
+**S3-EVD-015: Add evidence drawer tests**
 
-This is the next TODO in the critical path. It depends on S3-EVD-001 (completed).
+This is the next TODO in the critical path. It depends on S3-EVD-014 (completed).
 
 ## Blocked TODOs
 
@@ -81,5 +81,5 @@ This is the next TODO in the critical path. It depends on S3-EVD-001 (completed)
 - Grouping is now complete (100%)
 - Sorting is now complete (100%)
 - Selection Model is now complete (100%)
-- Evidence System: 9/20 completed (types, hook, drawer, summary, list, item, source link, calculation view, confidence display)
-- Next: Evidence System (S3-EVD-010)
+- Evidence System: 14/20 completed (types, hook, drawer, summary, list, item, source link, calculation view, confidence display, factories)
+- Next: Evidence System (S3-EVD-015)
