@@ -8,12 +8,13 @@
 - Created shared formatter utilities (formatPaise, formatDate, formatMonthKey, slugify)
 - Created Transaction Capability layer with useTransactionCapability hook (S3-CAP-001-020)
 - Created Filtering Engine with all filter components (S3-FIL-001-020)
+- Created Search Engine with search input component (S3-SEA-001-020)
 - All TypeScript checks passing
 
 ### Next Steps
-- Begin Search Engine implementation (S3-SEA-001)
-- Create search input component
-- Add search state to capability
+- Begin Grouping implementation (S3-GRP-001)
+- Create group types definition
+- Add group actions to capability
 
 ### Key Constraints
 - No modifications to Dashboard, Money Graph, Behaviour Workspace, Cashflow Workspace, or Reconciliation Workspace
