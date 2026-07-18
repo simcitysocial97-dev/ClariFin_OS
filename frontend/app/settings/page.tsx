@@ -15,8 +15,13 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
 
+  // Handle hydration - only render after client mount
   useEffect(() => {
-    setMounted(true);
+    // Use setTimeout to defer state update to next tick
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const exportData = () => {

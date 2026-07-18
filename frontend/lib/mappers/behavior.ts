@@ -25,16 +25,19 @@ import type {
  * Map WellnessScore DTO to Model
  *
  * Transformation rules:
+ * - Convert from basis points (0-10000) to score (0-100)
  * - Rename fields to camelCase for consistency
  * - Preserve explanation unchanged
  */
 export function mapWellnessScoreToModel(dto: WellnessScoreResponseDto): WellnessScoreModel {
   return {
-    score: dto.score,
+    // Convert from basis points (0-10000) to score (0-100)
+    score: dto.score / 100,
     band: dto.band,
     components: dto.components.map((c) => ({
       name: c.name,
-      score: c.score,
+      // Convert from basis points (0-10000) to score (0-100)
+      score: c.score / 100,
       weight: c.weight,
     })),
     snapshotDate: dto.snapshot_date,

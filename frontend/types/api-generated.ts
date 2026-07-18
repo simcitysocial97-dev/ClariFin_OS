@@ -150,6 +150,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/accounts/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Accounts Summary
+         * @description Get all accounts with metrics and explanation.
+         */
+        get: operations["get_accounts_summary_api_v1_accounts_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/accounts/{account_id}/analytics": {
         parameters: {
             query?: never;
@@ -596,7 +616,7 @@ export interface paths {
          *         days: Number of days to look back (1-365, default: 30)
          *
          *     Returns:
-         *         List of FinancialPattern objects
+         *         PatternsResponse with patterns list and explanation
          */
         get: operations["get_patterns_api_v1_behaviour_patterns_get"];
         put?: never;
@@ -828,7 +848,7 @@ export interface paths {
         };
         /**
          * List Cards
-         * @description Get all active credit cards.
+         * @description Get all active credit cards with explanation.
          */
         get: operations["list_cards_api_v1_credit_cards_get"];
         put?: never;
@@ -1246,7 +1266,7 @@ export interface paths {
          *         household_id: Household identifier
          *
          *     Returns:
-         *         Dict with cashflow, liquidity, credit forecasts and risk_flags
+         *         ForecastingResponse with cashflow, liquidity, credit forecasts and risk_flags
          */
         get: operations["get_financial_outlook_api_v1_financial_intelligence_outlook_get"];
         put?: never;
@@ -1339,6 +1359,29 @@ export interface paths {
          *         Confidence metadata with confidence score and data quality label
          */
         get: operations["get_financial_intelligence_confidence_api_v1_financial_intelligence_confidence_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Financial Events
+         * @description Get financial events with explanation.
+         *
+         *     Returns:
+         *         EventsResponse with events list and explanation
+         */
+        get: operations["get_financial_events_api_v1_financial_intelligence_events_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1552,7 +1595,7 @@ export interface paths {
         };
         /**
          * Get Investments
-         * @description Get all investments with calculated returns.
+         * @description Get all investments with calculated returns and explanation.
          */
         get: operations["get_investments_api_investments_get"];
         put?: never;
@@ -1600,9 +1643,9 @@ export interface paths {
         };
         /**
          * Get Loans
-         * @description Get all active loans via LoanService.
+         * @description Get all active loans via LoanService with explanation.
          *
-         *     Returns array of loan objects directly (not wrapped in object).
+         *     Returns LoansResponse with loans array and explanation.
          */
         get: operations["get_loans_api_loans_get"];
         put?: never;
@@ -2680,6 +2723,33 @@ export interface components {
             relationship_type: "TRANSFER" | "JOINT" | "GUARANTOR";
         };
         /**
+         * AccountSummary
+         * @description Single account summary for API response.
+         */
+        AccountSummary: {
+            /** Account Id */
+            account_id: string;
+            /** Name */
+            name: string;
+            /** Bank */
+            bank: string;
+            /** Account Type */
+            account_type: string;
+            /** Balance Paise */
+            balance_paise: number;
+            /** Average Balance Paise */
+            average_balance_paise: number;
+            /** Trend */
+            trend: string;
+            /** Velocity Paise Per Day */
+            velocity_paise_per_day: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
+        /**
          * AccountUpdate
          * @description Account update request.
          */
@@ -2716,6 +2786,26 @@ export interface components {
             notes?: string | null;
         };
         /**
+         * AccountsResponse
+         * @description Canonical API response for /api/v1/accounts/summary endpoint.
+         */
+        AccountsResponse: {
+            /** Accounts */
+            accounts: components["schemas"]["AccountSummary"][];
+            /** Total Balance Paise */
+            total_balance_paise: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
+        };
+        /**
          * BalanceSnapshotRequest
          * @description Balance snapshot creation request.
          */
@@ -2740,18 +2830,12 @@ export interface components {
         };
         /** Body_import_detect_api_import_detect_post */
         Body_import_detect_api_import_detect_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_upload_statement_api_upload_post */
         Body_upload_statement_api_upload_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
             /**
              * Member
@@ -2870,6 +2954,31 @@ export interface components {
             notes?: string | null;
         };
         /**
+         * CreditCardSummary
+         * @description Single credit card summary for API response.
+         */
+        CreditCardSummary: {
+            /** Card Id */
+            card_id: string;
+            /** Bank */
+            bank: string;
+            /** Card Last4 */
+            card_last4?: string | null;
+            /** Credit Limit Paise */
+            credit_limit_paise: number;
+            /** Current Outstanding Paise */
+            current_outstanding_paise: number;
+            /** Minimum Due Paise */
+            minimum_due_paise: number;
+            /** Utilization Bps */
+            utilization_bps: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
+        /**
          * CreditCardUpdateRequest
          * @description Credit card update request.
          */
@@ -2888,6 +2997,30 @@ export interface components {
             due_day_offset?: number | null;
             /** Notes */
             notes?: string | null;
+        };
+        /**
+         * CreditCardsResponse
+         * @description Canonical API response for /api/v1/credit-cards endpoint.
+         */
+        CreditCardsResponse: {
+            /** Cards */
+            cards: components["schemas"]["CreditCardSummary"][];
+            /** Total Outstanding Paise */
+            total_outstanding_paise: number;
+            /** Total Credit Limit Paise */
+            total_credit_limit_paise: number;
+            /** Total Utilization Bps */
+            total_utilization_bps: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
         };
         /**
          * DashboardSummary
@@ -2932,6 +3065,26 @@ export interface components {
             annual_rate_bps?: number | null;
         };
         /**
+         * EventsResponse
+         * @description Canonical API response for /api/v1/financial-events endpoint.
+         */
+        EventsResponse: {
+            /** Events */
+            events: components["schemas"]["FinancialEventSummary"][];
+            /** Total Events */
+            total_events: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
+        };
+        /**
          * Evidence
          * @description Evidence for a calculation.
          */
@@ -2966,6 +3119,74 @@ export interface components {
             sources: components["schemas"]["SourceReference"][];
             /** Calculationsteps */
             calculationSteps: components["schemas"]["CalculationStep"][];
+        };
+        /**
+         * FinancialEventSummary
+         * @description Single financial event summary for API response.
+         */
+        FinancialEventSummary: {
+            /** Id */
+            id: number;
+            /** Event Type */
+            event_type: string;
+            /** Amount Paise */
+            amount_paise: number;
+            /** Date Iso */
+            date_iso: string;
+            /** Account Id */
+            account_id: string;
+            /** Category */
+            category: string;
+            /** Lifecycle State */
+            lifecycle_state: string;
+            /** Confidence Bps */
+            confidence_bps: number;
+        };
+        /**
+         * ForecastMonth
+         * @description Single month forecast data.
+         */
+        ForecastMonth: {
+            /** Month */
+            month: string;
+            /** Expected Income Paise */
+            expected_income_paise: number;
+            /** Expected Expense Paise */
+            expected_expense_paise: number;
+            /** Expected Surplus Paise */
+            expected_surplus_paise: number;
+            /** Confidence Bps */
+            confidence_bps: number;
+        };
+        /**
+         * ForecastingResponse
+         * @description Canonical API response for /api/v1/financial-intelligence/outlook endpoint.
+         */
+        ForecastingResponse: {
+            /** Cashflow */
+            cashflow: components["schemas"]["ForecastMonth"][];
+            /** Liquidity */
+            liquidity: {
+                [key: string]: unknown;
+            };
+            /** Credit */
+            credit: {
+                [key: string]: unknown;
+            };
+            /** Risk Flags */
+            risk_flags: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
         };
         /**
          * ForeclosureRequest
@@ -3065,6 +3286,31 @@ export interface components {
             notes?: string | null;
         };
         /**
+         * InvestmentSummary
+         * @description Single investment summary for API response.
+         */
+        InvestmentSummary: {
+            /** Id */
+            id: number;
+            /** Name */
+            name: string;
+            /** Type */
+            type: string;
+            /** Invested Paise */
+            invested_paise: number;
+            /** Current Value Paise */
+            current_value_paise: number;
+            /** Gain Paise */
+            gain_paise: number;
+            /** Gain Percent */
+            gain_percent: number;
+            /**
+             * Is Active
+             * @default true
+             */
+            is_active: boolean;
+        };
+        /**
          * InvestmentUpdate
          * @description Investment update request.
          */
@@ -3079,6 +3325,30 @@ export interface components {
             as_of_date?: string | null;
             /** Notes */
             notes?: string | null;
+        };
+        /**
+         * InvestmentsResponse
+         * @description Canonical API response for /api/investments endpoint.
+         */
+        InvestmentsResponse: {
+            /** Investments */
+            investments: components["schemas"]["InvestmentSummary"][];
+            /** Total Invested Paise */
+            total_invested_paise: number;
+            /** Total Current Value Paise */
+            total_current_value_paise: number;
+            /** Total Gain Paise */
+            total_gain_paise: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
         };
         /**
          * LoanCreateRequest
@@ -3137,6 +3407,32 @@ export interface components {
             notes?: string | null;
         };
         /**
+         * LoansResponse
+         * @description Canonical API response for /api/loans endpoint.
+         */
+        LoansResponse: {
+            /** Loans */
+            loans: {
+                [key: string]: unknown;
+            }[];
+            /** Total Outstanding Paise */
+            total_outstanding_paise: number;
+            /** Total Principal Paise */
+            total_principal_paise: number;
+            /** Total Monthly Emi Paise */
+            total_monthly_emi_paise: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
+        };
+        /**
          * MemberCreate
          * @description Member creation request.
          */
@@ -3190,6 +3486,46 @@ export interface components {
             /** Last Updated */
             last_updated?: string | null;
             explanation?: components["schemas"]["NetWorthExplanation"] | null;
+        };
+        /**
+         * PatternSummary
+         * @description Single pattern summary for API response.
+         */
+        PatternSummary: {
+            /** Pattern Type */
+            pattern_type: string;
+            /** Pattern Key */
+            pattern_key: string;
+            /** Strength Bps */
+            strength_bps: number;
+            /** Transaction Count */
+            transaction_count: number;
+            /** Total Amount Paise */
+            total_amount_paise: number;
+            /** First Observed */
+            first_observed: string;
+            /** Last Observed */
+            last_observed: string;
+        };
+        /**
+         * PatternsResponse
+         * @description Canonical API response for /api/v1/behaviour/patterns endpoint.
+         */
+        PatternsResponse: {
+            /** Patterns */
+            patterns: components["schemas"]["PatternSummary"][];
+            /** Total Patterns */
+            total_patterns: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
         };
         /**
          * PaymentRecordRequest
@@ -3274,6 +3610,76 @@ export interface components {
              * @description New annual rate in basis points (0-5000)
              */
             new_rate_bps: number;
+        };
+        /**
+         * RecommendationResponse
+         * @description Response model for a single recommendation.
+         */
+        RecommendationResponse: {
+            /**
+             * Title
+             * @description Short title of the recommendation
+             */
+            title: string;
+            /**
+             * Reason
+             * @description Human-readable explanation of the recommendation
+             */
+            reason: string;
+            /**
+             * Metric
+             * @description The metric value that triggered this recommendation
+             */
+            metric: string;
+            /**
+             * Severity
+             * @description Severity level (LOW, MEDIUM, HIGH, CRITICAL)
+             */
+            severity: string;
+            /**
+             * Suggested Action
+             * @description Actionable suggestion for the user
+             */
+            suggested_action: string;
+        };
+        /**
+         * RecommendationsResponse
+         * @description Response model for a list of recommendations.
+         */
+        RecommendationsResponse: {
+            /**
+             * Recommendations
+             * @description List of triggered recommendations sorted by severity
+             */
+            recommendations: components["schemas"]["RecommendationResponse"][];
+            /**
+             * Total Count
+             * @description Total number of recommendations
+             */
+            total_count: number;
+            /**
+             * Snapshot Date
+             * @description Date of the snapshot used for recommendations
+             */
+            snapshot_date: string;
+            /**
+             * Is Partial
+             * @description Whether data is partial
+             * @default false
+             */
+            is_partial: boolean;
+            /**
+             * Partial Reason
+             * @description Reason for partial data
+             */
+            partial_reason?: string | null;
+            /**
+             * Last Updated
+             * @description Last update timestamp
+             */
+            last_updated?: string | null;
+            /** @description Explanation for recommendations */
+            explanation?: components["schemas"]["Explanation"] | null;
         };
         /**
          * ReconciliationMatch
@@ -3405,6 +3811,72 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
+        };
+        /**
+         * WellnessComponent
+         * @description Single wellness component score.
+         */
+        WellnessComponent: {
+            /** Name */
+            name: string;
+            /** Score */
+            score: number;
+            /** Weight */
+            weight: number;
+        };
+        /**
+         * WellnessScoreResponse
+         * @description Response model for wellness score.
+         */
+        WellnessScoreResponse: {
+            /**
+             * Score
+             * @description Wellness score between 0 and 100
+             */
+            score: string;
+            /**
+             * Band
+             * @description Wellness classification band
+             * @enum {string}
+             */
+            band: "Excellent" | "Healthy" | "Developing" | "Risk" | "Critical";
+            /**
+             * Components
+             * @description Breakdown of wellness score components
+             */
+            components: components["schemas"]["WellnessComponent"][];
+            /**
+             * Snapshot Date
+             * @description Date of the snapshot in ISO format
+             */
+            snapshot_date: string;
+            /**
+             * Version
+             * @description Version of the scoring algorithm
+             */
+            version: number;
+            /**
+             * Is Partial
+             * @description Whether data is partial
+             * @default false
+             */
+            is_partial: boolean;
+            /**
+             * Partial Reason
+             * @description Reason for partial data
+             */
+            partial_reason?: string | null;
+            /**
+             * Last Updated
+             * @description Last update timestamp
+             */
+            last_updated?: string | null;
+            /** @description Explanation for wellness score */
+            explanation?: components["schemas"]["Explanation"] | null;
         };
     };
     responses: never;
@@ -3720,6 +4192,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_accounts_summary_api_v1_accounts_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountsResponse"];
                 };
             };
         };
@@ -4247,9 +4739,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["WellnessScoreResponse"];
                 };
             };
             /** @description Validation Error */
@@ -4353,9 +4843,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    }[];
+                    "application/json": components["schemas"]["PatternsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -4391,9 +4879,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["RecommendationsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -4648,9 +5134,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    }[];
+                    "application/json": components["schemas"]["CreditCardsResponse"];
                 };
             };
         };
@@ -5371,9 +5855,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["ForecastingResponse"];
                 };
             };
             /** @description Validation Error */
@@ -5476,6 +5958,40 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_financial_events_api_v1_financial_intelligence_events_get: {
+        parameters: {
+            query?: {
+                /** @description Month in YYYY-MM format (default: all months) */
+                month_bucket?: string | null;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EventsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -5825,9 +6341,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["InvestmentsResponse"];
                 };
             };
         };
@@ -5952,9 +6466,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    }[];
+                    "application/json": components["schemas"]["LoansResponse"];
                 };
             };
         };

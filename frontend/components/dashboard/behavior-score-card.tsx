@@ -48,7 +48,14 @@ function ComponentBar({ label, value, invert = false }: { label: string; value: 
 export function BehaviorScoreCard() {
   const { data, isLoading, isError, refetch } = useBehaviorScore();
 
-  const isEmpty = !data || data.financial_health_score === undefined;
+  // Get component scores by name from the components array
+  // Score is already converted to 0-100 range by the mapper
+  const getComponentScore = (name: string): number => {
+    const component = data?.components.find((c) => c.name === name);
+    return component ? component.score / 100 : 0; // Convert from 0-100 to ratio (0-1)
+  };
+
+  const isEmpty = !data;
 
   return (
     <ChartContainer
@@ -75,14 +82,14 @@ export function BehaviorScoreCard() {
                 />
                 {/* Progress ring */}
                 <circle
-                  className={cn("transition-all", getRingColor(data.financial_health_score))}
+                  className={cn("transition-all", getRingColor(data.score))}
                   cx="50"
                   cy="50"
                   r="45"
                   strokeWidth="8"
                   fill="none"
                   strokeLinecap="round"
-                  strokeDasharray={`${(data.financial_health_score / 100) * 283} 283`}
+                  strokeDasharray={`${(data.score / 100) * 283} 283`}
                   transform="rotate(-90 50 50)"
                 />
                 {/* Score text */}
@@ -91,9 +98,9 @@ export function BehaviorScoreCard() {
                   y="50"
                   dominantBaseline="middle"
                   textAnchor="middle"
-                  className={cn("text-3xl font-bold", getScoreColor(data.financial_health_score))}
+                  className={cn("text-3xl font-bold", getScoreColor(data.score))}
                 >
-                  {Math.round(data.financial_health_score)}
+                  {Math.round(data.score)}
                 </text>
               </svg>
             </div>
@@ -101,39 +108,17 @@ export function BehaviorScoreCard() {
 
           {/* Component scores */}
           <div className="space-y-2">
-            <ComponentBar label="Savings Discipline" value={data.components.savings_discipline} />
-            <ComponentBar label="Habit Stability" value={data.components.habit_stability} />
-            <ComponentBar label="Impulsivity" value={data.components.impulsivity} invert />
+            <ComponentBar label="Savings Discipline" value={getComponentScore('savings_behaviour')} />
+            <ComponentBar label="Habit Stability" value={getComponentScore('resilience')} />
+            <ComponentBar label="Impulsivity" value={getComponentScore('credit_behaviour')} invert />
           </div>
 
-          {/* Risk flags */}
-          <div className="flex flex-wrap gap-1.5">
-            {data.risk_flags.india_specific.loan_app_pattern_flag && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                Loan App Activity
-              </Badge>
-            )}
-            {data.risk_flags.high_impulsivity && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                High Impulsivity
-              </Badge>
-            )}
-            {data.risk_flags.high_stress && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                Financial Stress
-              </Badge>
-            )}
-            {data.risk_flags.low_savings && (
-              <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
-                Low Savings
-              </Badge>
-            )}
+          {/* Band indicator */}
+          <div className="flex justify-center">
+            <Badge variant="outline" className="text-xs">
+              {data.band}
+            </Badge>
           </div>
-
-          {/* Summary */}
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            {data.summary}
-          </p>
         </div>
       )}
     </ChartContainer>

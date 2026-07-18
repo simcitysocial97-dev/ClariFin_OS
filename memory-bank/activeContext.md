@@ -1,6 +1,6 @@
 # Active Context
 
-## Current Sprint: Stage 3 Batch B Explanation Pipeline (2026-07-18)
+## Current Sprint: Stage 4 - Runtime Stabilization (2026-07-18)
 
 ### Completed
 - **Stage 3.3 - Debt Management (Loans)**
@@ -69,18 +69,36 @@
   - Created `frontend/lib/models/forecasting.ts` with `ForecastingModel`
   - Created `frontend/lib/mappers/forecasting.ts` to preserve explanation in DTO mapping
 
-### Stage 3.9 - Explainability Consolidation (COMPLETED)
-- Verified all capabilities follow frozen reference implementation
-- Fixed Stage 3 regression: moved investments explanation building from router to service
-- Fixed test mocks to use canonical SourceReference fields
-- Generated `docs/STAGE3_EXPLAINABILITY_AUDIT.md` with full verification report
-- All 94 frontend tests pass, no new backend errors introduced
+- **Stage 3.9 - Explainability Consolidation (COMPLETED)**
+  - Verified all capabilities follow frozen reference implementation
+  - Fixed Stage 3 regression: moved investments explanation building from router to service
+  - Fixed test mocks to use canonical SourceReference fields
+  - Generated `docs/STAGE3_EXPLAINABILITY_AUDIT.md` with full verification report
+  - All 94 frontend tests pass, no new backend errors introduced
 
-### Stage 3.10 - Backend Startup Fix (COMPLETED)
-- Fixed `NameError: name 'AccountsResponse' is not defined` in `account_service.py`
-- Root cause: Lazy import inside function body - Python evaluates return type annotations at class definition time
-- Fixed `NameError: name 'EventsResponse' is not defined` in `financial_events_service.py`
-- Solution: Moved imports to top level to match pattern used by all other services
-- Backend now starts successfully, API app loads without errors
+- **Stage 3.10 - Backend Startup Fix (COMPLETED)**
+  - Fixed `NameError: name 'AccountsResponse' is not defined` in `account_service.py`
+  - Root cause: Lazy import inside function body - Python evaluates return type annotations at class definition time
+  - Fixed `NameError: name 'EventsResponse' is not defined` in `financial_events_service.py`
+  - Solution: Moved imports to top level to match pattern used by all other services
+  - Backend now starts successfully, API app loads without errors
+
+- **Stage 4.1 - Behavior Score Card Fix (COMPLETED)**
+  - Fixed `behavior-score-card.tsx` to use correct `WellnessScoreModel` structure
+  - Updated `getComponentScore` to find components by name in the array
+  - Removed references to non-existent `risk_flags` and `summary` fields
+  - Added band indicator display
+  - Fixed mapper to convert score from basis points (0-10000) to 0-100 range
+
+- **Stage 4.2 - Settings Hydration Fix (COMPLETED)**
+  - Fixed `app/settings/page.tsx` hydration error
+  - Changed `setMounted(true)` to use `setTimeout` to defer state update to next tick
+  - Changed unused `e` parameter to `_e` to satisfy TypeScript
+
+### Validation Results
+- Backend: Imports successfully, ruff check passes (only style warnings)
+- Frontend: Type-check passes, build succeeds, all 94 tests pass
 
 ### Next Steps
+- Monitor for any runtime issues in production
+- Address remaining lint warnings in test files and page components
