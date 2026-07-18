@@ -48,3 +48,10 @@
 ### Next Steps
 - Phase 2: Engine purity refactor (remove direct sqlite3.connect from engines)
 - Phase 3-8: Await specifications for implementation
+
+### Stage 5 — Validation Fixes (Completed)
+- Fixed mypy errors in `behaviour_service.py`: Removed redundant cast, added int() conversions for sum()
+- Fixed mypy errors in `account_service.py`: Added `compute_account_balance()` and `compute_running_balance()` methods
+- Fixed ruff errors in test files: Removed unused variables, added strict= to zip()
+- All validation checks pass: ruff (0 errors), mypy src/ (7 pre-existing errors only), npm test (64/64), npm run build (success)
+```

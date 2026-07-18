@@ -12,12 +12,12 @@ interface BehavioralInsight {
 
 interface MonthlyChartPoint {
   month: string
-  amount: number  // In rupees (not paise)
+  amount: number  // In paise (canonical)
 }
 
 interface CategoryChartPoint {
   name: string
-  value: number  // In rupees (not paise)
+  value: number  // In paise (canonical)
 }
 
 interface OverviewData {
@@ -40,10 +40,33 @@ interface OverviewData {
   behavioral_insights: BehavioralInsight[]
 }
 
+// Convert rupees to paise at the hook boundary
+function rupeesToPaise(rupees: number): number {
+  return Math.round(rupees * 100)
+}
+
 async function fetchOverview(): Promise<OverviewData> {
   const response = await fetch(`${API_BASE}/api/overview`)
   if (!response.ok) throw new Error(`Overview fetch failed: ${response.status}`)
-  return response.json()
+  const raw = await response.json()
+  
+  // Convert category_chart values from rupees to paise (canonical)
+  const category_chart = (raw.category_chart || []).map((item: { name: string; value: number }) => ({
+    name: item.name,
+    value: rupeesToPaise(item.value),
+  }))
+  
+  // Convert monthly_chart values from rupees to paise (canonical)
+  const monthly_chart = (raw.monthly_chart || []).map((item: { month: string; amount: number }) => ({
+    month: item.month,
+    amount: rupeesToPaise(item.amount),
+  }))
+  
+  return {
+    ...raw,
+    category_chart,
+    monthly_chart,
+  }
 }
 
 export function useOverview() {

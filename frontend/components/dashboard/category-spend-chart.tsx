@@ -65,7 +65,7 @@ export function CategorySpendChart() {
                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={(value) => formatINRCompact(value * 100)}  // Convert rupees to paise for formatINRCompact
+                tickFormatter={(value) => formatINRCompact(Number(value))}
               />
               <YAxis
                 type="category"
@@ -83,7 +83,7 @@ export function CategorySpendChart() {
                   color: 'hsl(var(--popover-foreground))',
                   fontSize: '12px',
                 }}
-                formatter={(value) => [`₹${Number(value).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`, 'Amount']}
+                formatter={(value) => [formatINRCompact(Number(value)), 'Amount']}
               />
               <Bar
                 dataKey="value"

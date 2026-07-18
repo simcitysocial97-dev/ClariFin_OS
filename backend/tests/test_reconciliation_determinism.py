@@ -42,8 +42,8 @@ def temp_db():
     stmt_repo = StatementRepository(db_path)
 
     # Insert test statements for different accounts
-    stmt_a = stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_b = stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
+    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
+    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
 
     yield db, db_path
 
@@ -65,7 +65,7 @@ def populated_db(temp_db):
     # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
-        VALUES 
+        VALUES
             (1, '01/01/2025', '2025-01-01', 'Transfer to B', 100000, 'debit', 'Account_A'),
             (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 200000, 'debit', 'Account_A'),
             (1, '10/01/2025', '2025-01-10', 'Different amount', 50000, 'debit', 'Account_A')
@@ -75,7 +75,7 @@ def populated_db(temp_db):
     # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
-        VALUES 
+        VALUES
             (2, '01/01/2025', '2025-01-01', 'Transfer from A', 100000, 'credit', 'Account_B'),
             (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 200000, 'credit', 'Account_B'),
             (2, '10/01/2025', '2025-01-10', 'Different amount', 75000, 'credit', 'Account_B')
@@ -111,7 +111,7 @@ def test_deterministic_matching(populated_db):
     # Verify confidence scores are identical
     for m1, m2 in zip(
         sorted(matches_1, key=lambda x: x["deterministic_key"]),
-        sorted(matches_2, key=lambda x: x["deterministic_key"])
+        sorted(matches_2, key=lambda x: x["deterministic_key"]), strict=False
     ):
         assert m1["match_confidence"] == m2["match_confidence"], \
             f"Confidence should be identical for {m1['deterministic_key']}"
@@ -348,8 +348,8 @@ def test_replay_determinism_maintained(populated_db):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cur = conn.execute("""
-        SELECT id, date_iso, debit, credit 
-        FROM transactions 
+        SELECT id, date_iso, debit, credit
+        FROM transactions
         WHERE account_id = 'Account_A'
         ORDER BY date_iso ASC, id ASC
     """)
@@ -377,8 +377,8 @@ def test_replay_determinism_maintained(populated_db):
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     cur = conn.execute("""
-        SELECT id, date_iso, debit, credit 
-        FROM transactions 
+        SELECT id, date_iso, debit, credit
+        FROM transactions
         WHERE account_id = 'Account_A'
         ORDER BY date_iso ASC, id ASC
     """)
@@ -387,7 +387,7 @@ def test_replay_determinism_maintained(populated_db):
 
     # Transaction order should be identical
     assert len(txns_before) == len(txns_after)
-    for t1, t2 in zip(txns_before, txns_after):
+    for t1, t2 in zip(txns_before, txns_after, strict=False):
         assert t1["id"] == t2["id"]
         assert t1["date_iso"] == t2["date_iso"]
         assert t1["debit"] == t2["debit"]

@@ -24,7 +24,6 @@ from src.models.behaviour import (
 )
 from src.services.behaviour_service import BehaviourService
 
-
 # ============================================================
 # Test Fixtures
 # ============================================================

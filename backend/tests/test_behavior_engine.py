@@ -392,13 +392,13 @@ class TestNoMutation:
         conn = sqlite3.connect(temp_db)
         cur = conn.cursor()
         cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tables_before = set(row[0] for row in cur.fetchall())
+        tables_before = {row[0] for row in cur.fetchall()}
         conn.close()
         compute_behavior_profile(temp_db)
         conn = sqlite3.connect(temp_db)
         cur = conn.cursor()
         cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-        tables_after = set(row[0] for row in cur.fetchall())
+        tables_after = {row[0] for row in cur.fetchall()}
         conn.close()
         assert tables_before == tables_after
 
@@ -541,14 +541,14 @@ class TestIndiaRiskPatterns:
             {"type": "debit", "description": "MPL GAMING", "amount": 300, "date_iso": "2025-01-02"},
         ]
         result = detect_india_risk_patterns(transactions)
-        assert result["gambling_flag"] == True
+        assert result["gambling_flag"]
         assert result["gambling_transaction_count"] == 2
 
     def test_upi_micro_spend_detection(self):
         """Test UPI micro-spend clustering detection."""
         transactions = [{"type": "debit", "description": "UPI PAYMENT", "amount": 100, "date_iso": "2025-01-01"} for i in range(15)]
         result = detect_india_risk_patterns(transactions)
-        assert result["upi_micro_spend_flag"] == True
+        assert result["upi_micro_spend_flag"]
 
     def test_loan_app_detection(self):
         """Test loan app pattern detection."""
@@ -557,7 +557,7 @@ class TestIndiaRiskPatterns:
             {"type": "credit", "description": "INSTANT LOAN", "amount": 3000, "date_iso": "2025-01-05"},
         ]
         result = detect_india_risk_patterns(transactions)
-        assert result["loan_app_pattern_flag"] == True
+        assert result["loan_app_pattern_flag"]
 
     def test_emi_ratio_calculation(self):
         """Test EMI ratio calculation."""

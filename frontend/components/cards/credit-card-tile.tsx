@@ -1,6 +1,6 @@
 'use client'
 
-import { formatINR, formatDateDisplay, rupeesToPaise } from '@/lib/utils/format'
+import { formatINR, formatDateDisplay } from '@/lib/utils/format'
 import { Calendar, FileText, CheckCircle, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -78,18 +78,18 @@ export function CreditCardTile({ card, onViewStatements, onValidate }: CreditCar
         <div className="grid grid-cols-2 gap-4 py-2 border-y">
           <div>
             <p className="text-xs text-muted-foreground">Outstanding</p>
-            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.current_outstanding))}</p>
+            <p className="text-sm font-medium">{formatINR(card.current_outstanding)}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Minimum Due</p>
-            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.minimum_due))}</p>
+            <p className="text-sm font-medium">{formatINR(card.minimum_due)}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-muted-foreground">Credit Limit</p>
-            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.credit_limit))}</p>
+            <p className="text-sm font-medium">{formatINR(card.credit_limit)}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Utilization</p>

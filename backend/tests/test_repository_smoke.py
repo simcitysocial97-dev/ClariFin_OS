@@ -392,7 +392,7 @@ def test_loan_repository_add_and_list_prepayments():
 
         # Add prepayments
         prep_id1 = repo.add_prepayment(loan_id, 50000, "2024-06-01")
-        prep_id2 = repo.add_prepayment(loan_id, 100000, "2024-07-01", mode="reduce_emi")
+        repo.add_prepayment(loan_id, 100000, "2024-07-01", mode="reduce_emi")
 
         # List prepayments
         prepayments = repo.list_prepayments(loan_id)
@@ -432,7 +432,7 @@ def test_loan_repository_add_and_list_rate_changes():
 
         # Add rate changes
         rate_id1 = repo.add_rate_change(loan_id, "2024-06-01", 1100)  # 11%
-        rate_id2 = repo.add_rate_change(loan_id, "2024-09-01", 1050, mode="adjust_tenure")
+        repo.add_rate_change(loan_id, "2024-09-01", 1050, mode="adjust_tenure")
 
         # List rate changes (ordered by change_date ascending)
         changes = repo.list_rate_changes(loan_id)

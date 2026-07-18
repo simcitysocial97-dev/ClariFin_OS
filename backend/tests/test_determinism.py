@@ -84,7 +84,7 @@ def test_replay_stability():
         # Compare results
         assert len(result1) == len(result2), "Result counts differ"
 
-        for r1, r2 in zip(result1, result2):
+        for r1, r2 in zip(result1, result2, strict=False):
             assert r1["transaction_id"] == r2["transaction_id"], "Transaction IDs differ"
             assert r1["balance_paise"] == r2["balance_paise"], f"Balances differ: {r1['balance_paise']} vs {r2['balance_paise']}"
 
@@ -233,10 +233,10 @@ def test_update_prevention():
             print(f"   Trigger message: {error_msg}")
         elif blocked:
             print(f"❌ FAIL: Blocked but unexpected error: {error_msg}")
-            assert False, f"Unexpected error: {error_msg}"
+            raise AssertionError(f"Unexpected error: {error_msg}")
         else:
             print("❌ FAIL: UPDATE should have been blocked")
-            assert False, "UPDATE should have been blocked by trigger"
+            raise AssertionError("UPDATE should have been blocked by trigger")
 
     finally:
         os.unlink(db_path)
@@ -277,10 +277,10 @@ def test_delete_prevention():
             print(f"   Trigger message: {error_msg}")
         elif blocked:
             print(f"❌ FAIL: Blocked but unexpected error: {error_msg}")
-            assert False, f"Unexpected error: {error_msg}"
+            raise AssertionError(f"Unexpected error: {error_msg}")
         else:
             print("❌ FAIL: DELETE should have been blocked")
-            assert False, "DELETE should have been blocked by trigger"
+            raise AssertionError("DELETE should have been blocked by trigger")
 
     finally:
         os.unlink(db_path)
@@ -398,8 +398,8 @@ def test_account_scoped_determinism():
 
         # Verify account_id matches bank
         cur = conn.execute("""
-            SELECT t.id, t.account_id, s.bank 
-            FROM transactions t 
+            SELECT t.id, t.account_id, s.bank
+            FROM transactions t
             JOIN statements s ON t.statement_id = s.id
         """)
         for row in cur.fetchall():

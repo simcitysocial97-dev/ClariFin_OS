@@ -127,7 +127,7 @@ class TestPrepaymentPerformance:
         """Single prepayment simulation should be fast."""
         start = time.perf_counter()
         for _ in range(10):
-            result = apply_prepayment(
+            apply_prepayment(
                 outstanding_paise=100000000,
                 annual_rate_bps=850,
                 remaining_months=120,
@@ -375,7 +375,7 @@ class TestEdgeCasePrepayment:
 
     def test_zero_interest_prepayment(self):
         """Prepayment on zero-interest loan."""
-        schedule = generate_schedule(
+        generate_schedule(
             principal_paise=100000000,
             annual_rate_bps=0,
             tenure_months=120,

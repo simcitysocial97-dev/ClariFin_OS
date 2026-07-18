@@ -50,8 +50,8 @@ def temp_db():
     stmt_repo = StatementRepository(db_path)
 
     # Insert test statements for different accounts
-    stmt_a = stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_b = stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
+    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
+    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
 
     yield db, db_path
 
@@ -73,7 +73,7 @@ def populated_db(temp_db):
     # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
-        VALUES 
+        VALUES
             (1, '01/01/2025', '2025-01-01', 'Transfer to B', 100000, 'debit', 'Account_A'),
             (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 200000, 'debit', 'Account_A'),
             (1, '10/01/2025', '2025-01-10', 'Different amount', 50000, 'debit', 'Account_A'),
@@ -84,7 +84,7 @@ def populated_db(temp_db):
     # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
-        VALUES 
+        VALUES
             (2, '01/01/2025', '2025-01-01', 'Transfer from A', 100000, 'credit', 'Account_B'),
             (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 200000, 'credit', 'Account_B'),
             (2, '10/01/2025', '2025-01-10', 'Different amount', 75000, 'credit', 'Account_B'),

@@ -115,7 +115,7 @@ def test_full_audit_passes_on_clean_db(populated_db):
 
 def test_update_prevented_by_trigger(populated_db):
     """Test that UPDATE on transactions is prevented by trigger.
-    
+
     This confirms the immutability trigger is working correctly.
     """
     db, db_path = populated_db
@@ -140,7 +140,7 @@ def test_update_prevented_by_trigger(populated_db):
 
 def test_delete_prevented_by_trigger(populated_db):
     """Test that DELETE on transactions is prevented by trigger.
-    
+
     This confirms the immutability trigger is working correctly.
     """
     db, db_path = populated_db
@@ -166,7 +166,7 @@ def test_delete_prevented_by_trigger(populated_db):
 
 def test_tampered_hash_detected_via_recompute(populated_db):
     """Test that hash verification can detect tampering.
-    
+
     Since triggers prevent UPDATE, we test by:
     1. Creating a new database without triggers
     2. Inserting data
@@ -210,9 +210,9 @@ def test_tampered_hash_detected_via_recompute(populated_db):
     valid_hash = hashlib.sha256(hash_input.encode()).hexdigest().lower()
 
     conn.execute("""
-        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type, 
+        INSERT INTO transactions (statement_id, date, date_iso, description, amount, type,
                                   debit, credit, account_id, hash_signature)
-        VALUES (1, '01/01/2025', '2025-01-01', 'Test debit', 100.0, 'debit', 
+        VALUES (1, '01/01/2025', '2025-01-01', 'Test debit', 100.0, 'debit',
                 10000, 0, 'TestBank', ?)
     """, (valid_hash,))
 

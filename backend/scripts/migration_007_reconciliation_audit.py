@@ -100,7 +100,7 @@ def run_migration(db_path: str | None = None) -> None:
         "SELECT COUNT(*) FROM reconciliations WHERE confidence_bps IS NULL"
     ).fetchone()[0]
 
-    print(f"\n[MIGRATION 007] Summary:")
+    print("\n[MIGRATION 007] Summary:")
     print(f"  Total reconciliations:      {total}")
     print(f"  Backfilled confidence_bps:  {backfilled}")
     print(f"  Still NULL (left for review): {still_null}")

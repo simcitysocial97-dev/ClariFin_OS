@@ -1,0 +1,246 @@
+[
+  {
+    "timestamp": "2026-07-16T01:44:06.788Z",
+    "manifest": {
+      "timestamp": "2026-07-16T01:44:06.788Z",
+      "changedFiles": [
+        ".gitignore",
+        "calibration-output.log",
+        "calibration-run.log",
+        "frontend/__tests__/api-contracts/banks.contract.test.ts",
+        "frontend/app/loans/page.tsx",
+        "frontend/components/cards/credit-card-3d.tsx",
+        "frontend/components/error-boundary.tsx",
+        "frontend/components/ui/empty-state.tsx",
+        "frontend/lib/context/member-context.tsx",
+        "frontend/lib/hooks/use-cards.ts",
+        "frontend/lib/hooks/use-query-finance.ts",
+        "frontend/lib/hooks/use-reconciliation.ts",
+        "frontend/lib/parser/index.ts",
+        "frontend/package.json",
+        "frontend/tests/fixtures/test-fixtures.ts",
+        "frontend/tests/global-setup.ts",
+        "frontend/tests/specs/health-check.spec.ts",
+        "frontend/tests/specs/performance.spec.ts",
+        "frontend/tests/utils/comprehensive-reports.ts",
+        "frontend/tests/utils/css-helpers.ts",
+        "frontend/tests/utils/financial-assertions.ts",
+        "frontend/tests/utils/mode-helpers.ts",
+        "frontend/tests/utils/seed-data.ts",
+        "servers"
+      ],
+      "strategy": "full",
+      "stages": [
+        "toolchain",
+        "build"
+      ],
+      "durationMs": 534708,
+      "status": "PARTIAL",
+      "errorCount": 3,
+      "warningCount": 6
+    },
+    "stageResults": {
+      "Toolchain Lock": {
+        "pass": true,
+        "issues": 6
+      },
+      "Build Validation": {
+        "pass": false,
+        "issues": 3
+      }
+    }
+  },
+  {
+    "timestamp": "2026-07-16T03:27:26.390Z",
+    "manifest": {
+      "timestamp": "2026-07-16T03:27:26.390Z",
+      "changedFiles": [
+        "servers"
+      ],
+      "strategy": "fast",
+      "stages": [
+        "toolchain",
+        "architecture",
+        "types",
+        "api",
+        "query",
+        "imports",
+        "build"
+      ],
+      "durationMs": 412107,
+      "status": "PARTIAL",
+      "errorCount": 1,
+      "warningCount": 17
+    },
+    "stageResults": {
+      "Toolchain Lock": {
+        "pass": true,
+        "issues": 6
+      },
+      "Architecture Audit": {
+        "pass": true,
+        "issues": 0
+      },
+      "Type & React Compatibility Audit": {
+        "pass": true,
+        "issues": 3
+      },
+      "Generated API Audit": {
+        "pass": true,
+        "issues": 3
+      },
+      "React Query Audit": {
+        "pass": true,
+        "issues": 5
+      },
+      "Import Graph Audit": {
+        "pass": true,
+        "issues": 1
+      },
+      "Build Validation": {
+        "pass": false,
+        "issues": 1
+      }
+    }
+  },
+  {
+    "timestamp": "2026-07-16T03:41:01.586Z",
+    "manifest": {
+      "timestamp": "2026-07-16T03:41:01.586Z",
+      "changedFiles": [
+        "frontend/lib/hooks/use-cards.ts",
+        "frontend/lib/hooks/use-dashboard-metrics.ts",
+        "frontend/lib/hooks/use-investments.ts",
+        "frontend/lib/hooks/use-loans.ts",
+        "frontend/lib/hooks/use-networth.ts",
+        "frontend/next-env.d.ts",
+        "servers"
+      ],
+      "strategy": "fast",
+      "stages": [
+        "toolchain",
+        "build"
+      ],
+      "durationMs": 137237,
+      "status": "PARTIAL",
+      "errorCount": 2,
+      "warningCount": 6
+    },
+    "stageResults": {
+      "Toolchain Lock": {
+        "pass": true,
+        "issues": 6
+      },
+      "Build Validation": {
+        "pass": false,
+        "issues": 2
+      }
+    }
+  },
+  {
+    "timestamp": "2026-07-16T03:48:13.922Z",
+    "manifest": {
+      "timestamp": "2026-07-16T03:48:13.922Z",
+      "changedFiles": [
+        "frontend/lib/hooks/use-cards.ts",
+        "frontend/lib/hooks/use-dashboard-metrics.ts",
+        "frontend/lib/hooks/use-investments.ts",
+        "frontend/lib/hooks/use-loans.ts",
+        "frontend/lib/hooks/use-networth.ts",
+        "frontend/next-env.d.ts",
+        "servers"
+      ],
+      "strategy": "fast",
+      "stages": [
+        "toolchain",
+        "build"
+      ],
+      "durationMs": 198579,
+      "status": "PARTIAL",
+      "errorCount": 2,
+      "warningCount": 6
+    },
+    "stageResults": {
+      "Toolchain Lock": {
+        "pass": true,
+        "issues": 6
+      },
+      "Build Validation": {
+        "pass": false,
+        "issues": 2
+      }
+    }
+  },
+  {
+    "timestamp": "2026-07-16T04:37:57.853Z",
+    "manifest": {
+      "timestamp": "2026-07-16T04:37:57.853Z",
+      "changedFiles": [
+        "frontend/app/dashboard/page.tsx",
+        "frontend/lib/hooks/use-cards.ts",
+        "frontend/lib/hooks/use-dashboard-metrics.ts",
+        "frontend/lib/hooks/use-investments.ts",
+        "frontend/lib/hooks/use-loans.ts",
+        "frontend/lib/hooks/use-networth.ts",
+        "frontend/next-env.d.ts",
+        "memory-bank/activeContext.md",
+        "servers"
+      ],
+      "strategy": "fast",
+      "stages": [
+        "toolchain",
+        "build"
+      ],
+      "durationMs": 143867,
+      "status": "PARTIAL",
+      "errorCount": 3,
+      "warningCount": 6
+    },
+    "stageResults": {
+      "Toolchain Lock": {
+        "pass": true,
+        "issues": 6
+      },
+      "Build Validation": {
+        "pass": false,
+        "issues": 3
+      }
+    }
+  },
+  {
+    "timestamp": "2026-07-16T04:45:28.324Z",
+    "manifest": {
+      "timestamp": "2026-07-16T04:45:28.324Z",
+      "changedFiles": [
+        "frontend/app/dashboard/page.tsx",
+        "frontend/lib/hooks/use-cards.ts",
+        "frontend/lib/hooks/use-dashboard-metrics.ts",
+        "frontend/lib/hooks/use-investments.ts",
+        "frontend/lib/hooks/use-loans.ts",
+        "frontend/lib/hooks/use-networth.ts",
+        "frontend/next-env.d.ts",
+        "memory-bank/activeContext.md",
+        "servers"
+      ],
+      "strategy": "fast",
+      "stages": [
+        "toolchain",
+        "build"
+      ],
+      "durationMs": 374932,
+      "status": "PARTIAL",
+      "errorCount": 1,
+      "warningCount": 6
+    },
+    "stageResults": {
+      "Toolchain Lock": {
+        "pass": true,
+        "issues": 6
+      },
+      "Build Validation": {
+        "pass": false,
+        "issues": 1
+      }
+    }
+  }
+]

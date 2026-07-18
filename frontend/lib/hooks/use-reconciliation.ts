@@ -20,9 +20,9 @@ export interface ReconciliationMatch {
   credit_txn_id: number
   debit_account_id: string
   credit_account_id: string
-  amount: number  // in rupees
+  amount_paise: number  // In paise (canonical)
   date_diff_days: number
-  match_confidence: number  // 0.0-1.0
+  match_confidence_bps: number  // In basis points (0-10000)
   match_type: 'exact' | 'window' | 'fuzzy' | 'manual'
   status: 'pending' | 'confirmed' | 'rejected'
   created_at: string
@@ -44,22 +44,57 @@ export interface ReconciliationsData {
   reconciliations: ReconciliationMatch[]
 }
 
+// Convert rupees to paise at the hook boundary
+function rupeesToPaise(rupees: number): number {
+  return Math.round(rupees * 100)
+}
+
+// Convert confidence (0.0-1.0) to basis points (0-10000)
+function confidenceToBps(confidence: number): number {
+  return Math.round(confidence * 10000)
+}
+
 async function fetchReconciliations(): Promise<ReconciliationsData> {
   const response = await fetch(`${API_BASE}/api/reconciliations`)
   if (!response.ok) throw new Error(`Reconciliations fetch failed: ${response.status}`)
-  return response.json()
+  const raw = await response.json()
+  
+  // Convert all amounts and confidence to canonical units
+  const reconciliations = (raw.reconciliations || []).map((r: any) => ({
+    ...r,
+    amount_paise: rupeesToPaise(r.amount || 0),
+    match_confidence_bps: confidenceToBps(r.match_confidence || 0),
+  }))
+  
+  return { reconciliations }
 }
 
 async function fetchPendingReconciliations(): Promise<ReconciliationsData> {
   const response = await fetch(`${API_BASE}/api/reconciliations/pending`)
   if (!response.ok) throw new Error(`Pending reconciliations fetch failed: ${response.status}`)
-  return response.json()
+  const raw = await response.json()
+  
+  const reconciliations = (raw.reconciliations || []).map((r: any) => ({
+    ...r,
+    amount_paise: rupeesToPaise(r.amount || 0),
+    match_confidence_bps: confidenceToBps(r.match_confidence || 0),
+  }))
+  
+  return { reconciliations }
 }
 
 async function scanReconciliations(): Promise<{ matches: ReconciliationMatch[]; count: number }> {
   const response = await fetch(`${API_BASE}/api/reconciliations/scan`)
   if (!response.ok) throw new Error(`Scan reconciliations failed: ${response.status}`)
-  return response.json()
+  const raw = await response.json()
+  
+  const matches = (raw.matches || []).map((m: any) => ({
+    ...m,
+    amount_paise: rupeesToPaise(m.amount || 0),
+    match_confidence_bps: confidenceToBps(m.match_confidence || 0),
+  }))
+  
+  return { matches, count: raw.count }
 }
 
 async function confirmReconciliation(id: number): Promise<{ success: boolean; status: string }> {

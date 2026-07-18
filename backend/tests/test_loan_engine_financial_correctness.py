@@ -214,7 +214,7 @@ class TestPrepaymentCorrectness:
 
         assert result.new_schedule is not None
         new_interest = sum(row.interest_paise for row in result.new_schedule)
-        calculated_saved = original_interest - new_interest
+        original_interest - new_interest
 
         # Our interest_saved_paise includes the first month's interest
         # which is expected behavior
