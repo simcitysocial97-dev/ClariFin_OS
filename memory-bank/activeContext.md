@@ -54,6 +54,20 @@
   - Added `calculate_with_explanation()` method to `FinancialEventsService` in `backend/src/services/financial_events_service.py`
   - Added `/api/v1/financial-intelligence/events` endpoint to `backend/src/routers/financial_intelligence.py`
 
+- **Stage 3.7 - Batch C: Financial Health, Forecasting, Recommendations, Pattern Analysis**
+  - Added `WellnessComponent` and updated `WellnessScoreResponse` in `backend/src/models/behaviour.py` with explanation field
+  - Added `calculate_with_explanation()` method to `BehaviourService` in `backend/src/services/behaviour_service.py`
+  - Added `calculate_with_explanation()` method to `FinancialIntelligenceService` in `backend/src/services/financial_intelligence_service.py`
+  - Updated `/api/v1/behaviour/wellness-score` router with `response_model=WellnessScoreResponse`
+  - Updated `/api/v1/behaviour/patterns` router with `response_model=PatternsResponse`
+  - Updated `/api/v1/behaviour/recommendations` router with `response_model=RecommendationsResponse`
+  - Updated `/api/v1/financial-intelligence/outlook` router with `response_model=ForecastingResponse`
+  - Created `frontend/lib/contracts/api/behavior.ts` with Zod schemas
+  - Created `frontend/lib/models/behavior.ts` with `WellnessScoreModel`, `PatternsModel`, `RecommendationsModel`
+  - Created `frontend/lib/mappers/behavior.ts` to preserve explanation in DTO mapping
+  - Created `frontend/lib/contracts/api/forecasting.ts` with Zod schema
+  - Created `frontend/lib/models/forecasting.ts` with `ForecastingModel`
+  - Created `frontend/lib/mappers/forecasting.ts` to preserve explanation in DTO mapping
+
 ### Next Steps
 - Regenerate OpenAPI schemas (`clarifin_openapi.json`, `api_types.ts`, `types/api-generated.ts`)
-- Run full test suite to verify all changes

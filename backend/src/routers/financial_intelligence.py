@@ -13,7 +13,7 @@ from typing import Any
 
 from fastapi import APIRouter, Query
 
-from src.models.explanation import EventsResponse
+from src.models.explanation import EventsResponse, ForecastingResponse
 from src.services.financial_events_service import FinancialEventsService
 from src.services.financial_intelligence_service import FinancialIntelligenceService
 
@@ -175,7 +175,7 @@ def get_credit_forecast(
 # Financial Outlook Endpoint
 # ============================================================
 
-@router.get("/outlook")
+@router.get("/outlook", response_model=ForecastingResponse)
 def get_financial_outlook(
     forecast_months: int = Query(default=3, ge=1, le=12, description="Number of months to forecast"),
     emergency_threshold_paise: int = Query(
@@ -183,7 +183,7 @@ def get_financial_outlook(
         description="Emergency threshold in paise (default: 3,000,000 = ₹30,000)",
     ),
     household_id: str = Query(default="primary", description="Household identifier"),
-) -> dict[str, Any]:
+) -> ForecastingResponse:
     """Get comprehensive financial outlook.
 
     Combines cashflow, liquidity, and credit forecasts with risk flags.
@@ -194,13 +194,13 @@ def get_financial_outlook(
         household_id: Household identifier
 
     Returns:
-        Dict with cashflow, liquidity, credit forecasts and risk_flags
+        ForecastingResponse with cashflow, liquidity, credit forecasts and risk_flags
     """
     start = time.monotonic()
     service = FinancialIntelligenceService()
 
     try:
-        result = service.get_financial_outlook(
+        result = service.get_outlook_with_explanation(
             forecast_months=forecast_months,
             emergency_threshold_paise=emergency_threshold_paise,
             household_id=household_id,

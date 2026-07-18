@@ -10,6 +10,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from src.models.base import DomainModel
+from src.models.explanation import Explanation
 
 # Type aliases for common types
 WellnessBand = Literal["Excellent", "Healthy", "Developing", "Risk", "Critical"]
@@ -18,16 +19,27 @@ ProfileType = Literal[
     "SAVER", "BALANCED", "SPENDER", "DEBT_OPTIMIZER", "DEBT_DEPENDENT", "INSUFFICIENT_DATA"
 ]
 
+class WellnessComponent(BaseModel):
+    """Single wellness component score."""
+    name: str
+    score: int  # Score in basis points (0-10000)
+    weight: float  # Weight in the overall score (0-1)
+
+
 class WellnessScoreResponse(BaseModel):
     """Response model for wellness score."""
 
     score: Decimal = Field(..., description="Wellness score between 0 and 100")
     band: WellnessBand = Field(..., description="Wellness classification band")
-    components: dict[str, Decimal] = Field(
+    components: list["WellnessComponent"] = Field(
         ..., description="Breakdown of wellness score components"
     )
     snapshot_date: str = Field(..., description="Date of the snapshot in ISO format")
     version: int = Field(..., description="Version of the scoring algorithm")
+    is_partial: bool = Field(default=False, description="Whether data is partial")
+    partial_reason: str | None = Field(default=None, description="Reason for partial data")
+    last_updated: str | None = Field(default=None, description="Last update timestamp")
+    explanation: "Explanation | None" = Field(default=None, description="Explanation for wellness score")
 
 class DebtHealthResponse(BaseModel):
     """Response model for debt health metrics."""
@@ -130,3 +142,7 @@ class RecommendationsResponse(BaseModel):
     )
     total_count: int = Field(..., description="Total number of recommendations")
     snapshot_date: str = Field(..., description="Date of the snapshot used for recommendations")
+    is_partial: bool = Field(default=False, description="Whether data is partial")
+    partial_reason: str | None = Field(default=None, description="Reason for partial data")
+    last_updated: str | None = Field(default=None, description="Last update timestamp")
+    explanation: Explanation | None = Field(default=None, description="Explanation for recommendations")

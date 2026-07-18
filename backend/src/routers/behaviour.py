@@ -14,6 +14,8 @@ from typing import Any
 from fastapi import APIRouter, Query
 
 from src.errors import NotFoundError
+from src.models.behaviour import RecommendationsResponse, WellnessScoreResponse
+from src.models.explanation import PatternsResponse
 from src.services.behaviour_service import BehaviourService
 
 logger = logging.getLogger(__name__)
@@ -77,8 +79,8 @@ def get_financial_profile(household_id: str = Query("default", description="Hous
         raise
 
 
-@router.get("/wellness-score")
-def get_wellness_score(household_id: str = Query("default", description="Household identifier")) -> dict[str, Any]:
+@router.get("/wellness-score", response_model=WellnessScoreResponse)
+def get_wellness_score(household_id: str = Query("default", description="Household identifier")) -> WellnessScoreResponse:
     """Get the latest financial wellness score.
 
     Returns wellness score with band classification and component breakdown.
@@ -93,9 +95,9 @@ def get_wellness_score(household_id: str = Query("default", description="Househo
     service = BehaviourService()
 
     try:
-        result = service.get_wellness_score(household_id=household_id)
+        result = service.get_wellness_score_with_explanation(household_id=household_id)
         _timed_log("GET /behaviour/wellness-score", household_id, (time.monotonic() - start) * 1000)
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/wellness-score", household_id,
@@ -176,12 +178,12 @@ def get_cashflow_health(household_id: str = Query("default", description="Househ
         raise
 
 
-@router.get("/patterns")
+@router.get("/patterns", response_model=PatternsResponse)
 def get_patterns(
     household_id: str = Query("default", description="Household identifier"),
     pattern_type: str | None = Query(None, description="Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION)"),
     days: int = Query(30, ge=1, le=365, description="Number of days to look back for patterns"),
-) -> list[dict[str, Any]]:
+) -> PatternsResponse:
     """Get detected financial patterns.
 
     Returns patterns like impulse spending and subscriptions with strength scores.
@@ -192,19 +194,13 @@ def get_patterns(
         days: Number of days to look back (1-365, default: 30)
 
     Returns:
-        List of FinancialPattern objects
+        PatternsResponse with patterns list and explanation
     """
     start = time.monotonic()
     service = BehaviourService()
 
     try:
-        patterns = service.get_patterns(household_id=household_id, limit=days)
-
-        # Apply pattern_type filter if provided
-        if pattern_type:
-            patterns = [p for p in patterns if p.pattern_type == pattern_type]
-
-        result = [p.model_dump() for p in patterns]
+        result = service.get_patterns_with_explanation(household_id=household_id, limit=days)
         _timed_log("GET /behaviour/patterns", household_id, (time.monotonic() - start) * 1000)
         return result
     except Exception as e:
@@ -215,12 +211,12 @@ def get_patterns(
         raise
 
 
-@router.get("/recommendations")
+@router.get("/recommendations", response_model=RecommendationsResponse)
 def get_recommendations(
     household_id: str = Query("default", description="Household identifier"),
     limit: int = Query(10, ge=1, le=50, description="Maximum number of recommendations to return"),
     severity: str | None = Query(None, description="Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"),
-) -> dict[str, Any]:
+) -> RecommendationsResponse:
     """Get financial recommendations based on behaviour metrics.
 
     Returns actionable recommendations sorted by severity.
@@ -237,13 +233,13 @@ def get_recommendations(
     service = BehaviourService()
 
     try:
-        result = service.get_recommendations(
+        result = service.get_recommendations_with_explanation(
             household_id=household_id,
             limit=limit,
             severity_filter=severity,
         )
         _timed_log("GET /behaviour/recommendations", household_id, (time.monotonic() - start) * 1000)
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/recommendations", household_id,

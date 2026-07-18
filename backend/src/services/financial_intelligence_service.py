@@ -35,6 +35,7 @@ from src.services.behaviour_service import BehaviourService
 from src.services.cashflow_service import CashflowService
 from src.services.credit_card_service import CreditCardService
 from src.services.financial_events_service import FinancialEventsService
+from src.models.explanation import ForecastingResponse
 from src.services.loan_service import LoanService
 
 
@@ -799,6 +800,159 @@ class FinancialIntelligenceService:
         }
 
         return generate_optimization_plan(financial_state)
+
+# ============================================================
+# Explanation Pipeline Methods
+# ============================================================
+
+    def get_outlook_with_explanation(
+        self,
+        forecast_months: int = 3,
+        emergency_threshold_paise: int | None = None,
+        household_id: str = "primary",
+    ) -> ForecastingResponse:
+        """
+        Compute financial outlook with full explainability.
+
+        Returns:
+            ForecastingResponse with explanation containing:
+            - Evidence for cashflow, liquidity, credit forecasts
+            - Source references for each forecast
+            - Calculation steps: load-data, compute-forecasts, aggregate-outlook
+            - Confidence based on data availability
+        """
+        from datetime import datetime
+
+        from src.models.explanation import (
+            CalculationStep,
+            Confidence,
+            Evidence,
+            Explanation,
+            ForecastMonth,
+            SourceReference,
+        )
+
+        # Get individual forecasts
+        cashflow_result = self.get_cashflow_forecast(forecast_months=forecast_months, household_id=household_id, owner_id="self")
+        liquidity_result = self.get_liquidity_forecast(
+            forecast_months=forecast_months,
+            emergency_threshold_paise=emergency_threshold_paise,
+            household_id=household_id,
+            owner_id="self",
+        )
+        credit_result = self.get_credit_forecast(household_id=household_id)
+
+        # Build evidence
+        forecast_evidence: list[Evidence] = []
+        forecast_sources: list[SourceReference] = []
+
+        # Cashflow evidence
+        for month_data in cashflow_result.get("forecast", []):
+            forecast_evidence.append(Evidence(
+                id=f"forecast-cashflow-{month_data.get('month', '')}",
+                type="data",
+                description=f"Cashflow forecast for {month_data.get('month', '')}",
+                value=month_data.get("expected_surplus_paise", 0),
+                sourceId=household_id,
+            ))
+
+        # Liquidity evidence
+        forecast_evidence.append(Evidence(
+            id="forecast-liquidity",
+            type="data",
+            description="Liquidity forecast",
+            value=liquidity_result.get("projected_min_balance_paise", 0),
+            sourceId=household_id,
+        ))
+
+        # Credit evidence
+        forecast_evidence.append(Evidence(
+            id="forecast-credit",
+            type="data",
+            description="Credit forecast",
+            value=credit_result.get("current_dependency_ratio", 0),
+            sourceId=household_id,
+        ))
+
+        # Source reference
+        forecast_sources.append(SourceReference(
+            type="cashflow_engine",
+            id=household_id,
+            name="Financial Intelligence Forecast",
+            date=None,
+        ))
+
+        # Calculate confidence
+        confidence_bps = 10000
+        confidence_reasons: list[str] = []
+
+        if len(forecast_evidence) == 0:
+            confidence_bps -= 2000
+            confidence_reasons.append("No forecast data available")
+
+        # Build calculation steps
+        calculation_steps: list[CalculationStep] = [
+            CalculationStep(
+                stepId="load-data",
+                description="Load historical financial data",
+                operation="LOOKUP",
+                inputIds=[household_id],
+                outputId="data-loaded",
+                order=1,
+            ),
+            CalculationStep(
+                stepId="compute-forecasts",
+                description="Compute cashflow, liquidity, and credit forecasts",
+                operation="AVERAGE",
+                inputIds=[e.id for e in forecast_evidence],
+                outputId="forecasts-computed",
+                order=2,
+            ),
+            CalculationStep(
+                stepId="aggregate-outlook",
+                description="Aggregate forecasts into outlook",
+                operation="GROUP",
+                inputIds=["forecasts-computed"],
+                outputId="outlook-aggregated",
+                order=3,
+            ),
+        ]
+
+        # Build explanation
+        explanation = Explanation(
+            metric="forecasting",
+            value=len(forecast_evidence),
+            confidence=Confidence(
+                value=confidence_bps,
+                reason=", ".join(confidence_reasons) if confidence_reasons else "Complete forecast data available",
+            ),
+            evidence=forecast_evidence,
+            sources=forecast_sources,
+            calculationSteps=calculation_steps,
+        )
+
+        # Build forecast months
+        forecast_months_list = [
+            ForecastMonth(
+                month=month_data.get("month", ""),
+                expected_income_paise=month_data.get("expected_income_paise", 0),
+                expected_expense_paise=month_data.get("expected_expense_paise", 0),
+                expected_surplus_paise=month_data.get("expected_surplus_paise", 0),
+                confidence_bps=month_data.get("confidence_bps", 0),
+            )
+            for month_data in cashflow_result.get("forecast", [])
+        ]
+
+        return ForecastingResponse(
+            cashflow=forecast_months_list,
+            liquidity=liquidity_result,
+            credit=credit_result,
+            risk_flags=[],
+            is_partial=len(forecast_evidence) == 0,
+            partial_reason="No forecast data available" if len(forecast_evidence) == 0 else None,
+            last_updated=datetime.now().isoformat(),
+            explanation=explanation,
+        )
 
     # ============================================================
     # Financial Intelligence Report Methods

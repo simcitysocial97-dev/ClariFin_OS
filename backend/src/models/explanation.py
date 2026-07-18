@@ -300,3 +300,112 @@ class EventsResponse(BaseModel):
     partial_reason: str | None = None
     last_updated: str | None = None
     explanation: Explanation | None = None
+
+
+# ============================================================
+# Wellness Score Response Model
+# ============================================================
+
+class WellnessComponent(BaseModel):
+    """Single wellness component score."""
+    name: str
+    score: int  # Score in basis points (0-10000)
+    weight: float  # Weight in the overall score (0-1)
+
+
+class WellnessScoreResponse(BaseModel):
+    """Canonical API response for /api/v1/behaviour/wellness-score endpoint."""
+    score: int  # Wellness score in basis points (0-10000)
+    band: str  # Wellness band classification
+    components: list[WellnessComponent]
+    snapshot_date: str
+    version: int = 1
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Behavior Insights Response Model
+# ============================================================
+
+class BehaviorInsight(BaseModel):
+    """Single behavioral insight."""
+    type: str  # warning, positive, info
+    title: str
+    message: str
+    metric: str
+    value: int | float | bool | None
+
+
+class Nudge(BaseModel):
+    """Single nudge recommendation."""
+    type: str
+    title: str
+    message: str
+    priority: int
+
+
+class BehaviorInsightsResponse(BaseModel):
+    """Canonical API response for /api/behavior/insights endpoint."""
+    insights: list[BehaviorInsight]
+    nudges: list[Nudge]
+    top_nudge: Nudge | None = None
+    summary: str
+    financial_health_score: int | None = None
+    confidence: int | None = None
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Forecasting Response Model
+# ============================================================
+
+class ForecastMonth(BaseModel):
+    """Single month forecast data."""
+    month: str
+    expected_income_paise: int
+    expected_expense_paise: int
+    expected_surplus_paise: int
+    confidence_bps: int
+
+
+class ForecastingResponse(BaseModel):
+    """Canonical API response for /api/v1/financial-intelligence/outlook endpoint."""
+    cashflow: list[ForecastMonth]
+    liquidity: dict[str, Any]
+    credit: dict[str, Any]
+    risk_flags: list[dict[str, Any]]
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Patterns Response Model
+# ============================================================
+
+class PatternSummary(BaseModel):
+    """Single pattern summary for API response."""
+    pattern_type: str
+    pattern_key: str
+    strength_bps: int
+    transaction_count: int
+    total_amount_paise: int
+    first_observed: str
+    last_observed: str
+
+
+class PatternsResponse(BaseModel):
+    """Canonical API response for /api/v1/behaviour/patterns endpoint."""
+    patterns: list[PatternSummary]
+    total_patterns: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None

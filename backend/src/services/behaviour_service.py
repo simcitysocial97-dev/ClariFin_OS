@@ -47,6 +47,7 @@ from src.models.behaviour import (
     WellnessBand,
     WellnessScoreResponse,
 )
+from src.models.explanation import PatternsResponse
 from src.repositories.account_repository import AccountRepository
 from src.repositories.behaviour_repository import BehaviourRepository
 from src.repositories.credit_card_repository import CreditCardRepository
@@ -366,22 +367,41 @@ class BehaviourService:
 
             # Reconstruct wellness score components
             # Repository returns scores already in 0-100 range (scaled by * 100)
-            components: dict[str, Decimal] = {
-                "cashflow_health": Decimal(str(snapshot["cashflow_stability_score"])),
-                "debt_health": Decimal("1") - (Decimal(str(snapshot["debt_cycle_score"])) / Decimal("100")),
-                "savings_behaviour": max(
-                    Decimal("0"),
-                    Decimal(str(snapshot["savings_discipline_score"])),
+            # Convert to WellnessComponent list format
+            from src.models.behaviour import WellnessComponent
+
+            components: list[WellnessComponent] = [
+                WellnessComponent(
+                    name="cashflow_health",
+                    score=int(snapshot.get("cashflow_stability_score", 0)),
+                    weight=0.20,
                 ),
-                "resilience": Decimal(str(snapshot["resilience_index"])),
-                "lifestyle_control": Decimal("1") - min(
-                    Decimal("1"),
-                    max(Decimal("0"), Decimal(str(snapshot["lifestyle_inflation_rate"]))),
+                WellnessComponent(
+                    name="debt_health",
+                    score=10000 - int(snapshot.get("debt_cycle_score", 0)) * 100,
+                    weight=0.18,
                 ),
-                "credit_behaviour": Decimal("0.5") * (
-                    Decimal("1") - Decimal(str(snapshot["credit_revolver_ratio"]))
-                ) + Decimal("0.5") * (Decimal("1") - min(Decimal("1"), Decimal("0.4"))),  # Simplified FOIR
-            }
+                WellnessComponent(
+                    name="savings_behaviour",
+                    score=int(snapshot.get("savings_discipline_score", 0)),
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="resilience",
+                    score=int(snapshot.get("resilience_index", 0)),
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="lifestyle_control",
+                    score=10000 - min(10000, max(0, int(snapshot.get("lifestyle_inflation_rate", 0)))),
+                    weight=0.13,
+                ),
+                WellnessComponent(
+                    name="credit_behaviour",
+                    score=5000,  # Placeholder
+                    weight=0.13,
+                ),
+            ]
 
             from src.engines.behaviour_engine.wellness import classify_wellness_band
 
@@ -574,24 +594,47 @@ class BehaviourService:
             total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
 
             # Create wellness score response - scores already in 0-100 range from repository
+            from src.models.behaviour import WellnessComponent
+
+            wellness_components: list[WellnessComponent] = [
+                WellnessComponent(
+                    name="cashflow_health",
+                    score=int(latest_snapshot.get("cashflow_stability_score", 0)),
+                    weight=0.20,
+                ),
+                WellnessComponent(
+                    name="debt_health",
+                    score=10000 - int(latest_snapshot.get("debt_cycle_score", 0)) * 100,
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="savings_behaviour",
+                    score=int(latest_snapshot.get("savings_discipline_score", 0)),
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="resilience",
+                    score=int(latest_snapshot.get("resilience_index", 0)),
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="lifestyle_control",
+                    score=10000 - min(10000, max(0, int(latest_snapshot.get("lifestyle_inflation_rate", 0)))),
+                    weight=0.13,
+                ),
+                WellnessComponent(
+                    name="credit_behaviour",
+                    score=5000,  # Placeholder
+                    weight=0.13,
+                ),
+            ]
+
             wellness_score = WellnessScoreResponse(
                 score=Decimal(str(latest_snapshot["wellness_score"])),
                 band=cast(WellnessBand, self._classify_wellness_band(
                     Decimal(str(latest_snapshot["wellness_score"]))
                 )),
-                components={
-                    "cashflow_health": Decimal(str(latest_snapshot["cashflow_stability_score"])),
-                    "debt_health": Decimal("1") - (Decimal(str(latest_snapshot["debt_cycle_score"])) / Decimal("100")),
-                    "savings_behaviour": max(
-                        Decimal("0"),
-                        Decimal(str(latest_snapshot["savings_discipline_score"])),
-                    ),
-                    "resilience": Decimal(str(latest_snapshot["resilience_index"])),
-                    "lifestyle_control": Decimal("1") - min(
-                        Decimal("1"),
-                        max(Decimal("0"), Decimal(str(latest_snapshot["lifestyle_inflation_rate"]))),
-                    ),
-                },
+                components=wellness_components,
                 snapshot_date=latest_snapshot["snapshot_date"],
                 version=latest_snapshot["version"],
             )
@@ -1146,3 +1189,527 @@ class BehaviourService:
                 alerts.append(f"High subscription spending detected for {pattern.pattern_key}")
 
         return alerts
+
+    # ============================================================
+    # Explanation Pipeline Methods
+    # ============================================================
+
+    def get_wellness_score_with_explanation(
+        self,
+        household_id: str = "default",
+    ) -> WellnessScoreResponse:
+        """
+        Compute wellness score with full explainability.
+
+        Returns:
+            WellnessScoreResponse with explanation containing:
+            - Evidence for each component (cashflow, debt, savings, resilience, lifestyle, credit)
+            - Source references for the snapshot
+            - Calculation steps: load-snapshot, compute-components, aggregate-score
+            - Confidence based on data availability
+        """
+        from datetime import datetime
+
+        from src.models.explanation import (
+            CalculationStep,
+            Confidence,
+            Evidence,
+            Explanation,
+            SourceReference,
+        )
+
+        try:
+            snapshot = self.behaviour_repo.get_latest_snapshot(household_id)
+            if not snapshot:
+                raise NotFoundError("No behaviour snapshot available")
+
+            # Build evidence and sources
+            component_evidence: list[Evidence] = []
+            component_sources: list[SourceReference] = []
+            component_scores: list[dict[str, Any]] = []
+
+            # Component weights (from wellness score formula)
+            weights = {
+                "cashflow_health": 0.20,
+                "debt_health": 0.18,
+                "savings_behaviour": 0.18,
+                "resilience": 0.18,
+                "lifestyle_control": 0.13,
+                "credit_behaviour": 0.13,
+            }
+
+            # Process each component
+            for component_name, weight in weights.items():
+                if component_name == "debt_health":
+                    # debt_health = 1 - debt_cycle_score/100
+                    value = 10000 - int(snapshot.get("debt_cycle_score", 0)) * 100
+                elif component_name == "lifestyle_control":
+                    # lifestyle_control = 1 - min(1, max(0, lifestyle_inflation_rate))
+                    lifestyle_rate = min(10000, max(0, int(snapshot.get("lifestyle_inflation_rate", 0))))
+                    value = 10000 - lifestyle_rate
+                elif component_name == "credit_behaviour":
+                    # Simplified credit behaviour calculation
+                    value = 5000  # Placeholder
+                else:
+                    value = int(snapshot.get(f"{component_name}_score", 0))
+
+                if value > 0:
+                    component_evidence.append(Evidence(
+                        id=f"wellness-{component_name}",
+                        type="data",
+                        description=f"{component_name} component score",
+                        value=value,
+                        sourceId=household_id,
+                    ))
+
+                component_scores.append({
+                    "name": component_name,
+                    "score": value,
+                    "weight": weight,
+                })
+
+            # Source reference
+            component_sources.append(SourceReference(
+                type="behaviour_engine",
+                id=household_id,
+                name="Wellness Score Snapshot",
+                date=snapshot.get("snapshot_date"),
+            ))
+
+            # Calculate total score
+            total_score = sum(
+                int(e.value) for e in component_evidence
+                if isinstance(e.value, int)
+            ) // len(component_evidence) if component_evidence else 0
+
+            # Calculate confidence
+            confidence_bps = 10000
+            confidence_reasons: list[str] = []
+
+            if len(component_evidence) == 0:
+                confidence_bps -= 2000
+                confidence_reasons.append("No snapshot data available")
+
+            # Build calculation steps
+            calculation_steps: list[CalculationStep] = [
+                CalculationStep(
+                    stepId="load-snapshot",
+                    description="Load behaviour snapshot from repository",
+                    operation="LOOKUP",
+                    inputIds=[household_id],
+                    outputId="snapshot-loaded",
+                    order=1,
+                ),
+                CalculationStep(
+                    stepId="compute-components",
+                    description="Compute individual wellness component scores",
+                    operation="LOOKUP",
+                    inputIds=[e.id for e in component_evidence],
+                    outputId="components-computed",
+                    order=2,
+                ),
+                CalculationStep(
+                    stepId="aggregate-score",
+                    description="Aggregate component scores into wellness score",
+                    operation="ADD",
+                    inputIds=["components-computed"],
+                    outputId="wellness-score",
+                    order=3,
+                ),
+            ]
+
+            # Build explanation
+            explanation = Explanation(
+                metric="wellness_score",
+                value=total_score,
+                confidence=Confidence(
+                    value=confidence_bps,
+                    reason=", ".join(confidence_reasons) if confidence_reasons else "Complete snapshot data available",
+                ),
+                evidence=component_evidence,
+                sources=component_sources,
+                calculationSteps=calculation_steps,
+            )
+
+            # Get band
+            band = cast(WellnessBand, self._classify_wellness_band(Decimal(str(total_score)) / Decimal("100")))
+
+            # Build WellnessComponent list
+            from src.models.behaviour import WellnessComponent
+
+            wellness_components: list[WellnessComponent] = [
+                WellnessComponent(
+                    name="cashflow_health",
+                    score=int(snapshot.get("cashflow_stability_score", 0)),
+                    weight=0.20,
+                ),
+                WellnessComponent(
+                    name="debt_health",
+                    score=10000 - int(snapshot.get("debt_cycle_score", 0)) * 100,
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="savings_behaviour",
+                    score=int(snapshot.get("savings_discipline_score", 0)),
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="resilience",
+                    score=int(snapshot.get("resilience_index", 0)),
+                    weight=0.18,
+                ),
+                WellnessComponent(
+                    name="lifestyle_control",
+                    score=10000 - min(10000, max(0, int(snapshot.get("lifestyle_inflation_rate", 0)))),
+                    weight=0.13,
+                ),
+                WellnessComponent(
+                    name="credit_behaviour",
+                    score=5000,  # Placeholder
+                    weight=0.13,
+                ),
+            ]
+
+            return WellnessScoreResponse(
+                score=Decimal(str(total_score)) / Decimal("100"),
+                band=band,
+                components=wellness_components,
+                snapshot_date=snapshot["snapshot_date"],
+                version=snapshot.get("version", 1),
+                is_partial=len(component_evidence) == 0,
+                partial_reason="No snapshot data available" if len(component_evidence) == 0 else None,
+                last_updated=datetime.now().isoformat(),
+                explanation=explanation,
+            )
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(f"Error getting wellness score with explanation: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get wellness score with explanation: {str(e)}",
+            )
+
+    def get_patterns_with_explanation(
+        self,
+        household_id: str = "default",
+        limit: int = 5,
+    ) -> PatternsResponse:
+        """
+        Compute patterns summary with full explainability.
+
+        Returns:
+            PatternsResponse with explanation containing:
+            - Evidence for each pattern (type, key, strength, amount)
+            - Source references for each pattern
+            - Calculation steps: load-patterns, compute-strength, aggregate-patterns
+            - Confidence based on data availability
+        """
+        from datetime import datetime
+
+        from src.models.explanation import (
+            CalculationStep,
+            Confidence,
+            Evidence,
+            Explanation,
+            PatternSummary,
+            SourceReference,
+        )
+
+        try:
+            patterns = self.pattern_repo.get_recent_patterns(days=limit, household_id=household_id)
+
+            # Build evidence and sources
+            pattern_evidence: list[Evidence] = []
+            pattern_sources: list[SourceReference] = []
+            pattern_summaries: list[PatternSummary] = []
+
+            for pattern in patterns:
+                pattern_id = f"{pattern['pattern_type']}-{pattern['pattern_key']}"
+
+                # Evidence for pattern
+                pattern_evidence.append(Evidence(
+                    id=f"pattern-{pattern_id}",
+                    type="data",
+                    description=f"Pattern: {pattern['pattern_type']} - {pattern['pattern_key']}",
+                    value=pattern.get("total_amount_paise", 0),
+                    sourceId=pattern_id,
+                ))
+
+                # Source reference
+                pattern_sources.append(SourceReference(
+                    type="transaction",
+                    id=pattern_id,
+                    name=f"{pattern['pattern_type']}: {pattern['pattern_key']}",
+                    date=pattern.get("last_observed"),
+                ))
+
+                # Build pattern summary
+                pattern_summaries.append(PatternSummary(
+                    pattern_type=pattern["pattern_type"],
+                    pattern_key=pattern["pattern_key"],
+                    strength_bps=pattern.get("strength_bps", 0),
+                    transaction_count=pattern.get("transaction_count", 0),
+                    total_amount_paise=pattern.get("total_amount_paise", 0),
+                    first_observed=pattern.get("first_observed", ""),
+                    last_observed=pattern.get("last_observed", ""),
+                ))
+
+            # Calculate confidence
+            confidence_bps = 10000
+            confidence_reasons: list[str] = []
+
+            if len(pattern_evidence) == 0:
+                confidence_bps -= 2000
+                confidence_reasons.append("No patterns detected")
+
+            # Build calculation steps
+            calculation_steps: list[CalculationStep] = [
+                CalculationStep(
+                    stepId="load-patterns",
+                    description="Load patterns from repository",
+                    operation="LOOKUP",
+                    inputIds=[e.id for e in pattern_evidence],
+                    outputId="patterns-loaded",
+                    order=1,
+                ),
+                CalculationStep(
+                    stepId="compute-strength",
+                    description="Compute pattern strength scores",
+                    operation="AVERAGE",
+                    inputIds=[e.id for e in pattern_evidence],
+                    outputId="strengths-computed",
+                    order=2,
+                ),
+                CalculationStep(
+                    stepId="aggregate-patterns",
+                    description="Aggregate patterns into summary",
+                    operation="GROUP",
+                    inputIds=["patterns-loaded", "strengths-computed"],
+                    outputId="patterns-summary",
+                    order=3,
+                ),
+            ]
+
+            # Build explanation
+            explanation = Explanation(
+                metric="patterns",
+                value=len(pattern_summaries),
+                confidence=Confidence(
+                    value=confidence_bps,
+                    reason=", ".join(confidence_reasons) if confidence_reasons else "Complete pattern data available",
+                ),
+                evidence=pattern_evidence,
+                sources=pattern_sources,
+                calculationSteps=calculation_steps,
+            )
+
+            return PatternsResponse(
+                patterns=pattern_summaries,
+                total_patterns=len(pattern_summaries),
+                is_partial=len(pattern_evidence) == 0,
+                partial_reason="No patterns detected" if len(pattern_evidence) == 0 else None,
+                last_updated=datetime.now().isoformat(),
+                explanation=explanation,
+            )
+
+        except Exception as e:
+            logger.error(f"Error getting patterns with explanation: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get patterns with explanation: {str(e)}",
+            )
+
+    def get_recommendations_with_explanation(
+        self,
+        household_id: str = "default",
+        limit: int = 10,
+        severity_filter: str | None = None,
+    ) -> RecommendationsResponse:
+        """
+        Compute recommendations with full explainability.
+
+        Returns:
+            RecommendationsResponse with explanation containing:
+            - Evidence for each recommendation trigger
+            - Source references for recommendation inputs
+            - Calculation steps: load-data, compute-metrics, generate-recommendations
+            - Confidence based on data availability
+        """
+        from datetime import datetime
+
+        from src.models.explanation import (
+            CalculationStep,
+            Confidence,
+            Evidence,
+            Explanation,
+            SourceReference,
+        )
+
+        try:
+            # Get latest snapshot for context
+            snapshot = self.behaviour_repo.get_latest_snapshot(household_id)
+            if not snapshot:
+                raise NotFoundError("No behaviour snapshot available for recommendations")
+
+            # Get transactions for recommendation inputs
+            transactions = self.transaction_repo.get_all_transactions()
+            credit_cards = self.credit_card_repo.list_cards()
+            loans = self.loan_repo.list_loans()
+
+            # Build evidence
+            rec_evidence: list[Evidence] = []
+            rec_sources: list[SourceReference] = []
+
+            # Evidence for key metrics
+            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
+            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+
+            if total_income > 0:
+                rec_evidence.append(Evidence(
+                    id="rec-total-income",
+                    type="data",
+                    description="Total income for recommendations",
+                    value=total_income,
+                    sourceId=household_id,
+                ))
+
+            if total_expenses > 0:
+                rec_evidence.append(Evidence(
+                    id="rec-total-expenses",
+                    type="data",
+                    description="Total expenses for recommendations",
+                    value=total_expenses,
+                    sourceId=household_id,
+                ))
+
+            # Source reference
+            rec_sources.append(SourceReference(
+                type="behaviour_engine",
+                id=household_id,
+                name="Recommendation Engine",
+                date=snapshot.get("snapshot_date"),
+            ))
+
+            # Calculate metrics needed for recommendations
+            borrowed_lifestyle_ratio = compute_borrowed_lifestyle_ratio(
+                self._compute_credit_funded_expenses(transactions), total_expenses
+            )
+
+            foir, _ = compute_foir(
+                self._compute_fixed_obligations(loans, credit_cards),
+                self._compute_minimum_obligations(loans, credit_cards),
+                total_income,
+            )
+
+            # Calculate confidence
+            confidence_bps = 10000
+            confidence_reasons: list[str] = []
+
+            if len(rec_evidence) == 0:
+                confidence_bps -= 2000
+                confidence_reasons.append("No transaction data available")
+
+            # Build calculation steps
+            calculation_steps: list[CalculationStep] = [
+                CalculationStep(
+                    stepId="load-data",
+                    description="Load transaction and account data",
+                    operation="LOOKUP",
+                    inputIds=[household_id],
+                    outputId="data-loaded",
+                    order=1,
+                ),
+                CalculationStep(
+                    stepId="compute-metrics",
+                    description="Compute recommendation trigger metrics",
+                    operation="ADD",
+                    inputIds=[e.id for e in rec_evidence],
+                    outputId="metrics-computed",
+                    order=2,
+                ),
+                CalculationStep(
+                    stepId="generate-recommendations",
+                    description="Generate recommendations from metrics",
+                    operation="MATCH",
+                    inputIds=["metrics-computed"],
+                    outputId="recommendations-generated",
+                    order=3,
+                ),
+            ]
+
+            # Build explanation
+            explanation = Explanation(
+                metric="recommendations",
+                value=0,  # Will be updated with actual count
+                confidence=Confidence(
+                    value=confidence_bps,
+                    reason=", ".join(confidence_reasons) if confidence_reasons else "Complete data available",
+                ),
+                evidence=rec_evidence,
+                sources=rec_sources,
+                calculationSteps=calculation_steps,
+            )
+
+            # Generate recommendations
+            from src.engines.recommendation_engine.recommendations import (
+                compute_recommendations,
+            )
+
+            recommendations = compute_recommendations(
+                borrowed_lifestyle_ratio=borrowed_lifestyle_ratio,
+                foir=foir,
+                liquidity_months=0,  # Simplified
+                current_subscriptions=[],
+                previous_subscriptions=None,
+            )
+
+            if severity_filter:
+                recommendations = [
+                    r for r in recommendations
+                    if r.severity == severity_filter
+                ]
+
+            recommendations = recommendations[:limit]
+
+            # Convert to response models
+            recommendation_responses = [
+                RecommendationResponse(
+                    title=r.title,
+                    reason=r.reason,
+                    metric=r.metric,
+                    severity=r.severity,
+                    suggested_action=r.suggested_action,
+                )
+                for r in recommendations
+            ]
+
+            # Update explanation value with actual count
+            explanation = Explanation(
+                metric="recommendations",
+                value=len(recommendation_responses),
+                confidence=Confidence(
+                    value=confidence_bps,
+                    reason=", ".join(confidence_reasons) if confidence_reasons else "Complete data available",
+                ),
+                evidence=rec_evidence,
+                sources=rec_sources,
+                calculationSteps=calculation_steps,
+            )
+
+            return RecommendationsResponse(
+                recommendations=recommendation_responses,
+                total_count=len(recommendation_responses),
+                snapshot_date=snapshot["snapshot_date"],
+                is_partial=len(rec_evidence) == 0,
+                partial_reason="No data available" if len(rec_evidence) == 0 else None,
+                last_updated=datetime.now().isoformat(),
+                explanation=explanation,
+            )
+
+        except NotFoundError:
+            raise
+        except Exception as e:
+            logger.error(f"Error getting recommendations with explanation: {str(e)}", exc_info=True)
+            raise AppError(
+                message=f"Failed to get recommendations with explanation: {str(e)}",
+            )

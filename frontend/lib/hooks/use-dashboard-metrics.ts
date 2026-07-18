@@ -1,10 +1,14 @@
 /**
  * Consolidated Dashboard Metrics Hook
- * Uses the existing /api/dashboard/summary endpoint
+ * Uses the existing /api/v1/financial-intelligence/outlook endpoint
  */
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { ForecastingResponseSchema } from '../contracts/api/forecasting';
+import { mapForecastingToModel } from '../mappers/forecasting';
+import type { ForecastingModel } from '../models/forecasting';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -40,6 +44,13 @@ async function fetchDashboardSummary(): Promise<DashboardData> {
   return res.json();
 }
 
+async function fetchForecasting(): Promise<ForecastingModel> {
+  const res = await fetch(`${API_BASE}/api/v1/financial-intelligence/outlook`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  const dto = ForecastingResponseSchema.parse(await res.json());
+  return mapForecastingToModel(dto);
+}
+
 export function useDashboardMetrics(): HookState<DashboardData> {
   const queryClient = useQueryClient();
 
@@ -60,5 +71,12 @@ export function useDashboardMetrics(): HookState<DashboardData> {
     refetch,
     dataUpdatedAt: result.dataUpdatedAt,
   }), [result, refetch]);
+}
 
+export function useForecasting() {
+  return useQuery<ForecastingModel, Error>({
+    queryKey: ['forecasting', 'outlook'],
+    queryFn: fetchForecasting,
+    staleTime: 30_000,
+  });
 }
