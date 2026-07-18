@@ -342,7 +342,7 @@
 
 ## Blocked (0)
 
-## Completed (120)
+## Completed (140)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -475,3 +475,26 @@
 - S3-GRP-018: Add group dark mode support
 - S3-GRP-019: Add group accessibility
 - S3-GRP-020: Add group selection support
+
+### Sorting (20)
+- S3-SRT-001: Create sort types definition
+- S3-SRT-002: Add sort state to capability
+- S3-SRT-003: Add sortTransactions action to capability
+- S3-SRT-004: Add sort by date
+- S3-SRT-005: Add sort by amount
+- S3-SRT-006: Add sort by description
+- S3-SRT-007: Add sort by category
+- S3-SRT-008: Add sort by merchant
+- S3-SRT-009: Add sort UI component
+- S3-SRT-010: Add sort indicator to UI
+- S3-SRT-011: Add multi-column sort support
+- S3-SRT-012: Add sort persistence
+- S3-SRT-013: Add sort performance tests
+- S3-SRT-014: Add sort UI tests
+- S3-SRT-015: Add sort documentation
+- S3-SRT-016: Add sort keyboard navigation
+- S3-SRT-017: Add sort responsive design
+- S3-SRT-018: Add sort dark mode support
+- S3-SRT-019: Add sort accessibility
+- S3-SRT-020: Add sort default configuration
+

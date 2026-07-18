@@ -3,11 +3,11 @@
 ## Overall Progress
 
 - **Total TODOs:** 360
-- **Completed:** 120
+- **Completed:** 140
 - **In Progress:** 0
 - **Blocked:** 0
-- **Pending:** 240
-- **Overall %:** 33.3%
+- **Pending:** 220
+- **Overall %:** 38.9%
 
 ## Capability Progress
 
@@ -19,7 +19,7 @@
 | Filtering Engine | 20 | 20 | 0 | 0 | 100% |
 | Search Engine | 20 | 20 | 0 | 0 | 100% |
 | Grouping | 20 | 20 | 0 | 0 | 100% |
-| Sorting | 20 | 0 | 0 | 0 | 0% |
+| Sorting | 20 | 20 | 0 | 0 | 100% |
 | Selection Model | 20 | 0 | 0 | 0 | 0% |
 | Evidence System | 20 | 0 | 0 | 0 | 0% |
 | Workspace Layout | 20 | 0 | 0 | 0 | 0% |
@@ -34,7 +34,7 @@
 
 ## Current TODO
 
-**S3-SRT-001: Create sort types definition**
+**S3-SEL-001: Create selection types definition**
 
 This is the next TODO in the critical path. It depends on S3-CAP-001 (completed).
 
@@ -79,4 +79,5 @@ This is the next TODO in the critical path. It depends on S3-CAP-001 (completed)
 - Filtering Engine is now complete (100%)
 - Search Engine is now complete (100%)
 - Grouping is now complete (100%)
-- Next: Sorting (S3-SRT-001)
+- Sorting is now complete (100%)
+- Next: Selection Model (S3-SEL-001)
