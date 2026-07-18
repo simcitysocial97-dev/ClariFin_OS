@@ -118,27 +118,18 @@
 - S3-SEL-019: Add selection accessibility
 - S3-SEL-020: Add selection integration with table
 
-### Evidence System (20)
-- S3-EVD-001: Create evidence types definition
-- S3-EVD-002: Add evidence drawer component
-- S3-EVD-003: Add evidence summary section
-- S3-EVD-004: Add evidence list component
-- S3-EVD-005: Add evidence item component
-- S3-EVD-006: Add evidence source link
-- S3-EVD-007: Add evidence calculation view
-- S3-EVD-008: Add evidence confidence display
-- S3-EVD-009: Add evidence toggle action
-- S3-EVD-010: Add evidence for categorization
-- S3-EVD-011: Add evidence for import
-- S3-EVD-012: Add evidence for adjustment
-- S3-EVD-013: Add evidence for balance
-- S3-EVD-014: Add evidence for reconciliation
-- S3-EVD-015: Add evidence drawer tests
-- S3-EVD-016: Add evidence performance tests
-- S3-EVD-017: Add evidence documentation
-- S3-EVD-018: Add evidence responsive design
-- S3-EVD-019: Add evidence dark mode support
-- S3-EVD-020: Add evidence accessibility
+### Evidence System (11)
+- [ ] S3-EVD-010: Add evidence for categorization
+- [ ] S3-EVD-011: Add evidence for import
+- [ ] S3-EVD-012: Add evidence for adjustment
+- [ ] S3-EVD-013: Add evidence for balance
+- [ ] S3-EVD-014: Add evidence for reconciliation
+- [ ] S3-EVD-015: Add evidence drawer tests
+- [ ] S3-EVD-016: Add evidence performance tests
+- [ ] S3-EVD-017: Add evidence documentation
+- [ ] S3-EVD-018: Add evidence responsive design
+- [ ] S3-EVD-019: Add evidence dark mode support
+- [ ] S3-EVD-020: Add evidence accessibility
 
 ### Workspace Layout (20)
 - S3-WS-001: Create workspace page component
@@ -342,7 +333,7 @@
 
 ## Blocked (0)
 
-## Completed (140)
+## Completed (169)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -497,4 +488,27 @@
 - S3-SRT-018: Add sort dark mode support
 - S3-SRT-019: Add sort accessibility
 - S3-SRT-020: Add sort default configuration
+
+### Selection Model (20)
+- S3-SEL-001: Create selection types definition
+- S3-SEL-002: Add selection state to capability
+- S3-SEL-003: Add toggleSelection action
+- S3-SEL-004: Add selectAll action
+- S3-SEL-005: Add selectNone action
+- S3-SEL-006: Add selectPage action
+- S3-SEL-007: Add selection count display
+- S3-SEL-008: Add selection checkbox component
+- S3-SEL-009: Add select all checkbox
+- S3-SEL-010: Add selection keyboard shortcuts
+- S3-SEL-011: Add selection persistence
+- S3-SEL-012: Add selection range support
+- S3-SEL-013: Add selection validation
+- S3-SEL-014: Add selection UI tests
+- S3-SEL-015: Add selection performance tests
+- S3-SEL-016: Add selection documentation
+- S3-SEL-017: Add selection responsive design
+- S3-SEL-018: Add selection dark mode support
+- S3-SEL-019: Add selection accessibility
+- S3-SEL-020: Add selection integration with table
+
 

@@ -3,11 +3,11 @@
 ## Overall Progress
 
 - **Total TODOs:** 360
-- **Completed:** 140
+- **Completed:** 169
 - **In Progress:** 0
 - **Blocked:** 0
-- **Pending:** 220
-- **Overall %:** 38.9%
+- **Pending:** 191
+- **Overall %:** 46.9%
 
 ## Capability Progress
 
@@ -20,8 +20,8 @@
 | Search Engine | 20 | 20 | 0 | 0 | 100% |
 | Grouping | 20 | 20 | 0 | 0 | 100% |
 | Sorting | 20 | 20 | 0 | 0 | 100% |
-| Selection Model | 20 | 0 | 0 | 0 | 0% |
-| Evidence System | 20 | 0 | 0 | 0 | 0% |
+| Selection Model | 20 | 20 | 0 | 0 | 100% |
+| Evidence System | 20 | 9 | 0 | 0 | 45% |
 | Workspace Layout | 20 | 0 | 0 | 0 | 0% |
 | Toolbar | 20 | 0 | 0 | 0 | 0% |
 | Transaction Table | 20 | 0 | 0 | 0 | 0% |
@@ -34,9 +34,9 @@
 
 ## Current TODO
 
-**S3-SEL-001: Create selection types definition**
+**S3-EVD-010: Add evidence for categorization**
 
-This is the next TODO in the critical path. It depends on S3-CAP-001 (completed).
+This is the next TODO in the critical path. It depends on S3-EVD-001 (completed).
 
 ## Blocked TODOs
 
@@ -80,4 +80,6 @@ This is the next TODO in the critical path. It depends on S3-CAP-001 (completed)
 - Search Engine is now complete (100%)
 - Grouping is now complete (100%)
 - Sorting is now complete (100%)
-- Next: Selection Model (S3-SEL-001)
+- Selection Model is now complete (100%)
+- Evidence System: 9/20 completed (types, hook, drawer, summary, list, item, source link, calculation view, confidence display)
+- Next: Evidence System (S3-EVD-010)
