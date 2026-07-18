@@ -54,7 +54,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/accounts": {
+    "/api/v1/accounts": {
         parameters: {
             query?: never;
             header?: never;
@@ -62,10 +62,86 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Api Get Accounts
-         * @description Get all accounts with their computed balances.
+         * List Accounts
+         * @description Get all active accounts via AccountService.
          */
-        get: operations["api_get_accounts_api_accounts_get"];
+        get: operations["list_accounts_api_v1_accounts_get"];
+        put?: never;
+        /**
+         * Create Account
+         * @description Create a new account via AccountService.
+         */
+        post: operations["create_account_api_v1_accounts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Account
+         * @description Get account details via AccountService.
+         */
+        get: operations["get_account_api_v1_accounts__account_id__get"];
+        /**
+         * Update Account
+         * @description Update account via AccountService.
+         */
+        put: operations["update_account_api_v1_accounts__account_id__put"];
+        post?: never;
+        /**
+         * Deactivate Account
+         * @description Soft delete account via AccountService.
+         */
+        delete: operations["deactivate_account_api_v1_accounts__account_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}/balance-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Balance History
+         * @description Get balance history for an account.
+         */
+        get: operations["get_balance_history_api_v1_accounts__account_id__balance_history_get"];
+        put?: never;
+        /**
+         * Insert Balance Snapshot
+         * @description Insert a balance snapshot for an account.
+         */
+        post: operations["insert_balance_snapshot_api_v1_accounts__account_id__balance_history_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}/balance-history/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Latest Balance
+         * @description Get the most recent balance snapshot for an account.
+         */
+        get: operations["get_latest_balance_api_v1_accounts__account_id__balance_history_latest_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -74,7 +150,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/accounts/{account_id}/balance": {
+    "/api/v1/accounts/{account_id}/analytics": {
         parameters: {
             query?: never;
             header?: never;
@@ -82,10 +158,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Api Get Account Balance
-         * @description Get computed balance for an account.
+         * Get Account Analytics
+         * @description Get account analytics via AccountService.
          */
-        get: operations["api_get_account_balance_api_accounts__account_id__balance_get"];
+        get: operations["get_account_analytics_api_v1_accounts__account_id__analytics_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -94,7 +170,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/accounts/{account_id}/running-balance": {
+    "/api/v1/accounts/{account_id}/metrics": {
         parameters: {
             query?: never;
             header?: never;
@@ -102,13 +178,145 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Api Get Running Balance
-         * @description Get running balance history for an account.
+         * Get Account Metrics
+         * @description Get comprehensive account metrics via AccountService.
          */
-        get: operations["api_get_running_balance_api_accounts__account_id__running_balance_get"];
+        get: operations["get_account_metrics_api_v1_accounts__account_id__metrics_get"];
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Account Status
+         * @description Get account status via AccountService.
+         */
+        get: operations["get_account_status_api_v1_accounts__account_id__status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}/dormancy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Account Dormancy
+         * @description Check if account is dormant via AccountService.
+         */
+        get: operations["get_account_dormancy_api_v1_accounts__account_id__dormancy_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Institutions
+         * @description Get all institutions via AccountService.
+         */
+        get: operations["list_institutions_api_v1_institutions_get"];
+        put?: never;
+        /**
+         * Create Institution
+         * @description Create a new institution via AccountService.
+         */
+        post: operations["create_institution_api_v1_institutions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/institutions/{institution_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Institution
+         * @description Get institution details via AccountService.
+         */
+        get: operations["get_institution_api_v1_institutions__institution_id__get"];
+        /**
+         * Update Institution
+         * @description Update institution via AccountService.
+         */
+        put: operations["update_institution_api_v1_institutions__institution_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Linked Accounts
+         * @description Get all accounts linked to the given account via AccountService.
+         */
+        get: operations["get_linked_accounts_api_v1_accounts__account_id__links_get"];
+        put?: never;
+        /**
+         * Link Accounts
+         * @description Create a link between two accounts via AccountService.
+         */
+        post: operations["link_accounts_api_v1_accounts__account_id__links_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/accounts/{account_id}/links/{linked_account_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Unlink Accounts
+         * @description Remove a link between two accounts via AccountService.
+         */
+        delete: operations["unlink_accounts_api_v1_accounts__account_id__links__linked_account_id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -257,6 +465,298 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/behaviour/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Financial Profile
+         * @description Get comprehensive financial behaviour profile.
+         *
+         *     Returns financial personality classification based on transaction and account data.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "default")
+         *
+         *     Returns:
+         *         FinancialProfileResponse with profile classification
+         */
+        get: operations["get_financial_profile_api_v1_behaviour_profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/wellness-score": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Wellness Score
+         * @description Get the latest financial wellness score.
+         *
+         *     Returns wellness score with band classification and component breakdown.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "default")
+         *
+         *     Returns:
+         *         WellnessScoreResponse with score, band, and components
+         */
+        get: operations["get_wellness_score_api_v1_behaviour_wellness_score_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/debt-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Debt Health
+         * @description Get the latest debt health metrics.
+         *
+         *     Returns FOIR, credit dependency ratio, debt cycle score, and revolver ratio.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "default")
+         *
+         *     Returns:
+         *         DebtHealthResponse with debt health metrics
+         */
+        get: operations["get_debt_health_api_v1_behaviour_debt_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/cashflow-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow Health
+         * @description Get the latest cashflow health metrics.
+         *
+         *     Returns cashflow stability index, income/expense stability, and monthly surplus.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "default")
+         *
+         *     Returns:
+         *         CashflowHealthResponse with cashflow health metrics
+         */
+        get: operations["get_cashflow_health_api_v1_behaviour_cashflow_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/patterns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Patterns
+         * @description Get detected financial patterns.
+         *
+         *     Returns patterns like impulse spending and subscriptions with strength scores.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "default")
+         *         pattern_type: Optional filter for specific pattern type
+         *         days: Number of days to look back (1-365, default: 30)
+         *
+         *     Returns:
+         *         List of FinancialPattern objects
+         */
+        get: operations["get_patterns_api_v1_behaviour_patterns_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/recommendations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Recommendations
+         * @description Get financial recommendations based on behaviour metrics.
+         *
+         *     Returns actionable recommendations sorted by severity.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "default")
+         *         limit: Maximum number of recommendations to return (1-50, default: 10)
+         *         severity: Optional filter for specific severity level
+         *
+         *     Returns:
+         *         RecommendationsResponse with triggered recommendations
+         */
+        get: operations["get_recommendations_api_v1_behaviour_recommendations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/monthly-report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Monthly Report
+         * @description Generate a monthly financial summary report.
+         *
+         *     Returns comprehensive summary including wellness, debt, cashflow, patterns, and alerts.
+         *
+         *     Args:
+         *         period: Period in YYYY-MM format (default: current month)
+         *         household_id: Household identifier (default: "default")
+         *
+         *     Returns:
+         *         MonthlySummaryResponse with comprehensive financial summary
+         */
+        get: operations["get_monthly_report_api_v1_behaviour_monthly_report_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/stress-index": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Stress Index
+         * @description Get financial stress index with breakdown components.
+         *
+         *     Computes composite stress score including credit dependency, debt rolling,
+         *     liquidity extraction frequency, revolving behavior, and cashflow deficit.
+         *
+         *     Args:
+         *         month: Month in YYYY-MM format
+         *         scope: Scope for analysis (household or individual)
+         *         household_id: Household identifier
+         *
+         *     Returns:
+         *         Dict with stress score, components, and flag
+         */
+        get: operations["get_stress_index_api_v1_behaviour_stress_index_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/revolver-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Revolver Status
+         * @description Get revolver classification for a credit card account.
+         *
+         *     Classifies card as transactor (pays in full) or revolver (carries balance)
+         *     based on lifecycle states of events.
+         *
+         *     Args:
+         *         card_account_id: Credit card account ID to analyze
+         *         household_id: Household identifier
+         *
+         *     Returns:
+         *         Dict with type, confidence, and counts
+         */
+        get: operations["get_revolver_status_api_v1_behaviour_revolver_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/behaviour/household-divergence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Household Divergence
+         * @description Detect cross-owner funding within household.
+         *
+         *     Finds lineage links where events from different owners within the same
+         *     household are connected, indicating potential financial interdependencies.
+         *
+         *     Args:
+         *         month: Month in YYYY-MM format
+         *         household_id: Household identifier
+         *
+         *     Returns:
+         *         Dict with flag and divergent links
+         */
+        get: operations["get_household_divergence_api_v1_behaviour_household_divergence_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/statements": {
         parameters: {
             query?: never;
@@ -319,6 +819,227 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/credit-cards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Cards
+         * @description Get all active credit cards.
+         */
+        get: operations["list_cards_api_v1_credit_cards_get"];
+        put?: never;
+        /**
+         * Create Card
+         * @description Create a new credit card.
+         */
+        post: operations["create_card_api_v1_credit_cards_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Card
+         * @description Get credit card details.
+         */
+        get: operations["get_card_api_v1_credit_cards__card_id__get"];
+        /**
+         * Update Card
+         * @description Update credit card fields.
+         */
+        put: operations["update_card_api_v1_credit_cards__card_id__put"];
+        post?: never;
+        /**
+         * Deactivate Card
+         * @description Soft delete a credit card.
+         */
+        delete: operations["deactivate_card_api_v1_credit_cards__card_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/statements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Statements
+         * @description Get statement history for a card.
+         */
+        get: operations["list_statements_api_v1_credit_cards__card_id__statements_get"];
+        put?: never;
+        /**
+         * Generate Statement
+         * @description Generate a new statement for a credit card.
+         */
+        post: operations["generate_statement_api_v1_credit_cards__card_id__statements_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/outstanding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Outstanding
+         * @description Get current outstanding balance.
+         */
+        get: operations["get_outstanding_api_v1_credit_cards__card_id__outstanding_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/utilization": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Utilization
+         * @description Get credit utilization and available credit.
+         */
+        get: operations["get_utilization_api_v1_credit_cards__card_id__utilization_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Metrics
+         * @description Get core financial metrics for a credit card.
+         */
+        get: operations["get_metrics_api_v1_credit_cards__card_id__metrics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/next-statement-date": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Next Statement Date
+         * @description Get the next expected statement date.
+         */
+        get: operations["get_next_statement_date_api_v1_credit_cards__card_id__next_statement_date_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Payment
+         * @description Record a payment on the latest open statement.
+         */
+        post: operations["record_payment_api_v1_credit_cards__card_id__payments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/emi-conversion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Convert To Emi
+         * @description Convert a purchase to EMI.
+         *
+         *     Delegates via credit_card_engine -> loan_engine.
+         *     No EMI formula duplication.
+         */
+        post: operations["convert_to_emi_api_v1_credit_cards__card_id__emi_conversion_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/credit-cards/{card_id}/foreclosure": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Quote Foreclosure
+         * @description Quote foreclosure payoff for a credit card EMI.
+         *
+         *     Delegates via credit_card_engine -> loan_engine.
+         */
+        post: operations["quote_foreclosure_api_v1_credit_cards__card_id__foreclosure_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/cashflow/monthly": {
         parameters: {
             query?: never;
@@ -340,6 +1061,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/cashflow/monthly": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow Monthly Analysis
+         * @description Get enriched monthly cashflow analysis with financial events overlay.
+         *
+         *     Returns:
+         *         - cash_surplus, true_savings, liability_adjusted_savings
+         *         - net_worth_impact, month_classification
+         *         - credit_dependency_ratio, effective_liquidity_cost_annualized
+         */
+        get: operations["get_cashflow_monthly_analysis_api_v1_cashflow_monthly_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/dashboard/summary": {
         parameters: {
             query?: never;
@@ -349,13 +1095,16 @@ export interface paths {
         };
         /**
          * Api Dashboard Summary
-         * @description Get simplified dashboard summary for MVP.
+         * @description Get dashboard summary with behavior insights.
          *
-         *     Returns 4 key metrics:
-         *     - Net Cash Flow
-         *     - Savings Rate %
-         *     - EMI Ratio %
-         *     - Buffer Days
+         *     Returns:
+         *     - behavior_score: Financial health score (0-1)
+         *     - spending_this_month: Total spending for current month
+         *     - top_category: Most common spending category
+         *     - insights: Personalized insights
+         *     - nudges: Action recommendations
+         *     - reconciliation_pending: Count of pending transfers
+         *     - large_transactions: Significant transactions (>= ₹10,000)
          */
         get: operations["api_dashboard_summary_api_dashboard_summary_get"];
         put?: never;
@@ -378,6 +1127,354 @@ export interface paths {
          * @description Export transactions to CSV.
          */
         get: operations["export_csv_api_export_csv_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/cashflow-forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Cashflow Forecast
+         * @description Get cashflow forecast for the household.
+         *
+         *     Projects future monthly income, expenses, and surplus using weighted moving average.
+         *     Returns confidence score based on historical variance.
+         *     Uses TRUE cashflow adjusted for artificial income (cash advances, transfers).
+         *
+         *     Args:
+         *         forecast_months: Number of months to forecast (1-12, default: 3)
+         *         household_id: Household identifier (default: "primary")
+         *         owner_id: Owner filter - "self" for individual, None for household-wide
+         *
+         *     Returns:
+         *         Dict with forecast list and confidence score
+         */
+        get: operations["get_cashflow_forecast_api_v1_financial_intelligence_cashflow_forecast_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/liquidity-forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Liquidity Forecast
+         * @description Get liquidity forecast for the household.
+         *
+         *     Predicts future liquidity position and identifies potential stress points.
+         *
+         *     Args:
+         *         forecast_months: Number of months to forecast (1-12, default: 3)
+         *         emergency_threshold_paise: Emergency threshold in paise (default: 3,000,000 paise = ₹30,000)
+         *         household_id: Household identifier (default: "primary")
+         *         owner_id: Owner filter - "self" for individual, None for household-wide
+         *
+         *     Returns:
+         *         Dict with months_until_stress, projected_min_balance_paise, and risk_level
+         */
+        get: operations["get_liquidity_forecast_api_v1_financial_intelligence_liquidity_forecast_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/credit-forecast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Credit Forecast
+         * @description Get credit dependency forecast.
+         *
+         *     Predicts future credit utilization trends based on revolving behavior.
+         *
+         *     Args:
+         *         month: Month in YYYY-MM format (default: current month)
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Dict with current/forecast dependency ratios and trend
+         */
+        get: operations["get_credit_forecast_api_v1_financial_intelligence_credit_forecast_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/outlook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Financial Outlook
+         * @description Get comprehensive financial outlook.
+         *
+         *     Combines cashflow, liquidity, and credit forecasts with risk flags.
+         *
+         *     Args:
+         *         forecast_months: Number of months to forecast (1-12, default: 3)
+         *         emergency_threshold_paise: Emergency threshold in paise (default: 3,000,000 paise = ₹30,000)
+         *         household_id: Household identifier
+         *
+         *     Returns:
+         *         Dict with cashflow, liquidity, credit forecasts and risk_flags
+         */
+        get: operations["get_financial_outlook_api_v1_financial_intelligence_outlook_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Financial Intelligence Report
+         * @description Get comprehensive financial intelligence report.
+         *
+         *     Aggregates data from all financial domains:
+         *     - Behaviour (wellness, credit dependency)
+         *     - Cashflow (monthly surplus)
+         *     - Liquidity (forecast)
+         *     - Debts (loans, credit cards)
+         *     - Goals (active goals)
+         *     - Optimization (recommended actions)
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         IntelligenceReport with snapshot, health_score, priorities, risks, opportunities, confidence
+         */
+        get: operations["get_financial_intelligence_report_api_v1_financial_intelligence_report_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/priorities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Financial Intelligence Priorities
+         * @description Get ranked financial priorities.
+         *
+         *     Returns only the priority actions from the intelligence report.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Dict with priorities list
+         */
+        get: operations["get_financial_intelligence_priorities_api_v1_financial_intelligence_priorities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/financial-intelligence/confidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Financial Intelligence Confidence
+         * @description Get intelligence data quality and confidence.
+         *
+         *     Returns only the confidence metadata from the intelligence report.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Confidence metadata with confidence score and data quality label
+         */
+        get: operations["get_financial_intelligence_confidence_api_v1_financial_intelligence_confidence_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/goals/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Goals
+         * @description Get all goals for a household.
+         *
+         *     Args:
+         *         household_id: Household identifier
+         *         status: Optional filter by status
+         *
+         *     Returns:
+         *         List of financial goals
+         */
+        get: operations["list_goals_api_v1_goals__get"];
+        put?: never;
+        /**
+         * Create Goal
+         * @description Create a new financial goal.
+         *
+         *     Args:
+         *         household_id: Household identifier
+         *         goal_type: Type of goal
+         *         name: Goal name
+         *         target_amount_paise: Target amount in paise
+         *         current_amount_paise: Current saved amount (default: 0)
+         *         target_date: Target completion date (optional)
+         *         priority: Goal priority (default: medium)
+         *         status: Goal status (default: active)
+         *
+         *     Returns:
+         *         Created goal with ID
+         */
+        post: operations["create_goal_api_v1_goals__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/goals/{goal_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Goal
+         * @description Get a single goal by ID.
+         *
+         *     Args:
+         *         goal_id: Goal identifier
+         *
+         *     Returns:
+         *         Goal details
+         */
+        get: operations["get_goal_api_v1_goals__goal_id__get"];
+        put?: never;
+        post?: never;
+        /**
+         * Delete Goal
+         * @description Delete a financial goal.
+         *
+         *     Args:
+         *         goal_id: Goal identifier
+         *
+         *     Returns:
+         *         Deletion confirmation
+         */
+        delete: operations["delete_goal_api_v1_goals__goal_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/goals/{goal_id}/projection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Goal Projection
+         * @description Get goal achievement projection.
+         *
+         *     Calculates projected completion timeline based on available monthly surplus.
+         *
+         *     Args:
+         *         goal_id: Goal identifier
+         *
+         *     Returns:
+         *         Projection with achieved, months_required, confidence
+         */
+        get: operations["get_goal_projection_api_v1_goals__goal_id__projection_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/goals/{goal_id}/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Goal Health
+         * @description Get goal health score.
+         *
+         *     Returns health score, status, and explanation.
+         *
+         *     Args:
+         *         goal_id: Goal identifier
+         *
+         *     Returns:
+         *         Health score with status and explanation
+         */
+        get: operations["get_goal_health_api_v1_goals__goal_id__health_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -503,13 +1600,17 @@ export interface paths {
         };
         /**
          * Get Loans
-         * @description Get all active loans with computed summary.
+         * @description Get all active loans via LoanService.
+         *
+         *     Returns array of loan objects directly (not wrapped in object).
          */
         get: operations["get_loans_api_loans_get"];
         put?: never;
         /**
          * Create Loan
-         * @description Create a new loan record.
+         * @description Create a new loan via LoanService.
+         *
+         *     Uses rate_bps as canonical field; converts to interest_rate for repository.
          */
         post: operations["create_loan_api_loans_post"];
         delete?: never;
@@ -525,16 +1626,20 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Get Loan
+         * @description Get loan details via LoanService.
+         */
+        get: operations["get_loan_api_loans__loan_id__get"];
         /**
          * Update Loan
-         * @description Update loan outstanding or other fields.
+         * @description Update loan via LoanService.
          */
         put: operations["update_loan_api_loans__loan_id__put"];
         post?: never;
         /**
          * Delete Loan
-         * @description Soft delete a loan.
+         * @description Soft delete loan via LoanService.
          */
         delete: operations["delete_loan_api_loans__loan_id__delete"];
         options?: never;
@@ -551,7 +1656,9 @@ export interface paths {
         };
         /**
          * Get Loan Schedule
-         * @description Get amortization schedule for a loan.
+         * @description Get amortization schedule via LoanService.
+         *
+         *     Returns schedule with loan_id, emi_paise, total_interest_paise, and schedule rows.
          */
         get: operations["get_loan_schedule_api_loans__loan_id__schedule_get"];
         put?: never;
@@ -573,9 +1680,137 @@ export interface paths {
         put?: never;
         /**
          * Simulate Prepayment
-         * @description Simulate impact of a prepayment.
+         * @description Simulate prepayment via LoanSimulationService.
+         *
+         *     Returns spec-compliant response with original_interest_paise, new_interest_paise, etc.
          */
         post: operations["simulate_prepayment_api_loans__loan_id__prepayment_simulation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/{loan_id}/foreclosure-simulation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Foreclosure
+         * @description Simulate foreclosure via LoanSimulationService.
+         *
+         *     Returns spec-compliant response with outstanding_paise, penalty_paise, foreclosure_amount_paise.
+         */
+        post: operations["simulate_foreclosure_api_loans__loan_id__foreclosure_simulation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/{loan_id}/rate-change-simulation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Rate Change
+         * @description Simulate rate change via LoanSimulationService.
+         *
+         *     Uses request body instead of query params.
+         */
+        post: operations["simulate_rate_change_api_loans__loan_id__rate_change_simulation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/{loan_id}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Loan Payment
+         * @description Record a loan payment via LoanService.
+         */
+        post: operations["record_loan_payment_api_loans__loan_id__payments_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/analysis/priority": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Loan Priority
+         * @description Get prepayment priority ranking via LoanAnalysisService.
+         *
+         *     Returns array of recommendations matching spec format.
+         */
+        get: operations["get_loan_priority_api_loans_analysis_priority_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/{loan_id}/analysis/prepayment-vs-foreclosure": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze Prepayment Vs Foreclosure
+         * @description Compare prepayment vs foreclosure via LoanAnalysisService.
+         */
+        post: operations["analyze_prepayment_vs_foreclosure_api_loans__loan_id__analysis_prepayment_vs_foreclosure_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/loans/analysis/surplus-allocation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Analyze Surplus Allocation
+         * @description Analyze surplus allocation via LoanAnalysisService.
+         */
+        post: operations["analyze_surplus_allocation_api_loans_analysis_surplus_allocation_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -630,6 +1865,153 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/accounts/{account_id}/balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Api Get Account Balance
+         * @description Get computed balance for an account.
+         */
+        get: operations["api_get_account_balance_api_accounts__account_id__balance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/accounts/{account_id}/running-balance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Api Get Account Running Balance
+         * @description Get running balance for an account.
+         */
+        get: operations["api_get_account_running_balance_api_accounts__account_id__running_balance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/optimization/plan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Optimization Plan
+         * @description Get comprehensive optimization plan.
+         *
+         *     Combines surplus allocation, debt strategy, and goal prioritization.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Dict with recommended_actions, allocation_plan, warnings, confidence
+         */
+        get: operations["get_optimization_plan_api_v1_optimization_plan_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/optimization/debt-strategy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Debt Strategy
+         * @description Get recommended debt payoff strategy ranking.
+         *
+         *     Args:
+         *         strategy: Strategy type (avalanche, snowball, balanced)
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Dict with priority_order and strategy
+         */
+        get: operations["get_debt_strategy_api_v1_optimization_debt_strategy_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/optimization/goal-priority": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Goal Priority
+         * @description Get goal prioritization recommendations.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Dict with priority_order and recommendations
+         */
+        get: operations["get_goal_priority_api_v1_optimization_goal_priority_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/optimization/surplus-allocation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Surplus Allocation
+         * @description Get surplus allocation recommendations.
+         *
+         *     Args:
+         *         household_id: Household identifier (default: "primary")
+         *
+         *     Returns:
+         *         Dict with allocation breakdown
+         */
+        get: operations["get_surplus_allocation_api_v1_optimization_surplus_allocation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/networth": {
         parameters: {
             query?: never;
@@ -644,8 +2026,116 @@ export interface paths {
          *     Net Worth = Assets - Liabilities
          *     Assets = account balances + investment current values
          *     Liabilities = loan outstanding + card outstanding
+         *
+         *     Returns:
+         *         {
+         *             net_worth_paise: int,
+         *             assets: {...},
+         *             liabilities: {...},
+         *             is_partial: bool,
+         *             partial_reason: str | None,
+         *             explanation: NetWorthExplanation
+         *         }
          */
         get: operations["get_networth_api_networth_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patterns/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm Pattern
+         * @description Confirm a liquidity pattern as user-verified.
+         *
+         *     Args:
+         *         pattern_id: ID of the provider pattern to confirm.
+         *
+         *     Returns:
+         *         Success status.
+         */
+        post: operations["confirm_pattern_api_v1_patterns_confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patterns/new": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Pattern
+         * @description Create a new liquidity provider pattern.
+         *
+         *     Args:
+         *         provider_name: Name of the provider (e.g., 'NewProvider').
+         *         description_pattern: Regex pattern to match descriptions.
+         *         fee_min_bps: Minimum fee in basis points for auto zone.
+         *         fee_max_bps: Maximum fee in basis points for auto zone.
+         *         review_fee_min_bps: Minimum fee for review zone.
+         *         review_fee_max_bps: Maximum fee for review zone.
+         *         typical_settlement_days: Expected settlement window in days.
+         *
+         *     Returns:
+         *         Created pattern ID.
+         */
+        post: operations["create_pattern_api_v1_patterns_new_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patterns/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Providers
+         * @description Get all active liquidity provider patterns.
+         */
+        get: operations["list_providers_api_v1_patterns_providers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/patterns/purposes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Purposes
+         * @description Get all active liquidity purpose patterns.
+         */
+        get: operations["list_purposes_api_v1_patterns_purposes_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -711,8 +2201,12 @@ export interface paths {
          * @description Scan for potential transfer matches across accounts.
          *
          *     Phase 2B.1: Deterministic matching with confidence scoring.
+         *     Phase 3: Uses repository for data fetching, pure engine.
          *
-         *     Returns potential matches that can be saved as reconciliations.
+         *     Args:
+         *         household_id: Optional household filter. If None, scans all households.
+         *
+         *     Returns ReconciliationResponse with matches and explanation.
          */
         get: operations["api_scan_reconciliations_api_reconciliations_scan_get"];
         put?: never;
@@ -737,7 +2231,10 @@ export interface paths {
          * @description Create a reconciliation record between two transactions.
          *
          *     Phase 2B: Metadata-only, no ledger mutation.
-         *     Uses INSERT OR IGNORE for idempotency.
+         *     Phase 3: Uses amount_paise and confidence_bps for precision.
+         *
+         *     Breaking change: amount_paise (int) replaces amount (float).
+         *     confidence_bps (int) replaces match_confidence (float).
          */
         post: operations["api_create_reconciliation_api_reconciliations_create_post"];
         delete?: never;
@@ -782,6 +2279,7 @@ export interface paths {
          * @description Confirm a pending reconciliation.
          *
          *     Phase 2B: Updates reconciliation.status only. No ledger mutation.
+         *     Phase 3: Logs audit action.
          */
         post: operations["api_confirm_reconciliation_api_reconciliations__reconciliation_id__confirm_post"];
         delete?: never;
@@ -804,8 +2302,193 @@ export interface paths {
          * @description Reject a pending reconciliation.
          *
          *     Phase 2B: Updates reconciliation.status only. No ledger mutation.
+         *     Phase 3: Logs audit action.
          */
         post: operations["api_reject_reconciliation_api_reconciliations__reconciliation_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/reconciliations/{reconciliation_id}/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Api Undo Reconciliation
+         * @description Revert a confirmed reconciliation back to pending status.
+         *
+         *     Phase 3: Only allowed if confirmed in the current month.
+         *     Logs an 'undo' audit action on success.
+         */
+        post: operations["api_undo_reconciliation_api_reconciliations__reconciliation_id__undo_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/reconciliations/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Api Get Reconciliation Stats
+         * @description Get reconciliation statistics for health score calculation.
+         *
+         *     Computes coverage ratio, accuracy score, and health score.
+         *
+         *     Args:
+         *         household_id: Optional household filter. If None, computes stats for all transactions.
+         *
+         *     Returns:
+         *         Dict with coverage_ratio, accuracy_score, health_score, total_transactions,
+         *         matched_transactions, confirmed_count, rejected_count
+         */
+        get: operations["api_get_reconciliation_stats_api_reconciliations_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/scenarios/expense-reduction": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Expense Reduction
+         * @description Simulate expense reduction scenario.
+         *
+         *     What happens if monthly expenses reduce?
+         */
+        post: operations["simulate_expense_reduction_api_v1_scenarios_expense_reduction_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/scenarios/income-change": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Income Change
+         * @description Simulate income change scenario.
+         *
+         *     What happens if salary/income changes?
+         */
+        post: operations["simulate_income_change_api_v1_scenarios_income_change_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/scenarios/debt-prepayment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Debt Prepayment
+         * @description Simulate debt prepayment scenario.
+         *
+         *     What happens if I pay extra toward debt?
+         */
+        post: operations["simulate_debt_prepayment_api_v1_scenarios_debt_prepayment_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/scenarios/new-loan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate New Loan
+         * @description Simulate new loan impact scenario.
+         *
+         *     What happens if I take a new loan?
+         */
+        post: operations["simulate_new_loan_api_v1_scenarios_new_loan_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/scenarios/credit-behaviour": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Simulate Credit Behaviour
+         * @description Simulate credit behavior change scenario.
+         *
+         *     What happens if revolving behaviour stops?
+         */
+        post: operations["simulate_credit_behaviour_api_v1_scenarios_credit_behaviour_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/scenarios/compare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Compare Scenarios
+         * @description Compare baseline vs scenario results.
+         *
+         *     Generic comparison between two financial states.
+         */
+        post: operations["compare_scenarios_api_v1_scenarios_compare_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -952,6 +2635,51 @@ export interface components {
             notes?: string | null;
         };
         /**
+         * AccountCreateRequest
+         * @description Account creation request.
+         */
+        AccountCreateRequest: {
+            /** Name */
+            name: string;
+            /** Bank */
+            bank: string;
+            /**
+             * Account Type
+             * @default savings
+             */
+            account_type: string;
+            /**
+             * Balance Paise
+             * @description Initial balance in paise
+             * @default 0
+             */
+            balance_paise: number;
+            /**
+             * Account Number Last4
+             * @description Last 4 digits of account number
+             */
+            account_number_last4?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * AccountLinkRequest
+         * @description Account link creation request.
+         */
+        AccountLinkRequest: {
+            /**
+             * Linked Account Id
+             * @description ID of the account to link
+             */
+            linked_account_id: string;
+            /**
+             * Relationship Type
+             * @description Type of relationship
+             * @enum {string}
+             */
+            relationship_type: "TRANSFER" | "JOINT" | "GUARANTOR";
+        };
+        /**
          * AccountUpdate
          * @description Account update request.
          */
@@ -969,20 +2697,292 @@ export interface components {
             /** Notes */
             notes?: string | null;
         };
+        /**
+         * AccountUpdateRequest
+         * @description Account update request.
+         */
+        AccountUpdateRequest: {
+            /** Name */
+            name?: string | null;
+            /** Bank */
+            bank?: string | null;
+            /** Account Type */
+            account_type?: string | null;
+            /** Balance Paise */
+            balance_paise?: number | null;
+            /** Account Number Last4 */
+            account_number_last4?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * BalanceSnapshotRequest
+         * @description Balance snapshot creation request.
+         */
+        BalanceSnapshotRequest: {
+            /**
+             * Balance Paise
+             * @description Balance in paise
+             */
+            balance_paise: number;
+            /**
+             * Date Iso
+             * @description ISO-8601 date of the snapshot
+             */
+            date_iso: string;
+            /**
+             * Source
+             * @description Source of the balance
+             * @default actual
+             * @enum {string}
+             */
+            source: "actual" | "projected" | "adjusted";
+        };
         /** Body_import_detect_api_import_detect_post */
         Body_import_detect_api_import_detect_post: {
-            /** File */
+            /**
+             * File
+             * Format: binary
+             */
             file: string;
         };
         /** Body_upload_statement_api_upload_post */
         Body_upload_statement_api_upload_post: {
-            /** File */
+            /**
+             * File
+             * Format: binary
+             */
             file: string;
             /**
              * Member
              * @default Self
              */
             member: string;
+        };
+        /**
+         * CalculationStep
+         * @description Single step in a calculation chain.
+         */
+        CalculationStep: {
+            /** Stepid */
+            stepId: string;
+            /** Description */
+            description: string;
+            /**
+             * Operation
+             * @enum {string}
+             */
+            operation: "ADD" | "SUBTRACT" | "MULTIPLY" | "DIVIDE" | "AVERAGE" | "LOOKUP" | "FILTER" | "GROUP" | "MATCH";
+            /** Inputids */
+            inputIds: string[];
+            /** Outputid */
+            outputId: string;
+            /** Order */
+            order: number;
+        };
+        /**
+         * CashflowMonth
+         * @description Single month cashflow data.
+         */
+        CashflowMonth: {
+            /** Month Key */
+            month_key: string;
+            /** Month Label */
+            month_label: string;
+            /** Income Paise */
+            income_paise: number;
+            /** Expense Paise */
+            expense_paise: number;
+            /** Net Paise */
+            net_paise: number;
+            /** Transaction Count */
+            transaction_count: number;
+        };
+        /**
+         * CashflowResponse
+         * @description Canonical API response for /api/cashflow/monthly endpoint.
+         */
+        CashflowResponse: {
+            /** Months */
+            months: components["schemas"]["CashflowMonth"][];
+            /** Period Months */
+            period_months: number;
+            /** Total Income Paise */
+            total_income_paise: number;
+            /** Total Expense Paise */
+            total_expense_paise: number;
+            /** Total Net Paise */
+            total_net_paise: number;
+            /** Is Partial */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
+        };
+        /**
+         * Confidence
+         * @description Confidence in basis points (0-10000).
+         */
+        Confidence: {
+            /** Value */
+            value: number;
+            /** Reason */
+            reason?: string | null;
+        };
+        /**
+         * CreditCardCreateRequest
+         * @description Credit card creation request.
+         */
+        CreditCardCreateRequest: {
+            /** Name */
+            name: string;
+            /** Account Id */
+            account_id: string;
+            /** Bank */
+            bank: string;
+            /** Card Last4 */
+            card_last4?: string | null;
+            /**
+             * Credit Limit Paise
+             * @description Credit limit in paise
+             */
+            credit_limit_paise: number;
+            /**
+             * Annual Fee Paise
+             * @default 0
+             */
+            annual_fee_paise: number;
+            /**
+             * Interest Rate Bps
+             * @description Annual rate in basis points
+             */
+            interest_rate_bps: number;
+            /** Billing Day */
+            billing_day?: number | null;
+            /**
+             * Due Day Offset
+             * @default 21
+             */
+            due_day_offset: number;
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * CreditCardUpdateRequest
+         * @description Credit card update request.
+         */
+        CreditCardUpdateRequest: {
+            /** Name */
+            name?: string | null;
+            /** Credit Limit Paise */
+            credit_limit_paise?: number | null;
+            /** Annual Fee Paise */
+            annual_fee_paise?: number | null;
+            /** Interest Rate Bps */
+            interest_rate_bps?: number | null;
+            /** Billing Day */
+            billing_day?: number | null;
+            /** Due Day Offset */
+            due_day_offset?: number | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /**
+         * DashboardSummary
+         * @description Dashboard summary response.
+         */
+        DashboardSummary: {
+            /** Behavior Score */
+            behavior_score: number;
+            spending_this_month: components["schemas"]["Money"];
+            /** Top Category */
+            top_category: string;
+            /** Insights */
+            insights: string[];
+            /** Nudges */
+            nudges: string[];
+            /** Reconciliation Pending */
+            reconciliation_pending: number;
+            /** Large Transactions */
+            large_transactions: {
+                [key: string]: unknown;
+            }[];
+        };
+        /**
+         * EmiConversionRequest
+         * @description Request to convert a purchase to EMI.
+         */
+        EmiConversionRequest: {
+            /**
+             * Amount Paise
+             * @description Amount to convert in paise
+             */
+            amount_paise: number;
+            /**
+             * Tenure Months
+             * @description EMI tenure in months (3-24)
+             */
+            tenure_months: number;
+            /**
+             * Annual Rate Bps
+             * @description Override annual rate in basis points. Uses card rate if not provided.
+             */
+            annual_rate_bps?: number | null;
+        };
+        /**
+         * Evidence
+         * @description Evidence for a calculation.
+         */
+        Evidence: {
+            /** Id */
+            id: string;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "data" | "calculation" | "source";
+            /** Description */
+            description: string;
+            /** Value */
+            value: number | string | boolean | null;
+            /** Sourceid */
+            sourceId?: string | number | null;
+        };
+        /**
+         * Explanation
+         * @description Complete explanation for a financial metric.
+         */
+        Explanation: {
+            /** Metric */
+            metric: string;
+            /** Value */
+            value: number;
+            confidence: components["schemas"]["Confidence"];
+            /** Evidence */
+            evidence: components["schemas"]["Evidence"][];
+            /** Sources */
+            sources: components["schemas"]["SourceReference"][];
+            /** Calculationsteps */
+            calculationSteps: components["schemas"]["CalculationStep"][];
+        };
+        /**
+         * ForeclosureRequest
+         * @description Request to compute foreclosure payoff.
+         */
+        ForeclosureRequest: {
+            /**
+             * Remaining Months
+             * @description Remaining EMI months
+             */
+            remaining_months: number;
+            /**
+             * Penalty Bps
+             * @description Prepayment penalty in basis points
+             * @default 0
+             */
+            penalty_bps: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1005,6 +3005,40 @@ export interface components {
              * @default Self
              */
             member: string;
+        };
+        /**
+         * InstitutionCreateRequest
+         * @description Institution creation request.
+         */
+        InstitutionCreateRequest: {
+            /** Institution Id */
+            institution_id: string;
+            /** Name */
+            name: string;
+            /**
+             * Institution Type
+             * @description Type of institution
+             * @enum {string}
+             */
+            institution_type: "BANK" | "WALLET" | "BROKER" | "OTHER";
+            /** Interest Rate Bps */
+            interest_rate_bps?: number | null;
+            /** Supported Features Json */
+            supported_features_json?: string | null;
+        };
+        /**
+         * InstitutionUpdateRequest
+         * @description Institution update request - all fields optional.
+         */
+        InstitutionUpdateRequest: {
+            /** Name */
+            name?: string | null;
+            /** Institution Type */
+            institution_type?: ("BANK" | "WALLET" | "BROKER" | "OTHER") | null;
+            /** Interest Rate Bps */
+            interest_rate_bps?: number | null;
+            /** Supported Features Json */
+            supported_features_json?: string | null;
         };
         /**
          * InvestmentCreate
@@ -1047,57 +3081,58 @@ export interface components {
             notes?: string | null;
         };
         /**
-         * LoanCreate
-         * @description Loan creation request.
+         * LoanCreateRequest
+         * @description Loan creation request matching Phase 5 API spec.
          */
-        LoanCreate: {
+        LoanCreateRequest: {
             /** Name */
             name: string;
             /** Lender */
             lender: string;
-            /** Loan Type */
+            /**
+             * Loan Type
+             * @description Loan type: personal | home | vehicle | education | gold | other
+             * @default personal
+             */
             loan_type: string;
-            /** Principal Paise */
+            /**
+             * Principal Paise
+             * @description Principal amount in paise (must be > 0)
+             */
             principal_paise: number;
-            /** Outstanding Paise */
-            outstanding_paise: number;
-            /** Interest Rate */
-            interest_rate: number;
-            /** Disbursed Date */
+            /**
+             * Rate Bps
+             * @description Annual interest rate in basis points (0-5000)
+             */
+            rate_bps: number;
+            /**
+             * Tenure Months
+             * @description Tenure in months (1-360)
+             */
+            tenure_months: number;
+            /**
+             * Disbursed Date
+             * @description ISO 8601 date string
+             */
             disbursed_date: string;
-            /** Tenure Months */
-            tenure_months?: number | null;
             /** Emi Paise */
             emi_paise?: number | null;
-            /** Next Emi Date */
-            next_emi_date?: string | null;
-            /** Gold Weight Grams */
-            gold_weight_grams?: number | null;
-            /** Gold Purity */
-            gold_purity?: string | null;
-            /**
-             * Interest Type
-             * @default reducing
-             */
-            interest_type: string;
-            /** Notes */
-            notes?: string | null;
-        };
-        /**
-         * LoanUpdate
-         * @description Loan update request.
-         */
-        LoanUpdate: {
             /** Outstanding Paise */
             outstanding_paise?: number | null;
-            /** Interest Rate */
-            interest_rate?: number | null;
+        };
+        /**
+         * LoanUpdateRequest
+         * @description Loan update request matching Phase 5 API spec.
+         */
+        LoanUpdateRequest: {
+            /** Outstanding Paise */
+            outstanding_paise?: number | null;
+            /** Rate Bps */
+            rate_bps?: number | null;
             /** Tenure Months */
             tenure_months?: number | null;
             /** Emi Paise */
             emi_paise?: number | null;
-            /** Next Emi Date */
-            next_emi_date?: string | null;
             /** Notes */
             notes?: string | null;
         };
@@ -1123,17 +3158,220 @@ export interface components {
             paise: number;
         };
         /**
-         * PrepaymentRequest
+         * NetWorthExplanation
+         * @description Explanation for net worth calculation.
+         */
+        NetWorthExplanation: {
+            netWorth: components["schemas"]["Explanation"];
+            assets: components["schemas"]["Explanation"];
+            liabilities: components["schemas"]["Explanation"];
+            /** Confidencereason */
+            confidenceReason?: string | null;
+        };
+        /**
+         * NetWorthResponse
+         * @description Canonical API response for /api/networth endpoint.
+         */
+        NetWorthResponse: {
+            /** Net Worth Paise */
+            net_worth_paise: number;
+            /** Assets */
+            assets: {
+                [key: string]: number;
+            };
+            /** Liabilities */
+            liabilities: {
+                [key: string]: number;
+            };
+            /** Is Partial */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["NetWorthExplanation"] | null;
+        };
+        /**
+         * PaymentRecordRequest
+         * @description Request to record a payment on a statement.
+         */
+        PaymentRecordRequest: {
+            /**
+             * Payment Date
+             * @description ISO 8601 date string
+             */
+            payment_date: string;
+            /**
+             * Amount Paise
+             * @description Payment amount in paise
+             */
+            amount_paise: number;
+        };
+        /**
+         * PaymentRequest
+         * @description Record payment request model.
+         */
+        PaymentRequest: {
+            /**
+             * Amount Paise
+             * @description Payment amount in paise
+             */
+            amount_paise: number;
+            /**
+             * Payment Date
+             * @description ISO 8601 date
+             */
+            payment_date: string;
+            /** Principal Paise */
+            principal_paise?: number | null;
+            /** Interest Paise */
+            interest_paise?: number | null;
+            /** Late Fee Paise */
+            late_fee_paise?: number | null;
+            /** Source Account Id */
+            source_account_id?: number | null;
+        };
+        /**
+         * PrepaymentMode
+         * @description Prepayment behavior modes.
+         * @enum {string}
+         */
+        PrepaymentMode: "reduce_tenure" | "reduce_emi";
+        /**
+         * PrepaymentSimulationRequest
          * @description Prepayment simulation request.
          */
-        PrepaymentRequest: {
-            /** Prepayment Paise */
-            prepayment_paise: number;
+        PrepaymentSimulationRequest: {
+            /**
+             * Amount Paise
+             * @description Prepayment amount in paise
+             */
+            amount_paise: number;
+            /**
+             * Month
+             * @description Month number for prepayment
+             * @default 1
+             */
+            month: number | null;
             /**
              * Mode
              * @default reduce_tenure
              */
-            mode: string;
+            mode: components["schemas"]["PrepaymentMode"] | string;
+        };
+        /**
+         * RateChangeSimulationRequest
+         * @description Rate change simulation request.
+         */
+        RateChangeSimulationRequest: {
+            /**
+             * Month
+             * @description Month number when rate changes
+             */
+            month: number;
+            /**
+             * New Rate Bps
+             * @description New annual rate in basis points (0-5000)
+             */
+            new_rate_bps: number;
+        };
+        /**
+         * ReconciliationMatch
+         * @description Single reconciliation match with transaction details.
+         */
+        ReconciliationMatch: {
+            /** Id */
+            id?: number | null;
+            /** Debit Txn Id */
+            debit_txn_id: number;
+            /** Credit Txn Id */
+            credit_txn_id: number;
+            /** Debit Account Id */
+            debit_account_id: string;
+            /** Credit Account Id */
+            credit_account_id: string;
+            /** Amount Paise */
+            amount_paise: number;
+            /** Date Diff Days */
+            date_diff_days: number;
+            /** Match Confidence */
+            match_confidence: number;
+            /** Match Type */
+            match_type: string;
+            /** Status */
+            status?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Confirmed At */
+            confirmed_at?: string | null;
+            /** Debit Date */
+            debit_date?: string | null;
+            /** Debit Date Iso */
+            debit_date_iso?: string | null;
+            /** Debit Description */
+            debit_description?: string | null;
+            /** Debit Amount Paise */
+            debit_amount_paise?: number | null;
+            /** Debit Bank */
+            debit_bank?: string | null;
+            /** Credit Date */
+            credit_date?: string | null;
+            /** Credit Date Iso */
+            credit_date_iso?: string | null;
+            /** Credit Description */
+            credit_description?: string | null;
+            /** Credit Amount Paise */
+            credit_amount_paise?: number | null;
+            /** Credit Bank */
+            credit_bank?: string | null;
+        };
+        /**
+         * ReconciliationResponse
+         * @description Canonical API response for /api/reconciliations/scan endpoint.
+         */
+        ReconciliationResponse: {
+            /** Matches */
+            matches: components["schemas"]["ReconciliationMatch"][];
+            /** Count */
+            count: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
+        };
+        /**
+         * SourceReference
+         * @description Business source reference for evidence provenance.
+         */
+        SourceReference: {
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "statement" | "account" | "loan" | "investment" | "transaction" | "recommendation_engine" | "cashflow_engine" | "behaviour_engine" | "user_input";
+            /** Id */
+            id: string | number;
+            /** Name */
+            name?: string | null;
+            /** Date */
+            date?: string | null;
+        };
+        /**
+         * StatementGenerateRequest
+         * @description Request to generate a new statement.
+         */
+        StatementGenerateRequest: {
+            /**
+             * Statement Date
+             * @description ISO 8601 date string for the statement
+             */
+            statement_date: string;
         };
         /**
          * Transaction
@@ -1167,10 +3405,6 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
         };
     };
     responses: never;
@@ -1196,7 +3430,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -1216,12 +3452,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
     };
-    api_get_accounts_api_accounts_get: {
+    list_accounts_api_v1_accounts_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -1236,21 +3474,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
                 };
             };
         };
     };
-    api_get_account_balance_api_accounts__account_id__balance_get: {
+    create_account_api_v1_accounts_post: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                account_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountCreateRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -1258,7 +3500,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1272,14 +3516,12 @@ export interface operations {
             };
         };
     };
-    api_get_running_balance_api_accounts__account_id__running_balance_get: {
+    get_account_api_v1_accounts__account_id__get: {
         parameters: {
-            query?: {
-                limit?: number;
-            };
+            query?: never;
             header?: never;
             path: {
-                account_id: string;
+                account_id: number | string;
             };
             cookie?: never;
         };
@@ -1291,7 +3533,547 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_account_api_v1_accounts__account_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_account_api_v1_accounts__account_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_balance_history_api_v1_accounts__account_id__balance_history_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    insert_balance_snapshot_api_v1_accounts__account_id__balance_history_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BalanceSnapshotRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_latest_balance_api_v1_accounts__account_id__balance_history_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_account_analytics_api_v1_accounts__account_id__analytics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_account_metrics_api_v1_accounts__account_id__metrics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_account_status_api_v1_accounts__account_id__status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_account_dormancy_api_v1_accounts__account_id__dormancy_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_institutions_api_v1_institutions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+        };
+    };
+    create_institution_api_v1_institutions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InstitutionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_institution_api_v1_institutions__institution_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                institution_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_institution_api_v1_institutions__institution_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                institution_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InstitutionUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_linked_accounts_api_v1_accounts__account_id__links_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    link_accounts_api_v1_accounts__account_id__links_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AccountLinkRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    unlink_accounts_api_v1_accounts__account_id__links__linked_account_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number | string;
+                linked_account_id: number | string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1320,7 +4102,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -1340,7 +4124,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": string[];
                 };
             };
         };
@@ -1360,7 +4144,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -1380,7 +4166,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -1400,7 +4188,367 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    get_financial_profile_api_v1_behaviour_profile_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_wellness_score_api_v1_behaviour_wellness_score_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_debt_health_api_v1_behaviour_debt_health_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_cashflow_health_api_v1_behaviour_cashflow_health_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_patterns_api_v1_behaviour_patterns_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION) */
+                pattern_type?: string | null;
+                /** @description Number of days to look back for patterns */
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_recommendations_api_v1_behaviour_recommendations_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Maximum number of recommendations to return */
+                limit?: number;
+                /** @description Filter by severity (LOW, MEDIUM, HIGH, CRITICAL) */
+                severity?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_monthly_report_api_v1_behaviour_monthly_report_get: {
+        parameters: {
+            query?: {
+                /** @description Period in YYYY-MM format (default: current month) */
+                period?: string | null;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_stress_index_api_v1_behaviour_stress_index_get: {
+        parameters: {
+            query: {
+                /** @description Month in YYYY-MM format */
+                month: string;
+                /** @description Scope: household or individual */
+                scope?: string;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_revolver_status_api_v1_behaviour_revolver_status_get: {
+        parameters: {
+            query: {
+                /** @description Credit card account ID */
+                card_account_id: string;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_household_divergence_api_v1_behaviour_household_divergence_get: {
+        parameters: {
+            query: {
+                /** @description Month in YYYY-MM format */
+                month: string;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1420,7 +4568,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
                 };
             };
         };
@@ -1440,7 +4590,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -1465,7 +4617,484 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_cards_api_v1_credit_cards_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+        };
+    };
+    create_card_api_v1_credit_cards_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreditCardCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_card_api_v1_credit_cards__card_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_card_api_v1_credit_cards__card_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreditCardUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_card_api_v1_credit_cards__card_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_statements_api_v1_credit_cards__card_id__statements_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    generate_statement_api_v1_credit_cards__card_id__statements_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatementGenerateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_outstanding_api_v1_credit_cards__card_id__outstanding_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_utilization_api_v1_credit_cards__card_id__utilization_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_metrics_api_v1_credit_cards__card_id__metrics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_next_statement_date_api_v1_credit_cards__card_id__next_statement_date_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_payment_api_v1_credit_cards__card_id__payments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentRecordRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    convert_to_emi_api_v1_credit_cards__card_id__emi_conversion_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EmiConversionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    quote_foreclosure_api_v1_credit_cards__card_id__foreclosure_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                card_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ForeclosureRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1497,7 +5126,47 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["CashflowResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_cashflow_monthly_analysis_api_v1_cashflow_monthly_get: {
+        parameters: {
+            query: {
+                /** @description Month in YYYY-MM format */
+                month: string;
+                /** @description household or individual */
+                scope?: string;
+                /** @description Owner ID for individual scope */
+                owner_id?: string;
+                /** @description cash or accrual */
+                basis?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1526,7 +5195,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["DashboardSummary"];
                 };
             };
         };
@@ -1566,6 +5235,476 @@ export interface operations {
             };
         };
     };
+    get_cashflow_forecast_api_v1_financial_intelligence_cashflow_forecast_get: {
+        parameters: {
+            query?: {
+                /** @description Number of months to forecast */
+                forecast_months?: number;
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Owner filter (self for individual, or different owner) */
+                owner_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_liquidity_forecast_api_v1_financial_intelligence_liquidity_forecast_get: {
+        parameters: {
+            query?: {
+                /** @description Number of months to forecast */
+                forecast_months?: number;
+                /** @description Emergency threshold in paise (default: 3,000,000 = ₹30,000) */
+                emergency_threshold_paise?: number;
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Owner filter (self for individual) */
+                owner_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_credit_forecast_api_v1_financial_intelligence_credit_forecast_get: {
+        parameters: {
+            query?: {
+                /** @description Month in YYYY-MM format (default: current month) */
+                month?: string | null;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_financial_outlook_api_v1_financial_intelligence_outlook_get: {
+        parameters: {
+            query?: {
+                /** @description Number of months to forecast */
+                forecast_months?: number;
+                /** @description Emergency threshold in paise (default: 3,000,000 = ₹30,000) */
+                emergency_threshold_paise?: number;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_financial_intelligence_report_api_v1_financial_intelligence_report_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_financial_intelligence_priorities_api_v1_financial_intelligence_priorities_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_financial_intelligence_confidence_api_v1_financial_intelligence_confidence_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_goals_api_v1_goals__get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Filter by status: active, completed, paused */
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_goal_api_v1_goals__post: {
+        parameters: {
+            query: {
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Goal type (emergency_fund, debt_payoff, purchase, investment, education, retirement) */
+                goal_type: string;
+                /** @description Goal name */
+                name: string;
+                /** @description Target amount in paise */
+                target_amount_paise: number;
+                /** @description Current saved amount in paise */
+                current_amount_paise?: number;
+                /** @description Target date (YYYY-MM-DD) */
+                target_date?: string | null;
+                /** @description Priority: critical, high, medium, low */
+                priority?: string;
+                /** @description Status: active, completed, paused */
+                status?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_goal_api_v1_goals__goal_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_goal_api_v1_goals__goal_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_goal_projection_api_v1_goals__goal_id__projection_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_goal_health_api_v1_goals__goal_id__health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                goal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     upload_statement_api_upload_post: {
         parameters: {
             query?: never;
@@ -1585,7 +5724,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1618,7 +5759,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1651,7 +5794,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1680,7 +5825,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -1704,7 +5851,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1739,7 +5888,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1770,7 +5921,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1799,7 +5952,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
                 };
             };
         };
@@ -1813,7 +5968,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoanCreate"];
+                "application/json": components["schemas"]["LoanCreateRequest"];
             };
         };
         responses: {
@@ -1823,7 +5978,42 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_loan_api_loans__loan_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1842,13 +6032,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                loan_id: string;
+                loan_id: number;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LoanUpdate"];
+                "application/json": components["schemas"]["LoanUpdateRequest"];
             };
         };
         responses: {
@@ -1858,7 +6048,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1877,7 +6069,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                loan_id: string;
+                loan_id: number;
             };
             cookie?: never;
         };
@@ -1889,7 +6081,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1908,7 +6102,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                loan_id: string;
+                loan_id: number;
             };
             cookie?: never;
         };
@@ -1920,7 +6114,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1939,13 +6135,13 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                loan_id: string;
+                loan_id: number;
             };
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PrepaymentRequest"];
+                "application/json": components["schemas"]["PrepaymentSimulationRequest"];
             };
         };
         responses: {
@@ -1955,7 +6151,210 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_foreclosure_api_loans__loan_id__foreclosure_simulation_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_rate_change_api_loans__loan_id__rate_change_simulation_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RateChangeSimulationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_loan_payment_api_loans__loan_id__payments_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_loan_priority_api_loans_analysis_priority_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+        };
+    };
+    analyze_prepayment_vs_foreclosure_api_loans__loan_id__analysis_prepayment_vs_foreclosure_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                loan_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    analyze_surplus_allocation_api_loans_analysis_surplus_allocation_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -1984,7 +6383,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -2008,7 +6409,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2043,7 +6446,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2074,7 +6479,213 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    api_get_account_balance_api_accounts__account_id__balance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    api_get_account_running_balance_api_accounts__account_id__running_balance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    }[];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_optimization_plan_api_v1_optimization_plan_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_debt_strategy_api_v1_optimization_debt_strategy_get: {
+        parameters: {
+            query?: {
+                /** @description Strategy: avalanche, snowball, or balanced */
+                strategy?: string;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_goal_priority_api_v1_optimization_goal_priority_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_surplus_allocation_api_v1_optimization_surplus_allocation_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2103,7 +6714,123 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["NetWorthResponse"];
+                };
+            };
+        };
+    };
+    confirm_pattern_api_v1_patterns_confirm_post: {
+        parameters: {
+            query: {
+                pattern_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_pattern_api_v1_patterns_new_post: {
+        parameters: {
+            query: {
+                provider_name: string;
+                description_pattern: string;
+                fee_min_bps?: number;
+                fee_max_bps?: number;
+                review_fee_min_bps?: number;
+                review_fee_max_bps?: number;
+                typical_settlement_days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_providers_api_v1_patterns_providers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    list_purposes_api_v1_patterns_purposes_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -2125,7 +6852,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2154,14 +6883,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
     };
     api_scan_reconciliations_api_reconciliations_scan_get: {
         parameters: {
-            query?: never;
+            query?: {
+                household_id?: string | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2174,7 +6907,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ReconciliationResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2190,12 +6932,12 @@ export interface operations {
                 debit_account_id: string;
                 /** @description Credit account ID */
                 credit_account_id: string;
-                /** @description Matched amount in rupees */
-                amount: number;
+                /** @description Matched amount in paise (₹1.00 = 100) */
+                amount_paise: number;
                 /** @description Days between transaction dates */
                 date_diff_days?: number;
-                /** @description Confidence score 0.0-1.0 */
-                match_confidence: number;
+                /** @description Confidence in basis points (0-10000) */
+                confidence_bps: number;
                 /** @description 'exact', 'window', 'fuzzy', or 'manual' */
                 match_type?: string;
             };
@@ -2211,7 +6953,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2227,7 +6971,9 @@ export interface operations {
     };
     api_batch_insert_reconciliations_api_reconciliations_batch_insert_post: {
         parameters: {
-            query?: never;
+            query?: {
+                household_id?: string | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2240,7 +6986,18 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2262,7 +7019,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2293,7 +7052,301 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    api_undo_reconciliation_api_reconciliations__reconciliation_id__undo_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                reconciliation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    api_get_reconciliation_stats_api_reconciliations_stats_get: {
+        parameters: {
+            query?: {
+                /** @description Household identifier */
+                household_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_expense_reduction_api_v1_scenarios_expense_reduction_post: {
+        parameters: {
+            query: {
+                /** @description Monthly expense reduction in paise */
+                reduction_paise: number;
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Forecast horizon */
+                forecast_months?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_income_change_api_v1_scenarios_income_change_post: {
+        parameters: {
+            query: {
+                /** @description Monthly income change in paise (positive/negative) */
+                change_paise: number;
+                /** @description Household identifier */
+                household_id?: string;
+                /** @description Forecast horizon */
+                forecast_months?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_debt_prepayment_api_v1_scenarios_debt_prepayment_post: {
+        parameters: {
+            query: {
+                /** @description Extra monthly payment toward debt in paise */
+                extra_payment_paise: number;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_new_loan_api_v1_scenarios_new_loan_post: {
+        parameters: {
+            query: {
+                /** @description Loan principal in paise */
+                principal_paise: number;
+                /** @description Annual interest rate in basis points */
+                annual_rate_bps: number;
+                /** @description Loan tenure in months */
+                tenure_months: number;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_credit_behaviour_api_v1_scenarios_credit_behaviour_post: {
+        parameters: {
+            query?: {
+                /** @description Average credit interest rate in basis points (optional) */
+                average_interest_rate_bps?: number | null;
+                /** @description Household identifier */
+                household_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    compare_scenarios_api_v1_scenarios_compare_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    [key: string]: unknown;
+                };
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2362,7 +7415,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2395,7 +7450,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2427,7 +7484,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */
@@ -2456,7 +7515,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };
@@ -2480,7 +7541,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description Validation Error */

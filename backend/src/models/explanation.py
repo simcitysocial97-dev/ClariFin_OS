@@ -105,3 +105,44 @@ class CashflowResponse(BaseModel):
     partial_reason: str | None = None
     last_updated: str | None = None
     explanation: Explanation | None = None
+
+
+# ============================================================
+# Reconciliation Response Models
+# ============================================================
+
+class ReconciliationMatch(BaseModel):
+    """Single reconciliation match with transaction details."""
+    id: int | None = None
+    debit_txn_id: int
+    credit_txn_id: int
+    debit_account_id: str
+    credit_account_id: str
+    amount_paise: int
+    date_diff_days: int
+    match_confidence: float
+    match_type: str
+    status: str | None = None
+    created_at: str | None = None
+    confirmed_at: str | None = None
+    # Transaction details
+    debit_date: str | None = None
+    debit_date_iso: str | None = None
+    debit_description: str | None = None
+    debit_amount_paise: int | None = None
+    debit_bank: str | None = None
+    credit_date: str | None = None
+    credit_date_iso: str | None = None
+    credit_description: str | None = None
+    credit_amount_paise: int | None = None
+    credit_bank: str | None = None
+
+
+class ReconciliationResponse(BaseModel):
+    """Canonical API response for /api/reconciliations/scan endpoint."""
+    matches: list[ReconciliationMatch]
+    count: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None

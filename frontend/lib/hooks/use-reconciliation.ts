@@ -1,6 +1,8 @@
 import type { HookState } from './use-async-query';
 import { useAsyncQuery } from './use-async-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { mapReconciliationToModel } from '../mappers/reconciliation'
+import type { ReconciliationModel } from '../models/reconciliation'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
 
@@ -57,10 +59,11 @@ async function fetchPendingReconciliations(): Promise<ReconciliationsData> {
   return response.json()
 }
 
-async function scanReconciliations(): Promise<{ matches: ReconciliationMatch[]; count: number }> {
+async function fetchScanReconciliations(): Promise<ReconciliationModel> {
   const response = await fetch(`${API_BASE}/api/reconciliations/scan`)
   if (!response.ok) throw new Error(`Scan reconciliations failed: ${response.status}`)
-  return response.json()
+  const dto = await response.json()
+  return mapReconciliationToModel(dto)
 }
 
 async function confirmReconciliation(id: number): Promise<{ success: boolean; status: string }> {
@@ -93,10 +96,10 @@ export function usePendingReconciliations(): HookState<ReconciliationsData> {
   )
 }
 
-export function useScanReconciliations(): HookState<{ matches: ReconciliationMatch[]; count: number }> {
+export function useScanReconciliations(): HookState<ReconciliationModel> {
   return useAsyncQuery(
     ['reconciliations', 'scan'],
-    scanReconciliations
+    fetchScanReconciliations
   )
 }
 

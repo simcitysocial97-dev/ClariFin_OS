@@ -5299,7 +5299,7 @@
           "reconciliation"
         ],
         "summary": "Api Scan Reconciliations",
-        "description": "Scan for potential transfer matches across accounts.\n\nPhase 2B.1: Deterministic matching with confidence scoring.\nPhase 3: Uses repository for data fetching, pure engine.\n\nArgs:\n    household_id: Optional household filter. If None, scans all households.\n\nReturns potential matches that can be saved as reconciliations.",
+        "description": "Scan for potential transfer matches across accounts.\n\nPhase 2B.1: Deterministic matching with confidence scoring.\nPhase 3: Uses repository for data fetching, pure engine.\n\nArgs:\n    household_id: Optional household filter. If None, scans all households.\n\nReturns ReconciliationResponse with matches and explanation.",
         "operationId": "api_scan_reconciliations_api_reconciliations_scan_get",
         "parameters": [
           {
@@ -5325,9 +5325,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Api Scan Reconciliations Api Reconciliations Scan Get"
+                  "$ref": "#/components/schemas/ReconciliationResponse"
                 }
               }
             }
@@ -8228,6 +8226,268 @@
         ],
         "title": "RateChangeSimulationRequest",
         "description": "Rate change simulation request."
+      },
+      "ReconciliationMatch": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "debit_txn_id": {
+            "type": "integer",
+            "title": "Debit Txn Id"
+          },
+          "credit_txn_id": {
+            "type": "integer",
+            "title": "Credit Txn Id"
+          },
+          "debit_account_id": {
+            "type": "string",
+            "title": "Debit Account Id"
+          },
+          "credit_account_id": {
+            "type": "string",
+            "title": "Credit Account Id"
+          },
+          "amount_paise": {
+            "type": "integer",
+            "title": "Amount Paise"
+          },
+          "date_diff_days": {
+            "type": "integer",
+            "title": "Date Diff Days"
+          },
+          "match_confidence": {
+            "type": "number",
+            "title": "Match Confidence"
+          },
+          "match_type": {
+            "type": "string",
+            "title": "Match Type"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "created_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created At"
+          },
+          "confirmed_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confirmed At"
+          },
+          "debit_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debit Date"
+          },
+          "debit_date_iso": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debit Date Iso"
+          },
+          "debit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debit Description"
+          },
+          "debit_amount_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debit Amount Paise"
+          },
+          "debit_bank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Debit Bank"
+          },
+          "credit_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Date"
+          },
+          "credit_date_iso": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Date Iso"
+          },
+          "credit_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Description"
+          },
+          "credit_amount_paise": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Amount Paise"
+          },
+          "credit_bank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Credit Bank"
+          }
+        },
+        "type": "object",
+        "required": [
+          "debit_txn_id",
+          "credit_txn_id",
+          "debit_account_id",
+          "credit_account_id",
+          "amount_paise",
+          "date_diff_days",
+          "match_confidence",
+          "match_type"
+        ],
+        "title": "ReconciliationMatch",
+        "description": "Single reconciliation match with transaction details."
+      },
+      "ReconciliationResponse": {
+        "properties": {
+          "matches": {
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationMatch"
+            },
+            "type": "array",
+            "title": "Matches"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "is_partial": {
+            "type": "boolean",
+            "title": "Is Partial",
+            "default": false
+          },
+          "partial_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partial Reason"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Explanation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "matches",
+          "count"
+        ],
+        "title": "ReconciliationResponse",
+        "description": "Canonical API response for /api/reconciliations/scan endpoint."
       },
       "SourceReference": {
         "properties": {

@@ -1073,13 +1073,9 @@ export interface paths {
          * @description Get enriched monthly cashflow analysis with financial events overlay.
          *
          *     Returns:
-         *         - cash_surplus: Raw income - expense (cash basis)
-         *         - true_savings: Income - expense - fees - liability_increase
-         *         - liability_adjusted_savings: true_savings adjusted for liability changes
-         *         - net_worth_impact: asset_change - liability_change
-         *         - month_classification: surplus / deficit_covered_by_credit / deficit
-         *         - credit_dependency_ratio: Credit-funded expenses / total expenses
-         *         - effective_liquidity_cost_annualized: Annualized fee estimate
+         *         - cash_surplus, true_savings, liability_adjusted_savings
+         *         - net_worth_impact, month_classification
+         *         - credit_dependency_ratio, effective_liquidity_cost_annualized
          */
         get: operations["get_cashflow_monthly_analysis_api_v1_cashflow_monthly_get"];
         put?: never;
@@ -2210,7 +2206,7 @@ export interface paths {
          *     Args:
          *         household_id: Optional household filter. If None, scans all households.
          *
-         *     Returns potential matches that can be saved as reconciliations.
+         *     Returns ReconciliationResponse with matches and explanation.
          */
         get: operations["api_scan_reconciliations_api_reconciliations_scan_get"];
         put?: never;
@@ -2785,6 +2781,47 @@ export interface components {
             order: number;
         };
         /**
+         * CashflowMonth
+         * @description Single month cashflow data.
+         */
+        CashflowMonth: {
+            /** Month Key */
+            month_key: string;
+            /** Month Label */
+            month_label: string;
+            /** Income Paise */
+            income_paise: number;
+            /** Expense Paise */
+            expense_paise: number;
+            /** Net Paise */
+            net_paise: number;
+            /** Transaction Count */
+            transaction_count: number;
+        };
+        /**
+         * CashflowResponse
+         * @description Canonical API response for /api/cashflow/monthly endpoint.
+         */
+        CashflowResponse: {
+            /** Months */
+            months: components["schemas"]["CashflowMonth"][];
+            /** Period Months */
+            period_months: number;
+            /** Total Income Paise */
+            total_income_paise: number;
+            /** Total Expense Paise */
+            total_expense_paise: number;
+            /** Total Net Paise */
+            total_net_paise: number;
+            /** Is Partial */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
+        };
+        /**
          * Confidence
          * @description Confidence in basis points (0-10000).
          */
@@ -3150,6 +3187,8 @@ export interface components {
             is_partial: boolean;
             /** Partial Reason */
             partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
             explanation?: components["schemas"]["NetWorthExplanation"] | null;
         };
         /**
@@ -3235,6 +3274,76 @@ export interface components {
              * @description New annual rate in basis points (0-5000)
              */
             new_rate_bps: number;
+        };
+        /**
+         * ReconciliationMatch
+         * @description Single reconciliation match with transaction details.
+         */
+        ReconciliationMatch: {
+            /** Id */
+            id?: number | null;
+            /** Debit Txn Id */
+            debit_txn_id: number;
+            /** Credit Txn Id */
+            credit_txn_id: number;
+            /** Debit Account Id */
+            debit_account_id: string;
+            /** Credit Account Id */
+            credit_account_id: string;
+            /** Amount Paise */
+            amount_paise: number;
+            /** Date Diff Days */
+            date_diff_days: number;
+            /** Match Confidence */
+            match_confidence: number;
+            /** Match Type */
+            match_type: string;
+            /** Status */
+            status?: string | null;
+            /** Created At */
+            created_at?: string | null;
+            /** Confirmed At */
+            confirmed_at?: string | null;
+            /** Debit Date */
+            debit_date?: string | null;
+            /** Debit Date Iso */
+            debit_date_iso?: string | null;
+            /** Debit Description */
+            debit_description?: string | null;
+            /** Debit Amount Paise */
+            debit_amount_paise?: number | null;
+            /** Debit Bank */
+            debit_bank?: string | null;
+            /** Credit Date */
+            credit_date?: string | null;
+            /** Credit Date Iso */
+            credit_date_iso?: string | null;
+            /** Credit Description */
+            credit_description?: string | null;
+            /** Credit Amount Paise */
+            credit_amount_paise?: number | null;
+            /** Credit Bank */
+            credit_bank?: string | null;
+        };
+        /**
+         * ReconciliationResponse
+         * @description Canonical API response for /api/reconciliations/scan endpoint.
+         */
+        ReconciliationResponse: {
+            /** Matches */
+            matches: components["schemas"]["ReconciliationMatch"][];
+            /** Count */
+            count: number;
+            /**
+             * Is Partial
+             * @default false
+             */
+            is_partial: boolean;
+            /** Partial Reason */
+            partial_reason?: string | null;
+            /** Last Updated */
+            last_updated?: string | null;
+            explanation?: components["schemas"]["Explanation"] | null;
         };
         /**
          * SourceReference
@@ -5017,9 +5126,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["CashflowResponse"];
                 };
             };
             /** @description Validation Error */
@@ -6800,9 +6907,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
+                    "application/json": components["schemas"]["ReconciliationResponse"];
                 };
             };
             /** @description Validation Error */

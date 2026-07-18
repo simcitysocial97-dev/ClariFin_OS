@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from src.common import format_inr
+from src.models.explanation import ReconciliationResponse
 from src.repositories import ReconciliationRepository
 from src.services.reconciliation_service import ReconciliationService
 
@@ -43,8 +44,8 @@ def api_get_pending_reconciliations() -> dict[str, Any]:
     return api_get_reconciliations(status="pending")
 
 
-@router.get("/scan")
-def api_scan_reconciliations(household_id: str | None = None) -> dict[str, Any]:
+@router.get("/scan", response_model=ReconciliationResponse)
+def api_scan_reconciliations(household_id: str | None = None) -> ReconciliationResponse:
     """
     Scan for potential transfer matches across accounts.
 
@@ -54,18 +55,11 @@ def api_scan_reconciliations(household_id: str | None = None) -> dict[str, Any]:
     Args:
         household_id: Optional household filter. If None, scans all households.
 
-    Returns potential matches that can be saved as reconciliations.
+    Returns ReconciliationResponse with matches and explanation.
     """
     try:
         service = ReconciliationService()
-        matches = service.scan_potential_matches(household_id=household_id)
-
-        # Enrich with display fields
-        for m in matches:
-            m["amount_display"] = format_inr(m.get("amount", 0))
-            m["confidence_display"] = f"{m.get('match_confidence', 0) * 100:.0f}%"
-
-        return {"matches": matches, "count": len(matches)}
+        return service.scan_with_explanation(household_id=household_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
