@@ -21,7 +21,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Pencil, Trash2, TrendingUp, AlertCircle, PieChart, BarChart3 } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
-import { useInvestments, useCreateInvestment, useUpdateInvestment, useDeleteInvestment, type Investment } from "@/lib/hooks/use-investments";
+import { useInvestments, useCreateInvestment, useUpdateInvestment, useDeleteInvestment } from "@/lib/hooks/use-investments";
+import type { InvestmentSummaryModel } from "@/lib/models/investments";
 
 // ============================================================
 // Form Types
@@ -43,13 +44,11 @@ interface InvestmentFormData {
 // ============================================================
 
 function InvestmentCard({ investment, onEdit, onDelete }: { 
-  investment: Investment; 
-  onEdit: (investment: Investment) => void;
+  investment: InvestmentSummaryModel; 
+  onEdit: (investment: InvestmentSummaryModel) => void;
   onDelete: (id: string) => void;
 }) {
-  const gain = investment.current_value_paise - investment.invested_paise;
-  const gainPercent = investment.invested_paise > 0 ? (gain / investment.invested_paise) * 100 : 0;
-  const isGain = gain >= 0;
+  const isGain = investment.gainPaise >= 0;
 
   return (
     <Card>
@@ -61,10 +60,7 @@ function InvestmentCard({ investment, onEdit, onDelete }: {
             </div>
             <div>
               <h3 className="font-medium text-sm">{investment.name}</h3>
-              <p className="text-xs text-gray-500">{investment.investment_type.replace('_', ' ')}</p>
-              <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
-                {investment.platform || "Self"}
-              </span>
+              <p className="text-xs text-gray-500">{investment.type.replace('_', ' ')}</p>
             </div>
           </div>
           <div className="flex items-center gap-1">
@@ -79,16 +75,16 @@ function InvestmentCard({ investment, onEdit, onDelete }: {
         <div className="mt-3 pt-2 border-t space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">Current Value</span>
-            <span className="text-lg font-semibold">{formatINR(investment.current_value_paise)}</span>
+            <span className="text-lg font-semibold">{formatINR(investment.currentPaise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">Invested</span>
-            <span className="text-sm font-medium">{formatINR(investment.invested_paise)}</span>
+            <span className="text-sm font-medium">{formatINR(investment.investedPaise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">P&L</span>
             <span className={`text-sm font-medium ${isGain ? 'text-green-600' : 'text-red-600'}`}>
-              {isGain ? '+' : ''}{formatINR(gain)} ({gainPercent.toFixed(1)}%)
+              {isGain ? '+' : ''}{formatINR(investment.gainPaise)} ({investment.gainPercent >= 0 ? '+' : ''}{investment.gainPercent.toFixed(1)}%)
             </span>
           </div>
         </div>
@@ -102,19 +98,19 @@ function InvestmentForm({
   onSubmit, 
   onCancel 
 }: { 
-  initialData?: Investment; 
+  initialData?: InvestmentSummaryModel; 
   onSubmit: (data: InvestmentFormData) => void;
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState<InvestmentFormData>({
     name: initialData?.name || "",
-    investment_type: (initialData?.investment_type as any) || "mutual_fund",
-    invested_paise: initialData ? (initialData.invested_paise / 100).toString() : "",
-    current_value_paise: initialData ? (initialData.current_value_paise / 100).toString() : "",
-    as_of_date: initialData?.as_of_date || "",
-    platform: initialData?.platform || "",
-    units: initialData?.units ? initialData.units.toString() : "",
-    notes: initialData?.notes || "",
+    investment_type: (initialData?.type as any) || "mutual_fund",
+    invested_paise: initialData ? (initialData.investedPaise / 100).toString() : "",
+    current_value_paise: initialData ? (initialData.currentPaise / 100).toString() : "",
+    as_of_date: initialData?.isActive ? "" : "",
+    platform: "",
+    units: "",
+    notes: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -281,7 +277,7 @@ export default function InvestmentsPage() {
   const deleteInvestmentMutation = useDeleteInvestment();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingInvestment, setEditingInvestment] = useState<Investment | null>(null);
+  const [editingInvestment, setEditingInvestment] = useState<InvestmentSummaryModel | null>(null);
 
   const handleCreateInvestment = async (formData: InvestmentFormData) => {
     try {
@@ -329,7 +325,7 @@ export default function InvestmentsPage() {
     }
   };
 
-  const handleEditInvestment = (investment: Investment) => {
+  const handleEditInvestment = (investment: InvestmentSummaryModel) => {
     setEditingInvestment(investment);
     setDialogOpen(true);
   };
@@ -340,10 +336,16 @@ export default function InvestmentsPage() {
   };
 
   // Calculate totals
-  const totalInvested = data?.summary.total_invested_paise || 0;
-  const totalCurrent = data?.summary.total_current_value_paise || 0;
-  const totalGain = data?.summary.total_gain_paise || 0;
-  const gainPercent = data?.summary.gain_percent || 0;
+  const totalInvested = data?.totalInvestedPaise || 0;
+  const totalCurrent = data?.totalCurrentPaise || 0;
+  const totalGain = data?.totalGainPaise || 0;
+  const gainPercent = data ? (totalCurrent - totalInvested) / totalInvested * 100 : 0;
+
+  // Calculate allocation by type
+  const allocationByType: Record<string, number> = {}
+  data?.investments.forEach(inv => {
+    allocationByType[inv.type] = (allocationByType[inv.type] || 0) + inv.currentPaise
+  })
 
   if (isLoading) {
     return (
@@ -454,7 +456,7 @@ export default function InvestmentsPage() {
 
         {/* Allocation Chart */}
         <div>
-          <AllocationChart allocation={data?.summary.allocation_by_type || {}} />
+          <AllocationChart allocation={allocationByType} />
         </div>
       </div>
     </div>

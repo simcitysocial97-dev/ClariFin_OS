@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import APIRouter
 
 from src.errors import NotFoundError
+from src.models.explanation import LoansResponse
 from src.models.loan import LoanCreateRequest, LoanResponse, LoanUpdateRequest, ScheduleResponse
 from src.models.loan_payment import LoanPaymentCreate
 from src.models.loan_simulation import (
@@ -46,16 +47,15 @@ def _timed_log(endpoint: str, loan_id: int | None, duration_ms: float, success: 
 # Loan CRUD Endpoints (via LoanService)
 # ============================================================
 
-@router.get("/loans")
-def get_loans() -> list[dict[str, Any]]:
-    """Get all active loans via LoanService.
+@router.get("/loans", response_model=LoansResponse)
+def get_loans() -> LoansResponse:
+    """Get all active loans via LoanService with explanation.
 
-    Returns array of loan objects directly (not wrapped in object).
+    Returns LoansResponse with loans array and explanation.
     """
     start = time.monotonic()
     service = LoanService()
-    loans = service.get_loans()
-    result = [LoanResponse.from_loan_dict(loan).model_dump() for loan in loans]
+    result = service.calculate_with_explanation()
     _timed_log("GET /loans", None, (time.monotonic() - start) * 1000)
     return result
 
@@ -290,7 +290,7 @@ def get_loan_priority() -> list[dict[str, Any]]:
     analysis_service = LoanAnalysisService()
     recommendations = analysis_service.analyze_loan_priority()
     result = [{"loan_id": r.loan_id, "action": r.action, "reason": r.reason,
-             "interest_saved_paise": r.interest_saved_paise, "tenure_saved_months": r.tenure_saved_months}
+         "interest_saved_paise": r.interest_saved_paise, "tenure_saved_months": r.tenure_saved_months}
             for r in recommendations]
     _timed_log("GET /loans/analysis/priority", None, (time.monotonic() - start) * 1000)
     return result

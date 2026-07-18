@@ -4,7 +4,7 @@ Coordinates repositories and credit_card_engine to implement business logic.
 No direct database access - uses repositories only.
 """
 
-from datetime import date
+from datetime import date, datetime
 from typing import Any
 
 from src.engines.credit_card_engine import (
@@ -20,6 +20,15 @@ from src.engines.credit_card_engine import (
 )
 from src.models.credit_card_emi import EmiConversionResponse
 from src.models.credit_card_foreclosure import ForeclosureResponse
+from src.models.explanation import (
+    CalculationStep,
+    Confidence,
+    CreditCardSummary,
+    CreditCardsResponse,
+    Evidence,
+    Explanation,
+    SourceReference,
+)
 from src.repositories.credit_card_repository import CreditCardRepository
 from src.repositories.credit_card_statement_repository import CreditCardStatementRepository
 
@@ -341,3 +350,179 @@ class CreditCardService:
 
         return next_date.isoformat()
 
+    # ============================================================
+    # Explanation Pipeline
+    # ============================================================
+
+    def calculate_with_explanation(self) -> CreditCardsResponse:
+        """
+        Compute credit cards summary with full explainability.
+
+        Returns:
+            CreditCardsResponse with explanation containing:
+            - Evidence for each card (limit, outstanding, utilization)
+            - Source references for each card
+            - Calculation steps: sum-outstanding, sum-limit, compute-utilization, sum-due
+            - Confidence based on data availability
+        """
+        # Fetch all cards
+        cards = self.card_repo.list_cards()
+
+        # Build evidence and sources for each card
+        card_evidence: list[Evidence] = []
+        card_sources: list[SourceReference] = []
+        card_summaries: list[CreditCardSummary] = []
+
+        for card in cards:
+            card_id = card.get("id", "unknown")
+            credit_limit = card.get("credit_limit_paise", 0) or 0
+            outstanding = card.get("total_spend_paise", 0) or 0
+            total_emi = card.get("total_emi_paise", 0) or 0
+            total_fees = card.get("annual_fee_paise", 0) or 0
+
+            # Calculate outstanding using engine
+            total_outstanding = compute_outstanding(
+                total_spend_paise=outstanding,
+                total_emi_paise=total_emi,
+                total_fees_paise=total_fees,
+                total_payments_paise=0,
+            )
+
+            # Calculate utilization
+            utilization_bps = compute_utilization(total_outstanding, credit_limit) if credit_limit > 0 else 0
+
+            # Calculate minimum due
+            minimum_due = compute_minimum_due(
+                total_outstanding_paise=total_outstanding,
+                min_due_pct_bps=500,
+                floor_paise=10000,
+            )
+
+            # Evidence for credit limit
+            if credit_limit > 0:
+                card_evidence.append(Evidence(
+                    id=f"card-{card_id}-limit",
+                    type="data",
+                    description=f"Credit limit for {card.get('name', card_id)}",
+                    value=credit_limit,
+                    sourceId=str(card_id),
+                ))
+
+            # Evidence for outstanding
+            if total_outstanding > 0:
+                card_evidence.append(Evidence(
+                    id=f"card-{card_id}-outstanding",
+                    type="data",
+                    description=f"Outstanding for {card.get('name', card_id)}",
+                    value=total_outstanding,
+                    sourceId=str(card_id),
+                ))
+
+            # Evidence for minimum due
+            if minimum_due > 0:
+                card_evidence.append(Evidence(
+                    id=f"card-{card_id}-minimum-due",
+                    type="data",
+                    description=f"Minimum due for {card.get('name', card_id)}",
+                    value=minimum_due,
+                    sourceId=str(card_id),
+                ))
+
+            # Source reference
+            card_sources.append(SourceReference(
+                type="account",
+                id=str(card_id),
+                name=card.get("name", f"Card {card_id}"),
+                date=None,
+            ))
+
+            # Build card summary
+            card_summaries.append(CreditCardSummary(
+                card_id=str(card_id),
+                bank=card.get("bank", "unknown"),
+                card_last4=card.get("card_last4"),
+                credit_limit_paise=credit_limit,
+                current_outstanding_paise=total_outstanding,
+                minimum_due_paise=minimum_due,
+                utilization_bps=utilization_bps,
+                is_active=bool(card.get("is_active", True)),
+            ))
+
+        # Calculate totals
+        total_outstanding = sum(
+            int(e.value) for e in card_evidence
+            if isinstance(e.value, int) and "outstanding" in e.id
+        )
+        total_limit = sum(
+            int(e.value) for e in card_evidence
+            if isinstance(e.value, int) and "limit" in e.id
+        )
+        total_utilization = int((total_outstanding / total_limit * 10000) if total_limit > 0 else 0)
+
+        # Calculate confidence
+        confidence_bps = 10000
+        confidence_reasons: list[str] = []
+
+        if len(card_evidence) == 0:
+            confidence_bps -= 2000
+            confidence_reasons.append("No credit card data available")
+
+        # Build calculation steps
+        calculation_steps: list[CalculationStep] = [
+            CalculationStep(
+                stepId="sum-outstanding",
+                description="Sum all credit card outstanding balances",
+                operation="ADD",
+                inputIds=[e.id for e in card_evidence if "outstanding" in e.id],
+                outputId="total-outstanding",
+                order=1,
+            ),
+            CalculationStep(
+                stepId="sum-limit",
+                description="Sum all credit card limits",
+                operation="ADD",
+                inputIds=[e.id for e in card_evidence if "limit" in e.id],
+                outputId="total-limit",
+                order=2,
+            ),
+            CalculationStep(
+                stepId="compute-utilization",
+                description="Compute overall utilization ratio",
+                operation="DIVIDE",
+                inputIds=["total-outstanding", "total-limit"],
+                outputId="total-utilization",
+                order=3,
+            ),
+            CalculationStep(
+                stepId="sum-due",
+                description="Sum all minimum due amounts",
+                operation="ADD",
+                inputIds=[e.id for e in card_evidence if "minimum-due" in e.id],
+                outputId="total-due",
+                order=4,
+            ),
+        ]
+
+        # Build explanation
+        explanation = Explanation(
+            metric="credit_cards",
+            value=total_outstanding,
+            confidence=Confidence(
+                value=confidence_bps,
+                reason=", ".join(confidence_reasons) if confidence_reasons else "Complete credit card data available",
+            ),
+            evidence=card_evidence,
+            sources=card_sources,
+            calculationSteps=calculation_steps,
+        )
+
+        return CreditCardsResponse(
+            cards=card_summaries,
+            total_outstanding_paise=total_outstanding,
+            total_credit_limit_paise=total_limit,
+            total_utilization_bps=total_utilization,
+            is_partial=len(card_evidence) == 0,
+            partial_reason="No credit card data available" if len(card_evidence) == 0 else None,
+            last_updated=datetime.now().isoformat(),
+            explanation=explanation,
+        )

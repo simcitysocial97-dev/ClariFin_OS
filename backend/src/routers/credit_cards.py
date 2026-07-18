@@ -25,6 +25,7 @@ from src.models.credit_card_statement import (
     StatementGenerateRequest,
     StatementResponse,
 )
+from src.models.explanation import CreditCardsResponse
 from src.services.credit_card_service import CreditCardService
 
 logger = logging.getLogger(__name__)
@@ -61,13 +62,12 @@ def _timed_log(
 # ============================================================
 
 
-@router.get("/credit-cards")
-def list_cards() -> list[dict[str, Any]]:
-    """Get all active credit cards."""
+@router.get("/credit-cards", response_model=CreditCardsResponse)
+def list_cards() -> CreditCardsResponse:
+    """Get all active credit cards with explanation."""
     start = time.monotonic()
     service = CreditCardService()
-    cards = service.list_cards()
-    result = [CreditCardResponse.from_card_dict(card).model_dump() for card in cards]
+    result = service.calculate_with_explanation()
     _timed_log("GET /credit-cards", None, (time.monotonic() - start) * 1000)
     return result
 

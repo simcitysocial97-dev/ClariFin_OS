@@ -1,40 +1,30 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { z } from 'zod'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { useAppQuery } from '@/lib/query'
+import { queryKeys } from '@/lib/query'
+import { STALE_TIME } from '@/lib/query'
+import { InvestmentsResponseSchema } from '../contracts/api/investments'
+import { mapInvestmentsToModel } from '../mappers/investments'
+import type { InvestmentsModel } from '../models/investments'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
 
-const InvestmentSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  investment_type: z.string(),
-  platform: z.string().nullable(),
-  invested_paise: z.number().int(),
-  current_value_paise: z.number().int(),
-  units: z.number().nullable(),
-  buy_price_paise: z.number().int().nullable(),
-  current_price_paise: z.number().int().nullable(),
-  as_of_date: z.string().nullable(),
-  is_active: z.boolean(),
-  notes: z.string().nullable(),
-  last_updated: z.string().optional(),
-  created_at: z.string(),
-})
-
-const InvestmentSummarySchema = z.object({
-  total_investments: z.number(),
-  total_invested_paise: z.number().int(),
-  total_current_value_paise: z.number().int(),
-  total_gain_paise: z.number().int(),
-  gain_percent: z.number(),
-  allocation_by_type: z.record(z.string(), z.number().int()),
-})
-
-const InvestmentsResponseSchema = z.object({
-  investments: z.array(InvestmentSchema),
-  summary: InvestmentSummarySchema,
-})
-
-export type Investment = z.infer<typeof InvestmentSchema>
+export type Investment = {
+  id: number
+  name: string
+  investment_type: string
+  platform: string | null
+  invested_paise: number
+  current_value_paise: number
+  units: number | null
+  buy_price_paise: number | null
+  current_price_paise: number | null
+  as_of_date: string | null
+  is_active: boolean
+  notes: string | null
+  last_updated: string
+  created_at: string
+}
 
 export interface CreateInvestmentInput {
   name: string
@@ -49,10 +39,11 @@ export interface CreateInvestmentInput {
   notes?: string
 }
 
-async function fetchInvestments() {
+async function fetchInvestments(): Promise<InvestmentsModel> {
   const res = await fetch(`${API_BASE}/api/investments`)
   if (!res.ok) throw new Error('Failed to fetch investments')
-  return InvestmentsResponseSchema.parse(await res.json())
+  const dto = InvestmentsResponseSchema.parse(await res.json())
+  return mapInvestmentsToModel(dto)
 }
 
 async function createInvestment(input: CreateInvestmentInput) {
@@ -82,10 +73,11 @@ async function deleteInvestment(id: string) {
 }
 
 export function useInvestments() {
-  return useQuery({
-    queryKey: ['investments'],
+  return useAppQuery({
+    queryKey: queryKeys.investments.list(),
     queryFn: fetchInvestments,
-    staleTime: 5 * 60 * 1000,
+    capability: 'investments',
+    staleTime: STALE_TIME.NORMAL,
   })
 }
 
@@ -93,7 +85,7 @@ export function useCreateInvestment() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createInvestment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['investments'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.investments.list() }),
   })
 }
 
@@ -102,7 +94,7 @@ export function useUpdateInvestment() {
   return useMutation({
     mutationFn: ({ id, ...input }: { id: string } & Partial<CreateInvestmentInput>) =>
       updateInvestment(id, input),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['investments'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.investments.list() }),
   })
 }
 
@@ -110,7 +102,6 @@ export function useDeleteInvestment() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: deleteInvestment,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['investments'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.investments.list() }),
   })
-
 }

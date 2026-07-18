@@ -5,7 +5,7 @@ All monetary values are in paise (₹1.00 = 100 paise).
 All confidence values are in basis points (0-10000).
 """
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -142,6 +142,78 @@ class ReconciliationResponse(BaseModel):
     """Canonical API response for /api/reconciliations/scan endpoint."""
     matches: list[ReconciliationMatch]
     count: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Loans Response Models
+# ============================================================
+
+class LoansResponse(BaseModel):
+    """Canonical API response for /api/loans endpoint."""
+    loans: list[dict[str, Any]]
+    total_outstanding_paise: int
+    total_principal_paise: int
+    total_monthly_emi_paise: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Credit Cards Response Models
+# ============================================================
+
+class CreditCardSummary(BaseModel):
+    """Single credit card summary for API response."""
+    card_id: str
+    bank: str
+    card_last4: str | None = None
+    credit_limit_paise: int
+    current_outstanding_paise: int
+    minimum_due_paise: int
+    utilization_bps: int
+    is_active: bool = True
+
+
+class CreditCardsResponse(BaseModel):
+    """Canonical API response for /api/v1/credit-cards endpoint."""
+    cards: list[CreditCardSummary]
+    total_outstanding_paise: int
+    total_credit_limit_paise: int
+    total_utilization_bps: int
+    is_partial: bool = False
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None
+
+
+# ============================================================
+# Investments Response Models
+# ============================================================
+
+class InvestmentSummary(BaseModel):
+    """Single investment summary for API response."""
+    id: int
+    name: str
+    type: str
+    invested_paise: int
+    current_value_paise: int
+    gain_paise: int
+    gain_percent: float
+    is_active: bool = True
+
+
+class InvestmentsResponse(BaseModel):
+    """Canonical API response for /api/investments endpoint."""
+    investments: list[InvestmentSummary]
+    total_invested_paise: int
+    total_current_value_paise: int
+    total_gain_paise: int
     is_partial: bool = False
     partial_reason: str | None = None
     last_updated: str | None = None

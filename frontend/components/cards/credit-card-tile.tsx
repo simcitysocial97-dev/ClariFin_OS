@@ -1,14 +1,14 @@
 'use client'
 
-import { formatINR, formatDateDisplay, rupeesToPaise } from '@/lib/utils/format'
-import { Calendar, FileText, CheckCircle, AlertCircle } from 'lucide-react'
+import { formatINR, rupeesToPaise } from '@/lib/utils/format'
+import { FileText, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import type { CardSummary } from '@/lib/hooks/use-cards'
+import type { CreditCardSummaryModel } from '@/lib/models/cards'
 
 interface CreditCardTileProps {
-  card: CardSummary
+  card: CreditCardSummaryModel
   onViewStatements: () => void
   onValidate: () => void
 }
@@ -19,31 +19,14 @@ function getUtilizationColor(percent: number): string {
   return 'bg-red-500'
 }
 
-function getPaymentStatusBadge(status: string, daysUntilDue: number | null): { label: string; className: string } {
-  switch (status) {
-    case 'overdue':
-      return { label: 'OVERDUE', className: 'bg-red-500 hover:bg-red-600 text-white' }
-    case 'due_soon':
-      return { label: `DUE IN ${daysUntilDue} DAY${daysUntilDue && daysUntilDue > 1 ? 'S' : ''}`, className: 'bg-amber-500 hover:bg-amber-600 text-white' }
-    case 'upcoming':
-      return { label: `DUE IN ${daysUntilDue} DAYS`, className: 'bg-blue-500 hover:bg-blue-600 text-white' }
-    case 'on_track':
-      return { label: 'ON TRACK', className: 'bg-green-500 hover:bg-green-600 text-white' }
-    default:
-      return { label: 'UNKNOWN', className: '' }
-  }
+function getPaymentStatusBadge(): { label: string; className: string } {
+  // Default to unknown since we don't have payment status in the new model
+  return { label: 'UNKNOWN', className: '' }
 }
 
 export function CreditCardTile({ card, onViewStatements, onValidate }: CreditCardTileProps) {
-  const utilizationColor = getUtilizationColor(card.utilization_percent)
-  const paymentStatus = getPaymentStatusBadge(card.payment_status, card.days_until_due)
-
-  const formatPeriod = (start: string | null, end: string | null): string => {
-    if (!start || !end) return '—'
-    const startFormatted = formatDateDisplay(start)
-    const endFormatted = formatDateDisplay(end)
-    return `${startFormatted} – ${endFormatted}`
-  }
+  const utilizationColor = getUtilizationColor(card.utilizationBps / 100)
+  const paymentStatus = getPaymentStatusBadge()
 
   return (
     <Card className="flex flex-col">
@@ -51,7 +34,7 @@ export function CreditCardTile({ card, onViewStatements, onValidate }: CreditCar
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-lg">{card.bank}</CardTitle>
-            <p className="text-sm text-muted-foreground">•••• {card.card_last4}</p>
+            <p className="text-sm text-muted-foreground">•••• {card.cardLast4}</p>
           </div>
           <Badge className={paymentStatus.className}>
             {paymentStatus.label}
@@ -64,12 +47,12 @@ export function CreditCardTile({ card, onViewStatements, onValidate }: CreditCar
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="text-muted-foreground">Utilization</span>
-            <span className="font-medium">{card.utilization_percent.toFixed(1)}%</span>
+            <span className="font-medium">{(card.utilizationBps / 100).toFixed(1)}%</span>
           </div>
           <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
             <div 
               className={`h-full transition-all ${utilizationColor}`}
-              style={{ width: `${Math.min(card.utilization_percent, 100)}%` }}
+              style={{ width: `${Math.min(card.utilizationBps / 100, 100)}%` }}
             />
           </div>
         </div>
@@ -78,54 +61,24 @@ export function CreditCardTile({ card, onViewStatements, onValidate }: CreditCar
         <div className="grid grid-cols-2 gap-4 py-2 border-y">
           <div>
             <p className="text-xs text-muted-foreground">Outstanding</p>
-            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.current_outstanding))}</p>
+            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.currentOutstandingPaise))}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Minimum Due</p>
-            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.minimum_due))}</p>
+            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.minimumDuePaise))}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-muted-foreground">Credit Limit</p>
-            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.credit_limit))}</p>
+            <p className="text-sm font-medium">{formatINR(rupeesToPaise(card.creditLimitPaise))}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Utilization</p>
-            <p className="text-sm font-medium">{card.utilization_percent.toFixed(1)}%</p>
+            <p className="text-sm font-medium">{(card.utilizationBps / 100).toFixed(1)}%</p>
           </div>
         </div>
-
-        {/* Bill Cycle Dates */}
-        <div className="flex items-center gap-2 text-sm">
-          <Calendar className="h-4 w-4 text-muted-foreground" />
-          <span className="text-muted-foreground">Bill Cycle:</span>
-          <span>{formatPeriod(card.bill_cycle_start, card.bill_cycle_end)}</span>
-        </div>
-
-        {/* Statement Date */}
-        {card.statement_date && (
-          <div className="flex items-center gap-2 text-sm">
-            <FileText className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Statement:</span>
-            <span>{formatDateDisplay(card.statement_date)}</span>
-          </div>
-        )}
-
-        {/* Payment Due Date */}
-        {card.payment_due_date && (
-          <div className="flex items-center gap-2 text-sm">
-            <AlertCircle className="h-4 w-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Due:</span>
-            <span>{formatDateDisplay(card.payment_due_date)}</span>
-          </div>
-        )}
-
-        {/* Statement Count */}
-        <p className="text-xs text-muted-foreground">
-          {card.statement_count} statement{card.statement_count !== 1 ? 's' : ''} on file
-        </p>
 
         {/* Action Buttons */}
         <div className="flex gap-2 pt-2">

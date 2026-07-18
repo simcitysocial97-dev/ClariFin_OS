@@ -11,33 +11,32 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { CreditCard, Plus, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import type { CardSummary } from '@/lib/hooks/use-cards'
+import type { CreditCardSummaryModel } from '@/lib/models/cards'
 
 export default function CardsPage() {
-  const { data: cardsData, loading, error } = useCards()
+  const { data: cardsData, isLoading, error } = useCards()
   const { data: allStatements } = useStatementsQuery()
-  const [selectedCard, setSelectedCard] = useState<CardSummary | null>(null)
+  const [selectedCard, setSelectedCard] = useState<CreditCardSummaryModel | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   // Filter statements for selected card
   const cardStatements = selectedCard
     ? allStatements?.filter(
-        (stmt) => stmt.bank === selectedCard.bank && stmt.card_last4 === selectedCard.card_last4
+        (stmt) => stmt.bank === selectedCard.bank && stmt.card_last4 === selectedCard.cardLast4
       ) || []
     : []
 
-  const handleViewStatements = (card: CardSummary) => {
+  const handleViewStatements = (card: CreditCardSummaryModel) => {
     setSelectedCard(card)
     setDrawerOpen(true)
   }
 
-  const handleValidate = (card: CardSummary) => {
+  const handleValidate = (_card: CreditCardSummaryModel) => {
     // TODO: Implement validation API call
-    console.log('Validate card:', card.card_id)
   }
 
   // Loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="space-y-6 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -106,7 +105,7 @@ export default function CardsPage() {
   }
 
   // Empty state
-  if (!cardsData || cardsData.total_cards === 0) {
+  if (!cardsData || cardsData.cards.length === 0) {
     return (
       <div className="space-y-6 p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -159,7 +158,7 @@ export default function CardsPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {cardsData.cards.map((card) => (
           <CreditCardTile
-            key={card.card_id}
+            key={card.cardId}
             card={card}
             onViewStatements={() => handleViewStatements(card)}
             onValidate={() => handleValidate(card)}

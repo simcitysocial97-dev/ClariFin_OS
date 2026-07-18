@@ -22,7 +22,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Pencil, Trash2, Building2, AlertCircle, Calendar, IndianRupee, TrendingDown } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
-import { useLoans, useCreateLoan, useUpdateLoan, useDeleteLoan, useLoanSchedule, usePrepaymentSimulation, type Loan } from "@/lib/hooks/use-loans";
+import { useLoans, useCreateLoan, useUpdateLoan, useDeleteLoan, useLoanSchedule, usePrepaymentSimulation } from "@/lib/hooks/use-loans";
+import type { LoanSummaryModel } from "@/lib/models/loans";
 
 // ============================================================
 // Form Types
@@ -47,10 +48,10 @@ interface LoanFormData {
 // ============================================================
 
 function LoanCard({ loan, onEdit, onDelete, onShowSchedule }: { 
-  loan: Loan; 
-  onEdit: (loan: Loan) => void;
+  loan: LoanSummaryModel; 
+  onEdit: (loan: LoanSummaryModel) => void;
   onDelete: (id: string) => void;
-  onShowSchedule: (loan: Loan) => void;
+  onShowSchedule: (loan: LoanSummaryModel) => void;
 }) {
   return (
     <Card>
@@ -64,7 +65,7 @@ function LoanCard({ loan, onEdit, onDelete, onShowSchedule }: {
               <h3 className="font-medium text-sm">{loan.name}</h3>
               <p className="text-xs text-gray-500">{loan.lender}</p>
               <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
-                {loan.loan_type}
+                {loan.loanType || "loan"}
               </span>
             </div>
           </div>
@@ -83,15 +84,15 @@ function LoanCard({ loan, onEdit, onDelete, onShowSchedule }: {
         <div className="mt-3 pt-2 border-t space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">Outstanding</span>
-            <span className="text-lg font-semibold">{formatINR(loan.outstanding_paise)}</span>
+            <span className="text-lg font-semibold">{formatINR(loan.outstandingPaise ?? 0)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">EMI</span>
-            <span className="text-sm font-medium">{formatINR(loan.emi_paise || 0)}</span>
+            <span className="text-sm font-medium">{formatINR(loan.emiPaise ?? 0)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-500">Interest Rate</span>
-            <span className="text-sm font-medium">{loan.interest_rate}% p.a.</span>
+            <span className="text-sm font-medium">{loan.interestRate}% p.a.</span>
           </div>
         </div>
       </CardContent>
@@ -104,22 +105,22 @@ function LoanForm({
   onSubmit, 
   onCancel 
 }: { 
-  initialData?: Loan; 
+  initialData?: LoanSummaryModel; 
   onSubmit: (data: LoanFormData) => void;
   onCancel: () => void;
 }) {
   const [formData, setFormData] = useState<LoanFormData>({
     name: initialData?.name || "",
     lender: initialData?.lender || "",
-    loan_type: (initialData?.loan_type as any) || "personal",
-    principal_paise: initialData ? (initialData.principal_paise / 100).toString() : "",
-    outstanding_paise: initialData ? (initialData.outstanding_paise / 100).toString() : "",
-    interest_rate: initialData ? initialData.interest_rate.toString() : "",
-    disbursed_date: initialData?.disbursed_date || "",
-    tenure_months: initialData?.tenure_months ? (initialData.tenure_months).toString() : "",
-    emi_paise: initialData?.emi_paise ? (initialData.emi_paise / 100).toString() : "",
-    next_emi_date: initialData?.next_emi_date || "",
-    notes: initialData?.notes || "",
+    loan_type: "personal",
+    principal_paise: initialData ? (initialData.principalPaise / 100).toString() : "",
+    outstanding_paise: initialData ? ((initialData.outstandingPaise ?? 0) / 100).toString() : "",
+    interest_rate: initialData ? initialData.interestRate.toString() : "",
+    disbursed_date: initialData?.disbursedDate || "",
+    tenure_months: initialData?.tenureMonths ? (initialData.tenureMonths).toString() : "",
+    emi_paise: initialData?.emiPaise ? (initialData.emiPaise / 100).toString() : "",
+    next_emi_date: "",
+    notes: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -254,7 +255,7 @@ function AmortizationDrawer({
   open, 
   onOpenChange 
 }: { 
-  loan: Loan | null;
+  loan: LoanSummaryModel | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -329,7 +330,7 @@ function PrepaymentSimulator({
   open, 
   onOpenChange 
 }: { 
-  loan: Loan | null;
+  loan: LoanSummaryModel | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -422,14 +423,13 @@ export default function LoansPage() {
   const deleteLoanMutation = useDeleteLoan();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
+  const [editingLoan, setEditingLoan] = useState<LoanSummaryModel | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
-  const [scheduleLoan, setScheduleLoan] = useState<Loan | null>(null);
+  const [scheduleLoan, setScheduleLoan] = useState<LoanSummaryModel | null>(null);
   // Prepayment state (for future use)
   const [prepaymentOpen, setPrepaymentOpen] = useState(false);
-   
-  const [prepaymentLoan, setPrepaymentLoan] = useState<Loan | null>(null);
-   
+  const [prepaymentLoan, setPrepaymentLoan] = useState<LoanSummaryModel | null>(null);
+
   void setPrepaymentLoan;
 
   const handleCreateLoan = async (formData: LoanFormData) => {
@@ -484,19 +484,19 @@ export default function LoansPage() {
     }
   };
 
-  const handleEditLoan = (loan: Loan) => {
+  const handleEditLoan = (loan: LoanSummaryModel) => {
     setEditingLoan(loan);
     setDialogOpen(true);
   };
 
-  const handleShowSchedule = (loan: Loan) => {
+  const handleShowSchedule = (loan: LoanSummaryModel) => {
     setScheduleLoan(loan);
     setScheduleOpen(true);
   };
 
   // Calculate totals
-  const totalOutstanding = data?.loans.reduce((sum, l) => sum + l.outstanding_paise, 0) || 0;
-  const totalEMI = data?.summary.total_monthly_emi_paise || 0;
+  const totalOutstanding = data?.loans.reduce((sum, l) => sum + (l.outstandingPaise ?? 0), 0) || 0;
+  const totalEMI = data?.totalMonthlyEmiPaise || 0;
 
   if (isLoading) {
     return (

@@ -1,9 +1,13 @@
-import type { HookState } from './use-async-query';
-import { useAsyncQuery } from './use-async-query'
+import { useAppQuery } from '@/lib/query'
+import { queryKeys } from '@/lib/query'
+import { STALE_TIME } from '@/lib/query'
+import { CreditCardsResponseSchema } from '../contracts/api/cards'
+import { mapCreditCardsToModel } from '../mappers/cards'
+import type { CreditCardsModel } from '../models/cards'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
 
-// Types based on /api/cards response
+// Types based on /api/v1/credit-cards response
 export interface CardSummary {
   card_id: string
   bank: string
@@ -31,16 +35,18 @@ export interface CardsData {
   total_utilization_percent: number
 }
 
-async function fetchCards(): Promise<CardsData> {
-  const response = await fetch(`${API_BASE}/api/cards`)
+async function fetchCards(): Promise<CreditCardsModel> {
+  const response = await fetch(`${API_BASE}/api/v1/credit-cards`)
   if (!response.ok) throw new Error(`Cards fetch failed: ${response.status}`)
-  return response.json()
+  const dto = CreditCardsResponseSchema.parse(await response.json())
+  return mapCreditCardsToModel(dto)
 }
 
-export function useCards(): HookState<CardsData> {
-  return useAsyncQuery(
-    ['cards'],
-    fetchCards
-  )
-
+export function useCards() {
+  return useAppQuery({
+    queryKey: queryKeys.cards.list(),
+    queryFn: fetchCards,
+    capability: 'cards',
+    staleTime: STALE_TIME.NORMAL,
+  })
 }

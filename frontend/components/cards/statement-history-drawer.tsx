@@ -17,11 +17,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { CheckCircle, AlertCircle, XCircle } from 'lucide-react'
-import type { CardSummary } from '@/lib/hooks/use-cards'
+import type { CreditCardSummaryModel } from '@/lib/models/cards'
 import type { Statement } from '@/lib/api/client'
 
 interface StatementHistoryDrawerProps {
-  card: CardSummary | null
+  card: CreditCardSummaryModel | null
   open: boolean
   onOpenChange: (open: boolean) => void
   statements: Statement[]
@@ -67,7 +67,7 @@ export function StatementHistoryDrawer({
         <SheetHeader>
           <SheetTitle>Statement History</SheetTitle>
           <SheetDescription>
-            {card.bank} • •••• {card.card_last4}
+            {card.bank} • •••• {card.cardLast4}
           </SheetDescription>
         </SheetHeader>
         

@@ -4,9 +4,18 @@ Coordinates repositories and loan_engine to implement business logic.
 No direct database access - uses repositories only.
 """
 
+from datetime import datetime
 from typing import Any
 
 from src.engines.loan_engine import generate_schedule, total_interest_paise
+from src.models.explanation import (
+    CalculationStep,
+    Confidence,
+    Evidence,
+    Explanation,
+    LoansResponse,
+    SourceReference,
+)
 from src.models.loan_payment import LoanPaymentCreate
 from src.repositories.loan_payment_repository import LoanPaymentRepository
 from src.repositories.loan_repository import LoanRepository
@@ -234,3 +243,151 @@ class LoanService:
     def record_payment(self, payment: LoanPaymentCreate) -> int:
         """Record a loan payment."""
         return self.payment_repo.create_payment(payment)
+
+    # ============================================================
+    # Explanation Pipeline
+    # ============================================================
+
+    def calculate_with_explanation(self) -> LoansResponse:
+        """
+        Compute loans summary with full explainability.
+
+        Returns:
+            LoansResponse with explanation containing:
+            - Evidence for each loan (principal, outstanding, EMI)
+            - Source references for each loan
+            - Calculation steps: sum-outstanding, sum-principal, sum-emi, compute-total-payable
+            - Confidence based on data availability
+        """
+        # Fetch all loans
+        loans = self.loan_repo.list_loans()
+
+        # Build evidence and sources for each loan
+        loan_evidence: list[Evidence] = []
+        loan_sources: list[SourceReference] = []
+
+        for loan in loans:
+            loan_id = loan.get("id", "unknown")
+            principal = loan.get("principal_paise", 0) or 0
+            outstanding = loan.get("outstanding_paise", 0) or 0
+            emi = loan.get("emi_paise", 0) or 0
+
+            # Evidence for principal
+            if principal > 0:
+                loan_evidence.append(Evidence(
+                    id=f"loan-{loan_id}-principal",
+                    type="data",
+                    description=f"Principal for loan {loan.get('name', loan_id)}",
+                    value=principal,
+                    sourceId=str(loan_id),
+                ))
+
+            # Evidence for outstanding
+            if outstanding > 0:
+                loan_evidence.append(Evidence(
+                    id=f"loan-{loan_id}-outstanding",
+                    type="data",
+                    description=f"Outstanding for loan {loan.get('name', loan_id)}",
+                    value=outstanding,
+                    sourceId=str(loan_id),
+                ))
+
+            # Evidence for EMI
+            if emi > 0:
+                loan_evidence.append(Evidence(
+                    id=f"loan-{loan_id}-emi",
+                    type="data",
+                    description=f"EMI for loan {loan.get('name', loan_id)}",
+                    value=emi,
+                    sourceId=str(loan_id),
+                ))
+
+            # Source reference
+            loan_sources.append(SourceReference(
+                type="loan",
+                id=str(loan_id),
+                name=loan.get("name", f"Loan {loan_id}"),
+                date=loan.get("disbursed_date"),
+            ))
+
+        # Calculate totals
+        total_outstanding = sum(
+            int(e.value) for e in loan_evidence
+            if isinstance(e.value, int) and "outstanding" in e.id
+        )
+        total_principal = sum(
+            int(e.value) for e in loan_evidence
+            if isinstance(e.value, int) and "principal" in e.id
+        )
+        total_emi = sum(
+            int(e.value) for e in loan_evidence
+            if isinstance(e.value, int) and "emi" in e.id
+        )
+
+        # Calculate confidence
+        confidence_bps = 10000
+        confidence_reasons: list[str] = []
+
+        if len(loan_evidence) == 0:
+            confidence_bps -= 2000
+            confidence_reasons.append("No loan data available")
+
+        # Build calculation steps
+        calculation_steps: list[CalculationStep] = [
+            CalculationStep(
+                stepId="sum-outstanding",
+                description="Sum all loan outstanding balances",
+                operation="ADD",
+                inputIds=[e.id for e in loan_evidence if "outstanding" in e.id],
+                outputId="total-outstanding",
+                order=1,
+            ),
+            CalculationStep(
+                stepId="sum-principal",
+                description="Sum all loan principal amounts",
+                operation="ADD",
+                inputIds=[e.id for e in loan_evidence if "principal" in e.id],
+                outputId="total-principal",
+                order=2,
+            ),
+            CalculationStep(
+                stepId="sum-emi",
+                description="Sum all monthly EMI amounts",
+                operation="ADD",
+                inputIds=[e.id for e in loan_evidence if "emi" in e.id],
+                outputId="total-emi",
+                order=3,
+            ),
+            CalculationStep(
+                stepId="compute-total-payable",
+                description="Total payable = outstanding + remaining interest",
+                operation="ADD",
+                inputIds=["total-outstanding"],
+                outputId="total-payable",
+                order=4,
+            ),
+        ]
+
+        # Build explanation
+        explanation = Explanation(
+            metric="loans",
+            value=total_outstanding,
+            confidence=Confidence(
+                value=confidence_bps,
+                reason=", ".join(confidence_reasons) if confidence_reasons else "Complete loan data available",
+            ),
+            evidence=loan_evidence,
+            sources=loan_sources,
+            calculationSteps=calculation_steps,
+        )
+
+        return LoansResponse(
+            loans=loans,
+            total_outstanding_paise=total_outstanding,
+            total_principal_paise=total_principal,
+            total_monthly_emi_paise=total_emi,
+            is_partial=len(loan_evidence) == 0,
+            partial_reason="No loan data available" if len(loan_evidence) == 0 else None,
+            last_updated=datetime.now().isoformat(),
+            explanation=explanation,
+        )
