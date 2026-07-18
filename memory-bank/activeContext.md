@@ -69,5 +69,11 @@
   - Created `frontend/lib/models/forecasting.ts` with `ForecastingModel`
   - Created `frontend/lib/mappers/forecasting.ts` to preserve explanation in DTO mapping
 
+### Stage 3.9 - Explainability Consolidation (COMPLETED)
+- Verified all capabilities follow frozen reference implementation
+- Fixed Stage 3 regression: moved investments explanation building from router to service
+- Fixed test mocks to use canonical SourceReference fields
+- Generated `docs/STAGE3_EXPLAINABILITY_AUDIT.md` with full verification report
+- All 94 frontend tests pass, no new backend errors introduced
+
 ### Next Steps
-- Regenerate OpenAPI schemas (`clarifin_openapi.json`, `api_types.ts`, `types/api-generated.ts`)
