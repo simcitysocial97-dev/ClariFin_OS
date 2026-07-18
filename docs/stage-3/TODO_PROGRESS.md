@@ -118,12 +118,7 @@
 - S3-SEL-019: Add selection accessibility
 - S3-SEL-020: Add selection integration with table
 
-### Evidence System (11)
-- [ ] S3-EVD-010: Add evidence for categorization
-- [ ] S3-EVD-011: Add evidence for import
-- [ ] S3-EVD-012: Add evidence for adjustment
-- [ ] S3-EVD-013: Add evidence for balance
-- [ ] S3-EVD-014: Add evidence for reconciliation
+### Evidence System (5)
 - [ ] S3-EVD-015: Add evidence drawer tests
 - [ ] S3-EVD-016: Add evidence performance tests
 - [ ] S3-EVD-017: Add evidence documentation
@@ -333,7 +328,7 @@
 
 ## Blocked (0)
 
-## Completed (169)
+## Completed (174)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition

@@ -5,6 +5,13 @@
  */
 
 export { useEvidence } from './use-evidence';
+export {
+  createCategorizationEvidence,
+  createImportEvidence,
+  createAdjustmentEvidence,
+  createBalanceEvidence,
+  createReconciliationEvidence,
+} from './factories';
 export type {
   EvidenceType,
   EvidenceSource,
