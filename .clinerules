@@ -11,40 +11,65 @@ I am Cline. My memory resets between sessions. I operate using a **Hybrid State 
 
 ---
 
-## 2. TOOL PRIORITY ORDER (MUST FOLLOW)
+## 2. TOOL SELECTION
 
-**Always use tools in this order — never skip to a more expensive tool without proving cheaper tools were insufficient:**
+Choose tools based on the type of question.
 
-1. **Memory Bank** — Check for known patterns, maps, and prior analysis
-2. **User-provided summary** — Use explicit context from user
-3. **CGC `find_code()`** — Symbol lookup with source (INDEX_SOURCE=true)
-4. **CGC `analyze_code_relationships()`** — Caller/callee analysis
-5. **CGC `execute_cypher_query()`** — Complex queries (inheritance, dependencies)
-6. **`rg` (ripgrep)** — Fallback for CGC limitations or quick pattern matching
-7. **`read_file`** — Only when CGC returns `source: null` or incomplete data
+### Semantic Questions → CGC
+- Finding definitions, classes, functions, interfaces
+- Understanding module structure and architecture
+- Tracing dependency relationships
+- Symbol source retrieval
 
----
+**Use:** `find_code()`, `execute_cypher_query()`, `analyze_code_relationships()`
 
-## 3. CGC LIMITATIONS & WORKAROUNDS
+### Lexical Questions → rg
+- Imports, references, usages
+- Decorators, configuration values, strings
+- Exact symbol occurrences, test discovery
 
-**When CGC returns empty results, use these fallbacks:**
+**Do not waste CGC queries for purely textual searches.**
 
-| CGC Query | Limitation | Fallback |
-|-----------|------------|----------|
-| `find_callers` | Returns 0 for TS/JS function calls | `rg "functionName" --type ts` |
-| `CALLS` relationship | Incomplete for TS/JS | `rg "functionName" --type ts` |
-| `f.source` on File nodes | Returns null | Use `find_code("SymbolName")` |
-| Result count = 50 | May be truncated | Use multiple targeted queries |
-
-**Verification before trusting CGC:**
-- [ ] Is the symbol in a file at depth 5+? CGC indexes all depths, but verify.
-- [ ] Did query return exactly 50 results? If so, the cap may be truncating.
-- [ ] Did I try `rg` as fallback? It has no result limits.
-- [ ] Is the graph stale? Check last index time or run a known-symbol query as control.
+### Hybrid Questions → CGC + rg
+For caller/usages questions: Try CGC first, validate with rg if empty/incomplete.
 
 ---
 
-## 4. BUILD VERIFICATION
+## 3. DISCOVERY PHASE (NO FILE READS)
+
+**Allowed:** Memory Bank, CGC (semantic), `rg` (lexical)
+
+**Not allowed:** `read_file` for exploration, recursive `list_files`
+
+**Purpose:** Identify symbols, relationships, and file locations before modification.
+
+---
+
+## 4. MODIFICATION PHASE
+
+**Allowed:** `read_file` for identified files, editing tools, tests/build verification
+
+**Purpose:** Make targeted changes to specific files.
+
+---
+
+## 5. CGC COVERAGE AND FALLBACKS
+
+| Capability | Preferred Tool | Fallback |
+|------------|----------------|----------|
+| Definitions | CGC | rg |
+| Source retrieval | `find_code` | `read_file` |
+| Architecture | CGC | manual analysis |
+| TS/JS callers | CGC + rg | rg |
+| Python callers | CGC + rg | rg |
+| Imports | rg | none |
+| Decorators | rg | none |
+
+**Note:** Empty CGC results may indicate missing graph relationships, not absence.
+
+---
+
+## 6. BUILD VERIFICATION
 
 After file modifications:
 - **Frontend:** `cd frontend && npm run type-check && npm run lint && npm test -- --run && npm run build`
@@ -52,15 +77,25 @@ After file modifications:
 
 ---
 
-## 5. ARCHITECTURE.md SYNC
+## 7. ARCHITECTURE.md SYNC
 
 Update when: schema changes, layer files added/removed, dependency chain changes, technology stack changes, duplicate code resolution, API contract changes.
 
 ---
 
-## 6. GIT COMMIT PROTOCOL
+## 8. GIT COMMIT PROTOCOL
 
 After validation and `activeContext.md` update:
 1. `git add -A`
 2. `git commit -m "[type]: [description]"` (semantic style)
 3. `git push origin [current-branch]`
+
+---
+
+## 9. DECISION EXAMPLES
+
+**Example A:** "Where is UserService class?" → CGC `find_code`
+
+**Example B:** "Who imports UserService?" → `rg "UserService" --type ts`
+
+**Example C:** "What calls processTransaction?" → CGC attempt → rg validation if incomplete

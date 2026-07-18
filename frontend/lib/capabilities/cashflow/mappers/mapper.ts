@@ -31,6 +31,7 @@ export function mapCashflowMonthToModel(dto: CashflowMonthDto): CashflowMonthMod
  * Transformation rules:
  * - Flatten nested structure for easier component access
  * - Rename fields to camelCase for consistency
+ * - Preserve explanation unchanged
  */
 export function mapCashflowDtoToModel(dto: CashflowResponseDto): CashflowModel {
   return {
@@ -39,6 +40,10 @@ export function mapCashflowDtoToModel(dto: CashflowResponseDto): CashflowModel {
     totalIncomePaise: dto.total_income_paise,
     totalExpensePaise: dto.total_expense_paise,
     totalNetPaise: dto.total_net_paise,
+    isPartial: dto.is_partial,
+    partialReason: dto.partial_reason,
+    lastUpdated: dto.last_updated,
+    explanation: dto.explanation ?? null,
   }
 }
 

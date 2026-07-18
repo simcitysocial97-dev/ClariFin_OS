@@ -10,6 +10,7 @@ ignore = [
     "B904",  # raise from err
     "E722",  # bare except
     "N806",  # variable in function should be lowercase
+    "N815",  # mixedCase variable names (intentional for TypeScript compatibility)
     "E402",  # module level import not at top
 ]
 

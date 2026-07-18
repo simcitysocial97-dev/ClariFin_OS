@@ -4,10 +4,20 @@ Coordinates CashflowRepository and FinancialEventRepository to provide
 enriched cashflow data with financial events overlay.
 """
 
+from datetime import datetime
 from typing import Any
 
 from src.common import DB_PATH
 from src.engines.cashflow_engine import compute_monthly_cashflow
+from src.models.explanation import (
+    CalculationStep,
+    CashflowMonth,
+    CashflowResponse,
+    Confidence,
+    Evidence,
+    Explanation,
+    SourceReference,
+)
 from src.repositories import CashflowRepository
 from src.repositories.financial_event_repository import FinancialEventRepository
 
@@ -96,3 +106,144 @@ class CashflowService:
             "expense_paise": 0,
             "net_paise": 0,
         }
+
+    def calculate_with_explanation(
+        self,
+        months: int = 6,
+        member: str | None = None,
+    ) -> CashflowResponse:
+        """
+        Compute household cashflow with full explainability.
+
+        Returns:
+            CashflowResponse with explanation containing:
+            - Evidence for each income and expense transaction
+            - Source references for each transaction
+            - Calculation steps: sum-income, sum-expense, net-cashflow
+            - Confidence based on data availability
+        """
+        # Fetch all monthly cashflow data
+        all_months = self.cashflow_repo.get_monthly_cashflow(months=months, member=member)
+
+        # Build evidence and sources for income
+        income_evidence: list[Evidence] = []
+        income_sources: list[SourceReference] = []
+        months_list: list[CashflowMonth] = []
+
+        for month_data in all_months:
+            month_key = month_data.get("month_key", "")
+            income = int(month_data.get("income_paise", 0) or 0)
+            expense = int(month_data.get("expense_paise", 0) or 0)
+            txn_count = int(month_data.get("transaction_count", 0) or 0)
+
+            # Build month data
+            months_list.append(CashflowMonth(
+                month_key=month_key,
+                month_label=month_key,
+                income_paise=income,
+                expense_paise=expense,
+                net_paise=income - expense,
+                transaction_count=txn_count,
+            ))
+
+            if income > 0:
+                income_evidence.append(Evidence(
+                    id=f"income-{month_key}",
+                    type="data",
+                    description=f"Income for {month_key}",
+                    value=income,
+                    sourceId=f"month-{month_key}",
+                ))
+                income_sources.append(SourceReference(
+                    type="transaction",
+                    id=f"month-{month_key}",
+                    name=f"Income for {month_key}",
+                    date=month_key,
+                ))
+
+            if expense > 0:
+                income_evidence.append(Evidence(
+                    id=f"expense-{month_key}",
+                    type="data",
+                    description=f"Expense for {month_key}",
+                    value=expense,
+                    sourceId=f"month-{month_key}",
+                ))
+                income_sources.append(SourceReference(
+                    type="transaction",
+                    id=f"month-{month_key}",
+                    name=f"Expense for {month_key}",
+                    date=month_key,
+                ))
+
+        # Calculate totals - filter by type and sum integer values
+        total_income = sum(
+            int(e.value) for e in income_evidence
+            if isinstance(e.value, int) and "income" in e.id
+        )
+        total_expense = sum(
+            int(e.value) for e in income_evidence
+            if isinstance(e.value, int) and "expense" in e.id
+        )
+        total_net = total_income - total_expense
+
+        # Calculate confidence
+        confidence_bps = 10000
+        confidence_reasons: list[str] = []
+
+        if len(income_evidence) == 0:
+            confidence_bps -= 2000
+            confidence_reasons.append("No transaction data available")
+
+        # Build calculation steps
+        calculation_steps: list[CalculationStep] = [
+            CalculationStep(
+                stepId="sum-income",
+                description="Sum all income values",
+                operation="ADD",
+                inputIds=[e.id for e in income_evidence if "income" in e.id],
+                outputId="total-income",
+                order=1,
+            ),
+            CalculationStep(
+                stepId="sum-expense",
+                description="Sum all expense values",
+                operation="ADD",
+                inputIds=[e.id for e in income_evidence if "expense" in e.id],
+                outputId="total-expense",
+                order=2,
+            ),
+            CalculationStep(
+                stepId="net-cashflow",
+                description="Net cashflow = income - expense",
+                operation="SUBTRACT",
+                inputIds=["total-income", "total-expense"],
+                outputId="total-net",
+                order=3,
+            ),
+        ]
+
+        # Build explanation
+        explanation = Explanation(
+            metric="household_cashflow",
+            value=total_net,
+            confidence=Confidence(
+                value=confidence_bps,
+                reason=", ".join(confidence_reasons) if confidence_reasons else "Complete data available",
+            ),
+            evidence=income_evidence,
+            sources=income_sources,
+            calculationSteps=calculation_steps,
+        )
+
+        return CashflowResponse(
+            months=months_list,
+            period_months=len(months_list),
+            total_income_paise=total_income,
+            total_expense_paise=total_expense,
+            total_net_paise=total_net,
+            is_partial=len(income_evidence) == 0,
+            partial_reason="No transaction data available" if len(income_evidence) == 0 else None,
+            last_updated=datetime.now().isoformat(),
+            explanation=explanation,
+        )

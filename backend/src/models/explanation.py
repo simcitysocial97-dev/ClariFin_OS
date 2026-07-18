@@ -6,6 +6,7 @@ All confidence values are in basis points (0-10000).
 """
 
 from typing import Literal
+
 from pydantic import BaseModel, Field
 
 # Type aliases
@@ -81,3 +82,26 @@ class NetWorthResponse(BaseModel):
     partial_reason: str | None = None
     last_updated: str | None = None
     explanation: NetWorthExplanation | None = None
+
+
+class CashflowMonth(BaseModel):
+    """Single month cashflow data."""
+    month_key: str
+    month_label: str
+    income_paise: int
+    expense_paise: int
+    net_paise: int
+    transaction_count: int
+
+
+class CashflowResponse(BaseModel):
+    """Canonical API response for /api/cashflow/monthly endpoint."""
+    months: list[CashflowMonth]
+    period_months: int
+    total_income_paise: int
+    total_expense_paise: int
+    total_net_paise: int
+    is_partial: bool
+    partial_reason: str | None = None
+    last_updated: str | None = None
+    explanation: Explanation | None = None

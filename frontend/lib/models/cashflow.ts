@@ -9,23 +9,9 @@
 import type { Explanation } from '@/lib/explainability'
 
 /**
- * Cashflow month data for UI consumption
- */
-export interface CashflowMonthModel {
-  monthKey: string
-  monthLabel: string
-  incomePaise: number
-  expensePaise: number
-  netPaise: number
-  transactionCount: number
-}
-
-/**
  * Cashflow response for UI consumption
  */
 export interface CashflowModel {
-  months: CashflowMonthModel[]
-  periodMonths: number
   totalIncomePaise: number
   totalExpensePaise: number
   totalNetPaise: number

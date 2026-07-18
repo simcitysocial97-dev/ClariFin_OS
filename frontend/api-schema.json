@@ -2582,9 +2582,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Cashflow Monthly Api Cashflow Monthly Get"
+                  "$ref": "#/components/schemas/CashflowResponse"
                 }
               }
             }
@@ -2608,7 +2606,7 @@
           "cashflow"
         ],
         "summary": "Get Cashflow Monthly Analysis",
-        "description": "Get enriched monthly cashflow analysis with financial events overlay.\n\nReturns:\n    - cash_surplus: Raw income - expense (cash basis)\n    - true_savings: Income - expense - fees - liability_increase\n    - liability_adjusted_savings: true_savings adjusted for liability changes\n    - net_worth_impact: asset_change - liability_change\n    - month_classification: surplus / deficit_covered_by_credit / deficit\n    - credit_dependency_ratio: Credit-funded expenses / total expenses\n    - effective_liquidity_cost_annualized: Annualized fee estimate",
+        "description": "Get enriched monthly cashflow analysis with financial events overlay.\n\nReturns:\n    - cash_surplus, true_savings, liability_adjusted_savings\n    - net_worth_impact, month_classification\n    - credit_dependency_ratio, effective_liquidity_cost_annualized",
         "operationId": "get_cashflow_monthly_analysis_api_v1_cashflow_monthly_get",
         "parameters": [
           {
@@ -6945,6 +6943,119 @@
         "title": "CalculationStep",
         "description": "Single step in a calculation chain."
       },
+      "CashflowMonth": {
+        "properties": {
+          "month_key": {
+            "type": "string",
+            "title": "Month Key"
+          },
+          "month_label": {
+            "type": "string",
+            "title": "Month Label"
+          },
+          "income_paise": {
+            "type": "integer",
+            "title": "Income Paise"
+          },
+          "expense_paise": {
+            "type": "integer",
+            "title": "Expense Paise"
+          },
+          "net_paise": {
+            "type": "integer",
+            "title": "Net Paise"
+          },
+          "transaction_count": {
+            "type": "integer",
+            "title": "Transaction Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month_key",
+          "month_label",
+          "income_paise",
+          "expense_paise",
+          "net_paise",
+          "transaction_count"
+        ],
+        "title": "CashflowMonth",
+        "description": "Single month cashflow data."
+      },
+      "CashflowResponse": {
+        "properties": {
+          "months": {
+            "items": {
+              "$ref": "#/components/schemas/CashflowMonth"
+            },
+            "type": "array",
+            "title": "Months"
+          },
+          "period_months": {
+            "type": "integer",
+            "title": "Period Months"
+          },
+          "total_income_paise": {
+            "type": "integer",
+            "title": "Total Income Paise"
+          },
+          "total_expense_paise": {
+            "type": "integer",
+            "title": "Total Expense Paise"
+          },
+          "total_net_paise": {
+            "type": "integer",
+            "title": "Total Net Paise"
+          },
+          "is_partial": {
+            "type": "boolean",
+            "title": "Is Partial"
+          },
+          "partial_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Partial Reason"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Explanation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "months",
+          "period_months",
+          "total_income_paise",
+          "total_expense_paise",
+          "total_net_paise",
+          "is_partial"
+        ],
+        "title": "CashflowResponse",
+        "description": "Canonical API response for /api/cashflow/monthly endpoint."
+      },
       "Confidence": {
         "properties": {
           "value": {
@@ -7920,6 +8031,17 @@
               }
             ],
             "title": "Partial Reason"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
           },
           "explanation": {
             "anyOf": [

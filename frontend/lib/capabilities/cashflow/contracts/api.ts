@@ -6,6 +6,15 @@
 
 import { z } from 'zod'
 
+// Re-export shared schemas from networth (they are canonical)
+export type {
+  SourceReferenceSchema,
+  EvidenceSchema,
+  CalculationStepSchema,
+  ConfidenceSchema,
+  ExplanationSchema,
+} from '../../../contracts/api/networth'
+
 /**
  * Cashflow month schema - matches backend response
  */
@@ -27,6 +36,10 @@ export const CashflowResponseSchema = z.object({
   total_income_paise: z.number().int(),
   total_expense_paise: z.number().int(),
   total_net_paise: z.number().int(),
+  is_partial: z.boolean(),
+  partial_reason: z.string().nullable(),
+  last_updated: z.string().nullable(),
+  explanation: z.any().optional(),
 })
 
 export type CashflowMonthDto = z.infer<typeof CashflowMonthSchema>
