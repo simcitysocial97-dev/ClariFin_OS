@@ -9,12 +9,13 @@
 - Created Transaction Capability layer with useTransactionCapability hook (S3-CAP-001-020)
 - Created Filtering Engine with all filter components (S3-FIL-001-020)
 - Created Search Engine with search input component (S3-SEA-001-020)
+- Created Grouping system with group header component (S3-GRP-001-020)
 - All TypeScript checks passing
 
 ### Next Steps
-- Begin Grouping implementation (S3-GRP-001)
-- Create group types definition
-- Add group actions to capability
+- Begin Sorting implementation (S3-SRT-001)
+- Create sort types definition
+- Add sort actions to capability
 
 ### Key Constraints
 - No modifications to Dashboard, Money Graph, Behaviour Workspace, Cashflow Workspace, or Reconciliation Workspace

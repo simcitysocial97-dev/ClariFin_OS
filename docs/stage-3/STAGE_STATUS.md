@@ -3,11 +3,11 @@
 ## Overall Progress
 
 - **Total TODOs:** 360
-- **Completed:** 100
+- **Completed:** 120
 - **In Progress:** 0
 - **Blocked:** 0
-- **Pending:** 260
-- **Overall %:** 27.8%
+- **Pending:** 240
+- **Overall %:** 33.3%
 
 ## Capability Progress
 
@@ -18,7 +18,7 @@
 | Capability Layer | 20 | 20 | 0 | 0 | 100% |
 | Filtering Engine | 20 | 20 | 0 | 0 | 100% |
 | Search Engine | 20 | 20 | 0 | 0 | 100% |
-| Grouping | 20 | 0 | 0 | 0 | 0% |
+| Grouping | 20 | 20 | 0 | 0 | 100% |
 | Sorting | 20 | 0 | 0 | 0 | 0% |
 | Selection Model | 20 | 0 | 0 | 0 | 0% |
 | Evidence System | 20 | 0 | 0 | 0 | 0% |
@@ -34,7 +34,7 @@
 
 ## Current TODO
 
-**S3-GRP-001: Create group types definition**
+**S3-SRT-001: Create sort types definition**
 
 This is the next TODO in the critical path. It depends on S3-CAP-001 (completed).
 
@@ -78,4 +78,5 @@ This is the next TODO in the critical path. It depends on S3-CAP-001 (completed)
 - Capability Layer is now complete (100%)
 - Filtering Engine is now complete (100%)
 - Search Engine is now complete (100%)
-- Next: Grouping (S3-GRP-001)
+- Grouping is now complete (100%)
+- Next: Sorting (S3-SRT-001)

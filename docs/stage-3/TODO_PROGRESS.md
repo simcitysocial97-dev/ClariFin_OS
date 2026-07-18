@@ -342,7 +342,7 @@
 
 ## Blocked (0)
 
-## Completed (100)
+## Completed (120)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -453,3 +453,25 @@
 - S3-SEA-018: Add search responsive design
 - S3-SEA-019: Add search dark mode support
 - S3-SEA-020: Add search accessibility
+
+### Grouping (20)
+- S3-GRP-001: Create group types definition
+- S3-GRP-002: Add groupByDate action to capability
+- S3-GRP-003: Add groupByCategory action to capability
+- S3-GRP-004: Add groupByMerchant action to capability
+- S3-GRP-005: Add groupByAmount action to capability
+- S3-GRP-006: Add group state to capability
+- S3-GRP-007: Add toggleGroup action to capability
+- S3-GRP-008: Add group UI component
+- S3-GRP-009: Add group header component
+- S3-GRP-010: Add group expand/collapse state
+- S3-GRP-011: Add group all action
+- S3-GRP-012: Add group none action
+- S3-GRP-013: Add group keyboard navigation
+- S3-GRP-014: Add group performance tests
+- S3-GRP-015: Add group UI tests
+- S3-GRP-016: Add group documentation
+- S3-GRP-017: Add group responsive design
+- S3-GRP-018: Add group dark mode support
+- S3-GRP-019: Add group accessibility
+- S3-GRP-020: Add group selection support
