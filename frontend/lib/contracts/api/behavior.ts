@@ -5,15 +5,22 @@
  */
 
 import { z } from 'zod'
-
-// Re-export shared schemas from networth (they are canonical)
-export type {
+import {
   SourceReferenceSchema,
   EvidenceSchema,
   CalculationStepSchema,
   ConfidenceSchema,
   ExplanationSchema,
-} from './networth'
+} from '@/lib/explainability/contracts/explainability.zod'
+
+// Re-export shared schemas from explainability (they are canonical)
+export {
+  SourceReferenceSchema,
+  EvidenceSchema,
+  CalculationStepSchema,
+  ConfidenceSchema,
+  ExplanationSchema,
+}
 
 // Wellness component schema
 const WellnessComponentSchema = z.object({
@@ -32,7 +39,7 @@ export const WellnessScoreResponseSchema = z.object({
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
   last_updated: z.string().nullable(),
-  explanation: z.any().optional(),
+  explanation: ExplanationSchema.optional(),
 })
 
 // Behavior insight schema
@@ -63,7 +70,7 @@ export const BehaviorInsightsResponseSchema = z.object({
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
   last_updated: z.string().nullable(),
-  explanation: z.any().optional(),
+  explanation: ExplanationSchema.optional(),
 })
 
 // Pattern summary schema
@@ -84,7 +91,7 @@ export const PatternsResponseSchema = z.object({
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
   last_updated: z.string().nullable(),
-  explanation: z.any().optional(),
+  explanation: ExplanationSchema.optional(),
 })
 
 // Recommendation response schema
@@ -104,7 +111,7 @@ export const RecommendationsResponseSchema = z.object({
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
   last_updated: z.string().nullable(),
-  explanation: z.any().optional(),
+  explanation: ExplanationSchema.optional(),
 })
 
 export type WellnessComponentDto = z.infer<typeof WellnessComponentSchema>

@@ -2,78 +2,37 @@
  * NetWorth API Contract - Zod schemas for DTO validation
  *
  * These schemas validate raw API responses before mapping to ViewModels.
- * SourceReference schema mirrors backend model exactly.
+ * SourceReference schema mirrors backend SourceReference.
  */
 
 import { z } from 'zod'
+import {
+  SourceReferenceSchema,
+  EvidenceSchema,
+  CalculationStepSchema,
+  ConfidenceSchema,
+  ExplanationSchema,
+} from '@/lib/explainability/contracts/explainability.zod'
 
-// Source reference schema - mirrors backend SourceReference
-const SourceReferenceSchema = z.object({
-  // Source type classification
-  type: z.enum([
-    'statement',
-    'account',
-    'loan',
-    'investment',
-    'transaction',
-    'recommendation_engine',
-    'cashflow_engine',
-    'behaviour_engine',
-    'user_input',
-  ]),
+// Re-export shared schemas from explainability (they are canonical)
+export {
+  SourceReferenceSchema,
+  EvidenceSchema,
+  CalculationStepSchema,
+  ConfidenceSchema,
+  ExplanationSchema,
+}
 
-  // Source identifier
-  id: z.union([z.string(), z.number()]),
-
-  // Human-readable name
-  name: z.string().nullable().optional(),
-
-  // Source date (for statements)
-  date: z.string().nullable().optional(),
-})
-
-// Evidence schema
-const EvidenceSchema = z.object({
-  id: z.string(),
-  type: z.enum(['data', 'calculation', 'source']),
-  description: z.string(),
-  value: z.union([z.number(), z.string(), z.boolean()]).nullable(),
-  sourceId: z.union([z.string(), z.number()]).optional(),
-})
-
-// Calculation step schema
-const CalculationStepSchema = z.object({
-  stepId: z.string(),
-  description: z.string(),
-  operation: z.enum(['ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE', 'AVERAGE', 'LOOKUP', 'FILTER', 'GROUP', 'MATCH']),
-  inputIds: z.array(z.string()),
-  outputId: z.string(),
-  order: z.number().int(),
-})
-
-// Confidence schema
-const ConfidenceSchema = z.object({
-  value: z.number().int().min(0).max(10000),
-  reason: z.string().optional(),
-})
-
-// Explanation schema
-const ExplanationSchema = z.object({
-  metric: z.string(),
-  value: z.number().int(),
-  confidence: ConfidenceSchema,
-  evidence: z.array(EvidenceSchema),
-  sources: z.array(SourceReferenceSchema),
-  calculationSteps: z.array(CalculationStepSchema),
-})
-
-// NetWorth explanation schema
+// NetWorth explanation schema - uses the canonical ExplanationSchema
 const NetWorthExplanationSchema = z.object({
   netWorth: ExplanationSchema,
   assets: ExplanationSchema,
   liabilities: ExplanationSchema,
   confidenceReason: z.string().optional(),
 })
+
+// Re-export the NetWorthExplanationSchema for use in other files
+export { NetWorthExplanationSchema }
 
 /**
  * NetWorth response from /api/networth
@@ -101,4 +60,3 @@ export const NetWorthResponseSchema = z.object({
 })
 
 export type NetWorthDto = z.infer<typeof NetWorthResponseSchema>
-export type { SourceReferenceSchema, EvidenceSchema, CalculationStepSchema, ConfidenceSchema, ExplanationSchema, NetWorthExplanationSchema }

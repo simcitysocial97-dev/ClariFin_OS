@@ -6,15 +6,22 @@
  */
 
 import { z } from 'zod'
-
-// Re-export shared schemas from networth (they are canonical)
-export type {
+import {
   SourceReferenceSchema,
   EvidenceSchema,
   CalculationStepSchema,
   ConfidenceSchema,
   ExplanationSchema,
-} from './networth'
+} from '@/lib/explainability/contracts/explainability.zod'
+
+// Re-export shared schemas from explainability (they are canonical)
+export {
+  SourceReferenceSchema,
+  EvidenceSchema,
+  CalculationStepSchema,
+  ConfidenceSchema,
+  ExplanationSchema,
+}
 
 // Reconciliation match schema
 const ReconciliationMatchSchema = z.object({
@@ -52,7 +59,7 @@ export const ReconciliationResponseSchema = z.object({
   is_partial: z.boolean(),
   partial_reason: z.string().nullable(),
   last_updated: z.string().nullable(),
-  explanation: z.any().optional(),
+  explanation: ExplanationSchema.optional(),
 })
 
 export type ReconciliationMatchDto = z.infer<typeof ReconciliationMatchSchema>
