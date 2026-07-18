@@ -20,7 +20,7 @@ const mockExplanation = {
     { id: 'e1', type: 'data' as const, description: 'Account balance', value: 10000000 },
   ],
   sources: [
-    { sourceType: 'account' as const, recordId: 'acc-1', function: 'getBalance' },
+    { type: 'account', id: 'acc-1', name: 'Savings Account' },
   ],
   calculationSteps: [
     {

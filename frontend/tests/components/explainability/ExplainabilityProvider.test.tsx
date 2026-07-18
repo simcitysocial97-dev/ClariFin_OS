@@ -14,7 +14,7 @@ vi.mock('@/lib/store/explainability-store', () => ({
 const mockExplanation = {
   metric: 'test',
   value: 100,
-  confidence: { value: 5000 },
+  confidence: { value: 5000, reason: 'Test confidence' },
   evidence: [],
   sources: [],
   calculationSteps: [],
