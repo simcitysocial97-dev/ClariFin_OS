@@ -9,6 +9,15 @@ from src.engines.financial_events.lineage_walker import (
     DEFAULT_ROLLOVER_LOOKBACK_DAYS,
     walk_lineage,
 )
+from src.models.explanation import (
+    CalculationStep,
+    Confidence,
+    Evidence,
+    EventsResponse,
+    Explanation,
+    FinancialEventSummary,
+    SourceReference,
+)
 from src.models.financial_event import FinancialEvent
 from src.repositories.financial_event_repository import FinancialEventRepository
 
@@ -153,16 +162,6 @@ class FinancialEventsService:
             - Confidence based on event completeness
         """
         from datetime import datetime
-
-        from src.models.explanation import (
-            CalculationStep,
-            Confidence,
-            Evidence,
-            EventsResponse,
-            Explanation,
-            FinancialEventSummary,
-            SourceReference,
-        )
 
         # Fetch events
         if month_bucket:

@@ -20,6 +20,15 @@ from src.engines.account_engine import (
     compute_income_expense_ratio,
     is_account_dormant,
 )
+from src.models.explanation import (
+    AccountSummary,
+    AccountsResponse,
+    CalculationStep,
+    Confidence,
+    Evidence,
+    Explanation,
+    SourceReference,
+)
 from src.repositories.account_balance_repository import AccountBalanceRepository
 from src.repositories.account_link_repository import AccountLinkRepository
 from src.repositories.account_repository import AccountRepository
@@ -403,16 +412,6 @@ class AccountService:
             - Confidence based on data availability
         """
         from datetime import datetime
-
-        from src.models.explanation import (
-            AccountSummary,
-            AccountsResponse,
-            CalculationStep,
-            Confidence,
-            Evidence,
-            Explanation,
-            SourceReference,
-        )
 
         # Fetch all accounts
         accounts = self.account_repo.get_all_accounts()
