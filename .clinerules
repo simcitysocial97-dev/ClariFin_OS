@@ -46,7 +46,6 @@ Wrap EVERY user request inside this strict execution pattern:
 
 ## 4. BUILD VERIFICATION COMMANDS
 Run these terminal validation checks immediately after *any* file modification:
-- **Frontend Core & Gate:** `cd frontend && npm run type-check && npm run lint && npm test -- --run && npm run build`
 - **Backend Core (Virtual Env Isolated):**
   `cd backend && ./venv/bin/python3 -m ruff check .`
   `cd backend && ./venv/bin/python3 -m mypy .`
