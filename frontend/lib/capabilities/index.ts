@@ -51,3 +51,51 @@ export {
   useAccountsContext,
   type AccountsContextType,
 } from './accounts-context';
+
+// Loans capability
+export {
+  useLoansCapability,
+  type LoansCapabilityState,
+  type LoansCapabilityActions,
+  type LoansCapabilityReturn,
+} from './use-loans-capability';
+
+// Credit Cards capability
+export {
+  useCreditCardsCapability,
+  type CreditCardsCapabilityState,
+  type CreditCardsCapabilityActions,
+  type CreditCardsCapabilityReturn,
+} from './use-credit-cards-capability';
+
+// Investments capability
+export {
+  useInvestmentsCapability,
+  type InvestmentsCapabilityState,
+  type InvestmentsCapabilityActions,
+  type InvestmentsCapabilityReturn,
+} from './use-investments-capability';
+
+// Reconciliation capability
+export {
+  useReconciliationCapability,
+  type ReconciliationCapabilityState,
+  type ReconciliationCapabilityActions,
+  type ReconciliationCapabilityReturn,
+} from './use-reconciliation-capability';
+
+// Behaviour capability
+export {
+  useBehaviourCapability,
+  type BehaviourCapabilityState,
+  type BehaviourCapabilityActions,
+  type BehaviourCapabilityReturn,
+} from './use-behaviour-capability';
+
+// Forecast capability
+export {
+  useForecastCapability,
+  type ForecastCapabilityState,
+  type ForecastCapabilityActions,
+  type ForecastCapabilityReturn,
+} from './use-forecast-capability';
