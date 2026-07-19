@@ -115,9 +115,9 @@
 | Cap 15: Error States | L8 | DONE | Created error-state |
 | Cap 16: Empty States | L8 | DONE | Created empty-state |
 | Cap 17: Cross-Navigation | L9 | DONE | Created cross-navigation |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | Created workspace routers |
+| Cap 20: Backend Service | L3 | DONE | Created workspace services |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---
@@ -143,9 +143,9 @@
 | Cap 15: Error States | L8 | DONE | Created error-state |
 | Cap 16: Empty States | L8 | DONE | Created empty-state |
 | Cap 17: Cross-Navigation | L9 | DONE | Created cross-navigation |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | Created workspace routers |
+| Cap 20: Backend Service | L3 | DONE | Created workspace services |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---
@@ -171,9 +171,9 @@
 | Cap 15: Error States | L8 | DONE | Created error-state |
 | Cap 16: Empty States | L8 | DONE | Created empty-state |
 | Cap 17: Cross-Navigation | L9 | DONE | Created cross-navigation |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | Created workspace routers |
+| Cap 20: Backend Service | L3 | DONE | Created workspace services |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---
@@ -199,9 +199,9 @@
 | Cap 15: Error States | L8 | DONE | Created error-state |
 | Cap 16: Empty States | L8 | DONE | Created empty-state |
 | Cap 17: Cross-Navigation | L9 | DONE | Created cross-navigation |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | Created workspace routers |
+| Cap 20: Backend Service | L3 | DONE | Created workspace services |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---
@@ -228,9 +228,9 @@
 | Cap 16: Error States | L8 | DONE | Created error-state |
 | Cap 17: Empty States | L8 | DONE | Created empty-state |
 | Cap 18: Cross-Navigation | L9 | DONE | Created cross-navigation |
-| Cap 19: Backend DTO | L0 | NOT_STARTED | |
-| Cap 20: Backend Router | L4 | NOT_STARTED | Blocked on Cap 19, 21 |
-| Cap 21: Backend Service | L3 | NOT_STARTED | Blocked on Cap 19 |
+| Cap 19: Backend DTO | L0 | DONE | |
+| Cap 20: Backend Router | L4 | DONE | Created workspace routers |
+| Cap 21: Backend Service | L3 | DONE | Created workspace services |
 | Cap 22: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 14 |
 
 ---
@@ -256,9 +256,9 @@
 | Cap 15: Error States | L8 | DONE | Created error-state |
 | Cap 16: Empty States | L8 | DONE | Created empty-state |
 | Cap 17: Cross-Navigation | L9 | DONE | Created cross-navigation |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | Created workspace routers |
+| Cap 20: Backend Service | L3 | DONE | Created workspace services |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---
@@ -270,13 +270,13 @@
 | W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
 | W4.2 Cashflow | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
 | W4.3 Accounts | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
-| W4.4 Loans | 21 | 13 | 0 | 0 | 8 | 0 | 0 |
-| W4.5 Credit Cards | 21 | 12 | 0 | 0 | 9 | 0 | 0 |
-| W4.6 Investments | 21 | 12 | 0 | 0 | 9 | 0 | 0 |
-| W4.7 Reconciliation | 21 | 12 | 0 | 0 | 9 | 0 | 0 |
-| W4.8 Behaviour | 22 | 14 | 0 | 0 | 8 | 0 | 0 |
-| W4.9 Forecast | 21 | 12 | 0 | 0 | 9 | 0 | 0 |
-| **Total** | **189** | **54** | **0** | **0** | **135 | **0** | **0** |
+| W4.4 Loans | 21 | 10 | 0 | 0 | 11 | 0 | 0 |
+| W4.5 Credit Cards | 21 | 9 | 0 | 0 | 12 | 0 | 0 |
+| W4.6 Investments | 21 | 9 | 0 | 0 | 12 | 0 | 0 |
+| W4.7 Reconciliation | 21 | 9 | 0 | 0 | 12 | 0 | 0 |
+| W4.8 Behaviour | 22 | 10 | 0 | 0 | 12 | 0 | 0 |
+| W4.9 Forecast | 21 | 9 | 0 | 0 | 12 | 0 | 0 |
+| **Total** | **189** | **41** | **0** | **0** | **148 | **0** | **0** |
 
 ---
 
