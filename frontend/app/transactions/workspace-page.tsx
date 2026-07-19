@@ -23,6 +23,7 @@ import { TransactionTable } from '@/components/transaction-table/transaction-tab
 /**
  * Transaction Workspace Page
  * Composes all workspace regions using the capability layer
+ * Responsive layout with proper spacing and overflow handling
  */
 export function TransactionWorkspacePage() {
   const capability = useTransactionCapability();
@@ -31,7 +32,7 @@ export function TransactionWorkspacePage() {
   // Loading state
   if (capability.loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-[400px] p-4">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -40,7 +41,7 @@ export function TransactionWorkspacePage() {
   // Error state
   if (capability.error) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <ErrorMessage
           message={capability.error.message}
           onRetry={capability.refresh}
@@ -52,7 +53,7 @@ export function TransactionWorkspacePage() {
   // Empty state
   if (capability.transactions.length === 0) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <EmptyState onAction={capability.clearFilters} />
       </div>
     );
@@ -69,9 +70,12 @@ export function TransactionWorkspacePage() {
   ].filter(Boolean).length;
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Toolbar Region */}
+    <div className="flex flex-col h-full min-h-screen">
+      {/* Toolbar Region - Responsive */}
       <WorkspaceToolbar
+        transactionCount={capability.total}
+        activeFilterCount={activeFilterCount}
+        loading={capability.loading}
         onSearchClick={() => {}}
         onFilterToggle={() => {}}
         onGroupToggle={capability.toggleGroup}
@@ -79,12 +83,9 @@ export function TransactionWorkspacePage() {
         onExport={() => {}}
         onRefresh={capability.refresh}
         onSettings={() => {}}
-        transactionCount={capability.total}
-        activeFilterCount={activeFilterCount}
-        loading={capability.loading}
       />
 
-      {/* Filter Panel Region */}
+      {/* Filter Panel Region - Responsive */}
       <FilterPanel
         filters={{
           searchQuery: capability.searchQuery,
@@ -104,7 +105,7 @@ export function TransactionWorkspacePage() {
         }}
       />
 
-      {/* Transaction Table Region */}
+      {/* Transaction Table Region - Flex grow with overflow */}
       <div className="flex-1 overflow-auto">
         <TransactionTable
           transactions={capability.transactions}

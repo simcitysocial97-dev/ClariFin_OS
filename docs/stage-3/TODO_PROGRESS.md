@@ -1,6 +1,6 @@
 # Stage 3 — TODO Progress
 
-## Pending (167)
+## Pending (153)
 
 ### Transaction ViewModel (0)
 
@@ -120,18 +120,7 @@
 
 ### Evidence System (0)
 
-### Workspace Layout (19)
-- S3-WS-002: Add toolbar to workspace
-- S3-WS-003: Add filter panel to workspace
-- S3-WS-004: Add transaction table to workspace
-- S3-WS-005: Add selection summary to workspace
-- S3-WS-006: Add insight panel to workspace
-- S3-WS-007: Add evidence drawer to workspace
-- S3-WS-008: Add action drawer to workspace
-- S3-WS-009: Add workspace loading state
-- S3-WS-010: Add workspace error state
-- S3-WS-011: Add workspace empty state
-- S3-WS-012: Add workspace responsive layout
+### Workspace Layout (9)
 - S3-WS-013: Add workspace dark mode support
 - S3-WS-014: Add workspace keyboard navigation
 - S3-WS-015: Add workspace accessibility
@@ -139,9 +128,8 @@
 - S3-WS-017: Add workspace state persistence
 - S3-WS-018: Add workspace performance optimization
 - S3-WS-019: Add workspace tests
-- S3-WS-020: Add workspace documentation
 
-### Toolbar (19)
+### Toolbar (18)
 - S3-TBR-002: Add search button to toolbar
 - S3-TBR-003: Add filter toggle to toolbar
 - S3-TBR-004: Add group toggle to toolbar
@@ -151,7 +139,6 @@
 - S3-TBR-008: Add settings button to toolbar
 - S3-TBR-009: Add transaction count to toolbar
 - S3-TBR-010: Add active filter count to toolbar
-- S3-TBR-011: Add toolbar responsive design
 - S3-TBR-012: Add toolbar dark mode support
 - S3-TBR-013: Add toolbar keyboard shortcuts
 - S3-TBR-014: Add toolbar accessibility
@@ -162,7 +149,7 @@
 - S3-TBR-019: Add toolbar error state
 - S3-TBR-020: Add toolbar customization
 
-### Transaction Table (19)
+### Transaction Table (17)
 - S3-TBL-002: Add table header component
 - S3-TBL-003: Add table row component
 - S3-TBL-004: Add table cell component
@@ -172,8 +159,6 @@
 - S3-TBL-008: Add table row click action
 - S3-TBL-009: Add table empty state
 - S3-TBL-010: Add table loading state
-- S3-TBL-011: Add table error state
-- S3-TBL-012: Add table responsive design
 - S3-TBL-013: Add table dark mode support
 - S3-TBL-014: Add table keyboard navigation
 - S3-TBL-015: Add table accessibility
@@ -183,8 +168,7 @@
 - S3-TBL-019: Add table performance tests
 - S3-TBL-020: Add table documentation
 
-### Navigation (13)
-- S3-NAV-008: Add navigation to adjustment workspace
+### Navigation (12)
 - S3-NAV-009: Add cross-navigation from table
 - S3-NAV-010: Add navigation breadcrumb
 - S3-NAV-011: Add navigation back button
@@ -198,9 +182,7 @@
 - S3-NAV-019: Add navigation accessibility
 - S3-NAV-020: Add navigation error handling
 
-### Loading/Error States (16)
-- S3-LOD-006: Add error state to capability
-- S3-LOD-007: Add retry action to capability
+### Loading/Error States (14)
 - S3-LOD-008: Add loading timeout handling
 - S3-LOD-009: Add error recovery
 - S3-LOD-010: Add loading performance tests
@@ -219,7 +201,7 @@
 
 ## Blocked (0)
 
-## Completed (193)
+## Completed (207)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -419,22 +401,37 @@
 - S3-EVD-019: Add evidence dark mode support
 - S3-EVD-020: Add evidence accessibility
 
-### Loading/Error States (4)
+### Loading/Error States (6)
 - S3-LOD-001: Create loading spinner component
 - S3-LOD-002: Create skeleton row component
 - S3-LOD-003: Create error message component
 - S3-LOD-004: Create empty state component
+- S3-LOD-006: Add error state to capability
+- S3-LOD-007: Add retry action to capability
 
-### Workspace Layout (1)
+### Workspace Layout (11)
 - S3-WS-001: Create workspace page component
+- S3-WS-002: Add toolbar to workspace
+- S3-WS-003: Add filter panel to workspace
+- S3-WS-004: Add transaction table to workspace
+- S3-WS-005: Add selection summary to workspace
+- S3-WS-006: Add insight panel to workspace
+- S3-WS-007: Add action drawer to workspace
+- S3-WS-008: Add loading state to workspace
+- S3-WS-009: Add error state to workspace
+- S3-WS-010: Add empty state to workspace
+- S3-WS-012: Add workspace responsive layout
 
-### Toolbar (1)
+### Toolbar (2)
 - S3-TBR-001: Create toolbar component
+- S3-TBR-011: Add toolbar responsive design
 
-### Transaction Table (1)
+### Transaction Table (3)
 - S3-TBL-001: Create transaction table component
+- S3-TBL-011: Add table error state
+- S3-TBL-012: Add table responsive design
 
-### Navigation (7)
+### Navigation (8)
 - S3-NAV-001: Add navigation to category workspace
 - S3-NAV-002: Add navigation to merchant workspace
 - S3-NAV-003: Add navigation to date workspace
@@ -442,3 +439,4 @@
 - S3-NAV-005: Add navigation to balance workspace
 - S3-NAV-006: Add navigation to reconciliation workspace
 - S3-NAV-007: Add navigation to import workspace
+- S3-NAV-008: Add navigation to adjustment workspace

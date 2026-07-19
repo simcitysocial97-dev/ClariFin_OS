@@ -133,23 +133,25 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
   }), [searchQuery, categoryFilter, limit, page]);
 
   // React Query for data fetching
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<{ transactions: TransactionViewModel[]; total: number }>({
-    queryKey: [TRANSACTION_QUERY_KEY, queryParams],
-    queryFn: async () => {
-      const result = await fetchTransactions(queryParams);
-      return {
-        transactions: transactionMapper.mapTransactions(result.transactions),
-        total: result.total,
-      };
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-  });
+const {
+     data,
+     isLoading,
+     error,
+     refetch,
+   } = useQuery<{ transactions: TransactionViewModel[]; total: number }>({
+     queryKey: [TRANSACTION_QUERY_KEY, queryParams],
+     queryFn: async () => {
+       const result = await fetchTransactions(queryParams);
+       return {
+         transactions: transactionMapper.mapTransactions(result.transactions),
+         total: result.total,
+       };
+     },
+     staleTime: 5 * 60 * 1000, // 5 minutes
+     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
+     retry: 3,
+     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+   });
 
   // Actions
   const fetchTransactionsAction = useCallback(async () => {

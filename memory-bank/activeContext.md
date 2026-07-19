@@ -33,6 +33,32 @@
   - Added InsightPanel component for transaction insights
   - Added ActionDrawer component for bulk action controls
   - Fixed type mismatch: statusFilter now uses TransactionStatus[] type
+- Added responsive design to workspace (S3-WS-012):
+  - Flex grow for table region with overflow-auto
+  - Responsive padding (p-4 sm:p-6)
+  - Proper min-h-screen for full viewport height
+- Added responsive design to toolbar (S3-TBR-011):
+  - flex-col on mobile, flex-row on desktop
+  - Button wrapping with flex-wrap for mobile
+  - Filter count badge on filter button
+  - Responsive text variants
+- Added error state to transaction table (S3-TBL-011):
+  - Error prop added to interface
+  - Alert component for error display
+- Added responsive design to transaction table (S3-TBL-012):
+  - Hidden columns on mobile (hidden sm:table-cell, hidden md:table-cell)
+  - Responsive width classes
+  - Truncated text with max-w constraints
+- Created adjustment navigation (S3-NAV-008):
+  - getAdjustmentWorkspaceUrl function for URL generation
+  - hasAdjustmentNavigation function for visibility check
+- Added error state to capability layer (S3-LOD-006):
+  - error field in TransactionCapabilityState interface
+  - error from React Query returned in state
+- Added retry action to capability layer (S3-LOD-007):
+  - retry: 3 configuration in useQuery
+  - retryDelay with exponential backoff
+  - refresh function for manual retry
 
 ### Files Modified
 - frontend/components/loading/loading-spinner.tsx (new)
@@ -51,7 +77,8 @@
 - frontend/lib/navigation/balance-navigation.ts (new)
 - frontend/lib/navigation/reconciliation-navigation.ts (new)
 - frontend/lib/navigation/import-navigation.ts (new)
-- frontend/lib/navigation/index.ts (new)
+- frontend/lib/navigation/adjustment-navigation.ts (new)
+- frontend/lib/navigation/index.ts (updated)
 - frontend/components/evidence/__tests__/evidence-drawer.test.tsx (fixed)
 - frontend/components/selection/selection-summary.tsx (new)
 - frontend/components/workspace/insight-panel.tsx (new)
@@ -59,7 +86,7 @@
 - frontend/lib/capabilities/use-transaction-capability.ts (updated)
 
 ### Next Steps
-- S3-WS-012: Add workspace responsive layout
+- S3-WS-013: Add workspace dark mode support
 - S3-TST-001 through S3-TST-020: Testing
 - S3-VAL-001 through S3-VAL-020: Validation
 - S3-PER-001 through S3-PER-020: Performance
