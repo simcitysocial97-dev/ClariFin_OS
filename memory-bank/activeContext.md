@@ -1,20 +1,19 @@
 # Active Context
 
-## Stage 4 Execution - Level 0-2 Complete
+## Stage 4 Execution - Net Worth Capability Hook Complete
 
-### Changes Made (Today)
-- Completed Level 0 (Backend DTOs) for all 9 workspaces
-- Completed Level 1 (ViewModels) for all 9 workspaces
-- Completed Level 2 (Mappers) - created 9 mapper files:
-  - `frontend/lib/mappers/reconciliation-mapper.ts`
-  - `frontend/lib/mappers/behaviour-mapper.ts`
-  - `frontend/lib/mappers/forecast-mapper.ts`
-  - Updated `frontend/lib/mappers/index.ts` with all exports
+### Changes Made
+- Implemented `useNetWorthCapability` hook with React Query integration
+- Created `net-worth-context.tsx` with state interfaces and provider
+- Added unit tests for net worth capability in `__tests__/use-net-worth-capability.test.ts`
+- Updated `frontend/lib/capabilities/index.ts` with net worth exports
 - All TypeScript validations pass
+- All unit tests pass (9 tests)
 
 ### Next Steps
-- Level 3 (Backend Services) - 9 capabilities ready to implement
-- Level 4 (Backend Routers) - 9 capabilities ready to implement
+- Level 5 (Capability Hooks) - 8 more capabilities to implement
+- Level 6 (UI Components) - 37 capabilities ready after L5 completes
 
 ### Key Constraints
 - All monetary values use paise (integer) for financial determinism
+- React Query for data fetching and caching

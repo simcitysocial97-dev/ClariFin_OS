@@ -19,3 +19,19 @@ export {
   useTransactionContext,
   type TransactionContextType,
 } from './transaction-context';
+
+// Net Worth capability
+export {
+  useNetWorthCapability,
+  type NetWorthCapabilityState,
+  type NetWorthCapabilityActions,
+  type NetWorthCapabilityReturn,
+} from './use-net-worth-capability';
+
+// Re-export context
+export {
+  NetWorthContext,
+  NetWorthProvider,
+  useNetWorthContext,
+  type NetWorthContextType,
+} from './net-worth-context';

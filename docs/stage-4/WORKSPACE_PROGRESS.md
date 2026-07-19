@@ -15,8 +15,8 @@
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
 | Cap 1: ViewModel | L1 | DONE | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 2: Mapper | L2 | DONE | |
+| Cap 3: Capability Hook | L5 | DONE | |
 | Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 5: Composition Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 6: Trend Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
@@ -35,6 +35,7 @@
 | Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
 | Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+```
 
 ---
 
@@ -266,7 +267,7 @@
 
 | Workspace | Total Caps | NOT_STARTED | READY | IN_PROGRESS | VALIDATING | DONE | BLOCKED |
 |-----------|-----------|-------------|-------|-------------|------------|------|---------|
-| W4.1 Net Worth | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.1 Net Worth | 21 | 17 | 0 | 0 | 4 | 0 | 0 |
 | W4.2 Cashflow | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.3 Accounts | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.4 Loans | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
@@ -275,7 +276,7 @@
 | W4.7 Reconciliation | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.8 Behaviour | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.9 Forecast | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| **Total** | **189** | **171** | **0** | **0** | **18** | **0** | **0** |
+| **Total** | **189** | **167** | **0** | **0** | **22** | **0** | **0** |
 
 ---
 
