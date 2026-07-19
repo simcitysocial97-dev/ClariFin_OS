@@ -12,6 +12,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
+import type { TransactionStatus } from '@/lib/filters/types';
 import { transactionMapper } from '@/lib/mappers/transaction-mapper';
 import { fetchTransactions } from '@/lib/api/client';
 
@@ -34,7 +35,7 @@ export interface TransactionCapabilityState {
   categoryFilter: string[];
   merchantFilter: string[];
   amountFilter: { min?: number; max?: number } | null;
-  statusFilter: string[];
+  statusFilter: TransactionStatus[];
 
   // Sorting
   sortField: 'date' | 'amount' | 'description' | 'category' | 'merchant' | null;
@@ -67,7 +68,7 @@ export interface TransactionCapabilityActions {
   setCategoryFilter: (categories: string[]) => void;
   setMerchantFilter: (merchants: string[]) => void;
   setAmountFilter: (filter: { min?: number; max?: number } | null) => void;
-  setStatusFilter: (statuses: string[]) => void;
+  setStatusFilter: (statuses: TransactionStatus[]) => void;
   clearFilters: () => void;
   applyFilters: () => Promise<void>;
 
@@ -113,7 +114,7 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
   const [merchantFilter, setMerchantFilter] = useState<string[]>([]);
   const [amountFilter, setAmountFilter] = useState<{ min?: number; max?: number } | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<TransactionStatus[]>([]);
   const [sortField, setSortField] = useState<'date' | 'amount' | 'description' | 'category' | 'merchant' | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [groupBy, setGroupBy] = useState<'date' | 'category' | 'merchant' | 'amount' | null>(null);
@@ -218,7 +219,7 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
       setSelectedIds(allIds);
       setSelectAll(true);
     }
-  }, [data?.transactions]);
+  }, [data]);
 
   const clearSelection = useCallback(() => {
     setSelectedIds(new Set());

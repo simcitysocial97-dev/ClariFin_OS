@@ -23,7 +23,7 @@
 | Selection Model | 20 | 20 | 0 | 0 | 100% |
 | Evidence System | 20 | 20 | 0 | 0 | 100% |
 | Loading/Error States | 20 | 4 | 0 | 0 | 20% |
-| Workspace Layout | 20 | 1 | 0 | 0 | 5% |
+| Workspace Layout | 20 | 10 | 0 | 0 | 50% |
 | Toolbar | 20 | 1 | 0 | 0 | 5% |
 | Transaction Table | 20 | 1 | 0 | 0 | 5% |
 | Navigation | 20 | 7 | 0 | 0 | 35% |
@@ -83,8 +83,8 @@ This is the next TODO in the critical path. It depends on S3-CAP-001 (completed)
 - Selection Model is now complete (100%)
 - Evidence System: 20/20 completed (types, hook, drawer, summary, list, item, source link, calculation view, confidence display, factories, drawer tests, performance tests, documentation, responsive design, dark mode support, accessibility)
 - Loading/Error States: 4/20 completed (spinner, skeleton, error, empty state)
-- Workspace Layout: 1/20 completed (workspace page)
+- Workspace Layout: 10/20 completed (workspace page, toolbar, filter panel, transaction table, selection summary, insight panel, action drawer, loading state, error state, empty state)
 - Toolbar: 1/20 completed (toolbar component)
 - Transaction Table: 1/20 completed (table component)
 - Navigation: 7/20 completed (category, merchant, date, account, balance, reconciliation, import)
-- Next: S3-WS-002 (Add toolbar to workspace)
+- Next: S3-WS-012 (Add workspace responsive layout)

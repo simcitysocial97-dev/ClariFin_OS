@@ -25,6 +25,14 @@
   - Category, merchant, date, account, balance, reconciliation, import navigation
   - Index export for clean imports
 - Fixed unused variable warnings in evidence-drawer.test.tsx
+- Integrated workspace regions (S3-WS-002-011):
+  - Integrated WorkspaceToolbar with transaction count and filter count
+  - Integrated FilterPanel with all filter controls
+  - Integrated TransactionTable with selection and row click handling
+  - Added SelectionSummary component for bulk action display
+  - Added InsightPanel component for transaction insights
+  - Added ActionDrawer component for bulk action controls
+  - Fixed type mismatch: statusFilter now uses TransactionStatus[] type
 
 ### Files Modified
 - frontend/components/loading/loading-spinner.tsx (new)
@@ -32,7 +40,7 @@
 - frontend/components/loading/error-message.tsx (new)
 - frontend/components/loading/empty-state.tsx (new)
 - frontend/components/loading/index.ts (new)
-- frontend/app/transactions/workspace-page.tsx (new)
+- frontend/app/transactions/workspace-page.tsx (updated)
 - frontend/components/toolbar/workspace-toolbar.tsx (new)
 - frontend/components/transaction-table/transaction-table.tsx (new)
 - frontend/components/transaction-table/index.ts (new)
@@ -45,9 +53,13 @@
 - frontend/lib/navigation/import-navigation.ts (new)
 - frontend/lib/navigation/index.ts (new)
 - frontend/components/evidence/__tests__/evidence-drawer.test.tsx (fixed)
+- frontend/components/selection/selection-summary.tsx (new)
+- frontend/components/workspace/insight-panel.tsx (new)
+- frontend/components/workspace/action-drawer.tsx (new)
+- frontend/lib/capabilities/use-transaction-capability.ts (updated)
 
 ### Next Steps
-- S3-WS-002: Add toolbar to workspace
+- S3-WS-012: Add workspace responsive layout
 - S3-TST-001 through S3-TST-020: Testing
 - S3-VAL-001 through S3-VAL-020: Validation
 - S3-PER-001 through S3-PER-020: Performance

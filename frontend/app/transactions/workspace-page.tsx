@@ -9,19 +9,16 @@
 
 import { useTransactionCapability } from '@/lib/capabilities/use-transaction-capability';
 import { useEvidence } from '@/lib/evidence/use-evidence';
-import { TransactionSearch } from '@/components/search/transaction-search';
 import { FilterPanel } from '@/components/filters/filter-panel';
 import { LoadingSpinner } from '@/components/loading/loading-spinner';
 import { ErrorMessage } from '@/components/loading/error-message';
 import { EmptyState } from '@/components/loading/empty-state';
 import { EvidenceDrawer } from '@/components/evidence/evidence-drawer';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Download, RefreshCw } from 'lucide-react';
-import { formatINR } from '@/lib/utils/format';
-import { cn } from '@/lib/utils';
+import { WorkspaceToolbar } from '@/components/toolbar/workspace-toolbar';
+import { SelectionSummary } from '@/components/selection/selection-summary';
+import { InsightPanel } from '@/components/workspace/insight-panel';
+import { ActionDrawer } from '@/components/workspace/action-drawer';
+import { TransactionTable } from '@/components/transaction-table/transaction-table';
 
 /**
  * Transaction Workspace Page
@@ -61,32 +58,31 @@ export function TransactionWorkspacePage() {
     );
   }
 
+  // Calculate active filter count
+  const activeFilterCount = [
+    capability.searchQuery,
+    capability.dateFilter,
+    ...capability.categoryFilter,
+    ...capability.merchantFilter,
+    capability.amountFilter,
+    ...capability.statusFilter,
+  ].filter(Boolean).length;
+
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar Region */}
-      <div className="border-b bg-background p-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <TransactionSearch
-              value={capability.searchQuery}
-              onChange={capability.setSearchQuery}
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={capability.refresh}
-              disabled={capability.loading}
-            >
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <WorkspaceToolbar
+        onSearchClick={() => {}}
+        onFilterToggle={() => {}}
+        onGroupToggle={capability.toggleGroup}
+        onSortToggle={() => {}}
+        onExport={() => {}}
+        onRefresh={capability.refresh}
+        onSettings={() => {}}
+        transactionCount={capability.total}
+        activeFilterCount={activeFilterCount}
+        loading={capability.loading}
+      />
 
       {/* Filter Panel Region */}
       <FilterPanel
@@ -96,7 +92,7 @@ export function TransactionWorkspacePage() {
           categoryFilter: capability.categoryFilter,
           merchantFilter: capability.merchantFilter,
           amountFilter: capability.amountFilter,
-          statusFilter: capability.statusFilter as any,
+          statusFilter: capability.statusFilter,
         }}
         onFiltersChange={(filters) => {
           capability.setSearchQuery(filters.searchQuery);
@@ -104,69 +100,49 @@ export function TransactionWorkspacePage() {
           capability.setCategoryFilter(filters.categoryFilter);
           capability.setMerchantFilter(filters.merchantFilter);
           capability.setAmountFilter(filters.amountFilter);
-          capability.setStatusFilter(filters.statusFilter as any);
+          capability.setStatusFilter(filters.statusFilter);
         }}
       />
 
       {/* Transaction Table Region */}
       <div className="flex-1 overflow-auto">
-        <Card className="border-0 rounded-none">
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[50px]">Select</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Merchant</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {capability.transactions.map((tx) => (
-                  <TableRow
-                    key={tx.id}
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => {
-                      // Open evidence drawer for this transaction
-                      evidence.openEvidence(tx.id, tx.evidence || []);
-                    }}
-                  >
-                    <TableCell>
-                      <input
-                        type="checkbox"
-                        checked={capability.selectedIds.has(tx.id)}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          capability.toggleSelection(tx.id);
-                        }}
-                        aria-label={`Select transaction ${tx.id}`}
-                      />
-                    </TableCell>
-                    <TableCell>{tx.date_formatted || tx.date}</TableCell>
-                    <TableCell>{tx.description}</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="text-xs">
-                        {tx.category_name || 'Uncategorized'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{tx.merchant_name || '-'}</TableCell>
-                    <TableCell
-                      className={cn(
-                        'text-right font-mono tabular-nums',
-                        tx.transaction_type === 'debit' ? 'text-red-600' : 'text-green-600'
-                      )}
-                    >
-                      {formatINR(tx.amount.paise)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <TransactionTable
+          transactions={capability.transactions}
+          loading={capability.loading}
+          onRowClick={(tx) => {
+            evidence.openEvidence(tx.id, tx.evidence || []);
+          }}
+          onSelectionChange={(id, selected) => {
+            if (selected) {
+              capability.toggleSelection(id);
+            }
+          }}
+          selectedIds={capability.selectedIds}
+        />
       </div>
+
+      {/* Selection Summary Region */}
+      {capability.selectedIds.size > 0 && (
+        <SelectionSummary
+          count={capability.selectedIds.size}
+          total={capability.total}
+          onClear={capability.clearSelection}
+          onSelectAll={capability.selectAllVisible}
+        />
+      )}
+
+      {/* Insight Panel Region */}
+      <InsightPanel
+        transactions={capability.transactions}
+        groupBy={capability.groupBy}
+      />
+
+      {/* Action Drawer Region */}
+      <ActionDrawer
+        selectedCount={capability.selectedIds.size}
+        onBulkAction={capability.executeBulkAction}
+        onClearSelection={capability.clearSelection}
+      />
 
       {/* Evidence Drawer */}
       <EvidenceDrawer
