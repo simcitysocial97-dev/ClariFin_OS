@@ -90,7 +90,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | |
 | Cap 20: Backend Service | L3 | DONE | |
-| Cap 21: Benchmark Validation | L11 | READY | Ready for validation |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -268,14 +268,14 @@
 |-----------|-----------|-------------|-------|-------------|------------|------|---------|
 | W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
 | W4.2 Cashflow | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
-| W4.3 Accounts | 21 | 0 | 1 | 0 | 20 | 0 | 0 |
+| W4.3 Accounts | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.4 Loans | 21 | 13 | 0 | 0 | 8 | 0 | 0 |
 | W4.5 Credit Cards | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
 | W4.6 Investments | 21 | 13 | 0 | 0 | 8 | 0 | 0 |
 | W4.7 Reconciliation | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
 | W4.8 Behaviour | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
 | W4.9 Forecast | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
-| **Total** | **189** | **59** | **1** | **0** | **129 | **0** | **0** |
+| **Total** | **189** | **58** | **0** | **0** | **130 | **0** | **0** |
 
 ---
 
