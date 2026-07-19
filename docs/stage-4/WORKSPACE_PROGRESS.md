@@ -98,13 +98,13 @@
 
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 5: Amortization Schedule | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 6: Payment Progress | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 7: Interest Analysis | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 1: ViewModel | L1 | DONE | Pre-existing |
+| Cap 2: Mapper | L2 | DONE | Pre-existing |
+| Cap 3: Capability Hook | L5 | DONE | Created useLoansCapability |
+| Cap 4: Summary Card | L6 | DONE | Created loans-summary |
+| Cap 5: Amortization Schedule | L6 | DONE | Created amortization-schedule |
+| Cap 6: Payment Progress | L6 | DONE | Created payment-progress |
+| Cap 7: Interest Analysis | L6 | DONE | Created interest-analysis |
 | Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
@@ -269,13 +269,13 @@
 | W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
 | W4.2 Cashflow | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
 | W4.3 Accounts | 21 | 0 | 1 | 0 | 20 | 0 | 0 |
-| W4.4 Loans | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.4 Loans | 21 | 13 | 0 | 0 | 8 | 0 | 0 |
 | W4.5 Credit Cards | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.6 Investments | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.7 Reconciliation | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.8 Behaviour | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.9 Forecast | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| **Total** | **189** | **95** | **1** | **0** | **93 | **0** | **0** |
+| **Total** | **189** | **91** | **1** | **0** | **97 | **0** | **0** |
 
 ---
 
