@@ -21,4 +21,5 @@ export {
 } from './loading-skeleton';
 export { CreditCardsErrorState } from './error-state';
 export { CreditCardsEmptyState } from './empty-state';
+export { StatementHistory } from './statement-history';
 export { CrossNavigation } from './cross-navigation';

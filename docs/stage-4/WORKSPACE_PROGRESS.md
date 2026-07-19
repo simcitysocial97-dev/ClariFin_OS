@@ -32,8 +32,8 @@
 | Cap 16: Empty States | L8 | DONE | |
 | Cap 17: Cross-Navigation | L9 | DONE | |
 | Cap 18: Backend DTO | L0 | DONE | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 19: Backend Router | L4 | DONE | Created networth_workspace.py |
+| Cap 20: Backend Service | L3 | DONE | Created networth_workspace_service.py |
 | Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
@@ -130,7 +130,7 @@
 | Cap 2: Mapper | L2 | DONE | Pre-existing |
 | Cap 3: Capability Hook | L5 | DONE | Created useCreditCardsCapability |
 | Cap 4: Summary Card | L6 | DONE | Created credit-cards-summary |
-| Cap 5: Statement History | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Statement History | L6 | DONE | Created statement-history.tsx |
 | Cap 6: Utilization Chart | L6 | DONE | Created utilization-chart |
 | Cap 7: Spending by Category | L6 | DONE | Created spending-by-category |
 | Cap 8: Filters | L7 | DONE | Created cards-filters |
@@ -146,7 +146,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | Created workspace routers |
 | Cap 20: Backend Service | L3 | DONE | Created workspace services |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -267,16 +267,16 @@
 
 | Workspace | Total Caps | NOT_STARTED | READY | IN_PROGRESS | VALIDATING | DONE | BLOCKED |
 |-----------|-----------|-------------|-------|-------------|------------|------|---------|
-| W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
+| W4.1 Net Worth | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.2 Cashflow | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.3 Accounts | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.4 Loans | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
-| W4.5 Credit Cards | 21 | 2 | 0 | 0 | 19 | 0 | 0 |
+| W4.5 Credit Cards | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.6 Investments | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.7 Reconciliation | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.8 Behaviour | 22 | 0 | 0 | 0 | 22 | 0 | 0 |
 | W4.9 Forecast | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
-| **Total** | **189** | **4** | **0** | **0** | **185** | **0** | **0** |
+| **Total** | **189** | **0** | **0** | **0** | **189** | **0** | **0** |
 
 ---
 
