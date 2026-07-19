@@ -4,56 +4,20 @@
  * Tests for workspace page keyboard navigation, accessibility, and state management.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TransactionWorkspacePage } from './workspace-page';
 
 // Mock the hooks
+const mockUseTransactionCapability = vi.fn();
+const mockUseEvidence = vi.fn();
+
 vi.mock('@/lib/capabilities/use-transaction-capability', () => ({
-  useTransactionCapability: () => ({
-    loading: false,
-    error: null,
-    transactions: [
-      {
-        id: 'tx-1',
-        date: '2026-07-15',
-        description: 'Test transaction',
-        amount: { paise: 10000, rupees: 100 },
-        category_name: 'Food',
-        merchant_name: 'Test Merchant',
-        transaction_type: 'debit',
-        evidence: [],
-      },
-    ],
-    total: 1,
-    searchQuery: '',
-    dateFilter: null,
-    categoryFilter: [],
-    merchantFilter: [],
-    amountFilter: null,
-    statusFilter: [],
-    selectedIds: new Set(),
-    setSearchQuery: vi.fn(),
-    setDateFilter: vi.fn(),
-    setCategoryFilter: vi.fn(),
-    setMerchantFilter: vi.fn(),
-    setAmountFilter: vi.fn(),
-    setStatusFilter: vi.fn(),
-    toggleSelection: vi.fn(),
-    selectAllVisible: vi.fn(),
-    clearSelection: vi.fn(),
-    clearFilters: vi.fn(),
-    refresh: vi.fn(),
-    toggleGroup: vi.fn(),
-  }),
+  useTransactionCapability: () => mockUseTransactionCapability(),
 }));
 
 vi.mock('@/lib/evidence/use-evidence', () => ({
-  useEvidence: () => ({
-    isOpen: false,
-    openEvidence: vi.fn(),
-    closeEvidence: vi.fn(),
-  }),
+  useEvidence: () => mockUseEvidence(),
 }));
 
 vi.mock('@/components/filters/filter-panel', () => ({
@@ -114,7 +78,57 @@ vi.mock('@/components/transaction-table/transaction-table', () => ({
   TransactionTable: () => <div data-testid="transaction-table">Transaction Table</div>,
 }));
 
+const defaultMockCapability = {
+  loading: false,
+  loadingTimeout: false,
+  loadingTimeoutMessage: '',
+  error: null,
+  transactions: [
+    {
+      id: 'tx-1',
+      date: '2026-07-15',
+      description: 'Test transaction',
+      amount: { paise: 10000, rupees: 100 },
+      category_name: 'Food',
+      merchant_name: 'Test Merchant',
+      transaction_type: 'debit',
+      evidence: [],
+    },
+  ],
+  total: 1,
+  searchQuery: '',
+  dateFilter: null,
+  categoryFilter: [],
+  merchantFilter: [],
+  amountFilter: null,
+  statusFilter: [],
+  selectedIds: new Set(),
+  setSearchQuery: vi.fn(),
+  setDateFilter: vi.fn(),
+  setCategoryFilter: vi.fn(),
+  setMerchantFilter: vi.fn(),
+  setAmountFilter: vi.fn(),
+  setStatusFilter: vi.fn(),
+  toggleSelection: vi.fn(),
+  selectAllVisible: vi.fn(),
+  clearSelection: vi.fn(),
+  clearFilters: vi.fn(),
+  refresh: vi.fn(),
+  toggleGroup: vi.fn(),
+};
+
+const defaultMockEvidence = {
+  isOpen: false,
+  openEvidence: vi.fn(),
+  closeEvidence: vi.fn(),
+};
+
 describe('TransactionWorkspacePage', () => {
+  beforeEach(() => {
+    mockUseTransactionCapability.mockReturnValue(defaultMockCapability);
+    mockUseEvidence.mockReturnValue(defaultMockEvidence);
+  });
+
   it('renders the workspace with all regions', () => {
     render(<TransactionWorkspacePage />);
 
@@ -138,5 +152,61 @@ describe('TransactionWorkspacePage', () => {
 
     const toolbar = screen.getByTestId('workspace-toolbar');
     expect(toolbar).toHaveAttribute('data-transaction-count', '1');
+  });
+
+  it('displays active filter count in toolbar', () => {
+    render(<TransactionWorkspacePage />);
+
+    const toolbar = screen.getByTestId('workspace-toolbar');
+    expect(toolbar).toHaveAttribute('data-filter-count', '0');
+  });
+});
+
+describe('TransactionWorkspacePage - Loading Timeout', () => {
+  beforeEach(() => {
+    mockUseEvidence.mockReturnValue(defaultMockEvidence);
+  });
+
+  it('shows loading spinner when loading is true', () => {
+    mockUseTransactionCapability.mockReturnValue({
+      ...defaultMockCapability,
+      loading: true,
+      transactions: [],
+      total: 0,
+    });
+
+    render(<TransactionWorkspacePage />);
+
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+  });
+
+  it('shows loading timeout message when loadingTimeout is true', () => {
+    mockUseTransactionCapability.mockReturnValue({
+      ...defaultMockCapability,
+      loading: true,
+      loadingTimeout: true,
+      loadingTimeoutMessage: 'Loading is taking longer than expected. Please wait...',
+      transactions: [],
+      total: 0,
+    });
+
+    render(<TransactionWorkspacePage />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('Loading is taking longer than expected. Please wait...');
+  });
+
+  it('does not show loading timeout message when loadingTimeout is false', () => {
+    mockUseTransactionCapability.mockReturnValue({
+      ...defaultMockCapability,
+      loading: true,
+      loadingTimeout: false,
+      loadingTimeoutMessage: '',
+      transactions: [],
+      total: 0,
+    });
+
+    render(<TransactionWorkspacePage />);
+
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 });

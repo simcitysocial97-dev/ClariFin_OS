@@ -105,11 +105,16 @@
 - frontend/components/transaction-table/transaction-table.tsx (updated with dark mode, keyboard nav, a11y)
 
 ### Next Steps
-- S3-WS-018: Add workspace performance optimization
+- S3-LOD-008: Add loading timeout handling ✅
+- S3-LOD-009: Add error recovery
+- S3-LOD-010: Add loading performance tests
+- S3-LOD-011: Add error performance tests
+- S3-LOD-012: Add empty state performance tests
+- S3-LOD-013: Add loading tests
+- S3-LOD-014: Add error tests
+- S3-LOD-015: Add empty state tests
 - S3-TST-001 through S3-TST-020: Testing
 - S3-VAL-001 through S3-VAL-020: Validation
-- S3-PER-001 through S3-PER-020: Performance
-- S3-DOC-001 through S3-DOC-020: Documentation
 
 ### Key Constraints
 - No modifications to Dashboard, Money Graph, Behaviour Workspace, Cashflow Workspace, or Reconciliation Workspace

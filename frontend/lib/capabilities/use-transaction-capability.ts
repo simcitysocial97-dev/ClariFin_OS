@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
 import type { TransactionStatus } from '@/lib/filters/types';
@@ -28,6 +28,10 @@ export interface TransactionCapabilityState {
   total: number;
   loading: boolean;
   error: Error | null;
+
+  // Loading timeout
+  loadingTimeout: boolean;
+  loadingTimeoutMessage: string;
 
   // Filters
   searchQuery: string;
@@ -124,6 +128,11 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(50);
 
+  // Loading timeout state
+  const [loadingTimeout, setLoadingTimeout] = useState<boolean>(false);
+  const [loadingTimeoutMessage, setLoadingTimeoutMessage] = useState<string>('');
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Build query parameters from state
   const queryParams = useMemo(() => ({
     search: searchQuery || undefined,
@@ -133,25 +142,51 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
   }), [searchQuery, categoryFilter, limit, page]);
 
   // React Query for data fetching
-const {
-     data,
-     isLoading,
-     error,
-     refetch,
-   } = useQuery<{ transactions: TransactionViewModel[]; total: number }>({
-     queryKey: [TRANSACTION_QUERY_KEY, queryParams],
-     queryFn: async () => {
-       const result = await fetchTransactions(queryParams);
-       return {
-         transactions: transactionMapper.mapTransactions(result.transactions),
-         total: result.total,
-       };
-     },
-     staleTime: 5 * 60 * 1000, // 5 minutes
-     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-     retry: 3,
-     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-   });
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<{ transactions: TransactionViewModel[]; total: number }>({
+    queryKey: [TRANSACTION_QUERY_KEY, queryParams],
+    queryFn: async () => {
+      const result = await fetchTransactions(queryParams);
+      return {
+        transactions: transactionMapper.mapTransactions(result.transactions),
+        total: result.total,
+      };
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+
+  // Loading timeout effect - show message after 10 seconds
+  useEffect(() => {
+    if (isLoading) {
+      // Set timeout to show message after 10 seconds
+      loadingTimeoutRef.current = setTimeout(() => {
+        setLoadingTimeout(true);
+        setLoadingTimeoutMessage('Loading is taking longer than expected. Please wait...');
+      }, 10000);
+    } else {
+      // Clear timeout when loading completes
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+        loadingTimeoutRef.current = null;
+      }
+      setLoadingTimeout(false);
+      setLoadingTimeoutMessage('');
+    }
+
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+        loadingTimeoutRef.current = null;
+      }
+    };
+  }, [isLoading]);
 
   // Actions
   const fetchTransactionsAction = useCallback(async () => {
@@ -244,6 +279,10 @@ const {
     total: data?.total ?? 0,
     loading: isLoading,
     error: error as Error | null,
+
+    // Loading timeout
+    loadingTimeout,
+    loadingTimeoutMessage,
 
     // Filters
     searchQuery,

@@ -3,11 +3,12 @@
  *
  * Main workspace page component that composes all regions.
  * Uses the capability layer for state management.
+ * Optimized with React.memo and useMemo for performance.
  */
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo, useMemo, useCallback } from 'react';
 import { useTransactionCapability } from '@/lib/capabilities/use-transaction-capability';
 import { useEvidence } from '@/lib/evidence/use-evidence';
 import { FilterPanel } from '@/components/filters/filter-panel';
@@ -20,21 +21,43 @@ import { SelectionSummary } from '@/components/selection/selection-summary';
 import { InsightPanel } from '@/components/workspace/insight-panel';
 import { ActionDrawer } from '@/components/workspace/action-drawer';
 import { TransactionTable } from '@/components/transaction-table/transaction-table';
+import type { TransactionStatus } from '@/lib/filters/types';
+import type { TransactionViewModel } from '@/types/transaction-view-model';
 
 /**
  * Transaction Workspace Page
  * Composes all workspace regions using the capability layer
  * Responsive layout with proper spacing and overflow handling
  * Dark mode support with bg-background classes
- * Keyboard navigation support with tabIndex and key event handlers
+ * Keyboard navigation with tabIndex and key event handlers
  * Scroll management with scroll position restoration
  * State persistence for filters and selection
+ * Performance optimized with React.memo and useMemo
  */
-export function TransactionWorkspacePage() {
+function TransactionWorkspacePageComponent() {
   const capability = useTransactionCapability();
   const evidence = useEvidence();
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number>(0);
+
+  // Memoize active filter count calculation
+  const activeFilterCount = useMemo(() => {
+    return [
+      capability.searchQuery,
+      capability.dateFilter,
+      ...capability.categoryFilter,
+      ...capability.merchantFilter,
+      capability.amountFilter,
+      ...capability.statusFilter,
+    ].filter(Boolean).length;
+  }, [
+    capability.searchQuery,
+    capability.dateFilter,
+    capability.categoryFilter,
+    capability.merchantFilter,
+    capability.amountFilter,
+    capability.statusFilter,
+  ]);
 
   // Keyboard navigation handler
   useEffect(() => {
@@ -118,11 +141,16 @@ export function TransactionWorkspacePage() {
       <div
         ref={containerRef}
         tabIndex={-1}
-        className="flex items-center justify-center min-h-[400px] p-4 bg-background dark:bg-background focus:outline-none"
+        className="flex flex-col items-center justify-center min-h-[400px] p-4 bg-background dark:bg-background focus:outline-none"
         role="main"
         aria-label="Transaction Intelligence Workspace"
       >
         <LoadingSpinner size="lg" />
+        {capability.loadingTimeout && (
+          <p className="mt-4 text-sm text-muted-foreground" role="status">
+            {capability.loadingTimeoutMessage}
+          </p>
+        )}
       </div>
     );
   }
@@ -160,15 +188,34 @@ export function TransactionWorkspacePage() {
     );
   }
 
-  // Calculate active filter count
-  const activeFilterCount = [
-    capability.searchQuery,
-    capability.dateFilter,
-    ...capability.categoryFilter,
-    ...capability.merchantFilter,
-    capability.amountFilter,
-    ...capability.statusFilter,
-  ].filter(Boolean).length;
+  // Memoize filter change handler
+  const handleFiltersChange = useCallback((filters: {
+    searchQuery: string;
+    dateFilter: { from?: string; to?: string } | null;
+    categoryFilter: string[];
+    merchantFilter: string[];
+    amountFilter: { min?: number; max?: number } | null;
+    statusFilter: TransactionStatus[];
+  }) => {
+    capability.setSearchQuery(filters.searchQuery);
+    capability.setDateFilter(filters.dateFilter);
+    capability.setCategoryFilter(filters.categoryFilter);
+    capability.setMerchantFilter(filters.merchantFilter);
+    capability.setAmountFilter(filters.amountFilter);
+    capability.setStatusFilter(filters.statusFilter);
+  }, [capability]);
+
+  // Memoize row click handler
+  const handleRowClick = useCallback((tx: TransactionViewModel) => {
+    evidence.openEvidence(tx.id, tx.evidence || []);
+  }, [evidence]);
+
+  // Memoize selection change handler
+  const handleSelectionChange = useCallback((id: string, selected: boolean) => {
+    if (selected) {
+      capability.toggleSelection(id);
+    }
+  }, [capability]);
 
   return (
     <div
@@ -202,14 +249,7 @@ export function TransactionWorkspacePage() {
           amountFilter: capability.amountFilter,
           statusFilter: capability.statusFilter,
         }}
-        onFiltersChange={(filters) => {
-          capability.setSearchQuery(filters.searchQuery);
-          capability.setDateFilter(filters.dateFilter);
-          capability.setCategoryFilter(filters.categoryFilter);
-          capability.setMerchantFilter(filters.merchantFilter);
-          capability.setAmountFilter(filters.amountFilter);
-          capability.setStatusFilter(filters.statusFilter);
-        }}
+        onFiltersChange={handleFiltersChange}
       />
 
       {/* Transaction Table Region - Flex grow with overflow */}
@@ -217,14 +257,8 @@ export function TransactionWorkspacePage() {
         <TransactionTable
           transactions={capability.transactions}
           loading={capability.loading}
-          onRowClick={(tx) => {
-            evidence.openEvidence(tx.id, tx.evidence || []);
-          }}
-          onSelectionChange={(id, selected) => {
-            if (selected) {
-              capability.toggleSelection(id);
-            }
-          }}
+          onRowClick={handleRowClick}
+          onSelectionChange={handleSelectionChange}
           selectedIds={capability.selectedIds}
         />
       </div>
@@ -260,3 +294,6 @@ export function TransactionWorkspacePage() {
     </div>
   );
 }
+
+// Export memoized component for performance
+export const TransactionWorkspacePage = memo(TransactionWorkspacePageComponent);

@@ -23,7 +23,7 @@
 | Selection Model | 20 | 20 | 0 | 0 | 100% |
 | Evidence System | 20 | 20 | 0 | 0 | 100% |
 | Loading/Error States | 20 | 6 | 0 | 0 | 30% |
-| Workspace Layout | 20 | 16 | 0 | 0 | 80% |
+| Workspace Layout | 20 | 18 | 0 | 0 | 90% |
 | Toolbar | 20 | 6 | 0 | 0 | 30% |
 | Transaction Table | 20 | 6 | 0 | 0 | 30% |
 | Navigation | 20 | 8 | 0 | 0 | 40% |
@@ -34,9 +34,16 @@
 
 ## Current TODO
 
-**S3-WS-018: Add workspace performance optimization**
+**S3-LOD-008: Add loading timeout handling**
 
-This is the next TODO in the critical path. It depends on S3-WS-017 (completed).
+This is the next TODO in the critical path. It depends on S3-LOD-007 (completed).
+
+## Next TODOs
+
+After S3-LOD-008, the next TODOs are:
+- S3-LOD-009: Add error recovery
+- S3-LOD-010: Add loading performance tests
+- S3-LOD-011: Add error performance tests
 
 ## Blocked TODOs
 

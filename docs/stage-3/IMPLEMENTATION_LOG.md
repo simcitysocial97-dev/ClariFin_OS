@@ -608,6 +608,45 @@ Added dark mode support, keyboard navigation, and accessibility to TransactionTa
 **Issues:**
 None.
 
+### 2026-07-19 - S3-WS-018
+**Files Modified:**
+- frontend/app/transactions/workspace-page.tsx
+
+**Summary:**
+Added workspace performance optimization. Changes include:
+- Wrapped component with React.memo for memoization
+- Added useMemo for active filter count calculation
+- Added useCallback for filter change, row click, and selection change handlers
+- Proper dependency arrays for all hooks
+
+**Verification:**
+- TypeScript check passed (npx tsc --noEmit)
+- Vitest tests passed (4/4 tests)
+
+**Issues:**
+None.
+
+### 2026-07-19 - S3-LOD-008
+**Files Modified:**
+- frontend/lib/capabilities/use-transaction-capability.ts
+- frontend/app/transactions/workspace-page.tsx
+- frontend/app/transactions/workspace-page.test.tsx
+
+**Summary:**
+Added loading timeout handling to the capability layer. Changes include:
+- Added loadingTimeout and loadingTimeoutMessage state to TransactionCapabilityState interface
+- Added loadingTimeoutRef to track timeout
+- Added useEffect to set timeout after 10 seconds of loading
+- Added loading timeout message display in workspace page
+- Added tests for loading timeout behavior
+
+**Verification:**
+- TypeScript check passed (npx tsc --noEmit)
+- Vitest tests passed (7/7 tests)
+
+**Issues:**
+None.
+
 ## Execution Notes
 
 - All entries are chronological
