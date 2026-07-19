@@ -1,23 +1,22 @@
 # Active Context
 
-## Stage 4 Execution - Cashflow Truth Workspace Complete
+## Stage 4 Execution - Accounts Intelligence Workspace Started
 
 ### Changes Made
-- Created `useCashflowCapability` hook with React Query integration
-- Created `cashflow-context.tsx` with state interfaces and provider
-- Created all L6-L9 components: Summary Card, Monthly Trend, Category Breakdown, Transaction List, Filters, Search, Evidence Drawer, Insights Panel, Toolbar, Loading/Error/Empty States
-- Created `cashflow-navigation.ts` for cross-navigation
-- Created `app/cashflow/page.tsx` workspace page
-- Created `CashflowService` with DTO integration
-- Updated `cashflow.py` router with DTO endpoints
-- Updated `services/__init__.py` to export CashflowService
-- All ruff checks pass
-- Fixed `net-worth-search.tsx` with 'use client' directive
-- Fixed `net-worth/page.tsx` with 'use client' directive
+- Created `AccountsService` with DTO integration (get_accounts, get_account_detail, get_balance_history, get_transactions, get_type_breakdown, get_summary, get_insights)
+- Created `accounts_router.py` with /api/v1/accounts endpoints
+- Updated `services/__init__.py` to export AccountsService
+- Updated `api.py` to register accounts_router
+- Created `useAccountsCapability` hook with React Query integration
+- Created `accounts-context.tsx` with state interfaces and provider
+- Updated `capabilities/index.ts` to export accounts capability
+- Created `accounts-summary.tsx` component
+- All ruff checks pass, TypeScript compiles clean
 
 ### Next Steps
-- W4.3 Accounts Intelligence workspace
+- W4.3 Accounts Intelligence: Balance Trend, Type Breakdown, Transaction List components
 - W4.4 Loans Intelligence workspace
+- W4.5 Credit Cards Intelligence workspace
 
 ### Key Constraints
 - All monetary values use paise (integer) for financial determinism

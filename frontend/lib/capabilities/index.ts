@@ -35,3 +35,19 @@ export {
   useNetWorthContext,
   type NetWorthContextType,
 } from './net-worth-context';
+
+// Accounts capability
+export {
+  useAccountsCapability,
+  type AccountsCapabilityState,
+  type AccountsCapabilityActions,
+  type AccountsCapabilityReturn,
+} from './use-accounts-capability';
+
+// Re-export context
+export {
+  AccountsContext,
+  AccountsProvider,
+  useAccountsContext,
+  type AccountsContextType,
+} from './accounts-context';

@@ -70,10 +70,10 @@
 
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 1: ViewModel | L1 | DONE | |
+| Cap 2: Mapper | L2 | DONE | |
+| Cap 3: Capability Hook | L5 | DONE | |
+| Cap 4: Summary Card | L6 | DONE | |
 | Cap 5: Balance Trend | L6 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 6: Type Breakdown | L6 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 7: Transaction List | L6 | NOT_STARTED | Blocked on Cap 3 |
@@ -87,9 +87,9 @@
 | Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | |
+| Cap 20: Backend Service | L3 | DONE | |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---

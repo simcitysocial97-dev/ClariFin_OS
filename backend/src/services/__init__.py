@@ -4,6 +4,7 @@ Services coordinate repositories and engines to implement business logic.
 """
 
 from src.services.account_service import AccountService
+from src.services.accounts_service import AccountsService
 from src.services.audit_service import AuditService
 from src.services.base import BaseService
 from src.services.behavior_service import BehaviorService
@@ -18,6 +19,7 @@ from src.services.statement_service import StatementService
 
 __all__ = [
     "AccountService",
+    "AccountsService",
     "AuditService",
     "BaseService",
     "BehaviorService",
