@@ -60,15 +60,16 @@ This is the next TODO in the critical path. It depends on S3-WS-012 (completed).
 | Check | Status |
 |-------|--------|
 | TypeScript | ✅ Passed |
-| ESLint | Not run |
+| ESLint | ✅ Passed (1 warning - pre-existing) |
 | FVF Fast | Not run |
 | Architecture | Not run |
 | React Query | Not run |
 | Generated Types | Not run |
 | Build | Not run |
 | Console Errors | Not run |
-| Backend Ruff | Not run |
-| Backend Mypy | Not run |
+| Backend Ruff | ✅ Passed |
+| Backend Mypy | ⚠️ Pre-existing issues in test files |
+```
 
 ## Execution Notes
 
