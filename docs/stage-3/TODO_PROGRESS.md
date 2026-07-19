@@ -1,6 +1,6 @@
 # Stage 3 — TODO Progress
 
-## Pending (117)
+## Pending (107)
 
 ### Transaction ViewModel (0)
 
@@ -26,26 +26,13 @@
 
 ### Transaction Table (0)
 
-### Navigation (11)
-- S3-NAV-010: Add navigation breadcrumb
-- S3-NAV-011: Add navigation back button
-- S3-NAV-012: Add navigation keyboard shortcuts
-- S3-NAV-013: Add navigation state persistence
-- S3-NAV-014: Add navigation tests
-- S3-NAV-015: Add navigation performance tests
-- S3-NAV-016: Add navigation documentation
-- S3-NAV-017: Add navigation responsive design
-- S3-NAV-018: Add navigation dark mode support
-- S3-NAV-019: Add navigation accessibility
-- S3-NAV-020: Add navigation error handling
-
 ### Loading/Error States (0)
 
 ## In Progress (0)
 
 ## Blocked (0)
 
-## Completed (243)
+## Completed (253)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -354,3 +341,11 @@
 - S3-NAV-018: Add navigation dark mode support
 - S3-NAV-019: Add navigation accessibility
 - S3-NAV-020: Add navigation error handling
+
+### Testing (0)
+
+### Validation (0)
+
+### Performance (0)
+
+### Documentation (0)

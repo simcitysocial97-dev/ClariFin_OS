@@ -46,3 +46,30 @@ export {
   getAdjustmentWorkspaceUrl,
   hasAdjustmentNavigation,
 } from './adjustment-navigation';
+
+// State persistence
+export {
+  useNavigationState,
+  useSetNavigationState,
+  useClearNavigationState,
+  parseNavigationState,
+  buildNavigationUrl,
+} from './persistence';
+export type { NavigationState } from './persistence';
+
+// Keyboard shortcuts
+export {
+  useNavigationKeyboardShortcuts,
+  isNavigationShortcut,
+} from './keyboard';
+export type { NavigationKeyboardShortcuts } from './keyboard';
+
+// Error handling
+export {
+  createNavigationError,
+  handleNavigationError,
+  validateNavigationPath,
+  getNavigationErrorMessage,
+  isNavigationErrorRecoverable,
+} from './error-handling';
+export type { NavigationError, NavigationErrorType } from './error-handling';

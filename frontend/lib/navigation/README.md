@@ -17,6 +17,9 @@ import {
   getImportWorkspaceUrl,
   getAdjustmentWorkspaceUrl,
 } from '@/lib/navigation';
+
+// Navigation components
+import { Breadcrumb, BackButton } from '@/components/navigation';
 ```
 
 ## Functions
@@ -64,6 +67,65 @@ import {
 - `getAdjustmentWorkspaceUrl(transaction)` - Get URL for transaction's adjustment
 - `hasAdjustmentNavigation(transaction)` - Check if transaction has adjustment navigation
 
+## Components
+
+### Breadcrumb
+
+Displays navigation path with clickable items.
+
+```tsx
+import { Breadcrumb } from '@/components/navigation';
+
+<Breadcrumb
+  items={[
+    { label: 'Home', href: '/' },
+    { label: 'Transactions' },
+  ]}
+/>
+```
+
+### BackButton
+
+Navigates back in browser history or to fallback URL.
+
+```tsx
+import { BackButton } from '@/components/navigation';
+
+<BackButton label="Back to Transactions" fallbackHref="/transactions" />
+```
+
+## Hooks
+
+### useNavigationState
+
+Get current navigation state from URL.
+
+```tsx
+import { useNavigationState } from '@/lib/navigation';
+
+const state = useNavigationState();
+// { category: 'food', date: '2024-01-15', ... }
+```
+
+### useNavigationKeyboardShortcuts
+
+Handle Alt+Arrow key navigation shortcuts.
+
+```tsx
+import { useNavigationKeyboardShortcuts } from '@/lib/navigation';
+
+useNavigationKeyboardShortcuts({
+  onBack: () => router.back(),
+  onForward: () => router.forward(),
+});
+```
+
+## Error Handling
+
+- `createNavigationError(type, message, originalPath)` - Create a navigation error
+- `getNavigationErrorMessage(error)` - Get user-friendly error message
+- `isNavigationErrorRecoverable(error)` - Check if error is recoverable
+
 ## Example
 
 ```tsx
@@ -78,6 +140,6 @@ const handleCategoryClick = (tx: TransactionViewModel) => {
 ## Features
 
 - **Responsive**: URLs work on all screen sizes
-- **Dark Mode**: No UI components, so no dark mode support needed
-- **Accessibility**: URL generation is accessible by default
+- **Dark Mode**: Components support dark mode with proper theme classes
+- **Accessibility**: Includes ARIA labels and keyboard navigation
 - **Error Handling**: Functions handle missing data gracefully

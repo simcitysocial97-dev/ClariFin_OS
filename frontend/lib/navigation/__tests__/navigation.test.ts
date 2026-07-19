@@ -40,6 +40,13 @@ import {
   getAdjustmentWorkspaceUrl,
   hasAdjustmentNavigation,
 } from '../adjustment-navigation';
+import { parseNavigationState, buildNavigationUrl } from '../persistence';
+import {
+  createNavigationError,
+  getNavigationErrorMessage,
+  isNavigationErrorRecoverable,
+} from '../error-handling';
+import { isNavigationShortcut } from '../keyboard';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
 
 const mockTransaction: TransactionViewModel = {
@@ -171,5 +178,101 @@ describe('Adjustment Navigation', () => {
   it('detects adjustment navigation availability', () => {
     const txWithAdjustment = { ...mockTransaction, is_adjusted: true };
     expect(hasAdjustmentNavigation(txWithAdjustment)).toBe(true);
+  });
+});
+
+describe('Navigation State Persistence', () => {
+  it('parses navigation state from URL', () => {
+    const state = parseNavigationState('/transactions?category=food&date=2024-01-15');
+    expect(state.category).toBe('food');
+    expect(state.date).toBe('2024-01-15');
+  });
+
+  it('parses empty state from URL without params', () => {
+    const state = parseNavigationState('/transactions');
+    expect(state.category).toBeUndefined();
+    expect(state.date).toBeUndefined();
+  });
+
+  it('builds navigation URL with state', () => {
+    const url = buildNavigationUrl('/transactions', { category: 'food', date: '2024-01-15' });
+    expect(url).toContain('category=food');
+    expect(url).toContain('date=2024-01-15');
+  });
+
+  it('builds URL without state', () => {
+    const url = buildNavigationUrl('/transactions', {});
+    expect(url).toBe('/transactions');
+  });
+});
+
+describe('Navigation Error Handling', () => {
+  it('creates navigation error with correct structure', () => {
+    const error = createNavigationError('invalid_route', 'Test error', '/test');
+    expect(error.type).toBe('invalid_route');
+    expect(error.message).toBe('Test error');
+    expect(error.originalPath).toBe('/test');
+  });
+
+  it('returns correct error message for invalid_route', () => {
+    const error = createNavigationError('invalid_route', 'Test');
+    expect(getNavigationErrorMessage(error)).toBe('The page you are trying to navigate to does not exist.');
+  });
+
+  it('returns correct error message for missing_params', () => {
+    const error = createNavigationError('missing_params', 'Test');
+    expect(getNavigationErrorMessage(error)).toBe('Some required information is missing for navigation.');
+  });
+
+  it('returns correct error message for unauthorized', () => {
+    const error = createNavigationError('unauthorized', 'Test');
+    expect(getNavigationErrorMessage(error)).toBe('You do not have permission to access this page.');
+  });
+
+  it('returns correct error message for not_found', () => {
+    const error = createNavigationError('not_found', 'Test');
+    expect(getNavigationErrorMessage(error)).toBe('The requested page could not be found.');
+  });
+
+  it('returns correct error message for server_error', () => {
+    const error = createNavigationError('server_error', 'Test');
+    expect(getNavigationErrorMessage(error)).toBe('A server error occurred while navigating.');
+  });
+
+  it('detects recoverable errors', () => {
+    const error = createNavigationError('invalid_route', 'Test');
+    expect(isNavigationErrorRecoverable(error)).toBe(true);
+  });
+
+  it('detects non-recoverable errors', () => {
+    const error = createNavigationError('unauthorized', 'Test');
+    expect(isNavigationErrorRecoverable(error)).toBe(false);
+  });
+});
+
+describe('Navigation Keyboard Shortcuts', () => {
+  it('detects Alt+ArrowLeft as navigation shortcut', () => {
+    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowLeft' });
+    expect(isNavigationShortcut(event)).toBe(true);
+  });
+
+  it('detects Alt+ArrowRight as navigation shortcut', () => {
+    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowRight' });
+    expect(isNavigationShortcut(event)).toBe(true);
+  });
+
+  it('detects Alt+ArrowUp as navigation shortcut', () => {
+    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowUp' });
+    expect(isNavigationShortcut(event)).toBe(true);
+  });
+
+  it('detects Alt+ArrowDown as navigation shortcut', () => {
+    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowDown' });
+    expect(isNavigationShortcut(event)).toBe(true);
+  });
+
+  it('returns false for non-navigation shortcuts', () => {
+    const event = new KeyboardEvent('keydown', { altKey: false, key: 'ArrowLeft' });
+    expect(isNavigationShortcut(event)).toBe(false);
   });
 });
