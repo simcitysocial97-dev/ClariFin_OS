@@ -1,72 +1,69 @@
 """Cashflow endpoints."""
-from datetime import datetime
-from typing import Any
-
 from fastapi import APIRouter, HTTPException, Query
 
-from src.repositories import CashflowRepository
+from src.core.dtos.cashflow_dto import (
+    CashflowCategoryResponse,
+    CashflowMonthlyResponse,
+    CashflowSummaryDTO,
+    CashflowTransactionResponse,
+)
+from src.services import CashflowService
 
 router = APIRouter(prefix="/api", tags=["cashflow"])
+
+
+@router.get("/cashflow")
+def get_cashflow() -> CashflowSummaryDTO:
+    """
+    Returns cashflow summary with total income, expenses, and net cashflow.
+    All monetary values in paise (INTEGER).
+    """
+    try:
+        service = CashflowService()
+        return service.calculate_summary()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/cashflow/monthly")
 def get_cashflow_monthly(
     months: int = Query(default=6, ge=1, le=12),
-    member: str | None = Query(default=None),
-) -> dict[str, Any]:
+) -> CashflowMonthlyResponse:
     """
     Returns month-by-month income and expense aggregation.
     All monetary values in paise (INTEGER).
     """
     try:
-        repo = CashflowRepository()
-        rows = repo.get_monthly_cashflow(months=months, member=member)
+        service = CashflowService()
+        return service.get_monthly(months=months)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-        # Format response - limit to requested number of months
-        months_data = []
-        total_income = 0
-        total_expense = 0
 
-        # Get the most recent N months
-        rows_sorted = sorted(rows, key=lambda r: r.get("month_key", ""), reverse=True)
-        rows_limited = rows_sorted[:months]
+@router.get("/cashflow/categories")
+def get_cashflow_categories() -> CashflowCategoryResponse:
+    """
+    Returns category breakdown for cashflow.
+    All monetary values in paise (INTEGER).
+    """
+    try:
+        service = CashflowService()
+        return service.get_categories()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-        for row in rows_limited:
-            month_key = row.get("month_key", "")
-            if not month_key:
-                continue
 
-            income = int(row.get("income_paise", 0) or 0)
-            expense = int(row.get("expense_paise", 0) or 0)
-
-            # Create month label (e.g., "Jan 2025")
-            try:
-                month_dt = datetime.strptime(month_key, "%Y-%m")
-                month_label = month_dt.strftime("%b %Y")
-            except ValueError:
-                month_label = month_key
-
-            months_data.append({
-                "month_key": month_key,
-                "month_label": month_label,
-                "income_paise": income,
-                "expense_paise": expense,
-                "net_paise": income - expense,
-                "transaction_count": int(row.get("transaction_count", 0) or 0),
-            })
-
-            total_income += income
-            total_expense += expense
-
-        # Sort by month_key ascending for the response
-        months_data.sort(key=lambda m: m["month_key"])
-
-        return {
-            "months": months_data,
-            "period_months": len(months_data),
-            "total_income_paise": total_income,
-            "total_expense_paise": total_expense,
-            "total_net_paise": total_income - total_expense,
-        }
+@router.get("/cashflow/transactions")
+def get_cashflow_transactions(
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+) -> CashflowTransactionResponse:
+    """
+    Returns transactions for cashflow view.
+    All monetary values in paise (INTEGER).
+    """
+    try:
+        service = CashflowService()
+        return service.get_transactions(limit=limit, offset=offset)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

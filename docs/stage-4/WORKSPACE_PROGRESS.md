@@ -40,32 +40,28 @@
 
 ## W4.2 — Cashflow Truth
 
----
-
-## W4.2 — Cashflow Truth
-
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 5: Monthly Trend | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 6: Category Breakdown | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 7: Transaction List | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
-| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 18: Backend DTO | L0 | NOT_STARTED | |
-| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
-| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 1: ViewModel | L1 | DONE | |
+| Cap 2: Mapper | L2 | DONE | |
+| Cap 3: Capability Hook | L5 | DONE | |
+| Cap 4: Summary Card | L6 | DONE | |
+| Cap 5: Monthly Trend | L6 | DONE | |
+| Cap 6: Category Breakdown | L6 | DONE | |
+| Cap 7: Transaction List | L6 | DONE | |
+| Cap 8: Filters | L7 | DONE | |
+| Cap 9: Search | L7 | DONE | |
+| Cap 10: Evidence Drawer | L7 | DONE | |
+| Cap 11: Insights Panel | L7 | DONE | |
+| Cap 12: Toolbar | L7 | DONE | |
+| Cap 13: Workspace Page | L10 | DONE | |
+| Cap 14: Loading States | L8 | DONE | |
+| Cap 15: Error States | L8 | DONE | |
+| Cap 16: Empty States | L8 | DONE | |
+| Cap 17: Cross-Navigation | L9 | DONE | |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | DONE | |
+| Cap 20: Backend Service | L3 | DONE | |
 | Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
 
 ---
@@ -271,7 +267,7 @@
 | Workspace | Total Caps | NOT_STARTED | READY | IN_PROGRESS | VALIDATING | DONE | BLOCKED |
 |-----------|-----------|-------------|-------|-------------|------------|------|---------|
 | W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
-| W4.2 Cashflow | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.2 Cashflow | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
 | W4.3 Accounts | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.4 Loans | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.5 Credit Cards | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
@@ -279,7 +275,7 @@
 | W4.7 Reconciliation | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.8 Behaviour | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
 | W4.9 Forecast | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| **Total** | **189** | **151** | **0** | **0** | **38** | **0** | **0** |
+| **Total** | **189** | **147** | **0** | **0** | **42** | **0** | **0** |
 
 ---
 

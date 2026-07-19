@@ -6,6 +6,8 @@
  * Architecture Flow: Backend → API → DTO → Mapper → ViewModel → Capability → Workspace → Components → Page
  */
 
+'use client';
+
 import { useNetWorthCapability } from '@/lib/capabilities/use-net-worth-capability';
 import { NetWorthSummary } from '@/components/net-worth/net-worth-summary';
 import { CompositionChart } from '@/components/net-worth/composition-chart';

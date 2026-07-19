@@ -7,6 +7,7 @@ from src.services.account_service import AccountService
 from src.services.audit_service import AuditService
 from src.services.base import BaseService
 from src.services.behavior_service import BehaviorService
+from src.services.cashflow_service import CashflowService
 from src.services.dashboard_service import DashboardService
 from src.services.loan_analysis_service import LoanAnalysisService
 from src.services.loan_service import LoanService
@@ -20,6 +21,7 @@ __all__ = [
     "AuditService",
     "BaseService",
     "BehaviorService",
+    "CashflowService",
     "DashboardService",
     "LoanAnalysisService",
     "LoanService",
