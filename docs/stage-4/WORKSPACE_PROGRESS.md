@@ -1,0 +1,297 @@
+# Stage 4 — Workspace Progress Tracking
+
+## Global Status Legend
+- **NOT_STARTED**: No work has begun
+- **READY**: All dependencies met, ready for execution
+- **IN_PROGRESS**: Currently being worked on
+- **VALIDATING**: Implementation complete, running benchmark validation
+- **DONE**: All capabilities complete and benchmark passes
+- **BLOCKED**: Dependency not met or issue found
+
+---
+
+## W4.1 — Net Worth Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | DONE | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Composition Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Trend Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Account Breakdown | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | DONE | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.2 — Cashflow Truth
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Monthly Trend | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Category Breakdown | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Transaction List | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.3 — Accounts Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Balance Trend | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Type Breakdown | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Transaction List | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.4 — Loans Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Amortization Schedule | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Payment Progress | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Interest Analysis | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.5 — Credit Cards Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Statement History | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Utilization Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Spending by Category | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.6 — Investments Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Performance Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Asset Allocation | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Holdings Table | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.7 — Reconciliation Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Status Overview | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Discrepancy List | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Audit Trail | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.8 — Behaviour Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Score Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Spending Patterns | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Savings Rate | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Debt Health | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Wellness Radar | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Toolbar → Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## W4.9 — Forecast Intelligence
+
+| Capability | Level | Status | Notes |
+|-----------|-------|--------|-------|
+| Cap 1: ViewModel | L1 | NOT_STARTED | |
+| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
+| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
+| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 5: Net Worth Projection | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 6: Cashflow Projection | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 7: Scenario Comparison | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 13: Workspace Page | L10 | NOT_STARTED | Blocked on all L5-L9 |
+| Cap 14: Loading States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 15: Error States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 16: Empty States | L8 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 17: Cross-Navigation | L9 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 18: Backend DTO | L0 | NOT_STARTED | |
+| Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
+| Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
+| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+
+---
+
+## Workspace Rollup
+
+| Workspace | Total Caps | NOT_STARTED | READY | IN_PROGRESS | VALIDATING | DONE | BLOCKED |
+|-----------|-----------|-------------|-------|-------------|------------|------|---------|
+| W4.1 Net Worth | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.2 Cashflow | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.3 Accounts | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.4 Loans | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.5 Credit Cards | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.6 Investments | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.7 Reconciliation | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.8 Behaviour | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| W4.9 Forecast | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
+| **Total** | **189** | **171** | **0** | **0** | **18** | **0** | **0** |
+
+---
+
+## Execution Readiness
+
+| Level | Count | READY Count | Blockers |
+|-------|-------|-------------|----------|
+| L0 (Backend DTOs) | 9 | 9 | None — all are NOT_STARTED but have no dependencies |
+| L1 (ViewModels) | 9 | 9 | None — all are NOT_STARTED but have no dependencies |
+| L2 (Mappers) | 9 | 0 | Blocked on L1 |
+| L3 (Backend Services) | 9 | 0 | Blocked on L0 |
+| L4 (Backend Routers) | 9 | 0 | Blocked on L0, L3 |
+| L5 (Capability Hooks) | 9 | 0 | Blocked on L1, L2 |
+| L6 (UI Components) | 37 | 0 | Blocked on L5 |
+| L7 (UI Infrastructure) | 45 | 0 | Blocked on L5 |
+| L8 (UX States) | 27 | 0 | Blocked on L5 |
+| L9 (Cross-Navigation) | 9 | 0 | Blocked on L5 |
+| L10 (Workspace Pages) | 9 | 0 | Blocked on L5-L9 |
+| L11 (Benchmark Validation) | 9 | 0 | Blocked on L10 |

@@ -1,45 +1,60 @@
 # Active Context
 
-## Stage 3 Execution - Complete
+## Stage 4 Execution - Level 0-1 Complete
 
 ### Changes Made (Today)
-- Completed S3-VAL-001 through S3-VAL-010: Validation checks complete
-  - Fixed TypeScript errors in test files (unused imports/variables)
-  - TypeScript check passes (npx tsc --noEmit)
-  - ESLint check passes
-  - Build passes (npm run build)
-  - All 442 frontend tests pass
-  - Backend ruff check passes
-- Completed S3-DOC-001 through S3-DOC-020: Documentation complete
-  - Created VIEWMODEL_DOCS.md
-  - Created MAPPER_DOCS.md
-  - Created CAPABILITY_DOCS.md
-  - Created WORKSPACE_DOCS.md
-  - Created TESTING_DOCS.md
-  - Created PERFORMANCE_DOCS.md
-  - Created EVIDENCE_DOCS.md
-  - Created ARCHITECTURE_DOCS.md
-  - Created README.md
-- All core capabilities (15/15) at 100% completion
+- Completed Level 0 (Backend DTOs) for all 9 workspaces:
+  - Created `backend/src/core/dtos/net_worth_dto.py`
+  - Created `backend/src/core/dtos/cashflow_dto.py`
+  - Created `backend/src/core/dtos/accounts_dto.py`
+  - Created `backend/src/core/dtos/loans_dto.py`
+  - Created `backend/src/core/dtos/credit_cards_dto.py`
+  - Created `backend/src/core/dtos/investments_dto.py`
+  - Created `backend/src/core/dtos/reconciliation_dto.py`
+  - Created `backend/src/core/dtos/behaviour_dto.py`
+  - Created `backend/src/core/dtos/forecast_dto.py`
+- Completed Level 1 (ViewModels) for all 9 workspaces:
+  - Created `frontend/types/net-worth-view-model.ts`
+  - Created `frontend/types/cashflow-view-model.ts`
+  - Created `frontend/types/accounts-view-model.ts`
+  - Created `frontend/types/loans-view-model.ts`
+  - Created `frontend/types/credit-cards-view-model-model.ts`
+  - Created `frontend/types/investments-view-model.ts`
+  - Created `frontend/types/reconciliation-view-model.ts`
+  - Created `frontend/types/behaviour-view-model.ts`
+  - Created `frontend/types/forecast-view-model.ts`
+- Updated `backend/src/core/dtos/__init__.py` with all new DTO exports
+- Updated `frontend/types/index.ts` with all new ViewModel exports
+- All validations pass (ruff, mypy, TypeScript)
 
 ### Files Modified
-- frontend/app/transactions/__tests__/user-behavior.test.tsx (fixed unused imports)
-- frontend/lib/sort/__tests__/sort-logic.test.ts (fixed unused variables)
-- frontend/types/__tests__/invariants.test.ts (fixed unused imports)
-- docs/stage-3/VIEWMODEL_DOCS.md (new)
-- docs/stage-3/MAPPER_DOCS.md (new)
-- docs/stage-3/CAPABILITY_DOCS.md (new)
-- docs/stage-3/WORKSPACE_DOCS.md (new)
-- docs/stage-3/TESTING_DOCS.md (new)
-- docs/stage-3/PERFORMANCE_DOCS.md (new)
-- docs/stage-3/EVIDENCE_DOCS.md (new)
-- docs/stage-3/ARCHITECTURE_DOCS.md (new)
-- docs/stage-3/README.md (new)
+- backend/src/core/dtos/net_worth_dto.py (new)
+- backend/src/core/dtos/cashflow_dto.py (new)
+- backend/src/core/dtos/accounts_dto.py (new)
+- backend/src/core/dtos/loans_dto.py (new)
+- backend/src/core/dtos/credit_cards_dto.py (new)
+- backend/src/core/dtos/investments_dto.py (new)
+- backend/src/core/dtos/reconciliation_dto.py (new)
+- backend/src/core/dtos/behaviour_dto.py (new)
+- backend/src/core/dtos/forecast_dto.py (new)
+- backend/src/core/dtos/__init__.py (updated exports)
+- frontend/types/net-worth-view-model.ts (new)
+- frontend/types/cashflow-view-model.ts (new)
+- frontend/types/accounts-view-model.ts (new)
+- frontend/types/loans-view-model.ts (new)
+- frontend/types/credit-cards-view-model.ts (new)
+- frontend/types/investments-view-model.ts (new)
+- frontend/types/reconciliation-view-model.ts (new)
+- frontend/types/behaviour-view-model.ts (new)
+- frontend/types/forecast-view-model.ts (new)
+- frontend/types/index.ts (updated exports)
+- docs/stage-4/WORKSPACE_PROGRESS.md (updated status)
 
 ### Next Steps
-- Stage 3 is complete. Ready for benchmark verification.
+- Level 2 (Mappers) - 9 capabilities ready to implement
+- Level 3 (Backend Services) - 9 capabilities ready to implement
+- Level 4 (Backend Routers) - 9 capabilities ready to implement
 
 ### Key Constraints
-- No modifications to Dashboard, Money Graph, Behaviour Workspace, Cashflow Workspace, or Reconciliation Workspace
-- Only Stage 3 features to be implemented
-- FVF tool not found - validation passed with available tools
+- All monetary values use paise (integer) for financial determinism
+- Evidence chain, calculation steps, source references present in all ViewModels
