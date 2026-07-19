@@ -20,6 +20,7 @@
 - Created `frontend/lib/intelligence/goal-engine.ts` — Goal tracking, progress monitoring, velocity calculation
 - Created `frontend/lib/intelligence/anomaly-engine.ts` — Statistical anomaly detection (spending/income z-score)
 - Added unit tests: health-engine.test.ts, spending-engine.test.ts, runtime.test.ts (18 tests total)
+- Integrated IntelligenceRuntime with Command Center (computeIntelligence, getIntelligenceRuntime methods)
 - Fixed TypeScript errors in all intelligence engine files (unused parameters prefixed with underscore)
 - Fixed `formatCurrency` → `formatINR` in `components/cards/statement-history.tsx`
 - Added 'anomaly' to EngineName type and DEFAULT_INTELLIGENCE_CONFIG
@@ -32,7 +33,6 @@
 - No workspace code was modified
 
 ### Next Steps
-- Integrate IntelligenceRuntime with Command Center
 - Create component tests for UI integration
 
 ### Key Constraints
