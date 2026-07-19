@@ -16,8 +16,12 @@
 - Created `frontend/lib/intelligence/opportunity-engine.ts` — Opportunity detection (savings, debt, cashflow)
 - Created `frontend/lib/intelligence/recommendation-engine.ts` — Prioritized recommendations
 - Created `frontend/lib/intelligence/alert-engine.ts` — Alert generation (low liquidity, negative savings, gambling, loan apps)
+- Created `frontend/lib/intelligence/investment-engine.ts` — Investment analysis, diversification, risk assessment
+- Created `frontend/lib/intelligence/goal-engine.ts` — Goal tracking, progress monitoring, velocity calculation
+- Created `frontend/lib/intelligence/anomaly-engine.ts` — Statistical anomaly detection (spending/income z-score)
 - Fixed TypeScript errors in all intelligence engine files (unused parameters prefixed with underscore)
 - Fixed `formatCurrency` → `formatINR` in `components/cards/statement-history.tsx`
+- Added 'anomaly' to EngineName type and DEFAULT_INTELLIGENCE_CONFIG
 
 ### Validation
 - TypeScript: All intelligence files pass `tsc --noEmit` (0 errors)

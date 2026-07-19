@@ -389,7 +389,8 @@ export type EngineName =
   | 'risk'
   | 'opportunity'
   | 'recommendation'
-  | 'alert';
+  | 'alert'
+  | 'anomaly';
 
 export interface ThresholdConfig {
   /** Impulsivity threshold (0-1) */
@@ -437,6 +438,7 @@ export const DEFAULT_INTELLIGENCE_CONFIG: IntelligenceConfig = {
     'opportunity',
     'recommendation',
     'alert',
+    'anomaly',
   ],
   thresholds: DEFAULT_THRESHOLDS,
   max_insights: 50,
