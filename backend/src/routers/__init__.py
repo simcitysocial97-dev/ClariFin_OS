@@ -7,6 +7,7 @@ from . import (
     behaviour_workspace,
     cards_statements,
     cashflow,
+    cashflow_workspace,
     credit_cards_workspace,
     dashboard,
     export,
@@ -25,4 +26,4 @@ from . import (
     transactions,
 )
 
-__all__ = ["accounts", "audit", "banks", "behavior", "behaviour_workspace", "cards_statements", "cashflow", "credit_cards_workspace", "dashboard", "export", "forecast", "health", "import_router", "investments", "investments_workspace", "loans", "loans_workspace", "managed_accounts", "networth", "reconciliation", "reconciliation_workspace", "transactions", "members"]
+__all__ = ["accounts", "audit", "banks", "behavior", "behaviour_workspace", "cards_statements", "cashflow", "cashflow_workspace", "credit_cards_workspace", "dashboard", "export", "forecast", "health", "import_router", "investments", "investments_workspace", "loans", "loans_workspace", "managed_accounts", "networth", "reconciliation", "reconciliation_workspace", "transactions", "members"]

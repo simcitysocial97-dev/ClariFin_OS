@@ -55,6 +55,7 @@ from src.routers import (
     behaviour_workspace,
     cards_statements,
     cashflow,
+    cashflow_workspace,
     credit_cards,
     credit_cards_workspace,
     dashboard,
@@ -83,6 +84,7 @@ app.include_router(cards_statements.router)
 app.include_router(credit_cards.router)
 app.include_router(credit_cards_workspace.router)
 app.include_router(cashflow.router)
+app.include_router(cashflow_workspace.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
 app.include_router(forecast.router)

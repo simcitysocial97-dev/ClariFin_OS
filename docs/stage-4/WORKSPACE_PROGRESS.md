@@ -62,7 +62,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | |
 | Cap 20: Backend Service | L3 | DONE | |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -268,7 +268,7 @@
 | Workspace | Total Caps | NOT_STARTED | READY | IN_PROGRESS | VALIDATING | DONE | BLOCKED |
 |-----------|-----------|-------------|-------|-------------|------------|------|---------|
 | W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
-| W4.2 Cashflow | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
+| W4.2 Cashflow | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.3 Accounts | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.4 Loans | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
 | W4.5 Credit Cards | 21 | 2 | 0 | 0 | 19 | 0 | 0 |
@@ -276,7 +276,7 @@
 | W4.7 Reconciliation | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
 | W4.8 Behaviour | 22 | 1 | 0 | 0 | 21 | 0 | 0 |
 | W4.9 Forecast | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
-| **Total** | **189** | **11** | **0** | **0** | **177 | **0** | **0** |
+| **Total** | **189** | **10** | **0** | **0** | **178 | **0** | **0** |
 
 ---
 
