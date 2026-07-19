@@ -100,22 +100,20 @@ describe('Sort Logic', () => {
   });
 
   describe('Sort Actions', () => {
-    it('should toggle sort direction when same field is sorted', () => {
-      // Sorting by the same field should toggle direction
-      const currentField: SortField = 'date';
-      const currentDirection: SortDirection = 'asc';
-      const newDirection: SortDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+     it('should toggle sort direction when same field is sorted', () => {
+       // Sorting by the same field should toggle direction
+       const currentDirection: SortDirection = 'asc';
+       const newDirection: SortDirection = currentDirection === 'asc' ? 'desc' : 'asc';
 
-      expect(newDirection).toBe('desc');
-    });
+       expect(newDirection).toBe('desc');
+     });
 
-    it('should set direction to asc when new field is sorted', () => {
-      // Sorting by a new field should set direction to asc
-      const newField: SortField = 'amount';
-      const newDirection: SortDirection = 'asc';
+     it('should set direction to asc when new field is sorted', () => {
+       // Sorting by a new field should set direction to asc
+       const newDirection: SortDirection = 'asc';
 
-      expect(newDirection).toBe('asc');
-    });
+       expect(newDirection).toBe('asc');
+     });
 
     it('should support all sort fields', () => {
       // All sort fields should be supported

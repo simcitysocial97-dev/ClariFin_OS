@@ -872,6 +872,28 @@ Completed all Testing capability features. Added:
 **Issues:**
 None.
 
+### 2026-07-19 - S3-VAL-001 through S3-VAL-010
+**Files Modified:**
+- frontend/app/transactions/__tests__/user-behavior.test.tsx
+- frontend/lib/sort/__tests__/sort-logic.test.ts
+- frontend/types/__tests__/invariants.test.ts
+
+**Summary:**
+Completed validation checks for Stage 3. Fixed TypeScript errors in test files:
+- Removed unused `beforeEach` and `fireEvent` imports from user-behavior.test.tsx
+- Removed unused `currentField` and `newField` variables from sort-logic.test.ts
+- Removed unused `EvidenceItem` import and `date` variable from invariants.test.ts
+
+**Verification:**
+- TypeScript check passed (npx tsc --noEmit)
+- ESLint passed on all modified files
+- Build passed (npm run build)
+- All 442 tests passed (npm run test)
+- Backend ruff check passed
+
+**Issues:**
+None.
+
 ## Execution Notes
 
 - All entries are chronological

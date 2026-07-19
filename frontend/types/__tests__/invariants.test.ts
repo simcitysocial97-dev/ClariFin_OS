@@ -8,7 +8,6 @@ import { describe, it, expect } from 'vitest';
 import type {
   TransactionViewModel,
   MoneyViewModel,
-  EvidenceItem,
   CalculationStep,
   ImportLineage,
 } from '../transaction-view-model';
@@ -91,7 +90,6 @@ describe('TransactionViewModel Invariants', () => {
   describe('TransactionViewModel Date Navigation', () => {
     it('should have consistent date navigation fields', () => {
       // If year/month/day are present, they should be consistent with date
-      const date = '2026-07-19';
       const year = 2026;
       const month = 7;
       const day = 19;
