@@ -1,26 +1,38 @@
 # Active Context
 
-## Stage 4 Execution - Benchmark Validations Complete
+## Stage 6 Execution - COMPLETE
 
 ### Changes Made
-- Created `backend/src/services/cashflow_workspace_service.py` - aggregates cashflow data for workspace
-- Created `backend/src/routers/cashflow_workspace.py` - API endpoint at `/api/v1/cashflow`
-- Updated `backend/src/api.py` to register cashflow_workspace router
-- Updated `backend/src/routers/__init__.py` to export cashflow_workspace
-- Created `docs/stage-4/benchmarks/cashflow-benchmark.md` - benchmark validation document
-- Created `docs/stage-4/benchmarks/loans-benchmark.md` - benchmark validation document
-- Created `docs/stage-4/benchmarks/credit-cards-benchmark.md` - benchmark validation document
-- Created `docs/stage-4/benchmarks/investments-benchmark.md` - benchmark validation document
-- Created `docs/stage-4/benchmarks/reconciliation-benchmark.md` - benchmark validation document
-- Created `docs/stage-4/benchmarks/behaviour-benchmark.md` - benchmark validation document
-- Created `docs/stage-4/benchmarks/forecast-benchmark.md` - benchmark validation document
-- Updated `docs/stage-4/WORKSPACE_PROGRESS.md` - W4.4, W4.6, W4.7, W4.8, W4.9 benchmark validations marked as complete
+- Created `frontend/lib/intelligence/types.ts` — Core types: Insight, Alert, Recommendation, RiskScore, OpportunityScore, Goal, HealthScore, EvidenceChain, EvidenceItem, CalculationStep, SourceReference, IntelligenceEngine, IntelligenceContext, EngineResult
+- Created `frontend/lib/intelligence/runtime.ts` — IntelligenceRuntime class orchestrating all engines
+- Created `frontend/lib/intelligence/index.ts` — Public API exports
+- Created `frontend/lib/intelligence/insight-builder.ts` — Utility for building evidence chains and insight objects
+- Created `frontend/lib/intelligence/health-engine.ts` — Financial health scoring (Savings, Stability, Liquidity, Debt, Income dimensions)
+- Created `frontend/lib/intelligence/spending-engine.ts` — Spending analysis, anomaly detection, trend analysis
+- Created `frontend/lib/intelligence/cashflow-engine.ts` — Cashflow patterns, gap detection, stability metrics
+- Created `frontend/lib/intelligence/debt-engine.ts` — Debt structure analysis, DTI, EMI burden, risk alerts
+- Created `frontend/lib/intelligence/behaviour-engine.ts` — Behavioral intelligence (impulsivity, stress, savings discipline)
+- Created `frontend/lib/intelligence/risk-engine.ts` — Risk assessment (spending, liquidity, concentration risks)
+- Created `frontend/lib/intelligence/opportunity-engine.ts` — Opportunity detection (savings, debt, cashflow)
+- Created `frontend/lib/intelligence/recommendation-engine.ts` — Prioritized recommendations
+- Created `frontend/lib/intelligence/alert-engine.ts` — Alert generation (low liquidity, negative savings, gambling, loan apps)
+- Fixed TypeScript errors in all intelligence engine files (unused parameters prefixed with underscore)
+- Fixed `formatCurrency` → `formatINR` in `components/cards/statement-history.tsx`
+
+### Validation
+- TypeScript: All intelligence files pass `tsc --noEmit` (0 errors)
+- ESLint: All intelligence files pass `eslint` (0 errors)
+- No backend contracts were modified
+- No workspace code was modified
 
 ### Next Steps
-- Backend DTO implementation for W4.1 (Net Worth)
-- Backend Router/Service for W4.1 (Net Worth)
-- W4.5 Credit Cards - Statement History component (Cap 5)
+- Integrate IntelligenceRuntime with Command Center
+- Add unit tests for intelligence engines
+- Create component tests for UI integration
 
 ### Key Constraints
 - All monetary values use paise (integer) for financial determinism
-- Ruff check passed for all backend code
+- Scores in basis points (0-10000 for 0-100%)
+- No `as any` or `@ts-ignore` used
+- All engines consume only FinancialGraphRuntime API
+- No business logic in UI components

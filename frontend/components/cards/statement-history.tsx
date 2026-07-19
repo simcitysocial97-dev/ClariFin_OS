@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency } from '@/lib/utils/format';
+import { formatINR } from '@/lib/utils/format';
 import type { CreditCardsViewModel } from '@/types/credit-cards-view-model';
 
 interface StatementHistoryProps {
@@ -95,10 +95,10 @@ export function StatementHistory({ creditCards, loading, error }: StatementHisto
                   {stmt.period_from} to {stmt.period_to}
                 </TableCell>
                 <TableCell className="text-sm">
-                  {formatCurrency(stmt.total_due_paise)}
+                  {formatINR(stmt.total_due_paise)}
                 </TableCell>
                 <TableCell className="text-sm">
-                  {formatCurrency(stmt.min_due_paise)}
+                  {formatINR(stmt.min_due_paise)}
                 </TableCell>
                 <TableCell className="text-sm capitalize">
                   {stmt.status}
