@@ -674,6 +674,47 @@ Completed Loading/Error States tests and documentation. Added:
 **Issues:**
 None.
 
+### 2026-07-19 - S3-TBR-002 through S3-TBR-020
+**Files Modified:**
+- frontend/components/toolbar/workspace-toolbar.tsx
+- frontend/components/toolbar/__tests__/workspace-toolbar.test.tsx
+- frontend/components/toolbar/__tests__/workspace-toolbar-performance.test.tsx
+- frontend/components/toolbar/README.md
+
+**Summary:**
+Completed all toolbar features. Added:
+- Error state support (error prop, onErrorRetry callback)
+- Customization options (showSearch, showFilter, showGroup, showSort, showExport, showRefresh, showSettings)
+- Unit tests for all action buttons, transaction count, filter count, loading state, error state, and customization
+- Performance tests for render times under 100ms
+- Documentation with props, features, keyboard shortcuts, and performance notes
+
+**Verification:**
+- TypeScript check passed
+- Vitest tests passed (22/22 tests)
+
+**Issues:**
+None.
+
+### 2026-07-19 - S3-TBL-002 through S3-TBL-020
+**Files Modified:**
+- frontend/components/transaction-table/__tests__/transaction-table.test.tsx (new)
+- frontend/components/transaction-table/__tests__/transaction-table-performance.test.tsx (new)
+- frontend/components/transaction-table/README.md (new)
+
+**Summary:**
+Completed all transaction table tests, performance tests, and documentation. Added:
+- Unit tests for rendering transactions, dates, amounts, categories, loading state, error state, empty state, row click, selection, and selected state
+- Performance tests for 100 and 500 transactions, loading and error states
+- Documentation with props, features, states, responsive design, dark mode, and accessibility notes
+
+**Verification:**
+- TypeScript check passed
+- Vitest tests passed (15/15 tests)
+
+**Issues:**
+None.
+
 ## Execution Notes
 
 - All entries are chronological

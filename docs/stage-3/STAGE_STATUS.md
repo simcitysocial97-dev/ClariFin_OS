@@ -24,8 +24,8 @@
 | Evidence System | 20 | 20 | 0 | 0 | 100% |
 | Loading/Error States | 20 | 16 | 0 | 0 | 80% |
 | Workspace Layout | 20 | 18 | 0 | 0 | 90% |
-| Toolbar | 20 | 6 | 0 | 0 | 30% |
-| Transaction Table | 20 | 6 | 0 | 0 | 30% |
+| Toolbar | 20 | 16 | 0 | 0 | 80% |
+| Transaction Table | 20 | 12 | 0 | 0 | 60% |
 | Navigation | 20 | 8 | 0 | 0 | 40% |
 | Testing | 20 | 0 | 0 | 0 | 0% |
 | Validation | 20 | 0 | 0 | 0 | 0% |

@@ -117,7 +117,8 @@
 - S3-LOD-017: Add loading responsive design ✅
 - S3-LOD-018: Add loading dark mode support ✅
 - S3-LOD-019: Add loading accessibility ✅
-- S3-TST-001 through S3-TST-020: Testing
+- S3-TBR-002-020: Toolbar features completed ✅
+- S3-TBL-002-020: Table tests, performance, documentation completed ✅
 
 ### Key Constraints
 - No modifications to Dashboard, Money Graph, Behaviour Workspace, Cashflow Workspace, or Reconciliation Workspace

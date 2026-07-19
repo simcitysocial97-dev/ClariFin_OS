@@ -125,36 +125,36 @@
 - S3-WS-019: Add workspace tests
 
 ### Toolbar (12)
-- S3-TBR-002: Add search button to toolbar
-- S3-TBR-003: Add filter toggle to toolbar
-- S3-TBR-004: Add group toggle to toolbar
-- S3-TBR-005: Add sort toggle to toolbar
-- S3-TBR-006: Add export button to toolbar
-- S3-TBR-007: Add refresh button to toolbar
-- S3-TBR-008: Add settings button to toolbar
-- S3-TBR-009: Add transaction count to toolbar
-- S3-TBR-010: Add active filter count to toolbar
-- S3-TBR-016: Add toolbar performance tests
-- S3-TBR-017: Add toolbar documentation
-- S3-TBR-018: Add toolbar loading state
-- S3-TBR-019: Add toolbar error state
-- S3-TBR-020: Add toolbar customization
+- S3-TBR-002: Add search button to toolbar ✅
+- S3-TBR-003: Add filter toggle to toolbar ✅
+- S3-TBR-004: Add group toggle to toolbar ✅
+- S3-TBR-005: Add sort toggle to toolbar ✅
+- S3-TBR-006: Add export button to toolbar ✅
+- S3-TBR-007: Add refresh button to toolbar ✅
+- S3-TBR-008: Add settings button to toolbar ✅
+- S3-TBR-009: Add transaction count to toolbar ✅
+- S3-TBR-010: Add active filter count to toolbar ✅
+- S3-TBR-016: Add toolbar performance tests ✅
+- S3-TBR-017: Add toolbar documentation ✅
+- S3-TBR-018: Add toolbar loading state ✅
+- S3-TBR-019: Add toolbar error state ✅
+- S3-TBR-020: Add toolbar customization ✅
 
 ### Transaction Table (11)
-- S3-TBL-002: Add table header component
-- S3-TBL-003: Add table row component
-- S3-TBL-004: Add table cell component
+- S3-TBL-002: Add table header component ✅
+- S3-TBL-003: Add table row component ✅
+- S3-TBL-004: Add table cell component ✅
 - S3-TBL-005: Add table pagination
 - S3-TBL-006: Add table virtualization
-- S3-TBL-007: Add table row selection
-- S3-TBL-008: Add table row click action
-- S3-TBL-009: Add table empty state
-- S3-TBL-010: Add table loading state
+- S3-TBL-007: Add table row selection ✅
+- S3-TBL-008: Add table row click action ✅
+- S3-TBL-009: Add table empty state ✅
+- S3-TBL-010: Add table loading state ✅
 - S3-TBL-016: Add table column visibility
 - S3-TBL-017: Add table column resizing
-- S3-TBL-018: Add table tests
-- S3-TBL-019: Add table performance tests
-- S3-TBL-020: Add table documentation
+- S3-TBL-018: Add table tests ✅
+- S3-TBL-019: Add table performance tests ✅
+- S3-TBL-020: Add table documentation ✅
 
 ### Navigation (12)
 - S3-NAV-009: Add cross-navigation from table
