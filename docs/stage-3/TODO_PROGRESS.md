@@ -409,23 +409,23 @@
 - S3-PER-020: Add performance tests for capability
 
 ### Documentation (20)
-- S3-DOC-001: Add documentation
-- S3-DOC-002: Add user guides
-- S3-DOC-003: Add API documentation
-- S3-DOC-004: Add component documentation
-- S3-DOC-005: Add hook documentation
-- S3-DOC-006: Add type documentation
-- S3-DOC-007: Add architecture documentation
-- S3-DOC-008: Add performance documentation
-- S3-DOC-009: Add testing documentation
-- S3-DOC-010: Add validation documentation
-- S3-DOC-011: Add navigation documentation
-- S3-DOC-012: Add filter documentation
-- S3-DOC-013: Add search documentation
-- S3-DOC-014: Add group documentation
-- S3-DOC-015: Add sort documentation
-- S3-DOC-016: Add selection documentation
-- S3-DOC-017: Add evidence documentation
-- S3-DOC-018: Add loading documentation
-- S3-DOC-019: Add workspace documentation
-- S3-DOC-020: Add capability documentation
+- S3-DOC-001: Create ViewModel documentation
+- S3-DOC-002: Create mapper documentation
+- S3-DOC-003: Create capability documentation
+- S3-DOC-004: Create filter documentation
+- S3-DOC-005: Create search documentation
+- S3-DOC-006: Create group documentation
+- S3-DOC-007: Create sort documentation
+- S3-DOC-008: Create selection documentation
+- S3-DOC-009: Create evidence documentation
+- S3-DOC-010: Create workspace documentation
+- S3-DOC-011: Create navigation documentation
+- S3-DOC-012: Create testing documentation
+- S3-DOC-013: Create performance documentation
+- S3-DOC-014: Create architecture documentation
+- S3-DOC-015: Create user guide
+- S3-DOC-016: Create quick start guide
+- S3-DOC-017: Create API documentation
+- S3-DOC-018: Create component documentation
+- S3-DOC-019: Create hook documentation
+- S3-DOC-020: Update main documentation
