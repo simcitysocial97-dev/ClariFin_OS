@@ -24,7 +24,7 @@ export function ErrorMessage({
   onRetry,
 }: ErrorMessageProps) {
   return (
-    <Alert variant="destructive" role="alert">
+    <Alert variant="destructive" role="alert" className="bg-background dark:bg-background">
       <AlertCircle className="h-4 w-4" />
       <AlertTitle>{title}</AlertTitle>
       <AlertDescription>

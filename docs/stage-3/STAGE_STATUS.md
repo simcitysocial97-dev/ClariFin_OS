@@ -22,7 +22,7 @@
 | Sorting | 20 | 20 | 0 | 0 | 100% |
 | Selection Model | 20 | 20 | 0 | 0 | 100% |
 | Evidence System | 20 | 20 | 0 | 0 | 100% |
-| Loading/Error States | 20 | 6 | 0 | 0 | 30% |
+| Loading/Error States | 20 | 16 | 0 | 0 | 80% |
 | Workspace Layout | 20 | 18 | 0 | 0 | 90% |
 | Toolbar | 20 | 6 | 0 | 0 | 30% |
 | Transaction Table | 20 | 6 | 0 | 0 | 30% |

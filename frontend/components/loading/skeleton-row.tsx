@@ -17,10 +17,10 @@ interface SkeletonRowProps {
  */
 export function SkeletonRow({ columns = 7 }: SkeletonRowProps) {
   return (
-    <TableRow>
+    <TableRow className="border-b border-border dark:border-border">
       {Array.from({ length: columns }).map((_, i) => (
-        <TableCell key={i}>
-          <Skeleton className="h-4 w-full" />
+        <TableCell key={i} className="py-2">
+          <Skeleton className="h-4 w-full bg-muted dark:bg-muted" />
         </TableCell>
       ))}
     </TableRow>
