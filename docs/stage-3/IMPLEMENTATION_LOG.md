@@ -732,6 +732,68 @@ Fixed ESLint errors and warnings in the codebase:
 - ESLint passed on all modified files
 - Vitest tests passed (210/210 tests)
 
+### 2026-07-19 - S3-TBL-005
+**Files Modified:**
+- frontend/components/transaction-table/pagination-controls.tsx (new)
+- frontend/components/transaction-table/index.ts
+- frontend/app/transactions/workspace-page.tsx
+- frontend/components/transaction-table/__tests__/pagination-controls.test.tsx (new)
+- frontend/components/transaction-table/README.md
+
+**Summary:**
+Created PaginationControls component for the Transaction Table. The component includes:
+- First/Previous/Next/Last page navigation buttons
+- Items per page selector (10, 25, 50, 100)
+- Page info display (e.g., "1 / 2", "Showing 1 to 50 of 100")
+- Buttons disabled appropriately on first/last page
+- Responsive design with flex-col on mobile, flex-row on desktop
+- Dark mode support with bg-background classes
+- Accessibility with ARIA labels on all buttons
+- Integrated into workspace page below the transaction table
+
+**Verification:**
+- TypeScript check passed (npx tsc --noEmit)
+- ESLint passed on all modified files
+- Vitest tests passed (8/8 tests)
+
+### 2026-07-19 - S3-TBL-006
+**Files Modified:**
+- frontend/components/transaction-table/virtualized-table.tsx (new)
+- frontend/components/transaction-table/index.ts
+- frontend/components/transaction-table/__tests__/virtualized-table.test.tsx (new)
+- frontend/components/transaction-table/README.md
+
+**Summary:**
+Created VirtualizedTable component for efficient rendering of large transaction lists. The component includes:
+- Fixed height container (400px) with overflow scroll
+- Only renders visible rows for performance
+- Configurable row height and visible row count
+- Spacer rows for proper scroll height
+- All standard table features (loading, error, empty states)
+- Dark mode support with bg-background classes
+- Accessibility with ARIA attributes
+
+**Verification:**
+- TypeScript check passed (npx tsc --noEmit)
+- ESLint passed on all modified files
+- Vitest tests passed (9/9 tests)
+
+### 2026-07-19 - S3-NAV-009
+**Files Modified:**
+- frontend/components/transaction-table/transaction-table.tsx
+
+**Summary:**
+Added cross-navigation from table to related workspaces. Changes include:
+- Added Link component for category navigation
+- Added Link component for merchant navigation
+- Category badge is now clickable and navigates to category workspace
+- Merchant name is now clickable and navigates to merchant workspace
+- Click events stop propagation to prevent row click conflicts
+
+**Verification:**
+- TypeScript check passed (npx tsc --noEmit)
+- Vitest tests passed (11/11 tests)
+
 **Issues:**
 None.
 

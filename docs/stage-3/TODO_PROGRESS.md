@@ -1,6 +1,6 @@
 # Stage 3 — TODO Progress
 
-## Pending (120)
+## Pending (117)
 
 ### Transaction ViewModel (0)
 
@@ -24,12 +24,9 @@
 
 ### Toolbar (0)
 
-### Transaction Table (2)
-- S3-TBL-005: Add table pagination
-- S3-TBL-006: Add table virtualization
+### Transaction Table (0)
 
-### Navigation (12)
-- S3-NAV-009: Add cross-navigation from table
+### Navigation (11)
 - S3-NAV-010: Add navigation breadcrumb
 - S3-NAV-011: Add navigation back button
 - S3-NAV-012: Add navigation keyboard shortcuts
@@ -48,7 +45,7 @@
 
 ## Blocked (0)
 
-## Completed (240)
+## Completed (243)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition

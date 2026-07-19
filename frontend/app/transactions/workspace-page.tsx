@@ -21,6 +21,7 @@ import { SelectionSummary } from '@/components/selection/selection-summary';
 import { InsightPanel } from '@/components/workspace/insight-panel';
 import { ActionDrawer } from '@/components/workspace/action-drawer';
 import { TransactionTable } from '@/components/transaction-table/transaction-table';
+import { PaginationControls } from '@/components/transaction-table/pagination-controls';
 import type { TransactionStatus } from '@/lib/filters/types';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
 
@@ -262,6 +263,15 @@ function TransactionWorkspacePageComponent() {
           selectedIds={capability.selectedIds}
         />
       </div>
+
+      {/* Pagination Controls Region */}
+      <PaginationControls
+        page={capability.page}
+        limit={capability.limit}
+        total={capability.total}
+        onPageChange={capability.setPage}
+        onLimitChange={capability.setLimit}
+      />
 
       {/* Selection Summary Region */}
       {capability.selectedIds.size > 0 && (

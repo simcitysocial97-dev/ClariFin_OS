@@ -5,6 +5,7 @@
  * Dark mode support with bg-background classes.
  * Keyboard navigation with arrow key support.
  * Accessibility with proper ARIA attributes.
+ * Pagination support with page, limit, total props.
  */
 
 'use client';
@@ -18,7 +19,12 @@ import { SkeletonTable } from '@/components/loading/skeleton-row';
 import { EmptyState } from '@/components/loading/empty-state';
 import { formatINR } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
+import {
+  hasCategoryNavigation,
+  hasMerchantNavigation,
+} from '@/lib/navigation';
 
 interface ColumnVisibility {
   select: boolean;
@@ -234,14 +240,36 @@ export function TransactionTable({
                 )}
                 {visibility.category && (
                   <TableCell className="hidden sm:table-cell" role="cell">
-                    <Badge variant="secondary" className="text-xs">
-                      {tx.category_name || 'Uncategorized'}
-                    </Badge>
+                    {hasCategoryNavigation(tx) ? (
+                      <Link
+                        href={`/transactions?category=${encodeURIComponent(tx.category_id || 'uncategorized')}`}
+                        className="hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Badge variant="secondary" className="text-xs cursor-pointer">
+                          {tx.category_name || 'Uncategorized'}
+                        </Badge>
+                      </Link>
+                    ) : (
+                      <Badge variant="secondary" className="text-xs">
+                        {tx.category_name || 'Uncategorized'}
+                      </Badge>
+                    )}
                   </TableCell>
                 )}
                 {visibility.merchant && (
                   <TableCell className="hidden md:table-cell text-sm" role="cell">
-                    {tx.merchant_name || '-'}
+                    {hasMerchantNavigation(tx) ? (
+                      <Link
+                        href={`/transactions?merchant=${encodeURIComponent(tx.merchant_id || 'unknown')}`}
+                        className="hover:underline"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {tx.merchant_name || '-'}
+                      </Link>
+                    ) : (
+                      <>{tx.merchant_name || '-'}</>
+                    )}
                   </TableCell>
                 )}
                 {visibility.amount && (

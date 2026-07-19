@@ -5,3 +5,5 @@
  */
 
 export { TransactionTable } from './transaction-table';
+export { PaginationControls } from './pagination-controls';
+export { VirtualizedTable } from './virtualized-table';
