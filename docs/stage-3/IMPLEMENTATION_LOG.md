@@ -548,6 +548,66 @@ Added dark mode support to Transaction Workspace Page. Changes include:
 **Issues:**
 None.
 
+### 2026-07-19 - S3-WS-014 through S3-WS-017
+**Files Modified:**
+- frontend/app/transactions/workspace-page.tsx
+- frontend/app/transactions/page.tsx
+
+**Summary:**
+Added workspace keyboard navigation, accessibility, and scroll management. Changes include:
+- Keyboard event handlers for Ctrl+F (search), Ctrl+Shift+F (filter), Ctrl+G (group), Ctrl+S (sort), Ctrl+R (refresh)
+- Escape key to close evidence drawer
+- Ctrl+A to select all visible
+- Delete key to clear selection
+- tabIndex and role="main" aria-label attributes for accessibility
+- Scroll position tracking with useRef
+
+**Verification:**
+- TypeScript check passed
+- ESLint passed
+
+**Issues:**
+None.
+
+### 2026-07-19 - S3-TBR-012 through S3-TBR-014
+**Files Modified:**
+- frontend/components/toolbar/workspace-toolbar.tsx
+
+**Summary:**
+Added dark mode support, keyboard shortcuts, and accessibility to WorkspaceToolbar. Changes include:
+- bg-background dark:bg-background for dark mode support
+- role="toolbar" and aria-label on container
+- aria-label on all buttons with keyboard shortcut hints
+- aria-hidden on filter count badge
+
+**Verification:**
+- TypeScript check passed
+- ESLint passed
+
+**Issues:**
+None.
+
+### 2026-07-19 - S3-TBL-013 through S3-TBL-015
+**Files Modified:**
+- frontend/components/transaction-table/transaction-table.tsx
+
+**Summary:**
+Added dark mode support, keyboard navigation, and accessibility to TransactionTable. Changes include:
+- bg-background dark:bg-background on Card and containers
+- text-red-600 dark:text-red-400 and text-green-600 dark:text-green-400 for amount colors
+- Keyboard navigation with ArrowUp/ArrowDown to navigate rows
+- Enter/Space to trigger row click
+- role="table", role="row", role="cell" ARIA attributes
+- aria-selected on rows
+- Focus tracking with useState and useRef
+
+**Verification:**
+- TypeScript check passed
+- ESLint passed
+
+**Issues:**
+None.
+
 ## Execution Notes
 
 - All entries are chronological

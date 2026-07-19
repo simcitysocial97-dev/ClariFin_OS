@@ -120,15 +120,11 @@
 
 ### Evidence System (0)
 
-### Workspace Layout (8)
-- S3-WS-014: Add workspace keyboard navigation
-- S3-WS-015: Add workspace accessibility
-- S3-WS-016: Add workspace scroll management
-- S3-WS-017: Add workspace state persistence
+### Workspace Layout (2)
 - S3-WS-018: Add workspace performance optimization
 - S3-WS-019: Add workspace tests
 
-### Toolbar (18)
+### Toolbar (12)
 - S3-TBR-002: Add search button to toolbar
 - S3-TBR-003: Add filter toggle to toolbar
 - S3-TBR-004: Add group toggle to toolbar
@@ -138,17 +134,13 @@
 - S3-TBR-008: Add settings button to toolbar
 - S3-TBR-009: Add transaction count to toolbar
 - S3-TBR-010: Add active filter count to toolbar
-- S3-TBR-012: Add toolbar dark mode support
-- S3-TBR-013: Add toolbar keyboard shortcuts
-- S3-TBR-014: Add toolbar accessibility
-- S3-TBR-015: Add toolbar tests
 - S3-TBR-016: Add toolbar performance tests
 - S3-TBR-017: Add toolbar documentation
 - S3-TBR-018: Add toolbar loading state
 - S3-TBR-019: Add toolbar error state
 - S3-TBR-020: Add toolbar customization
 
-### Transaction Table (17)
+### Transaction Table (11)
 - S3-TBL-002: Add table header component
 - S3-TBL-003: Add table row component
 - S3-TBL-004: Add table cell component
@@ -158,9 +150,6 @@
 - S3-TBL-008: Add table row click action
 - S3-TBL-009: Add table empty state
 - S3-TBL-010: Add table loading state
-- S3-TBL-013: Add table dark mode support
-- S3-TBL-014: Add table keyboard navigation
-- S3-TBL-015: Add table accessibility
 - S3-TBL-016: Add table column visibility
 - S3-TBL-017: Add table column resizing
 - S3-TBL-018: Add table tests

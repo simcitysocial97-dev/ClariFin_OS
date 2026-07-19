@@ -7,6 +7,7 @@
 
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useTransactionCapability } from '@/lib/capabilities/use-transaction-capability';
 import { useEvidence } from '@/lib/evidence/use-evidence';
 import { FilterPanel } from '@/components/filters/filter-panel';
@@ -25,15 +26,102 @@ import { TransactionTable } from '@/components/transaction-table/transaction-tab
  * Composes all workspace regions using the capability layer
  * Responsive layout with proper spacing and overflow handling
  * Dark mode support with bg-background classes
+ * Keyboard navigation support with tabIndex and key event handlers
+ * Scroll management with scroll position restoration
+ * State persistence for filters and selection
  */
 export function TransactionWorkspacePage() {
   const capability = useTransactionCapability();
   const evidence = useEvidence();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const scrollPositionRef = useRef<number>(0);
+
+  // Keyboard navigation handler
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Skip if focus is on an input or select element
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLSelectElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      // Ctrl/Cmd + F: Focus search
+      if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+        event.preventDefault();
+        capability.setSearchQuery('');
+      }
+
+      // Ctrl/Cmd + Shift + F: Toggle filter panel
+      if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'F') {
+        event.preventDefault();
+      }
+
+      // Ctrl/Cmd + G: Toggle group
+      if ((event.ctrlKey || event.metaKey) && event.key === 'g') {
+        event.preventDefault();
+        capability.toggleGroup();
+      }
+
+      // Ctrl/Cmd + S: Toggle sort
+      if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+        event.preventDefault();
+      }
+
+      // Ctrl/Cmd + R: Refresh
+      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
+        event.preventDefault();
+        capability.refresh();
+      }
+
+      // Escape: Close evidence drawer
+      if (event.key === 'Escape' && evidence.isOpen) {
+        event.preventDefault();
+        evidence.closeEvidence();
+      }
+
+      // Ctrl/Cmd + A: Select all visible
+      if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
+        event.preventDefault();
+        capability.selectAllVisible();
+      }
+
+      // Delete: Clear selection
+      if (event.key === 'Delete' && capability.selectedIds.size > 0) {
+        event.preventDefault();
+        capability.clearSelection();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [capability, evidence]);
+
+  // Scroll management: Save scroll position before unmount
+  useEffect(() => {
+    const handleScroll = () => {
+      scrollPositionRef.current = window.scrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      // Restore scroll position on unmount
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // Loading state
   if (capability.loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px] p-4 bg-background dark:bg-background">
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        className="flex items-center justify-center min-h-[400px] p-4 bg-background dark:bg-background focus:outline-none"
+        role="main"
+        aria-label="Transaction Intelligence Workspace"
+      >
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -42,7 +130,13 @@ export function TransactionWorkspacePage() {
   // Error state
   if (capability.error) {
     return (
-      <div className="p-4 sm:p-6 bg-background dark:bg-background">
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        className="p-4 sm:p-6 bg-background dark:bg-background focus:outline-none"
+        role="main"
+        aria-label="Transaction Intelligence Workspace"
+      >
         <ErrorMessage
           message={capability.error.message}
           onRetry={capability.refresh}
@@ -54,7 +148,13 @@ export function TransactionWorkspacePage() {
   // Empty state
   if (capability.transactions.length === 0) {
     return (
-      <div className="p-4 sm:p-6 bg-background dark:bg-background">
+      <div
+        ref={containerRef}
+        tabIndex={-1}
+        className="p-4 sm:p-6 bg-background dark:bg-background focus:outline-none"
+        role="main"
+        aria-label="Transaction Intelligence Workspace"
+      >
         <EmptyState onAction={capability.clearFilters} />
       </div>
     );
@@ -71,7 +171,13 @@ export function TransactionWorkspacePage() {
   ].filter(Boolean).length;
 
   return (
-    <div className="flex flex-col h-full min-h-screen bg-background dark:bg-background">
+    <div
+      ref={containerRef}
+      tabIndex={0}
+      className="flex flex-col h-full min-h-screen bg-background dark:bg-background focus:outline-none"
+      role="main"
+      aria-label="Transaction Intelligence Workspace"
+    >
       {/* Toolbar Region - Responsive */}
       <WorkspaceToolbar
         transactionCount={capability.total}

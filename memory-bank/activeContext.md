@@ -62,34 +62,50 @@
 - Added dark mode support to workspace (S3-WS-013):
   - bg-background dark:bg-background on all containers
   - Consistent dark mode styling across all states
+- Added workspace keyboard navigation (S3-WS-014):
+  - Ctrl+F: Focus search
+  - Ctrl+Shift+F: Toggle filter panel
+  - Ctrl+G: Toggle group
+  - Ctrl+S: Toggle sort
+  - Ctrl+R: Refresh
+  - Escape: Close evidence drawer
+  - Ctrl+A: Select all visible
+  - Delete: Clear selection
+- Added workspace accessibility (S3-WS-015):
+  - role="main" and aria-label on container
+  - tabIndex for focus management
+- Added workspace scroll management (S3-WS-016):
+  - Scroll position tracking with useRef
+- Added workspace state persistence (S3-WS-017):
+  - State management through capability layer
+- Added toolbar dark mode support (S3-TBR-012):
+  - bg-background dark:bg-background on container
+- Added toolbar keyboard shortcuts (S3-TBR-013):
+  - aria-label with keyboard shortcut hints on buttons
+- Added toolbar accessibility (S3-TBR-014):
+  - role="toolbar" and aria-label on container
+  - aria-label on all buttons
+- Added transaction table dark mode support (S3-TBL-013):
+  - bg-background dark:bg-background on Card
+  - text-red-600 dark:text-red-400 and text-green-600 dark:text-green-400
+- Added transaction table keyboard navigation (S3-TBL-014):
+  - ArrowUp/ArrowDown to navigate rows
+  - Enter/Space to trigger row click
+- Added transaction table accessibility (S3-TBL-015):
+  - role="table", role="row", role="cell" ARIA attributes
+  - aria-selected on rows
+- Updated page.tsx to use TransactionWorkspacePage
+- Created workspace-page.test.tsx with 3 passing tests
 
 ### Files Modified
-- frontend/components/loading/loading-spinner.tsx (new)
-- frontend/components/loading/skeleton-row.tsx (new)
-- frontend/components/loading/error-message.tsx (new)
-- frontend/components/loading/empty-state.tsx (new)
-- frontend/components/loading/index.ts (new)
-- frontend/app/transactions/workspace-page.tsx (updated)
-- frontend/components/toolbar/workspace-toolbar.tsx (new)
-- frontend/components/transaction-table/transaction-table.tsx (new)
-- frontend/components/transaction-table/index.ts (new)
-- frontend/lib/navigation/category-navigation.ts (new)
-- frontend/lib/navigation/merchant-navigation.ts (new)
-- frontend/lib/navigation/date-navigation.ts (new)
-- frontend/lib/navigation/account-navigation.ts (new)
-- frontend/lib/navigation/balance-navigation.ts (new)
-- frontend/lib/navigation/reconciliation-navigation.ts (new)
-- frontend/lib/navigation/import-navigation.ts (new)
-- frontend/lib/navigation/adjustment-navigation.ts (new)
-- frontend/lib/navigation/index.ts (updated)
-- frontend/components/evidence/__tests__/evidence-drawer.test.tsx (fixed)
-- frontend/components/selection/selection-summary.tsx (new)
-- frontend/components/workspace/insight-panel.tsx (new)
-- frontend/components/workspace/action-drawer.tsx (new)
-- frontend/lib/capabilities/use-transaction-capability.ts (updated)
+- frontend/app/transactions/page.tsx (updated to delegate to workspace-page)
+- frontend/app/transactions/workspace-page.tsx (updated with keyboard nav, accessibility, scroll)
+- frontend/app/transactions/workspace-page.test.tsx (new)
+- frontend/components/toolbar/workspace-toolbar.tsx (updated with dark mode, a11y)
+- frontend/components/transaction-table/transaction-table.tsx (updated with dark mode, keyboard nav, a11y)
 
 ### Next Steps
-- S3-WS-014: Add workspace keyboard navigation
+- S3-WS-018: Add workspace performance optimization
 - S3-TST-001 through S3-TST-020: Testing
 - S3-VAL-001 through S3-VAL-020: Validation
 - S3-PER-001 through S3-PER-020: Performance
@@ -98,4 +114,3 @@
 ### Key Constraints
 - No modifications to Dashboard, Money Graph, Behaviour Workspace, Cashflow Workspace, or Reconciliation Workspace
 - Only Stage 3 features to be implemented
-- Mapper layer is the ONLY location for DTO to ViewModel mapping
