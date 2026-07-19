@@ -34,7 +34,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | NOT_STARTED | Blocked on Cap 18, 20 |
 | Cap 20: Backend Service | L3 | NOT_STARTED | Blocked on Cap 18 |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -118,7 +118,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | Created workspace routers |
 | Cap 20: Backend Service | L3 | DONE | Created workspace services |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -174,7 +174,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | Created workspace routers |
 | Cap 20: Backend Service | L3 | DONE | Created workspace services |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -202,7 +202,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | Created workspace routers |
 | Cap 20: Backend Service | L3 | DONE | Created workspace services |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -231,7 +231,7 @@
 | Cap 19: Backend DTO | L0 | DONE | |
 | Cap 20: Backend Router | L4 | DONE | Created workspace routers |
 | Cap 21: Backend Service | L3 | DONE | Created workspace services |
-| Cap 22: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 14 |
+| Cap 22: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -259,7 +259,7 @@
 | Cap 18: Backend DTO | L0 | DONE | |
 | Cap 19: Backend Router | L4 | DONE | Created workspace routers |
 | Cap 20: Backend Service | L3 | DONE | Created workspace services |
-| Cap 21: Benchmark Validation | L11 | NOT_STARTED | Blocked on Cap 13 |
+| Cap 21: Benchmark Validation | L11 | DONE | Validation passed |
 
 ---
 
@@ -270,13 +270,13 @@
 | W4.1 Net Worth | 21 | 4 | 0 | 0 | 17 | 0 | 0 |
 | W4.2 Cashflow | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.3 Accounts | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
-| W4.4 Loans | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
+| W4.4 Loans | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
 | W4.5 Credit Cards | 21 | 2 | 0 | 0 | 19 | 0 | 0 |
-| W4.6 Investments | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
-| W4.7 Reconciliation | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
-| W4.8 Behaviour | 22 | 1 | 0 | 0 | 21 | 0 | 0 |
-| W4.9 Forecast | 21 | 1 | 0 | 0 | 20 | 0 | 0 |
-| **Total** | **189** | **10** | **0** | **0** | **178 | **0** | **0** |
+| W4.6 Investments | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
+| W4.7 Reconciliation | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
+| W4.8 Behaviour | 22 | 0 | 0 | 0 | 22 | 0 | 0 |
+| W4.9 Forecast | 21 | 0 | 0 | 0 | 21 | 0 | 0 |
+| **Total** | **189** | **4** | **0** | **0** | **185** | **0** | **0** |
 
 ---
 
