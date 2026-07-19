@@ -3,11 +3,11 @@
 ## Overall Progress
 
 - **Total TODOs:** 360
-- **Completed:** 207
+- **Completed:** 208
 - **In Progress:** 0
 - **Blocked:** 0
-- **Pending:** 153
-- **Overall %:** 57.5%
+- **Pending:** 152
+- **Overall %:** 57.8%
 
 ## Capability Progress
 
@@ -23,7 +23,7 @@
 | Selection Model | 20 | 20 | 0 | 0 | 100% |
 | Evidence System | 20 | 20 | 0 | 0 | 100% |
 | Loading/Error States | 20 | 6 | 0 | 0 | 30% |
-| Workspace Layout | 20 | 11 | 0 | 0 | 55% |
+| Workspace Layout | 20 | 12 | 0 | 0 | 60% |
 | Toolbar | 20 | 2 | 0 | 0 | 10% |
 | Transaction Table | 20 | 3 | 0 | 0 | 15% |
 | Navigation | 20 | 8 | 0 | 0 | 40% |
@@ -34,9 +34,9 @@
 
 ## Current TODO
 
-**S3-WS-013: Add workspace dark mode support**
+**S3-WS-014: Add workspace keyboard navigation**
 
-This is the next TODO in the critical path. It depends on S3-WS-012 (completed).
+This is the next TODO in the critical path. It depends on S3-WS-013 (completed).
 
 ## Blocked TODOs
 
@@ -69,7 +69,6 @@ This is the next TODO in the critical path. It depends on S3-WS-012 (completed).
 | Console Errors | Not run |
 | Backend Ruff | ✅ Passed |
 | Backend Mypy | ⚠️ Pre-existing issues in test files |
-```
 
 ## Execution Notes
 
@@ -84,8 +83,8 @@ This is the next TODO in the critical path. It depends on S3-WS-012 (completed).
 - Selection Model is now complete (100%)
 - Evidence System: 20/20 completed (types, hook, drawer, summary, list, item, source link, calculation view, confidence display, factories, drawer tests, performance tests, documentation, responsive design, dark mode support, accessibility)
 - Loading/Error States: 6/20 completed (spinner, skeleton, error, empty state, error state in capability, retry action in capability)
-- Workspace Layout: 11/20 completed (workspace page, toolbar, filter panel, transaction table, selection summary, insight panel, action drawer, loading state, error state, empty state, responsive layout)
+- Workspace Layout: 12/20 completed (workspace page, toolbar, filter panel, transaction table, selection summary, insight panel, action drawer, loading state, error state, empty state, responsive layout, dark mode support)
 - Toolbar: 2/20 completed (toolbar component, responsive design)
 - Transaction Table: 3/20 completed (table component, error state, responsive design)
 - Navigation: 8/20 completed (category, merchant, date, account, balance, reconciliation, import, adjustment)
-- Next: S3-WS-013 (Add workspace dark mode support)
+- Next: S3-WS-014 (Add workspace keyboard navigation)

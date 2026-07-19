@@ -530,6 +530,24 @@ Added retry action to capability layer. Changes include:
 **Issues:**
 None.
 
+### 2026-07-19 - S3-WS-013
+**Files Modified:**
+- frontend/app/transactions/workspace-page.tsx
+
+**Summary:**
+Added dark mode support to Transaction Workspace Page. Changes include:
+- bg-background dark:bg-background on main container
+- bg-background dark:bg-background on loading state container
+- bg-background dark:bg-background on error state container
+- bg-background dark:bg-background on empty state container
+- bg-background dark:bg-background on table region container
+
+**Verification:**
+- TypeScript check passed
+
+**Issues:**
+None.
+
 ## Execution Notes
 
 - All entries are chronological

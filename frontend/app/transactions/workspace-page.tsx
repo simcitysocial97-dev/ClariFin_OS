@@ -24,6 +24,7 @@ import { TransactionTable } from '@/components/transaction-table/transaction-tab
  * Transaction Workspace Page
  * Composes all workspace regions using the capability layer
  * Responsive layout with proper spacing and overflow handling
+ * Dark mode support with bg-background classes
  */
 export function TransactionWorkspacePage() {
   const capability = useTransactionCapability();
@@ -32,7 +33,7 @@ export function TransactionWorkspacePage() {
   // Loading state
   if (capability.loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px] p-4">
+      <div className="flex items-center justify-center min-h-[400px] p-4 bg-background dark:bg-background">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -41,7 +42,7 @@ export function TransactionWorkspacePage() {
   // Error state
   if (capability.error) {
     return (
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 bg-background dark:bg-background">
         <ErrorMessage
           message={capability.error.message}
           onRetry={capability.refresh}
@@ -53,7 +54,7 @@ export function TransactionWorkspacePage() {
   // Empty state
   if (capability.transactions.length === 0) {
     return (
-      <div className="p-4 sm:p-6">
+      <div className="p-4 sm:p-6 bg-background dark:bg-background">
         <EmptyState onAction={capability.clearFilters} />
       </div>
     );
@@ -70,7 +71,7 @@ export function TransactionWorkspacePage() {
   ].filter(Boolean).length;
 
   return (
-    <div className="flex flex-col h-full min-h-screen">
+    <div className="flex flex-col h-full min-h-screen bg-background dark:bg-background">
       {/* Toolbar Region - Responsive */}
       <WorkspaceToolbar
         transactionCount={capability.total}
@@ -106,7 +107,7 @@ export function TransactionWorkspacePage() {
       />
 
       {/* Transaction Table Region - Flex grow with overflow */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto bg-background dark:bg-background">
         <TransactionTable
           transactions={capability.transactions}
           loading={capability.loading}

@@ -1,6 +1,6 @@
 # Stage 3 — TODO Progress
 
-## Pending (153)
+## Pending (152)
 
 ### Transaction ViewModel (0)
 
@@ -120,8 +120,7 @@
 
 ### Evidence System (0)
 
-### Workspace Layout (9)
-- S3-WS-013: Add workspace dark mode support
+### Workspace Layout (8)
 - S3-WS-014: Add workspace keyboard navigation
 - S3-WS-015: Add workspace accessibility
 - S3-WS-016: Add workspace scroll management
@@ -201,7 +200,7 @@
 
 ## Blocked (0)
 
-## Completed (207)
+## Completed (208)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -409,7 +408,7 @@
 - S3-LOD-006: Add error state to capability
 - S3-LOD-007: Add retry action to capability
 
-### Workspace Layout (11)
+### Workspace Layout (12)
 - S3-WS-001: Create workspace page component
 - S3-WS-002: Add toolbar to workspace
 - S3-WS-003: Add filter panel to workspace
@@ -421,6 +420,7 @@
 - S3-WS-009: Add error state to workspace
 - S3-WS-010: Add empty state to workspace
 - S3-WS-012: Add workspace responsive layout
+- S3-WS-013: Add workspace dark mode support
 
 ### Toolbar (2)
 - S3-TBR-001: Create toolbar component

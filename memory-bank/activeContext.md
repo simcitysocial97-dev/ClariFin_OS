@@ -59,6 +59,9 @@
   - retry: 3 configuration in useQuery
   - retryDelay with exponential backoff
   - refresh function for manual retry
+- Added dark mode support to workspace (S3-WS-013):
+  - bg-background dark:bg-background on all containers
+  - Consistent dark mode styling across all states
 
 ### Files Modified
 - frontend/components/loading/loading-spinner.tsx (new)
@@ -86,7 +89,7 @@
 - frontend/lib/capabilities/use-transaction-capability.ts (updated)
 
 ### Next Steps
-- S3-WS-013: Add workspace dark mode support
+- S3-WS-014: Add workspace keyboard navigation
 - S3-TST-001 through S3-TST-020: Testing
 - S3-VAL-001 through S3-VAL-020: Validation
 - S3-PER-001 through S3-PER-020: Performance
