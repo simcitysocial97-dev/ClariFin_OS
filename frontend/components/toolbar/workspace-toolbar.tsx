@@ -12,7 +12,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Filter, Group, SortAsc, Download, RefreshCw, Settings, AlertCircle } from 'lucide-react';
+import { Search, Filter, Group, SortAsc, Download, RefreshCw, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ErrorMessage } from '@/components/loading/error-message';
 

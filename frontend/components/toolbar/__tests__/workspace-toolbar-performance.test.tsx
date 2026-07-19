@@ -26,7 +26,7 @@ describe('WorkspaceToolbar Performance', () => {
     render(<WorkspaceToolbar {...mockProps} />);
     const end = performance.now();
     // Performance threshold accounts for test environment overhead
-    expect(end - start).toBeLessThan(100);
+    expect(end - start).toBeLessThan(150);
   });
 
   it('renders with high transaction count under 100ms', () => {

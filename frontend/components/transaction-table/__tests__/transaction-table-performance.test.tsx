@@ -4,7 +4,7 @@
  * Performance tests for transaction table component.
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { TransactionTable } from '../transaction-table';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
@@ -15,19 +15,14 @@ const createMockTransactions = (count: number): TransactionViewModel[] =>
     date: '2024-01-15',
     date_formatted: 'Jan 15, 2024',
     description: `Test transaction ${i}`,
-    amount: { paise: 10000 * (i + 1), display: `₹${(i + 1) * 100}.00` },
+    amount: { paise: 10000 * (i + 1), rupees: 100 * (i + 1) },
     transaction_type: 'debit',
     category_id: 'cat1',
     category_name: 'Food',
     merchant_id: 'merch1',
     merchant_name: 'Test Merchant',
-    confidence_score: 0.95,
     evidence: [],
-    import_lineage: { source: 'test', file_id: '1' },
-    adjustment: null,
-    relationship: { related_ids: [] },
-    navigation: { category: '/category/cat1', merchant: '/merchant/merch1' },
-    selection: { selected: false, selectable: true },
+    import_lineage: { file_id: '1', filename: 'test.pdf', import_date: '2024-01-15', source_type: 'pdf', bank: 'Test Bank' },
   }));
 
 describe('TransactionTable Performance', () => {
