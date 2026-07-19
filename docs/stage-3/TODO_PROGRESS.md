@@ -1,6 +1,6 @@
 # Stage 3 — TODO Progress
 
-## Pending (300)
+## Pending (167)
 
 ### Transaction ViewModel (0)
 
@@ -118,15 +118,9 @@
 - S3-SEL-019: Add selection accessibility
 - S3-SEL-020: Add selection integration with table
 
-### Evidence System (5)
-- [x] S3-EVD-015: Add evidence drawer tests
-- [x] S3-EVD-016: Add evidence performance tests
-- [x] S3-EVD-017: Add evidence documentation
-- [x] S3-EVD-018: Add evidence responsive design
-- [x] S3-EVD-019: Add evidence dark mode support
-- [x] S3-EVD-020: Add evidence accessibility
+### Evidence System (0)
 
-### Workspace Layout (20)
+### Workspace Layout (19)
 - S3-WS-002: Add toolbar to workspace
 - S3-WS-003: Add filter panel to workspace
 - S3-WS-004: Add transaction table to workspace
@@ -147,7 +141,7 @@
 - S3-WS-019: Add workspace tests
 - S3-WS-020: Add workspace documentation
 
-### Toolbar (20)
+### Toolbar (19)
 - S3-TBR-002: Add search button to toolbar
 - S3-TBR-003: Add filter toggle to toolbar
 - S3-TBR-004: Add group toggle to toolbar
@@ -168,8 +162,7 @@
 - S3-TBR-019: Add toolbar error state
 - S3-TBR-020: Add toolbar customization
 
-### Transaction Table (20)
-- S3-TBL-001: Create transaction table component
+### Transaction Table (19)
 - S3-TBL-002: Add table header component
 - S3-TBL-003: Add table row component
 - S3-TBL-004: Add table cell component
@@ -190,14 +183,7 @@
 - S3-TBL-019: Add table performance tests
 - S3-TBL-020: Add table documentation
 
-### Navigation (20)
-- S3-NAV-001: Add navigation to category workspace
-- S3-NAV-002: Add navigation to merchant workspace
-- S3-NAV-003: Add navigation to date workspace
-- S3-NAV-004: Add navigation to account workspace
-- S3-NAV-005: Add navigation to balance workspace
-- S3-NAV-006: Add navigation to reconciliation workspace
-- S3-NAV-007: Add navigation to import workspace
+### Navigation (13)
 - S3-NAV-008: Add navigation to adjustment workspace
 - S3-NAV-009: Add cross-navigation from table
 - S3-NAV-010: Add navigation breadcrumb
@@ -212,11 +198,7 @@
 - S3-NAV-019: Add navigation accessibility
 - S3-NAV-020: Add navigation error handling
 
-### Loading/Error States (20)
-- [x] S3-LOD-001: Create loading spinner component
-- [x] S3-LOD-002: Create skeleton row component
-- [x] S3-LOD-003: Create error message component
-- [x] S3-LOD-004: Create empty state component
+### Loading/Error States (16)
 - S3-LOD-006: Add error state to capability
 - S3-LOD-007: Add retry action to capability
 - S3-LOD-008: Add loading timeout handling
@@ -233,99 +215,11 @@
 - S3-LOD-019: Add loading accessibility
 - S3-LOD-020: Add loading integration tests
 
-### Testing (20)
-- S3-TST-001: Create capability contract tests
-- S3-TST-002: Create explainability tests
-- S3-TST-003: Create invariant tests
-- S3-TST-004: Create user behavior tests
-- S3-TST-005: Add mapper tests
-- S3-TST-006: Add filter tests
-- S3-TST-007: Add search tests
-- S3-TST-008: Add group tests
-- S3-TST-009: Add sort tests
-- S3-TST-010: Add selection tests
-- S3-TST-011: Add navigation tests
-- S3-TST-012: Add loading tests
-- S3-TST-013: Add error tests
-- S3-TST-014: Add empty state tests
-- S3-TST-015: Add performance tests
-- S3-TST-016: Add integration tests
-- S3-TST-017: Add accessibility tests
-- S3-TST-018: Add responsive tests
-- S3-TST-019: Add dark mode tests
-- S3-TST-020: Add test documentation
-
-### Validation (20)
-- S3-VAL-001: Run TypeScript type check
-- S3-VAL-002: Run ESLint check
-- S3-VAL-003: Run FVF Fast check
-- S3-VAL-004: Run architecture validation
-- S3-VAL-005: Run React Query validation
-- S3-VAL-006: Run generated type validation
-- S3-VAL-007: Run build verification
-- S3-VAL-008: Check for console errors
-- S3-VAL-009: Run backend ruff check
-- S3-VAL-010: Run backend mypy check
-- S3-VAL-011: Verify no DTO in components
-- S3-VAL-012: Verify no calculations in components
-- S3-VAL-013: Verify no business logic in page
-- S3-VAL-014: Verify mapper usage everywhere
-- S3-VAL-015: Verify no duplicated mappers
-- S3-VAL-016: Verify no duplicated hooks
-- S3-VAL-017: Verify no duplicated capabilities
-- S3-VAL-018: Verify no duplicated components
-- S3-VAL-019: Verify no TODO comments
-- S3-VAL-020: Verify no FIXME comments
-
-### Performance (20)
-- S3-PER-001: Optimize mapper performance
-- S3-PER-002: Optimize filter performance
-- S3-PER-003: Optimize search performance
-- S3-PER-004: Optimize sort performance
-- S3-PER-005: Optimize group performance
-- S3-PER-006: Optimize selection performance
-- S3-PER-007: Optimize table rendering
-- S3-PER-008: Optimize re-render prevention
-- S3-PER-009: Optimize query cache
-- S3-PER-010: Optimize request deduplication
-- S3-PER-011: Add lazy loading
-- S3-PER-012: Add performance monitoring
-- S3-PER-013: Add performance budget
-- S3-PER-014: Add performance tests
-- S3-PER-015: Add performance documentation
-- S3-PER-016: Optimize bundle size
-- S3-PER-017: Optimize initial load
-- S3-PER-018: Optimize memory usage
-- S3-PER-019: Add performance CI check
-- S3-PER-020: Add performance report
-
-### Documentation (20)
-- S3-DOC-001: Create ViewModel documentation
-- S3-DOC-002: Create mapper documentation
-- S3-DOC-003: Create capability documentation
-- S3-DOC-004: Create filter documentation
-- S3-DOC-005: Create search documentation
-- S3-DOC-006: Create group documentation
-- S3-DOC-007: Create sort documentation
-- S3-DOC-008: Create selection documentation
-- S3-DOC-009: Create evidence documentation
-- S3-DOC-010: Create workspace documentation
-- S3-DOC-011: Create toolbar documentation
-- S3-DOC-012: Create table documentation
-- S3-DOC-013: Create navigation documentation
-- S3-DOC-014: Create testing documentation
-- S3-DOC-015: Create performance documentation
-- S3-DOC-016: Create API documentation
-- S3-DOC-017: Create architecture documentation
-- S3-DOC-018: Create user guide
-- S3-DOC-019: Create quick start guide
-- S3-DOC-020: Update main documentation
-
 ## In Progress (0)
 
 ## Blocked (0)
 
-## Completed (175)
+## Completed (193)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -503,4 +397,48 @@
 - S3-SEL-019: Add selection accessibility
 - S3-SEL-020: Add selection integration with table
 
+### Evidence System (20)
+- S3-EVD-001: Create evidence types definition
+- S3-EVD-002: Create evidence hook
+- S3-EVD-003: Create evidence drawer component
+- S3-EVD-004: Create evidence summary component
+- S3-EVD-005: Create evidence list component
+- S3-EVD-006: Create evidence item component
+- S3-EVD-007: Create evidence source link component
+- S3-EVD-008: Create evidence calculation view component
+- S3-EVD-009: Create evidence confidence display component
+- S3-EVD-010: Create evidence factory functions
+- S3-EVD-011: Create evidence index export
+- S3-EVD-012: Add evidence error handling
+- S3-EVD-013: Add evidence loading state
+- S3-EVD-014: Add evidence empty state
+- S3-EVD-015: Add evidence drawer tests
+- S3-EVD-016: Add evidence performance tests
+- S3-EVD-017: Add evidence documentation
+- S3-EVD-018: Add evidence responsive design
+- S3-EVD-019: Add evidence dark mode support
+- S3-EVD-020: Add evidence accessibility
 
+### Loading/Error States (4)
+- S3-LOD-001: Create loading spinner component
+- S3-LOD-002: Create skeleton row component
+- S3-LOD-003: Create error message component
+- S3-LOD-004: Create empty state component
+
+### Workspace Layout (1)
+- S3-WS-001: Create workspace page component
+
+### Toolbar (1)
+- S3-TBR-001: Create toolbar component
+
+### Transaction Table (1)
+- S3-TBL-001: Create transaction table component
+
+### Navigation (7)
+- S3-NAV-001: Add navigation to category workspace
+- S3-NAV-002: Add navigation to merchant workspace
+- S3-NAV-003: Add navigation to date workspace
+- S3-NAV-004: Add navigation to account workspace
+- S3-NAV-005: Add navigation to balance workspace
+- S3-NAV-006: Add navigation to reconciliation workspace
+- S3-NAV-007: Add navigation to import workspace

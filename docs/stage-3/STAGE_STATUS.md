@@ -3,11 +3,11 @@
 ## Overall Progress
 
 - **Total TODOs:** 360
-- **Completed:** 193
+- **Completed:** 200
 - **In Progress:** 0
 - **Blocked:** 0
-- **Pending:** 167
-- **Overall %:** 53.6%
+- **Pending:** 160
+- **Overall %:** 55.6%
 
 ## Capability Progress
 
@@ -24,9 +24,9 @@
 | Evidence System | 20 | 20 | 0 | 0 | 100% |
 | Loading/Error States | 20 | 4 | 0 | 0 | 20% |
 | Workspace Layout | 20 | 1 | 0 | 0 | 5% |
-| Toolbar | 20 | 0 | 0 | 0 | 0% |
-| Transaction Table | 20 | 0 | 0 | 0 | 0% |
-| Navigation | 20 | 0 | 0 | 0 | 0% |
+| Toolbar | 20 | 1 | 0 | 0 | 5% |
+| Transaction Table | 20 | 1 | 0 | 0 | 5% |
+| Navigation | 20 | 7 | 0 | 0 | 35% |
 | Testing | 20 | 0 | 0 | 0 | 0% |
 | Validation | 20 | 0 | 0 | 0 | 0% |
 | Performance | 20 | 0 | 0 | 0 | 0% |
@@ -82,4 +82,9 @@ This is the next TODO in the critical path. It depends on S3-CAP-001 (completed)
 - Sorting is now complete (100%)
 - Selection Model is now complete (100%)
 - Evidence System: 20/20 completed (types, hook, drawer, summary, list, item, source link, calculation view, confidence display, factories, drawer tests, performance tests, documentation, responsive design, dark mode support, accessibility)
-- Next: Filtering Engine (S3-FIL-001)
+- Loading/Error States: 4/20 completed (spinner, skeleton, error, empty state)
+- Workspace Layout: 1/20 completed (workspace page)
+- Toolbar: 1/20 completed (toolbar component)
+- Transaction Table: 1/20 completed (table component)
+- Navigation: 7/20 completed (category, merchant, date, account, balance, reconciliation, import)
+- Next: S3-WS-002 (Add toolbar to workspace)

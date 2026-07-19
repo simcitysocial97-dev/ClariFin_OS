@@ -17,6 +17,13 @@
   - Search, filter, group, sort buttons
   - Export, refresh, settings actions
   - Transaction count and active filter indicators
+- Created Transaction Table component (S3-TBL-001):
+  - Table with header, rows, and cells
+  - Selection support with checkboxes
+  - Loading and empty states
+- Created Navigation system (S3-NAV-001-007):
+  - Category, merchant, date, account, balance, reconciliation, import navigation
+  - Index export for clean imports
 - Fixed unused variable warnings in evidence-drawer.test.tsx
 
 ### Files Modified
@@ -27,11 +34,20 @@
 - frontend/components/loading/index.ts (new)
 - frontend/app/transactions/workspace-page.tsx (new)
 - frontend/components/toolbar/workspace-toolbar.tsx (new)
+- frontend/components/transaction-table/transaction-table.tsx (new)
+- frontend/components/transaction-table/index.ts (new)
+- frontend/lib/navigation/category-navigation.ts (new)
+- frontend/lib/navigation/merchant-navigation.ts (new)
+- frontend/lib/navigation/date-navigation.ts (new)
+- frontend/lib/navigation/account-navigation.ts (new)
+- frontend/lib/navigation/balance-navigation.ts (new)
+- frontend/lib/navigation/reconciliation-navigation.ts (new)
+- frontend/lib/navigation/import-navigation.ts (new)
+- frontend/lib/navigation/index.ts (new)
 - frontend/components/evidence/__tests__/evidence-drawer.test.tsx (fixed)
 
 ### Next Steps
-- S3-TBL-001: Create transaction table component
-- S3-NAV-001 through S3-NAV-007: Navigation
+- S3-WS-002: Add toolbar to workspace
 - S3-TST-001 through S3-TST-020: Testing
 - S3-VAL-001 through S3-VAL-020: Validation
 - S3-PER-001 through S3-PER-020: Performance
