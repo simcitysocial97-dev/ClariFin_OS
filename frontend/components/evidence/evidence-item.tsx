@@ -15,11 +15,11 @@ interface EvidenceItemProps {
 }
 
 const typeColors: Record<EvidenceType, string> = {
-  categorization: 'bg-blue-100 text-blue-800',
-  import: 'bg-green-100 text-green-800',
-  adjustment: 'bg-yellow-100 text-yellow-800',
-  balance: 'bg-purple-100 text-purple-800',
-  reconciliation: 'bg-indigo-100 text-indigo-800',
+  categorization: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
+  import: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200',
+  adjustment: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200',
+  balance: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200',
+  reconciliation: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-200',
 };
 
 const typeLabels: Record<EvidenceType, string> = {

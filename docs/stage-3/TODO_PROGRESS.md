@@ -119,15 +119,14 @@
 - S3-SEL-020: Add selection integration with table
 
 ### Evidence System (5)
-- [ ] S3-EVD-015: Add evidence drawer tests
-- [ ] S3-EVD-016: Add evidence performance tests
-- [ ] S3-EVD-017: Add evidence documentation
-- [ ] S3-EVD-018: Add evidence responsive design
-- [ ] S3-EVD-019: Add evidence dark mode support
-- [ ] S3-EVD-020: Add evidence accessibility
+- [x] S3-EVD-015: Add evidence drawer tests
+- [x] S3-EVD-016: Add evidence performance tests
+- [x] S3-EVD-017: Add evidence documentation
+- [x] S3-EVD-018: Add evidence responsive design
+- [x] S3-EVD-019: Add evidence dark mode support
+- [x] S3-EVD-020: Add evidence accessibility
 
 ### Workspace Layout (20)
-- S3-WS-001: Create workspace page component
 - S3-WS-002: Add toolbar to workspace
 - S3-WS-003: Add filter panel to workspace
 - S3-WS-004: Add transaction table to workspace
@@ -149,7 +148,6 @@
 - S3-WS-020: Add workspace documentation
 
 ### Toolbar (20)
-- S3-TBR-001: Create toolbar component
 - S3-TBR-002: Add search button to toolbar
 - S3-TBR-003: Add filter toggle to toolbar
 - S3-TBR-004: Add group toggle to toolbar
@@ -215,11 +213,10 @@
 - S3-NAV-020: Add navigation error handling
 
 ### Loading/Error States (20)
-- S3-LOD-001: Create loading spinner component
-- S3-LOD-002: Create skeleton row component
-- S3-LOD-003: Create error message component
-- S3-LOD-004: Create empty state component
-- S3-LOD-005: Add loading state to capability
+- [x] S3-LOD-001: Create loading spinner component
+- [x] S3-LOD-002: Create skeleton row component
+- [x] S3-LOD-003: Create error message component
+- [x] S3-LOD-004: Create empty state component
 - S3-LOD-006: Add error state to capability
 - S3-LOD-007: Add retry action to capability
 - S3-LOD-008: Add loading timeout handling
@@ -328,7 +325,7 @@
 
 ## Blocked (0)
 
-## Completed (174)
+## Completed (175)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
