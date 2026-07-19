@@ -33,6 +33,10 @@ export interface TransactionCapabilityState {
   loadingTimeout: boolean;
   loadingTimeoutMessage: string;
 
+  // Error recovery
+  errorRecoveryAttempts: number;
+  isRecovering: boolean;
+
   // Filters
   searchQuery: string;
   dateFilter: { from?: string; to?: string } | null;
@@ -65,6 +69,7 @@ export interface TransactionCapabilityActions {
   // Fetch
   fetchTransactions: () => Promise<void>;
   refresh: () => Promise<void>;
+  recoverFromError: () => Promise<void>;
 
   // Filters
   setSearchQuery: (query: string) => void;
@@ -132,6 +137,10 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
   const [loadingTimeout, setLoadingTimeout] = useState<boolean>(false);
   const [loadingTimeoutMessage, setLoadingTimeoutMessage] = useState<string>('');
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Error recovery state
+  const [errorRecoveryAttempts, setErrorRecoveryAttempts] = useState<number>(0);
+  const [isRecovering, setIsRecovering] = useState<boolean>(false);
 
   // Build query parameters from state
   const queryParams = useMemo(() => ({
@@ -269,8 +278,26 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
   ) => {
     // Placeholder for bulk action implementation
     // This will be implemented when backend endpoints are available
-    console.log('Bulk action:', action, 'on', Array.from(selectedIds), payload);
+    console.warn('Bulk action:', action, 'on', Array.from(selectedIds), payload);
   }, [selectedIds]);
+
+  // Error recovery action - attempts to recover from error state
+  const recoverFromError = useCallback(async () => {
+    if (errorRecoveryAttempts >= 3) {
+      return; // Max recovery attempts reached
+    }
+
+    setIsRecovering(true);
+    setErrorRecoveryAttempts(prev => prev + 1);
+
+    try {
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await refetch();
+    } finally {
+      setIsRecovering(false);
+    }
+  }, [errorRecoveryAttempts, refetch]);
 
   // Return state and actions
   return {
@@ -283,6 +310,10 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
     // Loading timeout
     loadingTimeout,
     loadingTimeoutMessage,
+
+    // Error recovery
+    errorRecoveryAttempts,
+    isRecovering,
 
     // Filters
     searchQuery,
@@ -311,6 +342,7 @@ export function useTransactionCapability(): TransactionCapabilityReturn {
     // Actions
     fetchTransactions: fetchTransactionsAction,
     refresh,
+    recoverFromError,
     setSearchQuery,
     setDateFilter,
     setCategoryFilter,

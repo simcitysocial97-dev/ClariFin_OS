@@ -20,6 +20,24 @@ import { formatINR } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
 
+interface ColumnVisibility {
+  select: boolean;
+  date: boolean;
+  description: boolean;
+  category: boolean;
+  merchant: boolean;
+  amount: boolean;
+}
+
+interface ColumnWidths {
+  select?: number;
+  date?: number;
+  description?: number;
+  category?: number;
+  merchant?: number;
+  amount?: number;
+}
+
 interface TransactionTableProps {
   transactions: TransactionViewModel[];
   loading?: boolean;
@@ -27,6 +45,13 @@ interface TransactionTableProps {
   onRowClick?: (transaction: TransactionViewModel) => void;
   onSelectionChange?: (id: string, selected: boolean) => void;
   selectedIds?: Set<string>;
+  // Column visibility
+  columnVisibility?: ColumnVisibility;
+  // Column resizing
+  columnWidths?: ColumnWidths;
+  onColumnWidthsChange?: (widths: ColumnWidths) => void;
+  // Virtualization
+  virtualize?: boolean;
 }
 
 /**
@@ -44,9 +69,28 @@ export function TransactionTable({
   onRowClick,
   onSelectionChange,
   selectedIds = new Set(),
+  columnVisibility,
+  columnWidths,
+  onColumnWidthsChange,
+  virtualize,
 }: TransactionTableProps) {
   const [focusedRowIndex, setFocusedRowIndex] = useState<number>(-1);
   const rowRefs = useRef<(HTMLTableRowElement | null)[]>([]);
+
+  // Default column visibility
+  const visibility = columnVisibility ?? {
+    select: true,
+    date: true,
+    description: true,
+    category: true,
+    merchant: true,
+    amount: true,
+  };
+
+  // Column widths and virtualization (for future implementation)
+  void columnWidths;
+  void onColumnWidthsChange;
+  void virtualize;
 
   // Keyboard navigation for table rows
   useEffect(() => {
@@ -127,14 +171,26 @@ export function TransactionTable({
         <Table role="table" aria-label="Transactions">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40px] sm:w-[50px]">
-                <span className="sr-only">Select</span>
-              </TableHead>
-              <TableHead className="w-[100px] sm:w-auto">Date</TableHead>
-              <TableHead className="min-w-[150px]">Description</TableHead>
-              <TableHead className="w-[120px] hidden sm:table-cell">Category</TableHead>
-              <TableHead className="w-[120px] hidden md:table-cell">Merchant</TableHead>
-              <TableHead className="text-right w-[100px] sm:w-auto">Amount</TableHead>
+              {visibility.select && (
+                <TableHead className="w-[40px] sm:w-[50px]">
+                  <span className="sr-only">Select</span>
+                </TableHead>
+              )}
+              {visibility.date && (
+                <TableHead className="w-[100px] sm:w-auto">Date</TableHead>
+              )}
+              {visibility.description && (
+                <TableHead className="min-w-[150px]">Description</TableHead>
+              )}
+              {visibility.category && (
+                <TableHead className="w-[120px] hidden sm:table-cell">Category</TableHead>
+              )}
+              {visibility.merchant && (
+                <TableHead className="w-[120px] hidden md:table-cell">Merchant</TableHead>
+              )}
+              {visibility.amount && (
+                <TableHead className="text-right w-[100px] sm:w-auto">Amount</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -153,40 +209,52 @@ export function TransactionTable({
                 role="row"
                 aria-selected={selectedIds.has(tx.id)}
               >
-                <TableCell className="w-[40px] sm:w-[50px]">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.has(tx.id)}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      onSelectionChange?.(tx.id, e.target.checked);
-                    }}
-                    aria-label={`Select transaction ${tx.id}`}
-                  />
-                </TableCell>
-                <TableCell className="w-[100px] sm:w-auto text-sm" role="cell">
-                  {tx.date_formatted || tx.date}
-                </TableCell>
-                <TableCell className="max-w-[200px] sm:max-w-[300px] truncate text-sm" role="cell">
-                  {tx.description}
-                </TableCell>
-                <TableCell className="hidden sm:table-cell" role="cell">
-                  <Badge variant="secondary" className="text-xs">
-                    {tx.category_name || 'Uncategorized'}
-                  </Badge>
-                </TableCell>
-                <TableCell className="hidden md:table-cell text-sm" role="cell">
-                  {tx.merchant_name || '-'}
-                </TableCell>
-                <TableCell
-                  className={cn(
-                    'text-right font-mono tabular-nums text-sm',
-                    tx.transaction_type === 'debit' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
-                  )}
-                  role="cell"
-                >
-                  {formatINR(tx.amount.paise)}
-                </TableCell>
+                {visibility.select && (
+                  <TableCell className="w-[40px] sm:w-[50px]">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(tx.id)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        onSelectionChange?.(tx.id, e.target.checked);
+                      }}
+                      aria-label={`Select transaction ${tx.id}`}
+                    />
+                  </TableCell>
+                )}
+                {visibility.date && (
+                  <TableCell className="w-[100px] sm:w-auto text-sm" role="cell">
+                    {tx.date_formatted || tx.date}
+                  </TableCell>
+                )}
+                {visibility.description && (
+                  <TableCell className="max-w-[200px] sm:max-w-[300px] truncate text-sm" role="cell">
+                    {tx.description}
+                  </TableCell>
+                )}
+                {visibility.category && (
+                  <TableCell className="hidden sm:table-cell" role="cell">
+                    <Badge variant="secondary" className="text-xs">
+                      {tx.category_name || 'Uncategorized'}
+                    </Badge>
+                  </TableCell>
+                )}
+                {visibility.merchant && (
+                  <TableCell className="hidden md:table-cell text-sm" role="cell">
+                    {tx.merchant_name || '-'}
+                  </TableCell>
+                )}
+                {visibility.amount && (
+                  <TableCell
+                    className={cn(
+                      'text-right font-mono tabular-nums text-sm',
+                      tx.transaction_type === 'debit' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
+                    )}
+                    role="cell"
+                  >
+                    {formatINR(tx.amount.paise)}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

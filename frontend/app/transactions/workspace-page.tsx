@@ -122,6 +122,35 @@ function TransactionWorkspacePageComponent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [capability, evidence]);
 
+  // Memoize filter change handler
+  const handleFiltersChange = useCallback((filters: {
+    searchQuery: string;
+    dateFilter: { from?: string; to?: string } | null;
+    categoryFilter: string[];
+    merchantFilter: string[];
+    amountFilter: { min?: number; max?: number } | null;
+    statusFilter: TransactionStatus[];
+  }) => {
+    capability.setSearchQuery(filters.searchQuery);
+    capability.setDateFilter(filters.dateFilter);
+    capability.setCategoryFilter(filters.categoryFilter);
+    capability.setMerchantFilter(filters.merchantFilter);
+    capability.setAmountFilter(filters.amountFilter);
+    capability.setStatusFilter(filters.statusFilter);
+  }, [capability]);
+
+  // Memoize row click handler - opens evidence drawer
+  const handleRowClick = useCallback((tx: TransactionViewModel) => {
+    evidence.openEvidence(tx.id, tx.evidence || []);
+  }, [evidence]);
+
+  // Memoize selection change handler
+  const handleSelectionChange = useCallback((id: string, selected: boolean) => {
+    if (selected) {
+      capability.toggleSelection(id);
+    }
+  }, [capability]);
+
   // Scroll management: Save scroll position before unmount
   useEffect(() => {
     const handleScroll = () => {
@@ -187,35 +216,6 @@ function TransactionWorkspacePageComponent() {
       </div>
     );
   }
-
-  // Memoize filter change handler
-  const handleFiltersChange = useCallback((filters: {
-    searchQuery: string;
-    dateFilter: { from?: string; to?: string } | null;
-    categoryFilter: string[];
-    merchantFilter: string[];
-    amountFilter: { min?: number; max?: number } | null;
-    statusFilter: TransactionStatus[];
-  }) => {
-    capability.setSearchQuery(filters.searchQuery);
-    capability.setDateFilter(filters.dateFilter);
-    capability.setCategoryFilter(filters.categoryFilter);
-    capability.setMerchantFilter(filters.merchantFilter);
-    capability.setAmountFilter(filters.amountFilter);
-    capability.setStatusFilter(filters.statusFilter);
-  }, [capability]);
-
-  // Memoize row click handler
-  const handleRowClick = useCallback((tx: TransactionViewModel) => {
-    evidence.openEvidence(tx.id, tx.evidence || []);
-  }, [evidence]);
-
-  // Memoize selection change handler
-  const handleSelectionChange = useCallback((id: string, selected: boolean) => {
-    if (selected) {
-      capability.toggleSelection(id);
-    }
-  }, [capability]);
 
   return (
     <div

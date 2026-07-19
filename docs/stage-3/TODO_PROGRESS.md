@@ -1,6 +1,6 @@
 # Stage 3 — TODO Progress
 
-## Pending (152)
+## Pending (120)
 
 ### Transaction ViewModel (0)
 
@@ -8,153 +8,25 @@
 
 ### Capability Layer (0)
 
-### Filtering Engine (20)
-- S3-FIL-001: Create filter types definition
-- S3-FIL-002: Create date filter component
-- S3-FIL-003: Create category filter component
-- S3-FIL-004: Create merchant filter component
-- S3-FIL-005: Create amount filter component
-- S3-FIL-006: Create status filter component
-- S3-FIL-007: Create filter panel container
-- S3-FIL-008: Add filter state management
-- S3-FIL-009: Add applyFilters action to capability
-- S3-FIL-010: Add clearFilters action to capability
-- S3-FIL-011: Add filter persistence to capability
-- S3-FIL-012: Add multi-filter support
-- S3-FIL-013: Add filter validation
-- S3-FIL-014: Add filter UI tests
-- S3-FIL-015: Add filter performance tests
-- S3-FIL-016: Add filter documentation
-- S3-FIL-017: Add filter keyboard shortcuts
-- S3-FIL-018: Add filter responsive design
-- S3-FIL-019: Add filter dark mode support
-- S3-FIL-020: Add filter accessibility
+### Filtering Engine (0)
 
-### Search Engine (20)
-- S3-SEA-001: Create search input component
-- S3-SEA-002: Add search state to capability
-- S3-SEA-003: Add searchTransactions action
-- S3-SEA-004: Add search debouncing
-- S3-SEA-005: Add search highlighting
-- S3-SEA-006: Add search clear action
-- S3-SEA-007: Add search keyboard shortcut
-- S3-SEA-008: Add search history
-- S3-SEA-009: Add search suggestions
-- S3-SEA-010: Add search API endpoint
-- S3-SEA-011: Add search service
-- S3-SEA-012: Add search performance tests
-- S3-SEA-013: Add search UI tests
-- S3-SEA-014: Add search empty state
-- S3-SEA-015: Add search loading state
-- S3-SEA-016: Add search error handling
-- S3-SEA-017: Add search documentation
-- S3-SEA-018: Add search responsive design
-- S3-SEA-019: Add search dark mode support
-- S3-SEA-020: Add search accessibility
+### Search Engine (0)
 
-### Grouping (20)
-- S3-GRP-001: Create group types definition
-- S3-GRP-002: Add groupByDate action to capability
-- S3-GRP-003: Add groupByCategory action to capability
-- S3-GRP-004: Add groupByMerchant action to capability
-- S3-GRP-005: Add groupByAmount action to capability
-- S3-GRP-006: Add group state to capability
-- S3-GRP-007: Add toggleGroup action to capability
-- S3-GRP-008: Add group UI component
-- S3-GRP-009: Add group header component
-- S3-GRP-010: Add group expand/collapse state
-- S3-GRP-011: Add group all action
-- S3-GRP-012: Add group none action
-- S3-GRP-013: Add group keyboard navigation
-- S3-GRP-014: Add group performance tests
-- S3-GRP-015: Add group UI tests
-- S3-GRP-016: Add group documentation
-- S3-GRP-017: Add group responsive design
-- S3-GRP-018: Add group dark mode support
-- S3-GRP-019: Add group accessibility
-- S3-GRP-020: Add group selection support
+### Grouping (0)
 
-### Sorting (20)
-- S3-SRT-001: Create sort types definition
-- S3-SRT-002: Add sort state to capability
-- S3-SRT-003: Add sortTransactions action to capability
-- S3-SRT-004: Add sort by date
-- S3-SRT-005: Add sort by amount
-- S3-SRT-006: Add sort by description
-- S3-SRT-007: Add sort by category
-- S3-SRT-008: Add sort by merchant
-- S3-SRT-009: Add sort UI component
-- S3-SRT-010: Add sort indicator to UI
-- S3-SRT-011: Add multi-column sort support
-- S3-SRT-012: Add sort persistence
-- S3-SRT-013: Add sort performance tests
-- S3-SRT-014: Add sort UI tests
-- S3-SRT-015: Add sort documentation
-- S3-SRT-016: Add sort keyboard navigation
-- S3-SRT-017: Add sort responsive design
-- S3-SRT-018: Add sort dark mode support
-- S3-SRT-019: Add sort accessibility
-- S3-SRT-020: Add sort default configuration
+### Sorting (0)
 
-### Selection Model (20)
-- S3-SEL-001: Create selection types definition
-- S3-SEL-002: Add selection state to capability
-- S3-SEL-003: Add toggleSelection action
-- S3-SEL-004: Add selectAll action
-- S3-SEL-005: Add selectNone action
-- S3-SEL-006: Add selectPage action
-- S3-SEL-007: Add selection count display
-- S3-SEL-008: Add selection checkbox component
-- S3-SEL-009: Add select all checkbox
-- S3-SEL-010: Add selection keyboard shortcuts
-- S3-SEL-011: Add selection persistence
-- S3-SEL-012: Add selection range support
-- S3-SEL-013: Add selection validation
-- S3-SEL-014: Add selection UI tests
-- S3-SEL-015: Add selection performance tests
-- S3-SEL-016: Add selection documentation
-- S3-SEL-017: Add selection responsive design
-- S3-SEL-018: Add selection dark mode support
-- S3-SEL-019: Add selection accessibility
-- S3-SEL-020: Add selection integration with table
+### Selection Model (0)
 
 ### Evidence System (0)
 
-### Workspace Layout (2)
-- S3-WS-018: Add workspace performance optimization
-- S3-WS-019: Add workspace tests
+### Workspace Layout (0)
 
-### Toolbar (12)
-- S3-TBR-002: Add search button to toolbar ✅
-- S3-TBR-003: Add filter toggle to toolbar ✅
-- S3-TBR-004: Add group toggle to toolbar ✅
-- S3-TBR-005: Add sort toggle to toolbar ✅
-- S3-TBR-006: Add export button to toolbar ✅
-- S3-TBR-007: Add refresh button to toolbar ✅
-- S3-TBR-008: Add settings button to toolbar ✅
-- S3-TBR-009: Add transaction count to toolbar ✅
-- S3-TBR-010: Add active filter count to toolbar ✅
-- S3-TBR-016: Add toolbar performance tests ✅
-- S3-TBR-017: Add toolbar documentation ✅
-- S3-TBR-018: Add toolbar loading state ✅
-- S3-TBR-019: Add toolbar error state ✅
-- S3-TBR-020: Add toolbar customization ✅
+### Toolbar (0)
 
-### Transaction Table (11)
-- S3-TBL-002: Add table header component ✅
-- S3-TBL-003: Add table row component ✅
-- S3-TBL-004: Add table cell component ✅
+### Transaction Table (2)
 - S3-TBL-005: Add table pagination
 - S3-TBL-006: Add table virtualization
-- S3-TBL-007: Add table row selection ✅
-- S3-TBL-008: Add table row click action ✅
-- S3-TBL-009: Add table empty state ✅
-- S3-TBL-010: Add table loading state ✅
-- S3-TBL-016: Add table column visibility
-- S3-TBL-017: Add table column resizing
-- S3-TBL-018: Add table tests ✅
-- S3-TBL-019: Add table performance tests ✅
-- S3-TBL-020: Add table documentation ✅
 
 ### Navigation (12)
 - S3-NAV-009: Add cross-navigation from table
@@ -170,25 +42,13 @@
 - S3-NAV-019: Add navigation accessibility
 - S3-NAV-020: Add navigation error handling
 
-### Loading/Error States (14)
-- S3-LOD-008: Add loading timeout handling ✅
-- S3-LOD-009: Add error recovery
-- S3-LOD-010: Add loading performance tests ✅
-- S3-LOD-011: Add error performance tests ✅
-- S3-LOD-012: Add empty state performance tests ✅
-- S3-LOD-013: Add loading tests ✅
-- S3-LOD-014: Add error tests ✅
-- S3-LOD-015: Add empty state tests ✅
-- S3-LOD-016: Add loading documentation ✅
-- S3-LOD-017: Add loading responsive design ✅
-- S3-LOD-018: Add loading dark mode support ✅
-- S3-LOD-019: Add loading accessibility ✅
+### Loading/Error States (0)
 
 ## In Progress (0)
 
 ## Blocked (0)
 
-## Completed (208)
+## Completed (240)
 
 ### Transaction ViewModel (20)
 - S3-TVM-001: Create TransactionViewModel type definition
@@ -388,15 +248,29 @@
 - S3-EVD-019: Add evidence dark mode support
 - S3-EVD-020: Add evidence accessibility
 
-### Loading/Error States (6)
+### Loading/Error States (20)
 - S3-LOD-001: Create loading spinner component
 - S3-LOD-002: Create skeleton row component
 - S3-LOD-003: Create error message component
 - S3-LOD-004: Create empty state component
+- S3-LOD-005: Add loading state to capability
 - S3-LOD-006: Add error state to capability
 - S3-LOD-007: Add retry action to capability
+- S3-LOD-008: Add loading timeout handling
+- S3-LOD-009: Add error recovery
+- S3-LOD-010: Add loading performance tests
+- S3-LOD-011: Add error performance tests
+- S3-LOD-012: Add empty state performance tests
+- S3-LOD-013: Add loading tests
+- S3-LOD-014: Add error tests
+- S3-LOD-015: Add empty state tests
+- S3-LOD-016: Add loading documentation
+- S3-LOD-017: Add loading responsive design
+- S3-LOD-018: Add loading dark mode support
+- S3-LOD-019: Add loading accessibility
+- S3-LOD-020: Add error state tests
 
-### Workspace Layout (12)
+### Workspace Layout (20)
 - S3-WS-001: Create workspace page component
 - S3-WS-002: Add toolbar to workspace
 - S3-WS-003: Add filter panel to workspace
@@ -407,19 +281,62 @@
 - S3-WS-008: Add loading state to workspace
 - S3-WS-009: Add error state to workspace
 - S3-WS-010: Add empty state to workspace
+- S3-WS-011: Add keyboard navigation to workspace
 - S3-WS-012: Add workspace responsive layout
 - S3-WS-013: Add workspace dark mode support
+- S3-WS-014: Add workspace keyboard navigation
+- S3-WS-015: Add workspace accessibility
+- S3-WS-016: Add workspace scroll management
+- S3-WS-017: Add workspace state persistence
+- S3-WS-018: Add workspace performance optimization
+- S3-WS-019: Add workspace tests
+- S3-WS-020: Add workspace documentation
 
-### Toolbar (2)
+### Toolbar (20)
 - S3-TBR-001: Create toolbar component
+- S3-TBR-002: Add search button to toolbar
+- S3-TBR-003: Add filter toggle to toolbar
+- S3-TBR-004: Add group toggle to toolbar
+- S3-TBR-005: Add sort toggle to toolbar
+- S3-TBR-006: Add export button to toolbar
+- S3-TBR-007: Add refresh button to toolbar
+- S3-TBR-008: Add settings button to toolbar
+- S3-TBR-009: Add transaction count to toolbar
+- S3-TBR-010: Add active filter count to toolbar
 - S3-TBR-011: Add toolbar responsive design
+- S3-TBR-012: Add toolbar dark mode support
+- S3-TBR-013: Add toolbar keyboard shortcuts
+- S3-TBR-014: Add toolbar accessibility
+- S3-TBR-015: Add toolbar loading state
+- S3-TBR-016: Add toolbar performance tests
+- S3-TBR-017: Add toolbar documentation
+- S3-TBR-018: Add toolbar loading state
+- S3-TBR-019: Add toolbar error state
+- S3-TBR-020: Add toolbar customization
 
-### Transaction Table (3)
+### Transaction Table (20)
 - S3-TBL-001: Create transaction table component
+- S3-TBL-002: Add table header component
+- S3-TBL-003: Add table row component
+- S3-TBL-004: Add table cell component
+- S3-TBL-005: Add table pagination
+- S3-TBL-006: Add table virtualization
+- S3-TBL-007: Add table row selection
+- S3-TBL-008: Add table row click action
+- S3-TBL-009: Add table empty state
+- S3-TBL-010: Add table loading state
 - S3-TBL-011: Add table error state
 - S3-TBL-012: Add table responsive design
+- S3-TBL-013: Add table dark mode support
+- S3-TBL-014: Add table keyboard navigation
+- S3-TBL-015: Add table accessibility
+- S3-TBL-016: Add table column visibility
+- S3-TBL-017: Add table column resizing
+- S3-TBL-018: Add table tests
+- S3-TBL-019: Add table performance tests
+- S3-TBL-020: Add table documentation
 
-### Navigation (8)
+### Navigation (20)
 - S3-NAV-001: Add navigation to category workspace
 - S3-NAV-002: Add navigation to merchant workspace
 - S3-NAV-003: Add navigation to date workspace
@@ -428,3 +345,15 @@
 - S3-NAV-006: Add navigation to reconciliation workspace
 - S3-NAV-007: Add navigation to import workspace
 - S3-NAV-008: Add navigation to adjustment workspace
+- S3-NAV-009: Add cross-navigation from table
+- S3-NAV-010: Add navigation breadcrumb
+- S3-NAV-011: Add navigation back button
+- S3-NAV-012: Add navigation keyboard shortcuts
+- S3-NAV-013: Add navigation state persistence
+- S3-NAV-014: Add navigation tests
+- S3-NAV-015: Add navigation performance tests
+- S3-NAV-016: Add navigation documentation
+- S3-NAV-017: Add navigation responsive design
+- S3-NAV-018: Add navigation dark mode support
+- S3-NAV-019: Add navigation accessibility
+- S3-NAV-020: Add navigation error handling
