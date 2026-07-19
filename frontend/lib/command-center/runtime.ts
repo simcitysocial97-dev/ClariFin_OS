@@ -16,6 +16,12 @@ import {
   type ExplainabilityPayload,
   type TracePath,
 } from '../graph';
+import {
+  IntelligenceRuntime,
+  type IntelligenceResult,
+  type IntelligenceContext,
+  type IntelligenceConfig,
+} from '../intelligence';
 
 // ===== Panel Types =====
 export type PanelId = 'graph' | 'timeline' | 'insights' | 'search' | 'preview' | 'context';
@@ -130,6 +136,46 @@ export class CommandCenterRuntime {
    */
   explainNode(nodeId: string): ExplainabilityPayload | null {
     return this.graphRuntime.explain(nodeId);
+  }
+
+  // ===== Intelligence Integration =====
+  private intelligenceRuntime: IntelligenceRuntime = new IntelligenceRuntime();
+
+  /**
+   * Compute financial intelligence from the current graph
+   */
+  computeIntelligence(config?: Partial<IntelligenceConfig>): IntelligenceResult | null {
+    if (!this.currentGraph) return null;
+
+    const context: IntelligenceContext = {
+      nodes: this.currentGraph.nodes.map(n => ({
+        id: n.id,
+        type: n.type,
+        label: n.label,
+        value_paise: n.value_paise,
+        date: n.date,
+        metadata: n.metadata,
+        confidence: n.confidence,
+      })),
+      edges: this.currentGraph.edges.map(e => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        type: e.type,
+        label: e.label,
+        metadata: e.metadata,
+      })),
+      config: config ? { ...this.intelligenceRuntime.getConfig(), ...config } : this.intelligenceRuntime.getConfig(),
+    };
+
+    return this.intelligenceRuntime.compute(context);
+  }
+
+  /**
+   * Get the intelligence runtime for advanced operations
+   */
+  getIntelligenceRuntime(): IntelligenceRuntime {
+    return this.intelligenceRuntime;
   }
 
   // ===== Selection Management =====

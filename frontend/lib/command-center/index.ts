@@ -26,3 +26,17 @@ export {
   type NavigationTarget,
   type NavigationHistory,
 } from './navigation';
+
+// ===== Intelligence Integration =====
+export {
+  type IntelligenceResult,
+  type IntelligenceContext,
+  type IntelligenceConfig,
+  type Insight,
+  type Alert,
+  type Recommendation,
+  type RiskScore,
+  type OpportunityScore,
+  type Goal,
+  type HealthScore,
+} from '../intelligence';
