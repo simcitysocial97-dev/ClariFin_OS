@@ -154,15 +154,15 @@
 
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 5: Performance Chart | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 6: Asset Allocation | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 7: Holdings Table | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 1: ViewModel | L1 | DONE | Pre-existing |
+| Cap 2: Mapper | L2 | DONE | Pre-existing |
+| Cap 3: Capability Hook | L5 | DONE | Created useInvestmentsCapability |
+| Cap 4: Summary Card | L6 | DONE | Created investments-summary |
+| Cap 5: Performance Chart | L6 | DONE | Created performance-chart |
+| Cap 6: Asset Allocation | L6 | DONE | Created asset-allocation |
+| Cap 7: Holdings Table | L6 | DONE | Created holdings-table |
 | Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 8: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 11: Insights Panel | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 12: Toolbar | L7 | NOT_STARTED | Blocked on Cap 3 |
@@ -182,13 +182,13 @@
 
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 5: Status Overview | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 6: Discrepancy List | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 7: Audit Trail | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 1: ViewModel | L1 | DONE | Pre-existing |
+| Cap 2: Mapper | L2 | DONE | Pre-existing |
+| Cap 3: Capability Hook | L5 | DONE | Created useReconciliationCapability |
+| Cap 4: Summary Card | L6 | DONE | Created reconciliation-summary |
+| Cap 5: Status Overview | L6 | DONE | Created status-overview |
+| Cap 6: Discrepancy List | L6 | DONE | Created discrepancy-list |
+| Cap 7: Audit Trail | L6 | DONE | Created audit-trail |
 | Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
@@ -210,14 +210,14 @@
 
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Score Card | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 5: Spending Patterns | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 6: Savings Rate | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 7: Debt Health | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 8: Wellness Radar | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 1: ViewModel | L1 | DONE | Pre-existing |
+| Cap 2: Mapper | L2 | DONE | Pre-existing |
+| Cap 3: Capability Hook | L5 | DONE | Created useBehaviourCapability |
+| Cap 4: Score Card | L6 | DONE | Created behaviour-score |
+| Cap 5: Spending Patterns | L6 | DONE | Created spending-patterns |
+| Cap 6: Savings Rate | L6 | DONE | Created savings-rate |
+| Cap 7: Debt Health | L6 | DONE | Created debt-health |
+| Cap 8: Wellness Radar | L6 | DONE | Created wellness-radar |
 | Cap 9: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 10: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 11: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
@@ -238,13 +238,13 @@
 
 | Capability | Level | Status | Notes |
 |-----------|-------|--------|-------|
-| Cap 1: ViewModel | L1 | NOT_STARTED | |
-| Cap 2: Mapper | L2 | NOT_STARTED | Blocked on Cap 1 |
-| Cap 3: Capability Hook | L5 | NOT_STARTED | Blocked on Cap 1, 2 |
-| Cap 4: Summary Card | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 5: Net Worth Projection | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 6: Cashflow Projection | L6 | NOT_STARTED | Blocked on Cap 3 |
-| Cap 7: Scenario Comparison | L6 | NOT_STARTED | Blocked on Cap 3 |
+| Cap 1: ViewModel | L1 | DONE | Pre-existing |
+| Cap 2: Mapper | L2 | DONE | Pre-existing |
+| Cap 3: Capability Hook | L5 | DONE | Created useForecastCapability |
+| Cap 4: Summary Card | L6 | DONE | Created forecast-summary |
+| Cap 5: Net Worth Projection | L6 | DONE | Created net-worth-projection |
+| Cap 6: Cashflow Projection | L6 | DONE | Created cashflow-projection |
+| Cap 7: Scenario Comparison | L6 | DONE | Created scenario-comparison |
 | Cap 8: Filters | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 9: Search | L7 | NOT_STARTED | Blocked on Cap 3 |
 | Cap 10: Evidence Drawer | L7 | NOT_STARTED | Blocked on Cap 3 |
@@ -271,11 +271,11 @@
 | W4.3 Accounts | 21 | 0 | 1 | 0 | 20 | 0 | 0 |
 | W4.4 Loans | 21 | 13 | 0 | 0 | 8 | 0 | 0 |
 | W4.5 Credit Cards | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
-| W4.6 Investments | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| W4.7 Reconciliation | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| W4.8 Behaviour | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| W4.9 Forecast | 21 | 19 | 0 | 0 | 2 | 0 | 0 |
-| **Total** | **189** | **87** | **1** | **0** | **101 | **0** | **0** |
+| W4.6 Investments | 21 | 13 | 0 | 0 | 8 | 0 | 0 |
+| W4.7 Reconciliation | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
+| W4.8 Behaviour | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
+| W4.9 Forecast | 21 | 15 | 0 | 0 | 6 | 0 | 0 |
+| **Total** | **189** | **59** | **1** | **0** | **129 | **0** | **0** |
 
 ---
 
