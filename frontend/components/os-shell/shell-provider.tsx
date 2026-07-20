@@ -10,13 +10,13 @@
 
 import { createContext, useContext, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import { WorkspaceProvider, useWorkspace } from '@/lib/workspace';
+import { WorkspaceContext, useWorkspaceContext } from '@/lib/workspace/workspace-context';
 import { commandCenterRuntime } from '@/lib/command-center';
 import { performanceRuntime } from '@/lib/performance';
 import { commandPalette } from '@/lib/command-center/command-palette';
 import { layoutRuntime } from '@/lib/command-center/layout';
 import { navigationRuntime } from '@/lib/command-center/navigation';
-import type { WorkspaceContextValue } from '@/lib/workspace';
+import type { WorkspaceContextValue } from '@/lib/workspace/workspace-context';
 
 // ===== Shell Context =====
 interface ShellContextValue {
@@ -30,13 +30,18 @@ interface ShellContextValue {
   navigation: typeof navigationRuntime;
 }
 
+// ===== React Context =====
+const ShellContext = createContext<ShellContextValue | null>(null);
+
 // ===== Shell Provider Component =====
 interface ShellProviderProps {
   children: ReactNode;
 }
 
 export function ShellProvider({ children }: ShellProviderProps) {
-  const workspace = useWorkspace();
+  // Get workspace context value - this creates the state
+  // We then provide it via WorkspaceContext.Provider and ShellContext.Provider
+  const workspace = useWorkspaceContext();
 
   const value = useMemo<ShellContextValue>(
     () => ({
@@ -51,14 +56,11 @@ export function ShellProvider({ children }: ShellProviderProps) {
   );
 
   return (
-    <WorkspaceProvider>
+    <WorkspaceContext.Provider value={workspace}>
       <ShellContext.Provider value={value}>{children}</ShellContext.Provider>
-    </WorkspaceProvider>
+    </WorkspaceContext.Provider>
   );
 }
-
-// ===== React Context =====
-const ShellContext = createContext<ShellContextValue | null>(null);
 
 // ===== Hook =====
 export function useShell(): ShellContextValue {

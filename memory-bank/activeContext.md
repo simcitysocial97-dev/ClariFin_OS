@@ -15,10 +15,16 @@
 - **Reconciliation** (`frontend/app/reconciliation/page.tsx`) — Table Surface, removed header
 - **Settings** (`frontend/app/settings/page.tsx`) — Configuration Surface, removed header
 
-### Fixed TypeScript Errors
+### Fixed Issues
 - Fixed `right-inspector.tsx` type error for ContextPanel component mapping
+- Fixed `shell-provider.tsx` context composition order (WorkspaceContext.Provider now wraps correctly)
 - Removed unused imports (`Plus`, `usePrepaymentSimulation`, `useOverview`, `dataUpdatedAt`)
 - Fixed unused variable errors in workspace pages
+
+### Known Shortfalls (For Future Work)
+- Workspace commands dispatch custom events but pages don't listen to them
+- FilterRuntime integration is partial (not fully connected to workspace pages)
+- SelectionRuntime integration is partial (pages still use capability state)
 
 ### Verification
 - TypeScript check passed (`npx tsc --noEmit`)
