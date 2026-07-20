@@ -22,6 +22,22 @@ import {
   type IntelligenceContext,
   type IntelligenceConfig,
 } from '../intelligence';
+import {
+  SimulationRuntime,
+  type SimulationResult,
+  type SimulationContext,
+  type SimulationConfig,
+} from '../simulation';
+import {
+  CashflowSimulator,
+  NetWorthSimulator,
+  BudgetSimulator,
+  LoanSimulator,
+  InvestmentSimulator,
+  RetirementSimulator,
+  GoalSimulator,
+  EmergencyFundSimulator,
+} from '../simulation';
 
 // ===== Panel Types =====
 export type PanelId = 'graph' | 'timeline' | 'insights' | 'search' | 'preview' | 'context';
@@ -176,6 +192,68 @@ export class CommandCenterRuntime {
    */
   getIntelligenceRuntime(): IntelligenceRuntime {
     return this.intelligenceRuntime;
+  }
+
+  // ===== Simulation Integration =====
+  private simulationRuntime: SimulationRuntime = new SimulationRuntime();
+
+  /**
+   * Initialize simulation engines
+   */
+  private initSimulationEngines(): void {
+    this.simulationRuntime.registerEngine(new CashflowSimulator());
+    this.simulationRuntime.registerEngine(new NetWorthSimulator());
+    this.simulationRuntime.registerEngine(new BudgetSimulator());
+    this.simulationRuntime.registerEngine(new LoanSimulator());
+    this.simulationRuntime.registerEngine(new InvestmentSimulator());
+    this.simulationRuntime.registerEngine(new RetirementSimulator());
+    this.simulationRuntime.registerEngine(new GoalSimulator());
+    this.simulationRuntime.registerEngine(new EmergencyFundSimulator());
+  }
+
+  /**
+   * Compute financial simulations from the current graph
+   */
+  computeSimulations(config?: Partial<SimulationConfig>): SimulationResult[] | null {
+    if (!this.currentGraph) return null;
+
+    // Initialize engines on first use
+    if (this.simulationRuntime.getEngines().length === 0) {
+      this.initSimulationEngines();
+    }
+
+    const context: SimulationContext = {
+      nodes: this.currentGraph.nodes.map(n => ({
+        id: n.id,
+        type: n.type,
+        label: n.label,
+        value_paise: n.value_paise,
+        date: n.date,
+        metadata: n.metadata,
+        confidence: n.confidence,
+      })),
+      edges: this.currentGraph.edges.map(e => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        type: e.type,
+        label: e.label,
+        metadata: e.metadata,
+      })),
+      config: config ? { ...this.simulationRuntime.getConfig(), ...config } : this.simulationRuntime.getConfig(),
+    };
+
+    return this.simulationRuntime.compute(context);
+  }
+
+  /**
+   * Get the simulation runtime for advanced operations
+   */
+  getSimulationRuntime(): SimulationRuntime {
+    if (this.simulationRuntime.getEngines().length === 0) {
+      this.initSimulationEngines();
+    }
+    return this.simulationRuntime;
   }
 
   // ===== Selection Management =====

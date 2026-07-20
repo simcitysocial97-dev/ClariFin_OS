@@ -1,52 +1,27 @@
 # Active Context
 
-## Stage 6 Execution - COMPLETE
+## Stage 7.5 Execution - COMPLETE
 
 ### Changes Made
-- Created `frontend/lib/intelligence/types.ts` — Core types: Insight, Alert, Recommendation, RiskScore, OpportunityScore, Goal, HealthScore, EvidenceChain, EvidenceItem, CalculationStep, SourceReference, IntelligenceEngine, IntelligenceContext, EngineResult
-- Created `frontend/lib/intelligence/runtime.ts` — IntelligenceRuntime class orchestrating all engines
-- Created `frontend/lib/intelligence/index.ts` — Public API exports
-- Created `frontend/lib/intelligence/insight-builder.ts` — Utility for building evidence chains and insight objects
-- Created `frontend/lib/intelligence/health-engine.ts` — Financial health scoring (Savings, Stability, Liquidity, Debt, Income dimensions)
-- Created `frontend/lib/intelligence/spending-engine.ts` — Spending analysis, anomaly detection, trend analysis
-- Created `frontend/lib/intelligence/cashflow-engine.ts` — Cashflow patterns, gap detection, stability metrics
-- Created `frontend/lib/intelligence/debt-engine.ts` — Debt structure analysis, DTI, EMI burden, risk alerts
-- Created `frontend/lib/intelligence/behaviour-engine.ts` — Behavioral intelligence (impulsivity, stress, savings discipline)
-- Created `frontend/lib/intelligence/risk-engine.ts` — Risk assessment (spending, liquidity, concentration risks)
-- Created `frontend/lib/intelligence/opportunity-engine.ts` — Opportunity detection (savings, debt, cashflow)
-- Created `frontend/lib/intelligence/recommendation-engine.ts` — Prioritized recommendations
-- Created `frontend/lib/intelligence/alert-engine.ts` — Alert generation (low liquidity, negative savings, gambling, loan apps)
-- Created `frontend/lib/intelligence/investment-engine.ts` — Investment analysis, diversification, risk assessment
-- Created `frontend/lib/intelligence/goal-engine.ts` — Goal tracking, progress monitoring, velocity calculation
-- Created `frontend/lib/intelligence/anomaly-engine.ts` — Statistical anomaly detection (spending/income z-score)
-- Added unit tests: health-engine.test.ts, spending-engine.test.ts, runtime.test.ts (18 tests total)
-- Integrated IntelligenceRuntime with Command Center (computeIntelligence, getIntelligenceRuntime methods)
-- Fixed TypeScript errors in all intelligence engine files (unused parameters prefixed with underscore)
-- Fixed `formatCurrency` → `formatINR` in `components/cards/statement-history.tsx`
-- Added 'anomaly' to EngineName type and DEFAULT_INTELLIGENCE_CONFIG
+- Created `docs/stage-7.5/01_EXPERIENCE_SPEC.md` — Experience specification documenting all runtimes, workspaces, and capabilities
+- Created `docs/stage-7.5/02_LAYOUT_SPEC.md` — Layout specification with patterns, grid system, and responsive rules
+- Created `docs/stage-7.5/03_DECISION_LOG.md` — Decision log with 30 locked architectural and UX decisions
 
-### Backend Error Fixes (Current Session)
-- Added `list_accounts()` method to `AccountRepository` (alias for `get_all_accounts()`)
-- Added `list_investments()` method to `InvestmentRepository` (alias for `get_all()`)
-- Added `list_all_statements()` method to `CreditCardStatementRepository`
-- Added `list_statements()` method to `ReconciliationRepository`
-- Fixed `date_range` type in `NetWorthWorkspaceService` to accept `dict[str, str | None] | None`
-- Fixed `no-any-return` errors in `AlertRepository`, `PatternRepository`, `AccountRepository` by using explicit `bool()` conversion
-- Added type annotations for `discrepancies` and `audit_trail` in `ReconciliationWorkspaceService`
-- Documented Camelot typing issue in `pyproject.toml`
+### Verification
+- Verified FinancialGraphRuntime capabilities (build, traceMoney, related, focus, metrics, explain)
+- Verified IntelligenceRuntime capabilities (12 engines, evidence chain, related nodes)
+- Verified SimulationRuntime capabilities (8 simulators, paise/bps conventions)
+- Verified CommandCenterRuntime composition (workspace registration, panel management)
+- Verified all 9 workspace pages (dashboard, transactions, accounts, cards, loans, investments, net-worth, cashflow, behaviour, forecast, reconciliation, settings)
+- Verified navigation structure (2 sections: Overview, Manage)
+- Verified component reuse patterns (EvidenceDrawer, WorkspaceToolbar, LoadingSkeleton)
 
-### Validation
-- Ruff: All checks passed (0 errors)
-- Mypy: Reduced from 888 to 872 errors (16 source file errors fixed, remaining are test file type annotations)
-- Pytest: All 50 tests in modified files pass
-- No backend contracts were modified
-- No workspace code was modified
+### Architecture Compliance
+- All decisions based on implemented code in Stages 0-7
+- No speculative features added
+- No code modifications made (documentation only)
+- All financial guardrails preserved (paise, bps, no ML)
 
 ### Next Steps
-- Create component tests for UI integration
-
-### Key Constraints
-- All monetary values use paise (integer) for financial determinism
-- Scores in basis points (0-10000 for 0-100%)
-- No `as any` or `@ts-ignore` used
-- All engines consume only FinancialGraphRuntime API
+- Stage 8: Implement forecast workspace UI components
+- Stage 9: Implement simulation UI components

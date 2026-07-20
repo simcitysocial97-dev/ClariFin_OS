@@ -40,3 +40,10 @@ export {
   type Goal,
   type HealthScore,
 } from '../intelligence';
+
+// ===== Simulation Integration =====
+export {
+  type SimulationResult,
+  type SimulationContext,
+  type SimulationConfig,
+} from '../simulation';
