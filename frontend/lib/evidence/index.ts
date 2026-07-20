@@ -21,3 +21,6 @@ export type {
   EvidenceActionType,
   EvidenceSummary,
 } from './types';
+
+// ===== Stage 7.5 Runtime Consolidation =====
+export { EvidenceRuntime, evidenceRuntime } from './evidence-runtime';

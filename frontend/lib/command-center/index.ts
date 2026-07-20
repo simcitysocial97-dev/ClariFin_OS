@@ -10,8 +10,12 @@ export {
   type PanelId,
   type PanelState,
   type LayoutConfig,
-  type WorkspaceRegistration,
 } from './runtime';
+
+// Re-export WorkspaceRegistration from workspace module
+export {
+  type WorkspaceRegistration,
+} from '../workspace';
 
 export {
   LayoutRuntime,
@@ -47,3 +51,14 @@ export {
   type SimulationContext,
   type SimulationConfig,
 } from '../simulation';
+
+// ===== Stage 7.5 Runtime Consolidation =====
+export {
+  CommandPalette,
+  commandPalette,
+  createDefaultCommands,
+  type Command,
+  type CommandCategory,
+  type CommandGroup,
+  type CommandPaletteState,
+} from './command-palette';

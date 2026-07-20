@@ -25,12 +25,14 @@ import { graphTraversal } from './traversal';
 import { graphSelection } from './selection';
 import { graphMetrics } from './metrics';
 import { explainabilityRuntime } from './explainability';
+import { workspaceRegistry } from '../workspace';
 import type { GraphRegistry } from './registry';
 import type { GraphEventBus } from './event-bus';
 import type { GraphTraversalEngine } from './traversal';
 import type { GraphSelectionEngine } from './selection';
 import type { GraphMetricsEngine } from './metrics';
 import type { ExplainabilityRuntime, ExplainabilityProvider } from './explainability';
+import type { WorkspaceName } from '../workspace';
 
 // ===== Runtime Configuration =====
 export interface RuntimeConfig {
@@ -257,6 +259,28 @@ export class FinancialGraphRuntime implements RuntimeAPI {
     provider: ExplainabilityProvider,
   ): void {
     this.explainabilityEngine.registerProvider(workspace, provider);
+  }
+
+  // ===== Workspace Integration =====
+  /**
+   * Get all registered workspace names
+   */
+  getWorkspaceNames(): WorkspaceName[] {
+    return workspaceRegistry.getNames();
+  }
+
+  /**
+   * Check if a workspace is registered
+   */
+  hasWorkspace(name: WorkspaceName): boolean {
+    return workspaceRegistry.has(name);
+  }
+
+  /**
+   * Get workspace registration
+   */
+  getWorkspaceRegistration(name: WorkspaceName) {
+    return workspaceRegistry.get(name);
   }
 
   /**

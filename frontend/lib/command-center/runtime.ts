@@ -38,6 +38,11 @@ import {
   GoalSimulator,
   EmergencyFundSimulator,
 } from '../simulation';
+import {
+  workspaceRegistry,
+  type WorkspaceRegistration,
+  type WorkspaceName,
+} from '../workspace';
 
 // ===== Panel Types =====
 export type PanelId = 'graph' | 'timeline' | 'insights' | 'search' | 'preview' | 'context';
@@ -56,24 +61,15 @@ export interface LayoutConfig {
   savedLayouts: Record<string, Record<PanelId, PanelState>>;
 }
 
-// ===== Workspace Registration =====
-export interface WorkspaceRegistration {
-  name: string;
-  label: string;
-  icon?: string;
-  deepLink: string;
-  viewModelKey: string;
-}
-
 // ===== Command Center Runtime =====
 /**
  * Main runtime for the Command Center Platform.
  * Composes the Financial Graph Runtime and provides UI-oriented APIs.
+ * Uses WorkspaceRegistry as the canonical workspace registry.
  */
 export class CommandCenterRuntime {
   private graphRuntime: FinancialGraphRuntime;
   private layout: LayoutConfig;
-  private workspaces: Map<string, WorkspaceRegistration> = new Map();
   private currentGraph: GraphResult | null = null;
 
   constructor(graphRuntime?: FinancialGraphRuntime) {
@@ -84,23 +80,26 @@ export class CommandCenterRuntime {
   // ===== Workspace Registration =====
   /**
    * Register a workspace with the command center
+   * Delegates to WorkspaceRegistry
    */
   registerWorkspace(registration: WorkspaceRegistration): void {
-    this.workspaces.set(registration.name, registration);
+    workspaceRegistry.register(registration);
   }
 
   /**
    * Get all registered workspaces
+   * Delegates to WorkspaceRegistry
    */
   getWorkspaces(): WorkspaceRegistration[] {
-    return Array.from(this.workspaces.values());
+    return workspaceRegistry.getAll();
   }
 
   /**
    * Get a specific workspace registration
+   * Delegates to WorkspaceRegistry
    */
   getWorkspace(name: string): WorkspaceRegistration | undefined {
-    return this.workspaces.get(name);
+    return workspaceRegistry.get(name as WorkspaceName);
   }
 
   // ===== Graph Operations =====
@@ -413,7 +412,6 @@ export class CommandCenterRuntime {
   reset(): void {
     this.graphRuntime.reset();
     this.currentGraph = null;
-    this.workspaces.clear();
     this.layout = this.defaultLayout();
     this.saveLayout();
   }

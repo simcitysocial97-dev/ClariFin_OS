@@ -73,3 +73,12 @@ export {
   isNavigationErrorRecoverable,
 } from './error-handling';
 export type { NavigationError, NavigationErrorType } from './error-handling';
+
+// ===== Navigation Runtime =====
+// Re-export NavigationRuntime from command-center as the canonical navigation runtime
+export {
+  NavigationRuntime,
+  navigationRuntime,
+  type NavigationTarget,
+  type NavigationHistory,
+} from '../command-center/navigation';
