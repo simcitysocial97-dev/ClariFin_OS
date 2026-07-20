@@ -43,6 +43,7 @@ import {
   type WorkspaceRegistration,
   type WorkspaceName,
 } from '../workspace';
+import { filterRuntime, type FilterRuntime } from '../filters/filter-runtime';
 
 // ===== Panel Types =====
 export type PanelId = 'graph' | 'timeline' | 'insights' | 'search' | 'preview' | 'context';
@@ -403,6 +404,14 @@ export class CommandCenterRuntime {
       favorites: [],
       savedLayouts: {},
     };
+  }
+
+  // ===== Filter Runtime Access =====
+  /**
+   * Get the filter runtime for workspace filtering
+   */
+  getFilterRuntime(): FilterRuntime {
+    return filterRuntime;
   }
 
   // ===== Reset =====

@@ -1,3 +1,10 @@
+/**
+ * Cards Page - Stage 8B Workspace Integration & Surface Migration
+ *
+ * Table Surface - Main analysis surface for credit cards.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
+ */
+
 'use client'
 
 import { useState } from 'react'
@@ -9,8 +16,7 @@ import { StatementHistoryDrawer } from '@/components/cards/statement-history-dra
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
-import { CreditCard, Plus, AlertCircle } from 'lucide-react'
-import Link from 'next/link'
+import { CreditCard, AlertCircle } from 'lucide-react'
 import type { CardSummary } from '@/lib/hooks/use-cards'
 
 export default function CardsPage() {
@@ -39,15 +45,7 @@ export default function CardsPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="space-y-6 p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <Skeleton className="h-10 w-48" />
-            <Skeleton className="h-4 w-64 mt-2" />
-          </div>
-          <Skeleton className="h-10 w-32" />
-        </div>
-        
+      <div className="p-4 sm:p-6 space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="bg-card border rounded-lg p-4 animate-pulse">
@@ -57,7 +55,7 @@ export default function CardsPage() {
           ))}
         </div>
         
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="border rounded-lg p-4 space-y-3">
               <Skeleton className="h-6 w-32" />
@@ -78,22 +76,7 @@ export default function CardsPage() {
   // Error state
   if (error) {
     return (
-      <div className="space-y-6 p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Credit Cards</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your cards and view details
-            </p>
-          </div>
-          <Link href="/dashboard?upload=true">
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Card
-            </button>
-          </Link>
-        </div>
-        
+      <div className="p-4 sm:p-6 space-y-4">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error loading cards</AlertTitle>
@@ -108,22 +91,7 @@ export default function CardsPage() {
   // Empty state
   if (!cardsData || cardsData.total_cards === 0) {
     return (
-      <div className="space-y-6 p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Credit Cards</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your cards and view details
-            </p>
-          </div>
-          <Link href="/dashboard?upload=true">
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Card
-            </button>
-          </Link>
-        </div>
-        
+      <div className="p-4 sm:p-6 space-y-4">
         <EmptyState
           icon={<CreditCard className="h-10 w-10" />}
           title="No credit cards found"
@@ -138,25 +106,12 @@ export default function CardsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Credit Cards</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your cards and view details
-          </p>
-        </div>
-        <Link href="/dashboard?upload=true">
-          <button className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Card
-          </button>
-        </Link>
-      </div>
-
+    <div className="p-4 sm:p-6 space-y-4">
+      {/* Table Surface - Main content only (no header) */}
+      
       <CardPortfolioHeader data={cardsData} loading={false} />
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {cardsData.cards.map((card) => (
           <CreditCardTile
             key={card.card_id}
@@ -167,6 +122,7 @@ export default function CardsPage() {
         ))}
       </div>
 
+      {/* Statement History Drawer - for card details */}
       <StatementHistoryDrawer
         card={selectedCard}
         open={drawerOpen}

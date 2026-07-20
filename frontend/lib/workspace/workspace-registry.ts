@@ -1,13 +1,23 @@
 /**
- * Workspace Registry - Stage 7.5 Runtime Consolidation
+ * Workspace Registry - Stage 8B Workspace Integration & Surface Migration
  *
  * Canonical registry for all workspace registrations.
- * Extracted from CommandCenterRuntime to become the single source of truth.
+ * Extended with surface metadata and runtime integration.
  *
  * Architecture: WorkspaceRegistry → CommandCenter → Graph Runtime → Navigation
  */
 
 import type { WorkspaceName } from './workspace-context';
+
+// ===== Surface Types =====
+export type SurfaceType =
+  | 'GRAPH'
+  | 'TABLE'
+  | 'TIMELINE'
+  | 'SANKEY'
+  | 'MATRIX'
+  | 'SIMULATION'
+  | 'CONFIGURATION';
 
 // ===== Workspace Registration =====
 export interface WorkspaceRegistration {
@@ -17,6 +27,19 @@ export interface WorkspaceRegistration {
   deepLink: string;
   viewModelKey: string;
   description?: string;
+
+  // Surface metadata
+  defaultSurface: SurfaceType;
+  graphAdapter?: string;
+
+  // Runtime integration
+  supportedCommands: string[];
+  supportedFilters: string[];
+  supportedSelections: string[];
+  inspectorSections: string[];
+
+  // Keyboard shortcuts
+  keyboardShortcuts: Record<string, string>;
 }
 
 // ===== Workspace Registry =====
@@ -111,6 +134,16 @@ export class WorkspaceRegistry {
         deepLink: '/dashboard',
         viewModelKey: 'dashboard',
         description: 'Financial overview and insights',
+        defaultSurface: 'GRAPH',
+        graphAdapter: 'dashboard',
+        supportedCommands: ['refresh', 'export', 'search'],
+        supportedFilters: ['date', 'search'],
+        supportedSelections: [],
+        inspectorSections: ['context', 'insights'],
+        keyboardShortcuts: {
+          'r': 'refresh',
+          'e': 'export',
+        },
       },
       {
         name: 'transactions',
@@ -119,6 +152,22 @@ export class WorkspaceRegistry {
         deepLink: '/transactions',
         viewModelKey: 'transactions',
         description: 'Transaction history and categorization',
+        defaultSurface: 'TABLE',
+        graphAdapter: 'transactions',
+        supportedCommands: ['search', 'filter', 'group', 'sort', 'export', 'refresh', 'select-all', 'delete'],
+        supportedFilters: ['date', 'category', 'merchant', 'amount', 'status', 'search'],
+        supportedSelections: ['transaction'],
+        inspectorSections: ['context', 'evidence', 'related', 'actions'],
+        keyboardShortcuts: {
+          'f': 'search',
+          'F': 'filter',
+          'g': 'group',
+          's': 'sort',
+          'r': 'refresh',
+          'a': 'select-all',
+          'Delete': 'delete',
+          'Escape': 'close-evidence',
+        },
       },
       {
         name: 'accounts',
@@ -127,6 +176,16 @@ export class WorkspaceRegistry {
         deepLink: '/accounts',
         viewModelKey: 'accounts',
         description: 'Bank accounts and balances',
+        defaultSurface: 'TABLE',
+        graphAdapter: 'accounts',
+        supportedCommands: ['add', 'edit', 'delete', 'refresh'],
+        supportedFilters: ['search'],
+        supportedSelections: ['account'],
+        inspectorSections: ['context', 'related'],
+        keyboardShortcuts: {
+          'a': 'add',
+          'r': 'refresh',
+        },
       },
       {
         name: 'cards',
@@ -135,6 +194,16 @@ export class WorkspaceRegistry {
         deepLink: '/cards',
         viewModelKey: 'cards',
         description: 'Credit cards and statements',
+        defaultSurface: 'TABLE',
+        graphAdapter: 'cards',
+        supportedCommands: ['add', 'validate', 'refresh'],
+        supportedFilters: ['search'],
+        supportedSelections: ['card'],
+        inspectorSections: ['context', 'evidence'],
+        keyboardShortcuts: {
+          'a': 'add',
+          'r': 'refresh',
+        },
       },
       {
         name: 'loans',
@@ -143,6 +212,16 @@ export class WorkspaceRegistry {
         deepLink: '/loans',
         viewModelKey: 'loans',
         description: 'Loan management and amortization',
+        defaultSurface: 'TABLE',
+        graphAdapter: 'loans',
+        supportedCommands: ['add', 'edit', 'delete', 'schedule', 'simulate', 'refresh'],
+        supportedFilters: ['search'],
+        supportedSelections: ['loan'],
+        inspectorSections: ['context', 'amortization', 'simulation'],
+        keyboardShortcuts: {
+          'a': 'add',
+          'r': 'refresh',
+        },
       },
       {
         name: 'investments',
@@ -151,6 +230,16 @@ export class WorkspaceRegistry {
         deepLink: '/investments',
         viewModelKey: 'investments',
         description: 'Investment portfolio and holdings',
+        defaultSurface: 'TABLE',
+        graphAdapter: 'investments',
+        supportedCommands: ['add', 'edit', 'delete', 'refresh'],
+        supportedFilters: ['search'],
+        supportedSelections: ['investment'],
+        inspectorSections: ['context', 'allocation', 'related'],
+        keyboardShortcuts: {
+          'a': 'add',
+          'r': 'refresh',
+        },
       },
       {
         name: 'net-worth',
@@ -159,6 +248,17 @@ export class WorkspaceRegistry {
         deepLink: '/net-worth',
         viewModelKey: 'netWorth',
         description: 'Net worth tracking and analysis',
+        defaultSurface: 'GRAPH',
+        graphAdapter: 'netWorth',
+        supportedCommands: ['date-range', 'period', 'export', 'refresh'],
+        supportedFilters: ['date', 'account-type', 'period'],
+        supportedSelections: ['account', 'investment'],
+        inspectorSections: ['context', 'composition', 'trend', 'related'],
+        keyboardShortcuts: {
+          'd': 'date-range',
+          'p': 'period',
+          'r': 'refresh',
+        },
       },
       {
         name: 'cashflow',
@@ -167,6 +267,16 @@ export class WorkspaceRegistry {
         deepLink: '/cashflow',
         viewModelKey: 'cashflow',
         description: 'Cashflow analysis and trends',
+        defaultSurface: 'SANKEY',
+        graphAdapter: 'cashflow',
+        supportedCommands: ['refresh', 'export', 'evidence'],
+        supportedFilters: ['date', 'period'],
+        supportedSelections: ['transaction'],
+        inspectorSections: ['context', 'evidence', 'insights'],
+        keyboardShortcuts: {
+          'r': 'refresh',
+          'e': 'evidence',
+        },
       },
       {
         name: 'behaviour',
@@ -175,6 +285,17 @@ export class WorkspaceRegistry {
         deepLink: '/behaviour',
         viewModelKey: 'behaviour',
         description: 'Financial behavior analysis',
+        defaultSurface: 'TIMELINE',
+        graphAdapter: 'behaviour',
+        supportedCommands: ['period', 'refresh', 'evidence'],
+        supportedFilters: ['period'],
+        supportedSelections: ['pattern'],
+        inspectorSections: ['context', 'evidence', 'insights', 'patterns'],
+        keyboardShortcuts: {
+          'p': 'period',
+          'r': 'refresh',
+          'e': 'evidence',
+        },
       },
       {
         name: 'forecast',
@@ -183,6 +304,17 @@ export class WorkspaceRegistry {
         deepLink: '/forecast',
         viewModelKey: 'forecast',
         description: 'Financial projections and scenarios',
+        defaultSurface: 'SIMULATION',
+        graphAdapter: 'forecast',
+        supportedCommands: ['horizon', 'scenarios', 'refresh', 'simulate'],
+        supportedFilters: ['horizon', 'scenarios'],
+        supportedSelections: ['projection'],
+        inspectorSections: ['context', 'projections', 'scenarios', 'insights'],
+        keyboardShortcuts: {
+          'h': 'horizon',
+          's': 'scenarios',
+          'r': 'refresh',
+        },
       },
       {
         name: 'reconciliation',
@@ -191,6 +323,17 @@ export class WorkspaceRegistry {
         deepLink: '/reconciliation',
         viewModelKey: 'reconciliation',
         description: 'Statement reconciliation',
+        defaultSurface: 'TABLE',
+        graphAdapter: 'reconciliation',
+        supportedCommands: ['refresh', 'match', 'skip'],
+        supportedFilters: ['search', 'status'],
+        supportedSelections: ['reconciliation'],
+        inspectorSections: ['context', 'evidence', 'actions'],
+        keyboardShortcuts: {
+          'r': 'refresh',
+          'm': 'match',
+          's': 'skip',
+        },
       },
       {
         name: 'settings',
@@ -199,6 +342,16 @@ export class WorkspaceRegistry {
         deepLink: '/settings',
         viewModelKey: 'settings',
         description: 'Application settings',
+        defaultSurface: 'CONFIGURATION',
+        graphAdapter: undefined,
+        supportedCommands: ['export', 'import', 'clear'],
+        supportedFilters: [],
+        supportedSelections: [],
+        inspectorSections: ['context'],
+        keyboardShortcuts: {
+          'e': 'export',
+          'i': 'import',
+        },
       },
     ];
 

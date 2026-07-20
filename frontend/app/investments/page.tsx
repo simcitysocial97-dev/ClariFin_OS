@@ -1,14 +1,11 @@
-"use client";
-
 /**
- * Investments Page - Personal Finance MVP v1.0.0
- * ==============================================
- * 
- * Features:
- * - List all active investments with summary
- * - Portfolio allocation chart
- * - Gain/loss tracking
+ * Investments Page - Stage 8B Workspace Integration & Surface Migration
+ *
+ * Portfolio Explorer Surface - Main analysis surface for investments.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  */
+
+"use client";
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Pencil, Trash2, TrendingUp, AlertCircle, PieChart, BarChart3 } from "lucide-react";
+import { Pencil, Trash2, TrendingUp, AlertCircle, PieChart, BarChart3 } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
 import { useInvestments, useCreateInvestment, useUpdateInvestment, useDeleteInvestment, type Investment } from "@/lib/hooks/use-investments";
 
@@ -334,11 +331,6 @@ export default function InvestmentsPage() {
     setDialogOpen(true);
   };
 
-  const handleAddNew = () => {
-    setEditingInvestment(null);
-    setDialogOpen(true);
-  };
-
   // Calculate totals
   const totalInvested = data?.summary.total_invested_paise || 0;
   const totalCurrent = data?.summary.total_current_value_paise || 0;
@@ -347,8 +339,7 @@ export default function InvestmentsPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-8 w-48" />
+      <div className="p-4 sm:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-40" />
@@ -359,36 +350,9 @@ export default function InvestmentsPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Investments</h1>
-          <p className="text-gray-500 text-sm">Track your portfolio and investments</p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddNew}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Investment
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingInvestment ? "Edit Investment" : "Add New Investment"}</DialogTitle>
-            </DialogHeader>
-            <InvestmentForm
-              initialData={editingInvestment || undefined}
-              onSubmit={editingInvestment ? handleUpdateInvestment : handleCreateInvestment}
-              onCancel={() => {
-                setEditingInvestment(null);
-                setDialogOpen(false);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-
+    <div className="p-4 sm:p-6 space-y-4">
+      {/* Portfolio Explorer Surface - Main content only (no header) */}
+      
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
@@ -431,7 +395,7 @@ export default function InvestmentsPage() {
       )}
 
       {/* Investments Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Investments List */}
         <div className="lg:col-span-2">
           {data?.investments.length === 0 ? (
@@ -457,6 +421,28 @@ export default function InvestmentsPage() {
           <AllocationChart allocation={data?.summary.allocation_by_type || {}} />
         </div>
       </div>
+
+      {/* Add Investment Dialog - triggered by TopCommandBar */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <button className="hidden" aria-hidden="true">
+            Add Investment
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingInvestment ? "Edit Investment" : "Add New Investment"}</DialogTitle>
+          </DialogHeader>
+          <InvestmentForm
+            initialData={editingInvestment || undefined}
+            onSubmit={editingInvestment ? handleUpdateInvestment : handleCreateInvestment}
+            onCancel={() => {
+              setEditingInvestment(null);
+              setDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

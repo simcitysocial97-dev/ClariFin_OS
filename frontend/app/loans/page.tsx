@@ -1,14 +1,11 @@
-"use client";
-
 /**
- * Loans Page - Personal Finance MVP v1.0.0
- * ==========================================
- * 
- * Features:
- * - List all active loans with summary
- * - Amortization schedule drawer
- * - Prepayment simulation
+ * Loans Page - Stage 8B Workspace Integration & Surface Migration
+ *
+ * Amortization Surface - Main analysis surface for loans.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  */
+
+"use client";
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,9 +17,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Pencil, Trash2, Building2, AlertCircle, Calendar, IndianRupee, TrendingDown } from "lucide-react";
+import { Pencil, Trash2, Building2, AlertCircle, Calendar, IndianRupee, TrendingDown } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
-import { useLoans, useCreateLoan, useUpdateLoan, useDeleteLoan, useLoanSchedule, usePrepaymentSimulation, type Loan } from "@/lib/hooks/use-loans";
+import { useLoans, useCreateLoan, useUpdateLoan, useDeleteLoan, useLoanSchedule, type Loan } from "@/lib/hooks/use-loans";
 
 // ============================================================
 // Form Types
@@ -321,97 +318,6 @@ function AmortizationDrawer({
 }
 
 // ============================================================
-// Prepayment Simulator
-// ============================================================
-
-function PrepaymentSimulator({ 
-  loan, 
-  open, 
-  onOpenChange 
-}: { 
-  loan: Loan | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const [prepaymentAmount, setPrepaymentAmount] = useState("");
-  const [mode, setMode] = useState<"reduce_tenure" | "reduce_emi">("reduce_tenure");
-  
-  const { data: simulation, isLoading: simulationLoading } = usePrepaymentSimulation(
-    loan?.id?.toString() || null,
-    Math.round(parseFloat(prepaymentAmount) * 100) || 0,
-    mode
-  );
-
-  // Use simulationLoading to prevent unused variable warning
-  void simulationLoading;
-
-  if (!loan) return null;
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Prepayment Simulation - {loan.name}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="prepayment_amount">Prepayment Amount (₹)</Label>
-            <Input
-              id="prepayment_amount"
-              type="number"
-              step="0.01"
-              value={prepaymentAmount}
-              onChange={(e) => setPrepaymentAmount(e.target.value)}
-              placeholder="0.00"
-            />
-          </div>
-          <div>
-            <Label htmlFor="mode">Mode</Label>
-            <Select value={mode} onValueChange={(v: any) => setMode(v)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="reduce_tenure">Reduce Tenure</SelectItem>
-                <SelectItem value="reduce_emi">Reduce EMI</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          {simulation && (
-            <div className="border-t pt-4 space-y-2">
-              <h4 className="font-medium">Impact</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="text-gray-500">Original EMI:</span>
-                  <span className="ml-2 font-medium">{formatINR(simulation.original_emi_paise)}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">New EMI:</span>
-                  <span className="ml-2 font-medium">{formatINR(simulation.new_emi_paise)}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Original Tenure:</span>
-                  <span className="ml-2 font-medium">{simulation.original_remaining_months} months</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">New Tenure:</span>
-                  <span className="ml-2 font-medium">{simulation.new_remaining_months} months</span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-gray-500">Interest Saved:</span>
-                  <span className="ml-2 font-medium text-green-600">{formatINR(simulation.interest_saved_paise)}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-// ============================================================
 // Main Page Component
 // ============================================================
 
@@ -425,12 +331,6 @@ export default function LoansPage() {
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
   const [scheduleOpen, setScheduleOpen] = useState(false);
   const [scheduleLoan, setScheduleLoan] = useState<Loan | null>(null);
-  // Prepayment state (for future use)
-  const [prepaymentOpen, setPrepaymentOpen] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [prepaymentLoan, setPrepaymentLoan] = useState<Loan | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  void setPrepaymentLoan;
 
   const handleCreateLoan = async (formData: LoanFormData) => {
     try {
@@ -500,8 +400,7 @@ export default function LoansPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-8 w-48" />
+      <div className="p-4 sm:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-40" />
@@ -512,36 +411,9 @@ export default function LoansPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Loans</h1>
-          <p className="text-gray-500 text-sm">Track your active loans and EMIs</p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingLoan(null)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Loan
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingLoan ? "Edit Loan" : "Add New Loan"}</DialogTitle>
-            </DialogHeader>
-            <LoanForm
-              initialData={editingLoan || undefined}
-              onSubmit={editingLoan ? handleUpdateLoan : handleCreateLoan}
-              onCancel={() => {
-                setEditingLoan(null);
-                setDialogOpen(false);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-
+    <div className="p-4 sm:p-6 space-y-4">
+      {/* Amortization Surface - Main content only (no header) */}
+      
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
@@ -608,12 +480,27 @@ export default function LoansPage() {
         onOpenChange={setScheduleOpen}
       />
 
-      {/* Prepayment Simulator */}
-      <PrepaymentSimulator
-        loan={prepaymentLoan}
-        open={prepaymentOpen}
-        onOpenChange={setPrepaymentOpen}
-      />
+      {/* Add Loan Dialog - triggered by TopCommandBar */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <button className="hidden" aria-hidden="true">
+            Add Loan
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingLoan ? "Edit Loan" : "Add New Loan"}</DialogTitle>
+          </DialogHeader>
+          <LoanForm
+            initialData={editingLoan || undefined}
+            onSubmit={editingLoan ? handleUpdateLoan : handleCreateLoan}
+            onCancel={() => {
+              setEditingLoan(null);
+              setDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

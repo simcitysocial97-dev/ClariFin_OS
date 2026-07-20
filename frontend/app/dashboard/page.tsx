@@ -1,18 +1,11 @@
-"use client";
-
 /**
- * Dashboard Page - v2.1.0
- * =========================
- * * Compact, enterprise-grade financial dashboard surfacing all backend intelligence.
- * Includes isolated component-level error boundaries to avoid total page failures.
- * * Layout:
- * - Header Row
- * - KPI Row (4 cards)
- * - Analytics Summary Bar
- * - Main Content (2-column on desktop)
- * - Secondary Row (3-column on desktop)
- * - Footer
+ * Dashboard Page - Stage 8B Workspace Integration & Surface Migration
+ *
+ * Graph Surface - Main analysis surface for dashboard.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  */
+
+"use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -21,7 +14,6 @@ import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
-import { useOverview } from "@/lib/hooks/use-overview";
 import { formatINR, formatPercentage } from "@/lib/utils/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { CashflowChart } from "@/components/dashboard/cashflow-chart";
@@ -165,13 +157,13 @@ function HealthScoreFooter({ score }: { score: number }) {
 // ============================================================
 
 export default function DashboardPage() {
-  const { data, loading, error, refetch, dataUpdatedAt } = useDashboardMetrics();
-  const { data: overviewData } = useOverview();
+  const { data, loading, error, refetch } = useDashboardMetrics();
+  // useOverview hook is available for future use
 
   // Page Loading state
   if (loading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
+      <div className="p-4 sm:p-6">
         <DashboardSkeleton />
       </div>
     );
@@ -180,7 +172,7 @@ export default function DashboardPage() {
   // Page Global Error state (Hook failures)
   if (error) {
     return (
-      <div className="container mx-auto py-6">
+      <div className="p-4 sm:p-6">
         <ErrorFallback error={error} resetErrorBoundary={refetch} />
       </div>
     );
@@ -189,7 +181,7 @@ export default function DashboardPage() {
   // No data state
   if (!data) {
     return (
-      <div className="container mx-auto py-6">
+      <div className="p-4 sm:p-6">
         <Alert>
           <AlertTitle>No Data Available</AlertTitle>
           <AlertDescription>
@@ -201,21 +193,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header Row */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-gray-500 text-sm">
-            {overviewData?.months_of_data || 0} months of data
-          </p>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Last updated: {dataUpdatedAt ? new Date(dataUpdatedAt).toLocaleTimeString() : new Date().toLocaleTimeString()}
-        </p>
-      </div>
-
-      {/* KPI Row - 4 Key Numbers (Using core data hook; isolated inside global layout checks above) */}
+    <div className="p-4 sm:p-6 space-y-4">
+      {/* Graph Surface - Main content only (no header) */}
+      
+      {/* KPI Row - 4 Key Numbers */}
       <div data-testid="dashboard-kpi-row" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div data-testid="kpi-net-cash-flow">
           <NetCashFlowCard amount_paise={data.net_cash_flow_paise} />
@@ -237,9 +218,9 @@ export default function DashboardPage() {
       </ErrorBoundary>
 
       {/* Main Content - 2-column on desktop, stack on mobile */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* LEFT COLUMN - 60% width (span 2 on lg) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4">
           {/* Cashflow Trend Chart */}
           <section>
             <h2 className="text-sm font-medium text-muted-foreground mb-3">
@@ -264,7 +245,7 @@ export default function DashboardPage() {
         </div>
 
         {/* RIGHT COLUMN - 40% width (span 1 on lg) */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div data-testid="behavior-score-section">
             <ErrorBoundary componentName="Behavior Score">
               <BehaviorScoreCard />
@@ -280,7 +261,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Secondary Row - 3 columns on desktop, stack on mobile */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <ErrorBoundary componentName="Recurring Charges">
           <RecurringChargesWidget />
         </ErrorBoundary>

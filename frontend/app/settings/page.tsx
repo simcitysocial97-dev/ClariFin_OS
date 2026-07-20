@@ -1,3 +1,10 @@
+/**
+ * Settings Workspace Page - Stage 8B Workspace Integration & Surface Migration
+ *
+ * Configuration Surface - Main analysis surface for settings.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
+ */
+
 'use client';
 
 import { useAppStore } from '@/lib/store/use-app-store';
@@ -80,14 +87,9 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage your preferences and data
-        </p>
-      </div>
-
+    <div className="p-4 space-y-6">
+      {/* Configuration Surface - Main content only (no header) */}
+      
       {/* Appearance */}
       <Card>
         <CardHeader>

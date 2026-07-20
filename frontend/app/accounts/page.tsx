@@ -1,15 +1,11 @@
-"use client";
-
 /**
- * Accounts Page - Personal Finance MVP v1.0.0
- * ==========================================
- * 
- * Two sections:
- * 1. Computed Accounts - derived from transaction statements
- * 2. Managed Accounts - persistent DB-backed accounts
- * 
- * Phase 4: Added managed accounts section with DB persistence.
+ * Accounts Page - Stage 8B Workspace Integration & Surface Migration
+ *
+ * Relationship Explorer Surface - Main analysis surface for accounts.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  */
+
+"use client";
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Pencil, Trash2, Building2, AlertCircle, Wallet } from "lucide-react";
+import { Pencil, Trash2, Building2, AlertCircle, Wallet } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
 import { useManagedAccounts, useCreateAccount, useUpdateAccount, useDeleteAccount, type Account } from "@/lib/hooks/use-accounts";
 
@@ -295,11 +291,6 @@ export default function AccountsPage() {
     setDialogOpen(true);
   };
 
-  const handleAddNewManaged = () => {
-    setEditingAccount(null);
-    setDialogOpen(true);
-  };
-
   // Calculate totals
   const computedTotalPaise = computedAccounts.reduce((sum, a) => sum + a.balance_paise, 0);
   const managedTotalPaise = managedData?.accounts.reduce((sum, a) => sum + a.balance_paise, 0) || 0;
@@ -308,8 +299,7 @@ export default function AccountsPage() {
   // Loading state
   if (computedLoading && managedLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-8 w-48" />
+      <div className="p-4 sm:p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-40" />
@@ -320,36 +310,9 @@ export default function AccountsPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Accounts</h1>
-          <p className="text-gray-500 text-sm">Manage your savings accounts</p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddNewManaged}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Account
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingAccount ? "Edit Account" : "Add New Account"}</DialogTitle>
-            </DialogHeader>
-            <ManagedAccountForm
-              initialData={editingAccount || undefined}
-              onSubmit={editingAccount ? handleUpdateManaged : handleCreateManaged}
-              onCancel={() => {
-                setEditingAccount(null);
-                setDialogOpen(false);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
-
+    <div className="p-4 sm:p-6 space-y-4">
+      {/* Relationship Explorer Surface - Main content only (no header) */}
+      
       {/* Total Balance */}
       <Card className="bg-gray-50">
         <CardContent className="py-4">
@@ -442,6 +405,28 @@ export default function AccountsPage() {
           </div>
         )}
       </div>
+
+      {/* Add Account Dialog - triggered by TopCommandBar */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <button className="hidden" aria-hidden="true">
+            Add Account
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingAccount ? "Edit Account" : "Add New Account"}</DialogTitle>
+          </DialogHeader>
+          <ManagedAccountForm
+            initialData={editingAccount || undefined}
+            onSubmit={editingAccount ? handleUpdateManaged : handleCreateManaged}
+            onCancel={() => {
+              setEditingAccount(null);
+              setDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
