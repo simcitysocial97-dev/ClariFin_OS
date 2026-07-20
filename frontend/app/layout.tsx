@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
+import { WorkspaceProvider } from '@/lib/workspace';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -46,10 +47,12 @@ export default function RootLayout({
         >
           <QueryProvider>
             <MemberProvider>
-              <ErrorBoundary>
-                <MainLayout>{children}</MainLayout>
-              </ErrorBoundary>
-              <Toaster />
+              <WorkspaceProvider>
+                <ErrorBoundary>
+                  <MainLayout>{children}</MainLayout>
+                </ErrorBoundary>
+                <Toaster />
+              </WorkspaceProvider>
             </MemberProvider>
           </QueryProvider>
         </ThemeProvider>

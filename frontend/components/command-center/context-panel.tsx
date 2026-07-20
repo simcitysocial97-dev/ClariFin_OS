@@ -6,6 +6,8 @@
  * No hidden calculations - all data comes from FinancialGraphRuntime.
  */
 
+'use client';
+
 import { useMemo } from 'react';
 import { commandCenterRuntime } from '@/lib/command-center';
 import { formatINR } from '@/lib/utils/format';

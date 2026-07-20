@@ -6,6 +6,8 @@
  * All navigation flows through graph nodes.
  */
 
+'use client';
+
 import { useMemo } from 'react';
 import { commandCenterRuntime } from '@/lib/command-center';
 import type { GraphNode } from '@/lib/graph';

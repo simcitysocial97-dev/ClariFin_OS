@@ -7,6 +7,8 @@
  * Architecture: WorkspaceContext → All Workspaces
  */
 
+'use client';
+
 import { useState, useCallback, createContext, useContext } from 'react';
 import type { GraphSelection } from '../graph';
 

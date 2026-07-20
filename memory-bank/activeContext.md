@@ -21,9 +21,19 @@
 - Updated `frontend/lib/command-center/index.ts` — Added CommandPalette exports
 - Updated `frontend/lib/graph/runtime.ts` — Added workspace integration methods
 - Updated `docs/stage-7.5/PROGRESS.md` — All 9 capabilities marked complete
+- Fixed `frontend/lib/workspace/workspace-context.ts` — Added 'use client' directive
+- Fixed `frontend/app/command-center/page.tsx` — Added 'use client' directive
+- Fixed `frontend/components/command-center/global-search.tsx` — Added 'use client' directive
+- Fixed `frontend/components/command-center/money-graph.tsx` — Added 'use client' directive
+- Fixed `frontend/components/command-center/context-panel.tsx` — Added 'use client' directive
+- Fixed `frontend/components/command-center/workspace-preview.tsx` — Added 'use client' directive
+- Fixed `frontend/components/command-center/insight-feed.tsx` — Added 'use client' directive
+- Fixed `frontend/components/command-center/timeline.tsx` — Added 'use client' directive
+- Updated `frontend/app/layout.tsx` — Integrated WorkspaceProvider
 
 ### Verification
-- TypeScript validation passed for all new files
+- Frontend build passed successfully
+- Backend ruff check passed
 - All 9 Stage 7.5 capabilities implemented:
   - Workspace Context, Workspace Registry, Selection Runtime, Filter Runtime
   - Navigation Runtime, Financial Graph Integration, Evidence Runtime

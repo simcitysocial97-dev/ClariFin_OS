@@ -5,6 +5,8 @@
  * Composes all command center components.
  */
 
+'use client';
+
 import { useState, useEffect, useCallback } from 'react';
 import {
   commandCenterRuntime,

@@ -6,6 +6,8 @@
  * Consumes only FinancialGraphRuntime API.
  */
 
+'use client';
+
 import { useRef, useState, useCallback, useMemo } from 'react';
 import { commandCenterRuntime } from '@/lib/command-center';
 import type { GraphNode } from '@/lib/graph';

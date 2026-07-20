@@ -6,6 +6,8 @@
  * No workspace logic duplication - consumes only FinancialGraphRuntime.
  */
 
+'use client';
+
 import { useMemo } from 'react';
 import { commandCenterRuntime } from '@/lib/command-center';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

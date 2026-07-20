@@ -5,6 +5,8 @@
  * Searches: transactions, merchants, categories, accounts, cards, loans, investments, forecasts, behaviors.
  */
 
+'use client';
+
 import { useState, useMemo, useCallback } from 'react';
 import { commandCenterRuntime } from '@/lib/command-center';
 import type { GraphNode } from '@/lib/graph';
