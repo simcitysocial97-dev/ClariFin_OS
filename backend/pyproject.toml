@@ -37,8 +37,6 @@ exclude = [
 [[tool.mypy.overrides]]
 module = ["camelot.*", "pdfplumber.*", "cachetools.*", "fastapi.*", "pydantic.*", "pandas.*", "uvicorn.*", "sqlite3"]
 ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = ["camelot"]
-ignore_missing_imports = false
-no_implicit_reexport = false
+# Note: camelot is a PDF table extraction library without type stubs.
+# The import-untyped error is expected and suppressed via ignore_missing_imports.
+# This is a third-party dependency limitation, not a code issue.

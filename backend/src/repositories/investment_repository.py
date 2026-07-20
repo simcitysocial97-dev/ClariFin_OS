@@ -103,3 +103,7 @@ class InvestmentRepository(BaseRepository):
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()
         return bool(changes_row[0]) if changes_row else False
+
+    def list_investments(self) -> list[dict[str, Any]]:
+        """Get all investments for workspace services. Alias for get_all()."""
+        return self.get_all()

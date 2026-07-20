@@ -88,8 +88,8 @@ class AlertRepository(BaseRepository):
                 WHERE id = ?
             """, (alert_id,))
             conn.commit()
-            changes = conn.execute("SELECT changes()").fetchone()[0]
-        return changes > 0
+            changes_row = conn.execute("SELECT changes()").fetchone()
+        return bool(changes_row[0]) if changes_row else False
 
     def resolve_alert(self, alert_id: int | str, resolution_notes: str) -> bool:
         """Mark an alert as resolved."""
@@ -100,8 +100,8 @@ class AlertRepository(BaseRepository):
                 WHERE id = ?
             """, (resolution_notes, alert_id))
             conn.commit()
-            changes = conn.execute("SELECT changes()").fetchone()[0]
-        return changes > 0
+            changes_row = conn.execute("SELECT changes()").fetchone()
+        return bool(changes_row[0]) if changes_row else False
 
     def get_alert_history(self, household_id: str | None = None, days: int = 90) -> list[dict[str, Any]]:
         """Get historical alerts."""

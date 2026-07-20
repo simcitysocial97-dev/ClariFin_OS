@@ -68,10 +68,10 @@ class ReconciliationWorkspaceService(BaseService):
         }
 
         # Build discrepancies (placeholder)
-        discrepancies = []
+        discrepancies: list[dict[str, Any]] = []
 
         # Build audit trail (placeholder)
-        audit_trail = []
+        audit_trail: list[dict[str, Any]] = []
 
         # Generate insights
         insights = []

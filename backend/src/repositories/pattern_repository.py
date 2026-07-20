@@ -92,8 +92,8 @@ class PatternRepository(BaseRepository):
                 WHERE id = ?
             """, (new_strength_bps, pattern_id))
             conn.commit()
-            changes = conn.execute("SELECT changes()").fetchone()[0]
-        return changes > 0
+            changes_row = conn.execute("SELECT changes()").fetchone()
+        return bool(changes_row[0]) if changes_row else False
 
     def get_recent_patterns(
         self, days: int = 30, household_id: str | None = None

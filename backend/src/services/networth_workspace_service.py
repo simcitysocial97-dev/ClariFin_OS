@@ -24,7 +24,7 @@ class NetWorthWorkspaceService(BaseService):
 
     def get_networth_summary(
         self,
-        date_range: dict[str, str] | None = None,
+        date_range: dict[str, str | None] | None = None,
         account_types: list[str] | None = None,
         period: str = "1M",
     ) -> dict[str, Any]:
