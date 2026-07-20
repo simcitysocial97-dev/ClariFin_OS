@@ -15,6 +15,7 @@ import { useWorkspace } from '@/lib/workspace/workspace-context';
 import { commandCenterRuntime } from '@/lib/command-center';
 import { workspaceRegistry } from '@/lib/workspace/workspace-registry';
 import { ContextPanel } from '@/components/command-center/context-panel';
+import { EvidenceTree } from '@/components/visualization/evidence-tree/evidence-tree';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -27,20 +28,6 @@ import {
 } from 'lucide-react';
 
 // ===== Inspector Section Components =====
-function EvidenceSection() {
-  // Evidence is shown based on selection
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-medium">Evidence</CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <p className="text-xs text-muted-foreground">Evidence chain for selected item</p>
-      </CardContent>
-    </Card>
-  );
-}
-
 function InsightsSection() {
   return (
     <Card>
@@ -159,10 +146,10 @@ function ScenariosSection() {
 }
 
 // ===== Section Mapping =====
-// Note: ContextPanel is rendered separately with its required props
+// Note: ContextPanel and EvidenceTree are rendered separately with their required props
 const inspectorSections: Record<string, React.ComponentType<Record<string, unknown>>> = {
   // context: ContextPanel, // Rendered separately with required props
-  evidence: EvidenceSection,
+  // evidence: EvidenceTree, // Rendered separately with required props
   insights: InsightsSection,
   patterns: PatternsSection,
   composition: CompositionSection,
@@ -194,7 +181,7 @@ export function RightInspector({ className }: RightInspectorProps) {
   const selectedNodeId = useMemo(() => {
     const selection = commandCenterRuntime.getSelection();
     return selection.node_ids.length > 0 ? selection.node_ids[0] : null;
-  }, []);
+  }, [state.currentWorkspace]);
 
   // Get related nodes
   const relatedNodes = useMemo(() => {
@@ -285,9 +272,15 @@ export function RightInspector({ className }: RightInspectorProps) {
               />
             )}
 
+            {/* Evidence Tree - uses runtime data */}
+            {sections.includes('evidence') && (
+              <EvidenceTree nodeId={selectedNodeId} />
+            )}
+
             {/* Dynamic Sections from Registry */}
             {sections.map((section) => {
               if (section === 'context') return null; // Already rendered above
+              if (section === 'evidence') return null; // Already rendered above
               if (section === 'related') return null; // Handled separately
 
               const SectionComponent = inspectorSections[section];

@@ -13,6 +13,7 @@ import type {
   GraphResult,
   GraphFilter,
   GraphSelection,
+  GraphFocus,
   GraphMetrics,
   GraphMetadata,
   TracePath,
@@ -249,6 +250,20 @@ export class FinancialGraphRuntime implements RuntimeAPI {
    */
   getExplainability(): ExplainabilityRuntime {
     return this.explainabilityEngine;
+  }
+
+  /**
+   * Subscribe to selection changes
+   */
+  onSelectionChanged(handler: (selection: GraphSelection) => void): () => void {
+    return this.selectionEngine.onSelectionChanged(handler);
+  }
+
+  /**
+   * Subscribe to focus changes
+   */
+  onFocusChanged(handler: (focus: GraphFocus | null) => void): () => void {
+    return this.selectionEngine.onFocusChanged(handler);
   }
 
   /**

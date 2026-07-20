@@ -1,6 +1,6 @@
 # Active Context
 
-## Stage 8C Execution - COMPLETE
+## Stage 8C Integration - COMPLETE
 
 ### Changes Made
 - Created design system: `lib/design-system/tokens.ts`, `colors.ts`, `typography.ts`, `motion.ts`, `financial-semantics.ts`
@@ -25,16 +25,29 @@
   - `lib/platform/keyboard.ts`
   - `lib/platform/accessibility.ts`
   - `lib/platform/animation.ts`
+- Created `hooks/use-graph-visualization.ts` for runtime integration
+- Updated `lib/graph/runtime.ts` to add `onSelectionChanged` and `onFocusChanged` methods
+- Updated `components/os-shell/right-inspector.tsx` to use EvidenceTree component
 - Updated `lib/visualization/index.ts` to export all components
+
+### Integration Points
+- MoneyGraph → FinancialGraphRuntime via FinancialGraphModel
+- EvidenceTree → ExplainabilityRuntime for evidence data
+- RightInspector → CommandCenterRuntime for selection/related nodes
+- All visualizations subscribe to selection changes
 
 ### Fixed Issues
 - Fixed TypeScript errors in all created files (unused imports, type compatibility)
 - Fixed XYFlow type compatibility (using unknown for event types, casting data)
 - Fixed nivo/sankey API compatibility (removed invalid props)
+- Added missing `onSelectionChanged` and `onFocusChanged` methods to FinancialGraphRuntime
 
 ### Verification
 - TypeScript check passed (`npx tsc --noEmit`)
 - All Stage 8C files follow the shell integration pattern
+- No duplicate UI state (all state from shared runtimes)
+- No direct DTO consumption by visualizations
+- No mock visualization data remaining
 
 ### Next Steps
 - Stage 8D: Connect visualization components to workspace pages

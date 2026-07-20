@@ -15,7 +15,7 @@
 
 'use client';
 
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { FinancialGraphModel, type RenderNode } from '@/lib/graph/financial-graph-model';
 import { GraphRenderer } from '@/components/graph/renderer/graph-renderer';
 import { financialGraphRuntime } from '@/lib/graph';
@@ -44,21 +44,32 @@ export function MoneyGraph({
   // Build graph model from runtime
   const model = useMemo(() => {
     const currentGraph = financialGraphRuntime.getCurrentResult();
-    if (!currentGraph) {
-      return new FinancialGraphModel();
-    }
     const graphModel = new FinancialGraphModel();
+    if (currentGraph) {
+      graphModel.build(currentGraph);
+    }
     return graphModel;
+  }, []);
+
+  // Subscribe to selection changes
+  useEffect(() => {
+    const unsubscribe = financialGraphRuntime.onSelectionChanged((selection) => {
+      const nodeId = selection.node_ids.length > 0 ? selection.node_ids[0] : null;
+      setSelectedNodeId(nodeId);
+    });
+    return unsubscribe;
   }, []);
 
   // Handle node selection
   const handleNodeSelect = useCallback((node: RenderNode) => {
     setSelectedNodeId(node.id);
+    financialGraphRuntime.select([node.id]);
     onNodeSelect?.(node);
   }, [onNodeSelect]);
 
   // Handle node focus
   const handleNodeFocus = useCallback((node: RenderNode) => {
+    financialGraphRuntime.focus(node.id, 2);
     onNodeFocus?.(node);
   }, [onNodeFocus]);
 
