@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
@@ -38,21 +39,23 @@ export default function RootLayout({
         <script src="/parser/debug.js" defer />
       </head>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <QueryProvider>
-            <MemberProvider>
-              <ErrorBoundary>
-                <AppShell>{children}</AppShell>
-              </ErrorBoundary>
-              <Toaster />
-            </MemberProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <TooltipProvider delayDuration={300}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <QueryProvider>
+              <MemberProvider>
+                <ErrorBoundary>
+                  <AppShell>{children}</AppShell>
+                </ErrorBoundary>
+                <Toaster />
+              </MemberProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

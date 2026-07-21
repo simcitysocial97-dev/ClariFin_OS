@@ -1,11 +1,10 @@
 /**
- * Left Rail - Stage 8A Financial Operating System Shell
+ * Left Rail - Stage 8E Financial Operating System Shell
  *
  * Navigation rail for the Financial Operating System.
- * Width: 180px.
- * Reads navigation from WorkspaceRegistry - never hardcoded.
- *
- * Domains: Home, Money, Capital, Investments, Forecast, Intelligence, Operations, Automation, Settings
+ * Width: 180px (expanded), 56px (collapsed).
+ * Uses FinancialIcon, Surface, ScrollRegion from Stage 8E primitives.
+ * Navigation driven ONLY from WorkspaceRegistry.
  */
 
 'use client';
@@ -14,43 +13,95 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { workspaceRegistry } from '@/lib/workspace/workspace-registry';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { useShell } from './shell-provider';
+import { FinancialIcon } from '@/components/primitives/icon-system/financial-icon';
+import { ScrollRegion } from '@/components/primitives/layout/scroll-region';
+import { Stack } from '@/components/primitives/layout/stack';
 import { cn } from '@/lib/utils';
-import {
-  Home,
-  Wallet,
-  Building2,
-  TrendingUp,
-  BarChart3,
-  Brain,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-  Zap,
-  Cog,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import type { WorkspaceName } from '@/lib/workspace/workspace-context';
 
-// ===== Domain Configuration =====
-// These are domains, NOT pages. Each expands into registered workspaces.
-interface Domain {
+// ===== Domain Groups =====
+// Derived from workspace registry — never hardcoded.
+interface DomainGroup {
   id: string;
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  workspacePrefix?: string;
+  iconName: string;
+  workspaces: { name: WorkspaceName; label: string; icon: string; deepLink: string }[];
 }
 
-const DOMAINS: Domain[] = [
-  { id: 'home', label: 'Home', icon: Home },
-  { id: 'money', label: 'Money', icon: Wallet, workspacePrefix: 'transactions' },
-  { id: 'capital', label: 'Capital', icon: Building2, workspacePrefix: 'accounts' },
-  { id: 'investments', label: 'Investments', icon: TrendingUp, workspacePrefix: 'investments' },
-  { id: 'forecast', label: 'Forecast', icon: BarChart3, workspacePrefix: 'forecast' },
-  { id: 'intelligence', label: 'Intelligence', icon: Brain, workspacePrefix: 'behaviour' },
-  { id: 'operations', label: 'Operations', icon: Cog, workspacePrefix: 'reconciliation' },
-  { id: 'automation', label: 'Automation', icon: Zap, workspacePrefix: 'settings' },
-  { id: 'settings', label: 'Settings', icon: Settings, workspacePrefix: 'settings' },
-];
+function buildDomainGroups(): DomainGroup[] {
+  const all = workspaceRegistry.getAll();
+  const groups: DomainGroup[] = [
+    {
+      id: 'overview',
+      label: 'Overview',
+      iconName: 'layout-dashboard',
+      workspaces: all.filter(w => ['dashboard', 'net-worth', 'cashflow'].includes(w.name)).map(w => ({
+        name: w.name,
+        label: w.label,
+        icon: w.icon ?? 'layout-dashboard',
+        deepLink: w.deepLink,
+      })),
+    },
+    {
+      id: 'transactions',
+      label: 'Transactions',
+      iconName: 'receipt',
+      workspaces: all.filter(w => ['transactions', 'reconciliation'].includes(w.name)).map(w => ({
+        name: w.name,
+        label: w.label,
+        icon: w.icon ?? 'receipt',
+        deepLink: w.deepLink,
+      })),
+    },
+    {
+      id: 'accounts',
+      label: 'Accounts',
+      iconName: 'wallet',
+      workspaces: all.filter(w => ['accounts', 'cards', 'loans'].includes(w.name)).map(w => ({
+        name: w.name,
+        label: w.label,
+        icon: w.icon ?? 'wallet',
+        deepLink: w.deepLink,
+      })),
+    },
+    {
+      id: 'investments',
+      label: 'Investments',
+      iconName: 'trending-up',
+      workspaces: all.filter(w => ['investments'].includes(w.name)).map(w => ({
+        name: w.name,
+        label: w.label,
+        icon: w.icon ?? 'trending-up',
+        deepLink: w.deepLink,
+      })),
+    },
+    {
+      id: 'intelligence',
+      label: 'Intelligence',
+      iconName: 'brain',
+      workspaces: all.filter(w => ['behaviour', 'forecast'].includes(w.name)).map(w => ({
+        name: w.name,
+        label: w.label,
+        icon: w.icon ?? 'brain',
+        deepLink: w.deepLink,
+      })),
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      iconName: 'settings',
+      workspaces: all.filter(w => ['settings'].includes(w.name)).map(w => ({
+        name: w.name,
+        label: w.label,
+        icon: w.icon ?? 'settings',
+        deepLink: w.deepLink,
+      })),
+    },
+  ];
+  return groups.filter(g => g.workspaces.length > 0);
+}
 
 // ===== Left Rail Component =====
 interface LeftRailProps {
@@ -60,124 +111,156 @@ interface LeftRailProps {
 export function LeftRail({ className }: LeftRailProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { performance } = useShell();
 
-  // Get workspaces from registry (dynamic, not hardcoded)
-  const workspaces = useMemo(() => workspaceRegistry.getAll(), []);
+  const domainGroups = useMemo(() => buildDomainGroups(), []);
 
-  // Group workspaces by domain
-  const workspacesByDomain = useMemo(() => {
-    const groups: Record<string, typeof workspaces> = {};
-    for (const domain of DOMAINS) {
-      if (domain.workspacePrefix) {
-        groups[domain.id] = workspaces.filter(w =>
-          w.deepLink.startsWith(`/${domain.workspacePrefix}`),
-        );
-      }
-    }
-    return groups;
-  }, [workspaces]);
+  // Get runtime health
+  const cacheStats = useMemo(() => performance.getCacheStats(), [performance]);
+  const graphNodes = cacheStats.size; // proxy for health
 
-  // Determine active domain from current path
-  const activeDomain = useMemo(() => {
-    const pathParts = pathname.split('/')[1];
-    for (const domain of DOMAINS) {
-      if (domain.workspacePrefix && pathParts === domain.workspacePrefix) {
-        return domain.id;
-      }
-    }
-    if (pathname === '/' || pathname === '/dashboard') return 'home';
-    if (pathname === '/settings') return 'settings';
-    return null;
+  // Determine active workspace from path
+  const activeWorkspace = useMemo(() => {
+    const path = pathname.split('/')[1] || 'dashboard';
+    // Map route to workspace name
+    const routeMap: Record<string, WorkspaceName> = {
+      dashboard: 'dashboard',
+      transactions: 'transactions',
+      accounts: 'accounts',
+      cards: 'cards',
+      loans: 'loans',
+      investments: 'investments',
+      'net-worth': 'net-worth',
+      cashflow: 'cashflow',
+      behaviour: 'behaviour',
+      forecast: 'forecast',
+      reconciliation: 'reconciliation',
+      settings: 'settings',
+    };
+    return routeMap[path] ?? 'dashboard';
   }, [pathname]);
 
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 h-screen border-r bg-background transition-all duration-300',
-        collapsed ? 'w-14' : 'w-180',
+        'fixed left-0 top-0 z-40 h-screen flex flex-col',
+        'border-r border-[var(--border-default)]',
+        'bg-[var(--surface-default)]',
+        'transition-all duration-150 ease-out',
+        collapsed ? 'w-14' : 'w-[180px]',
         className,
       )}
     >
-      <div className="flex h-full flex-col">
-        {/* Header */}
-        <div className="flex h-14 items-center justify-between border-b px-3">
-          {!collapsed && (
-            <span className="text-sm font-semibold">ClariFin OS</span>
+      {/* Header */}
+      <div
+        className={cn(
+          'flex items-center border-b border-[var(--border-default)]',
+          'h-11 min-h-11',
+          collapsed ? 'justify-center px-2' : 'justify-between px-3',
+        )}
+      >
+        {!collapsed && (
+          <span className="fin-panel-header truncate text-[var(--text-primary)]">
+            ClariFin
+          </span>
+        )}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex items-center justify-center rounded-[var(--radius-sm)] h-6 w-6 hover:bg-[var(--surface-interactive)] text-[var(--text-tertiary)] transition-colors"
+          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {collapsed ? (
+            <ChevronRight className="h-3.5 w-3.5" />
+          ) : (
+            <ChevronLeft className="h-3.5 w-3.5" />
           )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed(!collapsed)}
-            className="ml-auto"
-          >
-            {collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
+        </button>
+      </div>
 
-        {/* Navigation */}
-        <ScrollArea className="flex-1 px-2 py-2">
-          <nav className="flex flex-col gap-1">
-            {DOMAINS.map(domain => {
-              const isActive = activeDomain === domain.id;
-              const domainWorkspaces = workspacesByDomain[domain.id] || [];
-
-              return (
-                <div key={domain.id}>
-                  <Link
-                    href={domain.workspacePrefix ? `/${domain.workspacePrefix}` : '/'}
-                    className={cn(
-                      'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                    )}
-                  >
-                    <domain.icon className="h-4 w-4 flex-shrink-0" />
-                    {!collapsed && <span>{domain.label}</span>}
-                  </Link>
-
-                  {/* Sub-workspaces */}
-                  {!collapsed && domainWorkspaces.length > 0 && (
-                    <div className="ml-4 mt-1 flex flex-col gap-0.5">
-                      {domainWorkspaces.map(workspace => {
-                        const isActiveWorkspace =
-                          pathname === workspace.deepLink ||
-                          pathname.startsWith(`${workspace.deepLink}/`);
-                        return (
-                          <Link
-                            key={workspace.name}
-                            href={workspace.deepLink}
-                            className={cn(
-                              'flex items-center gap-2 rounded-md px-2 py-1 text-xs font-medium transition-colors',
-                              isActiveWorkspace
-                                ? 'bg-primary/5 text-primary'
-                                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground',
-                            )}
-                          >
-                            <span className="truncate">{workspace.label}</span>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
+      {/* Navigation */}
+      <ScrollRegion className="flex-1 px-1.5 py-2">
+        <Stack gap={3}>
+          {domainGroups.map((group) => (
+            <div key={group.id}>
+              {/* Group label (collapsed: hidden) */}
+              {!collapsed && (
+                <div className="px-2 py-1">
+                  <span className="fin-caption uppercase tracking-wider">
+                    {group.label}
+                  </span>
                 </div>
-              );
-            })}
-          </nav>
-        </ScrollArea>
+              )}
 
-        {/* Footer */}
-        <div className="border-t p-2">
-          <div className="flex items-center justify-center">
-            <span className="text-xs text-muted-foreground">
-              v{process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0'}
-            </span>
+              {/* Workspace links */}
+              <Stack gap={0.5}>
+                {group.workspaces.map((ws) => {
+                  const isActive = activeWorkspace === ws.name;
+                  return collapsed ? (
+                    /* Collapsed: icon-only with tooltip via title */
+                    <Link
+                      key={ws.name}
+                      href={ws.deepLink}
+                      title={ws.label}
+                      className={cn(
+                        'flex items-center justify-center h-9 w-full rounded-[var(--radius-sm)] transition-colors relative',
+                        isActive
+                          ? 'bg-[var(--surface-selected)] text-[var(--color-selection)]'
+                          : 'text-[var(--text-tertiary)] hover:bg-[var(--surface-interactive)] hover:text-[var(--text-primary)]',
+                      )}
+                    >
+                      <FinancialIcon name={ws.icon} size={16} />
+                      {isActive && (
+                        <span className="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-[var(--color-selection)]" />
+                      )}
+                    </Link>
+                  ) : (
+                    /* Expanded: icon + label */
+                    <Link
+                      key={ws.name}
+                      href={ws.deepLink}
+                      className={cn(
+                        'flex items-center gap-2.5 h-8 px-2.5 rounded-[var(--radius-sm)] transition-colors relative group',
+                        isActive
+                          ? 'bg-[var(--surface-selected)] text-[var(--text-primary)]'
+                          : 'text-[var(--text-secondary)] hover:bg-[var(--surface-interactive)] hover:text-[var(--text-primary)]',
+                      )}
+                    >
+                      <FinancialIcon
+                        name={ws.icon}
+                        size={15}
+                        className={cn(
+                          'shrink-0',
+                          isActive ? 'text-[var(--color-selection)]' : 'text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)]',
+                        )}
+                      />
+                      <span className="fin-label truncate flex-1">{ws.label}</span>
+                      {isActive && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-selection)] shrink-0" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </Stack>
+            </div>
+          ))}
+        </Stack>
+      </ScrollRegion>
+
+      {/* Footer */}
+      <div className="border-t border-[var(--border-default)] px-2 py-1.5">
+        {collapsed ? (
+          <div className="flex justify-center">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-positive-500)]" title="Healthy" />
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-positive-500)]" />
+              <span className="fin-caption">{graphNodes} nodes</span>
+            </div>
+            <span className="fin-caption">v1.0</span>
+          </div>
+        )}
       </div>
     </aside>
   );

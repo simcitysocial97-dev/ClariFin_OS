@@ -1,38 +1,20 @@
 /**
- * Bottom Status Bar - Stage 8A Financial Operating System Shell
+ * Bottom Status Bar - Stage 8E Financial Operating System Shell
  *
- * Always visible status bar (20px height).
- * Contains: API, Sync, Database, Cache, Selection, Graph, Simulation, Latency, Build Status, Runtime Health.
- * Consumes runtime health only - no business logic.
+ * System status bar (24px height) at the bottom of the viewport.
+ * Displays cache health, sync status, and keyboard hints.
+ * Uses Surface, CompactToolbar, ToolbarLabel, FinancialIcon, Kbd.
  */
 
 'use client';
 
 import { useMemo } from 'react';
-import { useWorkspace } from '@/lib/workspace/workspace-context';
-import { commandCenterRuntime } from '@/lib/command-center';
 import { performanceRuntime } from '@/lib/performance';
+import { Surface } from '@/components/primitives/surface/surface';
+import { CompactToolbar, ToolbarLabel } from '@/components/primitives/toolbar-primitive/compact-toolbar';
+import { FinancialIcon } from '@/components/primitives/icon-system/financial-icon';
+import { Kbd } from '@/components/primitives/kbd/kbd';
 import { cn } from '@/lib/utils';
-import {
-  Wifi,
-  Database,
-  HardDrive,
-  MousePointer,
-  GitCompare,
-  Activity,
-  Cpu,
-  CheckCircle,
-  AlertCircle,
-} from 'lucide-react';
-
-// ===== Status Item =====
-interface StatusItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  status: 'success' | 'error' | 'warning' | 'idle';
-  value?: string;
-}
 
 // ===== Bottom Status Bar Component =====
 interface BottomStatusBarProps {
@@ -40,156 +22,72 @@ interface BottomStatusBarProps {
 }
 
 export function BottomStatusBar({ className }: BottomStatusBarProps) {
-  const { state } = useWorkspace();
-
-  // Get runtime health data
-  const statusItems = useMemo((): StatusItem[] => {
-    // Get cache stats
-    const cacheStats = performanceRuntime.getCacheStats();
-
-    // Get selection count
-    const selectionCount = commandCenterRuntime.getSelection().node_ids.length;
-
-    // Get graph metrics
-    const graph = commandCenterRuntime.getCurrentGraph();
-    const nodeCount = graph?.nodes.length ?? 0;
-    const edgeCount = graph?.edges.length ?? 0;
-
-    return [
-      {
-        id: 'api',
-        label: 'API',
-        icon: Wifi,
-        status: 'success',
-        value: 'Connected',
-      },
-      {
-        id: 'sync',
-        label: 'Sync',
-        icon: Activity,
-        status: 'success',
-        value: 'Idle',
-      },
-      {
-        id: 'database',
-        label: 'Database',
-        icon: Database,
-        status: 'success',
-        value: 'Ready',
-      },
-      {
-        id: 'cache',
-        label: 'Cache',
-        icon: HardDrive,
-        status: cacheStats.size > 0 ? 'success' : 'idle',
-        value: `${cacheStats.size} items`,
-      },
-      {
-        id: 'selection',
-        label: 'Selection',
-        icon: MousePointer,
-        status: selectionCount > 0 ? 'success' : 'idle',
-        value: selectionCount > 0 ? `${selectionCount} nodes` : 'None',
-      },
-      {
-        id: 'graph',
-        label: 'Graph',
-        icon: GitCompare,
-        status: nodeCount > 0 ? 'success' : 'idle',
-        value: `${nodeCount} nodes, ${edgeCount} edges`,
-      },
-      {
-        id: 'simulation',
-        label: 'Simulation',
-        icon: Cpu,
-        status: 'idle',
-        value: 'Ready',
-      },
-      {
-        id: 'latency',
-        label: 'Latency',
-        icon: Activity,
-        status: 'success',
-        value: '< 10ms',
-      },
-      {
-        id: 'build',
-        label: 'Build',
-        icon: CheckCircle,
-        status: 'success',
-        value: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
-      },
-      {
-        id: 'runtime',
-        label: 'Runtime',
-        icon: CheckCircle,
-        status: 'success',
-        value: 'Healthy',
-      },
-    ];
+  // Get cache stats from performance runtime
+  const cacheStats = useMemo(() => {
+    return performanceRuntime.getCacheStats();
   }, []);
 
-  // Get status color
-  const getStatusColor = (status: StatusItem['status']) => {
-    switch (status) {
-      case 'success':
-        return 'text-green-500';
-      case 'error':
-        return 'text-red-500';
-      case 'warning':
-        return 'text-yellow-500';
-      default:
-        return 'text-muted-foreground';
-    }
-  };
+  // Calculate cache health percentage
+  const cacheHealth = useMemo(() => {
+    const total = cacheStats.hits + cacheStats.misses;
+    if (total === 0) return 100;
+    return Math.round((cacheStats.hits / total) * 100);
+  }, [cacheStats]);
 
-  // Get status icon
-  const StatusIcon = ({ status }: { status: StatusItem['status'] }) => {
-    const iconProps = { className: `h-3 w-3 ${getStatusColor(status)}` };
-    switch (status) {
-      case 'success':
-        return <CheckCircle {...iconProps} />;
-      case 'error':
-        return <AlertCircle {...iconProps} />;
-      case 'warning':
-        return <AlertCircle {...iconProps} />;
-      default:
-        return <Activity {...iconProps} />;
-    }
-  };
+  // Get sync status (for future use)
+  // const syncState = useMemo(() => {
+  //   return performanceRuntime.getSyncState('system');
+  // }, []);
 
   return (
     <footer
       className={cn(
-        'fixed bottom-0 left-180 right-0 z-30 h-20 border-t bg-muted/20 backdrop-blur supports-[backdrop-filter]:bg-muted/10',
+        'fixed bottom-0 left-[180px] right-0 z-30 h-6',
+        'border-t border-[var(--border-default)]',
+        'bg-[var(--surface-timeline)]',
         className,
       )}
     >
-      <div className="flex h-full items-center justify-between px-3 text-xs">
-        <div className="flex items-center gap-4">
-          {statusItems.map(item => (
-            <div key={item.id} className="flex items-center gap-1.5">
-              <item.icon className="h-3 w-3 text-muted-foreground" />
-              <span className="text-muted-foreground">{item.label}:</span>
-              <StatusIcon status={item.status} />
-              {item.value && (
-                <span className={cn('ml-1', getStatusColor(item.status))}>
-                  {item.value}
-                </span>
-              )}
+      <Surface variant="timeline" density="none" borderless className="h-full w-full">
+        <CompactToolbar size="sm" className="h-full justify-between px-3">
+          {/* Left: System Status */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <FinancialIcon name="check-circle" size={12} className="text-[var(--color-success)]" />
+              <ToolbarLabel label="System Ready" />
             </div>
-          ))}
-        </div>
 
-        {/* Right side: Current workspace indicator */}
-        <div className="flex items-center gap-2">
-          <span className="text-muted-foreground">Workspace:</span>
-          <span className="font-medium">
-            {state.currentWorkspace.charAt(0).toUpperCase() +
-              state.currentWorkspace.slice(1).replace('-', ' ')}
-          </span>
-        </div>
-      </div>
+            <div className="flex items-center gap-1">
+              <FinancialIcon name="database" size={12} className="text-[var(--text-tertiary)]" />
+              <ToolbarLabel label={`${cacheStats.size} cached`} />
+            </div>
+
+            <div className="flex items-center gap-1">
+              <div
+                className={cn(
+                  'h-2 w-2 rounded-full',
+                  cacheHealth > 90 ? 'bg-[var(--color-success)]' :
+                  cacheHealth > 70 ? 'bg-[var(--color-warning)]' :
+                  'bg-[var(--color-error)]'
+                )}
+              />
+              <ToolbarLabel label={`${cacheHealth}% hit rate`} />
+            </div>
+          </div>
+
+          {/* Right: Keyboard Hints */}
+          <div className="flex items-center gap-3">
+            <Kbd keys={['mod', 'k']} />
+            <ToolbarLabel label="Command" />
+
+            <Kbd keys={['mod', 'shift', 'f']} />
+            <ToolbarLabel label="Search" />
+
+            <Kbd keys={['?']} />
+            <ToolbarLabel label="Help" />
+          </div>
+        </CompactToolbar>
+      </Surface>
     </footer>
   );
 }
