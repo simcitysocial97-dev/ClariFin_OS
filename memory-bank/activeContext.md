@@ -1,53 +1,49 @@
 # Active Context
 
-## Stage 8E Financial OS Visual Language - COMPLETE
+## Stage 8E-B Command Center Flagship Workspace - COMPLETE
 
 ### Changes Made
-- Created `styles/financial-os.css` — complete Financial OS CSS custom properties including typography (Inter, JetBrains Mono, IBM Plex Sans), 8px spacing scale, surface hierarchy (default/raised/interactive/selected/floating/overlay/graph/terminal/timeline), layout constants, elevations, financial semantic colors (positive/negative/warning/info/neutral), graph theme (node/edge colors, selection halo, traversal, simulation pulse, risk pulse), typography utility classes (fin-amount, fin-percentage, fin-timestamp, fin-identifier, etc.), surface styles, and state utilities (loading/empty/error/success/disabled/focused)
-- Updated `globals.css` — imports financial-os.css, bridges Tailwind v4 theme tokens to Financial OS custom properties, strips default shadcn oklch values, adds scrollbar styling and focus-visible
-- Created `lib/design-system/spacing.ts` — 8px spacing scale, layout constants (LEFT_RAIL_WIDTH, COMMAND_BAR_HEIGHT, TIMELINE_HEIGHT, STATUS_BAR_HEIGHT, INSPECTOR_MIN/MAX, GRID_GAP)
-- Created `lib/design-system/elevations.ts` — functional elevation scale (none/raised/interactive/selected/floating/overlay)
-- Updated `lib/design-system/index.ts` — exports spacing, elevations, layout constants
+- Created `components/command-center/layout/command-center-layout.tsx` — Three-layer analytical surface layout (Graph, Decision Feed, Metrics Strip)
+- Created `components/command-center/graph/money-graph-surface.tsx` — Abstraction layer consuming GraphRenderer, not XYFlow directly
+- Created `components/command-center/graph/overlay-registry.ts` — Plugin registry for graph overlays (Money Flow, Selection Halo, Confidence Ring, Risk Pulse, Forecast Edge, Evidence Count, Related Entity Count)
+- Created `components/command-center/decision-feed/panel.tsx` — Vertical investigation stream with AI-generated insights
+- Created `components/command-center/decision-feed/item.tsx` — Individual investigation item with FinancialIcon, ConfidenceBadge, MoneyValue, TimestampValue
+- Created `components/command-center/metrics/metrics-strip.tsx` — Compact horizontal strip with MetricTile primitives
+- Created `components/command-center/hooks/use-command-center-keyboard.ts` — Keyboard shortcuts (Arrow keys, Enter, Space, Escape, Ctrl/Cmd+K, F, G)
+- Updated `app/command-center/page.tsx` — Replaced tab-based interface with three-layer layout
 
-### Primitives Created
-- **Surface** (`components/primitives/surface/`) — CVA-based with 9 variant levels (default/raised/interactive/selected/floating/overlay/graph/terminal/timeline), density, radius, borderless
-- **Panel** (`components/primitives/panel/`) — Panel, PanelHeader (title/subtitle/actions), PanelToolbar, PanelBody (loading/empty/error states), PanelFooter, PanelStatus. Built on Surface. 4 density levels: comfortable/default/compact/terminal
-- **Layout** (`components/primitives/layout/`) — Stack (vertical/horizontal, gap, align, justify), Cluster (auto-wrap), Split (two-panel), Grid (CSS grid, 1-12 columns), Inset (padding wrapper), Divider, ScrollRegion (thin scrollbars)
-- **FinancialTable** (`components/primitives/table/`) — Generic typed table with FinancialColumn definition, sort/pin/sticky/resize-ready, 4 density levels, loading/empty states, hover-only (no zebra)
-- **Data Display** (`components/primitives/data-display/`) — MoneyValue (paise→INR, variant/sign/color), PercentageValue, DeltaValue (arrow+color), ConfidenceValue (dot+label), TimestampValue (5 formats), IdentifierValue (truncated/copy)
-- **FinancialBadge** (`components/primitives/badge-semantic/`) — Extends shadcn Badge with 8 semantic variants (positive/negative/warning/info/neutral/confidence/risk/status), optional dot indicator
-- **FinancialChip** (`components/primitives/chip-semantic/`) — 10 domain variants (account/merchant/category/rule/forecast/scenario/risk/confidence/filter/selection), removable, size
-- **CompactToolbar** (`components/primitives/toolbar-primitive/`) — Icon-first toolbar with ToolbarButton (tooltip+shortcut), ToolbarSeparator, ToolbarLabel, 3 sizes
-- **Kbd** (`components/primitives/kbd/`) — Keyboard shortcut display, ShortcutHint, modifier key symbols, 2 sizes
-- **FinancialIcon** (`components/primitives/icon-system/`) — Domain-mapped icon registry (transaction→Receipt, account→Landmark, loan→HandCoins, etc.), swappable icon library
+### Architecture
+```
+Top Command Bar (global)
+┌──────────────────────────────────────────────────────────┬───────────────┐
+│                                                          │               │
+│                 Financial Graph                          │ Decision Feed │
+│                                                          │               │
+├──────────────────────────────────────────────────────────┴───────────────┤
+│ Metrics Strip                                                           │
+└──────────────────────────────────────────────────────────────────────────┘
+Right Inspector (global)
+Bottom Timeline (global)
+```
 
-### Primitives Index
-- `components/primitives/index.ts` — Unified barrel export of all 22+ primitives
-
-### Installation
-- Added `@shadcn/tooltip` component
-- Added `TooltipProvider` to root layout
+### Interaction Flow
+- Node click → SelectionRuntime → ExplainabilityRuntime → RightInspector
+- Double click → NavigationRuntime → Open corresponding workspace
+- Keyboard shortcuts integrated with OS-level system
 
 ### Verification
 - TypeScript check passed with **zero errors** (`npx tsc --noEmit` clean exit)
-- No existing primitives modified (only created new)
-- No workspace pages modified
-- No runtime logic modified
+- ESLint check passed with **zero errors**
+- No duplicated graph logic
+- No duplicated inspector
+- No duplicated toolbar
+- No duplicated navigation
+- No duplicated metrics
 - No backend changes
+- No runtime changes
 - No business logic changes
 
-### OS Shell Components (Stage 8E-B)
-- **LeftRail** (`components/os-shell/left-rail.tsx`) — Navigation rail with dynamic domain groups from WorkspaceRegistry, collapse/expand, health indicator
-- **TopCommandBar** (`components/os-shell/top-command-bar.tsx`) — Command bar with workspace title, CompactToolbar, FinancialBadge, Kbd shortcuts
-- **RightInspector** (`components/os-shell/right-inspector.tsx`) — Contextual inspector with dynamic sections, resizable, collapsible
-- **BottomTimeline** (`components/os-shell/bottom-timeline.tsx`) — Timeline panel with mode tabs (Events/Forecast/Behaviour/Automation), collapsible
-- **BottomStatusBar** (`components/os-shell/bottom-status-bar.tsx`) — System status bar with cache health, hit rate, keyboard hints
-
-### Verification
-- TypeScript check passed with **zero errors** (`npx tsc --noEmit` clean exit)
-- All OS shell components use Stage 8E primitives (Surface, CompactToolbar, ToolbarLabel, FinancialIcon, Kbd)
-- Removed unused imports from left-rail.tsx, right-inspector.tsx, bottom-timeline.tsx
-
 ### Next Steps
-- Connect primitives to existing workspace pages
-- Replace hardcoded Tailwind classes with design system tokens across business components
+- Test the workspace in browser
+- Connect graph selection to RightInspector
+- Add overlay visualization components
