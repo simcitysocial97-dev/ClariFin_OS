@@ -1,5 +1,5 @@
 /**
- * Net Worth Summary Card - Stage 4 Net Worth Intelligence Workspace
+ * Net Worth Summary Card - Stage 8E-C2 Production Visual System Migration
  *
  * Displays current net worth with trend indicator and period comparison.
  *
@@ -9,7 +9,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { formatINR, formatPercentage } from '@/lib/utils/format';
+import { formatPercentage } from '@/lib/utils/format';
+import { MoneyValue } from '@/components/primitives/data-display/money-value';
 import type { NetWorthViewModel, NetWorthTrendDirection } from '@/types/net-worth-view-model';
 
 /**
@@ -92,9 +93,7 @@ export function NetWorthSummary({ netWorth, loading, error }: NetWorthSummaryPro
           <p className="text-sm text-gray-500">Net Worth</p>
 
           {/* Net Worth Amount */}
-          <p className="text-3xl font-bold" aria-label="Total net worth">
-            {formatINR(total_net_worth_paise)}
-          </p>
+          <MoneyValue paise={total_net_worth_paise} variant="large" />
 
           {/* Trend Information */}
           {trend && (
@@ -110,15 +109,11 @@ export function NetWorthSummary({ netWorth, loading, error }: NetWorthSummaryPro
           <div className="grid grid-cols-2 gap-4 pt-4 border-t">
             <div>
               <p className="text-xs text-gray-500">Assets</p>
-              <p className="text-sm font-medium" aria-label="Total assets">
-                {formatINR(total_assets_paise)}
-              </p>
+              <MoneyValue paise={total_assets_paise} variant="default" />
             </div>
             <div>
               <p className="text-xs text-gray-500">Liabilities</p>
-              <p className="text-sm font-medium" aria-label="Total liabilities">
-                {formatINR(total_liabilities_paise)}
-              </p>
+              <MoneyValue paise={total_liabilities_paise} variant="default" />
             </div>
           </div>
         </div>

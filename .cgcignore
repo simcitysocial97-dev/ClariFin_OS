@@ -21,8 +21,10 @@ __pycache__/
 *.log
 frontend/public/
 frontend/mocks/
+backend/src/core/mappers/
 
 # === IDE & GIT ===
 .git/
 .vscode/
 .idea/
+

@@ -1,5 +1,5 @@
 /**
- * Cashflow Summary Card - Stage 4 Cashflow Truth Workspace
+ * Cashflow Summary Card - Stage 8E-C2 Production Visual System Migration
  *
  * Displays current cashflow summary with income, expenses, and net cashflow.
  *
@@ -9,7 +9,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { formatINR, formatPercentage } from '@/lib/utils/format';
+import { formatPercentage } from '@/lib/utils/format';
+import { MoneyValue } from '@/components/primitives/data-display/money-value';
 import type { CashflowViewModel, CashflowTrendDirection } from '@/types/cashflow-view-model';
 
 /**
@@ -92,9 +93,7 @@ export function CashflowSummary({ cashflow, loading, error }: CashflowSummaryPro
           <p className="text-sm text-gray-500">Net Cashflow</p>
 
           {/* Net Cashflow Amount */}
-          <p className="text-3xl font-bold" aria-label="Net cashflow">
-            {formatINR(net_cashflow_paise)}
-          </p>
+          <MoneyValue paise={net_cashflow_paise} variant="large" />
 
           {/* Trend Information */}
           {trend && (
@@ -110,15 +109,11 @@ export function CashflowSummary({ cashflow, loading, error }: CashflowSummaryPro
           <div className="grid grid-cols-2 gap-4 pt-4 border-t">
             <div>
               <p className="text-xs text-gray-500">Income</p>
-              <p className="text-sm font-medium text-green-600" aria-label="Total income">
-                {formatINR(total_income_paise)}
-              </p>
+              <MoneyValue paise={total_income_paise} variant="default" sign="positive" />
             </div>
             <div>
               <p className="text-xs text-gray-500">Expenses</p>
-              <p className="text-sm font-medium text-red-600" aria-label="Total expenses">
-                {formatINR(total_expenses_paise)}
-              </p>
+              <MoneyValue paise={total_expenses_paise} variant="default" sign="negative" />
             </div>
           </div>
         </div>

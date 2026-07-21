@@ -1,14 +1,15 @@
 /**
- * Accounts Page - Stage 8B Workspace Integration & Surface Migration
+ * Accounts Page - Stage 8E-C2 Production Visual System Migration
  *
  * Relationship Explorer Surface - Main analysis surface for accounts.
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
+ *
+ * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
  */
 
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil, Trash2, Building2, AlertCircle, Wallet } from "lucide-react";
 import { formatINR } from "@/lib/utils/format";
 import { useManagedAccounts, useCreateAccount, useUpdateAccount, useDeleteAccount, type Account } from "@/lib/hooks/use-accounts";
+import { Surface } from "@/components/primitives/surface/surface";
+import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/panel";
+import { Stack } from "@/components/primitives/layout/stack";
+import { Grid } from "@/components/primitives/layout/grid";
 
 // ============================================================
 // Types for Computed Accounts (from /api/accounts)
@@ -55,43 +60,41 @@ function ManagedAccountCard({ account, onEdit, onDelete }: {
   onDelete: (id: string) => void;
 }) {
   return (
-     <Card>
-       <CardContent className="p-4">
-         <div className="flex items-start justify-between">
-           <div className="flex items-center gap-3">
-             <div className="p-2 bg-gray-100 rounded-lg">
-               <Building2 className="h-5 w-5 text-gray-600" />
-             </div>
-             <div>
-               <h3 className="font-medium text-sm">{account.name}</h3>
-               <p className="text-xs text-gray-500">{account.bank}</p>
-               <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
-                 {account.account_type}
-               </span>
-             </div>
+     <Surface variant="raised" density="none" className="p-4">
+       <div className="flex items-start justify-between">
+         <div className="flex items-center gap-3">
+           <div className="p-2 bg-gray-100 rounded-lg">
+             <Building2 className="h-5 w-5 text-gray-600" />
            </div>
-           <div className="flex items-center gap-1">
-             <Button variant="ghost" size="sm" onClick={() => onEdit(account)}>
-               <Pencil className="h-4 w-4" />
-             </Button>
-             <Button variant="ghost" size="sm" onClick={() => onDelete(account.id)}>
-               <Trash2 className="h-4 w-4 text-red-500" />
-             </Button>
+           <div>
+             <h3 className="font-medium text-sm">{account.name}</h3>
+             <p className="text-xs text-gray-500">{account.bank}</p>
+             <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
+               {account.account_type}
+             </span>
            </div>
          </div>
-         <div className="mt-3 pt-2 border-t">
-           <div className="flex items-center justify-between">
-             <span className="text-xs text-gray-500">Balance</span>
-             <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
-           </div>
-           {account.account_number_last4 && (
-             <p className="text-xs text-gray-400 mt-1">
-               ••••{account.account_number_last4}
-             </p>
-           )}
+         <div className="flex items-center gap-1">
+           <Button variant="ghost" size="sm" onClick={() => onEdit(account)}>
+             <Pencil className="h-4 w-4" />
+           </Button>
+           <Button variant="ghost" size="sm" onClick={() => onDelete(account.id)}>
+             <Trash2 className="h-4 w-4 text-red-500" />
+           </Button>
          </div>
-       </CardContent>
-     </Card>
+       </div>
+       <div className="mt-3 pt-2 border-t">
+         <div className="flex items-center justify-between">
+           <span className="text-xs text-gray-500">Balance</span>
+           <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+         </div>
+         {account.account_number_last4 && (
+           <p className="text-xs text-gray-400 mt-1">
+             ••••{account.account_number_last4}
+           </p>
+         )}
+       </div>
+     </Surface>
    );
 }
 
@@ -299,112 +302,118 @@ export default function AccountsPage() {
   // Loading state
   if (computedLoading && managedLoading) {
     return (
-      <div className="p-4 sm:p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-40" />
-          ))}
-        </div>
-      </div>
+      <Surface variant="default" density="none" className="flex flex-col h-full">
+        <Panel fill>
+          <PanelHeader title="Accounts" />
+          <PanelBody loading>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-40" />
+              ))}
+            </div>
+          </PanelBody>
+        </Panel>
+      </Surface>
     );
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      {/* Relationship Explorer Surface - Main content only (no header) */}
-      
-      {/* Total Balance */}
-      <Card className="bg-gray-50">
-        <CardContent className="py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-600">Total Balance</span>
+    <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Panel fill>
+        <PanelHeader title="Accounts" />
+        <PanelBody scrollable>
+          <Stack gap={4} className="p-4">
+            {/* Total Balance */}
+            <Surface variant="raised" density="none" className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Wallet className="h-5 w-5 text-gray-500" />
+                  <span className="text-gray-600">Total Balance</span>
+                </div>
+                <span className="text-2xl font-bold">
+                  {formatINR(totalBalancePaise)}
+                </span>
+              </div>
+            </Surface>
+
+            {/* Section 1: Computed Accounts (from statements) */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Detected Accounts</h2>
+              <p className="text-sm text-gray-500 mb-4">Accounts derived from imported statements</p>
+              {computedError && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{computedError}</AlertDescription>
+                </Alert>
+              )}
+              {computedAccounts.length === 0 ? (
+                <Surface variant="raised" density="none" className="p-6 text-center">
+                  <p className="text-gray-500">No accounts detected from statements. Import a statement to see accounts here.</p>
+                </Surface>
+              ) : (
+                <Grid gap={4} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {computedAccounts
+                    .sort((a, b) => b.balance_paise - a.balance_paise)
+                    .map((account) => (
+                      <Surface key={account.id} variant="raised" density="none" className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-gray-100 rounded-lg">
+                            <Building2 className="h-5 w-5 text-gray-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-sm">{account.name}</h3>
+                            <p className="text-xs text-gray-500">{account.bank}</p>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-2 border-t">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500">Balance</span>
+                            <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {account.transaction_count} transactions
+                          </p>
+                        </div>
+                      </Surface>
+                    ))}
+                </Grid>
+              )}
             </div>
-            <span className="text-2xl font-bold">
-              {formatINR(totalBalancePaise)}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Section 1: Computed Accounts (from statements) */}
-      <div>
-        <h2 className="text-lg font-semibold mb-3">Detected Accounts</h2>
-        <p className="text-sm text-gray-500 mb-4">Accounts derived from imported statements</p>
-        {computedError && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{computedError}</AlertDescription>
-          </Alert>
-        )}
-        {computedAccounts.length === 0 ? (
-          <Card className="p-6 text-center">
-            <p className="text-gray-500">No accounts detected from statements. Import a statement to see accounts here.</p>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {computedAccounts
-              .sort((a, b) => b.balance_paise - a.balance_paise)
-              .map((account) => (
-                <Card key={account.id}>
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <Building2 className="h-5 w-5 text-gray-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-sm">{account.name}</h3>
-                        <p className="text-xs text-gray-500">{account.bank}</p>
-                      </div>
-                    </div>
-                    <div className="mt-3 pt-2 border-t">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">Balance</span>
-                        <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {account.transaction_count} transactions
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-          </div>
-        )}
-      </div>
-
-      {/* Section 2: Managed Accounts (persistent) */}
-      <div>
-        <h2 className="text-lg font-semibold mb-3">Saved Accounts</h2>
-        <p className="text-sm text-gray-500 mb-4">Manually added accounts with persistent balances</p>
-        {managedError && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{managedError.message}</AlertDescription>
-          </Alert>
-        )}
-        {managedData?.accounts.length === 0 ? (
-          <Card className="p-6 text-center">
-            <p className="text-gray-500">No saved accounts. Add your first account above.</p>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {managedData?.accounts
-              .sort((a, b) => b.balance_paise - a.balance_paise)
-              .map((account) => (
-                <ManagedAccountCard
-                  key={account.id}
-                  account={account}
-                  onEdit={handleEditManaged}
-                  onDelete={handleDeleteManaged}
-                />
-              ))}
-          </div>
-        )}
-      </div>
+            {/* Section 2: Managed Accounts (persistent) */}
+            <div>
+              <h2 className="text-lg font-semibold mb-3">Saved Accounts</h2>
+              <p className="text-sm text-gray-500 mb-4">Manually added accounts with persistent balances</p>
+              {managedError && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>{managedError.message}</AlertDescription>
+                </Alert>
+              )}
+              {managedData?.accounts.length === 0 ? (
+                <Surface variant="raised" density="none" className="p-6 text-center">
+                  <p className="text-gray-500">No saved accounts. Add your first account above.</p>
+                </Surface>
+              ) : (
+                <Grid gap={4} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  {managedData?.accounts
+                    .sort((a, b) => b.balance_paise - a.balance_paise)
+                    .map((account) => (
+                      <ManagedAccountCard
+                        key={account.id}
+                        account={account}
+                        onEdit={handleEditManaged}
+                        onDelete={handleDeleteManaged}
+                      />
+                    ))}
+                </Grid>
+              )}
+            </div>
+          </Stack>
+        </PanelBody>
+      </Panel>
 
       {/* Add Account Dialog - triggered by TopCommandBar */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -427,6 +436,6 @@ export default function AccountsPage() {
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </Surface>
   );
 }

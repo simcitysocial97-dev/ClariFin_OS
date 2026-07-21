@@ -17,7 +17,6 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { SkeletonTable } from '@/components/loading/skeleton-row';
 import { EmptyState } from '@/components/loading/empty-state';
-import { formatINR } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
@@ -25,6 +24,7 @@ import {
   hasCategoryNavigation,
   hasMerchantNavigation,
 } from '@/lib/navigation';
+import { MoneyValue } from '@/components/primitives/data-display/money-value';
 
 interface ColumnVisibility {
   select: boolean;
@@ -274,13 +274,14 @@ export function TransactionTable({
                 )}
                 {visibility.amount && (
                   <TableCell
-                    className={cn(
-                      'text-right font-mono tabular-nums text-sm',
-                      tx.transaction_type === 'debit' ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
-                    )}
+                    className="text-right"
                     role="cell"
                   >
-                    {formatINR(tx.amount.paise)}
+                    <MoneyValue 
+                      paise={tx.amount.paise} 
+                      variant="default"
+                      sign={tx.transaction_type === 'debit' ? 'negative' : 'positive'}
+                    />
                   </TableCell>
                 )}
               </TableRow>
