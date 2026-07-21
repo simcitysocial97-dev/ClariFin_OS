@@ -5,6 +5,7 @@
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  *
  * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using MoneyValue primitive and semantic colors.
  */
 
 "use client";
@@ -19,12 +20,12 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/u
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil, Trash2, Building2, AlertCircle, Calendar, IndianRupee, TrendingDown } from "lucide-react";
-import { formatINR } from "@/lib/utils/format";
 import { useLoans, useCreateLoan, useUpdateLoan, useDeleteLoan, useLoanSchedule, type Loan } from "@/lib/hooks/use-loans";
 import { Surface } from "@/components/primitives/surface/surface";
 import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/panel";
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
+import { MoneyValue } from "@/components/primitives/data-display/money-value";
 
 // ============================================================
 // Form Types
@@ -58,13 +59,13 @@ function LoanCard({ loan, onEdit, onDelete, onShowSchedule }: {
     <Surface variant="raised" density="none" className="p-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            <Building2 className="h-5 w-5 text-gray-600" />
+          <div className="p-2 bg-[var(--surface-raised)] rounded-lg">
+            <Building2 className="h-5 w-5 text-[var(--text-secondary)]" />
           </div>
           <div>
             <h3 className="font-medium text-sm">{loan.name}</h3>
-            <p className="text-xs text-gray-500">{loan.lender}</p>
-            <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
+            <p className="text-xs text-[var(--text-tertiary)]">{loan.lender}</p>
+            <span className="inline-block mt-1 text-xs bg-[var(--surface-raised)] px-2 py-0.5 rounded">
               {loan.loan_type}
             </span>
           </div>
@@ -77,21 +78,21 @@ function LoanCard({ loan, onEdit, onDelete, onShowSchedule }: {
             <Pencil className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={() => onDelete(loan.id.toString())}>
-            <Trash2 className="h-4 w-4 text-red-500" />
+            <Trash2 className="h-4 w-4 text-[var(--color-negative-600)]" />
           </Button>
         </div>
       </div>
       <div className="mt-3 pt-2 border-t space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">Outstanding</span>
-          <span className="text-lg font-semibold">{formatINR(loan.outstanding_paise)}</span>
+          <span className="text-xs text-[var(--text-tertiary)]">Outstanding</span>
+          <MoneyValue paise={loan.outstanding_paise} variant="default" />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">EMI</span>
-          <span className="text-sm font-medium">{formatINR(loan.emi_paise || 0)}</span>
+          <span className="text-xs text-[var(--text-tertiary)]">EMI</span>
+          <MoneyValue paise={loan.emi_paise || 0} variant="default" />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">Interest Rate</span>
+          <span className="text-xs text-[var(--text-tertiary)]">Interest Rate</span>
           <span className="text-sm font-medium">{loan.interest_rate}% p.a.</span>
         </div>
       </div>
@@ -285,16 +286,16 @@ function AmortizationDrawer({
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-xs text-gray-500">Total Payments</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">Total Payments</p>
                   <p className="font-semibold">{scheduleData?.total_payments || 0}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Total Interest</p>
-                  <p className="font-semibold">{formatINR(scheduleData?.total_interest_paise || 0)}</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">Total Interest</p>
+                  <MoneyValue paise={scheduleData?.total_interest_paise || 0} variant="default" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500">Total Payment</p>
-                  <p className="font-semibold">{formatINR(scheduleData?.total_payment_paise || 0)}</p>
+                  <p className="text-xs text-[var(--text-tertiary)]">Total Payment</p>
+                  <MoneyValue paise={scheduleData?.total_payment_paise || 0} variant="default" />
                 </div>
               </div>
               <div className="border-t pt-4">
@@ -303,12 +304,12 @@ function AmortizationDrawer({
                   {scheduleData?.schedule?.slice(0, 12).map((entry: any) => (
                     <div key={entry.month_number} className="flex justify-between text-sm py-1 border-b">
                       <span>Month {entry.month_number}</span>
-                      <span>{formatINR(entry.emi_paise)}</span>
-                      <span className="text-gray-500">{formatINR(entry.principal_paise)} principal</span>
+                      <MoneyValue paise={entry.emi_paise} variant="default" />
+                      <span className="text-[var(--text-tertiary)]"><MoneyValue paise={entry.principal_paise} variant="default" /> principal</span>
                     </div>
                   ))}
                   {(scheduleData?.schedule?.length || 0) > 12 && (
-                    <p className="text-xs text-gray-500 text-center">... and {scheduleData.schedule.length - 12} more months</p>
+                    <p className="text-xs text-[var(--text-tertiary)] text-center">... and {scheduleData.schedule.length - 12} more months</p>
                   )}
                 </div>
               </div>
@@ -428,22 +429,22 @@ export default function LoansPage() {
             <Grid gap={4} className="grid-cols-1 md:grid-cols-3">
               <Surface variant="raised" density="none" className="p-4">
                 <div className="flex items-center gap-2">
-                  <IndianRupee className="h-5 w-5 text-gray-500" />
-                  <span className="text-gray-600">Total Outstanding</span>
+                  <IndianRupee className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Total Outstanding</span>
                 </div>
-                <p className="text-2xl font-bold mt-2">{formatINR(totalOutstanding)}</p>
+                <MoneyValue paise={totalOutstanding} variant="large" />
               </Surface>
               <Surface variant="raised" density="none" className="p-4">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-gray-500" />
-                  <span className="text-gray-600">Total Monthly EMI</span>
+                  <Calendar className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Total Monthly EMI</span>
                 </div>
-                <p className="text-2xl font-bold mt-2">{formatINR(totalEMI)}</p>
+                <MoneyValue paise={totalEMI} variant="large" />
               </Surface>
               <Surface variant="raised" density="none" className="p-4">
                 <div className="flex items-center gap-2">
-                  <TrendingDown className="h-5 w-5 text-gray-500" />
-                  <span className="text-gray-600">Active Loans</span>
+                  <TrendingDown className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Active Loans</span>
                 </div>
                 <p className="text-2xl font-bold mt-2">{data?.loans.length || 0}</p>
               </Surface>
@@ -461,7 +462,7 @@ export default function LoansPage() {
             {/* Loans List */}
             {data?.loans.length === 0 ? (
               <Surface variant="raised" density="none" className="p-6 text-center">
-                <p className="text-gray-500">No loans added. Add your first loan above.</p>
+                <p className="text-[var(--text-tertiary)]">No loans added. Add your first loan above.</p>
               </Surface>
             ) : (
               <Grid gap={4} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">

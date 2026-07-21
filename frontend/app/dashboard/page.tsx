@@ -5,6 +5,7 @@
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  *
  * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using MoneyValue primitive and semantic colors.
  */
 
 "use client";
@@ -15,7 +16,7 @@ import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { useDashboardMetrics } from "@/lib/hooks/use-dashboard-metrics";
-import { formatINR, formatPercentage } from "@/lib/utils/format";
+import { formatPercentage } from "@/lib/utils/format";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { CashflowChart } from "@/components/dashboard/cashflow-chart";
 import { BehaviorScoreCard } from "@/components/dashboard/behavior-score-card";
@@ -28,6 +29,7 @@ import { Surface } from "@/components/primitives/surface/surface";
 import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/panel";
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
+import { MoneyValue } from "@/components/primitives/data-display/money-value";
 
 // ============================================================
 // Internal Presentational Components
@@ -38,18 +40,20 @@ function NetCashFlowCard({ amount_paise }: { amount_paise: number }) {
   return (
     <Surface variant="raised" density="none" className="p-4">
       <Stack gap={2}>
-        <p className="text-sm text-gray-500">Net Cash Flow</p>
+        <p className="text-sm text-[var(--text-tertiary)]">Net Cash Flow</p>
         <div className="flex items-center gap-3">
           {isPositive ? (
-            <TrendingUp className="h-8 w-8 text-green-600" />
+            <TrendingUp className="h-8 w-8 text-[var(--color-positive-600)]" />
           ) : (
-            <TrendingDown className="h-8 w-8 text-red-600" />
+            <TrendingDown className="h-8 w-8 text-[var(--color-negative-600)]" />
           )}
-          <span className={`text-3xl font-bold ${isPositive ? "text-green-600" : "text-red-600"}`}>
-            {formatINR(amount_paise)}
-          </span>
+          <MoneyValue 
+            paise={amount_paise} 
+            variant="large" 
+            sign="auto"
+          />
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-[var(--text-tertiary)]">
           {isPositive ? "Income exceeds expenses" : "Expenses exceed income"}
         </p>
       </Stack>
@@ -62,16 +66,16 @@ function SavingsRateCard({ rate }: { rate: number }) {
   return (
     <Surface variant="raised" density="none" className="p-4">
       <Stack gap={2}>
-        <p className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <p className="text-sm font-medium text-[var(--text-secondary)] flex items-center gap-2">
           <PiggyBank className="h-4 w-4" />
           Savings Rate
         </p>
         <div className="flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${isGood ? "text-green-600" : "text-amber-600"}`}>
+          <span className={`text-3xl font-bold ${isGood ? "text-[var(--color-positive-600)]" : "text-[var(--color-warning-600)]"}`}>
             {formatPercentage(rate)}
           </span>
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-[var(--text-tertiary)]">
           Target: 20% or higher
         </p>
       </Stack>
@@ -82,18 +86,18 @@ function SavingsRateCard({ rate }: { rate: number }) {
 function EMIRatioCard({ ratio }: { ratio: number }) {
   const isHigh = ratio > 0.4;
   return (
-    <Surface variant="raised" density="none" className={`p-4 ${isHigh ? "bg-red-50 border-red-200" : ""}`}>
+    <Surface variant="raised" density="none" className={`p-4 ${isHigh ? "bg-[var(--color-negative-50)] border-[var(--color-negative-200)]" : ""}`}>
       <Stack gap={2}>
-        <p className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <p className="text-sm font-medium text-[var(--text-secondary)] flex items-center gap-2">
           <Home className="h-4 w-4" />
           EMI Ratio
         </p>
         <div className="flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${isHigh ? "text-red-600" : "text-gray-900"}`}>
+          <span className={`text-3xl font-bold ${isHigh ? "text-[var(--color-negative-600)]" : "text-[var(--text-primary)]"}`}>
             {formatPercentage(ratio)}
           </span>
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-[var(--text-tertiary)]">
           {isHigh ? "High EMI burden - consider reducing" : "Healthy EMI level"}
         </p>
       </Stack>
@@ -105,19 +109,19 @@ function BufferDaysCard({ days }: { days: number }) {
   const isHealthy = days >= 30;
   const isAdequate = days >= 14;
   return (
-    <Surface variant="raised" density="none" className={`p-4 ${isHealthy ? "bg-green-50 border-green-200" : isAdequate ? "bg-amber-50 border-amber-200" : "bg-red-50 border-red-200"}`}>
+    <Surface variant="raised" density="none" className={`p-4 ${isHealthy ? "bg-[var(--color-positive-50)] border-[var(--color-positive-200)]" : isAdequate ? "bg-[var(--color-warning-50)] border-[var(--color-warning-200)]" : "bg-[var(--color-negative-50)] border-[var(--color-negative-200)]"}`}>
       <Stack gap={2}>
-        <p className="text-sm font-medium text-gray-600 flex items-center gap-2">
+        <p className="text-sm font-medium text-[var(--text-secondary)] flex items-center gap-2">
           <Shield className="h-4 w-4" />
           Buffer Days
         </p>
         <div className="flex items-baseline gap-2">
-          <span className={`text-3xl font-bold ${isHealthy ? "text-green-600" : isAdequate ? "text-amber-600" : "text-red-600"}`}>
+          <span className={`text-3xl font-bold ${isHealthy ? "text-[var(--color-positive-600)]" : isAdequate ? "text-[var(--color-warning-600)]" : "text-[var(--color-negative-600)]"}`}>
             {days.toFixed(0)}
           </span>
-          <span className="text-sm text-gray-500">days</span>
+          <span className="text-sm text-[var(--text-tertiary)]">days</span>
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-[var(--text-tertiary)]">
           Target: 30+ days emergency fund
         </p>
       </Stack>
@@ -127,17 +131,17 @@ function BufferDaysCard({ days }: { days: number }) {
 
 function HealthScoreFooter({ score }: { score: number }) {
   const getColor = (s: number) => {
-    if (s >= 70) return "text-green-600";
-    if (s >= 40) return "text-amber-600";
-    return "text-red-600";
+    if (s >= 70) return "text-[var(--color-positive-600)]";
+    if (s >= 40) return "text-[var(--color-warning-600)]";
+    return "text-[var(--color-negative-600)]";
   };
   
   return (
     <Surface variant="raised" density="none" className="p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-gray-500" />
-          <span className="text-sm text-gray-600">Financial Health Score</span>
+          <Activity className="h-4 w-4 text-[var(--text-tertiary)]" />
+          <span className="text-sm text-[var(--text-secondary)]">Financial Health Score</span>
         </div>
         <span className={`text-lg font-bold ${getColor(score)}`}>
           {score.toFixed(0)}/100
@@ -233,7 +237,7 @@ export default function DashboardPage() {
               <div className="lg:col-span-2 space-y-4">
                 {/* Cashflow Trend Chart */}
                 <section>
-                  <h2 className="text-sm font-medium text-muted-foreground mb-3">
+                  <h2 className="text-sm font-medium text-[var(--text-tertiary)] mb-3">
                     Cashflow Trend
                   </h2>
                   <div data-testid="cashflow-chart-section">
@@ -245,7 +249,7 @@ export default function DashboardPage() {
 
                 {/* Category Spend Chart */}
                 <section>
-                  <h2 className="text-sm font-medium text-muted-foreground mb-3">
+                  <h2 className="text-sm font-medium text-[var(--text-tertiary)] mb-3">
                     Category Spend
                   </h2>
                   <ErrorBoundary componentName="Category Spend Chart">

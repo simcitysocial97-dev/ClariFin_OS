@@ -1,8 +1,10 @@
 /**
- * Cards Page - Stage 8B Workspace Integration & Surface Migration
+ * Cards Page - Stage 8E-C2 Production Visual System Migration
  *
  * Table Surface - Main analysis surface for credit cards.
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
+ *
+ * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
  */
 
 'use client'
@@ -18,6 +20,10 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { CreditCard, AlertCircle } from 'lucide-react'
 import type { CardSummary } from '@/lib/hooks/use-cards'
+import { Surface } from '@/components/primitives/surface/surface'
+import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel'
+import { Stack } from '@/components/primitives/layout/stack'
+import { Grid } from '@/components/primitives/layout/grid'
 
 export default function CardsPage() {
   const { data: cardsData, loading, error } = useCards()
@@ -45,82 +51,90 @@ export default function CardsPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="p-4 sm:p-6 space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-card border rounded-lg p-4 animate-pulse">
-              <div className="h-4 bg-muted rounded mb-2" />
-              <div className="h-6 bg-muted rounded" />
+      <Surface variant="default" density="none" className="flex flex-col h-full">
+        <Panel fill>
+          <PanelHeader title="Cards" />
+          <PanelBody loading>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-40" />
+              ))}
             </div>
-          ))}
-        </div>
-        
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="border rounded-lg p-4 space-y-3">
-              <Skeleton className="h-6 w-32" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-4 w-1/2" />
-              <div className="flex gap-2 pt-4">
-                <Skeleton className="h-10 flex-1" />
-                <Skeleton className="h-10 flex-1" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+          </PanelBody>
+        </Panel>
+      </Surface>
     )
   }
 
   // Error state
   if (error) {
     return (
-      <div className="p-4 sm:p-6 space-y-4">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error loading cards</AlertTitle>
-          <AlertDescription>
-            {error.message}. Please ensure the API server is running at http://localhost:8000
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Surface variant="default" density="none" className="flex flex-col h-full">
+        <Panel fill>
+          <PanelHeader title="Cards" />
+          <PanelBody error={error.message}>
+            <div className="p-4">
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error loading cards</AlertTitle>
+                <AlertDescription>
+                  {error.message}. Please ensure the API server is running at http://localhost:8000
+                </AlertDescription>
+              </Alert>
+            </div>
+          </PanelBody>
+        </Panel>
+      </Surface>
     )
   }
 
   // Empty state
   if (!cardsData || cardsData.total_cards === 0) {
     return (
-      <div className="p-4 sm:p-6 space-y-4">
-        <EmptyState
-          icon={<CreditCard className="h-10 w-10" />}
-          title="No credit cards found"
-          description="Import a credit card statement to get started. We'll automatically extract and display your card information."
-          action={{
-            label: "Upload Statement",
-            href: "/dashboard?upload=true"
-          }}
-        />
-      </div>
+      <Surface variant="default" density="none" className="flex flex-col h-full">
+        <Panel fill>
+          <PanelHeader title="Cards" />
+          <PanelBody empty emptyMessage="No credit cards found">
+            <div className="p-4">
+              <EmptyState
+                icon={<CreditCard className="h-10 w-10" />}
+                title="No credit cards found"
+                description="Import a credit card statement to get started. We'll automatically extract and display your card information."
+                action={{
+                  label: "Upload Statement",
+                  href: "/dashboard?upload=true"
+                }}
+              />
+            </div>
+          </PanelBody>
+        </Panel>
+      </Surface>
     )
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-4">
-      {/* Table Surface - Main content only (no header) */}
-      
-      <CardPortfolioHeader data={cardsData} loading={false} />
+    <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Panel fill>
+        <PanelHeader title="Cards" />
+        <PanelBody scrollable>
+          <Stack gap={4} className="p-4">
+            {/* Summary Cards */}
+            <CardPortfolioHeader data={cardsData} loading={false} />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {cardsData.cards.map((card) => (
-          <CreditCardTile
-            key={card.card_id}
-            card={card}
-            onViewStatements={() => handleViewStatements(card)}
-            onValidate={() => handleValidate(card)}
-          />
-        ))}
-      </div>
+            {/* Cards Grid */}
+            <Grid gap={4} className="grid-cols-1 lg:grid-cols-3">
+              {cardsData.cards.map((card) => (
+                <CreditCardTile
+                  key={card.card_id}
+                  card={card}
+                  onViewStatements={() => handleViewStatements(card)}
+                  onValidate={() => handleValidate(card)}
+                />
+              ))}
+            </Grid>
+          </Stack>
+        </PanelBody>
+      </Panel>
 
       {/* Statement History Drawer - for card details */}
       <StatementHistoryDrawer
@@ -129,6 +143,6 @@ export default function CardsPage() {
         onOpenChange={setDrawerOpen}
         statements={cardStatements}
       />
-    </div>
+    </Surface>
   )
 }

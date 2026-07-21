@@ -5,6 +5,7 @@
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  *
  * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using MoneyValue primitive and semantic colors.
  */
 
 "use client";
@@ -18,12 +19,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil, Trash2, Building2, AlertCircle, Wallet } from "lucide-react";
-import { formatINR } from "@/lib/utils/format";
 import { useManagedAccounts, useCreateAccount, useUpdateAccount, useDeleteAccount, type Account } from "@/lib/hooks/use-accounts";
 import { Surface } from "@/components/primitives/surface/surface";
 import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/panel";
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
+import { MoneyValue } from "@/components/primitives/data-display/money-value";
 
 // ============================================================
 // Types for Computed Accounts (from /api/accounts)
@@ -63,13 +64,13 @@ function ManagedAccountCard({ account, onEdit, onDelete }: {
      <Surface variant="raised" density="none" className="p-4">
        <div className="flex items-start justify-between">
          <div className="flex items-center gap-3">
-           <div className="p-2 bg-gray-100 rounded-lg">
-             <Building2 className="h-5 w-5 text-gray-600" />
+           <div className="p-2 bg-[var(--surface-raised)] rounded-lg">
+             <Building2 className="h-5 w-5 text-[var(--text-secondary)]" />
            </div>
            <div>
              <h3 className="font-medium text-sm">{account.name}</h3>
-             <p className="text-xs text-gray-500">{account.bank}</p>
-             <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
+             <p className="text-xs text-[var(--text-tertiary)]">{account.bank}</p>
+             <span className="inline-block mt-1 text-xs bg-[var(--surface-raised)] px-2 py-0.5 rounded">
                {account.account_type}
              </span>
            </div>
@@ -79,17 +80,17 @@ function ManagedAccountCard({ account, onEdit, onDelete }: {
              <Pencil className="h-4 w-4" />
            </Button>
            <Button variant="ghost" size="sm" onClick={() => onDelete(account.id)}>
-             <Trash2 className="h-4 w-4 text-red-500" />
+             <Trash2 className="h-4 w-4 text-[var(--color-negative-600)]" />
            </Button>
          </div>
        </div>
        <div className="mt-3 pt-2 border-t">
          <div className="flex items-center justify-between">
-           <span className="text-xs text-gray-500">Balance</span>
-           <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+           <span className="text-xs text-[var(--text-tertiary)]">Balance</span>
+           <MoneyValue paise={account.balance_paise} variant="default" />
          </div>
          {account.account_number_last4 && (
-           <p className="text-xs text-gray-400 mt-1">
+           <p className="text-xs text-[var(--text-muted)] mt-1">
              ••••{account.account_number_last4}
            </p>
          )}
@@ -327,19 +328,17 @@ export default function AccountsPage() {
             <Surface variant="raised" density="none" className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Wallet className="h-5 w-5 text-gray-500" />
-                  <span className="text-gray-600">Total Balance</span>
+                  <Wallet className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Total Balance</span>
                 </div>
-                <span className="text-2xl font-bold">
-                  {formatINR(totalBalancePaise)}
-                </span>
+                <MoneyValue paise={totalBalancePaise} variant="large" />
               </div>
             </Surface>
 
             {/* Section 1: Computed Accounts (from statements) */}
             <div>
               <h2 className="text-lg font-semibold mb-3">Detected Accounts</h2>
-              <p className="text-sm text-gray-500 mb-4">Accounts derived from imported statements</p>
+              <p className="text-sm text-[var(--text-tertiary)] mb-4">Accounts derived from imported statements</p>
               {computedError && (
                 <Alert variant="destructive" className="mb-4">
                   <AlertCircle className="h-4 w-4" />
@@ -349,7 +348,7 @@ export default function AccountsPage() {
               )}
               {computedAccounts.length === 0 ? (
                 <Surface variant="raised" density="none" className="p-6 text-center">
-                  <p className="text-gray-500">No accounts detected from statements. Import a statement to see accounts here.</p>
+                  <p className="text-[var(--text-tertiary)]">No accounts detected from statements. Import a statement to see accounts here.</p>
                 </Surface>
               ) : (
                 <Grid gap={4} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -358,20 +357,20 @@ export default function AccountsPage() {
                     .map((account) => (
                       <Surface key={account.id} variant="raised" density="none" className="p-4">
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-gray-100 rounded-lg">
-                            <Building2 className="h-5 w-5 text-gray-600" />
+                          <div className="p-2 bg-[var(--surface-raised)] rounded-lg">
+                            <Building2 className="h-5 w-5 text-[var(--text-secondary)]" />
                           </div>
                           <div>
                             <h3 className="font-medium text-sm">{account.name}</h3>
-                            <p className="text-xs text-gray-500">{account.bank}</p>
+                            <p className="text-xs text-[var(--text-tertiary)]">{account.bank}</p>
                           </div>
                         </div>
                         <div className="mt-3 pt-2 border-t">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs text-gray-500">Balance</span>
-                            <span className="text-lg font-semibold">{formatINR(account.balance_paise)}</span>
+                            <span className="text-xs text-[var(--text-tertiary)]">Balance</span>
+                            <MoneyValue paise={account.balance_paise} variant="default" />
                           </div>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-xs text-[var(--text-muted)] mt-1">
                             {account.transaction_count} transactions
                           </p>
                         </div>
@@ -384,7 +383,7 @@ export default function AccountsPage() {
             {/* Section 2: Managed Accounts (persistent) */}
             <div>
               <h2 className="text-lg font-semibold mb-3">Saved Accounts</h2>
-              <p className="text-sm text-gray-500 mb-4">Manually added accounts with persistent balances</p>
+              <p className="text-sm text-[var(--text-tertiary)] mb-4">Manually added accounts with persistent balances</p>
               {managedError && (
                 <Alert variant="destructive" className="mb-4">
                   <AlertCircle className="h-4 w-4" />
@@ -394,7 +393,7 @@ export default function AccountsPage() {
               )}
               {managedData?.accounts.length === 0 ? (
                 <Surface variant="raised" density="none" className="p-6 text-center">
-                  <p className="text-gray-500">No saved accounts. Add your first account above.</p>
+                  <p className="text-[var(--text-tertiary)]">No saved accounts. Add your first account above.</p>
                 </Surface>
               ) : (
                 <Grid gap={4} className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3">

@@ -5,6 +5,7 @@
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  *
  * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using MoneyValue primitive and semantic colors.
  */
 
 "use client";
@@ -18,12 +19,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil, Trash2, TrendingUp, AlertCircle, PieChart, BarChart3 } from "lucide-react";
-import { formatINR } from "@/lib/utils/format";
 import { useInvestments, useCreateInvestment, useUpdateInvestment, useDeleteInvestment, type Investment } from "@/lib/hooks/use-investments";
 import { Surface } from "@/components/primitives/surface/surface";
 import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/panel";
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
+import { MoneyValue } from "@/components/primitives/data-display/money-value";
 
 // ============================================================
 // Form Types
@@ -57,13 +58,13 @@ function InvestmentCard({ investment, onEdit, onDelete }: {
     <Surface variant="raised" density="none" className="p-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-gray-100 rounded-lg">
-            <TrendingUp className="h-5 w-5 text-gray-600" />
+          <div className="p-2 bg-[var(--surface-raised)] rounded-lg">
+            <TrendingUp className="h-5 w-5 text-[var(--text-secondary)]" />
           </div>
           <div>
             <h3 className="font-medium text-sm">{investment.name}</h3>
-            <p className="text-xs text-gray-500">{investment.investment_type.replace('_', ' ')}</p>
-            <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
+            <p className="text-xs text-[var(--text-tertiary)]">{investment.investment_type.replace('_', ' ')}</p>
+            <span className="inline-block mt-1 text-xs bg-[var(--surface-raised)] px-2 py-0.5 rounded">
               {investment.platform || "Self"}
             </span>
           </div>
@@ -73,23 +74,23 @@ function InvestmentCard({ investment, onEdit, onDelete }: {
             <Pencil className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={() => onDelete(investment.id.toString())}>
-            <Trash2 className="h-4 w-4 text-red-500" />
+            <Trash2 className="h-4 w-4 text-[var(--color-negative-600)]" />
           </Button>
         </div>
       </div>
       <div className="mt-3 pt-2 border-t space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">Current Value</span>
-          <span className="text-lg font-semibold">{formatINR(investment.current_value_paise)}</span>
+          <span className="text-xs text-[var(--text-tertiary)]">Current Value</span>
+          <MoneyValue paise={investment.current_value_paise} variant="default" />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">Invested</span>
-          <span className="text-sm font-medium">{formatINR(investment.invested_paise)}</span>
+          <span className="text-xs text-[var(--text-tertiary)]">Invested</span>
+          <MoneyValue paise={investment.invested_paise} variant="default" />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-500">P&L</span>
-          <span className={`text-sm font-medium ${isGain ? 'text-green-600' : 'text-red-600'}`}>
-            {isGain ? '+' : ''}{formatINR(gain)} ({gainPercent.toFixed(1)}%)
+          <span className="text-xs text-[var(--text-tertiary)]">P&L</span>
+          <span className={`text-sm font-medium ${isGain ? 'text-[var(--color-positive-600)]' : 'text-[var(--color-negative-600)]'}`}>
+            {isGain ? '+' : ''}<MoneyValue paise={gain} variant="default" sign="auto" /> ({gainPercent.toFixed(1)}%)
           </span>
         </div>
       </div>
@@ -257,8 +258,8 @@ function AllocationChart({ allocation }: { allocation: Record<string, number> })
                 <span className="text-sm">{type.replace('_', ' ')}</span>
               </div>
               <div className="text-right">
-                <span className="text-sm font-medium">{formatINR(value)}</span>
-                <span className="text-xs text-gray-500 ml-2">{percent.toFixed(1)}%</span>
+                <MoneyValue paise={value} variant="default" />
+                <span className="text-xs text-[var(--text-tertiary)] ml-2">{percent.toFixed(1)}%</span>
               </div>
             </div>
           );
@@ -337,6 +338,7 @@ export default function InvestmentsPage() {
   const totalCurrent = data?.summary.total_current_value_paise || 0;
   const totalGain = data?.summary.total_gain_paise || 0;
   const gainPercent = data?.summary.gain_percent || 0;
+  const isGain = totalGain >= 0;
 
   if (isLoading) {
     return (
@@ -365,25 +367,25 @@ export default function InvestmentsPage() {
             <Grid gap={4} className="grid-cols-1 md:grid-cols-3">
               <Surface variant="raised" density="none" className="p-4">
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-gray-500" />
-                  <span className="text-gray-600">Total Invested</span>
+                  <BarChart3 className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Total Invested</span>
                 </div>
-                <p className="text-2xl font-bold mt-2">{formatINR(totalInvested)}</p>
+                <MoneyValue paise={totalInvested} variant="large" />
               </Surface>
               <Surface variant="raised" density="none" className="p-4">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-gray-500" />
-                  <span className="text-gray-600">Current Value</span>
+                  <TrendingUp className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Current Value</span>
                 </div>
-                <p className="text-2xl font-bold mt-2">{formatINR(totalCurrent)}</p>
+                <MoneyValue paise={totalCurrent} variant="large" />
               </Surface>
               <Surface variant="raised" density="none" className="p-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-600">Total P&L</span>
+                  <span className="text-[var(--text-secondary)]">Total P&L</span>
                 </div>
-                <p className={`text-2xl font-bold mt-2 ${totalGain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {totalGain >= 0 ? '+' : ''}{formatINR(totalGain)} ({gainPercent >= 0 ? '+' : ''}{gainPercent.toFixed(1)}%)
-                </p>
+                <span className={`text-2xl font-bold ${isGain ? 'text-[var(--color-positive-600)]' : 'text-[var(--color-negative-600)]'}`}>
+                  {isGain ? '+' : ''}<MoneyValue paise={totalGain} variant="large" sign="auto" /> ({isGain ? '+' : ''}{gainPercent.toFixed(1)}%)
+                </span>
               </Surface>
             </Grid>
 
@@ -402,7 +404,7 @@ export default function InvestmentsPage() {
               <div className="lg:col-span-2">
                 {data?.investments.length === 0 ? (
                   <Surface variant="raised" density="none" className="p-6 text-center">
-                    <p className="text-gray-500">No investments added. Add your first investment above.</p>
+                    <p className="text-[var(--text-tertiary)]">No investments added. Add your first investment above.</p>
                   </Surface>
                 ) : (
                   <Grid gap={4} className="grid-cols-1 md:grid-cols-2">
