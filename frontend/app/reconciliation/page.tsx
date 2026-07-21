@@ -9,6 +9,7 @@
 
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { ReconciliationMatchCard } from '@/components/reconciliation/reconciliation-match-card';
 import { ReconciliationSummaryBar } from '@/components/reconciliation/reconciliation-summary-bar';
 import { ReconciliationEmptyState } from '@/components/reconciliation/reconciliation-empty-state';
@@ -17,6 +18,7 @@ import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
 import { Stack } from '@/components/primitives/layout/stack';
 import { Grid } from '@/components/primitives/layout/grid';
+import { commandCenterRuntime } from '@/lib/command-center';
 
 /**
  * Reconciliation Workspace Page
@@ -25,6 +27,46 @@ import { Grid } from '@/components/primitives/layout/grid';
  */
 export default function ReconciliationPage() {
   const { data, loading, error } = usePendingReconciliations();
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    reconciliation: {
+      reconciliations: data?.reconciliations || [],
+    },
+  }), [data]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'reconciliation' as const,
+      label: 'Reconciliation',
+      icon: 'check-square',
+      deepLink: '/reconciliation',
+      viewModelKey: 'reconciliation',
+      description: 'Statement reconciliation',
+      defaultSurface: 'TABLE' as const,
+      graphAdapter: 'reconciliation',
+      supportedCommands: ['refresh', 'match', 'skip'],
+      supportedFilters: ['search', 'status'],
+      supportedSelections: ['reconciliation'],
+      inspectorSections: ['context', 'evidence', 'actions'],
+      keyboardShortcuts: {
+        'r': 'refresh',
+        'm': 'match',
+        's': 'skip',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('reconciliation');
+    };
+  }, [viewModels]);
 
   if (loading) {
     return (

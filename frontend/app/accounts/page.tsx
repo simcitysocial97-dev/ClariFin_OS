@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,7 @@ import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/pan
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
 import { MoneyValue } from "@/components/primitives/data-display/money-value";
+import { commandCenterRuntime } from "@/lib/command-center";
 
 // ============================================================
 // Types for Computed Accounts (from /api/accounts)
@@ -294,6 +295,46 @@ export default function AccountsPage() {
     setEditingAccount(account);
     setDialogOpen(true);
   };
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    accounts: {
+      computed: computedAccounts,
+      managed: managedData?.accounts || [],
+    },
+  }), [computedAccounts, managedData?.accounts]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'accounts' as const,
+      label: 'Accounts',
+      icon: 'wallet',
+      deepLink: '/accounts',
+      viewModelKey: 'accounts',
+      description: 'Bank accounts and balances',
+      defaultSurface: 'TABLE' as const,
+      graphAdapter: 'accounts',
+      supportedCommands: ['add', 'edit', 'delete', 'refresh'],
+      supportedFilters: ['search'],
+      supportedSelections: ['account'],
+      inspectorSections: ['context', 'related'],
+      keyboardShortcuts: {
+        'a': 'add',
+        'r': 'refresh',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('accounts');
+    };
+  }, [viewModels]);
 
   // Calculate totals
   const computedTotalPaise = computedAccounts.reduce((sum, a) => sum + a.balance_paise, 0);

@@ -26,11 +26,18 @@ Per user correction: **Rules workspace is NOT part of this migration**
 - ✅ CommandCenterRuntime: Composes all runtimes
 
 ### Changes Made (This Session)
-- Corrected workspace inventory to match locked scope (10 workspaces, no Rules)
-- Removed unused `commandCenterRuntime` import from transaction-table.tsx
-- Updated net-worth-summary.tsx to use Surface instead of Card
-- Updated cashflow-summary.tsx to use Surface instead of Card
-- Updated settings/page.tsx to use semantic CSS variables
+- **Pass 3: Workspace Runtime Registration** - Added to all 10 workspace pages:
+  - `app/transactions/workspace-page.tsx` - Already had registration
+  - `app/accounts/page.tsx` - Added viewModels, register/unregister workspace
+  - `app/net-worth/page.tsx` - Added viewModels, register/unregister workspace
+  - `app/cashflow/page.tsx` - Added viewModels, register/unregister workspace
+  - `app/investments/page.tsx` - Added viewModels, register/unregister workspace
+  - `app/loans/page.tsx` - Added viewModels, register/unregister workspace
+  - `app/behaviour/workspace-page.tsx` - Added viewModels, register/unregister workspace
+  - `app/forecast/workspace-page.tsx` - Added viewModels, register/unregister workspace
+  - `app/reconciliation/page.tsx` - Added viewModels, register/unregister workspace
+  - `app/settings/page.tsx` - Added viewModels, register/unregister workspace
+- Each workspace now builds viewModels and registers with CommandCenterRuntime on mount
 
 ### Components Updated
 - `components/transaction-table/transaction-table.tsx` - Removed unused import

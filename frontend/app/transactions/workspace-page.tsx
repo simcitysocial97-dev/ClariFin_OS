@@ -5,11 +5,12 @@
  * Shell provides: Header, Toolbar, Filter Panel, Selection Summary, Evidence Drawer.
  *
  * Migrated: Wrapped in Surface primitive, removed legacy padding.
+ * Pass 3: Registered capabilities with CommandCenterRuntime, selection sync.
  */
 
 'use client';
 
-import { useEffect, memo, useCallback } from 'react';
+import { useEffect, memo, useCallback, useMemo } from 'react';
 import { useTransactionCapability } from '@/lib/capabilities/use-transaction-capability';
 import { LoadingSpinner } from '@/components/loading/loading-spinner';
 import { ErrorMessage } from '@/components/loading/error-message';
@@ -18,61 +19,75 @@ import { TransactionTable } from '@/components/transaction-table/transaction-tab
 import { PaginationControls } from '@/components/transaction-table/pagination-controls';
 import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
+import { commandCenterRuntime } from '@/lib/command-center';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
 
 /**
  * Transaction Workspace Page
  * Investigation Table Surface - Composed with Surface/Panel primitives
  * Shell provides: Header, Toolbar, Filter Panel, Selection Summary, Evidence Drawer
+ * Pass 3: Registers capabilities with CommandCenterRuntime
  */
 function TransactionWorkspacePageComponent() {
   const capability = useTransactionCapability();
 
-  // Keyboard navigation handler - now handled by TopCommandBar
-  // This is kept for workspace-specific shortcuts
+  // Build graph data for shared runtime
+  const viewModels = useMemo(() => ({
+    transactions: { transactions: capability.transactions },
+  }), [capability.transactions]);
+
+  // Register workspace with CommandCenterRuntime on mount
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Skip if focus is on an input or select element
-      if (
-        event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLSelectElement ||
-        event.target instanceof HTMLTextAreaElement
-      ) {
-        return;
-      }
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
 
-      // Ctrl/Cmd + G: Toggle group
-      if ((event.ctrlKey || event.metaKey) && event.key === 'g') {
-        event.preventDefault();
-        capability.toggleGroup();
-      }
-
-      // Ctrl/Cmd + R: Refresh
-      if ((event.ctrlKey || event.metaKey) && event.key === 'r') {
-        event.preventDefault();
-        capability.refresh();
-      }
-
-      // Ctrl/Cmd + A: Select all visible
-      if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
-        event.preventDefault();
-        capability.selectAllVisible();
-      }
-
-      // Delete: Clear selection
-      if (event.key === 'Delete' && capability.selectedIds.size > 0) {
-        event.preventDefault();
-        capability.clearSelection();
-      }
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'transactions' as const,
+      label: 'Transactions',
+      icon: 'receipt',
+      deepLink: '/transactions',
+      viewModelKey: 'transactions',
+      description: 'Transaction history and categorization',
+      defaultSurface: 'TABLE' as const,
+      graphAdapter: 'transactions',
+      supportedCommands: ['search', 'selection', 'export', 'explain', 'filter'],
+      supportedFilters: ['date', 'category', 'merchant', 'amount', 'status', 'search'],
+      supportedSelections: ['transaction'],
+      inspectorSections: ['context', 'evidence', 'related', 'actions'],
+      keyboardShortcuts: {
+        'f': 'search',
+        'F': 'filter',
+        'g': 'group',
+        's': 'sort',
+        'r': 'refresh',
+        'a': 'select-all',
+        'Delete': 'delete',
+        'Escape': 'close-evidence',
+      },
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [capability]);
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
 
-  // Memoize row click handler - selection is now handled by SelectionRuntime
-  const handleRowClick = useCallback((_tx: TransactionViewModel) => {
-    // Selection is handled by the table component via SelectionRuntime
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('transactions');
+    };
+  }, [viewModels]);
+
+  // Sync selection to shared runtime
+  useEffect(() => {
+    if (capability.selectedIds.size > 0) {
+      const nodeIds = Array.from(capability.selectedIds).map(id => `transaction:${id}`);
+      commandCenterRuntime.selectNodes(nodeIds);
+    } else {
+      commandCenterRuntime.clearSelection();
+    }
+  }, [capability.selectedIds]);
+
+  // Memoize row click handler - publishes to shared runtime
+  const handleRowClick = useCallback((tx: TransactionViewModel) => {
+    // Publish selection to shared runtime
+    commandCenterRuntime.selectNodes([`transaction:${tx.id}`]);
   }, []);
 
   // Memoize selection change handler
@@ -92,7 +107,7 @@ function TransactionWorkspacePageComponent() {
             <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
               <LoadingSpinner size="lg" />
               {capability.loadingTimeout && (
-                <p className="mt-4 text-sm text-muted-foreground" role="status">
+                <p className="mt-4 text-sm text-[var(--text-tertiary)]" role="status">
                   {capability.loadingTimeoutMessage}
                 </p>
               )}

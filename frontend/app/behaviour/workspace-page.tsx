@@ -9,6 +9,7 @@
 
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { useBehaviourCapability } from '@/lib/capabilities/use-behaviour-capability';
 import { BehaviourScore } from '@/components/behaviour/behaviour-score';
 import { SpendingPatterns } from '@/components/behaviour/spending-patterns';
@@ -24,6 +25,7 @@ import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
 import { Stack } from '@/components/primitives/layout/stack';
 import { Grid } from '@/components/primitives/layout/grid';
+import { commandCenterRuntime } from '@/lib/command-center';
 
 /**
  * Behaviour Workspace Page
@@ -36,6 +38,44 @@ export default function BehaviourPage() {
     loading,
     error,
   } = useBehaviourCapability();
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    behaviour: { behaviour },
+  }), [behaviour]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'behaviour' as const,
+      label: 'Behaviour',
+      icon: 'brain',
+      deepLink: '/behaviour',
+      viewModelKey: 'behaviour',
+      description: 'Financial behavior analysis',
+      defaultSurface: 'TIMELINE' as const,
+      graphAdapter: 'behaviour',
+      supportedCommands: ['period', 'refresh', 'evidence'],
+      supportedFilters: ['period'],
+      supportedSelections: ['pattern'],
+      inspectorSections: ['context', 'evidence', 'insights', 'patterns'],
+      keyboardShortcuts: {
+        'p': 'period',
+        'r': 'refresh',
+        'e': 'evidence',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('behaviour');
+    };
+  }, [viewModels]);
 
   // Show loading skeleton
   if (loading) {

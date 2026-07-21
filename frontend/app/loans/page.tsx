@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,6 +26,7 @@ import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/pan
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
 import { MoneyValue } from "@/components/primitives/data-display/money-value";
+import { commandCenterRuntime } from "@/lib/command-center";
 
 // ============================================================
 // Form Types
@@ -397,6 +398,46 @@ export default function LoansPage() {
     setScheduleLoan(loan);
     setScheduleOpen(true);
   };
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    loans: {
+      loans: data?.loans || [],
+      summary: data?.summary,
+    },
+  }), [data]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'loans' as const,
+      label: 'Loans',
+      icon: 'landmark',
+      deepLink: '/loans',
+      viewModelKey: 'loans',
+      description: 'Loan management and amortization',
+      defaultSurface: 'TABLE' as const,
+      graphAdapter: 'loans',
+      supportedCommands: ['add', 'edit', 'delete', 'schedule', 'simulate', 'refresh'],
+      supportedFilters: ['search'],
+      supportedSelections: ['loan'],
+      inspectorSections: ['context', 'amortization', 'simulation'],
+      keyboardShortcuts: {
+        'a': 'add',
+        'r': 'refresh',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('loans');
+    };
+  }, [viewModels]);
 
   // Calculate totals
   const totalOutstanding = data?.loans.reduce((sum, l) => sum + l.outstanding_paise, 0) || 0;

@@ -9,6 +9,7 @@
 
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { useForecastCapability } from '@/lib/capabilities/use-forecast-capability';
 import { ForecastSummary } from '@/components/forecast/forecast-summary';
 import { NetWorthProjection } from '@/components/forecast/net-worth-projection';
@@ -23,6 +24,7 @@ import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
 import { Stack } from '@/components/primitives/layout/stack';
 import { Grid } from '@/components/primitives/layout/grid';
+import { commandCenterRuntime } from '@/lib/command-center';
 
 /**
  * Forecast Workspace Page
@@ -35,6 +37,44 @@ export default function ForecastPage() {
     loading,
     error,
   } = useForecastCapability();
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    forecast: { forecast },
+  }), [forecast]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'forecast' as const,
+      label: 'Forecast',
+      icon: 'crystal-ball',
+      deepLink: '/forecast',
+      viewModelKey: 'forecast',
+      description: 'Financial projections and scenarios',
+      defaultSurface: 'SIMULATION' as const,
+      graphAdapter: 'forecast',
+      supportedCommands: ['horizon', 'scenarios', 'refresh', 'simulate'],
+      supportedFilters: ['horizon', 'scenarios'],
+      supportedSelections: ['projection'],
+      inspectorSections: ['context', 'projections', 'scenarios', 'insights'],
+      keyboardShortcuts: {
+        'h': 'horizon',
+        's': 'scenarios',
+        'r': 'refresh',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('forecast');
+    };
+  }, [viewModels]);
 
   // Show loading skeleton
   if (loading) {

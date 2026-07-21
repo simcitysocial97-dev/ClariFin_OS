@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,7 @@ import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/pan
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
 import { MoneyValue } from "@/components/primitives/data-display/money-value";
+import { commandCenterRuntime } from "@/lib/command-center";
 
 // ============================================================
 // Form Types
@@ -332,6 +333,46 @@ export default function InvestmentsPage() {
     setEditingInvestment(investment);
     setDialogOpen(true);
   };
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    investments: {
+      investments: data?.investments || [],
+      summary: data?.summary,
+    },
+  }), [data]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'investments' as const,
+      label: 'Investments',
+      icon: 'trending-up',
+      deepLink: '/investments',
+      viewModelKey: 'investments',
+      description: 'Investment portfolio and holdings',
+      defaultSurface: 'TABLE' as const,
+      graphAdapter: 'investments',
+      supportedCommands: ['add', 'edit', 'delete', 'refresh'],
+      supportedFilters: ['search'],
+      supportedSelections: ['investment'],
+      inspectorSections: ['context', 'allocation', 'related'],
+      keyboardShortcuts: {
+        'a': 'add',
+        'r': 'refresh',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('investments');
+    };
+  }, [viewModels]);
 
   // Calculate totals
   const totalInvested = data?.summary.total_invested_paise || 0;

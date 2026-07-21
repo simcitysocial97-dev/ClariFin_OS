@@ -88,6 +88,14 @@ export class CommandCenterRuntime {
   }
 
   /**
+   * Unregister a workspace from the command center
+   * Delegates to WorkspaceRegistry
+   */
+  unregisterWorkspace(name: WorkspaceName): boolean {
+    return workspaceRegistry.unregister(name);
+  }
+
+  /**
    * Get all registered workspaces
    * Delegates to WorkspaceRegistry
    */

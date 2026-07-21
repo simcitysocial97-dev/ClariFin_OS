@@ -9,6 +9,7 @@
 
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { useCashflowCapability } from '@/lib/capabilities/use-cashflow-capability';
 import { CashflowSummary } from '@/components/cashflow/cashflow-summary';
 import { MonthlyTrend } from '@/components/cashflow/monthly-trend';
@@ -22,6 +23,7 @@ import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
 import { Stack } from '@/components/primitives/layout/stack';
 import { Grid } from '@/components/primitives/layout/grid';
+import { commandCenterRuntime } from '@/lib/command-center';
 
 /**
  * Cashflow Workspace Page
@@ -34,6 +36,43 @@ export default function CashflowPage() {
     loading,
     error,
   } = useCashflowCapability();
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    cashflow: { cashflow },
+  }), [cashflow]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'cashflow' as const,
+      label: 'Cashflow',
+      icon: 'arrow-left-right',
+      deepLink: '/cashflow',
+      viewModelKey: 'cashflow',
+      description: 'Cashflow analysis and trends',
+      defaultSurface: 'SANKEY' as const,
+      graphAdapter: 'cashflow',
+      supportedCommands: ['refresh', 'export', 'evidence'],
+      supportedFilters: ['date', 'period'],
+      supportedSelections: ['transaction'],
+      inspectorSections: ['context', 'evidence', 'insights'],
+      keyboardShortcuts: {
+        'r': 'refresh',
+        'e': 'evidence',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('cashflow');
+    };
+  }, [viewModels]);
 
   // Loading state
   if (loading && !cashflow) {

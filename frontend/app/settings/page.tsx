@@ -10,16 +10,17 @@
 
 'use client';
 
+import { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
 import { Download, Upload, Trash2, Moon, Sun, CreditCard } from 'lucide-react';
-import { useState, useEffect } from 'react';
 import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
 import { Stack } from '@/components/primitives/layout/stack';
+import { commandCenterRuntime } from '@/lib/command-center';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -86,6 +87,46 @@ export default function SettingsPage() {
       });
     }
   };
+
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    settings: {
+      cards,
+      transactions,
+    },
+  }), [cards, transactions]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'settings' as const,
+      label: 'Settings',
+      icon: 'settings',
+      deepLink: '/settings',
+      viewModelKey: 'settings',
+      description: 'Application settings',
+      defaultSurface: 'CONFIGURATION' as const,
+      graphAdapter: undefined,
+      supportedCommands: ['export', 'import', 'clear'],
+      supportedFilters: [],
+      supportedSelections: [],
+      inspectorSections: ['context'],
+      keyboardShortcuts: {
+        'e': 'export',
+        'i': 'import',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('settings');
+    };
+  }, [viewModels]);
 
   if (!mounted) {
     return null;
