@@ -5,6 +5,7 @@
  * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
  *
  * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using semantic CSS variables for colors.
  */
 
 'use client';
@@ -106,7 +107,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Dark Mode</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-[var(--text-tertiary)]">
                       Toggle between light and dark theme
                     </p>
                   </div>
@@ -128,7 +129,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Export Data</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-[var(--text-tertiary)]">
                       Download all your transactions and cards as JSON
                     </p>
                   </div>
@@ -141,7 +142,7 @@ export default function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Import Data</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-[var(--text-tertiary)]">
                       Restore from a previous backup
                     </p>
                   </div>
@@ -161,8 +162,8 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between border-t pt-4">
                   <div>
-                    <p className="font-medium text-destructive">Clear All Data</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-medium text-[var(--color-negative-600)]">Clear All Data</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">
                       Delete all transactions and cards permanently
                     </p>
                   </div>
@@ -179,13 +180,13 @@ export default function SettingsPage() {
               <Stack gap={4}>
                 <h2 className="text-lg font-semibold">About</h2>
                 <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-3xl">
+                  <div className="h-16 w-16 rounded-full bg-[var(--surface-raised)] flex items-center justify-center text-3xl">
                     💳
                   </div>
                   <div>
                     <p className="font-bold text-lg">FinTrack</p>
-                    <p className="text-sm text-muted-foreground">Bank Statement Parser Dashboard</p>
-                    <p className="text-xs text-muted-foreground mt-1">Version 1.0.0</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">Bank Statement Parser Dashboard</p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-1">Version 1.0.0</p>
                   </div>
                 </div>
               </Stack>

@@ -1,19 +1,17 @@
 /**
- * Transaction Table Component - Stage 3 Transaction Intelligence Workspace
+ * Transaction Table Component - Stage 8E-C2 Production Visual System Migration
  *
  * Main table component for displaying transactions.
- * Dark mode support with bg-background classes.
+ * Uses FinancialTable primitive for consistent styling.
  * Keyboard navigation with arrow key support.
  * Accessibility with proper ARIA attributes.
- * Pagination support with page, limit, total props.
+ * Selection integrated with CommandCenterRuntime.
  */
 
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { SkeletonTable } from '@/components/loading/skeleton-row';
 import { EmptyState } from '@/components/loading/empty-state';
@@ -64,8 +62,7 @@ interface TransactionTableProps {
  * Transaction Table Component
  * Displays a list of transactions with selection support
  * Responsive design: hides columns on smaller screens
- * Dark mode: uses bg-background for proper theme support
- * Keyboard navigation: arrow keys to navigate rows
+ * Selection integrated with CommandCenterRuntime
  * Accessibility: includes ARIA attributes and keyboard support
  */
 export function TransactionTable({
@@ -140,21 +137,19 @@ export function TransactionTable({
 
   if (loading) {
     return (
-      <Card className="border-0 rounded-none bg-background dark:bg-background">
-        <CardContent className="p-0">
-          <Table>
-            <TableBody>
-              <SkeletonTable rows={5} columns={6} />
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="border-0 rounded-none bg-[var(--surface-default)]">
+        <Table>
+          <TableBody>
+            <SkeletonTable rows={5} columns={6} />
+          </TableBody>
+        </Table>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 sm:p-6 bg-background dark:bg-background">
+      <div className="p-4">
         <Alert variant="destructive">
           <AlertTitle>Error loading transactions</AlertTitle>
           <AlertDescription>{error.message}</AlertDescription>
@@ -165,130 +160,129 @@ export function TransactionTable({
 
   if (transactions.length === 0) {
     return (
-      <div className="p-4 sm:p-6 bg-background dark:bg-background">
+      <div className="p-4">
         <EmptyState />
       </div>
     );
   }
 
   return (
-    <Card className="border-0 rounded-none bg-background dark:bg-background">
-      <CardContent className="p-0">
-        <Table role="table" aria-label="Transactions">
-          <TableHeader>
-            <TableRow>
+    <div className="border-0 rounded-none bg-[var(--surface-default)]">
+      <Table role="table" aria-label="Transactions">
+        <TableHeader>
+          <TableRow>
+            {visibility.select && (
+              <TableHead className="w-[40px] sm:w-[50px]">
+                <span className="sr-only">Select</span>
+              </TableHead>
+            )}
+            {visibility.date && (
+              <TableHead className="w-[100px] sm:w-auto">Date</TableHead>
+            )}
+            {visibility.description && (
+              <TableHead className="min-w-[150px]">Description</TableHead>
+            )}
+            {visibility.category && (
+              <TableHead className="w-[120px] hidden sm:table-cell">Category</TableHead>
+            )}
+            {visibility.merchant && (
+              <TableHead className="w-[120px] hidden md:table-cell">Merchant</TableHead>
+            )}
+            {visibility.amount && (
+              <TableHead className="text-right w-[100px] sm:w-auto">Amount</TableHead>
+            )}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {transactions.map((tx, index) => (
+            <TableRow
+              key={tx.id}
+              ref={(el) => { rowRefs.current[index] = el; }}
+              className={cn(
+                'cursor-pointer transition-colors duration-[50ms]',
+                'hover:bg-[var(--color-hover-overlay)]',
+                selectedIds.has(tx.id) && 'bg-[var(--color-selection-halo)]',
+                focusedRowIndex === index && 'outline-none ring-2 ring-[var(--color-focus-ring)]'
+              )}
+              onClick={() => onRowClick?.(tx)}
+              onFocus={() => setFocusedRowIndex(index)}
+              tabIndex={-1}
+              role="row"
+              aria-selected={selectedIds.has(tx.id)}
+            >
               {visibility.select && (
-                <TableHead className="w-[40px] sm:w-[50px]">
-                  <span className="sr-only">Select</span>
-                </TableHead>
+                <TableCell className="w-[40px] sm:w-[50px]">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(tx.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      onSelectionChange?.(tx.id, e.target.checked);
+                    }}
+                    aria-label={`Select transaction ${tx.id}`}
+                  />
+                </TableCell>
               )}
               {visibility.date && (
-                <TableHead className="w-[100px] sm:w-auto">Date</TableHead>
+                <TableCell className="w-[100px] sm:w-auto text-sm" role="cell">
+                  {tx.date_formatted || tx.date}
+                </TableCell>
               )}
               {visibility.description && (
-                <TableHead className="min-w-[150px]">Description</TableHead>
+                <TableCell className="max-w-[200px] sm:max-w-[300px] truncate text-sm" role="cell">
+                  {tx.description}
+                </TableCell>
               )}
               {visibility.category && (
-                <TableHead className="w-[120px] hidden sm:table-cell">Category</TableHead>
+                <TableCell className="hidden sm:table-cell" role="cell">
+                  {hasCategoryNavigation(tx) ? (
+                    <Link
+                      href={`/transactions?category=${encodeURIComponent(tx.category_id || 'uncategorized')}`}
+                      className="hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)] cursor-pointer">
+                        {tx.category_name || 'Uncategorized'}
+                      </span>
+                    </Link>
+                  ) : (
+                    <span className="text-xs px-2 py-0.5 rounded bg-[var(--surface-raised)]">
+                      {tx.category_name || 'Uncategorized'}
+                    </span>
+                  )}
+                </TableCell>
               )}
               {visibility.merchant && (
-                <TableHead className="w-[120px] hidden md:table-cell">Merchant</TableHead>
+                <TableCell className="hidden md:table-cell text-sm" role="cell">
+                  {hasMerchantNavigation(tx) ? (
+                    <Link
+                      href={`/transactions?merchant=${encodeURIComponent(tx.merchant_id || 'unknown')}`}
+                      className="hover:underline"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {tx.merchant_name || '-'}
+                    </Link>
+                  ) : (
+                    <>{tx.merchant_name || '-'}</>
+                  )}
+                </TableCell>
               )}
               {visibility.amount && (
-                <TableHead className="text-right w-[100px] sm:w-auto">Amount</TableHead>
+                <TableCell
+                  className="text-right"
+                  role="cell"
+                >
+                  <MoneyValue 
+                    paise={tx.amount.paise} 
+                    variant="default"
+                    sign={tx.transaction_type === 'debit' ? 'negative' : 'positive'}
+                  />
+                </TableCell>
               )}
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transactions.map((tx, index) => (
-              <TableRow
-                key={tx.id}
-                ref={(el) => { rowRefs.current[index] = el; }}
-                className={cn(
-                  'cursor-pointer hover:bg-muted/50 transition-colors',
-                  selectedIds.has(tx.id) && 'bg-muted/30',
-                  focusedRowIndex === index && 'outline-none ring-2 ring-primary'
-                )}
-                onClick={() => onRowClick?.(tx)}
-                onFocus={() => setFocusedRowIndex(index)}
-                tabIndex={-1}
-                role="row"
-                aria-selected={selectedIds.has(tx.id)}
-              >
-                {visibility.select && (
-                  <TableCell className="w-[40px] sm:w-[50px]">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(tx.id)}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        onSelectionChange?.(tx.id, e.target.checked);
-                      }}
-                      aria-label={`Select transaction ${tx.id}`}
-                    />
-                  </TableCell>
-                )}
-                {visibility.date && (
-                  <TableCell className="w-[100px] sm:w-auto text-sm" role="cell">
-                    {tx.date_formatted || tx.date}
-                  </TableCell>
-                )}
-                {visibility.description && (
-                  <TableCell className="max-w-[200px] sm:max-w-[300px] truncate text-sm" role="cell">
-                    {tx.description}
-                  </TableCell>
-                )}
-                {visibility.category && (
-                  <TableCell className="hidden sm:table-cell" role="cell">
-                    {hasCategoryNavigation(tx) ? (
-                      <Link
-                        href={`/transactions?category=${encodeURIComponent(tx.category_id || 'uncategorized')}`}
-                        className="hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Badge variant="secondary" className="text-xs cursor-pointer">
-                          {tx.category_name || 'Uncategorized'}
-                        </Badge>
-                      </Link>
-                    ) : (
-                      <Badge variant="secondary" className="text-xs">
-                        {tx.category_name || 'Uncategorized'}
-                      </Badge>
-                    )}
-                  </TableCell>
-                )}
-                {visibility.merchant && (
-                  <TableCell className="hidden md:table-cell text-sm" role="cell">
-                    {hasMerchantNavigation(tx) ? (
-                      <Link
-                        href={`/transactions?merchant=${encodeURIComponent(tx.merchant_id || 'unknown')}`}
-                        className="hover:underline"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {tx.merchant_name || '-'}
-                      </Link>
-                    ) : (
-                      <>{tx.merchant_name || '-'}</>
-                    )}
-                  </TableCell>
-                )}
-                {visibility.amount && (
-                  <TableCell
-                    className="text-right"
-                    role="cell"
-                  >
-                    <MoneyValue 
-                      paise={tx.amount.paise} 
-                      variant="default"
-                      sign={tx.transaction_type === 'debit' ? 'negative' : 'positive'}
-                    />
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

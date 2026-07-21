@@ -6,11 +6,11 @@
  * Architecture Flow: Backend → API → DTO → Mapper → ViewModel → Capability → Workspace → Components → Page
  */
 
-import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { formatPercentage } from '@/lib/utils/format';
 import { MoneyValue } from '@/components/primitives/data-display/money-value';
+import { Surface } from '@/components/primitives/surface/surface';
 import type { CashflowViewModel, CashflowTrendDirection } from '@/types/cashflow-view-model';
 
 /**
@@ -29,11 +29,11 @@ interface CashflowSummaryProps {
 function TrendIcon({ direction }: { direction: CashflowTrendDirection }) {
   switch (direction) {
     case 'up':
-      return <TrendingUp className="h-4 w-4 text-green-500" aria-label="Trending up" />;
+      return <TrendingUp className="h-4 w-4 text-[var(--color-positive-600)]" aria-label="Trending up" />;
     case 'down':
-      return <TrendingDown className="h-4 w-4 text-red-500" aria-label="Trending down" />;
+      return <TrendingDown className="h-4 w-4 text-[var(--color-negative-600)]" aria-label="Trending down" />;
     default:
-      return <Minus className="h-4 w-4 text-gray-500" aria-label="No change" />;
+      return <Minus className="h-4 w-4 text-[var(--text-tertiary)]" aria-label="No change" />;
   }
 }
 
@@ -46,78 +46,70 @@ export function CashflowSummary({ cashflow, loading, error }: CashflowSummaryPro
   // Loading state
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-        </CardContent>
-      </Card>
+      <Surface variant="raised" density="none" className="p-4">
+        <div className="space-y-4">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-32" />
+        </div>
+      </Surface>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
-            <AlertCircle className="h-4 w-4" />
-            <span className="text-sm">Failed to load cashflow data</span>
-          </div>
-        </CardContent>
-      </Card>
+      <Surface variant="raised" density="none" className="p-4">
+        <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
+          <AlertCircle className="h-4 w-4" />
+          <span className="text-sm">Failed to load cashflow data</span>
+        </div>
+      </Surface>
     );
   }
 
   // Empty state
   if (!cashflow) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No cashflow data available</p>
-        </CardContent>
-      </Card>
+      <Surface variant="raised" density="none" className="p-4">
+        <p className="text-[var(--text-tertiary)] text-sm">No cashflow data available</p>
+      </Surface>
     );
   }
 
   const { total_income_paise, total_expenses_paise, net_cashflow_paise, trend } = cashflow;
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <div className="space-y-4">
-          {/* Cashflow Label */}
-          <p className="text-sm text-gray-500">Net Cashflow</p>
+    <Surface variant="raised" density="none" className="p-4">
+      <div className="space-y-4">
+        {/* Cashflow Label */}
+        <p className="text-sm text-[var(--text-tertiary)]">Net Cashflow</p>
 
-          {/* Net Cashflow Amount */}
-          <MoneyValue paise={net_cashflow_paise} variant="large" />
+        {/* Net Cashflow Amount */}
+        <MoneyValue paise={net_cashflow_paise} variant="large" />
 
-          {/* Trend Information */}
-          {trend && (
-            <div className="flex items-center gap-2">
-              <TrendIcon direction={trend.direction} />
-              <span className="text-sm text-gray-600">
-                {formatPercentage(trend.percentage_change)} from {trend.period}
-              </span>
-            </div>
-          )}
+        {/* Trend Information */}
+        {trend && (
+          <div className="flex items-center gap-2">
+            <TrendIcon direction={trend.direction} />
+            <span className="text-sm text-[var(--text-secondary)]">
+              {formatPercentage(trend.percentage_change)} from {trend.period}
+            </span>
+          </div>
+        )}
 
-          {/* Income and Expenses Breakdown */}
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-            <div>
-              <p className="text-xs text-gray-500">Income</p>
-              <MoneyValue paise={total_income_paise} variant="default" sign="positive" />
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Expenses</p>
-              <MoneyValue paise={total_expenses_paise} variant="default" sign="negative" />
-            </div>
+        {/* Income and Expenses Breakdown */}
+        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+          <div>
+            <p className="text-xs text-[var(--text-tertiary)]">Income</p>
+            <MoneyValue paise={total_income_paise} variant="default" sign="positive" />
+          </div>
+          <div>
+            <p className="text-xs text-[var(--text-tertiary)]">Expenses</p>
+            <MoneyValue paise={total_expenses_paise} variant="default" sign="negative" />
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Surface>
   );
 }
