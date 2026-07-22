@@ -53,7 +53,7 @@ export function ForecastSummary({ summary, loading, error }: ForecastSummaryProp
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load forecast summary</span>
           </div>
@@ -67,7 +67,7 @@ export function ForecastSummary({ summary, loading, error }: ForecastSummaryProp
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No forecast data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No forecast data available</p>
         </CardContent>
       </Card>
     );
@@ -76,7 +76,7 @@ export function ForecastSummary({ summary, loading, error }: ForecastSummaryProp
   const { current_net_worth_paise, projected_net_worth_paise, projected_growth_percentage, horizon_months } = summary;
 
   // Determine growth color
-  const growthColor = projected_growth_percentage >= 0 ? 'text-green-600' : 'text-red-600';
+  const growthColor = projected_growth_percentage >= 0 ? 'text-[var(--color-positive-600)]' : 'text-[var(--color-negative-600)]';
   const GrowthIcon = projected_growth_percentage >= 0 ? TrendingUp : TrendingDown;
 
   return (

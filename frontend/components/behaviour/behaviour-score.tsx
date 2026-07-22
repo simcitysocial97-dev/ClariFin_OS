@@ -49,7 +49,7 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load score</span>
           </div>
@@ -63,7 +63,7 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No score data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No score data available</p>
         </CardContent>
       </Card>
     );
@@ -73,7 +73,11 @@ export function BehaviourScore({ score, loading, error }: BehaviourScoreProps) {
   const percentage = (score.score / 100).toFixed(1);
 
   // Determine score color
-  const scoreColor = score.score >= 800 ? 'text-green-600' : score.score >= 600 ? 'text-amber-600' : 'text-red-600';
+  const scoreColor = score.score >= 800 
+    ? 'text-[var(--color-positive-600)]' 
+    : score.score >= 600 
+      ? 'text-[var(--color-warning-600)]' 
+      : 'text-[var(--color-negative-600)]';
 
   return (
     <Card>

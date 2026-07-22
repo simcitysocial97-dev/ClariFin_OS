@@ -74,7 +74,7 @@ export function CommandCenterLayout({
       <div className="h-full flex flex-col">
         {/* Main Content: Graph + Feed */}
         <div className="flex-1 flex overflow-hidden">
-          {/* Graph Area (65-70% width) */}
+          {/* Graph Area (70-75% width) - dominates the workspace */}
           <div className="flex-[3] min-w-0">
             <MoneyGraphSurface
               viewModels={viewModels}
@@ -83,14 +83,14 @@ export function CommandCenterLayout({
             />
           </div>
 
-          {/* Decision Feed (30-35% width) */}
-          <div className="w-80 flex-shrink-0 border-l border-[var(--border-default)]">
+          {/* Decision Feed (25-30% width) - supports graph */}
+          <div className="w-72 flex-shrink-0 border-l border-[var(--border-default)]">
             <DecisionFeedPanel onNodeSelect={handleFeedItemSelect} />
           </div>
         </div>
 
-        {/* Metrics Strip */}
-        <div className="h-14 border-t border-[var(--border-default)]">
+        {/* Metrics Strip - compact initiation bar */}
+        <div className="h-12 border-t border-[var(--border-default)]">
           <MetricsStrip onMetricSelect={handleMetricSelect} />
         </div>
       </div>

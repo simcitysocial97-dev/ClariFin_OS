@@ -13,14 +13,15 @@
     --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
     --font-display: 'IBM Plex Sans', var(--font-sans);
 
-    /* Font sizes */
-    --fs-xs: 0.75rem;   /* 12px */
-    --fs-sm: 0.8125rem;  /* 13px */
-    --fs-base: 0.875rem; /* 14px */
-    --fs-md: 1rem;       /* 16px */
-    --fs-lg: 1.125rem;   /* 18px */
-    --fs-xl: 1.25rem;    /* 20px */
-    --fs-2xl: 1.5rem;    /* 24px */
+    /* Font sizes - 8-step scale for analytical density */
+    --fs-2xs: 0.6875rem;  /* 11px - Hints, tertiary metadata */
+    --fs-xs: 0.75rem;     /* 12px - Captions, metadata */
+    --fs-sm: 0.8125rem;   /* 13px - Body small, labels */
+    --fs-base: 0.875rem;  /* 14px - Body default */
+    --fs-md: 1rem;        /* 16px - Panel titles */
+    --fs-lg: 1.125rem;    /* 18px - Section headers */
+    --fs-xl: 1.25rem;     /* 20px - Primary metrics */
+    --fs-2xl: 1.5rem;     /* 24px - Financial values (large) */
 
     /* Font weights */
     --fw-regular: 400;
@@ -467,6 +468,14 @@
     color: var(--text-tertiary);
   }
 
+  .fin-hint {
+    font-family: var(--font-sans);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-none);
+    color: var(--text-disabled);
+  }
+
   .fin-mono {
     font-family: var(--font-mono);
   }
@@ -560,6 +569,90 @@
   @keyframes fin-dash {
     from { stroke-dashoffset: 10; }
     to { stroke-dashoffset: 0; }
+  }
+
+  /* ================================================================
+     Premium Motion — Stage 8H
+     ================================================================ */
+
+  /* === Money Flow Animation === */
+  .fin-money-flow {
+    animation: fin-flow-move 2s ease-in-out infinite;
+  }
+
+  @keyframes fin-flow-move {
+    0% { stroke-dashoffset: 20; opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0.4; }
+  }
+
+  /* === Selection Halo === */
+  @keyframes fin-halo-appear {
+    0% { box-shadow: 0 0 0 0px var(--color-selection-halo); }
+    100% { box-shadow: 0 0 0 4px var(--color-selection-halo); }
+  }
+
+  .fin-selection-halo {
+    animation: fin-halo-appear var(--duration-fast) var(--ease-out) forwards;
+  }
+
+  /* === Panel Open === */
+  @keyframes fin-panel-enter {
+    0% { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .fin-panel-enter {
+    animation: fin-panel-enter 150ms var(--ease-out) forwards;
+  }
+
+  /* === Skeleton Loading === */
+  .fin-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-default) 25%,
+      var(--surface-interactive) 50%,
+      var(--surface-default) 75%
+    );
+    background-size: 200% 100%;
+    animation: fin-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  .fin-skeleton-text {
+    height: 12px;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .fin-skeleton-text:last-child {
+    width: 60%;
+  }
+
+  /* === Inspector Section Enter === */
+  .fin-inspector-section {
+    animation: fin-panel-enter 120ms var(--ease-out) forwards;
+  }
+
+  /* === Graph Node Enter === */
+  @keyframes fin-node-enter {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .fin-node-enter {
+    animation: fin-node-enter var(--duration-fast) var(--ease-out) forwards;
+  }
+
+  /* === Graph Edge Draw === */
+  @keyframes fin-edge-draw {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  .fin-edge-draw {
+    stroke-dasharray: 100;
+    animation: fin-edge-draw var(--duration-normal) var(--ease-out) forwards;
   }
 
   /* ================================================================
@@ -718,5 +811,93 @@
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     border: 0;
+  }
+
+  /* ===== Focus Ring Styles ===== */
+  .fin-focus-ring {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .fin-focus-ring-inset {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: -2px;
+  }
+
+  /* ===== Reduced Motion Support ===== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .fin-loading-pulse,
+    .fin-simulation-pulse,
+    .fin-risk-pulse {
+      animation: none;
+    }
+  }
+
+  /* ===== High Contrast Support ===== */
+  @media (prefers-contrast: high) {
+    :root {
+      --border-default: #000000;
+      --border-strong: #000000;
+      --text-primary: #000000;
+      --text-secondary: #000000;
+      --text-tertiary: #000000;
+      --color-focus-ring: #000000;
+    }
+
+    .dark {
+      --border-default: #ffffff;
+      --border-strong: #ffffff;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --text-tertiary: #ffffff;
+      --color-focus-ring: #ffffff;
+    }
+  }
+
+  /* ===== Density Mode Styles ===== */
+  .fin-density-compact {
+    --density-table-row-height: 32px;
+    --density-panel-padding: 8px;
+    --density-icon-size: 14px;
+    --density-font-size: 12px;
+  }
+
+  .fin-density-comfortable {
+    --density-table-row-height: 40px;
+    --density-panel-padding: 12px;
+    --density-icon-size: 16px;
+    --density-font-size: 14px;
+  }
+
+  .fin-density-analytical {
+    --density-table-row-height: 48px;
+    --density-panel-padding: 16px;
+    --density-icon-size: 18px;
+    --density-font-size: 14px;
+  }
+
+  /* ===== Live Region for Screen Readers ===== */
+  .fin-live-region {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .fin-live-region-alert {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 }

@@ -1,7 +1,8 @@
 /**
  * Capabilities Index - Central export for all capability modules
  *
- * This file provides clean import paths for all capability hooks and context.
+ * This file provides clean import paths for all capability hooks.
+ * Note: Context-based providers are not currently used - workspaces use hooks directly.
  */
 
 // Transaction capability
@@ -12,14 +13,6 @@ export {
   type TransactionCapabilityReturn,
 } from './use-transaction-capability';
 
-// Re-export context
-export {
-  TransactionContext,
-  TransactionProvider,
-  useTransactionContext,
-  type TransactionContextType,
-} from './transaction-context';
-
 // Net Worth capability
 export {
   useNetWorthCapability,
@@ -28,14 +21,6 @@ export {
   type NetWorthCapabilityReturn,
 } from './use-net-worth-capability';
 
-// Re-export context
-export {
-  NetWorthContext,
-  NetWorthProvider,
-  useNetWorthContext,
-  type NetWorthContextType,
-} from './net-worth-context';
-
 // Accounts capability
 export {
   useAccountsCapability,
@@ -43,14 +28,6 @@ export {
   type AccountsCapabilityActions,
   type AccountsCapabilityReturn,
 } from './use-accounts-capability';
-
-// Re-export context
-export {
-  AccountsContext,
-  AccountsProvider,
-  useAccountsContext,
-  type AccountsContextType,
-} from './accounts-context';
 
 // Loans capability
 export {

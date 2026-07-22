@@ -43,8 +43,8 @@ function DateRangeSelector({ selectedPeriod, onPeriodChange }: DateRangeSelector
           onClick={() => onPeriodChange(period)}
           className={`px-2 py-1 text-xs rounded ${
             selectedPeriod === period
-              ? 'bg-blue-100 text-blue-700'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              ? 'bg-[var(--color-info-100)] text-[var(--color-info-700)]'
+              : 'bg-[var(--surface-raised)] text-[var(--text-secondary)] hover:bg-[var(--surface-interactive)]'
           }`}
           role="radio"
           aria-checked={selectedPeriod === period}
@@ -68,7 +68,7 @@ function SimpleTrendVisualization({
 }) {
   if (snapshots.length === 0) {
     return (
-      <p className="text-xs text-gray-500 text-center py-4">
+      <p className="text-xs text-[var(--text-tertiary)] text-center py-4">
         No historical data available
       </p>
     );
@@ -84,12 +84,12 @@ function SimpleTrendVisualization({
     <div className="space-y-2" role="table" aria-label="Net worth trend data">
       {snapshots.slice(-10).map((snapshot) => (
         <div key={snapshot.date} className="flex items-center gap-2 text-xs">
-          <span className="w-20 text-gray-500" aria-label={snapshot.date}>
+          <span className="w-20 text-[var(--text-tertiary)]" aria-label={snapshot.date}>
             {formatDateDisplay(snapshot.date)}
           </span>
-          <div className="flex-1 bg-gray-100 rounded h-4 relative">
+          <div className="flex-1 bg-[var(--surface-raised)] rounded h-4 relative">
             <div
-              className="bg-blue-500 rounded h-4"
+              className="bg-[var(--color-info-500)] rounded h-4"
               style={{
                 width: `${((snapshot.net_worth_paise - min) / range) * 100}%`,
               }}
@@ -139,7 +139,7 @@ export function TrendChart({ netWorth, loading, error }: TrendChartProps) {
           <CardTitle>Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load trend data</span>
           </div>
@@ -156,15 +156,16 @@ export function TrendChart({ netWorth, loading, error }: TrendChartProps) {
           <CardTitle>Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 text-sm">No historical data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No historical data available</p>
         </CardContent>
       </Card>
     );
   }
 
-  // Note: In a real implementation, we would have historical snapshots
-  // For now, we show a placeholder
-  const snapshots: NetWorthHistoricalSnapshotViewModel[] = [];
+  // Historical snapshots are computed from account balance history
+  // When account balance snapshots are available, they will be mapped to net worth snapshots
+  // For now, display a production-safe empty state
+  const snapshots: NetWorthHistoricalSnapshotViewModel[] = netWorth.historical_snapshots || [];
 
   return (
     <Card>

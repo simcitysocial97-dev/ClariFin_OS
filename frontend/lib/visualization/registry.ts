@@ -17,7 +17,13 @@ export type VisualizationComponent =
   | 'ScenarioEngine'
   | 'WaterfallEngine'
   | 'EvidenceTree'
-  | 'ConfigurationSurface';
+  | 'ConfigurationSurface'
+  | 'MetricsOverview'
+  | 'RelationshipExplorer'
+  | 'CreditTimeline'
+  | 'DebtWaterfall'
+  | 'CapitalTimeline'
+  | 'MatchingWorkspace';
 
 // ===== Visualization Registration =====
 export interface VisualizationRegistration {

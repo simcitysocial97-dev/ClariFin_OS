@@ -27,12 +27,12 @@ interface SpendingPatternsProps {
 function getTrendIcon(trend: string) {
   switch (trend) {
     case 'increasing':
-      return <TrendingUp className="h-4 w-4 text-red-600" />;
+      return <TrendingUp className="h-4 w-4 text-[var(--color-negative-600)]" />;
     case 'decreasing':
-      return <TrendingDown className="h-4 w-4 text-green-600" />;
+      return <TrendingDown className="h-4 w-4 text-[var(--color-positive-600)]" />;
     case 'stable':
     default:
-      return <Minus className="h-4 w-4 text-gray-600" />;
+      return <Minus className="h-4 w-4 text-[var(--text-secondary)]" />;
   }
 }
 
@@ -65,7 +65,7 @@ export function SpendingPatterns({ patterns, loading, error }: SpendingPatternsP
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load spending patterns</span>
           </div>
@@ -79,7 +79,7 @@ export function SpendingPatterns({ patterns, loading, error }: SpendingPatternsP
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No spending patterns found</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No spending patterns found</p>
         </CardContent>
       </Card>
     );

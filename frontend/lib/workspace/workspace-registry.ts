@@ -17,7 +17,19 @@ export type SurfaceType =
   | 'SANKEY'
   | 'MATRIX'
   | 'SIMULATION'
-  | 'CONFIGURATION';
+  | 'CONFIGURATION'
+  | 'METRICS_OVERVIEW'
+  | 'RELATIONSHIP_EXPLORER'
+  | 'CREDIT_TIMELINE'
+  | 'DEBT_WATERFALL'
+  | 'ALLOCATION_MATRIX'
+  | 'CAPITAL_TIMELINE'
+  | 'MATCHING_WORKSPACE';
+
+// ===== Extended Metadata Types =====
+export type SearchProvider = 'transactions' | 'accounts' | 'loans' | 'investments' | 'goals' | 'rules' | 'forecasts' | 'merchants' | 'categories' | 'tags' | 'insights';
+
+export type OverlayProvider = 'money-flow' | 'risk' | 'confidence' | 'selection' | 'evidence' | 'simulation' | 'forecast' | 'dependencies' | 'ownership';
 
 // ===== Workspace Registration =====
 export interface WorkspaceRegistration {
@@ -40,6 +52,15 @@ export interface WorkspaceRegistration {
 
   // Keyboard shortcuts
   keyboardShortcuts: Record<string, string>;
+
+  // Extended metadata for OS interaction layer
+  searchProviders?: SearchProvider[];
+  overlayProviders?: OverlayProvider[];
+  focusTargets?: string[];
+  navigationTargets?: string[];
+  quickActions?: string[];
+  contextActions?: string[];
+  densitySupport?: boolean;
 }
 
 // ===== Workspace Registry =====
@@ -134,7 +155,7 @@ export class WorkspaceRegistry {
         deepLink: '/dashboard',
         viewModelKey: 'dashboard',
         description: 'Financial overview and insights',
-        defaultSurface: 'GRAPH',
+        defaultSurface: 'METRICS_OVERVIEW',
         graphAdapter: 'dashboard',
         supportedCommands: ['refresh', 'export', 'search'],
         supportedFilters: ['date', 'search'],

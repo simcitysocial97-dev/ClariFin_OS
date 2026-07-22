@@ -51,7 +51,7 @@ export function ReconciliationSummary({ statements, loading, error }: Reconcilia
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load reconciliation data</span>
           </div>
@@ -65,7 +65,7 @@ export function ReconciliationSummary({ statements, loading, error }: Reconcilia
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No reconciliation data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No reconciliation data available</p>
         </CardContent>
       </Card>
     );
@@ -82,7 +82,7 @@ export function ReconciliationSummary({ statements, loading, error }: Reconcilia
       <CardContent className="p-6">
         <div className="space-y-4">
           {/* Total Statements Label */}
-          <p className="text-sm text-gray-500">Total Statements</p>
+          <p className="text-sm text-[var(--text-tertiary)]">Total Statements</p>
 
           {/* Statement Count */}
           <p className="text-3xl font-bold" aria-label="Total statements">
@@ -92,19 +92,19 @@ export function ReconciliationSummary({ statements, loading, error }: Reconcilia
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-4 pt-4">
             <div>
-              <p className="text-xs text-gray-500">Total Debit</p>
+              <p className="text-xs text-[var(--text-tertiary)]">Total Debit</p>
               <p className="text-lg font-medium" aria-label="Total debit amount">
                 {formatINR(totalDebit)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500">Total Credit</p>
+              <p className="text-xs text-[var(--text-tertiary)]">Total Credit</p>
               <p className="text-lg font-medium" aria-label="Total credit amount">
                 {formatINR(totalCredit)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-500">Pending</p>
+              <p className="text-xs text-[var(--text-tertiary)]">Pending</p>
               <p className="text-lg font-medium" aria-label="Pending reconciliations">
                 {pendingCount}
               </p>
@@ -113,7 +113,7 @@ export function ReconciliationSummary({ statements, loading, error }: Reconcilia
 
           {/* Discrepancy Alert */}
           {discrepancyCount > 0 && (
-            <div className="flex items-center gap-2 pt-2 text-amber-600">
+            <div className="flex items-center gap-2 pt-2 text-[var(--color-warning-600)]">
               <AlertTriangle className="h-4 w-4" />
               <span className="text-sm font-medium">
                 {discrepancyCount} statement{discrepancyCount !== 1 ? 's' : ''} with discrepancies

@@ -30,13 +30,13 @@ interface MoneyGraphSurfaceProps {
   className?: string;
 }
 
-// ===== Layout Options =====
+// ===== Layout Options (optimized for investigative density) =====
 const LAYOUT_OPTIONS = {
-  width: 800,
-  height: 600,
-  padding: 20,
-  nodeSpacing: 50,
-  rankSpacing: 100,
+  width: 1200,
+  height: 800,
+  padding: 40,
+  nodeSpacing: 80,
+  rankSpacing: 120,
 };
 
 // ===== Money Graph Surface Component =====

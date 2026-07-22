@@ -154,6 +154,8 @@ export interface NetWorthViewModel {
   composition: NetWorthCompositionViewModel;
   /** Net worth trend information */
   trend?: NetWorthTrendViewModel;
+  /** Historical snapshots for trend chart (populated from account balance history) */
+  historical_snapshots?: NetWorthHistoricalSnapshotViewModel[];
   /** List of insights about net worth */
   insights: NetWorthInsightViewModel[];
   /** Evidence chain for explainability */

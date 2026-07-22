@@ -77,13 +77,13 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
         className,
       )}
     >
-      <div className="flex h-full w-full items-center gap-2 px-3">
+      <div className="flex h-full w-full items-center gap-1.5 px-2">
         {/* Left: Breadcrumbs */}
-        <div className="flex items-center gap-1 text-sm min-w-0 shrink-0">
+        <div className="flex items-center gap-1 min-w-0 shrink-0">
           {breadcrumbs.map((crumb, index) => (
             <div key={crumb.label} className="flex items-center gap-1">
               {index > 0 && (
-                <ChevronRight className="h-3 w-3 text-[var(--text-tertiary)]" />
+                <ChevronRight className="h-2.5 w-2.5 text-[var(--text-tertiary)]" />
               )}
               <span
                 className={cn(
@@ -99,7 +99,7 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
         </div>
 
         {/* Center: Global Search */}
-        <div className="flex-1 max-w-md mx-2">
+        <div className="flex-1 max-w-sm mx-1">
           <GlobalSearch
             onNodeSelect={handleNodeSelect}
             className="w-full"
@@ -110,15 +110,15 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
         <CompactToolbar size="sm" className="shrink-0">
           {/* Selection count */}
           {selectionCount > 0 && (
-            <FinancialBadge semantic="info" variant="outline" className="text-[10px] px-1.5">
-              {selectionCount} selected
+            <FinancialBadge semantic="info" variant="outline" className="text-[9px] px-1 py-0">
+              {selectionCount} sel
             </FinancialBadge>
           )}
 
           {/* Active filter count */}
           {activeFilterCount > 0 && (
-            <FinancialBadge semantic="warning" variant="outline" className="text-[10px] px-1.5">
-              {activeFilterCount} filters
+            <FinancialBadge semantic="warning" variant="outline" className="text-[9px] px-1 py-0">
+              {activeFilterCount} flt
             </FinancialBadge>
           )}
 
@@ -128,7 +128,7 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
           {workspaceCommands.map((command) => (
             <ToolbarButton
               key={command}
-              icon={() => <FinancialIcon name={command} size={14} />}
+              icon={() => <FinancialIcon name={command} size={13} />}
               label={command.charAt(0).toUpperCase() + command.slice(1)}
               onClick={() => handleCommand(command)}
             />
@@ -136,14 +136,8 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
 
           <ToolbarSeparator />
 
-          {/* Timeline toggle placeholder */}
-          <ToolbarButton
-            icon={() => <FinancialIcon name="simulate" size={14} />}
-            label="Simulate"
-          />
-
           {/* Cmd+K hint */}
-          <div className="flex items-center gap-1 px-1.5 text-[10px] text-[var(--text-tertiary)]">
+          <div className="flex items-center gap-0.5 px-1 text-[9px] text-[var(--text-tertiary)]">
             <Kbd keys={['cmd', 'K']} size="sm" />
           </div>
         </CompactToolbar>

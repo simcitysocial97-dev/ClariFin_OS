@@ -50,7 +50,7 @@ export function CategoryBreakdown({ categories, loading, error }: CategoryBreakd
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load category data</span>
           </div>
@@ -64,7 +64,7 @@ export function CategoryBreakdown({ categories, loading, error }: CategoryBreakd
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No category data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No category data available</p>
         </CardContent>
       </Card>
     );
@@ -86,17 +86,17 @@ export function CategoryBreakdown({ categories, loading, error }: CategoryBreakd
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-[var(--border-default)] rounded-full h-2">
                   <div
-                    className="bg-blue-500 h-2 rounded-full"
+                    className="bg-[var(--color-info-500)] h-2 rounded-full"
                     style={{ width: `${category.percentage}%` }}
                   />
                 </div>
-                <span className="text-xs text-gray-500 w-12 text-right">
+                <span className="text-xs text-[var(--text-tertiary)] w-12 text-right">
                   {category.percentage.toFixed(1)}%
                 </span>
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[var(--text-tertiary)]">
                 {category.transaction_count} transactions
               </p>
             </div>

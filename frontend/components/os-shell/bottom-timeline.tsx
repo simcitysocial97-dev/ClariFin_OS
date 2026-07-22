@@ -9,7 +9,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useWorkspace } from '@/lib/workspace/workspace-context';
 import { commandCenterRuntime } from '@/lib/command-center';
 import { Timeline } from '@/components/command-center/timeline';
 import { CompactToolbar, ToolbarButton } from '@/components/primitives/toolbar-primitive/compact-toolbar';
@@ -27,14 +26,13 @@ interface BottomTimelineProps {
 }
 
 export function BottomTimeline({ className }: BottomTimelineProps) {
-  const { state } = useWorkspace();
   const [mode, setMode] = useState<TimelineMode>('events');
   const [collapsed, setCollapsed] = useState(false);
 
   // Get selection context
   const selection = useMemo(() => {
     return commandCenterRuntime.getSelection();
-  }, [state.currentWorkspace]);
+  }, []);
 
   if (collapsed) {
     return (

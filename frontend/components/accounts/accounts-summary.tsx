@@ -52,7 +52,7 @@ export function AccountsSummary({ accounts, loading, error }: AccountsSummaryPro
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load accounts data</span>
           </div>
@@ -66,7 +66,7 @@ export function AccountsSummary({ accounts, loading, error }: AccountsSummaryPro
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No accounts data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No accounts data available</p>
         </CardContent>
       </Card>
     );
@@ -79,7 +79,7 @@ export function AccountsSummary({ accounts, loading, error }: AccountsSummaryPro
       <CardContent className="p-6">
         <div className="space-y-4">
           {/* Total Balance Label */}
-          <p className="text-sm text-gray-500">Total Balance</p>
+          <p className="text-sm text-[var(--text-tertiary)]">Total Balance</p>
 
           {/* Total Balance Amount */}
           <p className="text-3xl font-bold" aria-label="Total account balance">
@@ -87,14 +87,14 @@ export function AccountsSummary({ accounts, loading, error }: AccountsSummaryPro
           </p>
 
           {/* Account Count */}
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-[var(--text-secondary)]">
             {account_count} account{account_count !== 1 ? 's' : ''}
           </p>
 
           {/* Type Breakdown */}
           {type_breakdown && type_breakdown.length > 0 && (
             <div className="pt-4 border-t">
-              <p className="text-xs text-gray-500 mb-2">By Type</p>
+              <p className="text-xs text-[var(--text-tertiary)] mb-2">By Type</p>
               <div className="space-y-2">
                 {type_breakdown.map((tb) => (
                   <div key={tb.type} className="flex items-center justify-between">

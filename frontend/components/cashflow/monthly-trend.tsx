@@ -50,7 +50,7 @@ export function MonthlyTrend({ monthly, loading, error }: MonthlyTrendProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load monthly trend data</span>
           </div>
@@ -64,7 +64,7 @@ export function MonthlyTrend({ monthly, loading, error }: MonthlyTrendProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No monthly data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No monthly data available</p>
         </CardContent>
       </Card>
     );

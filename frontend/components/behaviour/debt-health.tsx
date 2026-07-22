@@ -53,7 +53,7 @@ export function DebtHealth({ debtHealth, loading, error }: DebtHealthProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load debt health</span>
           </div>
@@ -67,7 +67,7 @@ export function DebtHealth({ debtHealth, loading, error }: DebtHealthProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No debt health data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No debt health data available</p>
         </CardContent>
       </Card>
     );
@@ -78,7 +78,11 @@ export function DebtHealth({ debtHealth, loading, error }: DebtHealthProps) {
   const healthPercentage = (debtHealth.health_score / 100).toFixed(1);
 
   // Determine health color
-  const healthColor = debtHealth.health_score >= 800 ? 'text-green-600' : debtHealth.health_score >= 600 ? 'text-amber-600' : 'text-red-600';
+  const healthColor = debtHealth.health_score >= 800 
+    ? 'text-[var(--color-positive-600)]' 
+    : debtHealth.health_score >= 600 
+      ? 'text-[var(--color-warning-600)]' 
+      : 'text-[var(--color-negative-600)]';
 
   return (
     <Card>

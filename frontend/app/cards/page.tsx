@@ -43,9 +43,34 @@ export default function CardsPage() {
     setDrawerOpen(true)
   }
 
-  const handleValidate = (card: CardSummary) => {
-    // TODO: Implement validation API call
-    console.log('Validate card:', card.card_id)
+  const handleValidate = async (card: CardSummary) => {
+    // Validation: Fetch latest utilization and outstanding data to verify card status
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+    try {
+      const [utilizationRes, outstandingRes] = await Promise.all([
+        fetch(`${API_BASE}/api/v1/credit-cards/${card.card_id}/utilization`),
+        fetch(`${API_BASE}/api/v1/credit-cards/${card.card_id}/outstanding`),
+      ])
+      
+      if (utilizationRes.ok && outstandingRes.ok) {
+        const utilization = await utilizationRes.json()
+        const outstanding = await outstandingRes.json()
+        console.warn('Card validated:', {
+          card_id: card.card_id,
+          utilization,
+          outstanding,
+          validated: true,
+        })
+      } else {
+        console.error('Card validation failed:', {
+          card_id: card.card_id,
+          utilization_status: utilizationRes.status,
+          outstanding_status: outstandingRes.status,
+        })
+      }
+    } catch (err) {
+      console.error('Card validation error:', err)
+    }
   }
 
   // Loading state

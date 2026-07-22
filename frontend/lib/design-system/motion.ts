@@ -62,19 +62,26 @@ export const financialMotion = {
 } as const;
 
 // ===== CSS Animation Classes =====
+// All motion is semantic — no bounce, no elastic, no decorative scale.
 export const motionClasses = {
-  // Selection halo
-  selectionHalo: 'transition-all duration-200 ease-out',
-  selectionPulse: 'animate-pulse',
+  // Selection halo — 150ms semantic transition
+  selectionHalo: 'transition-[box-shadow,opacity] duration-150 ease-out fin-node-halo',
+  selectionPulse: 'fin-risk-pulse',
 
-  // Hover effect
-  hoverScale: 'transition-transform duration-150 ease-out hover:scale-105',
+  // Hover — opacity/background only, never scale
+  hoverScale: 'transition-colors duration-100 ease-out',
 
   // Focus effect
-  focusRing: 'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+  focusRing: 'focus:outline-none fin-focus-ring',
 
-  // Smooth transition
-  smooth: 'transition-all duration-200 ease-in-out',
+  // Panel open — 120–180 ms
+  panelOpen: 'transition-[opacity,transform] duration-150 ease-out',
+
+  // Navigation — instant
+  navigation: 'transition-none',
+
+  // Smooth transition (non-scale properties only)
+  smooth: 'transition-[opacity,background-color,border-color,box-shadow,color] duration-150 ease-out',
 } as const;
 
 // ===== Animation Keyframes =====

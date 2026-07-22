@@ -20,8 +20,7 @@ import {
   type Node,
   type Edge,
 } from '@xyflow/react';
-import { FinancialGraphModel, type RenderNode } from '@/lib/graph/financial-graph-model';
-import { motionClasses } from '@/lib/design-system/motion';
+import type { FinancialGraphModel, RenderNode } from '@/lib/graph/financial-graph-model';
 import { cn } from '@/lib/utils';
 
 // ===== Props =====
@@ -41,27 +40,49 @@ const nodeTypes = {
 // ===== Financial Node Component =====
 function FinancialNode({ data }: { data: RenderNode }) {
   const { label, color, size, valuePaise, confidenceColor, animation } = data;
+  const nodeSize = size * 2;
+  const isPulse = animation === 'pulse';
+  const isMoneyFlow = animation === 'flow';
 
   return (
-    <div
-      className={cn(
-        'flex items-center justify-center rounded-full border-2',
-        motionClasses.smooth,
-        animation === 'pulse' && 'animate-pulse',
-      )}
-      style={{
-        width: size * 2,
-        height: size * 2,
-        backgroundColor: color,
-        borderColor: confidenceColor ?? color,
-      }}
-      title={label}
-    >
-      {valuePaise !== undefined && (
-        <span className="text-xs font-mono text-white truncate max-w-full px-1">
-          ₹{(valuePaise / 100).toFixed(2)}
+    <div className="relative group">
+      {/* Selection halo */}
+      <div
+        className={cn(
+          'absolute inset-0 rounded-full opacity-0 group-data-[selected=true]:opacity-100',
+          'fin-selection-halo',
+        )}
+        style={{ backgroundColor: color, filter: 'blur(8px)', opacity: 0.2 }}
+      />
+      <div
+        className={cn(
+          'flex items-center justify-center rounded-full border-2 relative',
+          'transition-all duration-150 ease-out',
+          'group-hover:shadow-[var(--shadow-interactive)]',
+          isPulse && 'fin-risk-pulse',
+          isMoneyFlow && 'fin-money-flow',
+          'fin-node-enter',
+        )}
+        style={{
+          width: nodeSize,
+          height: nodeSize,
+          backgroundColor: color,
+          borderColor: confidenceColor ?? color,
+        }}
+        title={label}
+      >
+        {valuePaise !== undefined && (
+          <span className="text-[10px] font-mono text-white truncate max-w-full px-1 leading-none">
+            ₹{(valuePaise / 100).toFixed(0)}
+          </span>
+        )}
+      </div>
+      {/* Node label */}
+      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap">
+        <span className="text-[9px] font-sans text-[var(--text-tertiary)] leading-none" style={{ fontSize: '9px' }}>
+          {label?.length > 14 ? label.slice(0, 12) + '…' : label}
         </span>
-      )}
+      </div>
     </div>
   );
 }

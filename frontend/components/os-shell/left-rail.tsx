@@ -178,21 +178,21 @@ export function LeftRail({ className }: LeftRailProps) {
       </div>
 
       {/* Navigation */}
-      <ScrollRegion className="flex-1 px-1.5 py-2">
-        <Stack gap={3}>
+      <ScrollRegion className="flex-1 px-1 py-1.5">
+        <Stack gap={2}>
           {domainGroups.map((group) => (
             <div key={group.id}>
               {/* Group label (collapsed: hidden) */}
               {!collapsed && (
-                <div className="px-2 py-1">
-                  <span className="fin-caption uppercase tracking-wider">
+                <div className="px-1.5 py-0.5">
+                  <span className="fin-hint uppercase tracking-wider font-semibold">
                     {group.label}
                   </span>
                 </div>
               )}
 
               {/* Workspace links */}
-              <Stack gap={0.5}>
+              <Stack gap={0}>
                 {group.workspaces.map((ws) => {
                   const isActive = activeWorkspace === ws.name;
                   return collapsed ? (
@@ -202,15 +202,15 @@ export function LeftRail({ className }: LeftRailProps) {
                       href={ws.deepLink}
                       title={ws.label}
                       className={cn(
-                        'flex items-center justify-center h-9 w-full rounded-[var(--radius-sm)] transition-colors relative',
+                        'flex items-center justify-center h-8 w-full rounded-[var(--radius-sm)] transition-colors relative',
                         isActive
                           ? 'bg-[var(--surface-selected)] text-[var(--color-selection)]'
                           : 'text-[var(--text-tertiary)] hover:bg-[var(--surface-interactive)] hover:text-[var(--text-primary)]',
                       )}
                     >
-                      <FinancialIcon name={ws.icon} size={16} />
+                      <FinancialIcon name={ws.icon} size={15} />
                       {isActive && (
-                        <span className="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-full bg-[var(--color-selection)]" />
+                        <span className="absolute left-0.5 top-1/2 -translate-y-1/2 w-0.5 h-3.5 rounded-full bg-[var(--color-selection)]" />
                       )}
                     </Link>
                   ) : (
@@ -219,7 +219,7 @@ export function LeftRail({ className }: LeftRailProps) {
                       key={ws.name}
                       href={ws.deepLink}
                       className={cn(
-                        'flex items-center gap-2.5 h-8 px-2.5 rounded-[var(--radius-sm)] transition-colors relative group',
+                        'flex items-center gap-2 h-7 px-2 rounded-[var(--radius-sm)] transition-colors relative group',
                         isActive
                           ? 'bg-[var(--surface-selected)] text-[var(--text-primary)]'
                           : 'text-[var(--text-secondary)] hover:bg-[var(--surface-interactive)] hover:text-[var(--text-primary)]',
@@ -227,15 +227,15 @@ export function LeftRail({ className }: LeftRailProps) {
                     >
                       <FinancialIcon
                         name={ws.icon}
-                        size={15}
+                        size={13}
                         className={cn(
                           'shrink-0',
                           isActive ? 'text-[var(--color-selection)]' : 'text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)]',
                         )}
                       />
-                      <span className="fin-label truncate flex-1">{ws.label}</span>
+                      <span className="fin-label text-[var(--fs-sm)] truncate flex-1">{ws.label}</span>
                       {isActive && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-selection)] shrink-0" />
+                        <span className="h-1 w-1 rounded-full bg-[var(--color-selection)] shrink-0" />
                       )}
                     </Link>
                   );

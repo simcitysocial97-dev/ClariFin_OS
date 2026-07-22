@@ -32,12 +32,12 @@ interface InspectorBlockProps {
 
 function InspectorBlock({ title, icon, children }: InspectorBlockProps) {
   return (
-    <Surface variant="raised" density="compact" className="border-0 border-b border-[var(--border-subtle)] last:border-b-0">
-      <div className="flex items-center gap-1.5 px-3 py-1.5 border-b border-[var(--border-subtle)]">
-        {icon && <FinancialIcon name={icon} size={12} className="text-[var(--text-tertiary)]" />}
-        <span className="fin-caption font-medium uppercase tracking-wider">{title}</span>
+    <Surface variant="raised" density="compact" className="border-0 border-b border-[var(--border-subtle)] last:border-b-0 fin-inspector-section">
+      <div className="flex items-center gap-1.5 px-2 py-1 border-b border-[var(--border-subtle)]">
+        {icon && <FinancialIcon name={icon} size={10} className="text-[var(--text-tertiary)]" />}
+        <span className="fin-caption font-semibold uppercase tracking-wider text-[var(--text-secondary)]">{title}</span>
       </div>
-      <div className="px-3 py-2">
+      <div className="px-2 py-1.5 space-y-1">
         {children}
       </div>
     </Surface>
@@ -158,7 +158,7 @@ export function RightInspector({ className }: RightInspectorProps) {
   const selectedNodeId = useMemo(() => {
     const selection = commandCenterRuntime.getSelection();
     return selection.node_ids.length > 0 ? selection.node_ids[0] : null;
-  }, [state.currentWorkspace]);
+  }, []);
 
   // Get related nodes
   const relatedNodes = useMemo(() => {

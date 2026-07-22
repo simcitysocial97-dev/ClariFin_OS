@@ -53,7 +53,7 @@ export function SavingsRate({ savingsRate, loading, error }: SavingsRateProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-red-600">
+          <div className="flex items-center gap-2 text-[var(--color-negative-600)]">
             <AlertCircle className="h-4 w-4" />
             <span className="text-sm">Failed to load savings rate</span>
           </div>
@@ -67,7 +67,7 @@ export function SavingsRate({ savingsRate, loading, error }: SavingsRateProps) {
     return (
       <Card>
         <CardContent className="p-6">
-          <p className="text-gray-500 text-sm">No savings rate data available</p>
+          <p className="text-[var(--text-tertiary)] text-sm">No savings rate data available</p>
         </CardContent>
       </Card>
     );
@@ -77,7 +77,11 @@ export function SavingsRate({ savingsRate, loading, error }: SavingsRateProps) {
   const percentage = (savingsRate.savings_rate_bps / 100).toFixed(1);
 
   // Determine rate color
-  const rateColor = savingsRate.savings_rate_bps >= 200 ? 'text-green-600' : savingsRate.savings_rate_bps >= 100 ? 'text-amber-600' : 'text-red-600';
+  const rateColor = savingsRate.savings_rate_bps >= 200 
+    ? 'text-[var(--color-positive-600)]' 
+    : savingsRate.savings_rate_bps >= 100 
+      ? 'text-[var(--color-warning-600)]' 
+      : 'text-[var(--color-negative-600)]';
 
   return (
     <Card>

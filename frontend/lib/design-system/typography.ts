@@ -86,14 +86,24 @@ export const financialTypography = {
 } as const;
 
 // ===== CSS Classes =====
+// Hierarchy: Financial Values → Primary Metrics → Panel Titles → Section Labels → Metadata → Captions → Hints
+// Use fin-* token classes only — no arbitrary sizes, no hardcoded grays.
 export const typographyClasses = {
-  value: 'font-mono text-sm font-medium tracking-tight',
-  valueLarge: 'font-mono text-lg font-semibold tracking-tight',
-  valueSmall: 'font-mono text-xs',
-  nodeLabel: 'text-sm font-medium',
-  nodeLabelSmall: 'text-xs',
-  sectionHeader: 'text-lg font-semibold',
-  panelHeader: 'text-xl font-semibold',
-  body: 'text-sm',
-  caption: 'text-xs text-gray-500',
+  // Financial Values
+  value: 'fin-amount',
+  valueLarge: 'fin-amount-large',
+  valueSmall: 'fin-amount-compact',
+  // Primary Metrics / Node labels
+  nodeLabel: 'fin-label',
+  nodeLabelSmall: 'fin-label-caption',
+  // Panel Titles
+  panelHeader: 'fin-panel-header',
+  // Section Labels
+  sectionHeader: 'fin-section-header',
+  // Body / Metadata
+  body: 'fin-body',
+  bodySmall: 'fin-body-small',
+  // Captions / Hints
+  caption: 'fin-caption',
+  hint: 'fin-caption text-[var(--text-tertiary)]',
 } as const;

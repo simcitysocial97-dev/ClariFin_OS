@@ -133,10 +133,19 @@ class LoanService:
         }
 
     def get_current_balance(self, loan_id: int) -> int:
-        """
-        Calculate current outstanding balance from loan engine.
+        """Calculate current outstanding balance from loan engine.
 
         Does NOT trust stored balance - calculates fresh from schedule.
+        Returns the outstanding_paise value for the loan.
+
+        Args:
+            loan_id: The unique identifier of the loan.
+
+        Returns:
+            The current outstanding balance in paise (₹1.00 = 100 paise).
+
+        Raises:
+            ValueError: If loan with given ID is not found.
         """
         loan = self.loan_repo.get_loan(loan_id)
         if not loan:

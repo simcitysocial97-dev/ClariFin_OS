@@ -10,11 +10,16 @@ import { motionClasses } from '../design-system/motion';
 export function getAnimationClass(animation: string): string {
   switch (animation) {
     case 'pulse':
-      return 'animate-pulse';
+      return 'fin-risk-pulse';
     case 'flow':
-      return 'transition-all duration-300';
+      return 'fin-edge-money-flow';
     case 'warning':
-      return 'animate-bounce';
+      // Risk uses subtle pulse — never bounce/elastic
+      return 'fin-risk-pulse';
+    case 'selection':
+      return 'fin-node-halo';
+    case 'simulation':
+      return 'fin-simulation-pulse';
     default:
       return '';
   }
