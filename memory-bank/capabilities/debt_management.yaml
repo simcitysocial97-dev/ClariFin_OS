@@ -1,0 +1,50 @@
+id: debt_management
+name: Debt Management
+description: >
+  Compute loan schedules, EMI calculations, foreclosure amounts, prepayment simulations,
+  and loan health metrics for personal loans and other debt instruments.
+criticality: high
+risk: medium
+routers:
+  - src/routers/loans.py
+services:
+  - src/services/loan_service.py
+  - src/services/loan_analysis_service.py
+  - src/services/loan_simulation_service.py
+engines:
+  - src/engines/loan_engine/amortization.py
+  - src/engines/loan_engine/emi.py
+  - src/engines/loan_engine/floating_rate.py
+  - src/engines/loan_engine/foreclosure.py
+  - src/engines/loan_engine/metrics.py
+  - src/engines/loan_engine/models.py
+  - src/engines/loan_engine/prepayment.py
+  - src/engines/loan_engine/utils.py
+repositories:
+  - src/repositories/loan_repository.py
+  - src/repositories/loan_payment_repository.py
+tables:
+  - loans
+  - loan_payments
+  - credit_card_emi
+golden_datasets:
+  - tests/golden/datasets/salary_plus_loan.json
+  - tests/golden/datasets/multiple_loans.json
+  - tests/golden/datasets/high_debt_household.json
+property_tests:
+  - tests/properties/test_loan.py
+  - tests/properties/lending/test_engine_properties.py
+invariants:
+  - tests/invariants/test_loan.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - POST /api/loans
+  - GET /api/loans/{loan_id}/schedule
+  - POST /api/loans/foreclosure-calculate
+  - POST /api/loans/prepayment-simulate
+dependencies:
+  - household_cashflow
+failure_impact: >
+  Loan repayment planning breaks. Users cannot determine correct EMIs, foreclosure
+  amounts, or prepayment savings, leading to incorrect debt decisions.

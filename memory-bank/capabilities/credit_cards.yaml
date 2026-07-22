@@ -1,0 +1,48 @@
+id: credit_cards
+name: Credit Cards
+description: >
+  Analyze credit card statements, compute utilization ratios, track outstanding balances,
+  detect EMI conversions and cash advances, and optimize credit card repayment strategies.
+criticality: high
+risk: medium
+routers:
+  - src/routers/credit_cards.py
+  - src/routers/cards_statements.py
+services:
+  - src/services/credit_card_service.py
+engines:
+  - src/engines/credit_card_engine/billing.py
+  - src/engines/credit_card_engine/emi.py
+  - src/engines/credit_card_engine/foreclosure.py
+  - src/engines/credit_card_engine/interest.py
+  - src/engines/credit_card_engine/metrics.py
+  - src/engines/credit_card_engine/outstanding.py
+  - src/engines/credit_card_engine/utilization.py
+repositories:
+  - src/repositories/credit_card_repository.py
+  - src/repositories/credit_card_statement_repository.py
+tables:
+  - credit_cards
+  - credit_card_statements
+  - credit_card_emi
+  - credit_card_foreclosure
+golden_datasets:
+  - tests/golden/datasets/credit_card_revolver.json
+  - tests/golden/datasets/cash_advance.json
+  - tests/golden/datasets/cc_statement_scenario.json
+property_tests:
+  - tests/properties/credit_cards/test_engine_properties.py
+invariants:
+  - tests/invariants/test_credit.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - POST /api/credit-cards
+  - GET /api/credit-cards/{card_id}/statement
+  - POST /api/credit-cards/{card_id}/emi-convert
+  - POST /api/credit-cards/foreclosure-calculate
+dependencies:
+  - household_cashflow
+failure_impact: >
+  Credit card repayment planning breaks. Users cannot optimize payment strategies or
+  understand true cost of revolving debt, leading to excessive interest charges.

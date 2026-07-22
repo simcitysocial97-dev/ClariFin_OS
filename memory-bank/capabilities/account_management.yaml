@@ -1,0 +1,47 @@
+id: account_management
+name: Account Management
+description: >
+  Manage bank accounts and linked accounts, track balances, detect dormant accounts,
+  compute account metrics, and maintain account lifecycle state.
+criticality: high
+risk: low
+routers:
+  - src/routers/accounts.py
+  - src/routers/managed_accounts.py
+services:
+  - src/services/account_service.py
+engines:
+  - src/engines/account_engine/balance.py
+  - src/engines/account_engine/cashflow.py
+  - src/engines/account_engine/dormant.py
+  - src/engines/account_engine/history.py
+  - src/engines/account_engine/lifecycle.py
+  - src/engines/account_engine/metrics.py
+repositories:
+  - src/repositories/account_repository.py
+  - src/repositories/account_balance_repository.py
+  - src/repositories/account_link_repository.py
+tables:
+  - accounts
+  - account_balances
+  - account_links
+golden_datasets:
+  - tests/golden/datasets/normal_household.json
+  - tests/golden/datasets/salary_only.json
+  - tests/golden/datasets/family_household.json
+property_tests:
+  - tests/test_account_engine.py
+  - tests/properties/behaviour/test_engine_properties.py
+invariants:
+  - tests/invariants/test_account.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - POST /api/accounts
+  - GET /api/accounts/{account_id}
+  - GET /api/accounts/{account_id}/metrics
+  - POST /api/accounts/link
+dependencies: []
+failure_impact: >
+  Account data becomes inconsistent. Users cannot track balances or detect dormant accounts
+  leading to inaccurate financial position reporting.

@@ -336,3 +336,34 @@ The following rules have been consolidated or removed:
 - Removed: "Multiple read_file iterations for understanding" (now architectural debt)
 - Consolidated: All tool selection guidance into Intent Router
 - Consolidated: All self-healing guidance into Self-Healing Protocol
+
+---
+
+## 16. GIT SAFETY RULES
+
+### Branch Protection
+- **NEVER commit directly to `main` or `Production-Gate`**. All work must be done on a feature branch.
+- **NEVER force-push** to any shared branch (`main`, `Production-Gate`, `stage-*`).
+- **NEVER drop database tables.** Use `ADD COLUMN` or `IF NOT EXISTS`.
+- **NEVER delete branches** that contain unmerged work without explicit confirmation.
+
+### Commit Discipline
+- **One logical change per commit.** Each commit must pass all verification gates (`verify-fast.sh`).
+- **Commit messages** must follow conventional format: `type(scope): description`.
+- **Before every commit**, run `verify-fast.sh` and ensure all checks pass.
+- **Before merging**, ensure the working tree is clean and all tests pass.
+
+### Recovery Safety
+- **Always verify the source commit** before restoring files from Git history. Use `git ls-tree -r --name-only <commit> -- <path>` to confirm file existence.
+- **Never restore files that already exist** in the current HEAD. Check with `git ls-tree HEAD -- <path>` first.
+- **For MERGE operations**, always diff the lost version against the current version first: `git diff <current> <lost> -- <path>`.
+- **For engines, restore the entire directory** at once to preserve internal imports.
+- **For tests, restore the entire directory structure** to preserve conftest.py and __init__.py files.
+
+### Repository Boundary Enforcement
+- **ONLY files under `src/repositories/` may import FinanceDB.**
+- **Routers MUST NOT import FinanceDB or `get_db()`.**
+- **Engines MUST NOT import FinanceDB.**
+- If FinanceDB import is detected outside `repositories/`, refactor immediately.
+>>>>>>>
+

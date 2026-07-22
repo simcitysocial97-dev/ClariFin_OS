@@ -1,0 +1,510 @@
+{
+  "generated_at": "2026-07-15T14:13:41.805769+00:00",
+  "runtimes": {
+    "architecture": 1.12,
+    "golden": 0.44,
+    "capability": 0.48,
+    "properties": 0.36
+  },
+  "stage_analysis": {
+    "fast": {
+      "description": "Ruff lint + format + mypy/pyright type check",
+      "runtime_seconds": 1.12,
+      "lines_of_code": 0,
+      "unique_value": "Syntax and type errors caught before test execution",
+      "status": "KEEP"
+    },
+    "coverage": {
+      "description": "Source-to-capability coverage mapping",
+      "runtime_seconds": 1.0,
+      "unique_value": "Drives selective verification selection",
+      "status": "KEEP"
+    },
+    "change_intelligence": {
+      "description": "File impact analysis and risk assessment",
+      "runtime_seconds": 0.5,
+      "unique_value": "Essential for capability detection",
+      "status": "KEEP"
+    },
+    "mutation_readiness": {
+      "description": "Mutation analysis for test strength",
+      "runtime_seconds": 2.5,
+      "unique_value": "Quality metrics, not PR blocking",
+      "status": "OPTIONAL"
+    },
+    "architecture": {
+      "description": "Layer boundary validation",
+      "runtime_seconds": 1.12,
+      "unique_value": "Catches architectural violations",
+      "status": "KEEP"
+    },
+    "capability": {
+      "description": "Capability smoke tests",
+      "runtime_seconds": 0.48,
+      "unique_value": "Quick smoke validation of orchestration",
+      "status": "KEEP"
+    },
+    "property": {
+      "description": "Property-based invariant testing",
+      "runtime_seconds": 0.36,
+      "unique_value": "Exhaustive logic verification",
+      "note": "Has flaky test needing fix",
+      "status": "KEEP"
+    },
+    "golden": {
+      "description": "Golden dataset regression tests",
+      "runtime_seconds": 0.44,
+      "unique_value": "Regression protection for known scenarios",
+      "status": "KEEP"
+    },
+    "contract": {
+      "description": "API contract validation",
+      "runtime_seconds": 12,
+      "unique_value": "Verifies API shape compliance",
+      "note": "Has failures due to missing DB",
+      "status": "KEEP"
+    },
+    "meta": {
+      "description": "Meta infrastructure tests",
+      "runtime_seconds": 2,
+      "unique_value": "Validates test framework itself",
+      "status": "OPTIONAL"
+    }
+  },
+  "artifact_analysis": [
+    {
+      "file": "api-map.json",
+      "producer": "CIF/SVF",
+      "regeneration": "Per run",
+      "purpose": "Registry mapping files to endpoints",
+      "exists": true,
+      "size_bytes": 130993,
+      "last_modified": "2026-07-15T08:28:50.913320+00:00"
+    },
+    {
+      "file": "capability-registry.yaml",
+      "producer": "check_coverage.py",
+      "regeneration": "Per run",
+      "purpose": "Canonical capability definitions",
+      "exists": true,
+      "size_bytes": 16479,
+      "last_modified": "2026-07-15T13:45:04.066915+00:00"
+    },
+    {
+      "file": "change-impact.md",
+      "producer": "CIF",
+      "regeneration": "Per run",
+      "purpose": "Human-readable change analysis",
+      "exists": true,
+      "size_bytes": 15295,
+      "last_modified": "2026-07-15T13:45:04.076915+00:00"
+    },
+    {
+      "file": "change-report.json",
+      "producer": "CIF",
+      "regeneration": "Per run",
+      "purpose": "Machine-readable change analysis",
+      "exists": true,
+      "size_bytes": 2181,
+      "last_modified": "2026-07-15T14:08:32.013587+00:00"
+    },
+    {
+      "file": "change-report.md",
+      "producer": "CIF",
+      "regeneration": "Per run",
+      "purpose": "Human-readable change report",
+      "exists": true,
+      "size_bytes": 1069,
+      "last_modified": "2026-07-15T14:08:32.011768+00:00"
+    },
+    {
+      "file": "coverage.json",
+      "producer": "check_coverage.py",
+      "regeneration": "Per run",
+      "purpose": "File-to-capability coverage map",
+      "exists": true,
+      "size_bytes": 3443,
+      "last_modified": "2026-07-15T13:46:01.767322+00:00"
+    },
+    {
+      "file": "coverage.md",
+      "producer": "check_coverage.py",
+      "regeneration": "Per run",
+      "purpose": "Human coverage report",
+      "exists": true,
+      "size_bytes": 1201,
+      "last_modified": "2026-07-15T13:45:04.068204+00:00"
+    },
+    {
+      "file": "mutation-gaps.md",
+      "producer": "mutation_discovery.py",
+      "regeneration": "Per run",
+      "purpose": "Mutation candidate gaps",
+      "exists": true,
+      "size_bytes": 11746,
+      "last_modified": "2026-07-15T13:46:01.767479+00:00"
+    },
+    {
+      "file": "mutation-guide.md",
+      "producer": "mutation_discovery.py",
+      "regeneration": "Per run",
+      "purpose": "Mutation guidance",
+      "exists": true,
+      "size_bytes": 5787,
+      "last_modified": "2026-07-15T09:36:02.458204+00:00"
+    },
+    {
+      "file": "mutation-map.json",
+      "producer": "mutation_discovery.py",
+      "regeneration": "Per run",
+      "purpose": "Function purity analysis",
+      "exists": true,
+      "size_bytes": 72755,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "mutation-readiness.json",
+      "producer": "mutation_discovery.py",
+      "regeneration": "Per run",
+      "purpose": "Mutation readiness data",
+      "exists": true,
+      "size_bytes": 12761,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "mutation-readiness.md",
+      "producer": "mutation_discovery.py",
+      "regeneration": "Per run",
+      "purpose": "Human mutation readiness",
+      "exists": true,
+      "size_bytes": 4750,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "mutation-registry.json",
+      "producer": "mutation_discovery.py",
+      "regeneration": "Per run",
+      "purpose": "Mutation candidates registry",
+      "exists": true,
+      "size_bytes": 45522,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "risk-rules.yaml",
+      "producer": "Manual",
+      "regeneration": "Static",
+      "purpose": "Risk classification rules",
+      "exists": true,
+      "size_bytes": 1473,
+      "last_modified": "2026-07-15T03:28:59.825025+00:00"
+    },
+    {
+      "file": "selective-history.json",
+      "producer": "SVF",
+      "regeneration": "Per run",
+      "purpose": "Selective verification history",
+      "exists": true,
+      "size_bytes": 2773,
+      "last_modified": "2026-07-15T03:40:48.677310+00:00"
+    },
+    {
+      "file": "selective-plan.md",
+      "producer": "SVF",
+      "regeneration": "Per run",
+      "purpose": "Selective verification plan",
+      "exists": true,
+      "size_bytes": 397,
+      "last_modified": "2026-07-15T14:05:40.539859+00:00"
+    },
+    {
+      "file": "selective-summary.json",
+      "producer": "SVF",
+      "regeneration": "Per run",
+      "purpose": "Machine-readable SVF summary",
+      "exists": true,
+      "size_bytes": 349,
+      "last_modified": "2026-07-15T03:40:48.676700+00:00"
+    },
+    {
+      "file": "test-plan.md",
+      "producer": "CIF",
+      "regeneration": "Per run",
+      "purpose": "Recommended test plan",
+      "exists": true,
+      "size_bytes": 578,
+      "last_modified": "2026-07-15T14:08:32.013997+00:00"
+    },
+    {
+      "file": "test-strength.json",
+      "producer": "test_strength.py",
+      "regeneration": "Per run",
+      "purpose": "Test strength analysis",
+      "exists": true,
+      "size_bytes": 6010,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "test-strength.md",
+      "producer": "test_strength.py",
+      "regeneration": "Per run",
+      "purpose": "Human test strength report",
+      "exists": true,
+      "size_bytes": 2284,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "traceability.md",
+      "producer": "check_coverage.py",
+      "regeneration": "Per run",
+      "purpose": "Test-to-code traceability",
+      "exists": true,
+      "size_bytes": 13263,
+      "last_modified": "2026-07-15T13:45:04.076339+00:00"
+    },
+    {
+      "file": "validation-history.json",
+      "producer": "VOF",
+      "regeneration": "Per run",
+      "purpose": "Validation run history (stale data)",
+      "exists": true,
+      "size_bytes": 13302,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "validation-manifest.json",
+      "producer": "VOF",
+      "regeneration": "Per run",
+      "purpose": "Current validation manifest",
+      "exists": true,
+      "size_bytes": 1678,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "validation-metrics.json",
+      "producer": "VOF",
+      "regeneration": "Per run",
+      "purpose": "Stage metrics",
+      "exists": true,
+      "size_bytes": 120,
+      "last_modified": "2026-07-15T13:46:01.767757+00:00"
+    },
+    {
+      "file": "validation-workflows.md",
+      "producer": "Manual",
+      "regeneration": "Static",
+      "purpose": "Workflow documentation",
+      "exists": true,
+      "size_bytes": 4689,
+      "last_modified": "2026-07-15T03:33:16.913879+00:00"
+    },
+    {
+      "file": "verification-matrix.md",
+      "producer": "SVF",
+      "regeneration": "Per run",
+      "purpose": "Verification matrix",
+      "exists": true,
+      "size_bytes": 824,
+      "last_modified": "2026-07-15T14:05:40.586056+00:00"
+    }
+  ],
+  "capability_coverage": [
+    {
+      "id": "household_cashflow",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 3,
+        "property": 3,
+        "golden": 2,
+        "contract": 1,
+        "invariant": 1
+      },
+      "notes": "Well covered across all categories"
+    },
+    {
+      "id": "debt_management",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 3,
+        "property": 5,
+        "golden": 2,
+        "contract": 1,
+        "invariant": 1
+      },
+      "notes": "Well covered, some flaky tests"
+    },
+    {
+      "id": "credit_cards",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 3,
+        "property": 4,
+        "golden": 2,
+        "contract": 1,
+        "invariant": 1
+      },
+      "notes": "Well covered, flaky test detected in EMI conversion"
+    },
+    {
+      "id": "financial_health",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 5,
+        "property": 4,
+        "golden": 2,
+        "contract": 4,
+        "invariant": 1
+      },
+      "notes": "Well covered"
+    },
+    {
+      "id": "forecasting",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 4,
+        "property": 2,
+        "golden": 2,
+        "contract": 3,
+        "invariant": 1
+      },
+      "notes": "Well covered"
+    },
+    {
+      "id": "transaction_intelligence",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 3,
+        "property": 2,
+        "golden": 2,
+        "contract": 3,
+        "invariant": 1
+      },
+      "notes": "Well covered"
+    },
+    {
+      "id": "reconciliation",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 3,
+        "property": 2,
+        "golden": 1,
+        "contract": 3,
+        "invariant": 1
+      },
+      "notes": "Well covered, has dedicated determinism tests"
+    },
+    {
+      "id": "financial_events",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 2,
+        "property": 1,
+        "golden": 1,
+        "contract": 3,
+        "invariant": 1
+      },
+      "notes": "Well covered"
+    },
+    {
+      "id": "recommendations",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 2,
+        "property": 0,
+        "golden": 2,
+        "contract": 2,
+        "invariant": 1
+      },
+      "notes": "Missing property tests"
+    },
+    {
+      "id": "account_management",
+      "smoke_tests": true,
+      "property_tests": true,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 3,
+        "property": 1,
+        "golden": 2,
+        "contract": 2,
+        "invariant": 1
+      },
+      "notes": "Well covered"
+    },
+    {
+      "id": "pattern_analysis",
+      "smoke_tests": true,
+      "property_tests": false,
+      "golden_scenarios": true,
+      "contract_tests": true,
+      "invariants": true,
+      "test_files_count": {
+        "capability": 2,
+        "property": 0,
+        "golden": 1,
+        "contract": 3,
+        "invariant": 1
+      },
+      "notes": "Missing property tests"
+    }
+  ],
+  "overlap": {
+    "architecture_vs_property": {
+      "overlap": "Medium",
+      "description": "Architecture tests catch layer boundary violations; property tests catch logic errors. Different concern domains."
+    },
+    "architecture_vs_invariant": {
+      "overlap": "Low",
+      "description": "Architecture is structural; invariants are mathematical. Minimal overlap."
+    },
+    "property_vs_golden": {
+      "overlap": "High",
+      "description": "Both verify business logic. Golden tests are deterministic snapshots; property tests are exhaustive invariants. Complementary."
+    },
+    "capability_vs_contract": {
+      "overlap": "Medium",
+      "description": "Capability tests verify orchestration; contract tests verify API shape. Different but related."
+    },
+    "golden_vs_invariant": {
+      "overlap": "Medium",
+      "description": "Golden tests use invariant assertions. Some overlap in financial correctness."
+    }
+  }
+}
