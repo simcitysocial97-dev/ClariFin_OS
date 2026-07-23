@@ -7,7 +7,6 @@ from src.services.account_service import AccountService
 from src.services.accounts_service import AccountsService
 from src.services.audit_service import AuditService
 from src.services.base import BaseService
-from src.services.behavior_service import BehaviorService
 from src.services.behaviour_workspace_service import BehaviourWorkspaceService
 from src.services.cashflow_service import CashflowService
 from src.services.credit_cards_workspace_service import CreditCardsWorkspaceService
@@ -31,7 +30,6 @@ __all__ = [
     "AccountsService",
     "AuditService",
     "BaseService",
-    "BehaviorService",
     "BehaviourWorkspaceService",
     "CashflowService",
     "CreditCardsWorkspaceService",
