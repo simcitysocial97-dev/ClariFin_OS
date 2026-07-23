@@ -12,6 +12,8 @@ from src.services.behaviour_workspace_service import BehaviourWorkspaceService
 from src.services.cashflow_service import CashflowService
 from src.services.credit_cards_workspace_service import CreditCardsWorkspaceService
 from src.services.dashboard_service import DashboardService
+from src.services.financial_events_service import FinancialEventsService
+from src.services.financial_intelligence_service import FinancialIntelligenceService
 from src.services.forecast_service import ForecastService
 from src.services.investments_workspace_service import InvestmentsWorkspaceService
 from src.services.loan_analysis_service import LoanAnalysisService
@@ -22,6 +24,7 @@ from src.services.networth_service import NetWorthService
 from src.services.reconciliation_service import ReconciliationService
 from src.services.reconciliation_workspace_service import ReconciliationWorkspaceService
 from src.services.statement_service import StatementService
+from src.services.transaction_intelligence_service import TransactionIntelligenceService
 
 __all__ = [
     "AccountService",
@@ -29,11 +32,13 @@ __all__ = [
     "AuditService",
     "BaseService",
     "BehaviorService",
-    "CashflowService",
-    "DashboardService",
-    "ForecastService",
     "BehaviourWorkspaceService",
+    "CashflowService",
     "CreditCardsWorkspaceService",
+    "DashboardService",
+    "FinancialEventsService",
+    "FinancialIntelligenceService",
+    "ForecastService",
     "InvestmentsWorkspaceService",
     "LoanAnalysisService",
     "LoanService",
@@ -43,4 +48,5 @@ __all__ = [
     "ReconciliationService",
     "ReconciliationWorkspaceService",
     "StatementService",
+    "TransactionIntelligenceService",
 ]

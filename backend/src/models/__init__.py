@@ -1,6 +1,8 @@
 from src.models.account import Account
 from src.models.base import DomainModel, Money
 from src.models.dashboard import DashboardSummary
+from src.models.financial_event import FinancialEvent
+from src.models.financial_goal import FinancialGoal
 from src.models.investment import Investment
 from src.models.loan import (
     AmortizationRow,
@@ -31,6 +33,8 @@ __all__ = [
     "AmortizationRow",
     "DashboardSummary",
     "DomainModel",
+    "FinancialEvent",
+    "FinancialGoal",
     "ForeclosureSimulationResponse",
     "Investment",
     "Loan",

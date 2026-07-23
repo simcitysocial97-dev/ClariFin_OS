@@ -20,6 +20,37 @@ class AccountBalanceRepository(BaseRepository):
     """
 
     # ============================================================
+    # Running Balance (merged from Recon-V2 balance_repository)
+    # ============================================================
+
+    def get_running_balance_rows(
+        self, account_id: str | None = None, starting_balance_paise: int = 0
+    ) -> list[dict[str, Any]]:
+        """Return running balance rows computed from transactions.
+
+        Returns shape: [{date_iso, amount_paise, running_balance_paise}, ...]
+        Useful for BalanceEngine and trend visualisation.
+        """
+        results: list[dict[str, Any]] = []
+        with self._get_conn() as conn:
+            cursor = conn.execute(
+                "SELECT date, amount FROM transactions "
+                "WHERE account_id = ? OR ? IS NULL ORDER BY date ASC",
+                (account_id, account_id),
+            )
+            balance = starting_balance_paise
+            for date_iso, amount in cursor.fetchall():
+                balance += int(amount or 0)
+                results.append(
+                    {
+                        "date_iso": date_iso,
+                        "amount_paise": int(amount or 0),
+                        "running_balance_paise": balance,
+                    }
+                )
+        return results
+
+    # ============================================================
     # Balance Snapshot Operations
     # ============================================================
 
