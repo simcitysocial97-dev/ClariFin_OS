@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T04:39:13.465Z",
+  "timestamp": "2026-07-22T10:08:47.893Z",
   "versions": {
     "next": "16.1.6",
     "react": "19.2.3",
@@ -50,12 +50,12 @@
         "gen:types": "openapi-typescript http://localhost:8000/openapi.json -o ./types/api-generated.ts",
         "dev:safe": "concurrently --names 'next,tsc' --prefix-colors 'cyan,yellow' 'next dev --turbopack' 'tsc --watch --noEmit --preserveWatchOutput'",
         "type-check": "tsc --noEmit",
-        "fvf": "npx tsx tools/validate.ts --all",
-        "fvf:fast": "npx tsx tools/validate.ts --fast",
         "validate": "npm run type-check && npm run lint && npm run test"
       },
       "dependencies": {
+        "@nivo/sankey": "^0.99.0",
         "@tanstack/react-query": "^5.101.2",
+        "@xyflow/react": "^12.11.2",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "date-fns": "^4.1.0",

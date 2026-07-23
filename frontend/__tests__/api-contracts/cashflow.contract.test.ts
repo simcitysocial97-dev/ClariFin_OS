@@ -28,7 +28,7 @@ describe('GET /api/cashflow/monthly contract', () => {
     const response = await fetch('/api/cashflow/monthly')
     const data = await response.json()
 
-    data.months.forEach((month: any) => {
+    data.months.forEach((month: { income_paise: number; expense_paise: number; net_paise: number }) => {
       expect(typeof month.income_paise).toBe('number')
       expect(Number.isInteger(month.income_paise)).toBe(true)
       expect(typeof month.expense_paise).toBe('number')
@@ -42,7 +42,7 @@ describe('GET /api/cashflow/monthly contract', () => {
     const response = await fetch('/api/cashflow/monthly')
     const data = await response.json()
 
-    const keys = data.months.map((m: any) => m.month_key)
+    const keys = data.months.map((m: { month_key: string }) => m.month_key)
     const sorted = [...keys].sort()
     expect(keys).toEqual(sorted)
   })

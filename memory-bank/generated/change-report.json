@@ -1,46 +1,29 @@
 {
-  "generated_at": "2026-07-15T14:08:32.011829+00:00",
-  "git_sha": "79d3bf9b2b5da589f64f97bb6cbe8449c15590f4",
+  "generated_at": "2026-07-22T14:00:11.951700+00:00",
+  "git_sha": "9300b6fe54dbe5a2565fa6f8184c9c7cc781dba3",
   "changes": [
     {
-      "file": "backend/src/engines/cashflow_engine.py",
-      "risk": "CRITICAL",
-      "confidence": "HIGH",
+      "file": "some_random_file.py",
+      "risk": "LOW",
+      "confidence": "LOW",
       "capabilities": [
-        "household_cashflow"
+        "UNKNOWN"
       ],
       "affected": {
         "services": [],
         "engines": [],
         "repositories": [],
-        "property_tests": [
-          "tests/properties",
-          "tests/properties/cashflow"
-        ],
-        "golden_tests": [
-          "family_household",
-          "normal_household",
-          "salary_only",
-          "salary_plus_loan"
-        ],
-        "invariants": [
-          "tests/invariants/test_cashflow.py"
-        ],
-        "capability_tests": [
-          "tests/capabilities/household_cashflow"
-        ]
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
       },
-      "recommended_commands": [
-        "pytest tests/capabilities/household_cashflow -q",
-        "pytest tests/properties -q",
-        "pytest tests/properties/cashflow -q",
-        "pytest tests/golden -k 'family_household,normal_household,salary_only' -q"
-      ]
+      "recommended_commands": []
     }
   ],
   "overall": {
-    "risk": "CRITICAL",
-    "score": 8
+    "risk": "LOW",
+    "score": 1
   },
   "mutation_readiness": {
     "account_management": "Critical",
@@ -55,11 +38,7 @@
     "reconciliation": "Critical",
     "transaction_intelligence": "Critical"
   },
-  "affected_mutation_candidates": {
-    "backend/src/engines/cashflow_engine.py": [
-      "src/engines/cashflow_engine.py:compute_monthly_cashflow"
-    ]
-  },
+  "affected_mutation_candidates": {},
   "test_strength": {
     "account_management": "Critical",
     "credit_cards": "Critical",

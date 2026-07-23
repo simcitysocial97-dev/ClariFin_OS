@@ -1,28 +1,21 @@
 # Frontend Validation Report
 
-**Timestamp:** 2026-07-16T04:45:28.324Z
+**Timestamp:** 2026-07-22T10:08:47.894Z
 **Strategy:** fast
-**Duration:** 374.9s
-**Status:** ⚠️ PARTIAL
-**Errors:** 1 | **Warnings:** 6
-
-## ⚠️ AI Error Loop Detected
-
-**Repeated failures in:** Build Validation
-
-**Suggestion:** The following stages have failed for 5 consecutive runs: Build Validation. Consider reverting recent changes instead of continuing incremental fixes.
+**Duration:** 0.0s
+**Status:** ✅ PASS
+**Errors:** 0 | **Warnings:** 6
 
 ## Summary
 
 | Stage | Status | Duration | Summary |
 |-------|--------|----------|---------|
-| ✅ Toolchain Lock | PASS | 6ms | 0 errors, 6 warnings |
-| ❌ Build Validation | FAIL | 374767ms | 1 errors, 0 warnings |
+| ✅ Toolchain Lock | PASS | 2ms | 0 errors, 6 warnings |
 
 ## Detailed Results
 
 ## Toolchain Lock
-**Status:** ✅ PASS | **Duration:** 6ms
+**Status:** ✅ PASS | **Duration:** 2ms
 **Summary:** 0 errors, 6 warnings
 
 | Severity | File | Message |
@@ -33,13 +26,4 @@
 | 🟡 warning | - | zod uses floating version range "^4.4.3". Pin to exact version for reproducibility. |
 | 🟡 warning | - | zustand uses floating version range "^5.0.11". Pin to exact version for reproducibility. |
 | 🟡 warning | - | recharts uses floating version range "^3.7.0". Pin to exact version for reproducibility. |
-
-
-## Build Validation
-**Status:** ❌ FAIL | **Duration:** 374767ms
-**Summary:** 1 errors, 0 warnings
-
-| Severity | File | Message |
-|----------|------|---------|
-| 🔴 error | - | ESLint failed with 0 error(s) and 0 warning(s) |
 

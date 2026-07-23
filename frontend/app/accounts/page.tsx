@@ -112,7 +112,7 @@ function ManagedAccountForm({
   const [formData, setFormData] = useState<ManagedAccountFormData>({
     name: initialData?.name || "",
     bank: initialData?.bank || "",
-    account_type: (initialData?.account_type as any) || "savings",
+    account_type: (initialData?.account_type as "savings" | "current" | "salary" | "fd" | "nre" | "nro") || "savings",
     // Convert from paise to rupees for form display
     balance: initialData ? (initialData.balance_paise / 100).toString() : "",
     account_number_last4: initialData?.account_number_last4 || "",
@@ -150,7 +150,7 @@ function ManagedAccountForm({
         <Label htmlFor="account_type">Account Type</Label>
         <Select
           value={formData.account_type}
-          onValueChange={(value: any) => setFormData({ ...formData, account_type: value })}
+          onValueChange={(value: string) => setFormData({ ...formData, account_type: value as "savings" | "current" | "salary" | "fd" | "nre" | "nro" })}
         >
           <SelectTrigger>
             <SelectValue />
@@ -257,7 +257,7 @@ export default function AccountsPage() {
         notes: formData.notes || undefined,
       });
       setDialogOpen(false);
-    } catch (err) {
+    } catch {
       // Error is handled by mutation
     }
   };
@@ -277,7 +277,7 @@ export default function AccountsPage() {
       });
       setEditingAccount(null);
       setDialogOpen(false);
-    } catch (err) {
+    } catch {
       // Error is handled by mutation
     }
   };
@@ -286,7 +286,7 @@ export default function AccountsPage() {
     if (!confirm("Are you sure you want to delete this account?")) return;
     try {
       await deleteAccountMutation.mutateAsync(id);
-    } catch (err) {
+    } catch {
       // Error is handled by mutation
     }
   };

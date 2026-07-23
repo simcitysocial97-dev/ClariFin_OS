@@ -13,7 +13,7 @@ describe('GET /api/banks contract', () => {
     const response = await fetch('/api/banks')
     const data = await response.json()
 
-    data.banks.forEach((bank: any) => {
+    data.banks.forEach((bank: string) => {
       expect(typeof bank).toBe('string')
     })
   })

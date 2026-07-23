@@ -110,11 +110,11 @@ export function UploadZone() {
           const startTime = Date.now();
 
           // Load parser and parse
-          console.log('[UPLOAD] Loading parser...');
+          console.warn('[UPLOAD] Loading parser...');
           const parser = await loadParser();
-          console.log('[UPLOAD] Calling parseStatement...');
+          console.warn('[UPLOAD] Calling parseStatement...');
           const result = await parser(file);
-          console.log('[UPLOAD] Parse result:', result);
+          console.warn('[UPLOAD] Parse result:', result);
 
           const endTime = Date.now();
           const duration = endTime - startTime;

@@ -275,7 +275,7 @@ export function TransactionTable({
                   <MoneyValue 
                     paise={tx.amount.paise} 
                     variant="default"
-                    sign={tx.transaction_type === 'debit' ? 'negative' : 'positive'}
+                    sign="never"
                   />
                 </TableCell>
               )}

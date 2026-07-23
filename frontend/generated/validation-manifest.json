@@ -1,23 +1,31 @@
 {
-  "timestamp": "2026-07-16T04:45:28.324Z",
+  "timestamp": "2026-07-22T10:08:47.894Z",
   "changedFiles": [
-    "frontend/app/dashboard/page.tsx",
-    "frontend/lib/hooks/use-cards.ts",
-    "frontend/lib/hooks/use-dashboard-metrics.ts",
-    "frontend/lib/hooks/use-investments.ts",
-    "frontend/lib/hooks/use-loans.ts",
-    "frontend/lib/hooks/use-networth.ts",
-    "frontend/next-env.d.ts",
+    ".github/workflows/ci.yml",
+    "frontend/__tests__/api-contracts/banks.contract.test.ts",
+    "frontend/__tests__/api-contracts/cashflow.contract.test.ts",
+    "frontend/__tests__/api-contracts/categories.contract.test.ts",
+    "frontend/__tests__/api-contracts/transactions.contract.test.ts",
+    "frontend/app/accounts/page.tsx",
+    "frontend/app/transactions/workspace-page.tsx",
+    "frontend/components/transaction-table/transaction-table.tsx",
+    "frontend/components/upload/upload-zone.tsx",
+    "frontend/generated/toolchain-lock.json",
+    "frontend/generated/validation-history.json",
+    "frontend/generated/validation-manifest.json",
+    "frontend/generated/validation-report.md",
+    "frontend/lib/parser/core/text-extractor.ts",
+    "frontend/lib/parser/extractors/bank-detector.ts",
+    "frontend/lib/parser/extractors/metadata-extractor.ts",
     "memory-bank/activeContext.md",
     "servers"
   ],
   "strategy": "fast",
   "stages": [
-    "toolchain",
-    "build"
+    "toolchain"
   ],
-  "durationMs": 374932,
-  "status": "PARTIAL",
-  "errorCount": 1,
+  "durationMs": 17,
+  "status": "PASS",
+  "errorCount": 0,
   "warningCount": 6
 }

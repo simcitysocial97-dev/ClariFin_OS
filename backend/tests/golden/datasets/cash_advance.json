@@ -1,0 +1,57 @@
+{
+  "scenario": "cash_advance",
+  "description": "Credit card cash advance scenario. User takes cash advance from ATM, pays fee, and repays later.",
+  "household": {
+    "id": "hh_ca_001",
+    "name": "Cash Advance User",
+    "members": [
+      {"id": "mem_001", "name": "Cardholder", "role": "primary"}
+    ]
+  },
+  "accounts": [
+    {
+      "id": "acct_ca_001",
+      "name": "Salary Account",
+      "type": "savings",
+      "bank": "SBI",
+      "balance_paise": 800000,
+      "owner_id": "mem_001",
+      "household_id": "hh_ca_001"
+    }
+  ],
+  "transactions": [
+    {"date_iso": "2026-01-01", "description": "Salary Credit", "amount_paise": 5000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-10", "description": "ATM Cash Advance", "amount_paise": -1000000, "type": "debit", "category": "cash_advance"},
+    {"date_iso": "2026-01-10", "description": "Cash Advance Fee", "amount_paise": -50000, "type": "debit", "category": "fee"},
+    {"date_iso": "2026-01-15", "description": "Groceries", "amount_paise": -250000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-01-20", "description": "Credit Card Repayment", "amount_paise": -500000, "type": "debit", "category": "credit_card"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit", "amount_paise": 5000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-10", "description": "Credit Card Repayment", "amount_paise": -600000, "type": "debit", "category": "credit_card"}
+  ],
+  "loans": [],
+  "credit_cards": [
+    {
+      "id": "cc_ca_001",
+      "bank": "ICICI",
+      "last4": "5678",
+      "credit_limit_paise": 2000000,
+      "outstanding_paise": 1000000,
+      "statement_date": "2026-01-15",
+      "due_date": "2026-02-05",
+      "min_due_paise": 50000,
+      "total_amount_due_paise": 1050000
+    }
+  ],
+  "financial_events": [
+    {"event_type": "cash_advance", "amount_paise": 1000000, "date_iso": "2026-01-10", "account_id": "acct_ca_001", "fee_paise": 50000}
+  ],
+  "expected_output": {
+    "monthly_income_paise": 5000000,
+    "monthly_expense_paise": 1800000,
+    "monthly_surplus_paise": 3200000,
+    "cash_advance_fee_paise": 50000,
+    "has_cash_advance": true,
+    "confidence_bps": 7000,
+    "risk_flags": ["cash_advance_activity"]
+  }
+}

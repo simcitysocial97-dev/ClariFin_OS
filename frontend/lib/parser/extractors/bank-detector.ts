@@ -27,10 +27,10 @@ const BANK_PATTERNS = [
 export function detectBank(text: string): string {
     for (const pattern of BANK_PATTERNS) {
         if (pattern.regex.test(text)) {
-            console.log(`[BANK DETECTOR] Detected: ${pattern.name}`);
+            console.warn(`[BANK DETECTOR] Detected: ${pattern.name}`);
             return pattern.name;
         }
     }
-    console.log('[BANK DETECTOR] No bank detected, returning Unknown Bank');
+    console.warn('[BANK DETECTOR] No bank detected, returning Unknown Bank');
     return "Unknown Bank";
 }

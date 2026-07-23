@@ -1,0 +1,23 @@
+{
+  "scenario": "cc_statement_scenario",
+  "household": {"id": "primary"},
+  "accounts": [{"id": "a1", "balance_paise": 3000000}],
+  "transactions": [
+    {"date_iso": "2025-01-15", "income_paise": 0, "expense_paise": 0},
+    {"date_iso": "2025-01-20", "income_paise": 0, "expense_paise": 1000000},
+    {"date_iso": "2025-01-25", "income_paise": 8000000, "expense_paise": 0}
+  ],
+  "credit_cards": [
+    {"id": "c1", "name": "CRED", "outstanding_paise": 300000, "interest_rate_bps": 3600, "limit_paise": 10000000}
+  ],
+  "financial_events": [
+    {"event_type": "cash_advance", "amount_paise": 300000, "date_iso": "2025-01-10"},
+    {"event_type": "cash_advance_funding", "amount_paise": 285000, "date_iso": "2025-01-15"}
+  ],
+  "expected_output": {
+    "credit_utilization_ratio": 0.03,
+    "cash_advance_fee_paise": 15000,
+    "confidence_bps": 7000,
+    "risk_flags": ["cash_advance_activity"]
+  }
+}

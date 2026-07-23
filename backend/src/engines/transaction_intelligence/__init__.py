@@ -5,6 +5,8 @@ Supports EMI detection, credit card payments, cash conversions, etc.
 """
 from .cash_conversion_detector import (
     CashConversionResult,
+)
+from .cash_conversion_detector import (
     detect as detect_cash_conversion,
 )
 from .detector_result import DetectionResult, EMIDetectionResult

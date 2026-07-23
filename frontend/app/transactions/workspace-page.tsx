@@ -19,6 +19,11 @@ import { TransactionTable } from '@/components/transaction-table/transaction-tab
 import { PaginationControls } from '@/components/transaction-table/pagination-controls';
 import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
+import { WorkspaceToolbar } from '@/components/toolbar/workspace-toolbar';
+import { FilterPanel } from '@/components/filters/filter-panel';
+import { InsightPanel } from '@/components/workspace/insight-panel';
+import { EvidenceDrawer } from '@/components/evidence/evidence-drawer';
+import { SelectionSummary } from '@/components/selection/selection-summary';
 import { commandCenterRuntime } from '@/lib/command-center';
 import type { TransactionViewModel } from '@/types/transaction-view-model';
 
@@ -97,62 +102,102 @@ function TransactionWorkspacePageComponent() {
     }
   }, [capability]);
 
-  // Loading state
+  // Loading state - PanelBody swallows children when loading=true, render directly inside Panel
   if (capability.loading) {
     return (
-      <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Surface variant="default" density="none" className="flex flex-col h-full" role="main" aria-label="Transaction Intelligence Workspace" tabIndex={0}>
         <Panel fill>
           <PanelHeader title="Transactions" />
-          <PanelBody loading>
-            <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
-              <LoadingSpinner size="lg" />
-              {capability.loadingTimeout && (
-                <p className="mt-4 text-sm text-[var(--text-tertiary)]" role="status">
-                  {capability.loadingTimeoutMessage}
-                </p>
-              )}
-            </div>
-          </PanelBody>
+          <div className="flex flex-col items-center justify-center min-h-[400px] p-4">
+            <LoadingSpinner size="lg" />
+            {capability.loadingTimeout && (
+              <p className="mt-4 text-sm text-[var(--text-tertiary)]" role="status">
+                {capability.loadingTimeoutMessage}
+              </p>
+            )}
+          </div>
         </Panel>
       </Surface>
     );
   }
 
-  // Error state
+  // Error state - PanelBody swallows children when error is set, render directly inside Panel
   if (capability.error) {
     return (
-      <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Surface variant="default" density="none" className="flex flex-col h-full" role="main" aria-label="Transaction Intelligence Workspace" tabIndex={0}>
         <Panel fill>
           <PanelHeader title="Transactions" />
-          <PanelBody error={capability.error.message}>
+          <div className="p-4">
             <ErrorMessage
               message={capability.error.message}
               onRetry={capability.refresh}
             />
-          </PanelBody>
+          </div>
         </Panel>
       </Surface>
     );
   }
 
-  // Empty state
+  // Empty state - PanelBody swallows children when empty=true, render directly inside Panel
   if (capability.transactions.length === 0) {
     return (
-      <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Surface variant="default" density="none" className="flex flex-col h-full" role="main" aria-label="Transaction Intelligence Workspace" tabIndex={0}>
         <Panel fill>
           <PanelHeader title="Transactions" />
-          <PanelBody empty emptyMessage="No transactions found">
+          <div className="p-4">
             <EmptyState onAction={capability.clearFilters} />
-          </PanelBody>
+          </div>
         </Panel>
       </Surface>
     );
   }
 
+  // Normal state - full workspace with toolbar, filters, table, evidence drawer
+  const filterPanelFilters = {
+    searchQuery: capability.searchQuery,
+    dateFilter: capability.dateFilter,
+    categoryFilter: capability.categoryFilter,
+    merchantFilter: capability.merchantFilter,
+    amountFilter: capability.amountFilter,
+    statusFilter: capability.statusFilter,
+  };
+
+  const activeFilterCount = [
+    capability.dateFilter,
+    capability.categoryFilter.length > 0,
+    capability.merchantFilter.length > 0,
+    capability.amountFilter,
+    capability.statusFilter.length > 0,
+  ].filter(Boolean).length;
+
   return (
-    <Surface variant="default" density="none" className="flex flex-col h-full">
+    <Surface variant="default" density="none" className="flex flex-col h-full" role="main" aria-label="Transaction Intelligence Workspace" tabIndex={0}>
       <Panel fill>
         <PanelHeader title="Transactions" />
+        <WorkspaceToolbar
+          onSearchClick={() => {}}
+          onFilterToggle={() => {}}
+          onGroupToggle={capability.toggleGroup}
+          onSortToggle={() => {}}
+          onExport={() => {}}
+          onRefresh={capability.refresh}
+          onSettings={() => {}}
+          transactionCount={capability.transactions.length}
+          activeFilterCount={activeFilterCount}
+          loading={capability.loading}
+        />
+        <FilterPanel
+          filters={filterPanelFilters}
+          onFiltersChange={(filters) => {
+            capability.setDateFilter(filters.dateFilter);
+            capability.setCategoryFilter(filters.categoryFilter);
+            capability.setMerchantFilter(filters.merchantFilter);
+            capability.setAmountFilter(filters.amountFilter);
+            capability.setStatusFilter(filters.statusFilter);
+          }}
+          availableCategories={[]}
+          availableMerchants={[]}
+        />
         <PanelBody scrollable>
           <TransactionTable
             transactions={capability.transactions}
@@ -162,8 +207,30 @@ function TransactionWorkspacePageComponent() {
             selectedIds={capability.selectedIds}
           />
         </PanelBody>
+        <InsightPanel
+          transactions={capability.transactions}
+          groupBy={capability.groupBy}
+        />
+        <SelectionSummary
+          count={capability.selectedIds.size}
+          total={capability.total}
+          onClear={capability.clearSelection}
+          onSelectAll={capability.selectAllVisible}
+        />
       </Panel>
-      
+
+      {/* Evidence Drawer */}
+      <EvidenceDrawer
+        state={{
+          isOpen: false,
+          transactionId: null,
+          evidence: [],
+          loading: false,
+          error: null,
+        }}
+        onClose={() => {}}
+      />
+
       {/* Pagination Controls */}
       <div className="h-12 border-t border-[var(--border-default)] flex items-center justify-between px-3">
         <PaginationControls
