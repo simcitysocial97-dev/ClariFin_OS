@@ -7,7 +7,6 @@ criticality: high
 risk: low
 routers:
   - src/routers/transactions.py
-  - src/routers/patterns.py
 services:
   - src/services/transaction_intelligence_service.py
 engines:

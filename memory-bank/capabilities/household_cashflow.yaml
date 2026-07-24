@@ -24,10 +24,9 @@ golden_datasets:
   - tests/golden/datasets/salary_plus_loan.json
   - tests/golden/datasets/family_household.json
 property_tests:
-  - tests/properties/test_cashflow.py
   - tests/properties/cashflow/test_engine_properties.py
 invariants:
-  - tests/invariants/test_cashflow.py
+  - tests/invariants/test_cashflow_invariants.py
 architecture_tests:
   - tests/architecture
 contracts:

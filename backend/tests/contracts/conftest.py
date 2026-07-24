@@ -20,8 +20,12 @@ from src.api import app
 
 @pytest.fixture
 def client() -> TestClient:
-    """Provide FastAPI TestClient without mocks."""
-    return TestClient(app)
+    """Provide FastAPI TestClient without mocks.
+
+    Uses raise_server_exceptions=False so that 500 errors are returned
+    as HTTP responses rather than raising in the test process.
+    """
+    return TestClient(app, raise_server_exceptions=False)
 
 
 @pytest.fixture

@@ -22,9 +22,8 @@ golden_datasets:
   - tests/golden/datasets/normal_household.json
   - tests/golden/datasets/salary_plus_loan.json
 property_tests:
-  - tests/test_reconciliation.py
-  - tests/test_reconciliation_determinism.py
-  - tests/test_reconciliation_stats.py
+  - tests/engines/test_reconciliation.py
+  - tests/invariants/test_reconciliation_determinism.py
 invariants:
   - tests/invariants/test_transaction.py
 architecture_tests:

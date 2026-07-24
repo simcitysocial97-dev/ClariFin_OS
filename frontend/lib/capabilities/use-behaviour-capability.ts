@@ -100,7 +100,7 @@ export function useBehaviourCapability(): BehaviourCapabilityReturn {
   } = useQuery<BehaviourViewModel | null>({
     queryKey: [BEHAVIOUR_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/behavior/summary');
+      const response = await fetch('/api/v1/behaviour');
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }

@@ -6,7 +6,7 @@ description: >
 criticality: medium
 risk: low
 routers:
-  - src/routers/patterns.py
+  - src/routers/transactions.py
 services: []
 engines:
   - src/engines/insight_generator.py
@@ -21,7 +21,7 @@ golden_datasets:
   - tests/golden/datasets/irregular_income.json
   - tests/golden/datasets/normal_household.json
 property_tests:
-  - tests/test_pattern_repository.py
+  - tests/repositories/test_pattern_repository.py
 invariants:
   - tests/invariants/test_transaction.py
 architecture_tests:

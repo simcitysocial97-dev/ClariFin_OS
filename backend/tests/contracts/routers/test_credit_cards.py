@@ -26,8 +26,10 @@ class TestCreditCardsContract:
         """POST /credit-cards validates request body."""
         valid_request = {
             "name": "Test Card",
-            "bank": "Test Bank",
+            "account_id": "acc_test",
+            "bank": "hdfc",
             "credit_limit_paise": 100000,
+            "interest_rate_bps": 1200,
         }
 
         response = client.post("/api/v1/credit-cards", json=valid_request)
@@ -36,7 +38,20 @@ class TestCreditCardsContract:
 
     def test_create_card_missing_required(self, client: TestClient) -> None:
         """POST /credit-cards rejects missing required fields."""
-        invalid_request = {"bank": "Test Bank"}  # missing name
+        invalid_request = {"bank": "hdfc"}  # missing name, account_id, etc.
+
+        response = client.post("/api/v1/credit-cards", json=invalid_request)
+        assert response.status_code == 422
+
+    def test_create_card_invalid_bank(self, client: TestClient) -> None:
+        """POST /credit-cards rejects invalid bank."""
+        invalid_request = {
+            "name": "Test Card",
+            "account_id": "acc_test",
+            "bank": "Invalid Bank",
+            "credit_limit_paise": 100000,
+            "interest_rate_bps": 1200,
+        }
 
         response = client.post("/api/v1/credit-cards", json=invalid_request)
         assert response.status_code == 422

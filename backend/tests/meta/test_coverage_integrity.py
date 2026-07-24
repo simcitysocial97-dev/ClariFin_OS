@@ -12,7 +12,7 @@ import pathlib
 import yaml
 
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
-GENERATED_DIR = PROJECT_ROOT / "memory-bank" / "generated"
+GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 CAPABILITIES_DIR = PROJECT_ROOT / "memory-bank" / "capabilities"
 BACKEND_DIR = PROJECT_ROOT / "backend"
 

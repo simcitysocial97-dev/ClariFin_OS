@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-GENERATED_DIR = PROJECT_ROOT / "memory-bank" / "generated"
+GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 BACKEND_DIR = PROJECT_ROOT / "backend"
 
 

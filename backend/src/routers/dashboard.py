@@ -1,14 +1,14 @@
 """Dashboard summary endpoint."""
 from fastapi import APIRouter, HTTPException
 
-from src.models.dashboard import DashboardSummary
+from src.core.dtos.dashboard_dto import DashboardSummaryDTO
 from src.services.dashboard_service import DashboardService
 
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])
 
 
-@router.get("/summary", response_model=DashboardSummary)
-def api_dashboard_summary() -> DashboardSummary:
+@router.get("/summary", response_model=DashboardSummaryDTO)
+def api_dashboard_summary() -> DashboardSummaryDTO:
     """
     Get dashboard summary with behavior insights.
 

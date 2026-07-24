@@ -108,7 +108,7 @@ export function useNetWorthCapability(): NetWorthCapabilityReturn {
   } = useQuery<NetWorthViewModel | null>({
     queryKey: [NET_WORTH_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/net-worth');
+      const response = await fetch('/api/networth');
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }

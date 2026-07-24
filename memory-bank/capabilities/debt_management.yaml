@@ -32,7 +32,6 @@ golden_datasets:
   - tests/golden/datasets/multiple_loans.json
   - tests/golden/datasets/high_debt_household.json
 property_tests:
-  - tests/properties/test_loan.py
   - tests/properties/lending/test_engine_properties.py
 invariants:
   - tests/invariants/test_loan.py

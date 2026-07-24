@@ -6,7 +6,7 @@ Priority levels: critical, high, medium, low.
 Status values: active, completed, paused.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
@@ -49,7 +49,7 @@ class FinancialGoal(DomainModel):
     priority: GoalPriority = "medium"
     status: GoalStatus = "active"
 
-    created_at: str = Field(default_factory=lambda: datetime.now().isoformat())
+    created_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     updated_at: str | None = None
 
     @field_validator("target_amount_paise", "current_amount_paise")
@@ -75,14 +75,14 @@ class FinancialGoal(DomainModel):
             id=str(row["id"]),
             household_id=row["household_id"],
             owner_id=row.get("owner_id"),
-            goal_type=row["goal_type"],  # type: ignore
+            goal_type=row["goal_type"],
             name=row["name"],
             target_amount_paise=row["target_amount_paise"],
             current_amount_paise=row.get("current_amount_paise", 0),
             target_date=row.get("target_date"),
-            priority=row.get("priority", "medium"),  # type: ignore
-            status=row.get("status", "active"),  # type: ignore
-            created_at=row.get("created_at", cls.created_at.default_factory()),  # type: ignore
+            priority=row.get("priority", "medium"),
+            status=row.get("status", "active"),
+            created_at=row.get("created_at", datetime.now(UTC).isoformat()),
             updated_at=row.get("updated_at"),
         )
 
@@ -163,13 +163,13 @@ class FinancialGoalResponse(BaseModel):
             id=str(goal["id"]),
             household_id=goal.get("household_id", "primary"),
             owner_id=goal.get("owner_id"),
-            goal_type=goal["goal_type"],  # type: ignore
+            goal_type=goal["goal_type"],
             name=goal["name"],
             target_amount_paise=goal["target_amount_paise"],
             current_amount_paise=goal.get("current_amount_paise", 0),
             target_date=goal.get("target_date"),
-            priority=goal.get("priority", "medium"),  # type: ignore
-            status=goal.get("status", "active"),  # type: ignore
+            priority=goal.get("priority", "medium"),
+            status=goal.get("status", "active"),
             created_at=goal.get("created_at", ""),
             updated_at=goal.get("updated_date"),
         )

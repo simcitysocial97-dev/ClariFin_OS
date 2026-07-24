@@ -6,10 +6,9 @@ description: >
 criticality: high
 risk: low
 routers:
-  - src/routers/behavior.py
   - src/routers/behaviour.py
+  - src/routers/behaviour_workspace.py
 services:
-  - src/services/behavior_service.py
   - src/services/behaviour_service.py
 engines:
   - src/engines/behaviour_engine/account.py
@@ -35,10 +34,9 @@ golden_datasets:
   - tests/golden/datasets/high_debt_household.json
   - tests/golden/datasets/irregular_income.json
 property_tests:
-  - tests/properties/test_behaviour.py
   - tests/properties/behaviour/test_engine_properties.py
 invariants:
-  - tests/invariants/test_behaviour.py
+  - tests/domain/invariants/behaviour.py
 architecture_tests:
   - tests/architecture
 contracts:

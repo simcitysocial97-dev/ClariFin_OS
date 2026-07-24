@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:55:41.570310+00:00",
+  "generated_at": "2026-07-24T03:15:33.790197+00:00",
   "engines": [
     {
       "module_path": "src/engines/balance_engine.py",
@@ -10,20 +10,12 @@
       "killability_estimate": "LOW"
     },
     {
-      "module_path": "src/engines/cashflow_engine.py",
-      "pure_functions": 1,
-      "impure_functions": 0,
-      "unknown_functions": 0,
-      "readiness": "Ready",
-      "killability_estimate": "HIGH"
-    },
-    {
       "module_path": "src/engines/behavior_engine.py",
-      "pure_functions": 4,
-      "impure_functions": 0,
+      "pure_functions": 0,
+      "impure_functions": 5,
       "unknown_functions": 0,
-      "readiness": "Ready",
-      "killability_estimate": "MEDIUM"
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
     },
     {
       "module_path": "src/engines/ledger_audit_engine.py",
@@ -36,7 +28,7 @@
     {
       "module_path": "src/engines/reconciliation_engine.py",
       "pure_functions": 0,
-      "impure_functions": 3,
+      "impure_functions": 2,
       "unknown_functions": 0,
       "readiness": "Blocked",
       "killability_estimate": "LOW"
@@ -47,7 +39,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/nudge_engine.py",
@@ -55,7 +47,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/transaction_intelligence/detector_result.py",
@@ -71,7 +63,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/transaction_intelligence/cash_conversion_detector.py",
@@ -79,7 +71,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/transaction_intelligence/loan_emi_detector.py",
@@ -87,7 +79,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/utilization.py",
@@ -95,7 +87,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/interest.py",
@@ -103,7 +95,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/emi.py",
@@ -111,7 +103,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/metrics.py",
@@ -119,7 +111,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/foreclosure.py",
@@ -127,7 +119,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/billing.py",
@@ -135,7 +127,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/credit_card_engine/outstanding.py",
@@ -143,7 +135,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/financial_events/lineage_walker.py",
@@ -167,7 +159,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/financial_intelligence/scenario.py",
@@ -175,7 +167,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/financial_intelligence/goal_planner.py",
@@ -183,7 +175,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/financial_intelligence/utils.py",
@@ -199,7 +191,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/financial_intelligence/forecasting.py",
@@ -215,7 +207,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/account_engine/cashflow.py",
@@ -223,7 +215,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/account_engine/balance.py",
@@ -239,7 +231,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/account_engine/metrics.py",
@@ -247,7 +239,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/account_engine/history.py",
@@ -263,7 +255,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/income.py",
@@ -271,7 +263,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/cashflow.py",
@@ -279,7 +271,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/temporal.py",
@@ -295,7 +287,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/utils.py",
@@ -311,7 +303,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/patterns.py",
@@ -319,7 +311,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/debt.py",
@@ -327,7 +319,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/wellness.py",
@@ -335,7 +327,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/account.py",
@@ -343,7 +335,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/profile.py",
@@ -351,7 +343,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/credit_dependency.py",
@@ -367,7 +359,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/stress.py",
@@ -391,7 +383,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/prepayment.py",
@@ -399,7 +391,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/emi.py",
@@ -407,7 +399,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/metrics.py",
@@ -415,7 +407,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/utils.py",
@@ -423,7 +415,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/foreclosure.py",
@@ -431,7 +423,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/floating_rate.py",
@@ -439,7 +431,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "killability_estimate": "MEDIUM"
     }
   ]
 }

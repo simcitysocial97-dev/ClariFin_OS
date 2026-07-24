@@ -39,28 +39,79 @@
       "capability": "unknown"
     },
     {
-      "router": "accounts",
+      "router": "accounts_intelligence",
       "endpoint": "/api/v1/accounts",
       "method": "GET",
       "tags": [
-        "accounts"
+        "accounts-intelligence"
       ],
-      "summary": "List Accounts",
-      "operation_id": "list_accounts_api_v1_accounts_get",
+      "summary": "Get Accounts",
+      "operation_id": "get_accounts_api_v1_accounts_get",
       "request_schema": {},
       "response_schema": {
-        "items": {
-          "additionalProperties": true,
-          "type": "object"
-        },
-        "type": "array",
-        "title": "Response List Accounts Api V1 Accounts Get"
+        "$ref": "#/components/schemas/AccountsDTO"
       },
       "status_codes": [
-        "200"
+        "200",
+        "422"
       ],
-      "parameters": [],
-      "capability": "account_management"
+      "parameters": [
+        {
+          "name": "account_types",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Comma-separated account types",
+            "title": "Account Types"
+          },
+          "description": "Comma-separated account types"
+        },
+        {
+          "name": "institutions",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Comma-separated institutions",
+            "title": "Institutions"
+          },
+          "description": "Comma-separated institutions"
+        },
+        {
+          "name": "statuses",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Comma-separated statuses",
+            "title": "Statuses"
+          },
+          "description": "Comma-separated statuses"
+        }
+      ],
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -75,8 +126,8 @@
         "$ref": "#/components/schemas/AccountCreateRequest"
       },
       "response_schema": {
-        "additionalProperties": true,
         "type": "object",
+        "additionalProperties": true,
         "title": "Response Create Account Api V1 Accounts Post"
       },
       "status_codes": [
@@ -87,19 +138,17 @@
       "capability": "account_management"
     },
     {
-      "router": "accounts",
+      "router": "accounts_intelligence",
       "endpoint": "/api/v1/accounts/{account_id}",
       "method": "GET",
       "tags": [
-        "accounts"
+        "accounts-intelligence"
       ],
       "summary": "Get Account",
       "operation_id": "get_account_api_v1_accounts__account_id__get",
       "request_schema": {},
       "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Account Api V1 Accounts  Account Id  Get"
+        "$ref": "#/components/schemas/AccountDetailDTO"
       },
       "status_codes": [
         "200",
@@ -123,7 +172,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -247,22 +296,17 @@
       "capability": "account_management"
     },
     {
-      "router": "accounts",
+      "router": "accounts_intelligence",
       "endpoint": "/api/v1/accounts/{account_id}/balance-history",
       "method": "GET",
       "tags": [
-        "accounts"
+        "accounts-intelligence"
       ],
-      "summary": "Get Balance History",
-      "operation_id": "get_balance_history_api_v1_accounts__account_id__balance_history_get",
+      "summary": "Get Account Balance History",
+      "operation_id": "get_account_balance_history_api_v1_accounts__account_id__balance_history_get",
       "request_schema": {},
       "response_schema": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "title": "Response Get Balance History Api V1 Accounts  Account Id  Balance History Get"
+        "$ref": "#/components/schemas/AccountsHistoryResponse"
       },
       "status_codes": [
         "200",
@@ -298,7 +342,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -750,6 +794,109 @@
       "capability": "account_management"
     },
     {
+      "router": "accounts_intelligence",
+      "endpoint": "/api/v1/accounts/{account_id}/transactions",
+      "method": "GET",
+      "tags": [
+        "accounts-intelligence"
+      ],
+      "summary": "Get Account Transactions",
+      "operation_id": "get_account_transactions_api_v1_accounts__account_id__transactions_get",
+      "request_schema": {},
+      "response_schema": {
+        "$ref": "#/components/schemas/AccountsTransactionsResponse"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "account_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Account Id"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit"
+          }
+        },
+        {
+          "name": "offset",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "title": "Offset"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "accounts_intelligence",
+      "endpoint": "/api/v1/accounts/summary",
+      "method": "GET",
+      "tags": [
+        "accounts-intelligence"
+      ],
+      "summary": "Get Accounts Summary",
+      "operation_id": "get_accounts_summary_api_v1_accounts_summary_get",
+      "request_schema": {},
+      "response_schema": {
+        "$ref": "#/components/schemas/AccountsDTO"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
+      "router": "accounts_intelligence",
+      "endpoint": "/api/v1/accounts/type-breakdown",
+      "method": "GET",
+      "tags": [
+        "accounts-intelligence"
+      ],
+      "summary": "Get Accounts Type Breakdown",
+      "operation_id": "get_accounts_type_breakdown_api_v1_accounts_type_breakdown_get",
+      "request_schema": {},
+      "response_schema": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response Get Accounts Type Breakdown Api V1 Accounts Type Breakdown Get"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "unknown"
+    },
+    {
       "router": "audit",
       "endpoint": "/api/audit/report",
       "method": "GET",
@@ -792,69 +939,6 @@
       ],
       "parameters": [],
       "capability": "unknown"
-    },
-    {
-      "router": "behavior",
-      "endpoint": "/api/behavior/summary",
-      "method": "GET",
-      "tags": [
-        "behavior"
-      ],
-      "summary": "Api Behavior Summary",
-      "operation_id": "api_behavior_summary_api_behavior_summary_get",
-      "request_schema": {},
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response Api Behavior Summary Api Behavior Summary Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "financial_health"
-    },
-    {
-      "router": "behavior",
-      "endpoint": "/api/behavior/score",
-      "method": "GET",
-      "tags": [
-        "behavior"
-      ],
-      "summary": "Api Behavior Score",
-      "operation_id": "api_behavior_score_api_behavior_score_get",
-      "request_schema": {},
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response Api Behavior Score Api Behavior Score Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "financial_health"
-    },
-    {
-      "router": "behavior",
-      "endpoint": "/api/behavior/insights",
-      "method": "GET",
-      "tags": [
-        "behavior"
-      ],
-      "summary": "Api Behavior Insights",
-      "operation_id": "api_behavior_insights_api_behavior_insights_get",
-      "request_schema": {},
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response Api Behavior Insights Api Behavior Insights Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "financial_health"
     },
     {
       "router": "behaviour",
@@ -1187,19 +1271,19 @@
       "capability": "financial_health"
     },
     {
-      "router": "behaviour",
-      "endpoint": "/api/v1/behaviour/stress-index",
+      "router": "behaviour_workspace",
+      "endpoint": "/api/v1/behaviour",
       "method": "GET",
       "tags": [
-        "behaviour"
+        "behaviour-workspace"
       ],
-      "summary": "Get Stress Index",
-      "operation_id": "get_stress_index_api_v1_behaviour_stress_index_get",
+      "summary": "Get Behaviour",
+      "operation_id": "get_behaviour_api_v1_behaviour_get",
       "request_schema": {},
       "response_schema": {
         "type": "object",
         "additionalProperties": true,
-        "title": "Response Get Stress Index Api V1 Behaviour Stress Index Get"
+        "title": "Response Get Behaviour Api V1 Behaviour Get"
       },
       "status_codes": [
         "200",
@@ -1207,134 +1291,17 @@
       ],
       "parameters": [
         {
-          "name": "month",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "Month in YYYY-MM format",
-            "title": "Month"
-          },
-          "description": "Month in YYYY-MM format"
-        },
-        {
-          "name": "scope",
+          "name": "period",
           "in": "query",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Scope: household or individual",
-            "default": "household",
-            "title": "Scope"
-          },
-          "description": "Scope: household or individual"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
+            "default": "monthly",
+            "title": "Period"
+          }
         }
       ],
-      "capability": "financial_health"
-    },
-    {
-      "router": "behaviour",
-      "endpoint": "/api/v1/behaviour/revolver-status",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Revolver Status",
-      "operation_id": "get_revolver_status_api_v1_behaviour_revolver_status_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Revolver Status Api V1 Behaviour Revolver Status Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "card_account_id",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "Credit card account ID",
-            "title": "Card Account Id"
-          },
-          "description": "Credit card account ID"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "financial_health"
-    },
-    {
-      "router": "behaviour",
-      "endpoint": "/api/v1/behaviour/household-divergence",
-      "method": "GET",
-      "tags": [
-        "behaviour"
-      ],
-      "summary": "Get Household Divergence",
-      "operation_id": "get_household_divergence_api_v1_behaviour_household_divergence_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Household Divergence Api V1 Behaviour Household Divergence Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "month",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "Month in YYYY-MM format",
-            "title": "Month"
-          },
-          "description": "Month in YYYY-MM format"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "cards",
@@ -1428,28 +1395,59 @@
       "capability": "unknown"
     },
     {
-      "router": "credit_cards",
+      "router": "credit_cards_workspace",
       "endpoint": "/api/v1/credit-cards",
       "method": "GET",
       "tags": [
-        "credit-cards"
+        "credit-cards-workspace"
       ],
-      "summary": "List Cards",
-      "operation_id": "list_cards_api_v1_credit_cards_get",
+      "summary": "Get Credit Cards",
+      "operation_id": "get_credit_cards_api_v1_credit_cards_get",
       "request_schema": {},
       "response_schema": {
-        "items": {
-          "additionalProperties": true,
-          "type": "object"
-        },
-        "type": "array",
-        "title": "Response List Cards Api V1 Credit Cards Get"
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Credit Cards Api V1 Credit Cards Get"
       },
       "status_codes": [
-        "200"
+        "200",
+        "422"
       ],
-      "parameters": [],
-      "capability": "credit_cards"
+      "parameters": [
+        {
+          "name": "statuses",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statuses"
+          }
+        },
+        {
+          "name": "banks",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Banks"
+          }
+        }
+      ],
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1464,8 +1462,8 @@
         "$ref": "#/components/schemas/CreditCardCreateRequest"
       },
       "response_schema": {
-        "additionalProperties": true,
         "type": "object",
+        "additionalProperties": true,
         "title": "Response Create Card Api V1 Credit Cards Post"
       },
       "status_codes": [
@@ -1896,6 +1894,25 @@
     },
     {
       "router": "cashflow",
+      "endpoint": "/api/cashflow",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow",
+      "operation_id": "get_cashflow_api_cashflow_get",
+      "request_schema": {},
+      "response_schema": {
+        "$ref": "#/components/schemas/CashflowSummaryDTO"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "household_cashflow"
+    },
+    {
+      "router": "cashflow",
       "endpoint": "/api/cashflow/monthly",
       "method": "GET",
       "tags": [
@@ -1905,9 +1922,7 @@
       "operation_id": "get_cashflow_monthly_api_cashflow_monthly_get",
       "request_schema": {},
       "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Cashflow Monthly Api Cashflow Monthly Get"
+        "$ref": "#/components/schemas/CashflowMonthlyResponse"
       },
       "status_codes": [
         "200",
@@ -1925,40 +1940,41 @@
             "default": 6,
             "title": "Months"
           }
-        },
-        {
-          "name": "member",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Member"
-          }
         }
       ],
       "capability": "household_cashflow"
     },
     {
       "router": "cashflow",
-      "endpoint": "/api/v1/cashflow/monthly",
+      "endpoint": "/api/cashflow/categories",
       "method": "GET",
       "tags": [
         "cashflow"
       ],
-      "summary": "Get Cashflow Monthly Analysis",
-      "operation_id": "get_cashflow_monthly_analysis_api_v1_cashflow_monthly_get",
+      "summary": "Get Cashflow Categories",
+      "operation_id": "get_cashflow_categories_api_cashflow_categories_get",
       "request_schema": {},
       "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Cashflow Monthly Analysis Api V1 Cashflow Monthly Get"
+        "$ref": "#/components/schemas/CashflowCategoryResponse"
+      },
+      "status_codes": [
+        "200"
+      ],
+      "parameters": [],
+      "capability": "household_cashflow"
+    },
+    {
+      "router": "cashflow",
+      "endpoint": "/api/cashflow/transactions",
+      "method": "GET",
+      "tags": [
+        "cashflow"
+      ],
+      "summary": "Get Cashflow Transactions",
+      "operation_id": "get_cashflow_transactions_api_cashflow_transactions_get",
+      "request_schema": {},
+      "response_schema": {
+        "$ref": "#/components/schemas/CashflowTransactionResponse"
       },
       "status_codes": [
         "200",
@@ -1966,54 +1982,63 @@
       ],
       "parameters": [
         {
-          "name": "month",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "Month in YYYY-MM format",
-            "title": "Month"
-          },
-          "description": "Month in YYYY-MM format"
-        },
-        {
-          "name": "scope",
+          "name": "limit",
           "in": "query",
           "required": false,
           "schema": {
-            "type": "string",
-            "description": "household or individual",
-            "default": "household",
-            "title": "Scope"
-          },
-          "description": "household or individual"
+            "type": "integer",
+            "maximum": 100,
+            "minimum": 1,
+            "default": 50,
+            "title": "Limit"
+          }
         },
         {
-          "name": "owner_id",
+          "name": "offset",
           "in": "query",
           "required": false,
           "schema": {
-            "type": "string",
-            "description": "Owner ID for individual scope",
-            "default": "self",
-            "title": "Owner Id"
-          },
-          "description": "Owner ID for individual scope"
-        },
-        {
-          "name": "basis",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "cash or accrual",
-            "default": "cash",
-            "title": "Basis"
-          },
-          "description": "cash or accrual"
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "title": "Offset"
+          }
         }
       ],
       "capability": "household_cashflow"
+    },
+    {
+      "router": "cashflow_workspace",
+      "endpoint": "/api/v1/cashflow",
+      "method": "GET",
+      "tags": [
+        "cashflow-workspace"
+      ],
+      "summary": "Get Cashflow",
+      "operation_id": "get_cashflow_api_v1_cashflow_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Cashflow Api V1 Cashflow Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "period",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "monthly",
+            "title": "Period"
+          }
+        }
+      ],
+      "capability": "unknown"
     },
     {
       "router": "dashboard",
@@ -2026,7 +2051,7 @@
       "operation_id": "api_dashboard_summary_api_dashboard_summary_get",
       "request_schema": {},
       "response_schema": {
-        "$ref": "#/components/schemas/DashboardSummary"
+        "$ref": "#/components/schemas/DashboardSummaryDTO"
       },
       "status_codes": [
         "200"
@@ -2140,19 +2165,24 @@
       "capability": "unknown"
     },
     {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/cashflow-forecast",
-      "method": "GET",
+      "router": "financial_events",
+      "endpoint": "/api/financial-events/",
+      "method": "POST",
       "tags": [
-        "financial-intelligence"
+        "financial-events"
       ],
-      "summary": "Get Cashflow Forecast",
-      "operation_id": "get_cashflow_forecast_api_v1_financial_intelligence_cashflow_forecast_get",
-      "request_schema": {},
+      "summary": "Create Event",
+      "operation_id": "create_event_api_financial_events__post",
+      "request_schema": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        },
+        "title": "Transaction Ids"
+      },
       "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Cashflow Forecast Api V1 Financial Intelligence Cashflow Forecast Get"
+        "type": "integer",
+        "title": "Response Create Event Api Financial Events  Post"
       },
       "status_codes": [
         "200",
@@ -2160,141 +2190,105 @@
       ],
       "parameters": [
         {
-          "name": "forecast_months",
+          "name": "event_type",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Event Type"
+          }
+        },
+        {
+          "name": "account_id",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "title": "Account Id"
+          }
+        },
+        {
+          "name": "amount_paise",
           "in": "query",
           "required": false,
           "schema": {
             "type": "integer",
-            "maximum": 12,
-            "minimum": 1,
-            "description": "Number of months to forecast",
-            "default": 3,
-            "title": "Forecast Months"
-          },
-          "description": "Number of months to forecast"
+            "default": 0,
+            "title": "Amount Paise"
+          }
         },
         {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        },
-        {
-          "name": "owner_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Owner filter (self for individual, or different owner)",
-            "default": "self",
-            "title": "Owner Id"
-          },
-          "description": "Owner filter (self for individual, or different owner)"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/liquidity-forecast",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence"
-      ],
-      "summary": "Get Liquidity Forecast",
-      "operation_id": "get_liquidity_forecast_api_v1_financial_intelligence_liquidity_forecast_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Liquidity Forecast Api V1 Financial Intelligence Liquidity Forecast Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "forecast_months",
+          "name": "asset_change_paise",
           "in": "query",
           "required": false,
           "schema": {
             "type": "integer",
-            "maximum": 12,
-            "minimum": 1,
-            "description": "Number of months to forecast",
-            "default": 3,
-            "title": "Forecast Months"
-          },
-          "description": "Number of months to forecast"
+            "default": 0,
+            "title": "Asset Change Paise"
+          }
         },
         {
-          "name": "emergency_threshold_paise",
+          "name": "liability_change_paise",
           "in": "query",
           "required": false,
           "schema": {
             "type": "integer",
-            "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)",
-            "default": 3000000,
-            "title": "Emergency Threshold Paise"
-          },
-          "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)"
+            "default": 0,
+            "title": "Liability Change Paise"
+          }
         },
         {
-          "name": "household_id",
+          "name": "expense_paise",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 0,
+            "title": "Expense Paise"
+          }
+        },
+        {
+          "name": "income_paise",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 0,
+            "title": "Income Paise"
+          }
+        },
+        {
+          "name": "outstanding_paise",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 0,
+            "title": "Outstanding Paise"
+          }
+        },
+        {
+          "name": "date_iso",
           "in": "query",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
+            "default": "",
+            "title": "Date Iso"
+          }
         },
         {
-          "name": "owner_id",
+          "name": "category",
           "in": "query",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Owner filter (self for individual)",
-            "default": "self",
-            "title": "Owner Id"
-          },
-          "description": "Owner filter (self for individual)"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/credit-forecast",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence"
-      ],
-      "summary": "Get Credit Forecast",
-      "operation_id": "get_credit_forecast_api_v1_financial_intelligence_credit_forecast_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Credit Forecast Api V1 Financial Intelligence Credit Forecast Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
+            "default": "",
+            "title": "Category"
+          }
+        },
         {
-          "name": "month",
+          "name": "sub_type",
           "in": "query",
           "required": false,
           "schema": {
@@ -2306,336 +2300,72 @@
                 "type": "null"
               }
             ],
-            "description": "Month in YYYY-MM format (default: current month)",
-            "title": "Month"
-          },
-          "description": "Month in YYYY-MM format (default: current month)"
+            "title": "Sub Type"
+          }
         },
         {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/outlook",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Outlook",
-      "operation_id": "get_financial_outlook_api_v1_financial_intelligence_outlook_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Financial Outlook Api V1 Financial Intelligence Outlook Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "forecast_months",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "maximum": 12,
-            "minimum": 1,
-            "description": "Number of months to forecast",
-            "default": 3,
-            "title": "Forecast Months"
-          },
-          "description": "Number of months to forecast"
-        },
-        {
-          "name": "emergency_threshold_paise",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)",
-            "default": 3000000,
-            "title": "Emergency Threshold Paise"
-          },
-          "description": "Emergency threshold in paise (default: 3,000,000 = \u20b930,000)"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/report",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Intelligence Report",
-      "operation_id": "get_financial_intelligence_report_api_v1_financial_intelligence_report_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Financial Intelligence Report Api V1 Financial Intelligence Report Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/priorities",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Intelligence Priorities",
-      "operation_id": "get_financial_intelligence_priorities_api_v1_financial_intelligence_priorities_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Financial Intelligence Priorities Api V1 Financial Intelligence Priorities Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "financial_intelligence",
-      "endpoint": "/api/v1/financial-intelligence/confidence",
-      "method": "GET",
-      "tags": [
-        "financial-intelligence"
-      ],
-      "summary": "Get Financial Intelligence Confidence",
-      "operation_id": "get_financial_intelligence_confidence_api_v1_financial_intelligence_confidence_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Financial Intelligence Confidence Api V1 Financial Intelligence Confidence Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "goals",
-      "endpoint": "/api/v1/goals/",
-      "method": "POST",
-      "tags": [
-        "goals"
-      ],
-      "summary": "Create Goal",
-      "operation_id": "create_goal_api_v1_goals__post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Create Goal Api V1 Goals  Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        },
-        {
-          "name": "goal_type",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "description": "Goal type (emergency_fund, debt_payoff, purchase, investment, education, retirement)",
-            "title": "Goal Type"
-          },
-          "description": "Goal type (emergency_fund, debt_payoff, purchase, investment, education, retirement)"
-        },
-        {
-          "name": "name",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 100,
-            "description": "Goal name",
-            "title": "Name"
-          },
-          "description": "Goal name"
-        },
-        {
-          "name": "target_amount_paise",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "description": "Target amount in paise",
-            "title": "Target Amount Paise"
-          },
-          "description": "Target amount in paise"
-        },
-        {
-          "name": "current_amount_paise",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "minimum": 0,
-            "description": "Current saved amount in paise",
-            "default": 0,
-            "title": "Current Amount Paise"
-          },
-          "description": "Current saved amount in paise"
-        },
-        {
-          "name": "target_date",
+          "name": "provider",
           "in": "query",
           "required": false,
           "schema": {
             "anyOf": [
               {
-                "type": "string",
-                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Target date (YYYY-MM-DD)",
-            "title": "Target Date"
-          },
-          "description": "Target date (YYYY-MM-DD)"
+            "title": "Provider"
+          }
         },
         {
-          "name": "priority",
+          "name": "confidence_bps",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "default": 0,
+            "title": "Confidence Bps"
+          }
+        },
+        {
+          "name": "household_id",
           "in": "query",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Priority: critical, high, medium, low",
-            "default": "medium",
-            "title": "Priority"
-          },
-          "description": "Priority: critical, high, medium, low"
+            "default": "primary",
+            "title": "Household Id"
+          }
         },
         {
-          "name": "status",
+          "name": "owner_id",
           "in": "query",
           "required": false,
           "schema": {
             "type": "string",
-            "description": "Status: active, completed, paused",
-            "default": "active",
-            "title": "Status"
-          },
-          "description": "Status: active, completed, paused"
+            "default": "self",
+            "title": "Owner Id"
+          }
         }
       ],
-      "capability": "forecasting"
+      "capability": "unknown"
     },
     {
-      "router": "goals",
-      "endpoint": "/api/v1/goals/",
+      "router": "financial_events",
+      "endpoint": "/api/financial-events/",
       "method": "GET",
       "tags": [
-        "goals"
+        "financial-events"
       ],
-      "summary": "List Goals",
-      "operation_id": "list_goals_api_v1_goals__get",
+      "summary": "List Events",
+      "operation_id": "list_events_api_financial_events__get",
       "request_schema": {},
       "response_schema": {
         "type": "array",
-        "items": {
-          "type": "object",
-          "additionalProperties": true
-        },
-        "title": "Response List Goals Api V1 Goals  Get"
+        "items": {},
+        "title": "Response List Events Api Financial Events  Get"
       },
       "status_codes": [
         "200",
@@ -2643,19 +2373,7 @@
       ],
       "parameters": [
         {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        },
-        {
-          "name": "status",
+          "name": "month_bucket",
           "in": "query",
           "required": false,
           "schema": {
@@ -2667,28 +2385,70 @@
                 "type": "null"
               }
             ],
-            "description": "Filter by status: active, completed, paused",
-            "title": "Status"
+            "title": "Month Bucket"
+          }
+        },
+        {
+          "name": "household_id",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "primary",
+            "title": "Household Id"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "financial_events",
+      "endpoint": "/api/financial-events/{event_id}",
+      "method": "GET",
+      "tags": [
+        "financial-events"
+      ],
+      "summary": "Get Event",
+      "operation_id": "get_event_api_financial_events__event_id__get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Event Api Financial Events  Event Id  Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "event_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "description": "Event ID",
+            "title": "Event Id"
           },
-          "description": "Filter by status: active, completed, paused"
+          "description": "Event ID"
         }
       ],
-      "capability": "forecasting"
+      "capability": "unknown"
     },
     {
-      "router": "goals",
-      "endpoint": "/api/v1/goals/{goal_id}",
+      "router": "forecast",
+      "endpoint": "/api/v1/forecast",
       "method": "GET",
       "tags": [
-        "goals"
+        "forecast"
       ],
-      "summary": "Get Goal",
-      "operation_id": "get_goal_api_v1_goals__goal_id__get",
+      "summary": "Get Forecast",
+      "operation_id": "get_forecast_api_v1_forecast_get",
       "request_schema": {},
       "response_schema": {
         "type": "object",
         "additionalProperties": true,
-        "title": "Response Get Goal Api V1 Goals  Goal Id  Get"
+        "title": "Response Get Forecast Api V1 Forecast Get"
       },
       "status_codes": [
         "200",
@@ -2696,112 +2456,35 @@
       ],
       "parameters": [
         {
-          "name": "goal_id",
-          "in": "path",
-          "required": true,
+          "name": "horizon",
+          "in": "query",
+          "required": false,
           "schema": {
-            "type": "string",
-            "title": "Goal Id"
+            "type": "integer",
+            "maximum": 60,
+            "minimum": 1,
+            "default": 12,
+            "title": "Horizon"
           }
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "goals",
-      "endpoint": "/api/v1/goals/{goal_id}",
-      "method": "DELETE",
-      "tags": [
-        "goals"
-      ],
-      "summary": "Delete Goal",
-      "operation_id": "delete_goal_api_v1_goals__goal_id__delete",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Delete Goal Api V1 Goals  Goal Id  Delete"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
+        },
         {
-          "name": "goal_id",
-          "in": "path",
-          "required": true,
+          "name": "scenarios",
+          "in": "query",
+          "required": false,
           "schema": {
-            "type": "string",
-            "title": "Goal Id"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scenarios"
           }
         }
       ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "goals",
-      "endpoint": "/api/v1/goals/{goal_id}/projection",
-      "method": "GET",
-      "tags": [
-        "goals"
-      ],
-      "summary": "Get Goal Projection",
-      "operation_id": "get_goal_projection_api_v1_goals__goal_id__projection_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Goal Projection Api V1 Goals  Goal Id  Projection Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "goal_id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "title": "Goal Id"
-          }
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "goals",
-      "endpoint": "/api/v1/goals/{goal_id}/health",
-      "method": "GET",
-      "tags": [
-        "goals"
-      ],
-      "summary": "Get Goal Health",
-      "operation_id": "get_goal_health_api_v1_goals__goal_id__health_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Goal Health Api V1 Goals  Goal Id  Health Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "goal_id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "title": "Goal Id"
-          }
-        }
-      ],
-      "capability": "forecasting"
+      "capability": "unknown"
     },
     {
       "router": "import",
@@ -2977,6 +2660,77 @@
           "schema": {
             "type": "string",
             "title": "Investment Id"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
+      "router": "investments_workspace",
+      "endpoint": "/api/v1/investments",
+      "method": "GET",
+      "tags": [
+        "investments-workspace"
+      ],
+      "summary": "Get Investments",
+      "operation_id": "get_investments_api_v1_investments_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Investments Api V1 Investments Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "investment_types",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Investment Types"
+          }
+        },
+        {
+          "name": "institutions",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institutions"
+          }
+        },
+        {
+          "name": "statuses",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statuses"
           }
         }
       ],
@@ -3377,6 +3131,77 @@
       "capability": "debt_management"
     },
     {
+      "router": "loans_workspace",
+      "endpoint": "/api/v1/loans",
+      "method": "GET",
+      "tags": [
+        "loans-workspace"
+      ],
+      "summary": "Get Loans",
+      "operation_id": "get_loans_api_v1_loans_get",
+      "request_schema": {},
+      "response_schema": {
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Loans Api V1 Loans Get"
+      },
+      "status_codes": [
+        "200",
+        "422"
+      ],
+      "parameters": [
+        {
+          "name": "loan_types",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Loan Types"
+          }
+        },
+        {
+          "name": "lenders",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lenders"
+          }
+        },
+        {
+          "name": "statuses",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statuses"
+          }
+        }
+      ],
+      "capability": "unknown"
+    },
+    {
       "router": "accounts",
       "endpoint": "/api/accounts/manage",
       "method": "GET",
@@ -3555,156 +3380,49 @@
       "capability": "account_management"
     },
     {
-      "router": "optimization",
-      "endpoint": "/api/v1/optimization/plan",
+      "router": "members",
+      "endpoint": "/api/members",
       "method": "GET",
       "tags": [
-        "optimization"
+        "members"
       ],
-      "summary": "Get Optimization Plan",
-      "operation_id": "get_optimization_plan_api_v1_optimization_plan_get",
+      "summary": "Get Members",
+      "operation_id": "get_members_api_members_get",
       "request_schema": {},
       "response_schema": {
-        "type": "object",
         "additionalProperties": true,
-        "title": "Response Get Optimization Plan Api V1 Optimization Plan Get"
+        "type": "object",
+        "title": "Response Get Members Api Members Get"
       },
       "status_codes": [
-        "200",
-        "422"
+        "200"
       ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "recommendations"
+      "parameters": [],
+      "capability": "unknown"
     },
     {
-      "router": "optimization",
-      "endpoint": "/api/v1/optimization/debt-strategy",
-      "method": "GET",
+      "router": "members",
+      "endpoint": "/api/members",
+      "method": "POST",
       "tags": [
-        "optimization"
+        "members"
       ],
-      "summary": "Get Debt Strategy",
-      "operation_id": "get_debt_strategy_api_v1_optimization_debt_strategy_get",
-      "request_schema": {},
+      "summary": "Create Member",
+      "operation_id": "create_member_api_members_post",
+      "request_schema": {
+        "$ref": "#/components/schemas/MemberCreate"
+      },
       "response_schema": {
-        "type": "object",
         "additionalProperties": true,
-        "title": "Response Get Debt Strategy Api V1 Optimization Debt Strategy Get"
+        "type": "object",
+        "title": "Response Create Member Api Members Post"
       },
       "status_codes": [
         "200",
         "422"
       ],
-      "parameters": [
-        {
-          "name": "strategy",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Strategy: avalanche, snowball, or balanced",
-            "default": "avalanche",
-            "title": "Strategy"
-          },
-          "description": "Strategy: avalanche, snowball, or balanced"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "recommendations"
-    },
-    {
-      "router": "optimization",
-      "endpoint": "/api/v1/optimization/goal-priority",
-      "method": "GET",
-      "tags": [
-        "optimization"
-      ],
-      "summary": "Get Goal Priority",
-      "operation_id": "get_goal_priority_api_v1_optimization_goal_priority_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Goal Priority Api V1 Optimization Goal Priority Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "recommendations"
-    },
-    {
-      "router": "optimization",
-      "endpoint": "/api/v1/optimization/surplus-allocation",
-      "method": "GET",
-      "tags": [
-        "optimization"
-      ],
-      "summary": "Get Surplus Allocation",
-      "operation_id": "get_surplus_allocation_api_v1_optimization_surplus_allocation_get",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Get Surplus Allocation Api V1 Optimization Surplus Allocation Get"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "recommendations"
+      "parameters": [],
+      "capability": "unknown"
     },
     {
       "router": "networth",
@@ -3728,19 +3446,19 @@
       "capability": "unknown"
     },
     {
-      "router": "patterns",
-      "endpoint": "/api/v1/patterns/confirm",
-      "method": "POST",
+      "router": "networth_workspace",
+      "endpoint": "/api/v1/net-worth",
+      "method": "GET",
       "tags": [
-        "patterns"
+        "networth-workspace"
       ],
-      "summary": "Confirm Pattern",
-      "operation_id": "confirm_pattern_api_v1_patterns_confirm_post",
+      "summary": "Get Networth",
+      "operation_id": "get_networth_api_v1_net_worth_get",
       "request_schema": {},
       "response_schema": {
         "type": "object",
         "additionalProperties": true,
-        "title": "Response Confirm Pattern Api V1 Patterns Confirm Post"
+        "title": "Response Get Networth Api V1 Net Worth Get"
       },
       "status_codes": [
         "200",
@@ -3748,149 +3466,49 @@
       ],
       "parameters": [
         {
-          "name": "pattern_id",
+          "name": "date_range",
           "in": "query",
-          "required": true,
+          "required": false,
           "schema": {
-            "type": "integer",
-            "title": "Pattern Id"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date Range"
+          }
+        },
+        {
+          "name": "account_types",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Types"
+          }
+        },
+        {
+          "name": "period",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "default": "1M",
+            "title": "Period"
           }
         }
       ],
-      "capability": "transaction_intelligence"
-    },
-    {
-      "router": "patterns",
-      "endpoint": "/api/v1/patterns/new",
-      "method": "POST",
-      "tags": [
-        "patterns"
-      ],
-      "summary": "Create Pattern",
-      "operation_id": "create_pattern_api_v1_patterns_new_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Create Pattern Api V1 Patterns New Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "provider_name",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "title": "Provider Name"
-          }
-        },
-        {
-          "name": "description_pattern",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "string",
-            "title": "Description Pattern"
-          }
-        },
-        {
-          "name": "fee_min_bps",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "default": 150,
-            "title": "Fee Min Bps"
-          }
-        },
-        {
-          "name": "fee_max_bps",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "default": 400,
-            "title": "Fee Max Bps"
-          }
-        },
-        {
-          "name": "review_fee_min_bps",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "default": 50,
-            "title": "Review Fee Min Bps"
-          }
-        },
-        {
-          "name": "review_fee_max_bps",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "default": 800,
-            "title": "Review Fee Max Bps"
-          }
-        },
-        {
-          "name": "typical_settlement_days",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "default": 2,
-            "title": "Typical Settlement Days"
-          }
-        }
-      ],
-      "capability": "transaction_intelligence"
-    },
-    {
-      "router": "patterns",
-      "endpoint": "/api/v1/patterns/providers",
-      "method": "GET",
-      "tags": [
-        "patterns"
-      ],
-      "summary": "List Providers",
-      "operation_id": "list_providers_api_v1_patterns_providers_get",
-      "request_schema": {},
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response List Providers Api V1 Patterns Providers Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "transaction_intelligence"
-    },
-    {
-      "router": "patterns",
-      "endpoint": "/api/v1/patterns/purposes",
-      "method": "GET",
-      "tags": [
-        "patterns"
-      ],
-      "summary": "List Purposes",
-      "operation_id": "list_purposes_api_v1_patterns_purposes_get",
-      "request_schema": {},
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response List Purposes Api V1 Patterns Purposes Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3963,32 +3581,14 @@
       "operation_id": "api_scan_reconciliations_api_reconciliations_scan_get",
       "request_schema": {},
       "response_schema": {
-        "type": "object",
         "additionalProperties": true,
+        "type": "object",
         "title": "Response Api Scan Reconciliations Api Reconciliations Scan Get"
       },
       "status_codes": [
-        "200",
-        "422"
+        "200"
       ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Household Id"
-          }
-        }
-      ],
+      "parameters": [],
       "capability": "reconciliation"
     },
     {
@@ -4056,15 +3656,15 @@
           "description": "Credit account ID"
         },
         {
-          "name": "amount_paise",
+          "name": "amount",
           "in": "query",
           "required": true,
           "schema": {
-            "type": "integer",
-            "description": "Matched amount in paise (\u20b91.00 = 100)",
-            "title": "Amount Paise"
+            "type": "number",
+            "description": "Matched amount in rupees",
+            "title": "Amount"
           },
-          "description": "Matched amount in paise (\u20b91.00 = 100)"
+          "description": "Matched amount in rupees"
         },
         {
           "name": "date_diff_days",
@@ -4079,15 +3679,15 @@
           "description": "Days between transaction dates"
         },
         {
-          "name": "confidence_bps",
+          "name": "match_confidence",
           "in": "query",
           "required": true,
           "schema": {
-            "type": "integer",
-            "description": "Confidence in basis points (0-10000)",
-            "title": "Confidence Bps"
+            "type": "number",
+            "description": "Confidence score 0.0-1.0",
+            "title": "Match Confidence"
           },
-          "description": "Confidence in basis points (0-10000)"
+          "description": "Confidence score 0.0-1.0"
         },
         {
           "name": "match_type",
@@ -4115,32 +3715,14 @@
       "operation_id": "api_batch_insert_reconciliations_api_reconciliations_batch_insert_post",
       "request_schema": {},
       "response_schema": {
-        "type": "object",
         "additionalProperties": true,
+        "type": "object",
         "title": "Response Api Batch Insert Reconciliations Api Reconciliations Batch Insert Post"
       },
       "status_codes": [
-        "200",
-        "422"
+        "200"
       ],
-      "parameters": [
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Household Id"
-          }
-        }
-      ],
+      "parameters": [],
       "capability": "reconciliation"
     },
     {
@@ -4208,51 +3790,19 @@
       "capability": "reconciliation"
     },
     {
-      "router": "reconciliation",
-      "endpoint": "/api/reconciliations/{reconciliation_id}/undo",
-      "method": "POST",
-      "tags": [
-        "reconciliation"
-      ],
-      "summary": "Api Undo Reconciliation",
-      "operation_id": "api_undo_reconciliation_api_reconciliations__reconciliation_id__undo_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Api Undo Reconciliation Api Reconciliations  Reconciliation Id  Undo Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "reconciliation_id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "title": "Reconciliation Id"
-          }
-        }
-      ],
-      "capability": "reconciliation"
-    },
-    {
-      "router": "reconciliation",
-      "endpoint": "/api/reconciliations/stats",
+      "router": "reconciliation_workspace",
+      "endpoint": "/api/v1/reconciliation",
       "method": "GET",
       "tags": [
-        "reconciliation"
+        "reconciliation-workspace"
       ],
-      "summary": "Api Get Reconciliation Stats",
-      "operation_id": "api_get_reconciliation_stats_api_reconciliations_stats_get",
+      "summary": "Get Reconciliation",
+      "operation_id": "get_reconciliation_api_v1_reconciliation_get",
       "request_schema": {},
       "response_schema": {
         "type": "object",
         "additionalProperties": true,
-        "title": "Response Api Get Reconciliation Stats Api Reconciliations Stats Get"
+        "title": "Response Get Reconciliation Api V1 Reconciliation Get"
       },
       "status_codes": [
         "200",
@@ -4260,7 +3810,7 @@
       ],
       "parameters": [
         {
-          "name": "household_id",
+          "name": "status",
           "in": "query",
           "required": false,
           "schema": {
@@ -4272,331 +3822,27 @@
                 "type": "null"
               }
             ],
-            "description": "Household identifier",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "reconciliation"
-    },
-    {
-      "router": "scenarios",
-      "endpoint": "/api/v1/scenarios/expense-reduction",
-      "method": "POST",
-      "tags": [
-        "scenarios"
-      ],
-      "summary": "Simulate Expense Reduction",
-      "operation_id": "simulate_expense_reduction_api_v1_scenarios_expense_reduction_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Simulate Expense Reduction Api V1 Scenarios Expense Reduction Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "reduction_paise",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "description": "Monthly expense reduction in paise",
-            "title": "Reduction Paise"
-          },
-          "description": "Monthly expense reduction in paise"
+            "title": "Status"
+          }
         },
         {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        },
-        {
-          "name": "forecast_months",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "maximum": 12,
-            "minimum": 1,
-            "description": "Forecast horizon",
-            "default": 12,
-            "title": "Forecast Months"
-          },
-          "description": "Forecast horizon"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "scenarios",
-      "endpoint": "/api/v1/scenarios/income-change",
-      "method": "POST",
-      "tags": [
-        "scenarios"
-      ],
-      "summary": "Simulate Income Change",
-      "operation_id": "simulate_income_change_api_v1_scenarios_income_change_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Simulate Income Change Api V1 Scenarios Income Change Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "change_paise",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "description": "Monthly income change in paise (positive/negative)",
-            "title": "Change Paise"
-          },
-          "description": "Monthly income change in paise (positive/negative)"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        },
-        {
-          "name": "forecast_months",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "maximum": 12,
-            "minimum": 1,
-            "description": "Forecast horizon",
-            "default": 12,
-            "title": "Forecast Months"
-          },
-          "description": "Forecast horizon"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "scenarios",
-      "endpoint": "/api/v1/scenarios/debt-prepayment",
-      "method": "POST",
-      "tags": [
-        "scenarios"
-      ],
-      "summary": "Simulate Debt Prepayment",
-      "operation_id": "simulate_debt_prepayment_api_v1_scenarios_debt_prepayment_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Simulate Debt Prepayment Api V1 Scenarios Debt Prepayment Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "extra_payment_paise",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "description": "Extra monthly payment toward debt in paise",
-            "title": "Extra Payment Paise"
-          },
-          "description": "Extra monthly payment toward debt in paise"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "scenarios",
-      "endpoint": "/api/v1/scenarios/new-loan",
-      "method": "POST",
-      "tags": [
-        "scenarios"
-      ],
-      "summary": "Simulate New Loan",
-      "operation_id": "simulate_new_loan_api_v1_scenarios_new_loan_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Simulate New Loan Api V1 Scenarios New Loan Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "principal_paise",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "description": "Loan principal in paise",
-            "title": "Principal Paise"
-          },
-          "description": "Loan principal in paise"
-        },
-        {
-          "name": "annual_rate_bps",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "description": "Annual interest rate in basis points",
-            "title": "Annual Rate Bps"
-          },
-          "description": "Annual interest rate in basis points"
-        },
-        {
-          "name": "tenure_months",
-          "in": "query",
-          "required": true,
-          "schema": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "description": "Loan tenure in months",
-            "title": "Tenure Months"
-          },
-          "description": "Loan tenure in months"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
-        }
-      ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "scenarios",
-      "endpoint": "/api/v1/scenarios/credit-behaviour",
-      "method": "POST",
-      "tags": [
-        "scenarios"
-      ],
-      "summary": "Simulate Credit Behaviour",
-      "operation_id": "simulate_credit_behaviour_api_v1_scenarios_credit_behaviour_post",
-      "request_schema": {},
-      "response_schema": {
-        "type": "object",
-        "additionalProperties": true,
-        "title": "Response Simulate Credit Behaviour Api V1 Scenarios Credit Behaviour Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "average_interest_rate_bps",
+          "name": "banks",
           "in": "query",
           "required": false,
           "schema": {
             "anyOf": [
               {
-                "type": "integer"
+                "type": "string"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Average credit interest rate in basis points (optional)",
-            "title": "Average Interest Rate Bps"
-          },
-          "description": "Average credit interest rate in basis points (optional)"
-        },
-        {
-          "name": "household_id",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "string",
-            "description": "Household identifier",
-            "default": "primary",
-            "title": "Household Id"
-          },
-          "description": "Household identifier"
+            "title": "Banks"
+          }
         }
       ],
-      "capability": "forecasting"
-    },
-    {
-      "router": "scenarios",
-      "endpoint": "/api/v1/scenarios/compare",
-      "method": "POST",
-      "tags": [
-        "scenarios"
-      ],
-      "summary": "Compare Scenarios",
-      "operation_id": "compare_scenarios_api_v1_scenarios_compare_post",
-      "request_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Request"
-      },
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response Compare Scenarios Api V1 Scenarios Compare Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [],
-      "capability": "forecasting"
+      "capability": "unknown"
     },
     {
       "router": "transactions",
@@ -4611,7 +3857,8 @@
       "response_schema": {
         "type": "array",
         "items": {
-          "$ref": "#/components/schemas/Transaction"
+          "type": "object",
+          "additionalProperties": true
         },
         "title": "Response Get Transactions Api Transactions Get"
       },
@@ -4895,52 +4142,7 @@
         }
       ],
       "capability": "transaction_intelligence"
-    },
-    {
-      "router": "members",
-      "endpoint": "/api/members",
-      "method": "GET",
-      "tags": [
-        "members"
-      ],
-      "summary": "Get Members",
-      "operation_id": "get_members_api_members_get",
-      "request_schema": {},
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response Get Members Api Members Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "unknown"
-    },
-    {
-      "router": "members",
-      "endpoint": "/api/members",
-      "method": "POST",
-      "tags": [
-        "members"
-      ],
-      "summary": "Create Member",
-      "operation_id": "create_member_api_members_post",
-      "request_schema": {
-        "$ref": "#/components/schemas/MemberCreate"
-      },
-      "response_schema": {
-        "additionalProperties": true,
-        "type": "object",
-        "title": "Response Create Member Api Members Post"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [],
-      "capability": "unknown"
     }
   ],
-  "generated_at": "1784104116.602396"
+  "generated_at": "1784727957.18391"
 }

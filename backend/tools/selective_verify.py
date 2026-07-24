@@ -20,7 +20,7 @@ from typing import Any
 # Project root from this file's location (backend/tools → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 BACKEND_DIR = PROJECT_ROOT / "backend"
-GENERATED_DIR = PROJECT_ROOT / "memory-bank" / "generated"
+GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 
 
 @dataclass

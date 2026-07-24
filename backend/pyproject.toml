@@ -31,7 +31,34 @@ warn_unused_ignores = true
 explicit_package_bases = true
 
 exclude = [
-        ]
+    "tests/",
+]
+
+# Test configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "capability: mark test as capability smoke test",
+    "contract: mark test as contract test",
+    "property: mark test as property test",
+    "invariant: mark test as invariant test",
+    "golden: mark test as golden dataset test",
+    "meta: mark test as meta test",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:src.core.dtos.*",
+    "ignore::pytest.PytestDeprecationWarning",
+]
+
+[tool.hypothesis]
+default_profile = "default"
+
+[tool.hypothesis.profiles]
+default = { max_examples = 20, deadline = 5000 }
+ci = { max_examples = 150, deadline = 10000 }
+nightly = { max_examples = 1000, deadline = 30000 }
 
 # External third-party libraries only
 [[tool.mypy.overrides]]

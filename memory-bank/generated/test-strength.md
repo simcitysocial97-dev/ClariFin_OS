@@ -1,22 +1,11 @@
 # Validation Strength Report
 
-Generated: 2026-07-15T09:55:42.305807+00:00
+Generated: 2026-07-24T03:15:34.121743+00:00
 
 ## Strength Classification
 
 | Capability | Criticality | Strength | Score | Evidence | Gaps |
 |------------|-------------|----------|-------|----------|------|
-| Account Management | high | Critical | 17 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests |
-| Credit Cards | high | Critical | 17 | property(1), golden(3), smoke(1) | No contract tests, No invariant tests |
-| Debt Management | high | Critical | 20 | property(2), golden(3), smoke(1), invariants(1) | No contract tests |
-| Financial Health | high | Critical | 17 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests |
-| Household Cashflow | high | Critical | 20 | property(2), golden(4), smoke(1), invariants(1) | No contract tests |
-| Reconciliation | high | Critical | 17 | property(3), golden(2), smoke(1) | No contract tests, No invariant tests |
-| Transaction Intelligence | high | Critical | 17 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests |
-| Financial Events | medium | Critical | 17 | property(1), golden(2), smoke(1) | No contract tests, No invariant tests |
-| Forecasting | medium | Critical | 17 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests |
-| Pattern Analysis | medium | Critical | 17 | property(1), golden(2), smoke(1) | No contract tests, No invariant tests |
-| Recommendations | medium | Critical | 17 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests |
 
 ## Scoring Legend
 

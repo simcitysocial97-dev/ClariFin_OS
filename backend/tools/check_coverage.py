@@ -26,7 +26,7 @@ BACKEND_SRC = PROJECT_ROOT / "backend" / "src"
 BACKEND_TESTS = PROJECT_ROOT / "backend" / "tests"
 MEMORY_BANK = PROJECT_ROOT / "memory-bank"
 CAPABILITIES_DIR = MEMORY_BANK / "capabilities"
-GENERATED_DIR = MEMORY_BANK / "generated"
+GENERATED_DIR = BACKEND_TESTS / "generated"
 
 
 @dataclass

@@ -75,3 +75,46 @@ class TestStatementDetectionProperties:
                "date_iso": "2026-01-15", "description": description}
         result = detect_emi_payment(txn, [], {})
         assert result is None
+
+
+class TestCreditEngineProperties:
+    """Property tests for credit card EMI and utilization."""
+
+    @given(
+        amount_paise=st.integers(min_value=10000, max_value=100000000),
+        annual_rate_bps=st.integers(min_value=1800, max_value=4800),
+        tenure_months=st.sampled_from([3, 6, 9, 12, 18, 24]),
+    )
+    @settings(max_examples=20)
+    def test_emi_conversion_properties(
+        self,
+        amount_paise: int,
+        annual_rate_bps: int,
+        tenure_months: int,
+    ) -> None:
+        """EMI conversion must satisfy financial invariants."""
+        from src.engines.credit_card_engine import compute_emi_conversion
+
+        result = compute_emi_conversion(amount_paise, annual_rate_bps, tenure_months)
+        assert isinstance(result["emi_paise"], int)
+        assert isinstance(result["total_interest_paise"], int)
+        assert isinstance(result["total_repayment_paise"], int)
+        assert result["emi_paise"] > 0
+        assert result["total_repayment_paise"] == result["emi_paise"] * tenure_months
+        assert result["total_interest_paise"] >= 0
+
+    @given(
+        outstanding_paise=st.integers(min_value=0, max_value=50000000),
+        credit_limit_paise=st.integers(min_value=100000, max_value=10000000),
+    )
+    @settings(max_examples=20)
+    def test_utilization_bps_bounds(
+        self,
+        outstanding_paise: int,
+        credit_limit_paise: int,
+    ) -> None:
+        """Utilization must be between 0 and 10000 basis points."""
+        from src.engines.credit_card_engine.utilization import compute_utilization
+
+        util = compute_utilization(outstanding_paise, credit_limit_paise)
+        assert 0 <= util <= 10000, f"Utilization {util} out of bps bounds"

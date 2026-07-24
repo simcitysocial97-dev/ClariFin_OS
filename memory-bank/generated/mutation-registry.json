@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:55:41.571478+00:00",
+  "generated_at": "2026-07-24T03:15:33.791706+00:00",
   "entries": [
     {
       "module": "src/engines/balance_engine.py",
@@ -7,12 +7,12 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -25,46 +25,18 @@
       "performance_tests": false
     },
     {
-      "module": "src/engines/cashflow_engine.py",
-      "function": "multiple",
-      "capability": "household_cashflow",
-      "risk": "low",
-      "mutation_types": [
-        "Boolean",
-        "Loop termination",
-        "Boundary conditions",
-        "Arithmetic",
-        "Comparison",
-        "Constant replacement"
-      ],
-      "existing_tests": {
-        "smoke_tests": "tests/capabilities/household_cashflow",
-        "property_tests": [
-          "tests/properties/test_cashflow.py",
-          "tests/properties/cashflow/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/family_household.json"
-        ]
-      },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
-      "performance_tests": false
-    },
-    {
       "module": "src/engines/behavior_engine.py",
       "function": "multiple",
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
+        "Loop termination",
+        "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
         "Constant replacement",
-        "Boolean",
         "Comparison",
-        "Arithmetic"
+        "Boolean"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -82,12 +54,12 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -102,191 +74,150 @@
     {
       "module": "src/engines/reconciliation_engine.py",
       "function": "multiple",
-      "capability": "reconciliation",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/reconciliation",
-        "property_tests": [
-          "tests/test_reconciliation.py",
-          "tests/test_reconciliation_determinism.py",
-          "tests/test_reconciliation_stats.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_plus_loan.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/insight_generator.py",
       "function": "multiple",
-      "capability": "pattern_analysis",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/pattern_analysis",
-        "property_tests": [
-          "tests/test_pattern_repository.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/irregular_income.json",
-          "tests/golden/datasets/normal_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/nudge_engine.py",
       "function": "multiple",
-      "capability": "recommendations",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/recommendations",
-        "property_tests": [
-          "tests/test_recommendation_engine.py",
-          "tests/test_optimization_engine.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/credit_card_revolver.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/transaction_intelligence/cc_payment_detector.py",
       "function": "multiple",
-      "capability": "transaction_intelligence",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/transaction_intelligence",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py",
-          "tests/properties/transaction_intelligence/__init__.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/cc_statement_scenario.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/normal_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/transaction_intelligence/cash_conversion_detector.py",
       "function": "multiple",
-      "capability": "transaction_intelligence",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/transaction_intelligence",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py",
-          "tests/properties/transaction_intelligence/__init__.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/cc_statement_scenario.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/normal_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/transaction_intelligence/loan_emi_detector.py",
       "function": "multiple",
-      "capability": "transaction_intelligence",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/transaction_intelligence",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py",
-          "tests/properties/transaction_intelligence/__init__.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/cc_statement_scenario.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/normal_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/utilization.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
         "Constant replacement",
         "Boolean",
@@ -294,111 +225,87 @@
         "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/interest.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/emi.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/metrics.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/foreclosure.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
         "Constant replacement",
         "Loop termination",
@@ -406,195 +313,151 @@
         "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/billing.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/credit_card_engine/outstanding.py",
       "function": "multiple",
-      "capability": "credit_cards",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
         "Constant replacement",
         "Comparison",
         "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/credit_cards",
-        "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/credit_card_revolver.json",
-          "tests/golden/datasets/cash_advance.json",
-          "tests/golden/datasets/cc_statement_scenario.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/financial_events/lineage_walker.py",
       "function": "multiple",
-      "capability": "financial_events",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_events",
-        "property_tests": [
-          "tests/test_financial_events.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/cc_statement_scenario.json",
-          "tests/golden/datasets/salary_plus_loan.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/financial_intelligence/intelligence.py",
       "function": "multiple",
-      "capability": "forecasting",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/forecasting",
-        "property_tests": [
-          "tests/properties/test_forecast.py",
-          "tests/properties/forecasting/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/financial_intelligence/scenario.py",
       "function": "multiple",
-      "capability": "forecasting",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
+        "Sign inversion",
         "Boundary conditions",
-        "Arithmetic",
+        "Boolean",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/forecasting",
-        "property_tests": [
-          "tests/properties/test_forecast.py",
-          "tests/properties/forecasting/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/financial_intelligence/goal_planner.py",
       "function": "multiple",
-      "capability": "forecasting",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/forecasting",
-        "property_tests": [
-          "tests/properties/test_forecast.py",
-          "tests/properties/forecasting/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
@@ -603,14 +466,14 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
+        "Sign inversion",
         "Boundary conditions",
-        "Arithmetic",
+        "Boolean",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Arithmetic"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -625,71 +488,57 @@
     {
       "module": "src/engines/financial_intelligence/optimization.py",
       "function": "multiple",
-      "capability": "recommendations",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/recommendations",
-        "property_tests": [
-          "tests/test_recommendation_engine.py",
-          "tests/test_optimization_engine.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/credit_card_revolver.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/financial_intelligence/forecasting.py",
       "function": "multiple",
-      "capability": "forecasting",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/forecasting",
-        "property_tests": [
-          "tests/properties/test_forecast.py",
-          "tests/properties/forecasting/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/account_engine/dormant.py",
       "function": "multiple",
-      "capability": "account_management",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
         "Constant replacement",
@@ -697,114 +546,86 @@
         "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/account_management",
-        "property_tests": [
-          "tests/test_account_engine.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/family_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/account_engine/cashflow.py",
       "function": "multiple",
-      "capability": "account_management",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/account_management",
-        "property_tests": [
-          "tests/test_account_engine.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/family_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/account_engine/balance.py",
       "function": "multiple",
-      "capability": "account_management",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/account_management",
-        "property_tests": [
-          "tests/test_account_engine.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/family_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/account_engine/lifecycle.py",
       "function": "multiple",
-      "capability": "account_management",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/account_management",
-        "property_tests": [
-          "tests/test_account_engine.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/family_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/account_engine/metrics.py",
       "function": "multiple",
-      "capability": "account_management",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
         "Constant replacement",
@@ -813,143 +634,108 @@
         "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/account_management",
-        "property_tests": [
-          "tests/test_account_engine.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/family_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/account_engine/history.py",
       "function": "multiple",
-      "capability": "account_management",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/account_management",
-        "property_tests": [
-          "tests/test_account_engine.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/salary_only.json",
-          "tests/golden/datasets/family_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/recommendation_engine/recommendations.py",
       "function": "multiple",
-      "capability": "recommendations",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/recommendations",
-        "property_tests": [
-          "tests/test_recommendation_engine.py",
-          "tests/test_optimization_engine.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/credit_card_revolver.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/income.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/cashflow.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
@@ -958,13 +744,13 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -979,32 +765,25 @@
     {
       "module": "src/engines/behaviour_engine/lifestyle.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
+        "Sign inversion",
         "Boundary conditions",
-        "Arithmetic",
+        "Boolean",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
@@ -1013,11 +792,11 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -1032,486 +811,374 @@
     {
       "module": "src/engines/behaviour_engine/resilience.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/patterns.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/debt.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/wellness.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Arithmetic",
+        "Sign inversion",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/account.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/profile.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
         "Arithmetic",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/credit_dependency.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/savings.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/behaviour_engine/stress.py",
       "function": "multiple",
-      "capability": "financial_health",
+      "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Sign inversion",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/financial_health",
-        "property_tests": [
-          "tests/properties/test_behaviour.py",
-          "tests/properties/behaviour/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/normal_household.json",
-          "tests/golden/datasets/high_debt_household.json",
-          "tests/golden/datasets/irregular_income.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Sign inversion",
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
+        "Sign inversion",
         "Boundary conditions",
-        "Arithmetic",
+        "Boolean",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/prepayment.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/emi.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Arithmetic",
+        "Boolean",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/metrics.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/utils.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
         "Constant replacement",
         "Comparison",
         "Arithmetic"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/foreclosure.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     },
     {
       "module": "src/engines/loan_engine/floating_rate.py",
       "function": "multiple",
-      "capability": "debt_management",
-      "risk": "medium",
+      "capability": "unknown",
+      "risk": "low",
       "mutation_types": [
-        "Off-by-one",
-        "Boolean",
         "Loop termination",
-        "Boundary conditions",
         "Arithmetic",
+        "Boundary conditions",
+        "Constant replacement",
+        "Off-by-one",
         "Comparison",
-        "Constant replacement"
+        "Boolean"
       ],
       "existing_tests": {
-        "smoke_tests": "tests/capabilities/debt_management",
-        "property_tests": [
-          "tests/properties/test_loan.py",
-          "tests/properties/lending/test_engine_properties.py"
-        ],
-        "golden_tests": [
-          "tests/golden/datasets/salary_plus_loan.json",
-          "tests/golden/datasets/multiple_loans.json",
-          "tests/golden/datasets/high_debt_household.json"
-        ]
+        "smoke_tests": null,
+        "property_tests": [],
+        "golden_tests": []
       },
-      "property_tests": true,
-      "golden_tests": true,
-      "contracts": true,
+      "property_tests": false,
+      "golden_tests": false,
+      "contracts": false,
       "performance_tests": false
     }
   ]

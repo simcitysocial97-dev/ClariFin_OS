@@ -51,7 +51,7 @@ from src.routers import (
     accounts_router,
     audit,
     banks,
-    behavior,
+    behaviour,
     behaviour_workspace,
     cards_statements,
     cashflow,
@@ -60,6 +60,7 @@ from src.routers import (
     credit_cards_workspace,
     dashboard,
     export,
+    financial_events,
     forecast,
     import_router,
     investments,
@@ -79,7 +80,7 @@ app.include_router(accounts.router)
 app.include_router(accounts_router.router)
 app.include_router(audit.router)
 app.include_router(banks.router)
-app.include_router(behavior.router)
+app.include_router(behaviour.router)
 app.include_router(behaviour_workspace.router)
 app.include_router(cards_statements.router)
 app.include_router(credit_cards.router)
@@ -88,6 +89,7 @@ app.include_router(cashflow.router)
 app.include_router(cashflow_workspace.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
+app.include_router(financial_events.router)
 app.include_router(forecast.router)
 app.include_router(import_router.router)
 app.include_router(investments.router)
@@ -95,12 +97,12 @@ app.include_router(investments_workspace.router)
 app.include_router(loans.router)
 app.include_router(loans_workspace.router)
 app.include_router(managed_accounts.router)
+app.include_router(members.router)
 app.include_router(networth.router)
 app.include_router(networth_workspace.router)
 app.include_router(reconciliation.router)
 app.include_router(reconciliation_workspace.router)
 app.include_router(transactions.router)
-app.include_router(members.router)
 
 # ============================================================
 # Run Server

@@ -6,7 +6,7 @@ description: >
 criticality: medium
 risk: low
 routers:
-  - src/routers/optimization.py
+  - src/routers/financial_intelligence.py
 services:
   - src/services/financial_intelligence_service.py
 engines:
@@ -24,10 +24,9 @@ golden_datasets:
   - tests/golden/datasets/high_debt_household.json
   - tests/golden/datasets/credit_card_revolver.json
 property_tests:
-  - tests/test_recommendation_engine.py
-  - tests/test_optimization_engine.py
+  - tests/engines/test_recommendation_engine.py
 invariants:
-  - tests/invariants/test_behaviour.py
+  - tests/domain/invariants/behaviour.py
 architecture_tests:
   - tests/architecture
 contracts:

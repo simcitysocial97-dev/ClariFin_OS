@@ -34,17 +34,21 @@ class TestCashflowContract:
         response = client.get("/api/cashflow/monthly?months=-1")
         assert response.status_code == 422
 
-    def test_get_cashflow_monthly_analysis_contract(self, client: TestClient) -> None:
-        """GET /v1/cashflow/monthly returns valid response."""
-        response = client.get("/api/v1/cashflow/monthly?month=2025-01&scope=household")
-        assert response.status_code in (200, 404, 422, 500)
+    def test_get_cashflow_monthly_default_contract(self, client: TestClient) -> None:
+        """GET /cashflow/monthly with default months returns valid response."""
+        response = client.get("/api/cashflow/monthly")
+        assert response.status_code == 200
 
-    def test_get_cashflow_missing_month(self, client: TestClient) -> None:
-        """GET /v1/cashflow/monthly requires month parameter."""
-        response = client.get("/api/v1/cashflow/monthly")
+        data = response.json()
+        assert "months" in data
+        assert isinstance(data["months"], list)
+
+    def test_get_cashflow_monthly_zero_months(self, client: TestClient) -> None:
+        """GET /cashflow/monthly rejects zero months."""
+        response = client.get("/api/cashflow/monthly?months=0")
         assert response.status_code == 422
 
-    def test_get_cashflow_invalid_scope(self, client: TestClient) -> None:
-        """GET /v1/cashflow/monthly validates scope enum."""
-        response = client.get("/api/v1/cashflow/monthly?month=2025-01&scope=invalid_scope")
-        assert response.status_code in (200, 404, 422, 500)
+    def test_get_cashflow_monthly_above_max(self, client: TestClient) -> None:
+        """GET /cashflow/monthly rejects months above 12."""
+        response = client.get("/api/cashflow/monthly?months=13")
+        assert response.status_code == 422

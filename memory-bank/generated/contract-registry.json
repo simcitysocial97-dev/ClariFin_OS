@@ -36,34 +36,14 @@
       ],
       "capability": "unknown"
     },
-    "accounts": {
+    "accounts_intelligence": {
       "endpoints": [
         {
           "method": "GET",
           "path": "/api/v1/accounts",
           "request_schema": {},
           "response_schema": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Response List Accounts Api V1 Accounts Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/accounts",
-          "request_schema": {
-            "$ref": "#/components/schemas/AccountCreateRequest"
-          },
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Create Account Api V1 Accounts Post"
+            "$ref": "#/components/schemas/AccountsDTO"
           },
           "status_codes": [
             "200",
@@ -75,9 +55,79 @@
           "path": "/api/v1/accounts/{account_id}",
           "request_schema": {},
           "response_schema": {
+            "$ref": "#/components/schemas/AccountDetailDTO"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/accounts/{account_id}/balance-history",
+          "request_schema": {},
+          "response_schema": {
+            "$ref": "#/components/schemas/AccountsHistoryResponse"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/accounts/{account_id}/transactions",
+          "request_schema": {},
+          "response_schema": {
+            "$ref": "#/components/schemas/AccountsTransactionsResponse"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/accounts/summary",
+          "request_schema": {},
+          "response_schema": {
+            "$ref": "#/components/schemas/AccountsDTO"
+          },
+          "status_codes": [
+            "200"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/accounts/type-breakdown",
+          "request_schema": {},
+          "response_schema": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Response Get Accounts Type Breakdown Api V1 Accounts Type Breakdown Get"
+          },
+          "status_codes": [
+            "200"
+          ]
+        }
+      ],
+      "capability": "unknown"
+    },
+    "accounts": {
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/api/v1/accounts",
+          "request_schema": {
+            "$ref": "#/components/schemas/AccountCreateRequest"
+          },
+          "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Get Account Api V1 Accounts  Account Id  Get"
+            "title": "Response Create Account Api V1 Accounts Post"
           },
           "status_codes": [
             "200",
@@ -124,23 +174,6 @@
             "type": "object",
             "additionalProperties": true,
             "title": "Response Insert Balance Snapshot Api V1 Accounts  Account Id  Balance History Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/accounts/{account_id}/balance-history",
-          "request_schema": {},
-          "response_schema": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": true
-            },
-            "title": "Response Get Balance History Api V1 Accounts  Account Id  Balance History Get"
           },
           "status_codes": [
             "200",
@@ -459,50 +492,6 @@
       ],
       "capability": "unknown"
     },
-    "behavior": {
-      "endpoints": [
-        {
-          "method": "GET",
-          "path": "/api/behavior/summary",
-          "request_schema": {},
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Api Behavior Summary Api Behavior Summary Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/behavior/score",
-          "request_schema": {},
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Api Behavior Score Api Behavior Score Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/behavior/insights",
-          "request_schema": {},
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Api Behavior Insights Api Behavior Insights Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        }
-      ],
-      "capability": "financial_health"
-    },
     "behaviour": {
       "endpoints": [
         {
@@ -605,43 +594,20 @@
             "200",
             "422"
           ]
-        },
+        }
+      ],
+      "capability": "financial_health"
+    },
+    "behaviour_workspace": {
+      "endpoints": [
         {
           "method": "GET",
-          "path": "/api/v1/behaviour/stress-index",
+          "path": "/api/v1/behaviour",
           "request_schema": {},
           "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Get Stress Index Api V1 Behaviour Stress Index Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/behaviour/revolver-status",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Revolver Status Api V1 Behaviour Revolver Status Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/behaviour/household-divergence",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Household Divergence Api V1 Behaviour Household Divergence Get"
+            "title": "Response Get Behaviour Api V1 Behaviour Get"
           },
           "status_codes": [
             "200",
@@ -649,7 +615,7 @@
           ]
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     "cards": {
       "endpoints": [
@@ -699,24 +665,27 @@
       ],
       "capability": "unknown"
     },
-    "credit_cards": {
+    "credit_cards_workspace": {
       "endpoints": [
         {
           "method": "GET",
           "path": "/api/v1/credit-cards",
           "request_schema": {},
           "response_schema": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Response List Cards Api V1 Credit Cards Get"
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Credit Cards Api V1 Credit Cards Get"
           },
           "status_codes": [
-            "200"
+            "200",
+            "422"
           ]
-        },
+        }
+      ],
+      "capability": "unknown"
+    },
+    "credit_cards": {
+      "endpoints": [
         {
           "method": "POST",
           "path": "/api/v1/credit-cards",
@@ -724,8 +693,8 @@
             "$ref": "#/components/schemas/CreditCardCreateRequest"
           },
           "response_schema": {
-            "additionalProperties": true,
             "type": "object",
+            "additionalProperties": true,
             "title": "Response Create Card Api V1 Credit Cards Post"
           },
           "status_codes": [
@@ -933,12 +902,21 @@
       "endpoints": [
         {
           "method": "GET",
+          "path": "/api/cashflow",
+          "request_schema": {},
+          "response_schema": {
+            "$ref": "#/components/schemas/CashflowSummaryDTO"
+          },
+          "status_codes": [
+            "200"
+          ]
+        },
+        {
+          "method": "GET",
           "path": "/api/cashflow/monthly",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Cashflow Monthly Api Cashflow Monthly Get"
+            "$ref": "#/components/schemas/CashflowMonthlyResponse"
           },
           "status_codes": [
             "200",
@@ -947,12 +925,21 @@
         },
         {
           "method": "GET",
-          "path": "/api/v1/cashflow/monthly",
+          "path": "/api/cashflow/categories",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Cashflow Monthly Analysis Api V1 Cashflow Monthly Get"
+            "$ref": "#/components/schemas/CashflowCategoryResponse"
+          },
+          "status_codes": [
+            "200"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/cashflow/transactions",
+          "request_schema": {},
+          "response_schema": {
+            "$ref": "#/components/schemas/CashflowTransactionResponse"
           },
           "status_codes": [
             "200",
@@ -962,6 +949,25 @@
       ],
       "capability": "household_cashflow"
     },
+    "cashflow_workspace": {
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/cashflow",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Cashflow Api V1 Cashflow Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        }
+      ],
+      "capability": "unknown"
+    },
     "dashboard": {
       "endpoints": [
         {
@@ -969,7 +975,7 @@
           "path": "/api/dashboard/summary",
           "request_schema": {},
           "response_schema": {
-            "$ref": "#/components/schemas/DashboardSummary"
+            "$ref": "#/components/schemas/DashboardSummaryDTO"
           },
           "status_codes": [
             "200"
@@ -995,119 +1001,21 @@
       ],
       "capability": "unknown"
     },
-    "financial_intelligence": {
-      "endpoints": [
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/cashflow-forecast",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Cashflow Forecast Api V1 Financial Intelligence Cashflow Forecast Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/liquidity-forecast",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Liquidity Forecast Api V1 Financial Intelligence Liquidity Forecast Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/credit-forecast",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Credit Forecast Api V1 Financial Intelligence Credit Forecast Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/outlook",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Financial Outlook Api V1 Financial Intelligence Outlook Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/report",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Financial Intelligence Report Api V1 Financial Intelligence Report Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/priorities",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Financial Intelligence Priorities Api V1 Financial Intelligence Priorities Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/financial-intelligence/confidence",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Financial Intelligence Confidence Api V1 Financial Intelligence Confidence Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        }
-      ],
-      "capability": "forecasting"
-    },
-    "goals": {
+    "financial_events": {
       "endpoints": [
         {
           "method": "POST",
-          "path": "/api/v1/goals/",
-          "request_schema": {},
+          "path": "/api/financial-events/",
+          "request_schema": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Transaction Ids"
+          },
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Create Goal Api V1 Goals  Post"
+            "type": "integer",
+            "title": "Response Create Event Api Financial Events  Post"
           },
           "status_codes": [
             "200",
@@ -1116,15 +1024,12 @@
         },
         {
           "method": "GET",
-          "path": "/api/v1/goals/",
+          "path": "/api/financial-events/",
           "request_schema": {},
           "response_schema": {
             "type": "array",
-            "items": {
-              "type": "object",
-              "additionalProperties": true
-            },
-            "title": "Response List Goals Api V1 Goals  Get"
+            "items": {},
+            "title": "Response List Events Api Financial Events  Get"
           },
           "status_codes": [
             "200",
@@ -1133,54 +1038,12 @@
         },
         {
           "method": "GET",
-          "path": "/api/v1/goals/{goal_id}",
+          "path": "/api/financial-events/{event_id}",
           "request_schema": {},
           "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Get Goal Api V1 Goals  Goal Id  Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "DELETE",
-          "path": "/api/v1/goals/{goal_id}",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Delete Goal Api V1 Goals  Goal Id  Delete"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/goals/{goal_id}/projection",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Goal Projection Api V1 Goals  Goal Id  Projection Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/goals/{goal_id}/health",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Goal Health Api V1 Goals  Goal Id  Health Get"
+            "title": "Response Get Event Api Financial Events  Event Id  Get"
           },
           "status_codes": [
             "200",
@@ -1188,7 +1051,26 @@
           ]
         }
       ],
-      "capability": "forecasting"
+      "capability": "unknown"
+    },
+    "forecast": {
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/forecast",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Forecast Api V1 Forecast Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        }
+      ],
+      "capability": "unknown"
     },
     "import": {
       "endpoints": [
@@ -1294,6 +1176,25 @@
             "type": "object",
             "additionalProperties": true,
             "title": "Response Delete Investment Api Investments  Investment Id  Delete"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        }
+      ],
+      "capability": "unknown"
+    },
+    "investments_workspace": {
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/investments",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Investments Api V1 Investments Get"
           },
           "status_codes": [
             "200",
@@ -1508,58 +1409,16 @@
       ],
       "capability": "debt_management"
     },
-    "optimization": {
+    "loans_workspace": {
       "endpoints": [
         {
           "method": "GET",
-          "path": "/api/v1/optimization/plan",
+          "path": "/api/v1/loans",
           "request_schema": {},
           "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Get Optimization Plan Api V1 Optimization Plan Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/optimization/debt-strategy",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Debt Strategy Api V1 Optimization Debt Strategy Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/optimization/goal-priority",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Goal Priority Api V1 Optimization Goal Priority Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/optimization/surplus-allocation",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Surplus Allocation Api V1 Optimization Surplus Allocation Get"
+            "title": "Response Get Loans Api V1 Loans Get"
           },
           "status_codes": [
             "200",
@@ -1567,7 +1426,41 @@
           ]
         }
       ],
-      "capability": "recommendations"
+      "capability": "unknown"
+    },
+    "members": {
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/members",
+          "request_schema": {},
+          "response_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Response Get Members Api Members Get"
+          },
+          "status_codes": [
+            "200"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/members",
+          "request_schema": {
+            "$ref": "#/components/schemas/MemberCreate"
+          },
+          "response_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Response Create Member Api Members Post"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        }
+      ],
+      "capability": "unknown"
     },
     "networth": {
       "endpoints": [
@@ -1587,64 +1480,24 @@
       ],
       "capability": "unknown"
     },
-    "patterns": {
+    "networth_workspace": {
       "endpoints": [
         {
-          "method": "POST",
-          "path": "/api/v1/patterns/confirm",
+          "method": "GET",
+          "path": "/api/v1/net-worth",
           "request_schema": {},
           "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Confirm Pattern Api V1 Patterns Confirm Post"
+            "title": "Response Get Networth Api V1 Net Worth Get"
           },
           "status_codes": [
             "200",
             "422"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/patterns/new",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Create Pattern Api V1 Patterns New Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/patterns/providers",
-          "request_schema": {},
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response List Providers Api V1 Patterns Providers Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/patterns/purposes",
-          "request_schema": {},
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response List Purposes Api V1 Patterns Purposes Get"
-          },
-          "status_codes": [
-            "200"
           ]
         }
       ],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     },
     "reconciliation": {
       "endpoints": [
@@ -1680,13 +1533,12 @@
           "path": "/api/reconciliations/scan",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
             "additionalProperties": true,
+            "type": "object",
             "title": "Response Api Scan Reconciliations Api Reconciliations Scan Get"
           },
           "status_codes": [
-            "200",
-            "422"
+            "200"
           ]
         },
         {
@@ -1708,13 +1560,12 @@
           "path": "/api/reconciliations/batch-insert",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
             "additionalProperties": true,
+            "type": "object",
             "title": "Response Api Batch Insert Reconciliations Api Reconciliations Batch Insert Post"
           },
           "status_codes": [
-            "200",
-            "422"
+            "200"
           ]
         },
         {
@@ -1744,122 +1595,20 @@
             "200",
             "422"
           ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/reconciliations/{reconciliation_id}/undo",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Api Undo Reconciliation Api Reconciliations  Reconciliation Id  Undo Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/reconciliations/stats",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Api Get Reconciliation Stats Api Reconciliations Stats Get"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
         }
       ],
       "capability": "reconciliation"
     },
-    "scenarios": {
+    "reconciliation_workspace": {
       "endpoints": [
         {
-          "method": "POST",
-          "path": "/api/v1/scenarios/expense-reduction",
+          "method": "GET",
+          "path": "/api/v1/reconciliation",
           "request_schema": {},
           "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Simulate Expense Reduction Api V1 Scenarios Expense Reduction Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/scenarios/income-change",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Simulate Income Change Api V1 Scenarios Income Change Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/scenarios/debt-prepayment",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Simulate Debt Prepayment Api V1 Scenarios Debt Prepayment Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/scenarios/new-loan",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Simulate New Loan Api V1 Scenarios New Loan Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/scenarios/credit-behaviour",
-          "request_schema": {},
-          "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Simulate Credit Behaviour Api V1 Scenarios Credit Behaviour Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/v1/scenarios/compare",
-          "request_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Request"
-          },
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Compare Scenarios Api V1 Scenarios Compare Post"
+            "title": "Response Get Reconciliation Api V1 Reconciliation Get"
           },
           "status_codes": [
             "200",
@@ -1867,7 +1616,7 @@
           ]
         }
       ],
-      "capability": "forecasting"
+      "capability": "unknown"
     },
     "transactions": {
       "endpoints": [
@@ -1878,7 +1627,8 @@
           "response_schema": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Transaction"
+              "type": "object",
+              "additionalProperties": true
             },
             "title": "Response Get Transactions Api Transactions Get"
           },
@@ -1931,41 +1681,7 @@
         }
       ],
       "capability": "transaction_intelligence"
-    },
-    "members": {
-      "endpoints": [
-        {
-          "method": "GET",
-          "path": "/api/members",
-          "request_schema": {},
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Get Members Api Members Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        },
-        {
-          "method": "POST",
-          "path": "/api/members",
-          "request_schema": {
-            "$ref": "#/components/schemas/MemberCreate"
-          },
-          "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Create Member Api Members Post"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        }
-      ],
-      "capability": "unknown"
     }
   },
-  "generated_at": "1784104116.602396"
+  "generated_at": "1784727957.18391"
 }

@@ -19,8 +19,7 @@ tables:
 golden_datasets:
   - tests/golden/datasets/cc_statement_scenario.json
   - tests/golden/datasets/salary_plus_loan.json
-property_tests:
-  - tests/test_financial_events.py
+property_tests: []
 invariants:
   - tests/invariants/test_transaction.py
 architecture_tests:

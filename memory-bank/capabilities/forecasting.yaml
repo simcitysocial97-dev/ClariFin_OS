@@ -7,8 +7,6 @@ criticality: medium
 risk: low
 routers:
   - src/routers/financial_intelligence.py
-  - src/routers/scenarios.py
-  - src/routers/goals.py
 services:
   - src/services/financial_intelligence_service.py
 engines:
@@ -29,10 +27,9 @@ golden_datasets:
   - tests/golden/datasets/salary_plus_loan.json
   - tests/golden/datasets/irregular_income.json
 property_tests:
-  - tests/properties/test_forecast.py
   - tests/properties/forecasting/test_engine_properties.py
 invariants:
-  - tests/invariants/test_forecast.py
+  - tests/domain/invariants/forecast.py
 architecture_tests:
   - tests/architecture
 contracts:

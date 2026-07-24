@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-15T09:55:41.567176+00:00",
+  "generated_at": "2026-07-24T03:15:33.785738+00:00",
   "functions": [
     {
       "module": "src/engines/balance_engine.py",
@@ -81,9 +81,55 @@
       "risk": "low"
     },
     {
-      "module": "src/engines/cashflow_engine.py",
-      "function": "compute_monthly_cashflow",
-      "purity": "PURE",
+      "module": "src/engines/behavior_engine.py",
+      "function": "invalidate_behavior_cache",
+      "purity": "IMPURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison"
+      ],
+      "blockers": [
+        "import:sqlite3"
+      ],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behavior_engine.py",
+      "function": "get_cached_behavior_profile",
+      "purity": "IMPURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean"
+      ],
+      "blockers": [
+        "import:sqlite3"
+      ],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behavior_engine.py",
+      "function": "set_cached_behavior_profile",
+      "purity": "IMPURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison"
+      ],
+      "blockers": [
+        "import:sqlite3"
+      ],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behavior_engine.py",
+      "function": "detect_india_risk_patterns",
+      "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -93,61 +139,29 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [],
-      "criticality": "high",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "invalidate_behavior_cache",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison"
+      "blockers": [
+        "os.",
+        "import:sqlite3"
       ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "get_cached_behavior_profile",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison"
-      ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "set_cached_behavior_profile",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison"
-      ],
-      "blockers": [],
       "criticality": "medium",
       "risk": "low"
     },
     {
       "module": "src/engines/behavior_engine.py",
       "function": "compute_behavior_profile",
-      "purity": "PURE",
+      "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
         "Comparison",
-        "Boolean",
-        "Constant replacement"
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination",
+        "Sign inversion"
       ],
-      "blockers": [],
+      "blockers": [
+        "import:sqlite3"
+      ],
       "criticality": "medium",
       "risk": "low"
     },
@@ -218,37 +232,19 @@
         "Boolean",
         "Constant replacement",
         "Boundary conditions",
-        "Off-by-one",
         "Loop termination",
         "Sign inversion"
       ],
       "blockers": [
+        "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/reconciliation_engine.py",
       "function": "find_matches_for_transaction",
-      "purity": "IMPURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Constant replacement",
-        "Boundary conditions",
-        "Loop termination"
-      ],
-      "blockers": [
-        "import:sqlite3"
-      ],
-      "criticality": "high",
-      "risk": "medium"
-    },
-    {
-      "module": "src/engines/reconciliation_engine.py",
-      "function": "find_potential_matches_with_db",
       "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
@@ -263,8 +259,8 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/insight_generator.py",
@@ -364,7 +360,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -378,7 +374,7 @@
         "Boolean"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -395,7 +391,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -412,7 +408,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -429,7 +425,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -446,7 +442,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -462,7 +458,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -477,8 +473,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/utilization.py",
@@ -491,8 +487,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/interest.py",
@@ -507,8 +503,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/interest.py",
@@ -524,8 +520,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/interest.py",
@@ -541,8 +537,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/interest.py",
@@ -556,8 +552,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/emi.py",
@@ -572,8 +568,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/metrics.py",
@@ -588,8 +584,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/foreclosure.py",
@@ -603,8 +599,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/billing.py",
@@ -617,8 +613,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/billing.py",
@@ -634,8 +630,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/billing.py",
@@ -650,8 +646,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/billing.py",
@@ -665,8 +661,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/credit_card_engine/outstanding.py",
@@ -679,8 +675,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/financial_events/lineage_walker.py",
@@ -1301,7 +1297,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1315,7 +1311,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1331,7 +1327,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1347,7 +1343,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1362,7 +1358,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1379,7 +1375,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1396,7 +1392,7 @@
       "blockers": [
         "open"
       ],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1411,7 +1407,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1427,7 +1423,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1442,7 +1438,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1457,7 +1453,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1477,7 +1473,7 @@
       "blockers": [
         "open"
       ],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1495,7 +1491,7 @@
       "blockers": [
         "open"
       ],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1593,7 +1589,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1610,7 +1606,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1628,7 +1624,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1643,7 +1639,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1660,7 +1656,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1677,7 +1673,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1694,7 +1690,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1710,7 +1706,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1824,7 +1820,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1842,7 +1838,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1903,7 +1899,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1920,7 +1916,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1937,7 +1933,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1954,7 +1950,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1971,7 +1967,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -1987,7 +1983,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2004,7 +2000,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2021,7 +2017,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2037,7 +2033,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2054,7 +2050,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2070,7 +2066,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2087,7 +2083,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2102,7 +2098,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2119,7 +2115,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2134,7 +2130,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2151,7 +2147,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2166,7 +2162,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2182,7 +2178,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2199,7 +2195,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2216,7 +2212,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2236,7 +2232,7 @@
       "blockers": [
         "open"
       ],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2255,7 +2251,7 @@
       "blockers": [
         "open"
       ],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2272,7 +2268,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2290,7 +2286,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2308,7 +2304,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2325,7 +2321,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2342,7 +2338,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2358,7 +2354,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2373,7 +2369,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2391,7 +2387,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2408,7 +2404,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2425,7 +2421,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2442,7 +2438,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2459,7 +2455,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2478,7 +2474,7 @@
       "blockers": [
         "os."
       ],
-      "criticality": "high",
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2495,8 +2491,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
@@ -2510,8 +2506,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
@@ -2526,8 +2522,8 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
@@ -2543,8 +2539,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
@@ -2561,8 +2557,8 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
@@ -2579,8 +2575,8 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/prepayment.py",
@@ -2594,8 +2590,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/prepayment.py",
@@ -2610,8 +2606,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/prepayment.py",
@@ -2628,8 +2624,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/prepayment.py",
@@ -2645,8 +2641,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/prepayment.py",
@@ -2663,8 +2659,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/emi.py",
@@ -2679,8 +2675,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/emi.py",
@@ -2694,8 +2690,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/emi.py",
@@ -2709,8 +2705,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/emi.py",
@@ -2724,8 +2720,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/metrics.py",
@@ -2741,8 +2737,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/metrics.py",
@@ -2757,8 +2753,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/metrics.py",
@@ -2771,8 +2767,8 @@
         "Boundary conditions"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/metrics.py",
@@ -2786,8 +2782,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/metrics.py",
@@ -2800,8 +2796,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/utils.py",
@@ -2814,8 +2810,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/utils.py",
@@ -2828,8 +2824,8 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/foreclosure.py",
@@ -2844,8 +2840,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/foreclosure.py",
@@ -2860,8 +2856,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/floating_rate.py",
@@ -2878,8 +2874,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     },
     {
       "module": "src/engines/loan_engine/floating_rate.py",
@@ -2895,8 +2891,8 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "high",
-      "risk": "medium"
+      "criticality": "medium",
+      "risk": "low"
     }
   ]
 }

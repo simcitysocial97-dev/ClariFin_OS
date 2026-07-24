@@ -30,7 +30,7 @@ golden_datasets:
   - tests/golden/datasets/salary_only.json
   - tests/golden/datasets/family_household.json
 property_tests:
-  - tests/test_account_engine.py
+  - tests/engines/test_account_engine.py
   - tests/properties/behaviour/test_engine_properties.py
 invariants:
   - tests/invariants/test_account.py

@@ -13,7 +13,7 @@ from pathlib import Path
 # Test file is at: backend/tests/meta/test_mutation_registry.py
 # Need 4 parents to reach project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-GENERATED_DIR = PROJECT_ROOT / "memory-bank" / "generated"
+GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 
 # Scripts are at backend/tools
 MUTATION_DISCOVERY_SCRIPT = PROJECT_ROOT / "backend" / "tools" / "mutation_discovery.py"

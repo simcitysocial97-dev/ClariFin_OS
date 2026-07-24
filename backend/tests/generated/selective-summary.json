@@ -1,0 +1,18 @@
+{
+  "mode": "selective",
+  "generated_at": "2026-07-24 04:25:22 UTC",
+  "runtime_seconds": 3.6760997772216797,
+  "tests_run": 74,
+  "tests_skipped": 0,
+  "result": "FAIL",
+  "suites": {
+    "architecture": true,
+    "capability": [],
+    "property": [],
+    "golden": [],
+    "invariant": []
+  },
+  "changed_files": [
+    "nonexistent_file.py"
+  ]
+}
