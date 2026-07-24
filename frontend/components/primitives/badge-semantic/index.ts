@@ -1,0 +1,1 @@
+export { FinancialBadge, financialBadgeVariants } from './financial-badge';

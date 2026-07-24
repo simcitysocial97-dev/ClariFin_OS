@@ -1,6 +1,6 @@
 'use client'
 
-import { formatINR, formatDateDisplay, rupeesToPaise } from '@/lib/utils/format'
+import { formatINR, formatDateDisplay } from '@/lib/utils/format'
 import { CheckCircle, XCircle, ArrowLeftRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,6 +9,11 @@ import type { ReconciliationMatch } from '@/lib/hooks/use-reconciliation'
 
 interface ReconciliationMatchCardProps {
   match: ReconciliationMatch
+}
+
+// Convert basis points (0-10000) to percentage (0.0-1.0)
+function bpsToConfidence(bps: number): number {
+  return bps / 10000
 }
 
 function getConfidenceColor(confidence: number): string {
@@ -52,9 +57,12 @@ export function ReconciliationMatchCard({ match }: ReconciliationMatchCardProps)
     rejectMutation.mutate(match.id)
   }
 
-  // Format amounts (amount is in rupees, convert to paise for formatINR)
-  const debitAmountDisplay = formatINR(rupeesToPaise(match.debit_amount_paise))
-  const creditAmountDisplay = formatINR(rupeesToPaise(match.credit_amount_paise))
+  // Convert basis points to percentage for display
+  const confidence = bpsToConfidence(match.match_confidence_bps)
+
+  // Format amounts (amount_paise is already in paise)
+  const debitAmountDisplay = formatINR(match.debit_amount_paise)
+  const creditAmountDisplay = formatINR(match.credit_amount_paise)
 
   // Format dates
   const debitDateDisplay = formatDateDisplay(match.debit_date_iso) || match.debit_date
@@ -73,11 +81,11 @@ export function ReconciliationMatchCard({ match }: ReconciliationMatchCardProps)
             <div className="flex items-center gap-1">
               <div className="h-2 w-16 bg-muted rounded-full overflow-hidden">
                 <div 
-                  className={`h-full transition-all ${getConfidenceColor(match.match_confidence)}`}
-                  style={{ width: `${Math.min(match.match_confidence * 100, 100)}%` }}
+                  className={`h-full transition-all ${getConfidenceColor(confidence)}`}
+                  style={{ width: `${Math.min(confidence * 100, 100)}%` }}
                 />
               </div>
-              <span className="text-xs font-medium">{getConfidenceLabel(match.match_confidence)}</span>
+              <span className="text-xs font-medium">{getConfidenceLabel(confidence)}</span>
             </div>
           </div>
         </div>

@@ -1,0 +1,1 @@
+"""recommendations capability tests."""

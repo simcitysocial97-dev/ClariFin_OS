@@ -188,3 +188,11 @@ class ReconciliationRepository(BaseRepository):
             """)
             rows = [(row[0], row[1]) for row in cur.fetchall()]
         return rows
+
+    def list_statements(self) -> list[dict[str, Any]]:
+        """
+        Get all reconciliations for workspace services.
+
+        Returns list of reconciliation records with transaction details.
+        """
+        return self.get_reconciliations()

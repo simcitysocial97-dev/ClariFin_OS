@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-07-16T04:45:28.265Z",
+  "duration": 374766,
+  "steps": [
+    {
+      "name": "TypeScript",
+      "pass": true,
+      "durationMs": 7797,
+      "errorCount": 0,
+      "warningCount": 0
+    },
+    {
+      "name": "ESLint",
+      "pass": false,
+      "durationMs": 120014,
+      "errorCount": 0,
+      "warningCount": 0
+    },
+    {
+      "name": "Next.js Build",
+      "pass": true,
+      "durationMs": 246955,
+      "errorCount": 0,
+      "warningCount": 0
+    }
+  ],
+  "allPassed": false
+}

@@ -1,0 +1,282 @@
+{
+  "health": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "ready": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "accounts_intelligence": {
+    "endpoints": 6,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "accounts": {
+    "endpoints": 22,
+    "contract_published": false,
+    "capabilities": [
+      "account_management"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "audit": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "banks": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "behaviour": {
+    "endpoints": 7,
+    "contract_published": false,
+    "capabilities": [
+      "financial_health"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "behaviour_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "cards": {
+    "endpoints": 3,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "credit_cards_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "credit_cards": {
+    "endpoints": 13,
+    "contract_published": false,
+    "capabilities": [
+      "credit_cards"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "cashflow": {
+    "endpoints": 4,
+    "contract_published": false,
+    "capabilities": [
+      "household_cashflow"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "cashflow_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "dashboard": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "export": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "financial_events": {
+    "endpoints": 3,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "forecast": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "import": {
+    "endpoints": 3,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "investments": {
+    "endpoints": 4,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "investments_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "loans": {
+    "endpoints": 13,
+    "contract_published": false,
+    "capabilities": [
+      "debt_management"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "loans_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "members": {
+    "endpoints": 2,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "networth": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "networth_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "reconciliation": {
+    "endpoints": 7,
+    "contract_published": false,
+    "capabilities": [
+      "reconciliation"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "reconciliation_workspace": {
+    "endpoints": 1,
+    "contract_published": false,
+    "capabilities": [
+      "unknown"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  },
+  "transactions": {
+    "endpoints": 4,
+    "contract_published": false,
+    "capabilities": [
+      "transaction_intelligence"
+    ],
+    "tested": 0,
+    "snapshots": 0,
+    "coverage": "0%"
+  }
+}

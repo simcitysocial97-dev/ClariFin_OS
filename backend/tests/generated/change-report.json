@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-07-24T04:33:57.393561+00:00",
+  "git_sha": "60bebf152542a636567c6249154db47d9f174db3",
+  "changes": [
+    {
+      "file": "backend/src/engines/cashflow_engine.py",
+      "risk": "CRITICAL",
+      "confidence": "HIGH",
+      "capabilities": [
+        "household_cashflow"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [
+          "tests/properties/cashflow"
+        ],
+        "golden_tests": [
+          "family_household",
+          "normal_household",
+          "salary_only",
+          "salary_plus_loan"
+        ],
+        "invariants": [
+          "tests/invariants/test_cashflow_invariants.py"
+        ],
+        "capability_tests": [
+          "tests/capabilities/household_cashflow"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capabilities/household_cashflow -q",
+        "pytest tests/properties/cashflow -q",
+        "pytest tests/golden -k 'family_household,normal_household,salary_only' -q"
+      ]
+    }
+  ],
+  "overall": {
+    "risk": "CRITICAL",
+    "score": 8
+  },
+  "mutation_readiness": {
+    "account_management": "Critical",
+    "credit_cards": "Critical",
+    "debt_management": "Critical",
+    "financial_events": "Strong",
+    "financial_health": "Critical",
+    "forecasting": "Critical",
+    "household_cashflow": "Critical",
+    "pattern_analysis": "Critical",
+    "recommendations": "Critical",
+    "reconciliation": "Critical",
+    "transaction_intelligence": "Critical"
+  },
+  "affected_mutation_candidates": {
+    "backend/src/engines/cashflow_engine.py": [
+      "src/engines/cashflow_engine.py:compute_monthly_cashflow"
+    ]
+  },
+  "test_strength": {
+    "account_management": "Critical",
+    "credit_cards": "Critical",
+    "debt_management": "Critical",
+    "financial_events": "Strong",
+    "financial_health": "Critical",
+    "forecasting": "Critical",
+    "household_cashflow": "Critical",
+    "pattern_analysis": "Critical",
+    "recommendations": "Critical",
+    "reconciliation": "Critical",
+    "transaction_intelligence": "Critical"
+  }
+}

@@ -1,16 +1,14 @@
 """Dashboard business orchestration service."""
 
-from collections import Counter
 from datetime import datetime
 
 from src.common import enrich_transaction
+from src.core.dtos.dashboard_dto import DashboardSummaryDTO
 from src.engines.behavior_engine import (
     compute_behavior_profile,
     get_cached_behavior_profile,
     set_cached_behavior_profile,
 )
-from src.models.base import Money
-from src.models.dashboard import DashboardSummary
 from src.repositories.reconciliation_repository import ReconciliationRepository
 from src.repositories.transaction_repository import TransactionRepository
 from src.services.base import BaseService
@@ -24,11 +22,11 @@ class DashboardService(BaseService):
         self.txn_repo = TransactionRepository(self.db_path)
         self.recon_repo = ReconciliationRepository(self.db_path)
 
-    def get_summary(self) -> DashboardSummary:
+    def get_summary(self) -> DashboardSummaryDTO:
         """
         Orchestrate dashboard data from multiple sources.
 
-        Returns a typed DashboardSummary with behavior insights.
+        Returns a DashboardSummaryDTO with financial metrics in paise.
         """
         # Check cache first
         cached = get_cached_behavior_profile(self.db_path)
@@ -42,49 +40,39 @@ class DashboardService(BaseService):
         raw = self.txn_repo.get_all_transactions_with_bank({})
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
-        # Calculate spending this month
+        # Calculate income and expenses this month
         this_month_cutoff = datetime.now().replace(day=1).strftime("%Y-%m-%d")
         this_month_txns = [t for t in transactions if t.get("parsed_date", "") >= this_month_cutoff]
-        spending_this_month = sum(
-            t.get("amount", 0) for t in this_month_txns if t.get("type") == "debit"
+        total_income_paise = sum(
+            t.get("amount_paise", 0) for t in this_month_txns if t.get("type") == "credit"
         )
+        total_expenses_paise = sum(
+            t.get("amount_paise", 0) for t in this_month_txns if t.get("type") == "debit"
+        )
+        net_cash_flow_paise = total_income_paise - total_expenses_paise
 
-        # Top category by spend
-        category_spends = [t.get("category", "Uncategorized") for t in this_month_txns if t.get("type") == "debit"]
-        top_category = Counter(category_spends).most_common(1)[0][0] if category_spends else "None"
+        # Savings rate
+        savings_rate = 0.0
+        if total_income_paise > 0:
+            savings_rate = round((net_cash_flow_paise / total_income_paise) * 100, 2)
 
-        # Large transactions (>= ₹10,000)
-        large_threshold_paise = 10000 * 100  # ₹10,000
-        large_transactions = [
-            t
-            for t in transactions
-            if t.get("amount_paise", 0) >= large_threshold_paise
-        ][:5]
-
-        # Pending reconciliations
-        pending_count = len(self.recon_repo.get_reconciliations(status="pending"))
-
-        # Insights and nudges (derived from profile)
-        insights: list[str] = []
-        nudges: list[str] = []
-
+        # EMI ratio (from profile or calculated)
         indices = profile.get("behavioral_indices", {})
         savings_discipline = indices.get("savings_discipline", {})
+        emi_paise = int(savings_discipline.get("emi_paise", 0) or 0)
+        emi_ratio = 0.0
+        if total_income_paise > 0:
+            emi_ratio = round((emi_paise / total_income_paise) * 100, 2)
 
-        if profile.get("risk_signals", {}).get("low_savings"):
-            nudges.append("Consider setting aside more for savings this month.")
-        if profile.get("risk_signals", {}).get("high_impulsivity"):
-            nudges.append("High impulsivity detected. Review discretionary spending.")
+        # Buffer days (from profile)
+        buffer_days = int(savings_discipline.get("buffer_days", 0) or 0)
 
-        if savings_discipline.get("savings_rate", 0) > 0.2:
-            insights.append("Great job! Your savings rate exceeds 20%.")
-
-        return DashboardSummary(
-            behavior_score=float(profile.get("financial_health_score", 50)) / 100.0,
-            spending_this_month=Money(paise=int(round(spending_this_month * 100))),
-            top_category=top_category,
-            insights=insights,
-            nudges=nudges,
-            reconciliation_pending=pending_count,
-            large_transactions=large_transactions,
+        return DashboardSummaryDTO(
+            net_cash_flow_paise=net_cash_flow_paise,
+            total_income_paise=total_income_paise,
+            total_expenses_paise=total_expenses_paise,
+            savings_rate=savings_rate,
+            emi_paise=emi_paise,
+            emi_ratio=emi_ratio,
+            buffer_days=buffer_days,
         )

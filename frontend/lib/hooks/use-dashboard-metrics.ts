@@ -1,57 +1,49 @@
-/**
- * Consolidated Dashboard Metrics Hook
- * Uses the existing /api/dashboard/summary endpoint
- */
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { DashboardMetricsSchema, type DashboardMetrics } from '@/lib/schemas/dashboard-metrics'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-interface DashboardData {
-  // Canonical paise fields
-  net_cash_flow_paise: number;
-  total_income_paise: number;
-  total_expenses_paise: number;
-  // Deprecated rupees field (for backward compatibility)
-  net_cash_flow_rupees?: number;
-  // Other fields
-  savings_rate: number;
-  emi_paise: number;
-  emi_ratio: number;
-  buffer_days: number;
-  financial_health_score: number;
-  seven_day_trend: number;
-  category_drift_alert: string | null;
-  recent_transactions: any[];
-}
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 interface HookState<T> {
-  data: T | null;
-  loading: boolean;
-  error: Error | null;
-  refetch: () => Promise<void>;
-  dataUpdatedAt: number;
+  data: T | null
+  loading: boolean
+  error: Error | null
+  refetch: () => Promise<void>
+  dataUpdatedAt: number
 }
 
-async function fetchDashboardSummary(): Promise<DashboardData> {
-  const res = await fetch(`${API_BASE}/api/dashboard/summary`);
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
-}
-
-export function useDashboardMetrics(): HookState<DashboardData> {
-  const queryClient = useQueryClient();
+// 🛡️ Data fetching function utilizing Zod runtime parsing
+async function fetchDashboardSummary(): Promise<DashboardMetrics> {
+  const res = await fetch(`${API_BASE}/api/dashboard/summary`)
+  if (!res.ok) throw new Error(`API error: ${res.status}`)
   
-  const result = useQuery<DashboardData, Error>({
+  // This is unverified raw payload from the network
+  const raw = await res.json()
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = DashboardMetricsSchema.safeParse(raw)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Dashboard metrics API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
+}
+
+export function useDashboardMetrics(): HookState<DashboardMetrics> {
+  const queryClient = useQueryClient()
+  
+  const result = useQuery<DashboardMetrics, Error>({
     queryKey: ['dashboard', 'summary'],
     queryFn: fetchDashboardSummary,
     staleTime: 30_000,
-  });
+  })
 
   const refetch = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['dashboard', 'summary'] });
-  };
+    await queryClient.invalidateQueries({ queryKey: ['dashboard', 'summary'] })
+  }
 
   return useMemo(() => ({
     data: result.data ?? null,
@@ -59,5 +51,5 @@ export function useDashboardMetrics(): HookState<DashboardData> {
     error: result.error ?? null,
     refetch,
     dataUpdatedAt: result.dataUpdatedAt,
-  }), [result, refetch]);
+  }), [result, refetch])
 }

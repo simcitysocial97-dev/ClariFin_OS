@@ -1,0 +1,20 @@
+{
+  "scenario": "high_debt_household",
+  "household": {"id": "primary"},
+  "accounts": [{"id": "a1", "balance_paise": 500000}],
+  "transactions": [
+    {"date_iso": "2025-01", "income_paise": 5000000, "expense_paise": 4500000, "surplus_paise": 500000}
+  ],
+  "loans": [
+    {"id": "l1", "name": "Home Loan", "outstanding_paise": 50000000, "interest_rate_bps": 850}
+  ],
+  "credit_cards": [
+    {"id": "c1", "name": "Card", "outstanding_paise": 20000000, "interest_rate_bps": 3600}
+  ],
+  "expected_output": {
+    "monthly_surplus_paise": 500000,
+    "total_debt_paise": 70000000,
+    "confidence_bps": 6000,
+    "risk_flags": ["high_debt"]
+  }
+}

@@ -303,7 +303,7 @@ class HybridExtractor:
                 if all_rows:
                     self._log(f"Page {page_num}: extracted {len(all_rows)} rows via {attempt['flavor']}")
                     # Cast to correct return type
-                    return [list(str(c) for c in row) for row in all_rows], str(attempt['flavor'])
+                    return [[str(c) for c in row] for row in all_rows], str(attempt['flavor'])
 
             except Exception as e:
                 self._log(f"Page {page_num}: {attempt['flavor']} (cols={attempt['use_cols']}) failed: {e}")

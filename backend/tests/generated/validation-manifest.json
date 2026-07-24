@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-07-24T04:33:59.237932+00:00",
+  "changed_files": [
+    "backend/src/data/finance.db",
+    "backend/tests/generated/change-report.json",
+    "backend/tests/generated/change-report.md",
+    "backend/tests/generated/mutation-gaps.md",
+    "backend/tests/generated/mutation-map.json",
+    "backend/tests/generated/mutation-readiness.json",
+    "backend/tests/generated/mutation-readiness.md",
+    "backend/tests/generated/mutation-registry.json",
+    "backend/tests/generated/selective-history.json",
+    "backend/tests/generated/selective-plan.md",
+    "backend/tests/generated/selective-summary.json",
+    "backend/tests/generated/test-plan.md",
+    "backend/tests/generated/test-strength.json",
+    "backend/tests/generated/test-strength.md",
+    "backend/tests/generated/validation-manifest.json",
+    "backend/tests/generated/verification-matrix.md",
+    "servers"
+  ],
+  "strategy": "full",
+  "reason": "",
+  "confidence": "HIGH",
+  "affected_capabilities": [],
+  "stages": [
+    "fast",
+    "coverage",
+    "change_intelligence",
+    "mutation_readiness",
+    "architecture",
+    "capability",
+    "property",
+    "golden",
+    "contract",
+    "meta"
+  ],
+  "estimated_runtime": 0.0,
+  "commands_executed": [
+    "ruff check --fix src/",
+    "python backend/tools/check_coverage.py",
+    "python backend/tools/change_intelligence.py",
+    "python backend/tools/mutation_discovery.py",
+    "python backend/tools/test_strength.py",
+    "pytest tests/architecture -q --tb=short --maxfail=3",
+    "pytest tests/capabilities -q --tb=short --maxfail=3",
+    "pytest tests/properties -q --tb=short --maxfail=3",
+    "pytest tests/golden -q --tb=short --maxfail=3",
+    "pytest tests/contracts -q --tb=short --maxfail=3",
+    "pytest tests/meta -q --tb=short --maxfail=3"
+  ]
+}

@@ -386,3 +386,31 @@ class AccountService:
     def get_linked_accounts(self, account_id: str) -> list[dict[str, Any]]:
         """Get all accounts linked to the given account."""
         return self.link_repo.get_linked_accounts(account_id)
+
+    # ============================================================
+    # Balance Computation (for managed accounts router)
+    # ============================================================
+
+    def compute_account_balance(self, account_id: int | str) -> dict[str, Any]:
+        """Compute current account balance.
+
+        Returns account with current balance from repository.
+        """
+        account = self.account_repo.get_account_by_id(account_id)
+        if not account:
+            raise ValueError(f"Account {account_id} not found")
+        return account
+
+    def compute_running_balance(self, account_id: int | str) -> list[dict[str, Any]]:
+        """Get running balance history for an account.
+
+        Returns balance history as running balance entries.
+        """
+        history = self.balance_repo.get_balance_history(str(account_id))
+        return [
+            {
+                "date_iso": h["date_iso"],
+                "balance_paise": h["balance_paise"],
+            }
+            for h in history
+        ]

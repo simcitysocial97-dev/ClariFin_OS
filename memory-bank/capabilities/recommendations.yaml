@@ -1,0 +1,42 @@
+id: recommendations
+name: Recommendations
+description: >
+  Generate personalized financial recommendations based on account state, behaviour scores,
+  cashflow patterns, and optimization algorithms.
+criticality: medium
+risk: low
+routers:
+  - src/routers/financial_intelligence.py
+services:
+  - src/services/financial_intelligence_service.py
+engines:
+  - src/engines/recommendation_engine/recommendations.py
+  - src/engines/financial_intelligence/optimization.py
+  - src/engines/nudge_engine.py
+repositories:
+  - src/repositories/financial_goal_repository.py
+tables:
+  - recommendations
+  - financial_goals
+  - behaviour_scores
+golden_datasets:
+  - tests/golden/datasets/normal_household.json
+  - tests/golden/datasets/high_debt_household.json
+  - tests/golden/datasets/credit_card_revolver.json
+property_tests:
+  - tests/engines/test_recommendation_engine.py
+invariants:
+  - tests/domain/invariants/behaviour.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - GET /api/optimization/recommendations
+  - GET /api/optimization/nudges
+dependencies:
+  - household_cashflow
+  - debt_management
+  - credit_cards
+  - financial_health
+failure_impact: >
+  Users miss actionable insights. No optimization suggestions or behavioural nudges reduce
+  platform's ability to drive positive financial change.

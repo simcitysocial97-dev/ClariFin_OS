@@ -106,3 +106,12 @@ class CreditCardStatementRepository(BaseRepository):
             conn.commit()
             changes = conn.execute("SELECT changes()").fetchone()
         return bool(changes[0]) if changes else False
+
+    def list_all_statements(self) -> list[dict[str, Any]]:
+        """Get all statements for workspace services."""
+        with self._get_conn() as conn:
+            rows = conn.execute("""
+                SELECT * FROM credit_card_statements
+                ORDER BY statement_date DESC
+            """).fetchall()
+        return [dict(r) for r in rows]

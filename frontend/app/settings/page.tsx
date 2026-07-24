@@ -1,13 +1,26 @@
+/**
+ * Settings Workspace Page - Stage 8E-C2 Production Visual System Migration
+ *
+ * Configuration Surface - Main analysis surface for settings.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
+ *
+ * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using semantic CSS variables for colors.
+ */
+
 'use client';
 
+import { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '@/lib/store/use-app-store';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
 import { useToast } from '@/hooks/use-toast';
 import { Download, Upload, Trash2, Moon, Sun, CreditCard } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Surface } from '@/components/primitives/surface/surface';
+import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
+import { Stack } from '@/components/primitives/layout/stack';
+import { commandCenterRuntime } from '@/lib/command-center';
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
@@ -75,119 +88,153 @@ export default function SettingsPage() {
     }
   };
 
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    settings: {
+      cards,
+      transactions,
+    },
+  }), [cards, transactions]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'settings' as const,
+      label: 'Settings',
+      icon: 'settings',
+      deepLink: '/settings',
+      viewModelKey: 'settings',
+      description: 'Application settings',
+      defaultSurface: 'CONFIGURATION' as const,
+      graphAdapter: undefined,
+      supportedCommands: ['export', 'import', 'clear'],
+      supportedFilters: [],
+      supportedSelections: [],
+      inspectorSections: ['context'],
+      keyboardShortcuts: {
+        'e': 'export',
+        'i': 'import',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('settings');
+    };
+  }, [viewModels]);
+
   if (!mounted) {
     return null;
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground mt-1">
-          Manage your preferences and data
-        </p>
-      </div>
+    <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Panel fill>
+        <PanelHeader title="Settings" />
+        <PanelBody scrollable>
+          <Stack gap={6} className="p-4">
+            {/* Appearance */}
+            <Surface variant="raised" density="none" className="p-4">
+              <Stack gap={4}>
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                  Appearance
+                </h2>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Dark Mode</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">
+                      Toggle between light and dark theme
+                    </p>
+                  </div>
+                  <Switch
+                    checked={theme === 'dark'}
+                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                  />
+                </div>
+              </Stack>
+            </Surface>
 
-      {/* Appearance */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-            Appearance
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Dark Mode</p>
-              <p className="text-sm text-muted-foreground">
-                Toggle between light and dark theme
-              </p>
-            </div>
-            <Switch
-              checked={theme === 'dark'}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
-          </div>
-        </CardContent>
-      </Card>
+            {/* Data Management */}
+            <Surface variant="raised" density="none" className="p-4">
+              <Stack gap={4}>
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
+                  Data Management
+                </h2>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Export Data</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">
+                      Download all your transactions and cards as JSON
+                    </p>
+                  </div>
+                  <Button variant="outline" onClick={exportData}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Export
+                  </Button>
+                </div>
 
-      {/* Data Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Data Management
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Export Data</p>
-              <p className="text-sm text-muted-foreground">
-                Download all your transactions and cards as JSON
-              </p>
-            </div>
-            <Button variant="outline" onClick={exportData}>
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-          </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Import Data</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">
+                      Restore from a previous backup
+                    </p>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={importData}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                    <Button variant="outline">
+                      <Upload className="mr-2 h-4 w-4" />
+                      Import
+                    </Button>
+                  </div>
+                </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium">Import Data</p>
-              <p className="text-sm text-muted-foreground">
-                Restore from a previous backup
-              </p>
-            </div>
-            <div className="relative">
-              <input
-                type="file"
-                accept=".json"
-                onChange={importData}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-              <Button variant="outline">
-                <Upload className="mr-2 h-4 w-4" />
-                Import
-              </Button>
-            </div>
-          </div>
+                <div className="flex items-center justify-between border-t pt-4">
+                  <div>
+                    <p className="font-medium text-[var(--color-negative-600)]">Clear All Data</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">
+                      Delete all transactions and cards permanently
+                    </p>
+                  </div>
+                  <Button variant="destructive" onClick={handleClearData}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear All
+                  </Button>
+                </div>
+              </Stack>
+            </Surface>
 
-          <div className="flex items-center justify-between border-t pt-4">
-            <div>
-              <p className="font-medium text-destructive">Clear All Data</p>
-              <p className="text-sm text-muted-foreground">
-                Delete all transactions and cards permanently
-              </p>
-            </div>
-            <Button variant="destructive" onClick={handleClearData}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Clear All
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* About */}
-      <Card>
-        <CardHeader>
-          <CardTitle>About</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-3xl">
-              💳
-            </div>
-            <div>
-              <p className="font-bold text-lg">FinTrack</p>
-              <p className="text-sm text-muted-foreground">Bank Statement Parser Dashboard</p>
-              <p className="text-xs text-muted-foreground mt-1">Version 1.0.0</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            {/* About */}
+            <Surface variant="raised" density="none" className="p-4">
+              <Stack gap={4}>
+                <h2 className="text-lg font-semibold">About</h2>
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-16 rounded-full bg-[var(--surface-raised)] flex items-center justify-center text-3xl">
+                    💳
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg">FinTrack</p>
+                    <p className="text-sm text-[var(--text-tertiary)]">Bank Statement Parser Dashboard</p>
+                    <p className="text-xs text-[var(--text-tertiary)] mt-1">Version 1.0.0</p>
+                  </div>
+                </div>
+              </Stack>
+            </Surface>
+          </Stack>
+        </PanelBody>
+      </Panel>
+    </Surface>
   );
 }

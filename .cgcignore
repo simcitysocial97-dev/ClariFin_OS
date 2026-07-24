@@ -1,63 +1,30 @@
-# === GENERATED / COMPILED ===
-**/node_modules/**
-**/dist/**
-**/build/**
-**/out/**
-**/target/**
-**/.venv/**
-**/venv/**
-**/env/**
-**/__pycache__/**
-**/*.pyc
-**/*.pyo
+# === DEPENDENCIES & ENVIRONMENTS ===
+node_modules/
+.venv/
+venv/
+env/
+backend/venv/
+backend/.venv/
 
-# === BUILD ARTIFACTS ===
-**/*.min.js
-**/*.map
-**/*.worker.js
-**/*.min.css
-**/*.bundle.js
-**/pdf.worker.mjs
+# === BUILD & CACHE DIRS ===
+.next/
+dist/
+build/
+out/
+.turbo/
+.cache/
+__pycache__/
+*.pyc
+.pytest_cache/
 
-# === PUBLIC / STATIC ASSETS (not architecture) ===
-**/public/**
-**/mocks/**
-**/.env/
+# === HEAVY ASSETS & LOGS ===
+*.log
+frontend/public/
+frontend/mocks/
+backend/src/core/mappers/
 
-# === ARCHIVED / REFLEX DASHBOARD (false domain relationships) ===
-**/_archived_reflex_dashboard/**
+# === IDE & GIT ===
+.git/
+.vscode/
+.idea/
 
-# === MEMORY / DOCS / SERVERS (not source code) ===
-**/memory-bank/**
-**/docs/**
-**/servers/**
-
-# === TEST ARTIFACTS ===
-**/test-results/**
-**/playwright-report/**
-**/test-data/**
-**/error-context.md
-**/__snapshots__/**
-
-# === IDE / TOOLING ===
-**/.idea/**
-**/.vscode/**
-**/.cline/**
-**/.git/
-
-# === BINARY / MEDIA ===
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.svg
-*.mp4
-*.mp3
-*.zip
-*.tar
-*.gz
-*.ico
-*.woff
-*.woff2
-*.ttf
-*.eot

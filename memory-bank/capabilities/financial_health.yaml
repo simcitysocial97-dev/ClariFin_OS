@@ -1,0 +1,52 @@
+id: financial_health
+name: Financial Health
+description: >
+  Assess financial health through behaviour profiling, resilience scoring, stress detection,
+  savings rate analysis, and wellness metrics derived from transaction patterns.
+criticality: high
+risk: low
+routers:
+  - src/routers/behaviour.py
+  - src/routers/behaviour_workspace.py
+services:
+  - src/services/behaviour_service.py
+engines:
+  - src/engines/behaviour_engine/account.py
+  - src/engines/behaviour_engine/cashflow.py
+  - src/engines/behaviour_engine/credit_dependency.py
+  - src/engines/behaviour_engine/debt.py
+  - src/engines/behaviour_engine/income.py
+  - src/engines/behaviour_engine/lifestyle.py
+  - src/engines/behaviour_engine/patterns.py
+  - src/engines/behaviour_engine/profile.py
+  - src/engines/behaviour_engine/resilience.py
+  - src/engines/behaviour_engine/savings.py
+  - src/engines/behaviour_engine/stress.py
+  - src/engines/behaviour_engine/wellness.py
+repositories:
+  - src/repositories/behaviour_repository.py
+tables:
+  - behaviour_profiles
+  - behaviour_scores
+  - financial_events
+golden_datasets:
+  - tests/golden/datasets/normal_household.json
+  - tests/golden/datasets/high_debt_household.json
+  - tests/golden/datasets/irregular_income.json
+property_tests:
+  - tests/properties/behaviour/test_engine_properties.py
+invariants:
+  - tests/domain/invariants/behaviour.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - GET /api/behavior/profile
+  - GET /api/behavior/wellness
+  - GET /api/behavior/resilience
+  - GET /api/behavior/stress
+dependencies:
+  - household_cashflow
+  - transaction_intelligence
+failure_impact: >
+  Financial health assessments become unreliable. Users lose visibility into behaviour
+  patterns, stress indicators, and wellness scores needed for corrective action.

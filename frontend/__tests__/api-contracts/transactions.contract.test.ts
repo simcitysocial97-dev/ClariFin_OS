@@ -28,7 +28,7 @@ describe('GET /api/transactions contract', () => {
     const response = await fetch('/api/transactions')
     const data = await response.json()
 
-    data.transactions.forEach((tx: any) => {
+    data.transactions.forEach((tx: { amount_paise: number }) => {
       expect(Number.isInteger(tx.amount_paise)).toBe(true)
     })
   })

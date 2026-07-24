@@ -1,0 +1,76 @@
+{
+  "scenario": "family_household",
+  "description": "Multi-member household with shared accounts, joint expenses for a family of four.",
+  "household": {
+    "id": "hh_fam_001",
+    "name": "Family of Four",
+    "members": [
+      {"id": "mem_001", "name": "Primary Earner", "role": "primary"},
+      {"id": "mem_002", "name": "Spouse", "role": "secondary"},
+      {"id": "mem_003", "name": "Teen Child", "role": "dependent"},
+      {"id": "mem_004", "name": "Young Child", "role": "dependent"}
+    ]
+  },
+  "accounts": [
+    {
+      "id": "acct_fam_001",
+      "name": "Joint Family Account",
+      "type": "savings",
+      "bank": "SBI",
+      "balance_paise": 8000000,
+      "owner_id": "mem_001",
+      "household_id": "hh_fam_001"
+    },
+    {
+      "id": "acct_fam_002",
+      "name": "Spouse Savings",
+      "type": "savings",
+      "bank": "HDFC",
+      "balance_paise": 2000000,
+      "owner_id": "mem_002",
+      "household_id": "hh_fam_001"
+    }
+  ],
+  "transactions": [
+    {"date_iso": "2026-01-01", "description": "Salary Credit - Primary", "amount_paise": 10000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-01", "description": "Salary Credit - Spouse", "amount_paise": 5000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-03", "description": "Home Loan EMI", "amount_paise": -1200000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-01-05", "description": "Groceries", "amount_paise": -600000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-01-07", "description": "School Fees", "amount_paise": -450000, "type": "debit", "category": "education"},
+    {"date_iso": "2026-01-10", "description": "Utilities", "amount_paise": -200000, "type": "debit", "category": "utilities"},
+    {"date_iso": "2026-01-15", "description": "Medical Expenses", "amount_paise": -150000, "type": "debit", "category": "healthcare"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit - Primary", "amount_paise": 10000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit - Spouse", "amount_paise": 5000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-03", "description": "Home Loan EMI", "amount_paise": -1200000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-02-05", "description": "Groceries", "amount_paise": -550000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-02-10", "description": "School Fees", "amount_paise": -450000, "type": "debit", "category": "education"},
+    {"date_iso": "2026-02-15", "description": "Eating Out", "amount_paise": -120000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-03-01", "description": "Salary Credit - Primary", "amount_paise": 10000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-03-01", "description": "Salary Credit - Spouse", "amount_paise": 5000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-03-03", "description": "Home Loan EMI", "amount_paise": -1200000, "type": "debit", "category": "loan"}
+  ],
+  "loans": [
+    {
+      "id": "loan_hl_002",
+      "name": "Home Loan",
+      "lender": "SBI",
+      "principal_paise": 800000000,
+      "outstanding_paise": 500000000,
+      "interest_rate_bps": 875,
+      "tenure_months": 240,
+      "emi_paise": 1200000,
+      "start_date": "2022-04-01"
+    }
+  ],
+  "credit_cards": [],
+  "financial_events": [],
+  "expected_output": {
+    "monthly_income_paise": 15000000,
+    "monthly_expense_paise": 4050000,
+    "monthly_surplus_paise": 10950000,
+    "household_size": 4,
+    "has_multiple_earners": true,
+    "confidence_bps": 8000,
+    "risk_flags": ["has_loan"]
+  }
+}

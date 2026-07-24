@@ -1,0 +1,1 @@
+"""Business capability smoke tests."""

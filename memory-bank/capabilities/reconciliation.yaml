@@ -1,0 +1,40 @@
+id: reconciliation
+name: Reconciliation
+description: >
+  Match debit and credit transactions across accounts to identify matched pairs, unmatched items,
+  and settlement patterns using deterministic bipartite matching algorithms.
+criticality: high
+risk: medium
+routers:
+  - src/routers/reconciliation.py
+services:
+  - src/services/reconciliation_service.py
+engines:
+  - src/engines/reconciliation_engine.py
+repositories:
+  - src/repositories/reconciliation_repository.py
+  - src/repositories/reconciliation_audit_repository.py
+tables:
+  - transactions
+  - reconciliation_matches
+  - reconciliation_audit_log
+golden_datasets:
+  - tests/golden/datasets/normal_household.json
+  - tests/golden/datasets/salary_plus_loan.json
+property_tests:
+  - tests/engines/test_reconciliation.py
+  - tests/invariants/test_reconciliation_determinism.py
+invariants:
+  - tests/invariants/test_transaction.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - POST /api/reconciliation/run
+  - GET /api/reconciliation/{session_id}/matches
+  - GET /api/reconciliation/unmatched
+dependencies:
+  - household_cashflow
+  - transaction_intelligence
+failure_impact: >
+  Reconciliation accuracy breaks. Users cannot verify transaction completeness or detect
+  missing/suspicious transactions across accounts, undermining audit confidence.

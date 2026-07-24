@@ -1,0 +1,46 @@
+id: transaction_intelligence
+name: Transaction Intelligence
+description: >
+  Detect hidden financial patterns in transactions including credit card payments, loan EMIs,
+  and cash conversion cycles to improve cashflow accuracy and spending classification.
+criticality: high
+risk: low
+routers:
+  - src/routers/transactions.py
+services:
+  - src/services/transaction_intelligence_service.py
+engines:
+  - src/engines/transaction_intelligence/cash_conversion_detector.py
+  - src/engines/transaction_intelligence/cc_payment_detector.py
+  - src/engines/transaction_intelligence/detector_result.py
+  - src/engines/transaction_intelligence/loan_emi_detector.py
+repositories:
+  - src/repositories/transaction_repository.py
+  - src/repositories/pattern_repository.py
+tables:
+  - transactions
+  - patterns
+  - liquidity_patterns
+golden_datasets:
+  - tests/golden/datasets/cc_statement_scenario.json
+  - tests/golden/datasets/cash_advance.json
+  - tests/golden/datasets/normal_household.json
+property_tests:
+  - tests/properties/credit_cards/test_engine_properties.py
+  - tests/properties/transaction_intelligence/__init__.py
+invariants:
+  - tests/invariants/test_statement.py
+  - tests/invariants/test_transaction.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - POST /api/transactions/detect-patterns
+  - GET /api/patterns/credit-card-payments
+  - GET /api/patterns/loan-emis
+dependencies:
+  - household_cashflow
+  - credit_cards
+  - debt_management
+failure_impact: >
+  Hidden financial obligations go undetected. Users miss credit card payments, loan EMIs,
+  and cash conversion cycles, leading to inaccurate cashflow and unexpected charges.

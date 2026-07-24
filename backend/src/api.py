@@ -48,41 +48,61 @@ register_health_routes(app)
 # Register routers
 from src.routers import (
     accounts,
+    accounts_router,
     audit,
     banks,
-    behavior,
+    behaviour,
+    behaviour_workspace,
     cards_statements,
     cashflow,
+    cashflow_workspace,
     credit_cards,
+    credit_cards_workspace,
     dashboard,
     export,
+    financial_events,
+    forecast,
     import_router,
     investments,
+    investments_workspace,
     loans,
+    loans_workspace,
     managed_accounts,
     members,
     networth,
+    networth_workspace,
     reconciliation,
+    reconciliation_workspace,
     transactions,
 )
 
 app.include_router(accounts.router)
+app.include_router(accounts_router.router)
 app.include_router(audit.router)
 app.include_router(banks.router)
-app.include_router(behavior.router)
+app.include_router(behaviour.router)
+app.include_router(behaviour_workspace.router)
 app.include_router(cards_statements.router)
 app.include_router(credit_cards.router)
+app.include_router(credit_cards_workspace.router)
 app.include_router(cashflow.router)
+app.include_router(cashflow_workspace.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
+app.include_router(financial_events.router)
+app.include_router(forecast.router)
 app.include_router(import_router.router)
 app.include_router(investments.router)
+app.include_router(investments_workspace.router)
 app.include_router(loans.router)
+app.include_router(loans_workspace.router)
 app.include_router(managed_accounts.router)
-app.include_router(networth.router)
-app.include_router(reconciliation.router)
-app.include_router(transactions.router)
 app.include_router(members.router)
+app.include_router(networth.router)
+app.include_router(networth_workspace.router)
+app.include_router(reconciliation.router)
+app.include_router(reconciliation_workspace.router)
+app.include_router(transactions.router)
 
 # ============================================================
 # Run Server

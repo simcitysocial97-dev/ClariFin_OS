@@ -1,17 +1,16 @@
-"use client";
-
 /**
- * Investments Page - Personal Finance MVP v1.0.0
- * ==============================================
- * 
- * Features:
- * - List all active investments with summary
- * - Portfolio allocation chart
- * - Gain/loss tracking
+ * Investments Page - Stage 8E-C2 Production Visual System Migration
+ *
+ * Portfolio Explorer Surface - Main analysis surface for investments.
+ * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
+ *
+ * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Updated: Using MoneyValue primitive and semantic colors.
  */
 
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,9 +18,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Pencil, Trash2, TrendingUp, AlertCircle, PieChart, BarChart3 } from "lucide-react";
-import { formatINR } from "@/lib/utils/format";
+import { Pencil, Trash2, TrendingUp, AlertCircle, PieChart, BarChart3 } from "lucide-react";
 import { useInvestments, useCreateInvestment, useUpdateInvestment, useDeleteInvestment, type Investment } from "@/lib/hooks/use-investments";
+import { Surface } from "@/components/primitives/surface/surface";
+import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/panel";
+import { Stack } from "@/components/primitives/layout/stack";
+import { Grid } from "@/components/primitives/layout/grid";
+import { MoneyValue } from "@/components/primitives/data-display/money-value";
+import { commandCenterRuntime } from "@/lib/command-center";
 
 // ============================================================
 // Form Types
@@ -52,48 +56,46 @@ function InvestmentCard({ investment, onEdit, onDelete }: {
   const isGain = gain >= 0;
 
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-gray-100 rounded-lg">
-              <TrendingUp className="h-5 w-5 text-gray-600" />
-            </div>
-            <div>
-              <h3 className="font-medium text-sm">{investment.name}</h3>
-              <p className="text-xs text-gray-500">{investment.investment_type.replace('_', ' ')}</p>
-              <span className="inline-block mt-1 text-xs bg-gray-100 px-2 py-0.5 rounded">
-                {investment.platform || "Self"}
-              </span>
-            </div>
+    <Surface variant="raised" density="none" className="p-4">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-[var(--surface-raised)] rounded-lg">
+            <TrendingUp className="h-5 w-5 text-[var(--text-secondary)]" />
           </div>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => onEdit(investment)}>
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => onDelete(investment.id.toString())}>
-              <Trash2 className="h-4 w-4 text-red-500" />
-            </Button>
-          </div>
-        </div>
-        <div className="mt-3 pt-2 border-t space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">Current Value</span>
-            <span className="text-lg font-semibold">{formatINR(investment.current_value_paise)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">Invested</span>
-            <span className="text-sm font-medium">{formatINR(investment.invested_paise)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">P&L</span>
-            <span className={`text-sm font-medium ${isGain ? 'text-green-600' : 'text-red-600'}`}>
-              {isGain ? '+' : ''}{formatINR(gain)} ({gainPercent.toFixed(1)}%)
+          <div>
+            <h3 className="font-medium text-sm">{investment.name}</h3>
+            <p className="text-xs text-[var(--text-tertiary)]">{investment.investment_type.replace('_', ' ')}</p>
+            <span className="inline-block mt-1 text-xs bg-[var(--surface-raised)] px-2 py-0.5 rounded">
+              {investment.platform || "Self"}
             </span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="sm" onClick={() => onEdit(investment)}>
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => onDelete(investment.id.toString())}>
+            <Trash2 className="h-4 w-4 text-[var(--color-negative-600)]" />
+          </Button>
+        </div>
+      </div>
+      <div className="mt-3 pt-2 border-t space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-[var(--text-tertiary)]">Current Value</span>
+          <MoneyValue paise={investment.current_value_paise} variant="default" />
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-[var(--text-tertiary)]">Invested</span>
+          <MoneyValue paise={investment.invested_paise} variant="default" />
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-[var(--text-tertiary)]">P&L</span>
+          <span className={`text-sm font-medium ${isGain ? 'text-[var(--color-positive-600)]' : 'text-[var(--color-negative-600)]'}`}>
+            {isGain ? '+' : ''}<MoneyValue paise={gain} variant="default" sign="auto" /> ({gainPercent.toFixed(1)}%)
+          </span>
+        </div>
+      </div>
+    </Surface>
   );
 }
 
@@ -239,34 +241,32 @@ function AllocationChart({ allocation }: { allocation: Record<string, number> })
   const colors = ['#6366F1', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#EF4444'];
   
   return (
-    <Card>
-      <CardContent className="p-4">
-        <h3 className="font-medium mb-3 flex items-center gap-2">
-          <PieChart className="h-4 w-4" />
-          Portfolio Allocation
-        </h3>
-        <div className="space-y-2">
-          {Object.entries(allocation).map(([type, value], index) => {
-            const percent = total > 0 ? (value / total) * 100 : 0;
-            return (
-              <div key={type} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: colors[index % colors.length] }}
-                  />
-                  <span className="text-sm">{type.replace('_', ' ')}</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm font-medium">{formatINR(value)}</span>
-                  <span className="text-xs text-gray-500 ml-2">{percent.toFixed(1)}%</span>
-                </div>
+    <Surface variant="raised" density="none" className="p-4">
+      <h3 className="font-medium mb-3 flex items-center gap-2">
+        <PieChart className="h-4 w-4" />
+        Portfolio Allocation
+      </h3>
+      <div className="space-y-2">
+        {Object.entries(allocation).map(([type, value], index) => {
+          const percent = total > 0 ? (value / total) * 100 : 0;
+          return (
+            <div key={type} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: colors[index % colors.length] }}
+                />
+                <span className="text-sm">{type.replace('_', ' ')}</span>
               </div>
-            );
-          })}
-        </div>
-      </CardContent>
-    </Card>
+              <div className="text-right">
+                <MoneyValue paise={value} variant="default" />
+                <span className="text-xs text-[var(--text-tertiary)] ml-2">{percent.toFixed(1)}%</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Surface>
   );
 }
 
@@ -334,129 +334,163 @@ export default function InvestmentsPage() {
     setDialogOpen(true);
   };
 
-  const handleAddNew = () => {
-    setEditingInvestment(null);
-    setDialogOpen(true);
-  };
+  // Build view model for shared runtime
+  const viewModels = useMemo(() => ({
+    investments: {
+      investments: data?.investments || [],
+      summary: data?.summary,
+    },
+  }), [data]);
+
+  // Register workspace with CommandCenterRuntime on mount
+  useEffect(() => {
+    // Build graph for shared runtime
+    commandCenterRuntime.build(viewModels);
+
+    // Register workspace actions
+    const workspaceRegistration = {
+      name: 'investments' as const,
+      label: 'Investments',
+      icon: 'trending-up',
+      deepLink: '/investments',
+      viewModelKey: 'investments',
+      description: 'Investment portfolio and holdings',
+      defaultSurface: 'TABLE' as const,
+      graphAdapter: 'investments',
+      supportedCommands: ['add', 'edit', 'delete', 'refresh'],
+      supportedFilters: ['search'],
+      supportedSelections: ['investment'],
+      inspectorSections: ['context', 'allocation', 'related'],
+      keyboardShortcuts: {
+        'a': 'add',
+        'r': 'refresh',
+      },
+    };
+
+    commandCenterRuntime.registerWorkspace(workspaceRegistration);
+
+    return () => {
+      commandCenterRuntime.unregisterWorkspace('investments');
+    };
+  }, [viewModels]);
 
   // Calculate totals
   const totalInvested = data?.summary.total_invested_paise || 0;
   const totalCurrent = data?.summary.total_current_value_paise || 0;
   const totalGain = data?.summary.total_gain_paise || 0;
   const gainPercent = data?.summary.gain_percent || 0;
+  const isGain = totalGain >= 0;
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-6 space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-40" />
-          ))}
-        </div>
-      </div>
+      <Surface variant="default" density="none" className="flex flex-col h-full">
+        <Panel fill>
+          <PanelHeader title="Investments" />
+          <PanelBody loading>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-40" />
+              ))}
+            </div>
+          </PanelBody>
+        </Panel>
+      </Surface>
     );
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Investments</h1>
-          <p className="text-gray-500 text-sm">Track your portfolio and investments</p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAddNew}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Investment
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editingInvestment ? "Edit Investment" : "Add New Investment"}</DialogTitle>
-            </DialogHeader>
-            <InvestmentForm
-              initialData={editingInvestment || undefined}
-              onSubmit={editingInvestment ? handleUpdateInvestment : handleCreateInvestment}
-              onCancel={() => {
-                setEditingInvestment(null);
-                setDialogOpen(false);
-              }}
-            />
-          </DialogContent>
-        </Dialog>
-      </div>
+    <Surface variant="default" density="none" className="flex flex-col h-full">
+      <Panel fill>
+        <PanelHeader title="Investments" />
+        <PanelBody scrollable>
+          <Stack gap={4} className="p-4">
+            {/* Summary Cards */}
+            <Grid gap={4} className="grid-cols-1 md:grid-cols-3">
+              <Surface variant="raised" density="none" className="p-4">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Total Invested</span>
+                </div>
+                <MoneyValue paise={totalInvested} variant="large" />
+              </Surface>
+              <Surface variant="raised" density="none" className="p-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-[var(--text-tertiary)]" />
+                  <span className="text-[var(--text-secondary)]">Current Value</span>
+                </div>
+                <MoneyValue paise={totalCurrent} variant="large" />
+              </Surface>
+              <Surface variant="raised" density="none" className="p-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[var(--text-secondary)]">Total P&L</span>
+                </div>
+                <span className={`text-2xl font-bold ${isGain ? 'text-[var(--color-positive-600)]' : 'text-[var(--color-negative-600)]'}`}>
+                  {isGain ? '+' : ''}<MoneyValue paise={totalGain} variant="large" sign="auto" /> ({isGain ? '+' : ''}{gainPercent.toFixed(1)}%)
+                </span>
+              </Surface>
+            </Grid>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-600">Total Invested</span>
-            </div>
-            <p className="text-2xl font-bold mt-2">{formatINR(totalInvested)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-gray-500" />
-              <span className="text-gray-600">Current Value</span>
-            </div>
-            <p className="text-2xl font-bold mt-2">{formatINR(totalCurrent)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600">Total P&L</span>
-            </div>
-            <p className={`text-2xl font-bold mt-2 ${totalGain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {totalGain >= 0 ? '+' : ''}{formatINR(totalGain)} ({gainPercent >= 0 ? '+' : ''}{gainPercent.toFixed(1)}%)
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+            {/* Error Alert */}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error.message}</AlertDescription>
+              </Alert>
+            )}
 
-      {/* Error Alert */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error.message}</AlertDescription>
-        </Alert>
-      )}
+            {/* Investments Grid */}
+            <Grid gap={4} className="grid-cols-1 lg:grid-cols-3">
+              {/* Investments List */}
+              <div className="lg:col-span-2">
+                {data?.investments.length === 0 ? (
+                  <Surface variant="raised" density="none" className="p-6 text-center">
+                    <p className="text-[var(--text-tertiary)]">No investments added. Add your first investment above.</p>
+                  </Surface>
+                ) : (
+                  <Grid gap={4} className="grid-cols-1 md:grid-cols-2">
+                    {data?.investments.map((investment) => (
+                      <InvestmentCard
+                        key={investment.id}
+                        investment={investment}
+                        onEdit={handleEditInvestment}
+                        onDelete={handleDeleteInvestment}
+                      />
+                    ))}
+                  </Grid>
+                )}
+              </div>
 
-      {/* Investments Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Investments List */}
-        <div className="lg:col-span-2">
-          {data?.investments.length === 0 ? (
-            <Card className="p-6 text-center">
-              <p className="text-gray-500">No investments added. Add your first investment above.</p>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {data?.investments.map((investment) => (
-                <InvestmentCard
-                  key={investment.id}
-                  investment={investment}
-                  onEdit={handleEditInvestment}
-                  onDelete={handleDeleteInvestment}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+              {/* Allocation Chart */}
+              <div>
+                <AllocationChart allocation={data?.summary.allocation_by_type || {}} />
+              </div>
+            </Grid>
+          </Stack>
+        </PanelBody>
+      </Panel>
 
-        {/* Allocation Chart */}
-        <div>
-          <AllocationChart allocation={data?.summary.allocation_by_type || {}} />
-        </div>
-      </div>
-    </div>
+      {/* Add Investment Dialog - triggered by TopCommandBar */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogTrigger asChild>
+          <button className="hidden" aria-hidden="true">
+            Add Investment
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{editingInvestment ? "Edit Investment" : "Add New Investment"}</DialogTitle>
+          </DialogHeader>
+          <InvestmentForm
+            initialData={editingInvestment || undefined}
+            onSubmit={editingInvestment ? handleUpdateInvestment : handleCreateInvestment}
+            onCancel={() => {
+              setEditingInvestment(null);
+              setDialogOpen(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+    </Surface>
   );
 }

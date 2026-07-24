@@ -1,0 +1,60 @@
+{
+  "scenario": "credit_card_revolver",
+  "description": "Revolving credit card debt. User carries balance month-to-month, pays only minimum due.",
+  "household": {
+    "id": "hh_cc_001",
+    "name": "Credit Card Revolver",
+    "members": [
+      {"id": "mem_001", "name": "Cardholder", "role": "primary"}
+    ]
+  },
+  "accounts": [
+    {
+      "id": "acct_cc_001",
+      "name": "Salary Account",
+      "type": "savings",
+      "bank": "Axis",
+      "balance_paise": 1500000,
+      "owner_id": "mem_001",
+      "household_id": "hh_cc_001"
+    }
+  ],
+  "transactions": [
+    {"date_iso": "2026-01-01", "description": "Salary Credit", "amount_paise": 6000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-05", "description": "Credit Card Payment", "amount_paise": -250000, "type": "debit", "category": "credit_card"},
+    {"date_iso": "2026-01-10", "description": "Online Shopping", "amount_paise": -450000, "type": "debit", "category": "shopping"},
+    {"date_iso": "2026-01-15", "description": "Groceries", "amount_paise": -350000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit", "amount_paise": 6000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-05", "description": "Credit Card Payment", "amount_paise": -300000, "type": "debit", "category": "credit_card"},
+    {"date_iso": "2026-02-10", "description": "Dining", "amount_paise": -120000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-03-01", "description": "Salary Credit", "amount_paise": 6000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-03-05", "description": "Credit Card Payment", "amount_paise": -280000, "type": "debit", "category": "credit_card"}
+  ],
+  "loans": [],
+  "credit_cards": [
+    {
+      "id": "cc_001",
+      "bank": "HDFC",
+      "last4": "1234",
+      "credit_limit_paise": 3000000,
+      "outstanding_paise": 1800000,
+      "statement_date": "2026-01-05",
+      "due_date": "2026-01-25",
+      "min_due_paise": 90000,
+      "total_amount_due_paise": 1800000
+    }
+  ],
+  "financial_events": [
+    {"event_type": "credit_card_payment", "amount_paise": -250000, "date_iso": "2026-01-05", "account_id": "acct_cc_001"},
+    {"event_type": "credit_card_payment", "amount_paise": -300000, "date_iso": "2026-02-05", "account_id": "acct_cc_001"}
+  ],
+  "expected_output": {
+    "monthly_income_paise": 6000000,
+    "monthly_expense_paise": 1050000,
+    "monthly_surplus_paise": 4950000,
+    "credit_utilization_ratio": 0.6,
+    "has_revolving_debt": true,
+    "confidence_bps": 6500,
+    "risk_flags": ["high_credit_utilization", "revolving_debt"]
+  }
+}

@@ -8,6 +8,7 @@ Computes composite financial wellness score based on multiple behavioral dimensi
 
 from decimal import Decimal
 
+
 def compute_wellness_score(
     cashflow_stability: Decimal,
     debt_cycle_score: int,

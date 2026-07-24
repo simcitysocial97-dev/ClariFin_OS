@@ -24,11 +24,6 @@ export function ChartContainer({
   if (isLoading) {
     return (
       <div className="w-full">
-        {title && (
-          <div className="mb-3">
-            <Skeleton className="h-5 w-32" />
-          </div>
-        )}
         <Skeleton className="h-[200px] w-full rounded-lg" />
       </div>
     );
@@ -62,5 +57,14 @@ export function ChartContainer({
   }
 
   // Render children (the actual chart)
-  return <>{children}</>;
+  return (
+    <div className="w-full">
+      {title && (
+        <div className="mb-3">
+          <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        </div>
+      )}
+      {children}
+    </div>
+  );
 }

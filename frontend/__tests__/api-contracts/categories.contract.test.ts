@@ -13,7 +13,7 @@ describe('GET /api/categories/list contract', () => {
     const response = await fetch('/api/categories/list')
     const data = await response.json()
 
-    data.categories.forEach((cat: any) => {
+    data.categories.forEach((cat: string) => {
       expect(typeof cat).toBe('string')
     })
   })

@@ -1,0 +1,437 @@
+{
+  "generated_at": "2026-07-24T03:15:33.790197+00:00",
+  "engines": [
+    {
+      "module_path": "src/engines/balance_engine.py",
+      "pure_functions": 0,
+      "impure_functions": 4,
+      "unknown_functions": 0,
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
+    },
+    {
+      "module_path": "src/engines/behavior_engine.py",
+      "pure_functions": 0,
+      "impure_functions": 5,
+      "unknown_functions": 0,
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
+    },
+    {
+      "module_path": "src/engines/ledger_audit_engine.py",
+      "pure_functions": 0,
+      "impure_functions": 3,
+      "unknown_functions": 0,
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
+    },
+    {
+      "module_path": "src/engines/reconciliation_engine.py",
+      "pure_functions": 0,
+      "impure_functions": 2,
+      "unknown_functions": 0,
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
+    },
+    {
+      "module_path": "src/engines/insight_generator.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/nudge_engine.py",
+      "pure_functions": 3,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/transaction_intelligence/detector_result.py",
+      "pure_functions": 0,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "UNKNOWN"
+    },
+    {
+      "module_path": "src/engines/transaction_intelligence/cc_payment_detector.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/transaction_intelligence/cash_conversion_detector.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/transaction_intelligence/loan_emi_detector.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/utilization.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/interest.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/emi.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/metrics.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/foreclosure.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/billing.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/credit_card_engine/outstanding.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/financial_events/lineage_walker.py",
+      "pure_functions": 0,
+      "impure_functions": 2,
+      "unknown_functions": 0,
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/models.py",
+      "pure_functions": 0,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "UNKNOWN"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/intelligence.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/scenario.py",
+      "pure_functions": 6,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/goal_planner.py",
+      "pure_functions": 5,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/utils.py",
+      "pure_functions": 8,
+      "impure_functions": 1,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/optimization.py",
+      "pure_functions": 6,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/financial_intelligence/forecasting.py",
+      "pure_functions": 3,
+      "impure_functions": 1,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/account_engine/dormant.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/account_engine/cashflow.py",
+      "pure_functions": 3,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/account_engine/balance.py",
+      "pure_functions": 2,
+      "impure_functions": 1,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/account_engine/lifecycle.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/account_engine/metrics.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/account_engine/history.py",
+      "pure_functions": 0,
+      "impure_functions": 2,
+      "unknown_functions": 0,
+      "readiness": "Blocked",
+      "killability_estimate": "LOW"
+    },
+    {
+      "module_path": "src/engines/recommendation_engine/recommendations.py",
+      "pure_functions": 5,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/income.py",
+      "pure_functions": 5,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/cashflow.py",
+      "pure_functions": 3,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/temporal.py",
+      "pure_functions": 6,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/lifestyle.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/utils.py",
+      "pure_functions": 3,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/resilience.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/patterns.py",
+      "pure_functions": 5,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/debt.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/wellness.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/account.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/profile.py",
+      "pure_functions": 1,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/credit_dependency.py",
+      "pure_functions": 6,
+      "impure_functions": 2,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/savings.py",
+      "pure_functions": 3,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/stress.py",
+      "pure_functions": 5,
+      "impure_functions": 1,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/models.py",
+      "pure_functions": 0,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Partial",
+      "killability_estimate": "UNKNOWN"
+    },
+    {
+      "module_path": "src/engines/loan_engine/amortization.py",
+      "pure_functions": 6,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/prepayment.py",
+      "pure_functions": 5,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/emi.py",
+      "pure_functions": 4,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/metrics.py",
+      "pure_functions": 5,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/utils.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/foreclosure.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/loan_engine/floating_rate.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
+    }
+  ]
+}

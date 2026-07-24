@@ -58,7 +58,20 @@ export interface CreateLoanInput {
 async function fetchLoans() {
   const res = await fetch(`${API_BASE}/api/loans`)
   if (!res.ok) throw new Error('Failed to fetch loans')
-  return LoansResponseSchema.parse(await res.json())
+  
+  // This is unverified raw payload from the network
+  const raw = await res.json()
+  
+  // Intercept and parse data before passing it to frontend state loaders
+  const parsed = LoansResponseSchema.safeParse(raw)
+  
+  if (!parsed.success) {
+    // Safely prints exact path anomalies and mismatched value types to the browser console
+    console.error('❌ Loans API response validation failed:', parsed.error.issues)
+    throw new Error('API response shape mismatch — check backend contract')
+  }
+  
+  return parsed.data
 }
 
 async function fetchLoanSchedule(loanId: string) {

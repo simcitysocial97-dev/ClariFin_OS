@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from src.categorizer import categorize
 from src.csv_importer import CSVImporter
 from src.metadata_extractor import MetadataExtractor
+from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 from src.repositories import StatementRepository, TransactionRepository
 from src.statement_extractor import StatementExtractor
 
@@ -136,6 +137,17 @@ async def upload_statement(
 
         # Invalidate behavior cache after data changes
         invalidate_cache()
+
+        # Post-upload pipeline: financial intelligence, recommendations, dashboard refresh
+        try:
+            orchestrator = StatementProcessingOrchestrator()
+            pipeline_summary = orchestrator.process_after_upload(statement_id)
+            completed = [k for k, v in pipeline_summary.items() if v is not None and not k.endswith("_error")]
+            log.append(f"✅ Pipeline: {', '.join(completed)}")
+
+        except Exception as pipeline_error:
+            log.append(f"⚠️ Pipeline warning: {str(pipeline_error)[:60]}")
+            pipeline_summary = {}
 
         return {
             "success": True,

@@ -624,12 +624,9 @@ function extractFieldWithProximity(
     documentData: DocumentData
 ): { value: string | number | null; confidence: number; source: 'proximity' | 'fallback' | 'none' } {
     
-    console.log(`[METADATA] Extracting ${fieldName}...`);
-    
     // STEP 1: Try regex patterns FIRST (like the working JS parser)
     // This is more reliable for specific field extraction
     if (fieldConfig.fallbackPatterns && fieldConfig.fallbackPatterns.length > 0) {
-        console.log(`[METADATA] Trying regex patterns first...`);
         
         for (const pattern of fieldConfig.fallbackPatterns) {
             const match = documentData.fullText.match(pattern);
@@ -640,8 +637,6 @@ function extractFieldWithProximity(
                 if (fieldConfig.transform) {
                     extracted = fieldConfig.transform(extracted);
                 }
-                
-                console.log(`[METADATA] Found value via regex: "${extracted}"`);
                 
                 // Convert based on type
                 let convertedValue: string | number | null = null;

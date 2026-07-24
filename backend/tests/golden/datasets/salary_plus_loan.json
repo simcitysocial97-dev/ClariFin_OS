@@ -1,0 +1,60 @@
+{
+  "scenario": "salary_plus_loan",
+  "description": "Salaried employee with an active home loan. Regular EMI payments from salary account.",
+  "household": {
+    "id": "hh_loan_001",
+    "name": "Home Loan Household",
+    "members": [
+      {"id": "mem_001", "name": "Borrower", "role": "primary"}
+    ]
+  },
+  "accounts": [
+    {
+      "id": "acct_loan_001",
+      "name": "Salary Account",
+      "type": "savings",
+      "bank": "ICICI",
+      "balance_paise": 5000000,
+      "owner_id": "mem_001",
+      "household_id": "hh_loan_001"
+    }
+  ],
+  "transactions": [
+    {"date_iso": "2026-01-01", "description": "Salary Credit", "amount_paise": 10000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-01-03", "description": "Rent Payment", "amount_paise": -2000000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-01-05", "description": "Home Loan EMI", "amount_paise": -850000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-01-10", "description": "Groceries", "amount_paise": -400000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-01-15", "description": "Utilities", "amount_paise": -150000, "type": "debit", "category": "utilities"},
+    {"date_iso": "2026-02-01", "description": "Salary Credit", "amount_paise": 10000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-02-03", "description": "Rent Payment", "amount_paise": -2000000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-02-05", "description": "Home Loan EMI", "amount_paise": -850000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-02-10", "description": "Groceries", "amount_paise": -380000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-03-01", "description": "Salary Credit", "amount_paise": 10000000, "type": "credit", "category": "income"},
+    {"date_iso": "2026-03-03", "description": "Rent Payment", "amount_paise": -2000000, "type": "debit", "category": "housing"},
+    {"date_iso": "2026-03-05", "description": "Home Loan EMI", "amount_paise": -850000, "type": "debit", "category": "loan"}
+  ],
+  "loans": [
+    {
+      "id": "loan_hl_001",
+      "name": "Home Loan",
+      "lender": "SBI",
+      "principal_paise": 500000000,
+      "outstanding_paise": 350000000,
+      "interest_rate_bps": 850,
+      "tenure_months": 240,
+      "emi_paise": 850000,
+      "start_date": "2020-06-01"
+    }
+  ],
+  "credit_cards": [],
+  "financial_events": [],
+  "expected_output": {
+    "monthly_income_paise": 10000000,
+    "monthly_expense_paise": 3400000,
+    "monthly_surplus_paise": 6600000,
+    "has_debt": true,
+    "debt_to_income_ratio": 0.085,
+    "confidence_bps": 7500,
+    "risk_flags": ["has_loan"]
+  }
+}

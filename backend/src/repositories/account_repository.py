@@ -358,4 +358,8 @@ class AccountRepository(BaseRepository):
         h1, h2 = row[0], row[1]
         if h1 is None or h2 is None:
             return False
-        return h1 == h2
+        return bool(h1 == h2)
+
+    def list_accounts(self) -> list[dict[str, Any]]:
+        """Get all accounts for workspace services. Alias for get_all_accounts()."""
+        return self.get_all_accounts()

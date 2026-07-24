@@ -1,42 +1,212 @@
-# ClariFin_OS — Autonomous Core Agent & Memory Rules
+# ClariFin_OS — Repository Intelligence Architecture
 
-I am Cline. My memory resets between sessions. To maximize token efficiency, I bypass legacy, bulk text-file workflows. I operate using a **Hybrid State Model** pairing a lean local state with a live Code Graph Context (CGC) MCP server connected to FalkorDB.
+I am Cline. My memory resets between sessions. To maximize token efficiency, I operate using a **Repository Intelligence Architecture** that makes repository understanding primarily graph-driven and semantic-driven rather than filesystem-driven.
 
 ---
 
 ## 1. AUTOMATED MEMORY BANK LIFECYCLE (No Manual Commands Required)
+
 You must manage the memory bank autonomously. **Do not wait for the user to tell you to update it.**
 
-- **On Conversation Start (First Turn):** Quietly read *only* `memory-bank/projectbrief.md` and `memory-bank/activeContext.md` to establish current business intent. 
+- **On Conversation Start (First Turn):** Quietly read *only* `memory-bank/projectbrief.md` and `memory-bank/activeContext.md` to establish current business intent.
 - **During the Task:** DO NOT read or write to `systemPatterns.md`, `techContext.md`, or `progress.md` (They are DEPRECATED; use CGC graph queries instead).
 - **On Conversation End (Task Completion):** Right before declaring your task finished (and before running Git commands), you MUST automatically update `memory-bank/activeContext.md` with a 2-3 line bulleted summary of your changes and the next immediate steps. Keep this file under 50 lines by pruning old history.
 
 ---
 
-## 2. WORKSPACE & CGC MCP PROTOCOL
+## 2. REPOSITORY INTELLIGENCE PRINCIPLES
 
-- **CGC Graph-First Search:** ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) for ALL code discovery. CGC is configured with INDEX_SOURCE=true, meaning `find_code` returns COMPLETE source code in the `source` field. DO NOT call `read_file` after `find_code` - the source is already available.
+### Why This Architecture Exists
 
-- **FalkorDB Query Rules:** The graph uses FalkorDB (NOT SQLite). NEVER use `sqlite3` commands, SQL syntax, or relational DB tools to query `~/.codegraphcontext/global/db/falkordb`. ALWAYS use Cypher syntax via `execute_cypher_query`.
+The Repository Intelligence Architecture transforms how we understand codebases. Instead of reading files to discover code, we use semantic and graph reasoning to achieve **zero filesystem reads** for repository understanding.
 
-- **CGC Relationship Queries:** Use `analyze_code_relationships` to find callers/callees before reading files. This prevents reading multiple files to trace code flow.
-  - Use `find_callers` to find who calls a function
-  - Use `find_callees` to find what a function calls
-  - Use `class_hierarchy` to understand inheritance
+### Core Principles
 
-- **CGC Cypher Queries:** For complex queries (inheritance, module dependencies, cross-cutting concerns), use `execute_cypher_query` with Cypher patterns:
-  - `MATCH (c:Class {name: 'FinanceDB'})-[:INHERITS]->(p:Class) RETURN p.name`
-  - `MATCH (f:Function)-[:CALLS]->(c) WHERE f.name CONTAINS 'transaction' RETURN c.name, c.path`
+| Principle | Purpose | Tool |
+|-----------|---------|------|
+| **Semantic Reasoning** | Understand symbols, types, references, and definitions at the language level | `cgc:find_code` (SCIP) |
+| **Graph Reasoning** | Navigate relationships, dependencies, and architecture patterns | `cgc:analyze_code_relationships`, `cgc:execute_cypher_query` (FalkorDB) |
+| **Literal Reasoning** | Find exact text, CSS classes, Tailwind utilities, and replacement anchors | `rg` |
+| **Targeted Editing** | Make minimal, precise changes to code | `replace_in_file` |
+| **Validation** | Ensure correctness through automated checks | `ruff`, `mypy`, `tsc` |
 
-- **Git Commit Protocol:** After passing validation and updating `activeContext.md`, execute:
-  1. `git add -A`
-  2. `git commit -m "[type]: [description]"` (semantic style)
-  3. `git push origin [current-branch]`
+### The Reasoning Flow
+
+```
+User Request
+    |
+    v
+Intent Classification
+    |
+    v
+Repository Intelligence Planner
+    |
+    v
+CGC Semantic Layer (SCIP)
+    |
+    v
+CGC Graph Layer (FalkorDB)
+    |
+    v
+rg Literal Search
+    |
+    v
+Targeted Edit
+    |
+    v
+Validation
+```
+
+**Filesystem access is NOT part of repository discovery.** It exists only as an execution substrate for surgical edits.
 
 ---
 
-## 3. MANDATORY 3-PHASE EXECUTION LOOP
+## 3. INTENT ROUTER
+
+### Decision Tree for Tool Selection
+
+| Question | Tool | Rationale |
+|----------|------|-----------|
+| "Where is X?" (symbol, class, function) | `cgc:find_code` | SCIP provides symbol-level understanding with complete source |
+| "What calls X?" | `cgc:analyze_code_relationships` (find_callers) | Graph traversal finds callers efficiently |
+| "What does X call?" | `cgc:analyze_code_relationships` (find_callees) | Graph traversal finds callees efficiently |
+| "What depends on X?" | `cgc:execute_cypher_query` | Cypher queries complex dependency patterns |
+| "What inherits from X?" | `cgc:analyze_code_relationships` (class_hierarchy) | Inheritance is a graph relationship |
+| "Find 'text-red-600'" | `rg` | Literal string search for CSS/Tailwind |
+| "Find exact anchor for replacement" | `rg` | Precise text location for edits |
+| "Replace one line/block" | `replace_in_file` | Surgical edit with exact match |
+| "Rewrite whole file" | **FORBIDDEN** | Only allowed when all other tools fail |
+
+### Hybrid Search Pattern (Preferred Workflow)
+
+```
+SCIP (find_code)
+    ↓
+Find symbol + complete source
+    ↓
+Cypher (execute_cypher_query)
+    ↓
+Find relationships + architecture
+    ↓
+rg
+    ↓
+Find exact text anchor
+    ↓
+replace_in_file
+    ↓
+Targeted edit
+```
+
+---
+
+## 4. REASONING BUDGET
+
+### Optimization Priority
+
+Every task must minimize repository exploration. Follow this strict priority:
+
+1. **Semantic Discovery** → `cgc:find_code`
+2. **Relationship Traversal** → `cgc:analyze_code_relationships`, `cgc:execute_cypher_query`
+3. **Literal Search** → `rg`
+4. **Targeted Editing** → `replace_in_file`
+5. **Validation** → `ruff`, `mypy`, `tsc`
+
+**NEVER follow this pattern:**
+1. Filesystem exploration
+2. Thinking
+3. Editing
+
+**Always think BEFORE reading.** Use the graph to understand before touching files.
+
+---
+
+## 5. FILESYSTEM BUDGETS
+
+Filesystem reads are treated as architectural debt. They should be minimized.
+
+| Task Type | Maximum Filesystem Reads | Justification Required |
+|-----------|-------------------------|----------------------|
+| Repository Understanding | **0** | Must use CGC + rg only |
+| Small Feature Implementation | **2** | Only for final edit verification |
+| Medium Feature | **5** | Each read must be justified |
+| Large Refactor | **10** | Document why CGC/rg insufficient |
+| Any Additional Reads | **Forbidden** | Requires explicit user approval |
+
+### Tool Justification Protocol
+
+When filesystem access becomes necessary, internally justify:
+
+1. **Why CGC failed:** What semantic query returned no results?
+2. **Why graph failed:** What relationship query was insufficient?
+3. **Why rg failed:** What literal search found no anchors?
+4. **Why filesystem became unavoidable:** What specific context is missing?
+
+This reasoning guides tool selection and prevents unnecessary exploration.
+
+---
+
+## 6. CGC HYBRID INTELLIGENCE PROTOCOL
+
+### Architecture Layers
+
+**SCIP (Semantic Layer):**
+- Provides: symbols, types, references, definitions
+- `find_code` returns COMPLETE source code in the `source` field (INDEX_SOURCE=true)
+- DO NOT call `read_file` after `find_code` - the source is already available
+
+**FalkorDB (Graph Layer):**
+- Provides: graph, relationships, repository reasoning
+- Use Cypher syntax via `execute_cypher_query` (NOT SQL/SQLite)
+
+**rg (Literal Layer):**
+- Provides: exact strings, literals, CSS classes, Tailwind utilities
+- CGC and rg are complementary; rg is NOT merely a fallback
+
+### Tool Selection Matrix
+
+| Discovery Type | Tool | Purpose |
+|---------------|------|---------|
+| Semantic (symbols, types, references) | `cgc:find_code` | SCIP-backed symbol lookup |
+| Architecture (callers, callees, imports, inheritance) | `cgc:analyze_code_relationships`, `cgc:execute_cypher_query` | FalkorDB relationship graph |
+| Text (literals, CSS classes, exact anchors) | `rg` | Exact string search |
+| Filesystem read | `read_file` | **ONLY when CGC/rg cannot provide required context** |
+
+### CGC Graph-First Search
+
+ALWAYS use CodeGraphContext MCP tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) for ALL code discovery.
+
+### FalkorDB Query Rules
+
+The graph uses FalkorDB (NOT SQLite). NEVER use `sqlite3` commands, SQL syntax, or relational DB tools to query the code graph. ALWAYS use Cypher syntax via `execute_cypher_query`.
+
+### CGC Relationship Queries
+
+- Use `find_callers` to find who calls a function
+- Use `find_callees` to find what a function calls
+- Use `class_hierarchy` to understand inheritance
+
+### CGC Cypher Query Guardrails
+
+1. **Node Definition Rule:** NEVER reference an undeclared variable in `WHERE` or `RETURN` clauses.
+   - ❌ **BROKEN:** `MATCH (n:Function) WHERE f.path CONTAINS 'loan' RETURN n` (`f` is undefined)
+   - ✅ **CORRECT:** `MATCH (f:File)-[:CONTAINS]->(n:Function) WHERE f.path CONTAINS 'loan' RETURN n`
+2. **Property Schema Standard:**
+   - File paths exist on `File` nodes (`f.path`), NOT directly on `Function` or `Class` nodes.
+   - Use valid node labels: `Class`, `Interface`, `Function`, `Module`, `Variable`, `Parameter`, `File`, `Directory`, `Repository`.
+3. **Relationship Types:** `CALLS`, `IMPORTS`, `HAS_PARAMETER`, `INHERITS`, `CONTAINS`.
+
+### Example Cypher Patterns
+
+- Find callers: `MATCH (f:Function)-[:CALLS]->(c:Function) WHERE f.name = 'FinanceDB' RETURN c`
+- Find class relationships: `MATCH (c:Class)-[:INHERITS]->(p) RETURN c.name, p.name`
+- Module imports: `MATCH (m:Module)-[:IMPORTS]->(m2) RETURN m.name, m2.name`
+
+---
+
+## 7. MANDATORY 3-PHASE EXECUTION LOOP
+
 Wrap EVERY user request inside this strict execution pattern:
+
 - **Phase A (Schema Discovery):** Use CGC `find_code("SymbolName")` to locate and retrieve schemas. The `source` field in results contains the COMPLETE type definition - NO `read_file` call needed. Target specific symbols to get only what you need.
   - Example: `find_code("TransactionDTO")` returns full class definition with source code (INDEX_SOURCE=true)
 - **Phase B (Delta-Only Generation):** Execute code modifications strictly matching the Phase A schemas. Enforce financial guardrails.
@@ -44,43 +214,156 @@ Wrap EVERY user request inside this strict execution pattern:
 
 ---
 
-## 4. BUILD VERIFICATION COMMANDS
+## 8. BUILD VERIFICATION COMMANDS
+
 Run these terminal validation checks immediately after *any* file modification:
-- **Frontend Core & Gate:** `cd frontend && npm run type-check && npm run lint && npm test -- --run && npm run build`
+
 - **Backend Core (Virtual Env Isolated):**
-  `cd backend && ./venv/bin/python3 -m ruff check .`
-  `cd backend && ./venv/bin/python3 -m mypy .`
+  ```bash
+  cd backend && ./venv/bin/python3 -m ruff check .
+  cd backend && ./venv/bin/python3 -m mypy .
+  ```
+- **TypeScript Frontend Gate:**
+  ```bash
+  cd frontend && npx tsc --noEmit
+  ```
 
 ---
 
-## 5. STRICT CODE GUARDRAILS
+## 9. STRICT CODE GUARDRAILS
+
 - **Financial Metrics:** NEVER use loose floats for currency. Enforce integers representing absolute **Paise** (₹1.00 = 100 paise). Use safe decimal handlers for division.
 - **Next.js Conventions:** Prepend component files with `'use client'` *only* if they require state or user interaction hooks (e.g., onClick). Otherwise, default to lean Server Components. Use dynamic structural routing parameters (`app/reconciliation/[id]/page.tsx`).
-- **Strict Code Limitations:** 
+- **Strict Code Limitations:**
   - NEVER use `as any`, `@ts-ignore`, or `@ts-nocheck` in TypeScript.
   - NEVER drop database tables. Use `ADD COLUMN` or `IF NOT EXISTS`.
 
 ---
 
-## 6. Repository Boundary Rule
+## 10. SURGICAL CODE EDITING RULES
 
-- ONLY files under src/repositories/ may import FinanceDB.
-- Routers MUST NOT import FinanceDB or get_db().
-- Engines MUST NOT import FinanceDB.
-- If FinanceDB import is detected outside repositories/, refactor immediately.
+- **NEVER rewrite an entire file** to change a few lines. Always use precise, small block replacements.
+- **Small Search Blocks:** Keep `search` blocks under 10 lines to ensure 100% exact string matching.
+- **Verify Before Replacing:** If `replace_in_file` fails once:
+  - DO NOT switch to `write_to_file` immediately.
+  - Use `rg` to obtain the exact surrounding context.
+  - Re-attempt `replace_in_file` with the exact whitespace and indentation.
 
 ---
 
-## 7. GRAPH DATABASE & FALKORDB QUERY RULES
+## 11. REPOSITORY BOUNDARY RULE
 
-The project utilizes **FalkorDB** via CodeGraphContext (CGC) for code relationships and semantic indexing.
+- ONLY files under `src/repositories/` may import FinanceDB.
+- Routers MUST NOT import FinanceDB or `get_db()`.
+- Engines MUST NOT import FinanceDB.
+- If FinanceDB import is detected outside `repositories/`, refactor immediately.
 
-- ❌ **NEVER** attempt to use `sqlite3` commands, SQL syntax, or relational DB tools to query the code graph.
-- ⚠️ **DO NOT** assume standard SQL tables exist for codebase relationships.
-- ✅ **ALWAYS** use **Cypher query syntax** when interacting with the graph via `execute_cypher_query`.
-- ✅ **Nodes Available:** `Class`, `Interface`, `Function`, `Module`, `Variable`, `Parameter`, `File`, `Directory`, `Repository`.
-- ✅ **Relationship Types:** `CALLS`, `IMPORTS`, `HAS_PARAMETER`, `INHERITS`, `CONTAINS`.
-- ✅ **Example Cypher Patterns:**
-  - Find callers: `MATCH (f:Function)-[:CALLS]->(c:Function) WHERE f.name = 'FinanceDB' RETURN c`
-  - Find class relationships: `MATCH (c:Class)-[:INHERITS]->(p) RETURN c.name, p.name`
-  - Module imports: `MATCH (m:Module)-[:IMPORTS]->(m2) RETURN m.name, m2.name`
+---
+
+## 12. CGC WATCH INTEGRATION
+
+The project uses CGC watch to maintain live code graph synchronization. Evidence of CGC-first approach:
+
+- **Watched Paths:** The CGC server monitors the codebase for real-time graph updates
+- **Ignored Paths:** `.cgcignore` excludes `node_modules/`, `venv/`, `.next/`, `backend/src/core/mappers/`, and other non-source directories
+- **Verification:** All code discovery uses CGC tools (`find_code`, `analyze_code_relationships`, `execute_cypher_query`) before any filesystem operations
+
+### Self-Healing Protocol
+
+If an MCP tool call throws an error:
+
+1. **Parse the error output immediately** (e.g., `'f' not defined` in Cypher)
+2. **Correct the query/command syntax** in the next turn without asking the user
+3. **Retry the operation** with corrected parameters
+
+If `find_code` returns multiple symbols:
+- Disambiguate automatically using context clues
+- Prefer the most recently modified or most relevant match
+
+If `rg` returns multiple anchors:
+- Choose the smallest edit region
+- Verify uniqueness before editing
+
+If `replace_in_file` fails:
+- Use `rg` to obtain the exact surrounding context
+- Retry with precise match
+- Never escalate immediately to full file replacement
+
+---
+
+## 13. SCIP INTEGRATION
+
+SCIP indexes are already available inside CGC. Do not treat SCIP as a separate subsystem.
+
+**SCIP provides:**
+- Symbols
+- Types
+- References
+- Definitions
+
+**CGC provides:**
+- Graph
+- Relationships
+- Repository reasoning
+
+Both operate together seamlessly. `find_code` returns complete source code because INDEX_SOURCE=true is configured.
+
+---
+
+## 14. EFFICIENCY METRICS
+
+Every major task should internally optimize for:
+
+| Metric | Target |
+|--------|--------|
+| Semantic discoveries | Minimize redundant queries |
+| Relationship traversals | Prefer over file reads |
+| Literal searches | Use for exact anchors only |
+| Filesystem reads | **Zero** for repository understanding |
+| Targeted edits | One per logical change |
+| Validation passes | Must clear cleanly |
+
+**The objective is not merely completion.** It is maximum repository intelligence with minimum exploration.
+
+---
+
+## 15. REDUNDANCIES REMOVED
+
+The following rules have been consolidated or removed:
+
+- Removed: Separate "SCIP subsystem" documentation (now integrated into CGC)
+- Removed: "Filesystem read as discovery tool" (now explicitly forbidden)
+- Removed: "Multiple read_file iterations for understanding" (now architectural debt)
+- Consolidated: All tool selection guidance into Intent Router
+- Consolidated: All self-healing guidance into Self-Healing Protocol
+
+---
+
+## 16. GIT SAFETY RULES
+
+### Branch Protection
+- **NEVER commit directly to `main` or `Production-Gate`**. All work must be done on a feature branch.
+- **NEVER force-push** to any shared branch (`main`, `Production-Gate`, `stage-*`).
+- **NEVER drop database tables.** Use `ADD COLUMN` or `IF NOT EXISTS`.
+- **NEVER delete branches** that contain unmerged work without explicit confirmation.
+
+### Commit Discipline
+- **One logical change per commit.** Each commit must pass all verification gates (`verify-fast.sh`).
+- **Commit messages** must follow conventional format: `type(scope): description`.
+- **Before every commit**, run `verify-fast.sh` and ensure all checks pass.
+- **Before merging**, ensure the working tree is clean and all tests pass.
+
+### Recovery Safety
+- **Always verify the source commit** before restoring files from Git history. Use `git ls-tree -r --name-only <commit> -- <path>` to confirm file existence.
+- **Never restore files that already exist** in the current HEAD. Check with `git ls-tree HEAD -- <path>` first.
+- **For MERGE operations**, always diff the lost version against the current version first: `git diff <current> <lost> -- <path>`.
+- **For engines, restore the entire directory** at once to preserve internal imports.
+- **For tests, restore the entire directory structure** to preserve conftest.py and __init__.py files.
+
+### Repository Boundary Enforcement
+- **ONLY files under `src/repositories/` may import FinanceDB.**
+- **Routers MUST NOT import FinanceDB or `get_db()`.**
+- **Engines MUST NOT import FinanceDB.**
+- If FinanceDB import is detected outside `repositories/`, refactor immediately.
+>>>>>>>
+

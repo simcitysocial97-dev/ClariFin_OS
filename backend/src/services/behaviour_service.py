@@ -482,7 +482,7 @@ class BehaviourService:
                 credit_dependency_ratio=Decimal(str(latest_snapshot["credit_dependency_ratio"])),
                 debt_cycle_score=latest_snapshot["debt_cycle_score"],
                 credit_revolver_ratio=Decimal(str(latest_snapshot["credit_revolver_ratio"])),
-                band=cast(DebtHealthBand, "MODERATE"),  # Simplified - would compute from latest data
+                band="MODERATE",  # Simplified - would compute from latest data
                 snapshot_date=latest_snapshot["snapshot_date"],
             )
 
@@ -739,7 +739,7 @@ class BehaviourService:
         card_obligations = sum(
             self._compute_minimum_due(card) for card in credit_cards
         )
-        return loan_obligations + card_obligations
+        return int(loan_obligations) + int(card_obligations)
 
     def _compute_minimum_obligations(self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]) -> int:
         """Compute minimum obligations (minimum due amounts)."""
@@ -747,7 +747,7 @@ class BehaviourService:
         card_minimums = sum(
             self._compute_minimum_due(card) for card in credit_cards
         )
-        return loan_minimums + card_minimums
+        return int(loan_minimums) + int(card_minimums)
 
     def _compute_minimum_due(self, credit_card: dict[str, Any]) -> int:
         """Compute minimum due for a credit card."""
@@ -755,6 +755,7 @@ class BehaviourService:
         if isinstance(limit, Decimal):
             return int(limit * Decimal("0.05"))  # 5% of limit
         return int(limit * 0.05) if limit else 0
+
 
     def _compute_revolving_balance(self, credit_cards: list[dict[str, Any]]) -> int:
         """Compute total revolving balance from credit cards."""

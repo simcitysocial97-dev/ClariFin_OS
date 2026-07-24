@@ -1,0 +1,38 @@
+id: household_cashflow
+name: Household Cashflow
+description: >
+  Compute monthly household cashflow analysis including income, expenses, surplus/deficit,
+  true savings adjusted for financial events, and credit dependency ratios.
+criticality: high
+risk: low
+routers:
+  - src/routers/cashflow.py
+services:
+  - src/services/cashflow_service.py
+engines:
+  - src/engines/cashflow_engine.py
+repositories:
+  - src/repositories/cashflow_repository.py
+tables:
+  - transactions
+  - accounts
+  - financial_events
+  - cashflow_summaries
+golden_datasets:
+  - tests/golden/datasets/normal_household.json
+  - tests/golden/datasets/salary_only.json
+  - tests/golden/datasets/salary_plus_loan.json
+  - tests/golden/datasets/family_household.json
+property_tests:
+  - tests/properties/cashflow/test_engine_properties.py
+invariants:
+  - tests/invariants/test_cashflow_invariants.py
+architecture_tests:
+  - tests/architecture
+contracts:
+  - POST /api/cashflow/monthly
+  - GET /api/cashflow/trends
+dependencies: []
+failure_impact: >
+  Core financial visibility. Loss causes inability to determine surplus/deficit,
+  leading to incorrect budget and planning decisions.

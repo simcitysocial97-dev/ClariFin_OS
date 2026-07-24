@@ -56,13 +56,13 @@ export interface DocumentData {
  * Extract text with position data from PDF
  */
 export async function extractTextWithPositions(file: File): Promise<DocumentData> {
-    console.log('[TEXT EXTRACTOR] Loading PDF...');
+    console.warn('[TEXT EXTRACTOR] Loading PDF...');
     
     const pdfjs = await getPdfJs();
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
     
-    console.log('[TEXT EXTRACTOR] Pages:', pdf.numPages);
+    console.warn('[TEXT EXTRACTOR] Pages:', pdf.numPages);
     
     const pages: PageData[] = [];
     let fullText = '';
@@ -99,7 +99,7 @@ export async function extractTextWithPositions(file: File): Promise<DocumentData
             fullText: pageText
         });
         
-        console.log(`[TEXT EXTRACTOR] Page ${pageNum}: ${items.length} items, ${lines.length} lines`);
+        console.warn(`[TEXT EXTRACTOR] Page ${pageNum}: ${items.length} items, ${lines.length} lines`);
     }
     
     return {

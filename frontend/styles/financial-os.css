@@ -1,0 +1,903 @@
+/* ============================================================
+   Financial OS — CSS Custom Properties
+   Stage 8E Financial OS Visual Language
+   
+   Single source of truth for all Financial OS visual tokens.
+   Imported by globals.css. No globals.css overrides here.
+   ============================================================ */
+
+@layer financial-os {
+  /* ===== Typography ===== */
+  :root {
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Roboto Mono', monospace;
+    --font-display: 'IBM Plex Sans', var(--font-sans);
+
+    /* Font sizes - 8-step scale for analytical density */
+    --fs-2xs: 0.6875rem;  /* 11px - Hints, tertiary metadata */
+    --fs-xs: 0.75rem;     /* 12px - Captions, metadata */
+    --fs-sm: 0.8125rem;   /* 13px - Body small, labels */
+    --fs-base: 0.875rem;  /* 14px - Body default */
+    --fs-md: 1rem;        /* 16px - Panel titles */
+    --fs-lg: 1.125rem;    /* 18px - Section headers */
+    --fs-xl: 1.25rem;     /* 20px - Primary metrics */
+    --fs-2xl: 1.5rem;     /* 24px - Financial values (large) */
+
+    /* Font weights */
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+    /* Line heights - monospace values use 'none' for alignment */
+    --lh-none: 1;
+    --lh-tight: 1.25;
+    --lh-snug: 1.375;
+    --lh-normal: 1.5;
+
+    /* Letter spacing */
+    --ls-tight: -0.025em;
+    --ls-normal: 0em;
+    --ls-wide: 0.025em;
+    --ls-mono: 0.025em;
+
+    /* Numeric typography - tabular numbers for columns */
+    --numeric: 'tnum' 1;
+    --numeric-comma: 'tnum' 1, 'calt' 0;
+  }
+
+  /* ===== Spacing Scale (8px system) ===== */
+  :root {
+    --space-0: 0px;
+    --space-0\.5: 2px;
+    --space-1: 4px;
+    --space-1\.5: 6px;
+    --space-2: 8px;
+    --space-2\.5: 10px;
+    --space-3: 12px;
+    --space-3\.5: 14px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 32px;
+    --space-9: 36px;
+    --space-10: 40px;
+    --space-11: 44px;
+    --space-12: 48px;
+    --space-14: 56px;
+    --space-16: 64px;
+    --space-20: 80px;
+    --space-24: 96px;
+    --space-28: 112px;
+    --space-32: 128px;
+  }
+
+  /* ===== Layout Constants ===== */
+  :root {
+    --left-rail-width: 180px;
+    --command-bar-height: 44px;
+    --timeline-height: 88px;
+    --status-bar-height: 20px;
+    --inspector-min: 280px;
+    --inspector-max: 420px;
+    --grid-gap: 16px;
+  }
+
+  /* ===== Border Radius ===== */
+  :root {
+    --radius-none: 0px;
+    --radius-sm: 2px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+    --radius-xl: 8px;
+    --radius-2xl: 12px;
+    --radius-full: 9999px;
+  }
+
+  /* ===== Border Width ===== */
+  :root {
+    --border-0: 0px;
+    --border-1: 1px;
+    --border-2: 2px;
+    --border-4: 4px;
+  }
+
+  /* ===== Elevations (Shadows) ===== */
+  :root {
+    --shadow-none: none;
+    --shadow-raised: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-interactive: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-selected: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-floating: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  /* ===== Z-Index Scale ===== */
+  :root {
+    --z-base: 0;
+    --z-dropdown: 1000;
+    --z-sticky: 1100;
+    --z-fixed: 1200;
+    --z-modal: 1300;
+    --z-popover: 1400;
+    --z-tooltip: 1500;
+    --z-notification: 1600;
+  }
+
+  /* ===== Duration ===== */
+  :root {
+    --duration-instant: 0ms;
+    --duration-fastest: 50ms;
+    --duration-faster: 100ms;
+    --duration-fast: 150ms;
+    --duration-normal: 200ms;
+    --duration-slow: 300ms;
+    --duration-slower: 400ms;
+    --duration-slowest: 500ms;
+  }
+
+  /* ===== Easing ===== */
+  :root {
+    --ease-linear: linear;
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ===== Light Theme ===== */
+  :root {
+    /* Slate-based neutral palette */
+    --color-white: #ffffff;
+    --color-black: #000000;
+
+    /* Surface hierarchy */
+    --surface-default: #ffffff;
+    --surface-raised: #f8fafc;
+    --surface-interactive: #f1f5f9;
+    --surface-selected: #e2e8f0;
+    --surface-floating: #ffffff;
+    --surface-overlay: rgba(0, 0, 0, 0.4);
+    --surface-graph: #f8fafc;
+    --surface-terminal: #0f172a;
+    --surface-timeline: #f1f5f9;
+
+    /* Border tokens */
+    --border-default: #e2e8f0;
+    --border-subtle: #f1f5f9;
+    --border-strong: #cbd5e1;
+    --border-focus: #3b82f6;
+    --border-selected: #2563eb;
+
+    /* Text tokens */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-tertiary: #64748b;
+    --text-disabled: #94a3b8;
+    --text-inverse: #ffffff;
+    --text-link: #2563eb;
+
+    /* === Financial Semantic Colors === */
+
+    /* Positive (income, gains, assets) */
+    --color-positive-50: #f0fdf4;
+    --color-positive-100: #dcfce7;
+    --color-positive-200: #bbf7d0;
+    --color-positive-300: #86efac;
+    --color-positive-400: #4ade80;
+    --color-positive-500: #22c55e;
+    --color-positive-600: #16a34a;
+    --color-positive-700: #15803d;
+    --color-positive-800: #166534;
+    --color-positive-900: #14532d;
+
+    /* Negative (expenses, losses, liabilities) */
+    --color-negative-50: #fef2f2;
+    --color-negative-100: #fee2e2;
+    --color-negative-200: #fecaca;
+    --color-negative-300: #fca5a5;
+    --color-negative-400: #f87171;
+    --color-negative-500: #ef4444;
+    --color-negative-600: #dc2626;
+    --color-negative-700: #b91c1c;
+    --color-negative-800: #991b1b;
+    --color-negative-900: #7f1d1d;
+
+    /* Warning (high risk, attention) */
+    --color-warning-50: #fffbeb;
+    --color-warning-100: #fef3c7;
+    --color-warning-200: #fde68a;
+    --color-warning-300: #fcd34d;
+    --color-warning-400: #fbbf24;
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+    --color-warning-700: #b45309;
+    --color-warning-800: #92400e;
+    --color-warning-900: #78350f;
+
+    /* Info (insights, recommendations) */
+    --color-info-50: #eff6ff;
+    --color-info-100: #dbeafe;
+    --color-info-200: #bfdbfe;
+    --color-info-300: #93c5fd;
+    --color-info-400: #60a5fa;
+    --color-info-500: #3b82f6;
+    --color-info-600: #2563eb;
+    --color-info-700: #1d4ed8;
+    --color-info-800: #1e40af;
+    --color-info-900: #1e3a8a;
+
+    /* Neutral (transfers, balance) */
+    --color-neutral-50: #f8fafc;
+    --color-neutral-100: #f1f5f9;
+    --color-neutral-200: #e2e8f0;
+    --color-neutral-300: #cbd5e1;
+    --color-neutral-400: #94a3b8;
+    --color-neutral-500: #64748b;
+    --color-neutral-600: #475569;
+    --color-neutral-700: #334155;
+    --color-neutral-800: #1e293b;
+    --color-neutral-900: #0f172a;
+
+    /* === Graph Theme Colors === */
+    --color-node-transaction: #64748b;
+    --color-node-account: #3b82f6;
+    --color-node-loan: #ef4444;
+    --color-node-credit-card: #ef4444;
+    --color-node-investment: #22c55e;
+    --color-node-behaviour: #3b82f6;
+    --color-node-merchant: #64748b;
+    --color-node-category: #94a3b8;
+    --color-node-institution: #475569;
+    --color-node-forecast: #3b82f6;
+    --color-node-net-worth: #64748b;
+    --color-node-discrepancy: #ef4444;
+    --color-node-reconciliation: #64748b;
+
+    /* Edge colors */
+    --color-edge-default: #cbd5e1;
+    --color-edge-ownership: #94a3b8;
+    --color-edge-category: #94a3b8;
+    --color-edge-institution: #94a3b8;
+    --color-edge-impact: #60a5fa;
+    --color-edge-amortization: #f87171;
+    --color-edge-projection: #60a5fa;
+    --color-edge-reconciliation: #94a3b8;
+    --color-edge-money-flow: #22c55e;
+
+    /* Selection & Interaction */
+    --color-selection: #3b82f6;
+    --color-selection-halo: rgba(59, 130, 246, 0.15);
+    --color-hover-overlay: rgba(0, 0, 0, 0.03);
+    --color-focus-ring: #3b82f6;
+    --color-traversal: #6366f1;
+
+    /* Confidence levels */
+    --color-confidence-high: #22c55e;
+    --color-confidence-medium: #f59e0b;
+    --color-confidence-low: #ef4444;
+
+    /* Risk levels */
+    --color-risk-low: #22c55e;
+    --color-risk-medium: #f59e0b;
+    --color-risk-high: #ef4444;
+    --color-risk-critical: #b91c1c;
+
+    /* Simulation */
+    --color-simulation-stroke: #3b82f6;
+    --color-simulation-pulse: rgba(59, 130, 246, 0.3);
+    --color-evidence-stroke: #6366f1;
+  }
+
+  /* ===== Dark Theme ===== */
+  .dark {
+    --surface-default: #0f172a;
+    --surface-raised: #1e293b;
+    --surface-interactive: #334155;
+    --surface-selected: #475569;
+    --surface-floating: #1e293b;
+    --surface-overlay: rgba(0, 0, 0, 0.6);
+    --surface-graph: #0f172a;
+    --surface-terminal: #020617;
+    --surface-timeline: #1e293b;
+
+    --border-default: #334155;
+    --border-subtle: #1e293b;
+    --border-strong: #475569;
+    --border-focus: #60a5fa;
+    --border-selected: #3b82f6;
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --text-disabled: #475569;
+    --text-inverse: #0f172a;
+    --text-link: #60a5fa;
+
+    --color-selection: #60a5fa;
+    --color-selection-halo: rgba(96, 165, 250, 0.2);
+    --color-hover-overlay: rgba(255, 255, 255, 0.03);
+    --color-focus-ring: #60a5fa;
+    --color-traversal: #818cf8;
+
+    /* Shadow tokens redefined for dark */
+    --shadow-raised: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-interactive: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    --shadow-selected: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-floating: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+    --shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.4);
+  }
+
+  /* ================================================================
+     Typography Utility Classes
+     ================================================================ */
+
+  /* === Numeric Typography === */
+  .fin-amount {
+    font-family: var(--font-mono);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-none);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-mono);
+  }
+
+  .fin-amount-large {
+    font-family: var(--font-mono);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-none);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-mono);
+  }
+
+  .fin-amount-compact {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-none);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-mono);
+  }
+
+  .fin-percentage {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-none);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fin-timestamp {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-tight);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-tight);
+  }
+
+  .fin-identifier {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-none);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ls-wide);
+  }
+
+  .fin-evidence {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-tight);
+    color: var(--text-tertiary);
+  }
+
+  .fin-confidence {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-medium);
+    line-height: var(--lh-none);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fin-calculation {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-snug);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+  }
+
+  /* === Display Typography === */
+  .fin-label {
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-snug);
+    color: var(--text-secondary);
+  }
+
+  .fin-label-caption {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-tight);
+    color: var(--text-tertiary);
+  }
+
+  .fin-section-header {
+    font-family: var(--font-sans);
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+    color: var(--text-primary);
+  }
+
+  .fin-panel-header {
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-semibold);
+    line-height: var(--lh-snug);
+    color: var(--text-primary);
+  }
+
+  .fin-body {
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-normal);
+    color: var(--text-primary);
+  }
+
+  .fin-body-small {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-tight);
+    color: var(--text-secondary);
+  }
+
+  .fin-caption {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-tight);
+    color: var(--text-tertiary);
+  }
+
+  .fin-hint {
+    font-family: var(--font-sans);
+    font-size: var(--fs-2xs);
+    font-weight: var(--fw-regular);
+    line-height: var(--lh-none);
+    color: var(--text-disabled);
+  }
+
+  .fin-mono {
+    font-family: var(--font-mono);
+  }
+
+  .fin-sans {
+    font-family: var(--font-sans);
+  }
+
+  /* ================================================================
+     Graph Theme Styles
+     ================================================================ */
+
+  /* === Node Selection Halo === */
+  .fin-node-selected::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 2px var(--color-selection);
+    pointer-events: none;
+  }
+
+  .fin-node-halo {
+    box-shadow: 0 0 0 4px var(--color-selection-halo);
+  }
+
+  /* === Edge Styles === */
+  .fin-edge-money-flow {
+    stroke: var(--color-edge-money-flow);
+    stroke-width: 2;
+  }
+
+  .fin-edge-default {
+    stroke: var(--color-edge-default);
+    stroke-width: 1;
+  }
+
+  .fin-edge-projections {
+    stroke: var(--color-edge-projection);
+    stroke-width: 1;
+    stroke-dasharray: 5, 5;
+  }
+
+  .fin-edge-simulation {
+    stroke: var(--color-simulation-stroke);
+    stroke-width: 1;
+    stroke-dasharray: 5, 5;
+    animation: fin-dash var(--duration-slow) linear infinite;
+  }
+
+  .fin-edge-evidence {
+    stroke: var(--color-evidence-stroke);
+    stroke-width: 1;
+    stroke-dasharray: 3, 3;
+  }
+
+  .fin-edge-traversal {
+    stroke: var(--color-traversal);
+    stroke-width: 2;
+    filter: drop-shadow(0 0 4px var(--color-traversal));
+  }
+
+  /* === Traversal Path === */
+  .fin-traversal-path {
+    stroke: var(--color-traversal);
+    stroke-width: 2;
+    fill: none;
+    opacity: 0.6;
+  }
+
+  /* === Simulation Pulse === */
+  .fin-simulation-pulse {
+    animation: fin-pulse-sim var(--duration-slow) ease-in-out infinite;
+  }
+
+  /* === Risk Pulse === */
+  .fin-risk-pulse {
+    animation: fin-pulse-risk var(--duration-slow) ease-in-out infinite;
+  }
+
+  @keyframes fin-pulse-risk {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.15); }
+  }
+
+  @keyframes fin-pulse-sim {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes fin-dash {
+    from { stroke-dashoffset: 10; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* ================================================================
+     Premium Motion — Stage 8H
+     ================================================================ */
+
+  /* === Money Flow Animation === */
+  .fin-money-flow {
+    animation: fin-flow-move 2s ease-in-out infinite;
+  }
+
+  @keyframes fin-flow-move {
+    0% { stroke-dashoffset: 20; opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0.4; }
+  }
+
+  /* === Selection Halo === */
+  @keyframes fin-halo-appear {
+    0% { box-shadow: 0 0 0 0px var(--color-selection-halo); }
+    100% { box-shadow: 0 0 0 4px var(--color-selection-halo); }
+  }
+
+  .fin-selection-halo {
+    animation: fin-halo-appear var(--duration-fast) var(--ease-out) forwards;
+  }
+
+  /* === Panel Open === */
+  @keyframes fin-panel-enter {
+    0% { opacity: 0; transform: translateY(4px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .fin-panel-enter {
+    animation: fin-panel-enter 150ms var(--ease-out) forwards;
+  }
+
+  /* === Skeleton Loading === */
+  .fin-skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-default) 25%,
+      var(--surface-interactive) 50%,
+      var(--surface-default) 75%
+    );
+    background-size: 200% 100%;
+    animation: fin-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--radius-sm);
+  }
+
+  .fin-skeleton-text {
+    height: 12px;
+    width: 100%;
+    margin-bottom: 6px;
+  }
+
+  .fin-skeleton-text:last-child {
+    width: 60%;
+  }
+
+  /* === Inspector Section Enter === */
+  .fin-inspector-section {
+    animation: fin-panel-enter 120ms var(--ease-out) forwards;
+  }
+
+  /* === Graph Node Enter === */
+  @keyframes fin-node-enter {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  .fin-node-enter {
+    animation: fin-node-enter var(--duration-fast) var(--ease-out) forwards;
+  }
+
+  /* === Graph Edge Draw === */
+  @keyframes fin-edge-draw {
+    0% { stroke-dashoffset: 100; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  .fin-edge-draw {
+    stroke-dasharray: 100;
+    animation: fin-edge-draw var(--duration-normal) var(--ease-out) forwards;
+  }
+
+  /* ================================================================
+     Surface Styles
+     ================================================================ */
+
+  .fin-surface {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+  }
+
+  .fin-surface-raised {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .fin-surface-interactive {
+    background: var(--surface-default);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    transition: background var(--duration-fastest) var(--ease-out),
+                box-shadow var(--duration-fastest) var(--ease-out);
+  }
+
+  .fin-surface-interactive:hover {
+    background: var(--surface-interactive);
+    box-shadow: var(--shadow-interactive);
+  }
+
+  .fin-surface-selected {
+    background: var(--surface-selected);
+    border: 1px solid var(--border-selected);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-selected);
+  }
+
+  .fin-surface-floating {
+    background: var(--surface-floating);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-floating);
+  }
+
+  .fin-surface-overlay {
+    background: var(--surface-overlay);
+    backdrop-filter: blur(4px);
+  }
+
+  .fin-surface-graph {
+    background: var(--surface-graph);
+    border: none;
+    border-radius: 0;
+  }
+
+  .fin-surface-terminal {
+    background: var(--surface-terminal);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    color: #22c55e;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+  }
+
+  .fin-surface-timeline {
+    background: var(--surface-timeline);
+    border-top: 1px solid var(--border-default);
+  }
+
+  /* ================================================================
+     State Utility Classes
+     ================================================================ */
+
+  .fin-loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .fin-loading-pulse {
+    animation: fin-shimmer 1.5s ease-in-out infinite;
+    background: linear-gradient(
+      90deg,
+      var(--surface-default) 0%,
+      var(--surface-interactive) 50%,
+      var(--surface-default) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  @keyframes fin-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .fin-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    color: var(--text-tertiary);
+    text-align: center;
+  }
+
+  .fin-error {
+    background: var(--color-negative-50);
+    border: 1px solid var(--color-negative-200);
+    color: var(--color-negative-700);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .dark .fin-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: var(--color-negative-400);
+  }
+
+  .fin-success {
+    background: var(--color-positive-50);
+    border: 1px solid var(--color-positive-200);
+    color: var(--color-positive-700);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .dark .fin-success {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: var(--color-positive-400);
+  }
+
+  .fin-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .fin-focused {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* ================================================================
+     Accessibility
+     ================================================================ */
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  /* ===== Focus Ring Styles ===== */
+  .fin-focus-ring {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  .fin-focus-ring-inset {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: -2px;
+  }
+
+  /* ===== Reduced Motion Support ===== */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .fin-loading-pulse,
+    .fin-simulation-pulse,
+    .fin-risk-pulse {
+      animation: none;
+    }
+  }
+
+  /* ===== High Contrast Support ===== */
+  @media (prefers-contrast: high) {
+    :root {
+      --border-default: #000000;
+      --border-strong: #000000;
+      --text-primary: #000000;
+      --text-secondary: #000000;
+      --text-tertiary: #000000;
+      --color-focus-ring: #000000;
+    }
+
+    .dark {
+      --border-default: #ffffff;
+      --border-strong: #ffffff;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --text-tertiary: #ffffff;
+      --color-focus-ring: #ffffff;
+    }
+  }
+
+  /* ===== Density Mode Styles ===== */
+  .fin-density-compact {
+    --density-table-row-height: 32px;
+    --density-panel-padding: 8px;
+    --density-icon-size: 14px;
+    --density-font-size: 12px;
+  }
+
+  .fin-density-comfortable {
+    --density-table-row-height: 40px;
+    --density-panel-padding: 12px;
+    --density-icon-size: 16px;
+    --density-font-size: 14px;
+  }
+
+  .fin-density-analytical {
+    --density-table-row-height: 48px;
+    --density-panel-padding: 16px;
+    --density-icon-size: 18px;
+    --density-font-size: 14px;
+  }
+
+  /* ===== Live Region for Screen Readers ===== */
+  .fin-live-region {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .fin-live-region-alert {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+}
