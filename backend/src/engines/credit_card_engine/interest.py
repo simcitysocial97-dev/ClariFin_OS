@@ -65,7 +65,9 @@ def compute_daily_interest(
     daily_rate: Decimal = bps_to_daily_rate(annual_rate_bps)
     outstanding: Decimal = Decimal(outstanding_paise)
     interest_decimal: Decimal = outstanding * daily_rate
-    interest_paise = int(interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    interest_paise = int(
+        interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+    )
 
     return interest_paise
 

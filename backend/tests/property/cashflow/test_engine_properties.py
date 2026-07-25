@@ -1,4 +1,5 @@
 """Property tests for Cashflow Engine — business capability: cashflow."""
+
 from __future__ import annotations
 
 import sys

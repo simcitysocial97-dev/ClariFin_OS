@@ -1,4 +1,5 @@
 """Base repository with common database access pattern."""
+
 import sqlite3
 from pathlib import Path
 

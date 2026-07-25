@@ -1,4 +1,5 @@
 """Cashflow endpoints."""
+
 from fastapi import APIRouter, HTTPException, Query
 
 from src.core.dtos.cashflow_dto import (

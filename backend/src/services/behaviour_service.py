@@ -85,7 +85,9 @@ class BehaviourService:
         self.behaviour_repo = behaviour_repo or BehaviourRepository(db_path)
         self.pattern_repo = pattern_repo or PatternRepository(db_path)
 
-    def compute_financial_profile(self, household_id: str = "default") -> FinancialProfileResponse:
+    def compute_financial_profile(
+        self, household_id: str = "default"
+    ) -> FinancialProfileResponse:
         """Compute and persist a comprehensive financial behaviour profile.
 
         1. Fetch financial data from repositories
@@ -122,11 +124,17 @@ class BehaviourService:
             snapshot_date = date.today().isoformat()
 
             # Savings metrics
-            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
-            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+            total_income = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "credit"
+            )
+            total_expenses = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "debit"
+            )
             financial_fees = self._compute_financial_fees(transactions, credit_cards)
 
-            savings_rate = compute_true_savings_rate(total_income, total_expenses, financial_fees)
+            savings_rate = compute_true_savings_rate(
+                total_income, total_expenses, financial_fees
+            )
             borrowed_lifestyle_ratio = compute_borrowed_lifestyle_ratio(
                 self._compute_credit_funded_expenses(transactions), total_expenses
             )
@@ -137,7 +145,9 @@ class BehaviourService:
 
             compute_income_stability(monthly_incomes)
             compute_expense_stability(monthly_expenses)
-            cashflow_stability = compute_cashflow_stability_index(monthly_incomes, monthly_expenses)
+            cashflow_stability = compute_cashflow_stability_index(
+                monthly_incomes, monthly_expenses
+            )
             compute_monthly_surplus(total_income, total_expenses, financial_fees)
 
             # Debt metrics
@@ -170,7 +180,9 @@ class BehaviourService:
 
             # Lifestyle metrics
             non_essential_current = self._compute_non_essential_expenses(transactions)
-            non_essential_previous = self._compute_previous_non_essential_expenses(transactions)
+            non_essential_previous = self._compute_previous_non_essential_expenses(
+                transactions
+            )
 
             lifestyle_inflation = compute_lifestyle_inflation(
                 non_essential_current, non_essential_previous
@@ -193,9 +205,13 @@ class BehaviourService:
                 household_id=household_id,
                 savings_discipline_score_bps=int(savings_rate * 10000),
                 cashflow_stability_score_bps=int(cashflow_stability * 10000),
-                salary_dependence_ratio_bps=int(self._compute_salary_dependence(transactions) * 10000),
+                salary_dependence_ratio_bps=int(
+                    self._compute_salary_dependence(transactions) * 10000
+                ),
                 lifestyle_inflation_rate_bps=int(lifestyle_inflation * 10000),
-                subscription_burn_rate_bps=int(self._compute_subscription_burn_rate(transactions) * 10000),
+                subscription_burn_rate_bps=int(
+                    self._compute_subscription_burn_rate(transactions) * 10000
+                ),
                 resilience_index_bps=int(resilience_index * 10000),
                 wellness_score_bps=int(wellness_score * 10000),
                 version=1,
@@ -208,8 +224,12 @@ class BehaviourService:
                 savings_rate=savings_rate,
                 borrowed_lifestyle_ratio=borrowed_lifestyle_ratio,
                 credit_revolver_ratio=credit_revolver_ratio,
-                discretionary_spending_ratio=self._compute_discretionary_spending_ratio(transactions),
-                impulse_transaction_ratio=self._compute_impulse_transaction_ratio(transactions),
+                discretionary_spending_ratio=self._compute_discretionary_spending_ratio(
+                    transactions
+                ),
+                impulse_transaction_ratio=self._compute_impulse_transaction_ratio(
+                    transactions
+                ),
                 lifestyle_creep_index=self._compute_lifestyle_creep_index(transactions),
                 transaction_count=len(transactions),
             )
@@ -227,7 +247,9 @@ class BehaviourService:
                 message=f"Failed to compute financial profile: {str(e)}",
             )
 
-    def get_wellness_score(self, household_id: str = "default") -> WellnessScoreResponse:
+    def get_wellness_score(
+        self, household_id: str = "default"
+    ) -> WellnessScoreResponse:
         """Get the latest financial wellness score.
 
         Args:
@@ -248,24 +270,32 @@ class BehaviourService:
             # Repository returns scores already in 0-100 range (scaled by * 100)
             components: dict[str, Decimal] = {
                 "cashflow_health": Decimal(str(snapshot["cashflow_stability_score"])),
-                "debt_health": Decimal("1") - (Decimal(str(snapshot["debt_cycle_score"])) / Decimal("100")),
+                "debt_health": Decimal("1")
+                - (Decimal(str(snapshot["debt_cycle_score"])) / Decimal("100")),
                 "savings_behaviour": max(
                     Decimal("0"),
                     Decimal(str(snapshot["savings_discipline_score"])),
                 ),
                 "resilience": Decimal(str(snapshot["resilience_index"])),
-                "lifestyle_control": Decimal("1") - min(
+                "lifestyle_control": Decimal("1")
+                - min(
                     Decimal("1"),
-                    max(Decimal("0"), Decimal(str(snapshot["lifestyle_inflation_rate"]))),
+                    max(
+                        Decimal("0"), Decimal(str(snapshot["lifestyle_inflation_rate"]))
+                    ),
                 ),
-                "credit_behaviour": Decimal("0.5") * (
-                    Decimal("1") - Decimal(str(snapshot["credit_revolver_ratio"]))
-                ) + Decimal("0.5") * (Decimal("1") - min(Decimal("1"), Decimal("0.4"))),  # Simplified FOIR
+                "credit_behaviour": Decimal("0.5")
+                * (Decimal("1") - Decimal(str(snapshot["credit_revolver_ratio"])))
+                + Decimal("0.5")
+                * (Decimal("1") - min(Decimal("1"), Decimal("0.4"))),  # Simplified FOIR
             }
 
             from src.engines.behaviour_engine.wellness import classify_wellness_band
 
-            band = cast(WellnessBand, classify_wellness_band(Decimal(str(snapshot["wellness_score"]))))
+            band = cast(
+                WellnessBand,
+                classify_wellness_band(Decimal(str(snapshot["wellness_score"]))),
+            )
 
             return WellnessScoreResponse(
                 score=Decimal(str(snapshot["wellness_score"])),
@@ -305,8 +335,12 @@ class BehaviourService:
             credit_cards = self.credit_card_repo.list_cards()
             loans = self.loan_repo.list_loans()
 
-            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
-            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+            total_income = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "credit"
+            )
+            total_expenses = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "debit"
+            )
 
             # Compute dynamic debt metrics
             foir, foir_band = compute_foir(
@@ -340,7 +374,9 @@ class BehaviourService:
                 message=f"Failed to get debt health: {str(e)}",
             )
 
-    def get_cashflow_health(self, household_id: str = "default") -> CashflowHealthResponse:
+    def get_cashflow_health(
+        self, household_id: str = "default"
+    ) -> CashflowHealthResponse:
         """Get the latest cashflow health metrics.
 
         Args:
@@ -359,14 +395,22 @@ class BehaviourService:
 
             # Get latest transactions for dynamic cashflow metrics
             transactions = self.transaction_repo.get_all_transactions()
-            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
-            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+            total_income = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "credit"
+            )
+            total_expenses = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "debit"
+            )
             financial_fees = self._compute_financial_fees(transactions, [])
 
-            monthly_surplus = compute_monthly_surplus(total_income, total_expenses, financial_fees)
+            monthly_surplus = compute_monthly_surplus(
+                total_income, total_expenses, financial_fees
+            )
 
             return CashflowHealthResponse(
-                cashflow_stability_index=Decimal(str(snapshot["cashflow_stability_score"])),
+                cashflow_stability_index=Decimal(
+                    str(snapshot["cashflow_stability_score"])
+                ),
                 income_stability=Decimal(str(snapshot["income_stability_score"])),
                 expense_stability=Decimal(str(snapshot["expense_stability_score"])),
                 monthly_surplus_paise=monthly_surplus,
@@ -381,7 +425,9 @@ class BehaviourService:
                 message=f"Failed to get cashflow health: {str(e)}",
             )
 
-    def get_patterns(self, household_id: str = "default", limit: int = 5) -> list[FinancialPattern]:
+    def get_patterns(
+        self, household_id: str = "default", limit: int = 5
+    ) -> list[FinancialPattern]:
         """Get the latest detected financial patterns.
 
         Args:
@@ -396,7 +442,9 @@ class BehaviourService:
         """
         try:
             # Get patterns from repository - convert limit (int) to days for get_recent_patterns
-            patterns = self.pattern_repo.get_recent_patterns(days=limit, household_id=household_id)
+            patterns = self.pattern_repo.get_recent_patterns(
+                days=limit, household_id=household_id
+            )
 
             return [
                 FinancialPattern(
@@ -417,7 +465,9 @@ class BehaviourService:
                 message=f"Failed to get patterns: {str(e)}",
             )
 
-    def generate_monthly_summary(self, period: str, household_id: str = "default") -> MonthlySummaryResponse:
+    def generate_monthly_summary(
+        self, period: str, household_id: str = "default"
+    ) -> MonthlySummaryResponse:
         """Generate a monthly financial summary report.
 
         Args:
@@ -446,30 +496,49 @@ class BehaviourService:
             latest_snapshot = snapshots[-1]
 
             # Get patterns for the period - convert limit (int) to days for get_recent_patterns
-            patterns = self.pattern_repo.get_recent_patterns(days=5, household_id=household_id)
+            patterns = self.pattern_repo.get_recent_patterns(
+                days=5, household_id=household_id
+            )
 
             # Get all transactions (simplified - would filter by date in real implementation)
             transactions = self.transaction_repo.get_all_transactions()
-            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
-            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+            total_income = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "credit"
+            )
+            total_expenses = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "debit"
+            )
 
             # Create wellness score response - scores already in 0-100 range from repository
             wellness_score = WellnessScoreResponse(
                 score=Decimal(str(latest_snapshot["wellness_score"])),
-                band=cast(WellnessBand, self._classify_wellness_band(
-                    Decimal(str(latest_snapshot["wellness_score"]))
-                )),
+                band=cast(
+                    WellnessBand,
+                    self._classify_wellness_band(
+                        Decimal(str(latest_snapshot["wellness_score"]))
+                    ),
+                ),
                 components={
-                    "cashflow_health": Decimal(str(latest_snapshot["cashflow_stability_score"])),
-                    "debt_health": Decimal("1") - (Decimal(str(latest_snapshot["debt_cycle_score"])) / Decimal("100")),
+                    "cashflow_health": Decimal(
+                        str(latest_snapshot["cashflow_stability_score"])
+                    ),
+                    "debt_health": Decimal("1")
+                    - (
+                        Decimal(str(latest_snapshot["debt_cycle_score"]))
+                        / Decimal("100")
+                    ),
                     "savings_behaviour": max(
                         Decimal("0"),
                         Decimal(str(latest_snapshot["savings_discipline_score"])),
                     ),
                     "resilience": Decimal(str(latest_snapshot["resilience_index"])),
-                    "lifestyle_control": Decimal("1") - min(
+                    "lifestyle_control": Decimal("1")
+                    - min(
                         Decimal("1"),
-                        max(Decimal("0"), Decimal(str(latest_snapshot["lifestyle_inflation_rate"]))),
+                        max(
+                            Decimal("0"),
+                            Decimal(str(latest_snapshot["lifestyle_inflation_rate"])),
+                        ),
                     ),
                 },
                 snapshot_date=latest_snapshot["snapshot_date"],
@@ -479,18 +548,28 @@ class BehaviourService:
             # Create debt health response
             debt_health = DebtHealthResponse(
                 foir=Decimal("0.4"),  # Simplified - would compute from latest data
-                credit_dependency_ratio=Decimal(str(latest_snapshot["credit_dependency_ratio"])),
+                credit_dependency_ratio=Decimal(
+                    str(latest_snapshot["credit_dependency_ratio"])
+                ),
                 debt_cycle_score=latest_snapshot["debt_cycle_score"],
-                credit_revolver_ratio=Decimal(str(latest_snapshot["credit_revolver_ratio"])),
+                credit_revolver_ratio=Decimal(
+                    str(latest_snapshot["credit_revolver_ratio"])
+                ),
                 band="MODERATE",  # Simplified - would compute from latest data
                 snapshot_date=latest_snapshot["snapshot_date"],
             )
 
             # Create cashflow health response - scores already in 0-100 range from repository
             cashflow_health = CashflowHealthResponse(
-                cashflow_stability_index=Decimal(str(latest_snapshot["cashflow_stability_score"])),
-                income_stability=Decimal(str(latest_snapshot["income_stability_score"])),
-                expense_stability=Decimal(str(latest_snapshot["expense_stability_score"])),
+                cashflow_stability_index=Decimal(
+                    str(latest_snapshot["cashflow_stability_score"])
+                ),
+                income_stability=Decimal(
+                    str(latest_snapshot["income_stability_score"])
+                ),
+                expense_stability=Decimal(
+                    str(latest_snapshot["expense_stability_score"])
+                ),
                 monthly_surplus_paise=total_income - total_expenses,
                 snapshot_date=latest_snapshot["snapshot_date"],
             )
@@ -511,7 +590,9 @@ class BehaviourService:
 
             # Compute savings rate
             financial_fees = self._compute_financial_fees(transactions, [])
-            savings_rate = compute_true_savings_rate(total_income, total_expenses, financial_fees)
+            savings_rate = compute_true_savings_rate(
+                total_income, total_expenses, financial_fees
+            )
 
             # Generate alerts
             alerts = self._generate_alerts(latest_snapshot, financial_patterns)
@@ -560,7 +641,9 @@ class BehaviourService:
             # Get latest snapshot for context
             snapshot = self.behaviour_repo.get_latest_snapshot(household_id)
             if not snapshot:
-                raise NotFoundError("No behaviour snapshot available for recommendations")
+                raise NotFoundError(
+                    "No behaviour snapshot available for recommendations"
+                )
 
             # Get transactions for recommendation inputs
             transactions = self.transaction_repo.get_all_transactions()
@@ -568,8 +651,12 @@ class BehaviourService:
             loans = self.loan_repo.list_loans()
 
             # Calculate metrics needed for recommendations
-            total_income = sum(t["amount_paise"] for t in transactions if t["type"] == "credit")
-            total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+            total_income = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "credit"
+            )
+            total_expenses = sum(
+                t["amount_paise"] for t in transactions if t["type"] == "debit"
+            )
 
             borrowed_lifestyle_ratio = compute_borrowed_lifestyle_ratio(
                 self._compute_credit_funded_expenses(transactions), total_expenses
@@ -582,17 +669,28 @@ class BehaviourService:
             )
 
             # Calculate liquidity months
-            liquid_assets = self._compute_liquid_assets(self.account_repo.get_all_accounts())
+            liquid_assets = self._compute_liquid_assets(
+                self.account_repo.get_all_accounts()
+            )
             essential_expenses = self._compute_essential_expenses(transactions)
-            liquidity_months = int(liquid_assets / essential_expenses) if essential_expenses > 0 else 0
+            liquidity_months = (
+                int(liquid_assets / essential_expenses) if essential_expenses > 0 else 0
+            )
 
             # Get subscriptions for recommendation input
             subscription_patterns = [
-                p for p in self.pattern_repo.get_recent_patterns(days=30, household_id=household_id)
+                p
+                for p in self.pattern_repo.get_recent_patterns(
+                    days=30, household_id=household_id
+                )
                 if p["pattern_type"] == "SUBSCRIPTION"
             ]
             subscriptions = [
-                {"merchant": p["pattern_key"], "avg_amount_paise": p["total_amount_paise"] // max(1, p["transaction_count"])}
+                {
+                    "merchant": p["pattern_key"],
+                    "avg_amount_paise": p["total_amount_paise"]
+                    // max(1, p["transaction_count"]),
+                }
                 for p in subscription_patterns
             ]
 
@@ -612,8 +710,7 @@ class BehaviourService:
             # Apply severity filter if provided
             if severity_filter:
                 recommendations = [
-                    r for r in recommendations
-                    if r.severity == severity_filter
+                    r for r in recommendations if r.severity == severity_filter
                 ]
 
             # Apply limit
@@ -678,19 +775,26 @@ class BehaviourService:
 
         return classify_wellness_band(score)
 
-    def _compute_financial_fees(self, transactions: list[dict[str, Any]], credit_cards: list[dict[str, Any]]) -> int:
+    def _compute_financial_fees(
+        self, transactions: list[dict[str, Any]], credit_cards: list[dict[str, Any]]
+    ) -> int:
         """Compute total financial fees from transactions and credit cards."""
         # Simplified implementation - would use actual fee detection logic
         return sum(
-            t["amount_paise"] for t in transactions
-            if "fee" in t.get("description", "").lower() or "interest" in t.get("description", "").lower()
+            t["amount_paise"]
+            for t in transactions
+            if "fee" in t.get("description", "").lower()
+            or "interest" in t.get("description", "").lower()
         )
 
-    def _compute_credit_funded_expenses(self, transactions: list[dict[str, Any]]) -> int:
+    def _compute_credit_funded_expenses(
+        self, transactions: list[dict[str, Any]]
+    ) -> int:
         """Compute credit-funded expenses from transactions."""
         # Simplified implementation - would use actual credit detection logic
         return sum(
-            t["amount_paise"] for t in transactions
+            t["amount_paise"]
+            for t in transactions
             if t["type"] == "debit" and "credit" in t.get("description", "").lower()
         )
 
@@ -700,7 +804,9 @@ class BehaviourService:
         for t in transactions:
             if t["type"] == "credit":
                 month_key = t["date_iso"][:7]  # YYYY-MM
-                monthly_incomes[month_key] = monthly_incomes.get(month_key, 0) + t["amount_paise"]
+                monthly_incomes[month_key] = (
+                    monthly_incomes.get(month_key, 0) + t["amount_paise"]
+                )
 
         return list(monthly_incomes.values())
 
@@ -710,7 +816,9 @@ class BehaviourService:
         for t in transactions:
             if t["type"] == "debit":
                 month_key = t["date_iso"][:7]  # YYYY-MM
-                monthly_expenses[month_key] = monthly_expenses.get(month_key, 0) + t["amount_paise"]
+                monthly_expenses[month_key] = (
+                    monthly_expenses.get(month_key, 0) + t["amount_paise"]
+                )
 
         return list(monthly_expenses.values())
 
@@ -733,20 +841,20 @@ class BehaviourService:
 
         return Decimal(str(salary_income)) / Decimal(str(true_income))
 
-    def _compute_fixed_obligations(self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]) -> int:
+    def _compute_fixed_obligations(
+        self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]
+    ) -> int:
         """Compute total fixed obligations from loans and credit cards."""
         loan_obligations = sum(loan.get("emi_paise", 0) for loan in loans)
-        card_obligations = sum(
-            self._compute_minimum_due(card) for card in credit_cards
-        )
+        card_obligations = sum(self._compute_minimum_due(card) for card in credit_cards)
         return int(loan_obligations) + int(card_obligations)
 
-    def _compute_minimum_obligations(self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]) -> int:
+    def _compute_minimum_obligations(
+        self, loans: list[dict[str, Any]], credit_cards: list[dict[str, Any]]
+    ) -> int:
         """Compute minimum obligations (minimum due amounts)."""
         loan_minimums = sum(loan.get("minimum_due_paise", 0) for loan in loans)
-        card_minimums = sum(
-            self._compute_minimum_due(card) for card in credit_cards
-        )
+        card_minimums = sum(self._compute_minimum_due(card) for card in credit_cards)
         return int(loan_minimums) + int(card_minimums)
 
     def _compute_minimum_due(self, credit_card: dict[str, Any]) -> int:
@@ -756,7 +864,6 @@ class BehaviourService:
             return int(limit * Decimal("0.05"))  # 5% of limit
         return int(limit * 0.05) if limit else 0
 
-
     def _compute_revolving_balance(self, credit_cards: list[dict[str, Any]]) -> int:
         """Compute total revolving balance from credit cards."""
         return sum(card.get("outstanding_paise", 0) for card in credit_cards)
@@ -764,7 +871,8 @@ class BehaviourService:
     def _count_credit_advances(self, transactions: list[dict[str, Any]]) -> int:
         """Count credit advances from transactions."""
         return sum(
-            1 for t in transactions
+            1
+            for t in transactions
             if t["type"] == "credit" and "loan" in t.get("description", "").lower()
         )
 
@@ -783,7 +891,8 @@ class BehaviourService:
     def _compute_liquid_assets(self, accounts: list[dict[str, Any]]) -> int:
         """Compute total liquid assets from accounts."""
         return sum(
-            acc["balance_paise"] for acc in accounts
+            acc["balance_paise"]
+            for acc in accounts
             if acc["account_type"] in {"savings", "current"}
         )
 
@@ -791,54 +900,82 @@ class BehaviourService:
         """Compute essential monthly expenses from transactions."""
         essential_categories = {"rent", "utilities", "groceries", "loan", "insurance"}
         return sum(
-            t["amount_paise"] for t in transactions
-            if t["type"] == "debit" and t.get("category", "").lower() in essential_categories
+            t["amount_paise"]
+            for t in transactions
+            if t["type"] == "debit"
+            and t.get("category", "").lower() in essential_categories
         )
 
-    def _compute_non_essential_expenses(self, transactions: list[dict[str, Any]]) -> int:
+    def _compute_non_essential_expenses(
+        self, transactions: list[dict[str, Any]]
+    ) -> int:
         """Compute current period non-essential expenses."""
-        non_essential_categories = {"entertainment", "dining", "shopping", "travel", "lifestyle"}
+        non_essential_categories = {
+            "entertainment",
+            "dining",
+            "shopping",
+            "travel",
+            "lifestyle",
+        }
         return sum(
-            t["amount_paise"] for t in transactions
-            if t["type"] == "debit" and t.get("category", "").lower() in non_essential_categories
+            t["amount_paise"]
+            for t in transactions
+            if t["type"] == "debit"
+            and t.get("category", "").lower() in non_essential_categories
         )
 
-    def _compute_previous_non_essential_expenses(self, transactions: list[dict[str, Any]]) -> int:
+    def _compute_previous_non_essential_expenses(
+        self, transactions: list[dict[str, Any]]
+    ) -> int:
         """Compute previous period non-essential expenses."""
         return self._compute_non_essential_expenses(transactions)
 
-    def _compute_subscription_burn_rate(self, transactions: list[dict[str, Any]]) -> Decimal:
+    def _compute_subscription_burn_rate(
+        self, transactions: list[dict[str, Any]]
+    ) -> Decimal:
         """Compute subscription burn rate from transactions."""
         subscription_keywords = {"subscription", "membership", "monthly fee"}
         subscription_expenses = sum(
-            t["amount_paise"] for t in transactions
-            if t["type"] == "debit" and any(
+            t["amount_paise"]
+            for t in transactions
+            if t["type"] == "debit"
+            and any(
                 keyword in t.get("description", "").lower()
                 for keyword in subscription_keywords
             )
         )
 
-        total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"] for t in transactions if t["type"] == "debit"
+        )
         if total_expenses == 0:
             return Decimal("0")
 
         return Decimal(str(subscription_expenses)) / Decimal(str(total_expenses))
 
-    def _compute_discretionary_spending_ratio(self, transactions: list[dict[str, Any]]) -> Decimal:
+    def _compute_discretionary_spending_ratio(
+        self, transactions: list[dict[str, Any]]
+    ) -> Decimal:
         """Compute discretionary spending ratio."""
         discretionary_categories = {"entertainment", "dining", "shopping", "travel"}
         discretionary_expenses = sum(
-            t["amount_paise"] for t in transactions
-            if t["type"] == "debit" and t.get("category", "").lower() in discretionary_categories
+            t["amount_paise"]
+            for t in transactions
+            if t["type"] == "debit"
+            and t.get("category", "").lower() in discretionary_categories
         )
 
-        total_expenses = sum(t["amount_paise"] for t in transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"] for t in transactions if t["type"] == "debit"
+        )
         if total_expenses == 0:
             return Decimal("0")
 
         return Decimal(str(discretionary_expenses)) / Decimal(str(total_expenses))
 
-    def _compute_impulse_transaction_ratio(self, transactions: list[dict[str, Any]]) -> Decimal:
+    def _compute_impulse_transaction_ratio(
+        self, transactions: list[dict[str, Any]]
+    ) -> Decimal:
         """Compute impulse transaction ratio."""
         impulse_transactions = detect_impulse_transactions(transactions)
         if not transactions:
@@ -846,26 +983,37 @@ class BehaviourService:
 
         return Decimal(str(len(impulse_transactions))) / Decimal(str(len(transactions)))
 
-    def _compute_lifestyle_creep_index(self, transactions: list[dict[str, Any]]) -> Decimal:
+    def _compute_lifestyle_creep_index(
+        self, transactions: list[dict[str, Any]]
+    ) -> Decimal:
         """Compute lifestyle creep index from transactions."""
         from src.engines.behaviour_engine.lifestyle import compute_lifestyle_creep_index
 
         monthly_discretionary = self._get_monthly_discretionary_spending(transactions)
         return compute_lifestyle_creep_index(monthly_discretionary)
 
-    def _get_monthly_discretionary_spending(self, transactions: list[dict[str, Any]]) -> list[int]:
+    def _get_monthly_discretionary_spending(
+        self, transactions: list[dict[str, Any]]
+    ) -> list[int]:
         """Extract monthly discretionary spending from transactions."""
         monthly_discretionary: dict[str, int] = {}
         discretionary_categories = {"entertainment", "dining", "shopping", "travel"}
 
         for t in transactions:
-            if t["type"] == "debit" and t.get("category", "").lower() in discretionary_categories:
+            if (
+                t["type"] == "debit"
+                and t.get("category", "").lower() in discretionary_categories
+            ):
                 month_key = t["date_iso"][:7]  # YYYY-MM
-                monthly_discretionary[month_key] = monthly_discretionary.get(month_key, 0) + t["amount_paise"]
+                monthly_discretionary[month_key] = (
+                    monthly_discretionary.get(month_key, 0) + t["amount_paise"]
+                )
 
         return list(monthly_discretionary.values())
 
-    def _generate_alerts(self, snapshot: dict[str, Any], patterns: list[FinancialPattern]) -> list[str]:
+    def _generate_alerts(
+        self, snapshot: dict[str, Any], patterns: list[FinancialPattern]
+    ) -> list[str]:
         """Generate financial alerts from snapshot and patterns."""
         alerts: list[str] = []
         wellness_score = Decimal(str(snapshot["wellness_score"]))
@@ -886,8 +1034,15 @@ class BehaviourService:
         # Pattern alerts
         for pattern in patterns:
             if pattern.strength > Decimal("0.7") and pattern.pattern_type == "IMPULSE":
-                alerts.append(f"High impulse spending detected for {pattern.pattern_key}")
-            elif pattern.strength > Decimal("0.8") and pattern.pattern_type == "SUBSCRIPTION":
-                alerts.append(f"High subscription spending detected for {pattern.pattern_key}")
+                alerts.append(
+                    f"High impulse spending detected for {pattern.pattern_key}"
+                )
+            elif (
+                pattern.strength > Decimal("0.8")
+                and pattern.pattern_type == "SUBSCRIPTION"
+            ):
+                alerts.append(
+                    f"High subscription spending detected for {pattern.pattern_key}"
+                )
 
         return alerts

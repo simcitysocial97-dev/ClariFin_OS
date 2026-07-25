@@ -2,6 +2,7 @@
 
 Common result types for all transaction detectors.
 """
+
 from dataclasses import dataclass
 from typing import Literal
 
@@ -21,6 +22,7 @@ class DetectionResult:
         match_reason: Why this matched (e.g., 'amount_match', 'amount+date', 'description+date').
         matched_entity_id: ID of the matched entity (loan_id, card_id, etc.).
     """
+
     classification: str
     sub_classification: str
     priority: int  # 60-100 scale
@@ -33,6 +35,7 @@ class DetectionResult:
 @dataclass(frozen=True)
 class EMIDetectionResult(DetectionResult):
     """EMI-specific detection result with schedule details."""
+
     schedule_row_id: int | None  # Points to loan_amortization_schedule row
     principal_paise: int
     interest_paise: int

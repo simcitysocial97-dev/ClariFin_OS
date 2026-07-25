@@ -18,8 +18,10 @@ CreditCardStatus = Literal["active", "inactive", "closed"]
 
 # ===== Statement History Types =====
 
+
 class StatementHistoryDTO(BaseModel):
     """Statement history entry for a credit card."""
+
     id: int = Field(description="Statement identifier")
     card_id: str = Field(description="Credit card identifier")
     period_from: str = Field(description="Statement period start (ISO format)")
@@ -27,14 +29,18 @@ class StatementHistoryDTO(BaseModel):
     total_due_paise: int = Field(description="Total amount due in paise")
     min_due_paise: int = Field(description="Minimum amount due in paise")
     total_payment_paise: int = Field(description="Total payment made in paise")
-    payment_date: str | None = Field(default=None, description="Payment date (ISO format)")
+    payment_date: str | None = Field(
+        default=None, description="Payment date (ISO format)"
+    )
     status: str = Field(description="Payment status (paid, pending, overdue)")
 
 
 # ===== Utilization Types =====
 
+
 class UtilizationDTO(BaseModel):
     """Credit card utilization data."""
+
     card_id: str = Field(description="Credit card identifier")
     credit_limit_paise: int = Field(description="Credit limit in paise")
     current_balance_paise: int = Field(description="Current balance in paise")
@@ -44,19 +50,25 @@ class UtilizationDTO(BaseModel):
 
 # ===== Spending by Category Types =====
 
+
 class SpendingByCategoryDTO(BaseModel):
     """Spending breakdown by category for a credit card."""
+
     card_id: str = Field(description="Credit card identifier")
     category: str = Field(description="Category name")
     amount_paise: int = Field(description="Spending amount in paise")
     percentage: float = Field(description="Percentage of total spending (0-100)")
-    transaction_count: int = Field(description="Number of transactions in this category")
+    transaction_count: int = Field(
+        description="Number of transactions in this category"
+    )
 
 
 # ===== Credit Card Summary Types =====
 
+
 class CreditCardSummaryDTO(BaseModel):
     """Credit card summary information."""
+
     id: str = Field(description="Credit card identifier")
     name: str = Field(description="Card name")
     bank: str = Field(description="Issuing bank")
@@ -79,24 +91,32 @@ CreditCardInsightSeverity = Literal["low", "medium", "high"]
 
 class CreditCardInsightDTO(BaseModel):
     """Insight about credit card changes or patterns."""
+
     type: CreditCardInsightType = Field(description="Insight type")
     severity: CreditCardInsightSeverity = Field(description="Insight severity")
     message: str = Field(description="Human-readable insight message")
-    action_url: str | None = Field(default=None, description="URL for detailed view or action")
+    action_url: str | None = Field(
+        default=None, description="URL for detailed view or action"
+    )
 
 
 # ===== Credit Card Evidence Types =====
 
+
 class CreditCardEvidenceItemDTO(BaseModel):
     """Evidence item for credit card calculation."""
+
     type: str = Field(description="Evidence type (statement, transaction, adjustment)")
     summary: str = Field(description="Human-readable summary")
     source: str = Field(description="Source reference")
-    confidence: float | None = Field(default=None, description="Confidence score (0-100)")
+    confidence: float | None = Field(
+        default=None, description="Confidence score (0-100)"
+    )
 
 
 class CreditCardCalculationStepDTO(BaseModel):
     """Calculation step in the credit card derivation chain."""
+
     name: str = Field(description="Step name")
     description: str = Field(description="Step description")
     inputs: dict[str, Any] = Field(default_factory=dict, description="Input values")
@@ -105,23 +125,22 @@ class CreditCardCalculationStepDTO(BaseModel):
 
 class CreditCardEvidenceChainDTO(BaseModel):
     """Evidence chain for credit card calculation."""
+
     summary: str = Field(description="Overall summary of the calculation")
     evidence: list[CreditCardEvidenceItemDTO] = Field(
-        default_factory=list,
-        description="List of evidence items"
+        default_factory=list, description="List of evidence items"
     )
     calculation_steps: list[CreditCardCalculationStepDTO] = Field(
-        default_factory=list,
-        description="Calculation chain steps"
+        default_factory=list, description="Calculation chain steps"
     )
     source_references: list[str] = Field(
-        default_factory=list,
-        description="Source references for traceability"
+        default_factory=list, description="Source references for traceability"
     )
     confidence_score: float = Field(description="Overall confidence (0-100)")
 
 
 # ===== Main Credit Cards DTO =====
+
 
 class CreditCardsDTO(BaseModel):
     """
@@ -132,21 +151,21 @@ class CreditCardsDTO(BaseModel):
     - total_due_paise: Total due in paise
     - total_available_paise: Total available credit in paise
     """
+
     cards: list[CreditCardSummaryDTO] = Field(
-        default_factory=list,
-        description="List of credit card summaries"
+        default_factory=list, description="List of credit card summaries"
     )
-    total_balance_paise: int = Field(description="Total balance across all cards in paise")
+    total_balance_paise: int = Field(
+        description="Total balance across all cards in paise"
+    )
     total_due_paise: int = Field(description="Total due across all cards in paise")
     total_available_paise: int = Field(description="Total available credit in paise")
     card_count: int = Field(description="Total number of active cards")
     insights: list[CreditCardInsightDTO] = Field(
-        default_factory=list,
-        description="List of insights about credit cards"
+        default_factory=list, description="List of insights about credit cards"
     )
     evidence_chain: CreditCardEvidenceChainDTO | None = Field(
-        default=None,
-        description="Evidence chain for explainability"
+        default=None, description="Evidence chain for explainability"
     )
 
     class Config:
@@ -158,33 +177,34 @@ class CreditCardsDTO(BaseModel):
                 "total_available_paise": 35000000,  # ₹3,50,000.00
                 "card_count": 2,
                 "insights": [],
-                "evidence_chain": None
+                "evidence_chain": None,
             }
         }
 
 
 # ===== Credit Cards Response Types =====
 
+
 class CreditCardsStatementResponse(BaseModel):
     """Response for statement history endpoint."""
+
     statements: list[StatementHistoryDTO] = Field(
-        default_factory=list,
-        description="Statement history entries"
+        default_factory=list, description="Statement history entries"
     )
     total_count: int = Field(description="Total number of statements")
 
 
 class CreditCardsUtilizationResponse(BaseModel):
     """Response for utilization endpoint."""
+
     utilization: list[UtilizationDTO] = Field(
-        default_factory=list,
-        description="Utilization data for each card"
+        default_factory=list, description="Utilization data for each card"
     )
 
 
 class CreditCardsSpendingResponse(BaseModel):
     """Response for spending by category endpoint."""
+
     spending: list[SpendingByCategoryDTO] = Field(
-        default_factory=list,
-        description="Spending breakdown by category"
+        default_factory=list, description="Spending breakdown by category"
     )

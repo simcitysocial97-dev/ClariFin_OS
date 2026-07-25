@@ -28,6 +28,7 @@ from .utils import (
 # Cashflow Forecasting
 # ============================================================
 
+
 def forecast_cashflow(
     cashflow_history: list[dict[str, Any]],
     forecast_months: int = DEFAULT_FORECAST_MONTHS,
@@ -97,7 +98,9 @@ def forecast_cashflow(
 
     # Generate forecast months
     last_month = sorted_history[-1].get("month", "2026-01")
-    forecast_month_list = generate_month_sequence(_next_month(last_month), forecast_months)
+    forecast_month_list = generate_month_sequence(
+        _next_month(last_month), forecast_months
+    )
 
     forecast = [
         {
@@ -153,6 +156,7 @@ def _weighted_average(values: list[int]) -> float:
 # Liquidity Forecasting
 # ============================================================
 
+
 def forecast_liquidity(
     current_liquidity_paise: int,
     cashflow_forecast: list[dict[str, Any]],
@@ -180,14 +184,17 @@ def forecast_liquidity(
         return {
             "months_until_stress": None,
             "projected_min_balance_paise": current_liquidity_paise,
-            "risk_level": "low" if current_liquidity_paise >= emergency_threshold_paise else "high",
+            "risk_level": (
+                "low"
+                if current_liquidity_paise >= emergency_threshold_paise
+                else "high"
+            ),
             "model_version": "v1.0-weightedaverage",
         }
 
     # Extract surpluses from forecast
     monthly_surpluses = [
-        int(f.get("expected_surplus_paise", 0) or 0)
-        for f in cashflow_forecast
+        int(f.get("expected_surplus_paise", 0) or 0) for f in cashflow_forecast
     ]
 
     # Project balance trajectory
@@ -223,6 +230,7 @@ def forecast_liquidity(
 # Credit Utilization Forecasting
 # ============================================================
 
+
 def forecast_credit_utilization(
     financial_events: list[dict[str, Any]],
     credit_history: list[dict[str, Any]],
@@ -252,7 +260,9 @@ def forecast_credit_utilization(
             - model_version: Version string for the forecasting model
     """
     # Compute current dependency from financial events
-    current_dependency = _compute_current_credit_dependency(financial_events, credit_history)
+    current_dependency = _compute_current_credit_dependency(
+        financial_events, credit_history
+    )
 
     # Analyze trend from credit history
     utilization_ratios = [
@@ -309,8 +319,7 @@ def _compute_current_credit_dependency(
     # Try credit history first (normalized structure)
     if credit_history:
         ratios = [
-            Decimal(str(h.get("utilization_ratio", 0) or 0))
-            for h in credit_history
+            Decimal(str(h.get("utilization_ratio", 0) or 0)) for h in credit_history
         ]
         if ratios:
             return sum(ratios) / Decimal(str(len(ratios)))
@@ -323,7 +332,11 @@ def _compute_current_credit_dependency(
         event_type = event.get("event_type", "")
         liability_change = int(event.get("liability_change_paise", 0) or 0)
 
-        if event_type in ("cash_advance", "credit_card_cash_advance", "liability_increase"):
+        if event_type in (
+            "cash_advance",
+            "credit_card_cash_advance",
+            "liability_increase",
+        ):
             if liability_change > 0:
                 credit_funded += liability_change
             total_expense += int(event.get("expense_paise", 0) or 0)
@@ -332,7 +345,8 @@ def _compute_current_credit_dependency(
     if credit_funded == 0 and total_expense == 0:
         # Check for revolving behavior in events
         revolver_count = sum(
-            1 for e in financial_events
+            1
+            for e in financial_events
             if e.get("lifecycle_state") in ("open", "partially_settled", "rolls_over")
         )
         return Decimal("0.3") if revolver_count > 0 else Decimal("0.1")
@@ -347,6 +361,7 @@ def _compute_current_credit_dependency(
 # ============================================================
 # Cash Shortfall Detection
 # ============================================================
+
 
 def detect_future_cash_shortfall(
     cashflow_forecast: list[dict[str, Any]],
@@ -372,28 +387,39 @@ def detect_future_cash_shortfall(
 
     # Count months with negative surplus
     negative_surplus_months = [
-        f for f in cashflow_forecast
-        if int(f.get("expected_surplus_paise", 0) or 0) < 0
+        f for f in cashflow_forecast if int(f.get("expected_surplus_paise", 0) or 0) < 0
     ]
 
     if months_until_stress == 1:
         severity = "critical"
-        expected_month = cashflow_forecast[0].get("month") if cashflow_forecast else None
+        expected_month = (
+            cashflow_forecast[0].get("month") if cashflow_forecast else None
+        )
         reason = (
             f"Liquidity will drop below emergency threshold in month {months_until_stress}. "
             f"Projected minimum balance: ₹{abs(projected_min) / 100:.2f}"
         )
     elif months_until_stress and months_until_stress <= 2:
         severity = "critical"
-        expected_month = cashflow_forecast[months_until_stress - 1].get("month") if len(cashflow_forecast) >= months_until_stress else None
+        expected_month = (
+            cashflow_forecast[months_until_stress - 1].get("month")
+            if len(cashflow_forecast) >= months_until_stress
+            else None
+        )
         reason = f"Cash shortfall expected within {months_until_stress} months"
     elif months_until_stress:
         severity = "warning"
-        expected_month = cashflow_forecast[months_until_stress - 1].get("month") if len(cashflow_forecast) >= months_until_stress else None
+        expected_month = (
+            cashflow_forecast[months_until_stress - 1].get("month")
+            if len(cashflow_forecast) >= months_until_stress
+            else None
+        )
         reason = f"Potential cash shortfall in month {months_until_stress}"
     elif negative_surplus_months and risk_level == "high":
         severity = "warning"
-        expected_month = negative_surplus_months[0].get("month") if negative_surplus_months else None
+        expected_month = (
+            negative_surplus_months[0].get("month") if negative_surplus_months else None
+        )
         reason = f"Negative surplus in {len(negative_surplus_months)} forecast month(s)"
     else:
         severity = "none"

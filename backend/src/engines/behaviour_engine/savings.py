@@ -4,7 +4,6 @@ All monetary values are integers in paise (₹1.00 = 100 paise).
 All functions are pure - no database access.
 """
 
-
 from decimal import Decimal
 
 
@@ -38,7 +37,7 @@ def compute_true_savings_rate(
         for display purposes (e.g., savings rate can't exceed 100%).
     """
     if income_paise == 0:
-        return Decimal('0')
+        return Decimal("0")
 
     net_savings = income_paise - actual_expenses_paise - financial_fees_paise
     return Decimal(str(net_savings)) / Decimal(str(income_paise))
@@ -71,7 +70,7 @@ def compute_borrowed_lifestyle_ratio(
         Higher values suggest reliance on credit for daily expenses.
     """
     if total_expenses_paise == 0:
-        return Decimal('0')
+        return Decimal("0")
 
     return Decimal(str(credit_funded_paise)) / Decimal(str(total_expenses_paise))
 

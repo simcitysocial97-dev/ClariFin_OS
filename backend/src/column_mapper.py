@@ -2,6 +2,7 @@
 Map PDF column names to standard transaction fields.
 Uses FUZZY MATCHING, not regex.
 """
+
 from difflib import SequenceMatcher
 from typing import Any
 
@@ -10,30 +11,55 @@ class ColumnMapper:
     """Map various column names to standard fields"""
 
     # Standard field names we want to extract
-    STANDARD_FIELDS = ['date', 'description', 'amount', 'debit', 'credit']
+    STANDARD_FIELDS = ["date", "description", "amount", "debit", "credit"]
 
     # Known column name variations (lowercase)
     COLUMN_ALIASES = {
-        'date': [
-            'date', 'transaction date', 'txn date', 'posting date',
-            'trans date', 'value date', 'date of transaction'
+        "date": [
+            "date",
+            "transaction date",
+            "txn date",
+            "posting date",
+            "trans date",
+            "value date",
+            "date of transaction",
         ],
-        'description': [
-            'description', 'particulars', 'narration', 'details',
-            'transaction details', 'transaction description', 'trans description',
-            'description of transaction'
+        "description": [
+            "description",
+            "particulars",
+            "narration",
+            "details",
+            "transaction details",
+            "transaction description",
+            "trans description",
+            "description of transaction",
         ],
-        'amount': [
-            'amount', 'transaction amount', 'txn amount', 'amount (in rs.)',
-            'amount(in rs.)', 'amount inr', 'total'
+        "amount": [
+            "amount",
+            "transaction amount",
+            "txn amount",
+            "amount (in rs.)",
+            "amount(in rs.)",
+            "amount inr",
+            "total",
         ],
-        'debit': [
-            'debit', 'dr', 'withdrawal', 'debit amount', 'dr amount',
-            'debits', 'dr.'
+        "debit": [
+            "debit",
+            "dr",
+            "withdrawal",
+            "debit amount",
+            "dr amount",
+            "debits",
+            "dr.",
         ],
-        'credit': [
-            'credit', 'cr', 'deposit', 'credit amount', 'cr amount',
-            'credits', 'cr.'
+        "credit": [
+            "credit",
+            "cr",
+            "deposit",
+            "credit amount",
+            "cr amount",
+            "credits",
+            "cr.",
         ],
     }
 
@@ -51,7 +77,7 @@ class ColumnMapper:
             col_lower = str(col).lower().strip()
 
             # Skip metadata columns
-            if col.startswith('_'):
+            if col.startswith("_"):
                 continue
 
             # Find best match
@@ -116,12 +142,12 @@ class ColumnMapper:
     def _remove_common_words(self, s: str) -> str:
         """Remove common words from string for better matching"""
 
-        common_words = ['of', 'the', 'in', 'for', 'transaction', 'amount', 'rs', 'rs.']
+        common_words = ["of", "the", "in", "for", "transaction", "amount", "rs", "rs."]
 
         words = s.split()
         filtered = [w for w in words if w not in common_words]
 
-        return ' '.join(filtered)
+        return " ".join(filtered)
 
     def get_missing_fields(self, mapping: dict[str, str]) -> list[str]:
         """Get list of standard fields not found in mapping"""
@@ -131,7 +157,7 @@ class ColumnMapper:
     def has_required_fields(self, mapping: dict[str, str]) -> bool:
         """Check if mapping has at least date and one amount field"""
 
-        has_date = 'date' in mapping
-        has_amount = any(f in mapping for f in ['amount', 'debit', 'credit'])
+        has_date = "date" in mapping
+        has_amount = any(f in mapping for f in ["amount", "debit", "credit"])
 
         return has_date and has_amount

@@ -31,7 +31,7 @@ def health_check() -> dict[str, Any]:
     return {
         "status": "healthy",
         "version": "1.0.0",
-        "message": "ClariFin_OS is running"
+        "message": "ClariFin_OS is running",
     }
 
 
@@ -96,16 +96,12 @@ def readiness_check() -> dict[str, Any]:
         return {
             "status": "ready",
             "checks": checks,
-            "message": "All systems operational"
+            "message": "All systems operational",
         }
     else:
         raise HTTPException(
             status_code=503,
-            detail={
-                "status": "not_ready",
-                "checks": checks,
-                "errors": errors
-            }
+            detail={"status": "not_ready", "checks": checks, "errors": errors},
         )
 
 

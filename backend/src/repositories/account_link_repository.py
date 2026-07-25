@@ -50,9 +50,7 @@ class AccountLinkRepository(BaseRepository):
                 # Link already exists
                 return False
 
-    def unlink_accounts(
-        self, primary_account_id: str, linked_account_id: str
-    ) -> bool:
+    def unlink_accounts(self, primary_account_id: str, linked_account_id: str) -> bool:
         """Remove a link between two accounts."""
         with self._get_conn() as conn:
             conn.execute(

@@ -1,0 +1,11 @@
+[mutmut]
+paths_to_mutate = "src/engines/"
+tests_dir = "tests/"
+runner = "pytest -x --tb=short"
+
+[thresholds]
+# Target mutation scores per engine
+cashflow_engine = 80
+loan_engine = 80
+behaviour_engine = 80
+credit_card_engine = 80

@@ -1,4 +1,5 @@
 """Credit Card Invariants - Utilization, EMI, and statement validation."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -35,7 +36,9 @@ def assert_credit_invariants(card_data: dict[str, Any]) -> None:
             )
 
 
-def assert_utilization_valid(available_credit: int, limit: int, outstanding: int) -> None:
+def assert_utilization_valid(
+    available_credit: int, limit: int, outstanding: int
+) -> None:
     """Validate credit card utilization calculations.
 
     INVARIANT: Utilization = outstanding / limit.
@@ -63,7 +66,9 @@ def assert_utilization_valid(available_credit: int, limit: int, outstanding: int
             raise AssertionError(f"Utilization {util} out of range (0-1)")
 
 
-def assert_emi_conversion_valid(emi_result: dict[str, Any], amount_paise: int, tenure_months: int) -> None:
+def assert_emi_conversion_valid(
+    emi_result: dict[str, Any], amount_paise: int, tenure_months: int
+) -> None:
     """Validate EMI conversion result invariants.
 
     INVARIANT: EMI must be positive.

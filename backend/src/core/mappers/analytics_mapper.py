@@ -68,7 +68,7 @@ class AnalyticsMapper:
                 SpendingTrendPoint(
                     month=point.get("month", ""),
                     amount_paise=int(point.get("amount_paise", 0)),
-                    average_paise=int(point.get("average_paise", 0))
+                    average_paise=int(point.get("average_paise", 0)),
                 )
                 for point in spending_trend
             ],
@@ -76,7 +76,7 @@ class AnalyticsMapper:
                 DayOfWeekData(
                     day=d.get("day", ""),
                     amount_paise=int(d.get("amount_paise", 0)),
-                    count=d.get("count", 0)
+                    count=d.get("count", 0),
                 )
                 for d in day_of_week
             ],
@@ -84,7 +84,7 @@ class AnalyticsMapper:
                 MerchantData(
                     merchant=m.get("merchant", ""),
                     amount_paise=int(m.get("amount_paise", 0)),
-                    count=m.get("count", 0)
+                    count=m.get("count", 0),
                 )
                 for m in top_merchants
             ],
@@ -93,7 +93,7 @@ class AnalyticsMapper:
                     description=rc.get("description", ""),
                     frequency=rc.get("frequency", 0),
                     avg_amount_paise=int(rc.get("avg_amount_paise", 0)),
-                    annual_amount_paise=int(rc.get("annual_amount_paise", 0))
+                    annual_amount_paise=int(rc.get("annual_amount_paise", 0)),
                 )
                 for rc in recurring_charges
             ],
@@ -103,8 +103,8 @@ class AnalyticsMapper:
                     date_display=lt.get("date_display", ""),
                     description=lt.get("description", ""),
                     amount_paise=int(lt.get("amount_paise", 0)),
-                    bank=lt.get("bank", "")
+                    bank=lt.get("bank", ""),
                 )
                 for lt in largest_transactions
-            ]
+            ],
         )

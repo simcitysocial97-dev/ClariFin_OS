@@ -38,6 +38,7 @@ from repositories.transaction_repository import TransactionRepository
 # Fixtures
 # ============================================================
 
+
 @pytest.fixture
 def temp_db():
     """Create a temporary database for testing."""
@@ -61,13 +62,28 @@ def populated_db(temp_db):
     txn_repo = TransactionRepository(db_path)
 
     # Insert a statement
-    stmt_id = stmt_repo.insert_statement("TestBank", "test.pdf", "01/01/2025", "31/01/2025")
+    stmt_id = stmt_repo.insert_statement(
+        "TestBank", "test.pdf", "01/01/2025", "31/01/2025"
+    )
 
     # Insert transactions
-    txn_repo.insert_transactions(stmt_id, [
-        {"date": "01/01/2025", "description": "Test debit", "amount_paise": 10000, "type": "debit"},
-        {"date": "02/01/2025", "description": "Test credit", "amount_paise": 5000, "type": "credit"},
-    ])
+    txn_repo.insert_transactions(
+        stmt_id,
+        [
+            {
+                "date": "01/01/2025",
+                "description": "Test debit",
+                "amount_paise": 10000,
+                "type": "debit",
+            },
+            {
+                "date": "02/01/2025",
+                "description": "Test credit",
+                "amount_paise": 5000,
+                "type": "credit",
+            },
+        ],
+    )
 
     return db, db_path
 
@@ -75,6 +91,7 @@ def populated_db(temp_db):
 # ============================================================
 # Test 1: Ledger integrity passes on clean DB
 # ============================================================
+
 
 def test_integrity_passes_on_clean_db(populated_db):
     """Test that ledger integrity passes on a clean database."""
@@ -113,6 +130,7 @@ def test_full_audit_passes_on_clean_db(populated_db):
 # Test 2: Immutability triggers work correctly
 # ============================================================
 
+
 def test_update_prevented_by_trigger(populated_db):
     """Test that UPDATE on transactions is prevented by trigger.
 
@@ -129,8 +147,7 @@ def test_update_prevented_by_trigger(populated_db):
     # Attempt to update - should raise exception
     with pytest.raises(sqlite3.IntegrityError) as exc_info:
         conn.execute(
-            "UPDATE transactions SET amount_paise = 99999 WHERE id = ?",
-            (txn_id,)
+            "UPDATE transactions SET amount_paise = 99999 WHERE id = ?", (txn_id,)
         )
         conn.commit()
 
@@ -163,6 +180,7 @@ def test_delete_prevented_by_trigger(populated_db):
 # ============================================================
 # Test 3: Tampering detection (via direct DB manipulation without triggers)
 # ============================================================
+
 
 def test_tampered_hash_detected_via_recompute(populated_db):
     """Test that hash verification can detect tampering.
@@ -209,12 +227,15 @@ def test_tampered_hash_detected_via_recompute(populated_db):
     hash_input = "TestBank|2025-01-01|Test debit|10000|0"
     valid_hash = hashlib.sha256(hash_input.encode()).hexdigest().lower()
 
-    conn.execute("""
+    conn.execute(
+        """
         INSERT INTO transactions (statement_id, date, date_iso, description, amount, type,
                                   debit, credit, account_id, hash_signature)
         VALUES (1, '01/01/2025', '2025-01-01', 'Test debit', 100.0, 'debit',
                 10000, 0, 'TestBank', ?)
-    """, (valid_hash,))
+    """,
+        (valid_hash,),
+    )
 
     conn.commit()
 
@@ -241,6 +262,7 @@ def test_tampered_hash_detected_via_recompute(populated_db):
 # Test 4: Re-running audit returns same result
 # ============================================================
 
+
 def test_audit_deterministic(populated_db):
     """Test that running audit multiple times returns same result."""
     db, db_path = populated_db
@@ -251,8 +273,14 @@ def test_audit_deterministic(populated_db):
     # All results should be identical
     for i in range(1, len(results)):
         assert results[i]["overall_status"] == results[0]["overall_status"]
-        assert results[i]["ledger_integrity"]["violation_count"] == results[0]["ledger_integrity"]["violation_count"]
-        assert results[i]["hash_verification"]["tampered_count"] == results[0]["hash_verification"]["tampered_count"]
+        assert (
+            results[i]["ledger_integrity"]["violation_count"]
+            == results[0]["ledger_integrity"]["violation_count"]
+        )
+        assert (
+            results[i]["hash_verification"]["tampered_count"]
+            == results[0]["hash_verification"]["tampered_count"]
+        )
 
 
 def test_audit_idempotent_on_clean_db(populated_db):
@@ -272,6 +300,7 @@ def test_audit_idempotent_on_clean_db(populated_db):
 # ============================================================
 # Test 5: Integrity validation checks
 # ============================================================
+
 
 def test_integrity_detects_null_account_id():
     """Test that integrity check detects NULL account_id."""

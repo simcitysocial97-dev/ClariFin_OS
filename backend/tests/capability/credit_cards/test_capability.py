@@ -1,4 +1,5 @@
 """Smoke tests for Credit Cards capability."""
+
 from __future__ import annotations
 
 import sys

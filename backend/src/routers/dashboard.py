@@ -1,4 +1,5 @@
 """Dashboard summary endpoint."""
+
 from fastapi import APIRouter, HTTPException
 
 from src.core.dtos.dashboard_dto import DashboardSummaryDTO

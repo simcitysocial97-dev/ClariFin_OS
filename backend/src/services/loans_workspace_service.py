@@ -45,74 +45,92 @@ class LoansWorkspaceService(BaseService):
         # Build loan summaries
         loan_summaries = []
         for loan in loans:
-            loan_summaries.append({
-                "id": loan.get("loan_id", 0),
-                "name": loan.get("name", ""),
-                "lender": loan.get("lender", ""),
-                "loan_type": loan.get("loan_type", ""),
-                "principal_paise": loan.get("principal_paise", 0),
-                "outstanding_paise": loan.get("outstanding_paise", 0),
-                "interest_rate": loan.get("interest_rate", 0),
-                "tenure_months": loan.get("tenure_months", 0),
-                "emi_paise": loan.get("emi_paise", 0),
-                "disbursed_date": loan.get("disbursed_date", ""),
-                "status": loan.get("status", "active"),
-            })
+            loan_summaries.append(
+                {
+                    "id": loan.get("loan_id", 0),
+                    "name": loan.get("name", ""),
+                    "lender": loan.get("lender", ""),
+                    "loan_type": loan.get("loan_type", ""),
+                    "principal_paise": loan.get("principal_paise", 0),
+                    "outstanding_paise": loan.get("outstanding_paise", 0),
+                    "interest_rate": loan.get("interest_rate", 0),
+                    "tenure_months": loan.get("tenure_months", 0),
+                    "emi_paise": loan.get("emi_paise", 0),
+                    "disbursed_date": loan.get("disbursed_date", ""),
+                    "status": loan.get("status", "active"),
+                }
+            )
 
         # Build amortization schedule (placeholder)
         amortization = []
         for loan in loans:
-            amortization.append({
-                "loan_id": loan.get("loan_id", 0),
-                "schedule": [
-                    {
-                        "month": m,
-                        "date": f"2025-{m:02d}-01",
-                        "emi_paise": loan.get("emi_paise", 0),
-                        "principal_paise": loan.get("emi_paise", 0) // 2,
-                        "interest_paise": loan.get("emi_paise", 0) // 2,
-                        "balance_paise": max(0, loan.get("outstanding_paise", 0) - m * (loan.get("emi_paise", 0) // 2)),
-                    }
-                    for m in range(1, min(13, loan.get("tenure_months", 0) + 1))
-                ],
-            })
+            amortization.append(
+                {
+                    "loan_id": loan.get("loan_id", 0),
+                    "schedule": [
+                        {
+                            "month": m,
+                            "date": f"2025-{m:02d}-01",
+                            "emi_paise": loan.get("emi_paise", 0),
+                            "principal_paise": loan.get("emi_paise", 0) // 2,
+                            "interest_paise": loan.get("emi_paise", 0) // 2,
+                            "balance_paise": max(
+                                0,
+                                loan.get("outstanding_paise", 0)
+                                - m * (loan.get("emi_paise", 0) // 2),
+                            ),
+                        }
+                        for m in range(1, min(13, loan.get("tenure_months", 0) + 1))
+                    ],
+                }
+            )
 
         # Build payment progress
         payment_progress = []
         for loan in loans:
             principal = loan.get("principal_paise", 0)
             outstanding = loan.get("outstanding_paise", 0)
-            progress = int((principal - outstanding) / principal * 100) if principal > 0 else 0
-            payment_progress.append({
-                "loan_id": loan.get("loan_id", 0),
-                "progress_percentage": progress,
-                "principal_paise": principal,
-                "outstanding_paise": outstanding,
-                "total_paid_paise": principal - outstanding,
-            })
+            progress = (
+                int((principal - outstanding) / principal * 100) if principal > 0 else 0
+            )
+            payment_progress.append(
+                {
+                    "loan_id": loan.get("loan_id", 0),
+                    "progress_percentage": progress,
+                    "principal_paise": principal,
+                    "outstanding_paise": outstanding,
+                    "total_paid_paise": principal - outstanding,
+                }
+            )
 
         # Build interest analysis
         interest_analysis = []
         for loan in loans:
             rate = loan.get("interest_rate", 0)
             interest_paise = int(loan.get("outstanding_paise", 0) * rate / 100)
-            interest_analysis.append({
-                "loan_id": loan.get("loan_id", 0),
-                "rate": rate,
-                "interest_paise": interest_paise,
-                "category": "high" if rate > 12 else "medium" if rate > 8 else "low",
-            })
+            interest_analysis.append(
+                {
+                    "loan_id": loan.get("loan_id", 0),
+                    "rate": rate,
+                    "interest_paise": interest_paise,
+                    "category": (
+                        "high" if rate > 12 else "medium" if rate > 8 else "low"
+                    ),
+                }
+            )
 
         # Generate insights
         insights = []
         if total_outstanding > 0:
             high_interest = [ia for ia in interest_analysis if ia["category"] == "high"]
             if high_interest:
-                insights.append({
-                    "type": "warning",
-                    "severity": "high",
-                    "message": f"{len(high_interest)} loan(s) have high interest rates (>12%)",
-                })
+                insights.append(
+                    {
+                        "type": "warning",
+                        "severity": "high",
+                        "message": f"{len(high_interest)} loan(s) have high interest rates (>12%)",
+                    }
+                )
 
         return {
             "loans": loan_summaries,

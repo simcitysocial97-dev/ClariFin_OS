@@ -23,6 +23,7 @@ GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 @dataclass
 class StageMetrics:
     """Metrics for a validation stage."""
+
     stage_id: str
     description: str
     estimated_runtime: float
@@ -85,8 +86,14 @@ def audit_stage_runtime() -> dict[str, float]:
     stages = [
         ("architecture", ["pytest", "tests/architecture", "-q", "--tb=short"]),
         ("golden", ["pytest", "tests/golden", "-q", "--tb=short"]),
-        ("capability", ["pytest", "tests/capabilities/household_cashflow", "-q", "--tb=short"]),
-        ("properties", ["pytest", "tests/properties/test_money_invariants.py", "-q", "--tb=short"]),
+        (
+            "capability",
+            ["pytest", "tests/capabilities/household_cashflow", "-q", "--tb=short"],
+        ),
+        (
+            "properties",
+            ["pytest", "tests/properties/test_money_invariants.py", "-q", "--tb=short"],
+        ),
     ]
 
     for stage_id, cmd in stages:
@@ -103,27 +110,77 @@ def audit_generated_artifacts() -> list[dict[str, Any]]:
 
     artifact_files = [
         ("api-map.json", "CIF/SVF", "Per run", "Registry mapping files to endpoints"),
-        ("capability-registry.yaml", "check_coverage.py", "Per run", "Canonical capability definitions"),
+        (
+            "capability-registry.yaml",
+            "check_coverage.py",
+            "Per run",
+            "Canonical capability definitions",
+        ),
         ("change-impact.md", "CIF", "Per run", "Human-readable change analysis"),
         ("change-report.json", "CIF", "Per run", "Machine-readable change analysis"),
         ("change-report.md", "CIF", "Per run", "Human-readable change report"),
-        ("coverage.json", "check_coverage.py", "Per run", "File-to-capability coverage map"),
+        (
+            "coverage.json",
+            "check_coverage.py",
+            "Per run",
+            "File-to-capability coverage map",
+        ),
         ("coverage.md", "check_coverage.py", "Per run", "Human coverage report"),
-        ("mutation-gaps.md", "mutation_discovery.py", "Per run", "Mutation candidate gaps"),
+        (
+            "mutation-gaps.md",
+            "mutation_discovery.py",
+            "Per run",
+            "Mutation candidate gaps",
+        ),
         ("mutation-guide.md", "mutation_discovery.py", "Per run", "Mutation guidance"),
-        ("mutation-map.json", "mutation_discovery.py", "Per run", "Function purity analysis"),
-        ("mutation-readiness.json", "mutation_discovery.py", "Per run", "Mutation readiness data"),
-        ("mutation-readiness.md", "mutation_discovery.py", "Per run", "Human mutation readiness"),
-        ("mutation-registry.json", "mutation_discovery.py", "Per run", "Mutation candidates registry"),
+        (
+            "mutation-map.json",
+            "mutation_discovery.py",
+            "Per run",
+            "Function purity analysis",
+        ),
+        (
+            "mutation-readiness.json",
+            "mutation_discovery.py",
+            "Per run",
+            "Mutation readiness data",
+        ),
+        (
+            "mutation-readiness.md",
+            "mutation_discovery.py",
+            "Per run",
+            "Human mutation readiness",
+        ),
+        (
+            "mutation-registry.json",
+            "mutation_discovery.py",
+            "Per run",
+            "Mutation candidates registry",
+        ),
         ("risk-rules.yaml", "Manual", "Static", "Risk classification rules"),
         ("selective-history.json", "SVF", "Per run", "Selective verification history"),
         ("selective-plan.md", "SVF", "Per run", "Selective verification plan"),
         ("selective-summary.json", "SVF", "Per run", "Machine-readable SVF summary"),
         ("test-plan.md", "CIF", "Per run", "Recommended test plan"),
         ("test-strength.json", "test_strength.py", "Per run", "Test strength analysis"),
-        ("test-strength.md", "test_strength.py", "Per run", "Human test strength report"),
-        ("traceability.md", "check_coverage.py", "Per run", "Test-to-code traceability"),
-        ("validation-history.json", "VOF", "Per run", "Validation run history (stale data)"),
+        (
+            "test-strength.md",
+            "test_strength.py",
+            "Per run",
+            "Human test strength report",
+        ),
+        (
+            "traceability.md",
+            "check_coverage.py",
+            "Per run",
+            "Test-to-code traceability",
+        ),
+        (
+            "validation-history.json",
+            "VOF",
+            "Per run",
+            "Validation run history (stale data)",
+        ),
         ("validation-manifest.json", "VOF", "Per run", "Current validation manifest"),
         ("validation-metrics.json", "VOF", "Per run", "Stage metrics"),
         ("validation-workflows.md", "Manual", "Static", "Workflow documentation"),
@@ -134,17 +191,23 @@ def audit_generated_artifacts() -> list[dict[str, Any]]:
         path = GENERATED_DIR / filename
         exists = path.exists()
         size = path.stat().st_size if exists else 0
-        mtime = datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat() if exists else "N/A"
+        mtime = (
+            datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat()
+            if exists
+            else "N/A"
+        )
 
-        artifacts.append({
-            "file": filename,
-            "producer": producer,
-            "regeneration": regeneration,
-            "purpose": purpose,
-            "exists": exists,
-            "size_bytes": size,
-            "last_modified": mtime,
-        })
+        artifacts.append(
+            {
+                "file": filename,
+                "producer": producer,
+                "regeneration": regeneration,
+                "purpose": purpose,
+                "exists": exists,
+                "size_bytes": size,
+                "last_modified": mtime,
+            }
+        )
 
     return artifacts
 
@@ -559,8 +622,12 @@ def main() -> None:
         "stage_analysis": {
             "fast": {
                 "description": "Ruff lint + format + mypy/pyright type check",
-                "runtime_seconds": runtimes.get("architecture", 2),  # Architecture includes mypy
-                "lines_of_code": wc_files("test_*.py") + wc_files("*.py") if False else 0,
+                "runtime_seconds": runtimes.get(
+                    "architecture", 2
+                ),  # Architecture includes mypy
+                "lines_of_code": (
+                    wc_files("test_*.py") + wc_files("*.py") if False else 0
+                ),
                 "unique_value": "Syntax and type errors caught before test execution",
                 "status": "KEEP",
             },

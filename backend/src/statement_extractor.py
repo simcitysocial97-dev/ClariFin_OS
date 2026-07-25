@@ -34,12 +34,12 @@ import pdfplumber
 # ============================================================
 
 BANK_KEYWORDS: dict[str, list[str]] = {
-    "HDFC Bank":       ["HDFC Bank", "HDFC BANK"],
-    "ICICI Bank":      ["ICICI Bank", "ICICI BANK"],
-    "Axis Bank":       ["Axis Bank", "AXIS BANK"],
-    "SBI Card":        ["State Bank of India", "SBI Card", "SBICARD"],
+    "HDFC Bank": ["HDFC Bank", "HDFC BANK"],
+    "ICICI Bank": ["ICICI Bank", "ICICI BANK"],
+    "Axis Bank": ["Axis Bank", "AXIS BANK"],
+    "SBI Card": ["State Bank of India", "SBI Card", "SBICARD"],
     "IDFC First Bank": ["IDFC FIRST Bank", "IDFC First Bank", "IDFC FIRST BANK"],
-    "IndusInd Bank":   ["IndusInd Bank", "INDUSIND BANK"],
+    "IndusInd Bank": ["IndusInd Bank", "INDUSIND BANK"],
 }
 
 SCORE_THRESHOLD = 25.0
@@ -47,23 +47,49 @@ MAX_PAGES_TO_SCAN = 6
 
 # Header row keywords — multi-word phrases that only appear in header rows
 HEADER_PHRASES = [
-    "transaction date", "transaction description", "amount (in rs.)",
-    "amount (rs.)", "neucoins*", "base neucoins", "emi eligibility",
-    "fx transactions", "particulars", "narration", "withdrawal (dr.)",
-    "deposit (cr.)", "txn date", "txn amount", "value date",
-    "chq./ref.no.", "chq/ref number", "loan on card",
-    "merchant category", "cashback earned",
+    "transaction date",
+    "transaction description",
+    "amount (in rs.)",
+    "amount (rs.)",
+    "neucoins*",
+    "base neucoins",
+    "emi eligibility",
+    "fx transactions",
+    "particulars",
+    "narration",
+    "withdrawal (dr.)",
+    "deposit (cr.)",
+    "txn date",
+    "txn amount",
+    "value date",
+    "chq./ref.no.",
+    "chq/ref number",
+    "loan on card",
+    "merchant category",
+    "cashback earned",
     # Additional phrases (Indian bank statements)
-    "posting date", "transaction details", "billing date", "ref no",
-    "reference number", "reward points", "sr no", "sl no", "serial no",
-    "domestic transactions", "international transactions", "retail transactions",
-    "date of transaction", "amount in inr", "amount (inr)",
+    "posting date",
+    "transaction details",
+    "billing date",
+    "ref no",
+    "reference number",
+    "reward points",
+    "sr no",
+    "sl no",
+    "serial no",
+    "domestic transactions",
+    "international transactions",
+    "retail transactions",
+    "date of transaction",
+    "amount in inr",
+    "amount (inr)",
 ]
 
 
 # ============================================================
 # Custom Exception
 # ============================================================
+
 
 class ExtractionError(Exception):
     pass
@@ -72,6 +98,7 @@ class ExtractionError(Exception):
 # ============================================================
 # Utility Functions
 # ============================================================
+
 
 def _cell_str(cell: Any) -> str:
     """Safely convert a cell value to stripped string."""
@@ -119,7 +146,7 @@ def _cell_has_digits(cell: str) -> bool:
 
 
 # Compiled DR/CR pattern (Fix 2: word boundary — avoids matching ALEXANDR, SUCRE)
-_DR_CR_PATTERN = re.compile(r'^(.*?)\s+(DR|CR|Dr|Cr)\s*$', re.DOTALL)
+_DR_CR_PATTERN = re.compile(r"^(.*?)\s+(DR|CR|Dr|Cr)\s*$", re.DOTALL)
 
 
 def _split_dr_cr(amount: str) -> tuple[str, str]:
@@ -161,15 +188,13 @@ def _parse_amount_paise(amount_str: Any) -> int:
         if isinstance(amount_str, int):
             return amount_str * 100
         # For floats, use Decimal to avoid precision loss
-        paise = Decimal(str(amount_str)) * Decimal('100')
-        return int(paise.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+        paise = Decimal(str(amount_str)) * Decimal("100")
+        return int(paise.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
     # Handle string input
-    cleaned = (str(amount_str)
-               .replace("Rs", "")
-               .replace("₹", "")
-               .replace(",", "")
-               .strip())
+    cleaned = (
+        str(amount_str).replace("Rs", "").replace("₹", "").replace(",", "").strip()
+    )
 
     if not cleaned:
         raise ValueError(f"Empty amount string: {amount_str!r}")
@@ -177,7 +202,7 @@ def _parse_amount_paise(amount_str: Any) -> int:
     try:
         rupees = Decimal(cleaned)
         # Financial Standard: Use quantization to guarantee safe integer conversion
-        paise = (rupees * Decimal('100')).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        paise = (rupees * Decimal("100")).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         return int(paise)
     except (ValueError, InvalidOperation) as e:
         raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
@@ -186,6 +211,7 @@ def _parse_amount_paise(amount_str: Any) -> int:
 # ============================================================
 # StatementExtractor
 # ============================================================
+
 
 class StatementExtractor:
     """
@@ -201,11 +227,11 @@ class StatementExtractor:
         self._best_page: int | None = None
         self._best_strategy: str | None = None
         self._best_score: float = 0.0
-        self._date_col_idx: int = 0   # detected date column index
-        self._desc_col_idx: int = 1   # detected description column index
-        self._amount_col_idx: int | None = None   # Fix 2B: single amount col
-        self._debit_col_idx: int | None = None    # Fix 2B: debit col (separate)
-        self._credit_col_idx: int | None = None   # Fix 2B: credit col (separate)
+        self._date_col_idx: int = 0  # detected date column index
+        self._desc_col_idx: int = 1  # detected description column index
+        self._amount_col_idx: int | None = None  # Fix 2B: single amount col
+        self._debit_col_idx: int | None = None  # Fix 2B: debit col (separate)
+        self._credit_col_idx: int | None = None  # Fix 2B: credit col (separate)
         self._header_row: list[str] | None = None  # Fix 9: captured header row
 
     def _log(self, msg: str) -> None:
@@ -268,13 +294,16 @@ class StatementExtractor:
             if tables and len(tables) > 0:
                 self._log(f"  Page {page_number}: lattice → {len(tables)} table(s)")
                 for t in tables:
-                    results.append({"table": t, "strategy": "lattice", "page": page_number})
+                    results.append(
+                        {"table": t, "strategy": "lattice", "page": page_number}
+                    )
                 # Fix 15: Skip stream only if lattice has >=3 cols, >=5 rows AND has dates
                 for t in tables:
                     rows = t.df.values.tolist()
                     if len(rows) >= 5 and len(rows[0]) >= 3:
                         date_count = sum(
-                            1 for row in rows
+                            1
+                            for row in rows
                             if any(_cell_has_date(_cell_str(c)) for c in row)
                         )
                         if date_count >= 1:
@@ -297,7 +326,9 @@ class StatementExtractor:
                 if tables and len(tables) > 0:
                     self._log(f"  Page {page_number}: stream → {len(tables)} table(s)")
                     for t in tables:
-                        results.append({"table": t, "strategy": "stream", "page": page_number})
+                        results.append(
+                            {"table": t, "strategy": "stream", "page": page_number}
+                        )
             except Exception as e:
                 self._log(f"  Page {page_number}: stream failed: {e}")
 
@@ -333,7 +364,7 @@ class StatementExtractor:
             return 0.0
 
         # Fix 7: Rebalanced weights — row_score capped lower so date_score dominates
-        row_score = min(row_count, 60) * 0.5          # max 30 (was 150)
+        row_score = min(row_count, 60) * 0.5  # max 30 (was 150)
 
         # numeric_score
         total_cells = row_count * col_count
@@ -341,7 +372,7 @@ class StatementExtractor:
             1 for row in rows for cell in row if _cell_has_digits(_cell_str(cell))
         )
         numeric_ratio = cells_with_digits / total_cells if total_cells > 0 else 0
-        numeric_score = numeric_ratio * 25             # max 25 (was 20)
+        numeric_score = numeric_ratio * 25  # max 25 (was 20)
 
         # date_score — check ALL columns for date pattern
         date_rows = 0
@@ -354,15 +385,13 @@ class StatementExtractor:
         date_ratio = date_rows / row_count if row_count > 0 else 0
         if date_rows < 1 or date_ratio < 0.03:
             return 0.0
-        date_score = date_ratio * 40                   # max 40 (was 30)
+        date_score = date_ratio * 40  # max 40 (was 30)
 
         # consistency_score
-        non_empty_per_row = [
-            sum(1 for cell in row if _cell_str(cell)) for row in rows
-        ]
+        non_empty_per_row = [sum(1 for cell in row if _cell_str(cell)) for row in rows]
         avg_non_empty = sum(non_empty_per_row) / row_count if row_count > 0 else 0
         fill_ratio = avg_non_empty / col_count if col_count > 0 else 0
-        consistency_score = fill_ratio * 15            # max 15 (was 10)
+        consistency_score = fill_ratio * 15  # max 15 (was 10)
 
         # Fix 7: Column count bonus/penalty
         if 3 <= col_count <= 7:
@@ -489,7 +518,9 @@ class StatementExtractor:
         self._log(f"Date column detection: counts={date_counts}, best_idx={best_idx}")
         return best_idx
 
-    def _detect_description_column(self, rows: list[list[str]], date_col_idx: int) -> int:
+    def _detect_description_column(
+        self, rows: list[list[str]], date_col_idx: int
+    ) -> int:
         """
         Fix 3: Find the description column by scanning the header row first,
         then falling back to the column with the longest average text length
@@ -502,12 +533,20 @@ class StatementExtractor:
         # Try header row first
         if self._header_row:
             header = [c.lower() for c in self._header_row]
-            desc_keywords = ["description", "particulars", "narration",
-                             "transaction details", "details", "remarks"]
+            desc_keywords = [
+                "description",
+                "particulars",
+                "narration",
+                "transaction details",
+                "details",
+                "remarks",
+            ]
             for kw in desc_keywords:
                 for i, h in enumerate(header):
                     if kw in h and i != date_col_idx:
-                        self._log(f"Description column from header: idx={i} ({header[i]!r})")
+                        self._log(
+                            f"Description column from header: idx={i} ({header[i]!r})"
+                        )
                         return i
 
         # Fallback: column with longest average text (excluding date and numeric cols)
@@ -516,7 +555,9 @@ class StatementExtractor:
             if col_idx == date_col_idx:
                 avg_lengths.append(0)
                 continue
-            texts = [row[col_idx] for row in rows if col_idx < len(row) and row[col_idx]]
+            texts = [
+                row[col_idx] for row in rows if col_idx < len(row) and row[col_idx]
+            ]
             if not texts:
                 avg_lengths.append(0)
                 continue
@@ -535,7 +576,9 @@ class StatementExtractor:
         # Last resort: index 1 if date is 0, else 0
         return 1 if date_col_idx == 0 else 0
 
-    def _detect_amount_columns(self, rows: list[list[str]], date_col_idx: int) -> dict[str, Any]:
+    def _detect_amount_columns(
+        self, rows: list[list[str]], date_col_idx: int
+    ) -> dict[str, Any]:
         """
         Fix 4: Find amount column(s) by scanning for the rightmost column(s)
         where >50% of cells match a currency/number pattern.
@@ -543,18 +586,22 @@ class StatementExtractor:
         """
         col_count = max(len(row) for row in rows) if rows else 0
         if col_count == 0:
-            return {"amount_col": col_count - 1, "debit_col": None,
-                    "credit_col": None, "structure": "single_amount"}
+            return {
+                "amount_col": col_count - 1,
+                "debit_col": None,
+                "credit_col": None,
+                "structure": "single_amount",
+            }
 
         # Currency pattern: digits with optional commas, dots, minus
-        _CURRENCY_RE = re.compile(r'^-?[\d,]+\.?\d*$')
+        _CURRENCY_RE = re.compile(r"^-?[\d,]+\.?\d*$")
 
         def is_currency(cell: str) -> bool:
             c = cell.strip().replace(" ", "")
             # Remove common suffixes
             for sfx in ("DR", "CR", "Dr", "Cr"):
                 if c.upper().endswith(sfx):
-                    c = c[:-len(sfx)].strip()
+                    c = c[: -len(sfx)].strip()
             return bool(_CURRENCY_RE.match(c)) if c else False
 
         # Count currency cells per column
@@ -570,7 +617,8 @@ class StatementExtractor:
         # Find columns where >50% of cells are currency
         threshold = 0.5
         currency_cols = [
-            i for i in range(col_count)
+            i
+            for i in range(col_count)
             if total_counts[i] > 0
             and currency_counts[i] / total_counts[i] > threshold
             and i != date_col_idx
@@ -590,29 +638,49 @@ class StatementExtractor:
                     header_credit_col = i
 
         if header_debit_col is not None and header_credit_col is not None:
-            self._log(f"Amount cols from header: debit={header_debit_col}, credit={header_credit_col}")
-            return {"amount_col": None, "debit_col": header_debit_col,
-                    "credit_col": header_credit_col, "structure": "separate_debit_credit"}
+            self._log(
+                f"Amount cols from header: debit={header_debit_col}, credit={header_credit_col}"
+            )
+            return {
+                "amount_col": None,
+                "debit_col": header_debit_col,
+                "credit_col": header_credit_col,
+                "structure": "separate_debit_credit",
+            }
 
         if len(currency_cols) >= 2:
             # Take the two rightmost currency columns
             debit_col = sorted(currency_cols)[-2]
             credit_col = sorted(currency_cols)[-1]
             self._log(f"Amount cols detected: debit={debit_col}, credit={credit_col}")
-            return {"amount_col": None, "debit_col": debit_col,
-                    "credit_col": credit_col, "structure": "separate_debit_credit"}
+            return {
+                "amount_col": None,
+                "debit_col": debit_col,
+                "credit_col": credit_col,
+                "structure": "separate_debit_credit",
+            }
 
         if currency_cols:
             amount_col = sorted(currency_cols)[-1]
             self._log(f"Amount col detected: {amount_col}")
-            return {"amount_col": amount_col, "debit_col": None,
-                    "credit_col": None, "structure": "single_amount"}
+            return {
+                "amount_col": amount_col,
+                "debit_col": None,
+                "credit_col": None,
+                "structure": "single_amount",
+            }
 
         # Fallback: last column — mark as fallback so _row_has_standalone_amount
         # does NOT use it (avoids treating running-balance cells as new transactions)
-        self._log(f"Amount col fallback: last col {col_count - 1} (not used for standalone detection)")
-        return {"amount_col": None, "debit_col": None,
-                "credit_col": None, "structure": "single_amount"}
+        self._log(
+            f"Amount col fallback: last col {col_count - 1} (not used for standalone detection)"
+        )
+        return {
+            "amount_col": None,
+            "debit_col": None,
+            "credit_col": None,
+            "structure": "single_amount",
+        }
 
     # ----------------------------------------------------------
     # Step 7: Merge Multi-line Rows
@@ -622,11 +690,25 @@ class StatementExtractor:
     # NOTE: igst, cgst, sgst REMOVED — they are legitimate transaction line items
     # (tax charges billed as separate transactions in Indian credit card statements)
     _SUMMARY_KEYWORDS = {
-        "total", "sub total", "subtotal", "service tax", "gst", "cess",
-        "interest", "late payment", "finance charge",
-        "opening balance", "closing balance", "minimum amount due", "total due",
-        "payment due", "credit limit", "available limit", "grand total",
-        "brought forward", "carried forward",
+        "total",
+        "sub total",
+        "subtotal",
+        "service tax",
+        "gst",
+        "cess",
+        "interest",
+        "late payment",
+        "finance charge",
+        "opening balance",
+        "closing balance",
+        "minimum amount due",
+        "total due",
+        "payment due",
+        "credit limit",
+        "available limit",
+        "grand total",
+        "brought forward",
+        "carried forward",
     }
 
     def _is_summary_row(self, row: list[str]) -> bool:
@@ -671,14 +753,14 @@ class StatementExtractor:
         if not amount_cols:
             return False
 
-        _CURRENCY_RE = re.compile(r'^-?[\d,]+\.?\d*$')
+        _CURRENCY_RE = re.compile(r"^-?[\d,]+\.?\d*$")
         for col_idx in amount_cols:
             if col_idx < len(row):
                 val = row[col_idx].strip()
                 # Strip DR/CR suffix
                 for sfx in ("DR", "CR", "Dr", "Cr"):
                     if val.upper().endswith(sfx):
-                        val = val[:-len(sfx)].strip()
+                        val = val[: -len(sfx)].strip()
                 val_clean = val.replace(",", "")
                 if val_clean and _CURRENCY_RE.match(val_clean):
                     try:
@@ -739,8 +821,7 @@ class StatementExtractor:
                         continue
                     # Append non-empty cells to description column
                     continuation_text = " ".join(
-                        cell for i, cell in enumerate(row)
-                        if cell and i != date_col_idx
+                        cell for i, cell in enumerate(row) if cell and i != date_col_idx
                     ).strip()
                     if continuation_text:
                         while len(current) <= desc_col:
@@ -780,12 +861,18 @@ class StatementExtractor:
         numeric_col_counts = [0] * col_count
         for row in rows:
             for i, cell in enumerate(row):
-                if i < col_count and _cell_has_digits(cell) and not _cell_has_date(cell):
+                if (
+                    i < col_count
+                    and _cell_has_digits(cell)
+                    and not _cell_has_date(cell)
+                ):
                     numeric_col_counts[i] += 1
 
         # If 2+ columns are heavily numeric (>30% of rows), likely separate debit/credit
         threshold = len(rows) * 0.3
-        heavy_numeric = [i for i, cnt in enumerate(numeric_col_counts) if cnt > threshold]
+        heavy_numeric = [
+            i for i, cnt in enumerate(numeric_col_counts) if cnt > threshold
+        ]
 
         # Exclude date column
         heavy_numeric = [i for i in heavy_numeric if i != self._date_col_idx]
@@ -812,7 +899,7 @@ class StatementExtractor:
         # Strip trailing DR/CR suffix (with or without space)
         for sfx in (" DR", " CR", " Dr", " Cr", "DR", "CR", "Dr", "Cr"):
             if s.upper().endswith(sfx.upper()):
-                s = s[:-len(sfx)].strip()
+                s = s[: -len(sfx)].strip()
                 break
         # Strip SBI Card style suffixes: C (Credit), D (Debit), M (EMI)
         # These are attached directly to the amount without space
@@ -893,9 +980,7 @@ class StatementExtractor:
 
         # Pattern: amount followed by Cr/Dr at end of description
         # Examples: "BBPS PAYMENT RECEIVED - 19,688.00 Cr", "CASHBACK CREDIT 994.00 Cr"
-        embedded_pattern = re.compile(
-            r'([\d,]+\.?\d*)\s*(Cr|Dr|CR|DR)\s*$'
-        )
+        embedded_pattern = re.compile(r"([\d,]+\.?\d*)\s*(Cr|Dr|CR|DR)\s*$")
 
         match = embedded_pattern.search(desc)
         if match:
@@ -913,9 +998,11 @@ class StatementExtractor:
             txn["type"] = "credit" if embedded_type == "CR" else "debit"
 
             # Clean description - remove the embedded amount suffix
-            txn["description"] = desc[:match.start()].strip()
+            txn["description"] = desc[: match.start()].strip()
 
-            self._log(f"  Extracted embedded amount: {embedded_amount} {embedded_type} from '{desc}'")
+            self._log(
+                f"  Extracted embedded amount: {embedded_amount} {embedded_type} from '{desc}'"
+            )
 
         return txn
 
@@ -968,7 +1055,11 @@ class StatementExtractor:
             desc = row[desc_col].strip() if desc_col < len(row) else ""
 
             # debit_col and credit_col are guaranteed non-None here due to the outer check
-            if amount_structure == "separate_debit_credit" and debit_col is not None and credit_col is not None:
+            if (
+                amount_structure == "separate_debit_credit"
+                and debit_col is not None
+                and credit_col is not None
+            ):
                 debit_val = row[debit_col].strip() if debit_col < len(row) else ""
                 credit_val = row[credit_col].strip() if credit_col < len(row) else ""
 
@@ -1047,7 +1138,8 @@ class StatementExtractor:
                     for t in tables:
                         rows = t.df.values.tolist()
                         date_count = sum(
-                            1 for row in rows
+                            1
+                            for row in rows
                             if any(_cell_has_date(_cell_str(c)) for c in row)
                         )
                         if date_count >= 1:
@@ -1080,8 +1172,7 @@ class StatementExtractor:
         if row_count < 2 or col_count < 2:
             return 0.0
         date_rows = sum(
-            1 for row in rows
-            if any(_cell_has_date(_cell_str(c)) for c in row)
+            1 for row in rows if any(_cell_has_date(_cell_str(c)) for c in row)
         )
         if date_rows < 1:
             return 0.0
@@ -1123,7 +1214,9 @@ class StatementExtractor:
             # Try strict scoring first
             best_t, best_s = None, 0.0
             for t in page_tables:
-                s = self.score_table({"table": t, "strategy": strategy, "page": page_num})
+                s = self.score_table(
+                    {"table": t, "strategy": strategy, "page": page_num}
+                )
                 if s > best_s:
                     best_s, best_t = s, t
 
@@ -1136,7 +1229,9 @@ class StatementExtractor:
 
             if best_t is not None and best_s > 0:
                 page_rows = best_t.df.values.tolist()
-                self._log(f"  Page {page_num}: {len(page_rows)} rows (score={best_s:.1f})")
+                self._log(
+                    f"  Page {page_num}: {len(page_rows)} rows (score={best_s:.1f})"
+                )
                 all_rows.extend(page_rows)
                 consecutive_no_dates = 0
             else:
@@ -1196,11 +1291,18 @@ class StatementExtractor:
                         while i >= 1:
                             token = tokens[i].upper()
                             if token in ("CR", "DR") and i > 1:
-                                prev_token = tokens[i-1].replace(",", "").replace("(", "").replace(")", "")
+                                prev_token = (
+                                    tokens[i - 1]
+                                    .replace(",", "")
+                                    .replace("(", "")
+                                    .replace(")", "")
+                                )
                                 # Check if it's a valid number
                                 try:
                                     float(prev_token)
-                                    cr_dr_positions.append((i-1, i, token))  # (amount_idx, crdr_idx, type)
+                                    cr_dr_positions.append(
+                                        (i - 1, i, token)
+                                    )  # (amount_idx, crdr_idx, type)
                                     i -= 2
                                     continue
                                 except ValueError:
@@ -1217,13 +1319,17 @@ class StatementExtractor:
                             desc = " ".join(tokens[1:desc_end]).strip()
 
                             if amount and amount != "0.00" and amount != "0":
-                                transactions.append({
-                                    "date": date,
-                                    "description": desc,
-                                    "amount": self._normalize_amount(amount),
-                                    "type": "credit" if txn_type == "CR" else "debit",
-                                    "raw": tokens,
-                                })
+                                transactions.append(
+                                    {
+                                        "date": date,
+                                        "description": desc,
+                                        "amount": self._normalize_amount(amount),
+                                        "type": (
+                                            "credit" if txn_type == "CR" else "debit"
+                                        ),
+                                        "raw": tokens,
+                                    }
+                                )
                             continue
 
                         # Single Cr/Dr pair (standard format)
@@ -1234,13 +1340,17 @@ class StatementExtractor:
                             desc = " ".join(tokens[1:desc_end]).strip()
 
                             if amount and amount != "0.00" and amount != "0":
-                                transactions.append({
-                                    "date": date,
-                                    "description": desc,
-                                    "amount": self._normalize_amount(amount),
-                                    "type": "credit" if txn_type == "CR" else "debit",
-                                    "raw": tokens,
-                                })
+                                transactions.append(
+                                    {
+                                        "date": date,
+                                        "description": desc,
+                                        "amount": self._normalize_amount(amount),
+                                        "type": (
+                                            "credit" if txn_type == "CR" else "debit"
+                                        ),
+                                        "raw": tokens,
+                                    }
+                                )
                             continue
 
                         # Standard format: DATE ... AMOUNT Cr/Dr
@@ -1280,7 +1390,17 @@ class StatementExtractor:
                         if not txn_type and amount:
                             desc_lower = desc.lower()
                             # Credit keywords: payment received, refund, cashback, reversal
-                            if any(kw in desc_lower for kw in ['credit', 'payment received', 'refund', 'cashback', 'reversal', 'transfer credit']):
+                            if any(
+                                kw in desc_lower
+                                for kw in [
+                                    "credit",
+                                    "payment received",
+                                    "refund",
+                                    "cashback",
+                                    "reversal",
+                                    "transfer credit",
+                                ]
+                            ):
                                 txn_type = "credit"
                             else:
                                 txn_type = "debit"
@@ -1289,13 +1409,17 @@ class StatementExtractor:
                             txn = {
                                 "date": date,
                                 "description": desc,
-                                "amount": self._normalize_amount(amount) if amount else "",
+                                "amount": (
+                                    self._normalize_amount(amount) if amount else ""
+                                ),
                                 "type": txn_type,
                                 "raw": tokens,
                             }
                             # Add amount_paise (canonical integer representation)
                             try:
-                                txn["amount_paise"] = _parse_amount_paise(txn.get("amount", "0"))  # type: ignore[assignment]
+                                txn["amount_paise"] = _parse_amount_paise(
+                                    txn.get("amount", "0")
+                                )  # type: ignore[assignment]
                             except ValueError:
                                 txn["amount_paise"] = 0  # type: ignore[assignment]
                             transactions.append(txn)
@@ -1339,7 +1463,9 @@ class StatementExtractor:
         # Step 5: Scan backwards from best_page to find the true first page
         # with transaction data (handles cases where earlier pages also have txns)
         # start_page and strategy are guaranteed non-None after select_best_table() succeeds
-        actual_start = self._find_actual_start_page(cast(int, start_page), cast(str, strategy))
+        actual_start = self._find_actual_start_page(
+            cast(int, start_page), cast(str, strategy)
+        )
         self._log(f"Best page={start_page}, actual start={actual_start}")
 
         # Collect rows from actual start page onwards
@@ -1366,7 +1492,9 @@ class StatementExtractor:
         self._amount_col_idx = amount_info.get("amount_col")
         self._debit_col_idx = amount_info.get("debit_col")
         self._credit_col_idx = amount_info.get("credit_col")
-        self._log(f"Amount cols: amount={self._amount_col_idx}, debit={self._debit_col_idx}, credit={self._credit_col_idx}")
+        self._log(
+            f"Amount cols: amount={self._amount_col_idx}, debit={self._debit_col_idx}, credit={self._credit_col_idx}"
+        )
 
         # Step 8: Merge multi-line rows
         merged = self.merge_multiline_rows(cleaned, date_col_idx)
@@ -1397,6 +1525,7 @@ class StatementExtractor:
 # ============================================================
 # CLI Entry Point
 # ============================================================
+
 
 def main() -> None:
     if len(sys.argv) < 2:

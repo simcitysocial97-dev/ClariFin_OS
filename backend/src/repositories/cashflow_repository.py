@@ -1,4 +1,5 @@
 """Cashflow domain repository."""
+
 import json
 from typing import Any
 
@@ -130,7 +131,9 @@ class CashflowRepository(BaseRepository):
 
                 # Parse transaction_ids JSON
                 try:
-                    txn_id_list = json.loads(txn_ids) if isinstance(txn_ids, str) else txn_ids
+                    txn_id_list = (
+                        json.loads(txn_ids) if isinstance(txn_ids, str) else txn_ids
+                    )
                 except (json.JSONDecodeError, TypeError):
                     txn_id_list = []
 
@@ -143,24 +146,28 @@ class CashflowRepository(BaseRepository):
                     # Exclude asset change (credit leg) from income
                     if asset_change > 0:
                         raw_income -= asset_change
-                        adjustments.append({
-                            "event_id": event.get("id"),
-                            "type": "artificial_income_exclusion",
-                            "amount_paise": asset_change,
-                            "transaction_ids": txn_id_list,
-                        })
+                        adjustments.append(
+                            {
+                                "event_id": event.get("id"),
+                                "type": "artificial_income_exclusion",
+                                "amount_paise": asset_change,
+                                "transaction_ids": txn_id_list,
+                            }
+                        )
 
                     # Replace full debit amount with just fee in expense
                     # The raw_expense already includes the full debit (liability_change)
                     # We need to adjust: remove the principle, keep only the fee
                     if liability_change > 0:
-                        raw_expense -= (liability_change - expense)  # Keep only fee
-                        adjustments.append({
-                            "event_id": event.get("id"),
-                            "type": "cash_advance_fee_adjustment",
-                            "amount_paise": expense,
-                            "transaction_ids": txn_id_list,
-                        })
+                        raw_expense -= liability_change - expense  # Keep only fee
+                        adjustments.append(
+                            {
+                                "event_id": event.get("id"),
+                                "type": "cash_advance_fee_adjustment",
+                                "amount_paise": expense,
+                                "transaction_ids": txn_id_list,
+                            }
+                        )
 
                 # transfer_internal adjustments
                 elif event_type == "transfer_internal":
@@ -180,13 +187,15 @@ class CashflowRepository(BaseRepository):
                                 raw_income -= txn_amount
                             elif txn_type == "debit":
                                 raw_expense -= txn_amount
-                            adjustments.append({
-                                "event_id": event.get("id"),
-                                "type": "transfer_exclusion",
-                                "amount_paise": txn_amount,
-                                "transaction_type": txn_type,
-                                "transaction_id": txn_id,
-                            })
+                            adjustments.append(
+                                {
+                                    "event_id": event.get("id"),
+                                    "type": "transfer_exclusion",
+                                    "amount_paise": txn_amount,
+                                    "transaction_type": txn_type,
+                                    "transaction_id": txn_id,
+                                }
+                            )
 
                 # emi_payment adjustments
                 elif event_type == "emi_payment":
@@ -205,24 +214,27 @@ class CashflowRepository(BaseRepository):
 
                     # Adjust: remove full EMI, add back just interest
                     if emi_amount > 0:
-                        raw_expense -= (emi_amount - expense)
-                        adjustments.append({
-                            "event_id": event.get("id"),
-                            "type": "emi_interest_only",
-                            "amount_paise": expense,
-                            "transaction_ids": txn_id_list,
-                        })
+                        raw_expense -= emi_amount - expense
+                        adjustments.append(
+                            {
+                                "event_id": event.get("id"),
+                                "type": "emi_interest_only",
+                                "amount_paise": expense,
+                                "transaction_ids": txn_id_list,
+                            }
+                        )
 
             # Calculate surplus
             surplus = raw_income - raw_expense
 
-            results.append({
-                "month_key": month_key,
-                "income_paise": raw_income,
-                "expense_paise": raw_expense,
-                "surplus_paise": surplus,
-                "adjustments_applied": adjustments,
-            })
+            results.append(
+                {
+                    "month_key": month_key,
+                    "income_paise": raw_income,
+                    "expense_paise": raw_expense,
+                    "surplus_paise": surplus,
+                    "adjustments_applied": adjustments,
+                }
+            )
 
         return results
-

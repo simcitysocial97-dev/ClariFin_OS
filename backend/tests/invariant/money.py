@@ -1,4 +1,5 @@
 """Money Invariants - QEA-5 Rule: All amounts are integers representing paise."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -24,7 +25,9 @@ def assert_money_invariants(data: dict[str, Any]) -> None:
             if value is None:
                 raise AssertionError(f"{key} is None (paise must be integer)")
             if not isinstance(value, int):
-                raise AssertionError(f"{key}={value} is not integer paise, got {type(value).__name__}")
+                raise AssertionError(
+                    f"{key}={value} is not integer paise, got {type(value).__name__}"
+                )
 
 
 def assert_all_paise_integers(data: dict[str, Any]) -> None:

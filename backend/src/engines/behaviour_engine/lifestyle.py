@@ -31,11 +31,11 @@ def compute_lifestyle_inflation(
     """
     if previous_period_non_essential_paise == 0:
         # No baseline - cannot compute inflation
-        return Decimal('0')
+        return Decimal("0")
 
     if current_period_non_essential_paise == 0:
         # Complete elimination of non-essential spending
-        return Decimal('-1')
+        return Decimal("-1")
 
     change = current_period_non_essential_paise - previous_period_non_essential_paise
     return Decimal(str(change)) / Decimal(str(previous_period_non_essential_paise))
@@ -65,14 +65,14 @@ def compute_lifestyle_creep_index(
     """
     if len(monthly_discretionary_spending_paise) < 2:
         # No trend data available
-        return Decimal('0')
+        return Decimal("0")
 
     earliest = monthly_discretionary_spending_paise[0]
     latest = monthly_discretionary_spending_paise[-1]
 
     if earliest == 0:
         # Cannot compute creep from zero baseline
-        return Decimal('0')
+        return Decimal("0")
 
     change = latest - earliest
     return Decimal(str(change)) / Decimal(str(earliest))

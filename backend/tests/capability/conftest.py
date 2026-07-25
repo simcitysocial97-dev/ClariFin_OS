@@ -1,9 +1,11 @@
 """Shared fixtures and configuration for capability smoke tests."""
+
 from __future__ import annotations
 
 import sys
 from pathlib import Path
 
+import yaml
 import pytest
 
 # Ensure src is on path for all capability tests
@@ -16,15 +18,25 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 def load_capability_manifest(capability_id: str) -> dict[str, object]:
-    """Load a capability YAML manifest from memory-bank/capabilities/."""
-    import yaml  # type: ignore[import-untyped]
+    """Load a capability manifest from the combined capability-registry.yaml."""
+    registry_path = (
+        Path(__file__).parent.parent.parent / "generated" / "capability-registry.yaml"
+    )
+    with open(registry_path) as f:
+        registry = yaml.safe_load(f)
 
-    manifest_path = Path(__file__).parent.parent.parent.parent / "memory-bank" / "capabilities" / f"{capability_id}.yaml"
-    with open(manifest_path) as f:
-        return yaml.safe_load(f)  # type: ignore[no-any-return]
+    # Find the matching capability by ID from the combined list
+    capabilities = registry.get("capabilities", [])
+    for cap in capabilities:
+        if cap.get("id") == capability_id:
+            return cap  # type: ignore[no-any-return]
+
+    raise ValueError(f"Capability '{capability_id}' not found in registry.")
 
 
-def validate_manifest_fields(manifest: dict[str, object], required_fields: list[str]) -> None:
+def validate_manifest_fields(
+    manifest: dict[str, object], required_fields: list[str]
+) -> None:
     """Assert that a manifest contains all required fields."""
     missing = [field for field in required_fields if field not in manifest]
     assert not missing, f"Manifest missing required fields: {missing}"

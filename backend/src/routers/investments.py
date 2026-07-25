@@ -13,6 +13,7 @@ router = APIRouter(prefix="/api", tags=["investments"])
 
 class InvestmentCreate(BaseModel):
     """Investment creation request."""
+
     name: str
     investment_type: str
     invested_paise: int
@@ -26,6 +27,7 @@ class InvestmentCreate(BaseModel):
 
 class InvestmentUpdate(BaseModel):
     """Investment update request."""
+
     units: float | None = None
     current_price_paise: int | None = None
     current_value_paise: int | None = None
@@ -56,7 +58,11 @@ def get_investments() -> dict[str, Any]:
             "total_invested_paise": total_invested,
             "total_current_value_paise": total_current,
             "total_gain_paise": total_gain,
-            "gain_percent": round((total_gain / total_invested * 100), 2) if total_invested > 0 else 0,
+            "gain_percent": (
+                round((total_gain / total_invested * 100), 2)
+                if total_invested > 0
+                else 0
+            ),
             "allocation_by_type": allocation,
         },
     }
@@ -78,12 +84,14 @@ def create_investment(investment: InvestmentCreate) -> dict[str, Any]:
 
 
 @router.put("/investments/{investment_id}")
-def update_investment(investment_id: str, investment: InvestmentUpdate) -> dict[str, Any]:
+def update_investment(
+    investment_id: str, investment: InvestmentUpdate
+) -> dict[str, Any]:
     """Update an investment."""
     repo = InvestmentRepository()
     updated = repo.update(
         investment_id,
-        **{k: v for k, v in investment.model_dump().items() if v is not None}
+        **{k: v for k, v in investment.model_dump().items() if v is not None},
     )
     if not updated:
         raise NotFoundError(f"Investment {investment_id} not found")

@@ -1,4 +1,5 @@
 """Bank domain repository."""
+
 from src.repositories.base import BaseRepository
 
 

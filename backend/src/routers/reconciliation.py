@@ -1,4 +1,5 @@
 """Reconciliation matching and confirmation endpoints."""
+
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
@@ -75,7 +76,9 @@ def api_create_reconciliation(
     amount: float = Query(..., description="Matched amount in rupees"),
     date_diff_days: int = Query(0, description="Days between transaction dates"),
     match_confidence: float = Query(..., description="Confidence score 0.0-1.0"),
-    match_type: str = Query("exact", description="'exact', 'window', 'fuzzy', or 'manual'"),
+    match_type: str = Query(
+        "exact", description="'exact', 'window', 'fuzzy', or 'manual'"
+    ),
 ) -> dict[str, Any]:
     """
     Create a reconciliation record between two transactions.
@@ -148,7 +151,9 @@ def api_confirm_reconciliation(reconciliation_id: int) -> dict[str, Any]:
         repo = ReconciliationRepository()
         updated = repo.confirm_reconciliation(reconciliation_id)
         if not updated:
-            raise HTTPException(status_code=404, detail="Reconciliation not found or not pending")
+            raise HTTPException(
+                status_code=404, detail="Reconciliation not found or not pending"
+            )
         return {"success": True, "status": "confirmed"}
     except HTTPException:
         raise
@@ -167,7 +172,9 @@ def api_reject_reconciliation(reconciliation_id: int) -> dict[str, Any]:
         repo = ReconciliationRepository()
         updated = repo.reject_reconciliation(reconciliation_id)
         if not updated:
-            raise HTTPException(status_code=404, detail="Reconciliation not found or not pending")
+            raise HTTPException(
+                status_code=404, detail="Reconciliation not found or not pending"
+            )
         return {"success": True, "status": "rejected"}
     except HTTPException:
         raise

@@ -3,13 +3,24 @@
 Pure function: accepts plain data, returns classification result.
 No database access - schedule and loan data are passed in as parameters.
 """
+
 from datetime import date
 from typing import Any, Literal
 
 from .detector_result import EMIDetectionResult
 
 # EMI keywords for description matching
-EMI_KEYWORDS = {"emi", "loan", "installment", "repayment", "mortgage", "hdfc", "icici", "sbi", "axis"}
+EMI_KEYWORDS = {
+    "emi",
+    "loan",
+    "installment",
+    "repayment",
+    "mortgage",
+    "hdfc",
+    "icici",
+    "sbi",
+    "axis",
+}
 
 
 def _is_emi_description(description: str) -> bool:
@@ -18,7 +29,9 @@ def _is_emi_description(description: str) -> bool:
     return any(kw in desc_lower for kw in EMI_KEYWORDS)
 
 
-def _amount_within_tolerance(amount_paise: int, expected_paise: int, tolerance_pct: float = 0.01) -> bool:
+def _amount_within_tolerance(
+    amount_paise: int, expected_paise: int, tolerance_pct: float = 0.01
+) -> bool:
     """Check if amount is within ±tolerance_pct of expected."""
     if expected_paise == 0:
         return False
@@ -27,7 +40,9 @@ def _amount_within_tolerance(amount_paise: int, expected_paise: int, tolerance_p
     return diff <= tolerance_paise
 
 
-def _date_near_expected(txn_date_iso: str, expected_date_iso: str, days: int = 3) -> bool:
+def _date_near_expected(
+    txn_date_iso: str, expected_date_iso: str, days: int = 3
+) -> bool:
     """Check if transaction date is within N days of expected date."""
     try:
         txn_date = date.fromisoformat(txn_date_iso)
@@ -89,7 +104,9 @@ def detect_emi_payment(
                 schedule_row_id=bank_stmt_row.get("id"),
                 principal_paise=int(bank_stmt_row.get("principal_paise", 0)),
                 interest_paise=int(bank_stmt_row.get("interest_paise", 0)),
-                outstanding_after_paise=int(bank_stmt_row.get("outstanding_after_paise", 0)),
+                outstanding_after_paise=int(
+                    bank_stmt_row.get("outstanding_after_paise", 0)
+                ),
             )
 
         # Check computed schedule for this date
@@ -121,9 +138,21 @@ def detect_emi_payment(
                     match_reason=match_reason,
                     matched_entity_id=loan_id,
                     schedule_row_id=schedule_row.get("id") if schedule_row else None,
-                    principal_paise=int(schedule_row.get("principal_paise", 0)) if schedule_row else 0,
-                    interest_paise=int(schedule_row.get("interest_paise", 0)) if schedule_row else 0,
-                    outstanding_after_paise=int(schedule_row.get("outstanding_after_paise", emi_paise)) if schedule_row else emi_paise,
+                    principal_paise=(
+                        int(schedule_row.get("principal_paise", 0))
+                        if schedule_row
+                        else 0
+                    ),
+                    interest_paise=(
+                        int(schedule_row.get("interest_paise", 0))
+                        if schedule_row
+                        else 0
+                    ),
+                    outstanding_after_paise=(
+                        int(schedule_row.get("outstanding_after_paise", emi_paise))
+                        if schedule_row
+                        else emi_paise
+                    ),
                 )
 
         # Date proximity match (priority 75 or 85 if combined with amount)
@@ -148,16 +177,38 @@ def detect_emi_payment(
                             source=source_computed,
                             match_reason=match_reason,
                             matched_entity_id=loan_id,
-                            schedule_row_id=schedule_row_for_result.get("id") if schedule_row_for_result else None,
-                            principal_paise=int(schedule_row_for_result.get("principal_paise", 0)) if schedule_row_for_result else 0,
-                            interest_paise=int(schedule_row_for_result.get("interest_paise", 0)) if schedule_row_for_result else 0,
-                            outstanding_after_paise=int(schedule_row_for_result.get("outstanding_after_paise", emi_paise)) if schedule_row_for_result else emi_paise,
+                            schedule_row_id=(
+                                schedule_row_for_result.get("id")
+                                if schedule_row_for_result
+                                else None
+                            ),
+                            principal_paise=(
+                                int(schedule_row_for_result.get("principal_paise", 0))
+                                if schedule_row_for_result
+                                else 0
+                            ),
+                            interest_paise=(
+                                int(schedule_row_for_result.get("interest_paise", 0))
+                                if schedule_row_for_result
+                                else 0
+                            ),
+                            outstanding_after_paise=(
+                                int(
+                                    schedule_row_for_result.get(
+                                        "outstanding_after_paise", emi_paise
+                                    )
+                                )
+                                if schedule_row_for_result
+                                else emi_paise
+                            ),
                         )
             else:
                 # Try to find any schedule row near this date for principal/interest split
                 found_row = None
                 for (lid, due_date), row in schedule_lookup.items():
-                    if lid == loan_id and _date_near_expected(txn_date_iso, due_date, 3):
+                    if lid == loan_id and _date_near_expected(
+                        txn_date_iso, due_date, 3
+                    ):
                         found_row = row
                         break
 
@@ -179,7 +230,9 @@ def detect_emi_payment(
                             schedule_row_id=found_row.get("id"),
                             principal_paise=int(found_row.get("principal_paise", 0)),
                             interest_paise=int(found_row.get("interest_paise", 0)),
-                            outstanding_after_paise=int(found_row.get("outstanding_after_paise", 0)),
+                            outstanding_after_paise=int(
+                                found_row.get("outstanding_after_paise", 0)
+                            ),
                         )
 
         # Description keyword match (priority 60)
@@ -198,9 +251,21 @@ def detect_emi_payment(
                     match_reason=match_reason,
                     matched_entity_id=loan_id,
                     schedule_row_id=schedule_row.get("id") if schedule_row else None,
-                    principal_paise=int(schedule_row.get("principal_paise", 0)) if schedule_row else 0,
-                    interest_paise=int(schedule_row.get("interest_paise", 0)) if schedule_row else 0,
-                    outstanding_after_paise=int(schedule_row.get("outstanding_after_paise", emi_paise)) if schedule_row else emi_paise,
+                    principal_paise=(
+                        int(schedule_row.get("principal_paise", 0))
+                        if schedule_row
+                        else 0
+                    ),
+                    interest_paise=(
+                        int(schedule_row.get("interest_paise", 0))
+                        if schedule_row
+                        else 0
+                    ),
+                    outstanding_after_paise=(
+                        int(schedule_row.get("outstanding_after_paise", emi_paise))
+                        if schedule_row
+                        else emi_paise
+                    ),
                 )
 
     return best_match
@@ -221,7 +286,8 @@ def find_loan_candidates_for_account(
         Loans where the account is likely the loan account.
     """
     return [
-        loan for loan in loans
+        loan
+        for loan in loans
         if str(loan.get("lender", "")) == transaction_account_id
         or str(loan.get("lender", "")).lower() in transaction_account_id.lower()
     ]

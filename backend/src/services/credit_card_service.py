@@ -21,7 +21,9 @@ from src.engines.credit_card_engine import (
 from src.models.credit_card_emi import EmiConversionResponse
 from src.models.credit_card_foreclosure import ForeclosureResponse
 from src.repositories.credit_card_repository import CreditCardRepository
-from src.repositories.credit_card_statement_repository import CreditCardStatementRepository
+from src.repositories.credit_card_statement_repository import (
+    CreditCardStatementRepository,
+)
 
 
 class CreditCardService:
@@ -144,7 +146,7 @@ class CreditCardService:
         minimum_due_paise = compute_minimum_due(
             total_outstanding_paise=outstanding_paise,
             min_due_pct_bps=500,  # 5% default
-            floor_paise=10000,    # ₹100 floor
+            floor_paise=10000,  # ₹100 floor
         )
 
         # Persist statement in transaction
@@ -188,7 +190,9 @@ class CreditCardService:
             amount_paise=amount_paise,
         )
         if not success:
-            raise RuntimeError(f"Failed to update payment on statement {statement['id']}")
+            raise RuntimeError(
+                f"Failed to update payment on statement {statement['id']}"
+            )
 
         updated = self.statement_repo.get_statement(statement["id"])
         return updated or statement
@@ -221,7 +225,9 @@ class CreditCardService:
 
         return {
             "utilization_bps": compute_utilization(outstanding, credit_limit),
-            "available_credit_paise": compute_available_credit(credit_limit, outstanding),
+            "available_credit_paise": compute_available_credit(
+                credit_limit, outstanding
+            ),
         }
 
     def convert_to_emi(
@@ -340,4 +346,3 @@ class CreditCardService:
         )
 
         return next_date.isoformat()
-

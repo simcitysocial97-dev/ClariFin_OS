@@ -44,7 +44,9 @@ def compute_balance_trend(balances: list[int]) -> str:
         return "STABLE"
 
 
-def compute_balance_velocity(opening_balance: int, closing_balance: int, days: int) -> int:
+def compute_balance_velocity(
+    opening_balance: int, closing_balance: int, days: int
+) -> int:
     """
     Compute rate of balance change per day.
 

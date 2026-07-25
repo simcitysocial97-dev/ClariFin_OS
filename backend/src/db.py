@@ -1,7 +1,3 @@
-
-
-
-
 """
 db.py
 =====
@@ -142,6 +138,7 @@ CREATE TABLE IF NOT EXISTS reconciliations (
 # Module-level Utilities
 # ============================================================
 
+
 def _parse_date_to_ymd(date_str: str) -> str:
     """
     Parse Indian date formats to YYYY-MM-DD for sorting/grouping.
@@ -150,9 +147,16 @@ def _parse_date_to_ymd(date_str: str) -> str:
              DD Mon YYYY, DD Mon YY, DD-Mon-YYYY, DD-Mon-YY
     """
     from datetime import datetime
+
     formats = [
-        "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
-        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d/%m/%y",
+        "%d-%m-%y",
+        "%d %b %Y",
+        "%d %b %y",
+        "%d-%b-%Y",
+        "%d-%b-%y",
     ]
     s = date_str.strip()
     for fmt in formats:
@@ -166,6 +170,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
 # ============================================================
 # Helpers
 # ============================================================
+
 
 def _parse_amount_paise(amount_str: str | int | float) -> int:
     """
@@ -189,15 +194,13 @@ def _parse_amount_paise(amount_str: str | int | float) -> int:
         if isinstance(amount_str, int):
             return amount_str * 100
         # For floats, use Decimal to avoid precision loss
-        paise = Decimal(str(amount_str)) * Decimal('100')
-        return int(paise.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+        paise = Decimal(str(amount_str)) * Decimal("100")
+        return int(paise.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
     # Handle string input
-    cleaned = (str(amount_str)
-               .replace("Rs", "")
-               .replace("₹", "")
-               .replace(",", "")
-               .strip())
+    cleaned = (
+        str(amount_str).replace("Rs", "").replace("₹", "").replace(",", "").strip()
+    )
 
     if not cleaned:
         raise ValueError(f"Empty amount string: {amount_str!r}")
@@ -205,10 +208,11 @@ def _parse_amount_paise(amount_str: str | int | float) -> int:
     try:
         rupees = Decimal(cleaned)
         # Financial Standard: Use quantization to guarantee safe integer conversion
-        paise = (rupees * Decimal('100')).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        paise = (rupees * Decimal("100")).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         return int(paise)
     except (ValueError, InvalidOperation) as e:
         raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
+
 
 def _row_to_dict(cursor: sqlite3.Cursor, row: tuple[Any, ...]) -> dict[str, Any]:
     """Convert a sqlite3 row to a dict using cursor.description."""
@@ -218,6 +222,7 @@ def _row_to_dict(cursor: sqlite3.Cursor, row: tuple[Any, ...]) -> dict[str, Any]
 # ============================================================
 # FinanceDB
 # ============================================================
+
 
 class FinanceDB:
     """
@@ -313,7 +318,10 @@ class FinanceDB:
                     date_str = row[1]
                     date_iso = _parse_date_to_ymd(date_str)
                     if date_iso:
-                        conn.execute("UPDATE transactions SET date_iso = ? WHERE id = ?", (date_iso, txn_id))
+                        conn.execute(
+                            "UPDATE transactions SET date_iso = ? WHERE id = ?",
+                            (date_iso, txn_id),
+                        )
             except Exception:
                 pass  # Migration already done or no data
 
@@ -335,7 +343,9 @@ class FinanceDB:
 
             # Phase 2A.1: Add deterministic indexes
             try:
-                conn.execute("CREATE INDEX IF NOT EXISTS idx_txn_date_iso ON transactions(date_iso)")
+                conn.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_txn_date_iso ON transactions(date_iso)"
+                )
             except Exception:
                 pass
 
@@ -353,13 +363,17 @@ class FinanceDB:
             # Phase 2A.2: Drop old statement-scoped index, create account-scoped index
             try:
                 conn.execute("DROP INDEX IF EXISTS idx_account_date_iso")
-                conn.execute("CREATE INDEX IF NOT EXISTS idx_account_date_iso ON transactions(account_id, date_iso, id)")
+                conn.execute(
+                    "CREATE INDEX IF NOT EXISTS idx_account_date_iso ON transactions(account_id, date_iso, id)"
+                )
             except Exception:
                 pass
 
             # Phase 2A.1: Add unique index on hash_signature (if not exists)
             try:
-                conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_transaction_hash ON transactions(hash_signature)")
+                conn.execute(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS idx_transaction_hash ON transactions(hash_signature)"
+                )
             except Exception:
                 pass  # May fail if duplicates exist
 
@@ -526,13 +540,19 @@ class FinanceDB:
         try:
             cur = conn.execute("PRAGMA table_info(accounts)")
             columns = [row[1] for row in cur.fetchall()]
-            if 'bank_name' in columns and 'bank' not in columns:
+            if "bank_name" in columns and "bank" not in columns:
                 conn.execute("ALTER TABLE accounts RENAME COLUMN bank_name TO bank")
-            if 'account_number_masked' in columns and 'account_number_last4' not in columns:
-                conn.execute("ALTER TABLE accounts RENAME COLUMN account_number_masked TO account_number_last4")
+            if (
+                "account_number_masked" in columns
+                and "account_number_last4" not in columns
+            ):
+                conn.execute(
+                    "ALTER TABLE accounts RENAME COLUMN account_number_masked TO account_number_last4"
+                )
             conn.commit()
         except Exception:
             pass  # SQLite version may not support RENAME COLUMN or already migrated
+
 
 # ============================================================
 # CLI / Quick Test

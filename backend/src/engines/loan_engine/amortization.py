@@ -73,10 +73,14 @@ def generate_schedule(
     for month in range(1, tenure_months + 1):
         # Compute interest with Decimal precision
         interest_decimal: Decimal = balance * monthly_rate
-        interest_paise = int(interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+        interest_paise = int(
+            interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+        )
 
         # Compute principal component
-        principal_component_paise = compute_principal_component(emi_paise, interest_paise)
+        principal_component_paise = compute_principal_component(
+            emi_paise, interest_paise
+        )
 
         # Last payment adjustment (handles rounding)
         if month == tenure_months:
@@ -94,15 +98,17 @@ def generate_schedule(
         # Compute payment date with proper edge case handling
         payment_date: date = _add_months(start, month - 1)
 
-        schedule.append(AmortizationRow(
-            month_number=month,
-            payment_date=payment_date.isoformat(),
-            emi_paise=actual_emi_paise,
-            principal_paise=principal_component_paise,
-            interest_paise=interest_paise,
-            balance_paise=max(0, int(balance)),
-            cumulative_interest_paise=cumulative_interest,
-        ))
+        schedule.append(
+            AmortizationRow(
+                month_number=month,
+                payment_date=payment_date.isoformat(),
+                emi_paise=actual_emi_paise,
+                principal_paise=principal_component_paise,
+                interest_paise=interest_paise,
+                balance_paise=max(0, int(balance)),
+                cumulative_interest_paise=cumulative_interest,
+            )
+        )
 
     return schedule
 
@@ -154,7 +160,9 @@ def validate_schedule_invariants(
 
     # Check last balance is zero
     if schedule[-1].balance_paise != 0:
-        raise ValueError(f"Final balance must be zero, got {schedule[-1].balance_paise}")
+        raise ValueError(
+            f"Final balance must be zero, got {schedule[-1].balance_paise}"
+        )
 
     # Check sum of principal equals original
     total_principal = sum(row.principal_paise for row in schedule)
@@ -204,7 +212,9 @@ def validate_schedule(
     # 1. Balance never negative
     for row in schedule:
         if row.balance_paise < 0:
-            errors.append(f"Balance went negative at month {row.month_number}: {row.balance_paise}")
+            errors.append(
+                f"Balance went negative at month {row.month_number}: {row.balance_paise}"
+            )
 
     # 2. Principal paid never exceeds original principal
     total_principal = sum(row.principal_paise for row in schedule)
@@ -246,9 +256,7 @@ def validate_schedule(
     # 7. Month numbers are sequential
     for i, row in enumerate(schedule, 1):
         if row.month_number != i:
-            errors.append(
-                f"Month number {row.month_number} != expected {i}"
-            )
+            errors.append(f"Month number {row.month_number} != expected {i}")
 
     # 8. (Optional) Check tenure length if provided
     if original_tenure_months is not None and len(schedule) != original_tenure_months:

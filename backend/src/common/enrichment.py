@@ -1,4 +1,5 @@
 """Transaction enrichment utilities."""
+
 from typing import Any
 
 from .formatting import clean_description, format_date_display, format_inr

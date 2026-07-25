@@ -1,4 +1,5 @@
 """Smoke tests for Account Management capability."""
+
 from __future__ import annotations
 
 import sys

@@ -140,7 +140,9 @@ def apply_prepayment_at_month(
     INVARIANT 3: Returns new schedule, never mutates input
     """
     if prepayment_month < 1 or prepayment_month > len(schedule):
-        raise ValueError(f"Prepayment month {prepayment_month} out of range [1, {len(schedule)}]")
+        raise ValueError(
+            f"Prepayment month {prepayment_month} out of range [1, {len(schedule)}]"
+        )
 
     if prepayment_paise <= 0:
         raise ValueError("Prepayment amount must be positive")
@@ -151,7 +153,9 @@ def apply_prepayment_at_month(
     remaining_months = len(schedule) - prepayment_month + 1
 
     # Apply prepayment penalty if any
-    penalty_decimal = Decimal(prepayment_paise) * Decimal(prepayment_penalty_bps) / Decimal(10000)
+    penalty_decimal = (
+        Decimal(prepayment_paise) * Decimal(prepayment_penalty_bps) / Decimal(10000)
+    )
     penalty_paise = int(penalty_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
     effective_prepayment = prepayment_paise - penalty_paise
 
@@ -187,9 +191,13 @@ def apply_prepayment_at_month(
     # Generate new schedule from prepayment point
     # Pass schedule from prepayment month onwards for proper tenure calculation
     # Convert mode to Literal for type compatibility
-    mode_literal: Literal["reduce_tenure", "reduce_emi"] = "reduce_tenure" if mode == "reduce_tenure" or mode == PrepaymentMode.REDUCE_TENURE else "reduce_emi"
+    mode_literal: Literal["reduce_tenure", "reduce_emi"] = (
+        "reduce_tenure"
+        if mode == "reduce_tenure" or mode == PrepaymentMode.REDUCE_TENURE
+        else "reduce_emi"
+    )
     new_regenerated = regenerate_schedule(
-        schedule[prepayment_month - 1:],
+        schedule[prepayment_month - 1 :],
         new_balance,
         annual_rate_bps,
         mode_literal,
@@ -197,7 +205,7 @@ def apply_prepayment_at_month(
     )
 
     # Combine completed schedule with regenerated portion
-    completed_portion = schedule[:prepayment_month - 1] if prepayment_month > 1 else []
+    completed_portion = schedule[: prepayment_month - 1] if prepayment_month > 1 else []
     new_schedule = completed_portion + new_regenerated
 
     # Compute savings
@@ -323,7 +331,9 @@ def regenerate_schedule(
 
     if mode == "reduce_emi":
         # Recalculate EMI for reduce_emi mode
-        new_emi_val = compute_emi_fixed(new_principal_paise, annual_rate_bps, calc_remaining_months)
+        new_emi_val = compute_emi_fixed(
+            new_principal_paise, annual_rate_bps, calc_remaining_months
+        )
         # Rebuild schedule with correct EMI
         new_schedule = generate_schedule(
             principal_paise=new_principal_paise,
@@ -337,15 +347,17 @@ def regenerate_schedule(
     if previous_schedule and month_offset > 0:
         adjusted_schedule = []
         for row in new_schedule:
-            adjusted_schedule.append(AmortizationRow(
-                month_number=row.month_number + month_offset,
-                payment_date=row.payment_date,
-                emi_paise=row.emi_paise,
-                principal_paise=row.principal_paise,
-                interest_paise=row.interest_paise,
-                balance_paise=row.balance_paise,
-                cumulative_interest_paise=row.cumulative_interest_paise,
-            ))
+            adjusted_schedule.append(
+                AmortizationRow(
+                    month_number=row.month_number + month_offset,
+                    payment_date=row.payment_date,
+                    emi_paise=row.emi_paise,
+                    principal_paise=row.principal_paise,
+                    interest_paise=row.interest_paise,
+                    balance_paise=row.balance_paise,
+                    cumulative_interest_paise=row.cumulative_interest_paise,
+                )
+            )
         return adjusted_schedule
 
     return new_schedule

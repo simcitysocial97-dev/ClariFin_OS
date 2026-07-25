@@ -132,7 +132,7 @@ def compute_weekend_spend_ratio(transactions: list[dict[str, Any]]) -> Decimal:
             weekend_spend += amount
 
     if total_spend == 0:
-        return Decimal('0')
+        return Decimal("0")
 
     return round_decimal(Decimal(str(weekend_spend)) / Decimal(str(total_spend)))
 
@@ -177,7 +177,7 @@ def compute_night_spend_ratio(transactions: list[dict[str, Any]]) -> Decimal:
 
     # If no time data available, return 0
     if not has_time_data or total_spend == 0:
-        return Decimal('0')
+        return Decimal("0")
 
     return round_decimal(Decimal(str(night_spend)) / Decimal(str(total_spend)))
 
@@ -246,14 +246,16 @@ def detect_recurring_merchants(
         # Must have at least 2 months of recurring activity
         if months_with_sufficient >= 2:
             avg_amount = sum(avg_amounts) // len(avg_amounts) if avg_amounts else 0
-            recurring_patterns.append({
-                "merchant": merchant,
-                "total_transactions": len(txns),
-                "months_covered": months_with_sufficient,
-                "avg_amount_paise": avg_amount,
-                "first_seen": min(t.get("date_iso", "") for t in txns),
-                "last_seen": max(t.get("date_iso", "") for t in txns),
-            })
+            recurring_patterns.append(
+                {
+                    "merchant": merchant,
+                    "total_transactions": len(txns),
+                    "months_covered": months_with_sufficient,
+                    "avg_amount_paise": avg_amount,
+                    "first_seen": min(t.get("date_iso", "") for t in txns),
+                    "last_seen": max(t.get("date_iso", "") for t in txns),
+                }
+            )
 
     return recurring_patterns
 
@@ -290,7 +292,9 @@ def detect_subscription_patterns(
 
     for merchant, txns in merchant_txns.items():
         # Group by day-of-month
-        day_amounts: dict[int, list[tuple[int, tuple[int, int]]]] = defaultdict(list)  # day -> [(amount, (year, month))]
+        day_amounts: dict[int, list[tuple[int, tuple[int, int]]]] = defaultdict(
+            list
+        )  # day -> [(amount, (year, month))]
 
         for txn in txns:
             date_iso = txn.get("date_iso", "")
@@ -319,19 +323,25 @@ def detect_subscription_patterns(
 
             # Check if all amounts are within tolerance
             is_subscription = all(
-                abs(amt - avg_amount) / avg_amount <= tolerance if avg_amount > 0 else False
+                (
+                    abs(amt - avg_amount) / avg_amount <= tolerance
+                    if avg_amount > 0
+                    else False
+                )
                 for amt in amounts
             )
 
             if is_subscription:
-                subscriptions.append({
-                    "merchant": merchant,
-                    "day_of_month": day,
-                    "avg_amount_paise": avg_amount,
-                    "months_active": len(unique_months),
-                    "total_transactions": len(amounts),
-                    "first_seen": min(t.get("date_iso", "") for t in txns),
-                    "last_seen": max(t.get("date_iso", "") for t in txns),
-                })
+                subscriptions.append(
+                    {
+                        "merchant": merchant,
+                        "day_of_month": day,
+                        "avg_amount_paise": avg_amount,
+                        "months_active": len(unique_months),
+                        "total_transactions": len(amounts),
+                        "first_seen": min(t.get("date_iso", "") for t in txns),
+                        "last_seen": max(t.get("date_iso", "") for t in txns),
+                    }
+                )
 
     return subscriptions

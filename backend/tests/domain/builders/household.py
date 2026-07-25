@@ -1,4 +1,5 @@
 """Household Builder - Plain Python builder for household data."""
+
 from __future__ import annotations
 
 from typing import Any

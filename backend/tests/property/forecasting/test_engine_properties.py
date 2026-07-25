@@ -1,4 +1,5 @@
 """Property tests for Forecasting — financial intelligence forecasting."""
+
 from __future__ import annotations
 
 import sys
@@ -30,12 +31,24 @@ class TestForecastEngineProperties:
         from src.engines.financial_intelligence.forecasting import forecast_cashflow
 
         history = [
-            {"month": "2026-01", "income_paise": income_paise, "expense_paise": expense_paise,
-             "surplus_paise": income_paise - expense_paise},
-            {"month": "2026-02", "income_paise": income_paise, "expense_paise": expense_paise,
-             "surplus_paise": income_paise - expense_paise},
-            {"month": "2026-03", "income_paise": income_paise, "expense_paise": expense_paise,
-             "surplus_paise": income_paise - expense_paise},
+            {
+                "month": "2026-01",
+                "income_paise": income_paise,
+                "expense_paise": expense_paise,
+                "surplus_paise": income_paise - expense_paise,
+            },
+            {
+                "month": "2026-02",
+                "income_paise": income_paise,
+                "expense_paise": expense_paise,
+                "surplus_paise": income_paise - expense_paise,
+            },
+            {
+                "month": "2026-03",
+                "income_paise": income_paise,
+                "expense_paise": expense_paise,
+                "surplus_paise": income_paise - expense_paise,
+            },
         ]
         result = forecast_cashflow(history, forecast_months=3)
         assert isinstance(result, dict)
@@ -56,10 +69,18 @@ class TestForecastEngineProperties:
         from src.engines.financial_intelligence.forecasting import forecast_cashflow
 
         history = [
-            {"month": "2026-01", "income_paise": income_paise, "expense_paise": expense_paise,
-             "surplus_paise": income_paise - expense_paise},
-            {"month": "2026-02", "income_paise": income_paise, "expense_paise": expense_paise,
-             "surplus_paise": income_paise - expense_paise},
+            {
+                "month": "2026-01",
+                "income_paise": income_paise,
+                "expense_paise": expense_paise,
+                "surplus_paise": income_paise - expense_paise,
+            },
+            {
+                "month": "2026-02",
+                "income_paise": income_paise,
+                "expense_paise": expense_paise,
+                "surplus_paise": income_paise - expense_paise,
+            },
         ]
         result = forecast_cashflow(history, forecast_months=2)
         if "confidence_bps" in result:
@@ -67,12 +88,14 @@ class TestForecastEngineProperties:
 
     @given(
         month_data=st.lists(
-            st.fixed_dictionaries({
-                "month": st.just("2025-01"),
-                "income_paise": st.integers(min_value=50000, max_value=1000000),
-                "expense_paise": st.integers(min_value=50000, max_value=1000000),
-                "surplus_paise": st.integers(min_value=-100000, max_value=1000000),
-            }),
+            st.fixed_dictionaries(
+                {
+                    "month": st.just("2025-01"),
+                    "income_paise": st.integers(min_value=50000, max_value=1000000),
+                    "expense_paise": st.integers(min_value=50000, max_value=1000000),
+                    "surplus_paise": st.integers(min_value=-100000, max_value=1000000),
+                }
+            ),
             min_size=1,
             max_size=12,
         ),

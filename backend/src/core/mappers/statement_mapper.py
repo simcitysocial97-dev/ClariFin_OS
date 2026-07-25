@@ -73,17 +73,30 @@ class StatementMapper:
         # Validation badge
         validation_status = stmt.get("validation_status") or "pending"
         badge_text = (
-            "✅ Exact Match" if validation_status == "exact_match"
-            else f"⚠️ Close (₹{diff_rupees:,.0f} off)" if validation_status == "close_match"
-            else f"❌ Mismatch (₹{diff_rupees:,.0f})" if validation_status == "mismatch"
-            else "— No Data" if validation_status == "no_metadata"
-            else "⏳ Pending"
+            "✅ Exact Match"
+            if validation_status == "exact_match"
+            else (
+                f"⚠️ Close (₹{diff_rupees:,.0f} off)"
+                if validation_status == "close_match"
+                else (
+                    f"❌ Mismatch (₹{diff_rupees:,.0f})"
+                    if validation_status == "mismatch"
+                    else (
+                        "— No Data"
+                        if validation_status == "no_metadata"
+                        else "⏳ Pending"
+                    )
+                )
+            )
         )
         badge_color = (
-            "green" if validation_status == "exact_match"
-            else "amber" if validation_status == "close_match"
-            else "red" if validation_status == "mismatch"
-            else "gray"
+            "green"
+            if validation_status == "exact_match"
+            else (
+                "amber"
+                if validation_status == "close_match"
+                else "red" if validation_status == "mismatch" else "gray"
+            )
         )
 
         card_last4 = stmt.get("card_last4") or ""
@@ -98,7 +111,8 @@ class StatementMapper:
             period_to=stmt.get("statement_period_to") or "",
             period_display=(
                 f"{stmt.get('statement_period_from')} – {stmt.get('statement_period_to')}"
-                if stmt.get("statement_period_from") else ""
+                if stmt.get("statement_period_from")
+                else ""
             ),
             transaction_count=stmt.get("transaction_count", 0),
             total_debit_paise=total_debit_paise,

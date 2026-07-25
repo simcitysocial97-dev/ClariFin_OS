@@ -1,4 +1,5 @@
 """Audit and integrity verification endpoints."""
+
 from typing import Any
 
 from fastapi import APIRouter, HTTPException

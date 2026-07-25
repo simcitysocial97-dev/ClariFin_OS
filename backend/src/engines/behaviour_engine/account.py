@@ -147,8 +147,8 @@ def detect_low_balance_risk(
 
     # Risk = (essential - current) / essential
     # This gives 0 when balance = essential, and approaches 1 as balance -> 0
-    risk = Decimal(str(essential_monthly_expenses_paise - current_balance_paise)) / Decimal(
-        str(essential_monthly_expenses_paise)
-    )
+    risk = Decimal(
+        str(essential_monthly_expenses_paise - current_balance_paise)
+    ) / Decimal(str(essential_monthly_expenses_paise))
 
     return round_decimal(risk)

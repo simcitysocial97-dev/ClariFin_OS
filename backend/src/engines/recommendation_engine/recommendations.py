@@ -91,7 +91,9 @@ def check_foir(foir_ratio: Decimal) -> Recommendation | None:
     """
     if foir_ratio > FOIR_THRESHOLD:
         percentage = int(foir_ratio * 100)
-        severity: RecommendationSeverity = "CRITICAL" if foir_ratio >= Decimal("0.6") else "HIGH"
+        severity: RecommendationSeverity = (
+            "CRITICAL" if foir_ratio >= Decimal("0.6") else "HIGH"
+        )
         return Recommendation(
             title="High Fixed Obligations",
             reason="Fixed obligations are high",
@@ -155,7 +157,9 @@ def detect_subscription_growth(
             )
         return None
 
-    total_previous = sum(sub.get("avg_amount_paise", 0) for sub in previous_subscriptions)
+    total_previous = sum(
+        sub.get("avg_amount_paise", 0) for sub in previous_subscriptions
+    )
 
     if total_previous == 0:
         # Previous had no subscriptions but current does
@@ -171,7 +175,9 @@ def detect_subscription_growth(
 
     # Calculate growth percentage
     if total_previous > 0:
-        growth = Decimal(str(total_current - total_previous)) / Decimal(str(total_previous))
+        growth = Decimal(str(total_current - total_previous)) / Decimal(
+            str(total_previous)
+        )
         if growth > SUBSCRIPTION_GROWTH_THRESHOLD:
             growth_pct = int(growth * 100)
             return Recommendation(
@@ -185,7 +191,8 @@ def detect_subscription_growth(
     # Check for new subscriptions (not in previous period)
     previous_merchants = {sub.get("merchant", "") for sub in previous_subscriptions}
     new_subscriptions = [
-        sub for sub in current_subscriptions
+        sub
+        for sub in current_subscriptions
         if sub.get("merchant", "") not in previous_merchants
     ]
 
@@ -249,4 +256,3 @@ def compute_recommendations(
     recommendations.sort(key=lambda r: severity_order.get(r.severity, 4))
 
     return recommendations
-

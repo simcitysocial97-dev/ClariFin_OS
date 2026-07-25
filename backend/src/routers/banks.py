@@ -1,4 +1,5 @@
 """Bank listing endpoint."""
+
 from fastapi import APIRouter
 
 from src.repositories.bank_repository import BankRepository

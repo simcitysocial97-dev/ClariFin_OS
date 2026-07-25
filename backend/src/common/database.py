@@ -7,6 +7,7 @@ New code should instantiate repositories directly via their __init__.
 The only remaining use of FinanceDB is for schema/migration management
 in db.py itself.
 """
+
 from pathlib import Path
 
 from src.config import settings

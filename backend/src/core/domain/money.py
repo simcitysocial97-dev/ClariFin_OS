@@ -16,7 +16,6 @@ as integer paise internally. No floating-point arithmetic for money.
 """
 
 
-
 class Money:
     """
     Immutable monetary value represented in paise (integer).
@@ -31,7 +30,7 @@ class Money:
     Business limits (e.g., max amount) are enforced in higher layers.
     """
 
-    __slots__ = ('_paise',)
+    __slots__ = ("_paise",)
 
     def __init__(self, paise: int):
         """
@@ -65,7 +64,7 @@ class Money:
         return self._paise / 100.0
 
     @classmethod
-    def from_rupees(cls, rupees: int | float) -> 'Money':
+    def from_rupees(cls, rupees: int | float) -> "Money":
         """
         Create Money from rupees (float or int).
 
@@ -84,7 +83,7 @@ class Money:
     # Arithmetic Operations (all return new Money instances)
     # ============================================================
 
-    def add(self, other: 'Money') -> 'Money':
+    def add(self, other: "Money") -> "Money":
         """
         Add two Money values.
 
@@ -98,7 +97,7 @@ class Money:
             raise TypeError(f"Cannot add Money and {type(other).__name__}")
         return Money(self._paise + other._paise)
 
-    def subtract(self, other: 'Money') -> 'Money':
+    def subtract(self, other: "Money") -> "Money":
         """
         Subtract two Money values.
 
@@ -112,7 +111,7 @@ class Money:
             raise TypeError(f"Cannot subtract {type(other).__name__} from Money")
         return Money(self._paise - other._paise)
 
-    def multiply(self, factor: int) -> 'Money':
+    def multiply(self, factor: int) -> "Money":
         """
         Multiply by integer factor.
 
@@ -123,10 +122,12 @@ class Money:
             New Money instance with product
         """
         if not isinstance(factor, int):
-            raise TypeError(f"Money can only be multiplied by int, got {type(factor).__name__}")
+            raise TypeError(
+                f"Money can only be multiplied by int, got {type(factor).__name__}"
+            )
         return Money(self._paise * factor)
 
-    def divide(self, divisor: int) -> 'Money':
+    def divide(self, divisor: int) -> "Money":
         """
         Divide by integer divisor (integer division).
 
@@ -140,12 +141,14 @@ class Money:
             ZeroDivisionError: If divisor is 0
         """
         if not isinstance(divisor, int):
-            raise TypeError(f"Money can only be divided by int, got {type(divisor).__name__}")
+            raise TypeError(
+                f"Money can only be divided by int, got {type(divisor).__name__}"
+            )
         if divisor == 0:
             raise ZeroDivisionError("Cannot divide Money by zero")
         return Money(round(self._paise / divisor))
 
-    def percentage(self, percent: int) -> 'Money':
+    def percentage(self, percent: int) -> "Money":
         """
         Calculate percentage of this amount.
 
@@ -161,7 +164,7 @@ class Money:
             raise ValueError(f"Percentage must be 0-100, got {percent}")
         return Money(round(self._paise * percent / 100))
 
-    def negate(self) -> 'Money':
+    def negate(self) -> "Money":
         """
         Negate the amount (positive → negative, negative → positive).
 
@@ -170,7 +173,7 @@ class Money:
         """
         return Money(-self._paise)
 
-    def absolute(self) -> 'Money':
+    def absolute(self) -> "Money":
         """
         Get absolute value.
 
@@ -195,7 +198,7 @@ class Money:
         """Check if amount is negative."""
         return self._paise < 0
 
-    def equals(self, other: 'Money') -> bool:
+    def equals(self, other: "Money") -> bool:
         """
         Check equality with another Money instance.
 
@@ -209,7 +212,7 @@ class Money:
             return False
         return self._paise == other._paise
 
-    def compare(self, other: 'Money') -> int:
+    def compare(self, other: "Money") -> int:
         """
         Compare with another Money instance.
 
@@ -242,9 +245,9 @@ class Money:
 
     def __format__(self, format_spec: str) -> str:
         """Format support for f-strings."""
-        if format_spec == 'rupees':
+        if format_spec == "rupees":
             return f"₹{self._paise / 100.0:,.2f}"
-        elif format_spec == 'paise':
+        elif format_spec == "paise":
             return f"{self._paise} paise"
         return str(self)
 
@@ -252,31 +255,31 @@ class Money:
     # Python Magic Methods (for convenience)
     # ============================================================
 
-    def __add__(self, other: 'Money') -> 'Money':
+    def __add__(self, other: "Money") -> "Money":
         """Support + operator."""
         return self.add(other)
 
-    def __sub__(self, other: 'Money') -> 'Money':
+    def __sub__(self, other: "Money") -> "Money":
         """Support - operator."""
         return self.subtract(other)
 
-    def __mul__(self, factor: int) -> 'Money':
+    def __mul__(self, factor: int) -> "Money":
         """Support * operator."""
         return self.multiply(factor)
 
-    def __rmul__(self, factor: int) -> 'Money':
+    def __rmul__(self, factor: int) -> "Money":
         """Support reflected * operator."""
         return self.multiply(factor)
 
-    def __truediv__(self, divisor: int) -> 'Money':
+    def __truediv__(self, divisor: int) -> "Money":
         """Support / operator."""
         return self.divide(divisor)
 
-    def __neg__(self) -> 'Money':
+    def __neg__(self) -> "Money":
         """Support unary - operator."""
         return self.negate()
 
-    def __abs__(self) -> 'Money':
+    def __abs__(self) -> "Money":
         """Support abs() function."""
         return self.absolute()
 
@@ -286,25 +289,25 @@ class Money:
             return NotImplemented
         return self._paise == other._paise
 
-    def __lt__(self, other: 'Money') -> bool:
+    def __lt__(self, other: "Money") -> bool:
         """Support < operator."""
         if not isinstance(other, Money):
             return NotImplemented
         return self._paise < other._paise
 
-    def __le__(self, other: 'Money') -> bool:
+    def __le__(self, other: "Money") -> bool:
         """Support <= operator."""
         if not isinstance(other, Money):
             return NotImplemented
         return self._paise <= other._paise
 
-    def __gt__(self, other: 'Money') -> bool:
+    def __gt__(self, other: "Money") -> bool:
         """Support > operator."""
         if not isinstance(other, Money):
             return NotImplemented
         return self._paise > other._paise
 
-    def __ge__(self, other: 'Money') -> bool:
+    def __ge__(self, other: "Money") -> bool:
         """Support >= operator."""
         if not isinstance(other, Money):
             return NotImplemented

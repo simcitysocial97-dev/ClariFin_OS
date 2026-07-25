@@ -1,4 +1,5 @@
 """Account Invariants — State transitions, scope ownership, balance consistency."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -27,7 +28,10 @@ def assert_account_state_valid(account_data: dict[str, Any]) -> None:
             )
 
     # Credit limit must be non-negative for credit accounts
-    if "credit_limit_paise" in account_data and account_data["credit_limit_paise"] is not None:
+    if (
+        "credit_limit_paise" in account_data
+        and account_data["credit_limit_paise"] is not None
+    ):
         if account_data["credit_limit_paise"] < 0:
             raise AssertionError(
                 f"credit_limit_paise ({account_data['credit_limit_paise']}) cannot be negative"
@@ -62,12 +66,12 @@ def assert_owner_scope_valid(account_data: dict[str, Any]) -> None:
             )
         # Scope consistency: household scope requires household_id
         if account_data["scope"] == "household" and not household_id:
-            raise AssertionError(
-                "Household scope requires household_id to be set"
-            )
+            raise AssertionError("Household scope requires household_id to be set")
 
 
-def assert_account_closed_valid(is_active: bool, last_transaction_date: str | None) -> None:
+def assert_account_closed_valid(
+    is_active: bool, last_transaction_date: str | None
+) -> None:
     """Validate account closure invariants.
 
     INVARIANT: Closed accounts have no recent transaction activity.
@@ -81,6 +85,4 @@ def assert_account_closed_valid(is_active: bool, last_transaction_date: str | No
         AssertionError: If closure state is inconsistent
     """
     if is_active and last_transaction_date is None:
-        raise AssertionError(
-            "Active account must have a last_transaction_date"
-        )
+        raise AssertionError("Active account must have a last_transaction_date")

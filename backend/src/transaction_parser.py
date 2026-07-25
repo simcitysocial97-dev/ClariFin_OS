@@ -2,6 +2,7 @@
 Parse transactions from table rows.
 ONLY regex allowed: Date parsing (DD/MM/YYYY)
 """
+
 import re  # ONLY for date validation
 from typing import Any
 
@@ -12,9 +13,9 @@ class TransactionParser:
     """Convert table rows to transaction objects"""
 
     # ONLY regex: Validate date format - this is ALLOWED per requirements
-    DATE_PATTERN = re.compile(r'(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})')
+    DATE_PATTERN = re.compile(r"(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})")
 
-    def __init__(self, column_mapping: dict[str, str], bank_name: str = 'Unknown'):
+    def __init__(self, column_mapping: dict[str, str], bank_name: str = "Unknown"):
         self.mapping = column_mapping
         self.bank_name = bank_name
 
@@ -33,26 +34,26 @@ class TransactionParser:
         """Parse a single row into transaction dict"""
 
         # Get date
-        date_col = self.mapping.get('date')
+        date_col = self.mapping.get("date")
         if not date_col:
             return None
 
-        date_val = str(row.get(date_col, '')).strip()
+        date_val = str(row.get(date_col, "")).strip()
         date = self._parse_date(date_val)
         if not date:
             return None  # Skip rows without valid date
 
         # Get description
-        desc_col = self.mapping.get('description')
-        description = str(row.get(desc_col, '')).strip() if desc_col else ''
+        desc_col = self.mapping.get("description")
+        description = str(row.get(desc_col, "")).strip() if desc_col else ""
 
         # Get amount - try separate debit/credit columns first
         amount = 0.0
-        tx_type = 'debit'
+        tx_type = "debit"
 
-        debit_col = self.mapping.get('debit')
-        credit_col = self.mapping.get('credit')
-        amount_col = self.mapping.get('amount')
+        debit_col = self.mapping.get("debit")
+        credit_col = self.mapping.get("credit")
+        amount_col = self.mapping.get("amount")
 
         if debit_col and credit_col:
             # Separate columns
@@ -61,10 +62,10 @@ class TransactionParser:
 
             if debit_val > 0:
                 amount = debit_val
-                tx_type = 'debit'
+                tx_type = "debit"
             elif credit_val > 0:
                 amount = credit_val
-                tx_type = 'credit'
+                tx_type = "credit"
         elif amount_col:
             # Single amount column
             amount = self._parse_amount(row.get(amount_col))
@@ -73,12 +74,12 @@ class TransactionParser:
             return None
 
         return {
-            'date': date,
-            'description': description,
-            'amount_paise': int(amount * 100),
-            'type': tx_type,
-            'bank': self.bank_name,
-            'category': 'Uncategorized'
+            "date": date,
+            "description": description,
+            "amount_paise": int(amount * 100),
+            "type": tx_type,
+            "bank": self.bank_name,
+            "category": "Uncategorized",
         }
 
     def _parse_date(self, value: str) -> str | None:
@@ -86,7 +87,7 @@ class TransactionParser:
         Parse date to DD/MM/YYYY format.
         Uses regex - this is the ONLY allowed regex per requirements.
         """
-        if not value or value == 'None':
+        if not value or value == "None":
             return None
 
         value = str(value).strip()
@@ -101,9 +102,9 @@ class TransactionParser:
         if len(year) == 2:
             year_int = int(year)
             if year_int < 50:
-                year = '20' + year
+                year = "20" + year
             else:
-                year = '19' + year
+                year = "19" + year
 
         return f"{day.zfill(2)}/{month.zfill(2)}/{year}"
 
@@ -119,16 +120,16 @@ class TransactionParser:
         amount_str = str(value)
 
         # Remove common characters (NO REGEX - simple string operations)
-        for char in ['₹', ',', ' ', 'Rs.', 'Rs', 'INR', 'inr']:
-            amount_str = amount_str.replace(char, '')
+        for char in ["₹", ",", " ", "Rs.", "Rs", "INR", "inr"]:
+            amount_str = amount_str.replace(char, "")
 
         # Handle Cr/Dr suffix (NO REGEX)
-        amount_str = amount_str.replace('Cr', '').replace('Dr', '')
-        amount_str = amount_str.replace('cr', '').replace('dr', '')
+        amount_str = amount_str.replace("Cr", "").replace("Dr", "")
+        amount_str = amount_str.replace("cr", "").replace("dr", "")
         amount_str = amount_str.strip()
 
         # Handle negative
-        amount_str = amount_str.replace('-', '')
+        amount_str = amount_str.replace("-", "")
 
         try:
             amount = float(amount_str)

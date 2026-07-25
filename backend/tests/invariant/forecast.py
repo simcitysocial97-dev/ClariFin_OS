@@ -1,4 +1,5 @@
 """Forecast Invariants - Confidence in bps range, valid values."""
+
 from __future__ import annotations
 
 from decimal import Decimal
@@ -23,10 +24,14 @@ def assert_forecast_invariants(forecast_result: dict[str, Any]) -> None:
 
         if isinstance(confidence, Decimal):
             if confidence < Decimal("0") or confidence > Decimal("10000"):
-                raise AssertionError(f"Confidence {confidence} out of bps range (0-10000)")
+                raise AssertionError(
+                    f"Confidence {confidence} out of bps range (0-10000)"
+                )
         elif isinstance(confidence, (int, float)):
             if confidence < 0 or confidence > 10000:
-                raise AssertionError(f"Confidence {confidence} out of bps range (0-10000)")
+                raise AssertionError(
+                    f"Confidence {confidence} out of bps range (0-10000)"
+                )
 
     # All paise values must be integers
     from .money import assert_money_invariants

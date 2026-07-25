@@ -34,7 +34,8 @@ def compute_foreclosure_amount(
     # First, generate the remaining schedule
     # For foreclosure, we need to calculate interest from the beginning of remaining period
     original_schedule = generate_schedule(
-        principal_paise=outstanding_paise + (months_paid * 0),  # We need original principal
+        principal_paise=outstanding_paise
+        + (months_paid * 0),  # We need original principal
         annual_rate_bps=annual_rate_bps,
         tenure_months=remaining_months,
         start_date="2025-01-01",  # Default, would need actual start date
@@ -44,7 +45,9 @@ def compute_foreclosure_amount(
     remaining_interest = total_interest_paise(original_schedule)
 
     # Penalty calculation
-    penalty_decimal = Decimal(prepayment_penalty_bps) * Decimal(outstanding_paise) / Decimal(10000)
+    penalty_decimal = (
+        Decimal(prepayment_penalty_bps) * Decimal(outstanding_paise) / Decimal(10000)
+    )
     penalty_paise = int(penalty_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
 
     # Total foreclosure amount
@@ -100,7 +103,9 @@ def compute_prepayment_breakup(
     accrued_interest = sum(row.interest_paise for row in remaining_schedule)
 
     # Penalty
-    penalty_decimal = Decimal(prepayment_penalty_bps) * Decimal(principal_remaining) / Decimal(10000)
+    penalty_decimal = (
+        Decimal(prepayment_penalty_bps) * Decimal(principal_remaining) / Decimal(10000)
+    )
     penalty = int(penalty_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
 
     return {

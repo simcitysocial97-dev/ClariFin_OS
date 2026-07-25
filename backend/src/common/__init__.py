@@ -1,4 +1,5 @@
 """Shared utilities for API layer."""
+
 from .calculations import (
     _parse_amount_paise,
     compute_behavioral_insights,

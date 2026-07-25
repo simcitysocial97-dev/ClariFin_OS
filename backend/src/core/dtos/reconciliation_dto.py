@@ -17,8 +17,10 @@ ReconciliationStatus = Literal["pending", "confirmed", "rejected", "disputed"]
 
 # ===== Discrepancy Types =====
 
+
 class DiscrepancyDTO(BaseModel):
     """Discrepancy between transaction and statement."""
+
     id: int = Field(description="Discrepancy identifier")
     transaction_id: int = Field(description="Transaction identifier")
     statement_id: int = Field(description="Statement identifier")
@@ -32,8 +34,10 @@ class DiscrepancyDTO(BaseModel):
 
 # ===== Status Overview Types =====
 
+
 class StatusOverviewDTO(BaseModel):
     """Reconciliation status overview."""
+
     total_transactions: int = Field(description="Total transactions")
     reconciled: int = Field(description="Number of reconciled transactions")
     pending: int = Field(description="Number of pending reconciliations")
@@ -43,8 +47,10 @@ class StatusOverviewDTO(BaseModel):
 
 # ===== Audit Trail Types =====
 
+
 class AuditTrailEntryDTO(BaseModel):
     """Single entry in audit trail."""
+
     id: int = Field(description="Audit entry identifier")
     transaction_id: int = Field(description="Transaction identifier")
     action: str = Field(description="Action taken (reconcile, reject, dispute)")
@@ -55,8 +61,10 @@ class AuditTrailEntryDTO(BaseModel):
 
 # ===== Reconciliation Summary Types =====
 
+
 class ReconciliationSummaryDTO(BaseModel):
     """Reconciliation summary for a statement."""
+
     statement_id: int = Field(description="Statement identifier")
     bank: str = Field(description="Bank name")
     period_from: str = Field(description="Statement period start")
@@ -76,24 +84,32 @@ ReconciliationInsightSeverity = Literal["low", "medium", "high"]
 
 class ReconciliationInsightDTO(BaseModel):
     """Insight about reconciliation changes or patterns."""
+
     type: ReconciliationInsightType = Field(description="Insight type")
     severity: ReconciliationInsightSeverity = Field(description="Insight severity")
     message: str = Field(description="Human-readable insight message")
-    action_url: str | None = Field(default=None, description="URL for detailed view or action")
+    action_url: str | None = Field(
+        default=None, description="URL for detailed view or action"
+    )
 
 
 # ===== Reconciliation Evidence Types =====
 
+
 class ReconciliationEvidenceItemDTO(BaseModel):
     """Evidence item for reconciliation calculation."""
+
     type: str = Field(description="Evidence type (transaction, statement, match)")
     summary: str = Field(description="Human-readable summary")
     source: str = Field(description="Source reference")
-    confidence: float | None = Field(default=None, description="Confidence score (0-100)")
+    confidence: float | None = Field(
+        default=None, description="Confidence score (0-100)"
+    )
 
 
 class ReconciliationCalculationStepDTO(BaseModel):
     """Calculation step in the reconciliation derivation chain."""
+
     name: str = Field(description="Step name")
     description: str = Field(description="Step description")
     inputs: dict[str, Any] = Field(default_factory=dict, description="Input values")
@@ -102,23 +118,22 @@ class ReconciliationCalculationStepDTO(BaseModel):
 
 class ReconciliationEvidenceChainDTO(BaseModel):
     """Evidence chain for reconciliation calculation."""
+
     summary: str = Field(description="Overall summary of the calculation")
     evidence: list[ReconciliationEvidenceItemDTO] = Field(
-        default_factory=list,
-        description="List of evidence items"
+        default_factory=list, description="List of evidence items"
     )
     calculation_steps: list[ReconciliationCalculationStepDTO] = Field(
-        default_factory=list,
-        description="Calculation chain steps"
+        default_factory=list, description="Calculation chain steps"
     )
     source_references: list[str] = Field(
-        default_factory=list,
-        description="Source references for traceability"
+        default_factory=list, description="Source references for traceability"
     )
     confidence_score: float = Field(description="Overall confidence (0-100)")
 
 
 # ===== Main Reconciliation DTO =====
+
 
 class ReconciliationDTO(BaseModel):
     """
@@ -128,13 +143,12 @@ class ReconciliationDTO(BaseModel):
     - total_discrepancy_paise: Total discrepancy in paise (canonical)
     - total_reconciled_paise: Total reconciled in paise
     """
+
     statements: list[ReconciliationSummaryDTO] = Field(
-        default_factory=list,
-        description="List of statement summaries"
+        default_factory=list, description="List of statement summaries"
     )
     discrepancies: list[DiscrepancyDTO] = Field(
-        default_factory=list,
-        description="List of discrepancies"
+        default_factory=list, description="List of discrepancies"
     )
     status_overview: StatusOverviewDTO = Field(
         default_factory=lambda: StatusOverviewDTO(
@@ -144,19 +158,16 @@ class ReconciliationDTO(BaseModel):
             discrepancies=0,
             match_rate=0.0,
         ),
-        description="Reconciliation status overview"
+        description="Reconciliation status overview",
     )
     audit_trail: list[AuditTrailEntryDTO] = Field(
-        default_factory=list,
-        description="Audit trail entries"
+        default_factory=list, description="Audit trail entries"
     )
     insights: list[ReconciliationInsightDTO] = Field(
-        default_factory=list,
-        description="List of insights about reconciliation"
+        default_factory=list, description="List of insights about reconciliation"
     )
     evidence_chain: ReconciliationEvidenceChainDTO | None = Field(
-        default=None,
-        description="Evidence chain for explainability"
+        default=None, description="Evidence chain for explainability"
     )
 
     class Config:
@@ -169,22 +180,23 @@ class ReconciliationDTO(BaseModel):
                     "reconciled": 95,
                     "pending": 3,
                     "discrepancies": 2,
-                    "match_rate": 95.0
+                    "match_rate": 95.0,
                 },
                 "audit_trail": [],
                 "insights": [],
-                "evidence_chain": None
+                "evidence_chain": None,
             }
         }
 
 
 # ===== Reconciliation Response Types =====
 
+
 class ReconciliationDiscrepancyResponse(BaseModel):
     """Response for discrepancy list endpoint."""
+
     discrepancies: list[DiscrepancyDTO] = Field(
-        default_factory=list,
-        description="List of discrepancies"
+        default_factory=list, description="List of discrepancies"
     )
     total: int = Field(description="Total number of discrepancies")
     limit: int = Field(description="Number of discrepancies per page")
@@ -193,8 +205,8 @@ class ReconciliationDiscrepancyResponse(BaseModel):
 
 class ReconciliationAuditResponse(BaseModel):
     """Response for audit trail endpoint."""
+
     audit_trail: list[AuditTrailEntryDTO] = Field(
-        default_factory=list,
-        description="Audit trail entries"
+        default_factory=list, description="Audit trail entries"
     )
     total_count: int = Field(description="Total number of entries")

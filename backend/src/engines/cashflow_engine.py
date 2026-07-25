@@ -22,6 +22,7 @@ from typing import Any
 # Month Classification Constants
 # ============================================================
 
+
 class MonthClassification:
     SURPLUS = "surplus"
     DEFICIT_COVERED_BY_CREDIT = "deficit_covered_by_credit"
@@ -31,6 +32,7 @@ class MonthClassification:
 # ============================================================
 # Core Computation
 # ============================================================
+
 
 def compute_monthly_cashflow(
     cash_summary: dict[str, Any],
@@ -83,7 +85,11 @@ def compute_monthly_cashflow(
         event_type = event.get("event_type", "")
         asset_change = int(event.get("asset_change_paise", 0) or 0)
 
-        if event_type in ("cash_advance", "credit_card_cash_advance", "liability_increase"):
+        if event_type in (
+            "cash_advance",
+            "credit_card_cash_advance",
+            "liability_increase",
+        ):
             # Cash advance adds to credit-funded pool
             total_credit_funded += abs(asset_change)
             total_liability_increase += event_amount
@@ -115,7 +121,8 @@ def compute_monthly_cashflow(
 
     # Month classification
     has_credit_events = any(
-        e.get("event_type") in ("cash_advance", "credit_card_cash_advance", "liability_increase")
+        e.get("event_type")
+        in ("cash_advance", "credit_card_cash_advance", "liability_increase")
         for e in financial_events
     )
 
@@ -130,7 +137,9 @@ def compute_monthly_cashflow(
 
     # Credit dependency ratio
     if expense > 0:
-        credit_dependency_ratio = Decimal(str(total_credit_funded)) / Decimal(str(expense))
+        credit_dependency_ratio = Decimal(str(total_credit_funded)) / Decimal(
+            str(expense)
+        )
     else:
         credit_dependency_ratio = Decimal("0")
 

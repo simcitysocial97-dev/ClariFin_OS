@@ -47,8 +47,13 @@ def compute_financial_metrics(
     # Utilization in basis points
     if credit_limit_paise > 0 and outstanding_paise > 0:
         from decimal import ROUND_HALF_EVEN, Decimal
-        util_decimal = Decimal(outstanding_paise) * Decimal(10000) / Decimal(credit_limit_paise)
-        utilization_bps = int(util_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+
+        util_decimal = (
+            Decimal(outstanding_paise) * Decimal(10000) / Decimal(credit_limit_paise)
+        )
+        utilization_bps = int(
+            util_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+        )
         utilization_bps = min(utilization_bps, 10000)
     else:
         utilization_bps = 0

@@ -1,4 +1,5 @@
 """Smoke tests for Debt Management capability."""
+
 from __future__ import annotations
 
 import sys

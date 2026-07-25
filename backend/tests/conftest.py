@@ -86,6 +86,7 @@ def temp_db():
     """
     import tempfile
     import os
+
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
     yield db_path

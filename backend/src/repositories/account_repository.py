@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 from typing import Any
 
 from src.models.account import Account
@@ -20,7 +21,7 @@ class AccountRepository(BaseRepository):
             columns = [row[1] for row in cur.fetchall()]
 
             # Use correct column names based on schema
-            if 'bank' in columns:
+            if "bank" in columns:
                 # New schema
                 rows = conn.execute("""
                     SELECT id, name, bank, account_type, account_number_last4,
@@ -43,8 +44,10 @@ class AccountRepository(BaseRepository):
             result = []
             for r in rows:
                 d = dict(r)
-                d['bank'] = d.pop('bank_name', d.get('bank'))
-                d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
+                d["bank"] = d.pop("bank_name", d.get("bank"))
+                d["account_number_last4"] = d.pop(
+                    "account_number_masked", d.get("account_number_last4")
+                )
                 result.append(d)
         return result
 
@@ -56,15 +59,13 @@ class AccountRepository(BaseRepository):
         Money value object exposed by the Account model.
         """
         with self._get_conn() as conn:
-            rows = conn.execute(
-                """
+            rows = conn.execute("""
                 SELECT id, name, account_type AS type,
                        balance_paise AS initial_balance_paise
                 FROM accounts
                 WHERE is_active = 1
                 ORDER BY name
-            """
-            ).fetchall()
+            """).fetchall()
         return [Account.from_db_row(dict(row)) for row in rows]
 
     def create_account(
@@ -83,22 +84,40 @@ class AccountRepository(BaseRepository):
             columns = [row[1] for row in cur.fetchall()]
 
             # Use correct column names based on schema
-            if 'bank' in columns:
+            if "bank" in columns:
                 # New schema
-                cur = conn.execute("""
+                cur = conn.execute(
+                    """
                     INSERT INTO accounts (name, bank, account_type, balance_paise,
                                            account_number_last4, notes)
                     VALUES (?, ?, ?, ?, ?, ?)
-                    """, (name, bank, account_type, balance_paise,
-                          account_number_last4, notes))
+                    """,
+                    (
+                        name,
+                        bank,
+                        account_type,
+                        balance_paise,
+                        account_number_last4,
+                        notes,
+                    ),
+                )
             else:
                 # Old schema with bank_name/account_number_masked
-                cur = conn.execute("""
+                cur = conn.execute(
+                    """
                     INSERT INTO accounts (name, bank_name, account_type, balance_paise,
                                            account_number_masked, notes)
                     VALUES (?, ?, ?, ?, ?, ?)
-                    """, (name, bank, account_type, balance_paise,
-                          account_number_last4, notes))
+                    """,
+                    (
+                        name,
+                        bank,
+                        account_type,
+                        balance_paise,
+                        account_number_last4,
+                        notes,
+                    ),
+                )
             conn.commit()
         lastrowid = cur.lastrowid
         return self.get_account_by_id(lastrowid if lastrowid is not None else 0)
@@ -113,8 +132,10 @@ class AccountRepository(BaseRepository):
             return None
         d = dict(row)
         # Map old column names to new for API compatibility
-        d['bank'] = d.pop('bank_name', d.get('bank'))
-        d['account_number_last4'] = d.pop('account_number_masked', d.get('account_number_last4'))
+        d["bank"] = d.pop("bank_name", d.get("bank"))
+        d["account_number_last4"] = d.pop(
+            "account_number_masked", d.get("account_number_last4")
+        )
         return d
 
     def update_account(
@@ -128,26 +149,28 @@ class AccountRepository(BaseRepository):
         notes: str | None = None,
     ) -> dict[str, Any] | None:
         """Update an existing account. Only updates provided fields."""
-        updates = {k: v for k, v in {
-            "name": name,
-            "bank": bank,
-            "account_type": account_type,
-            "balance_paise": balance_paise,
-            "account_number_last4": account_number_last4,
-            "notes": notes,
-        }.items() if v is not None}
+        updates = {
+            k: v
+            for k, v in {
+                "name": name,
+                "bank": bank,
+                "account_type": account_type,
+                "balance_paise": balance_paise,
+                "account_number_last4": account_number_last4,
+                "notes": notes,
+            }.items()
+            if v is not None
+        }
 
         if not updates:
             return self.get_account_by_id(account_id)
 
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause = ", ".join(f"{k} = ?" for k in updates)
         set_clause += ", updated_at = datetime('now')"
         values = list(updates.values()) + [account_id]
 
         with self._get_conn() as conn:
-            conn.execute(
-                f"UPDATE accounts SET {set_clause} WHERE id = ?", values
-            )
+            conn.execute(f"UPDATE accounts SET {set_clause} WHERE id = ?", values)
             conn.commit()
         return self.get_account_by_id(account_id)
 

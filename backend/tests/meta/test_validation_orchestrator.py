@@ -44,9 +44,15 @@ def test_manifest_schema() -> None:
         data = json.load(f)
 
     required_fields = [
-        "timestamp", "changed_files", "strategy", "reason",
-        "confidence", "affected_capabilities", "stages",
-        "estimated_runtime", "commands_executed"
+        "timestamp",
+        "changed_files",
+        "strategy",
+        "reason",
+        "confidence",
+        "affected_capabilities",
+        "stages",
+        "estimated_runtime",
+        "commands_executed",
     ]
     for field in required_fields:
         assert field in data, f"Manifest missing '{field}'"
@@ -56,7 +62,8 @@ def test_decision_logic_routers() -> None:
     """Router changes should trigger selective verification."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -65,7 +72,7 @@ from validation_orchestrator import determine_strategy
 strategy, reason, risk = determine_strategy(['backend/src/routers/accounts.py'])
 assert strategy == 'selective', f"Router change should be selective, got {strategy}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -79,7 +86,8 @@ def test_decision_logic_engines() -> None:
     """Engine changes should trigger selective verification."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -88,7 +96,7 @@ from validation_orchestrator import determine_strategy
 strategy, reason, risk = determine_strategy(['backend/src/engines/cashflow_engine.py'])
 assert strategy == 'selective', f"Engine change should be selective, got {strategy}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -102,7 +110,8 @@ def test_decision_logic_models() -> None:
     """Model changes should trigger full verification."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -111,7 +120,7 @@ from validation_orchestrator import determine_strategy
 strategy, reason, risk = determine_strategy(['backend/src/models/account.py'])
 assert strategy == 'full', f"Model change should be full, got {strategy}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -125,7 +134,8 @@ def test_decision_logic_docs() -> None:
     """Documentation changes should trigger fast verification."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -134,7 +144,7 @@ from validation_orchestrator import determine_strategy
 strategy, reason, risk = determine_strategy(['docs/README.md', 'README.md'])
 assert strategy == 'fast', f"Doc change should be fast, got {strategy}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -148,7 +158,8 @@ def test_decision_logic_empty() -> None:
     """No changes should trigger fast verification."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -158,7 +169,7 @@ strategy, reason, risk = determine_strategy([])
 assert strategy == 'fast', f"No changes should be fast, got {strategy}"
 assert risk == 'LOW', f"No changes should have LOW risk, got {risk}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -173,7 +184,8 @@ def test_history_rotation() -> None:
     # Import and test rotation
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -186,7 +198,7 @@ loaded = load_history()
 assert len(loaded) == 200, f"History should be capped at 200, got {len(loaded)}"
 assert loaded[0]["entry"] == 50, f"First entry should be 50, got {loaded[0]['entry']}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -200,7 +212,8 @@ def test_fallback_to_full() -> None:
     """Unknown capability handling should trigger full verification fallback."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -214,7 +227,7 @@ assert 'architecture' in full_pipeline, "Full pipeline must include architecture
 assert 'property' in full_pipeline, "Full pipeline must include property"
 assert 'golden' in full_pipeline, "Full pipeline must include golden"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -228,7 +241,8 @@ def test_validation_graph_stages() -> None:
     """ValidationGraph must have all expected stages."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -242,7 +256,7 @@ expected = ['fast', 'coverage', 'change_intelligence', 'architecture', 'capabili
 for exp in expected:
     assert exp in stage_ids, f"Missing stage: {exp}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -256,7 +270,8 @@ def test_risk_rules_loaded() -> None:
     """risk-rules.yaml must be valid and loadable."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -266,7 +281,7 @@ rules = load_risk_rules()
 assert 'rules' in rules, "Rules must have 'rules' key"
 assert len(rules['rules']) > 0, "Rules must not be empty"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -292,7 +307,12 @@ def test_explain_mode() -> None:
 def test_json_output() -> None:
     """--json must generate valid JSON output."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/validation_orchestrator.py", "--plan", "--json"],
+        [
+            sys.executable,
+            "backend/tools/validation_orchestrator.py",
+            "--plan",
+            "--json",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,

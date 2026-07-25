@@ -64,40 +64,85 @@ DATE_FORMATS = [
 
 # Common column name patterns
 DATE_COLUMN_NAMES = [
-    "date", "transaction date", "txn date", "posting date", "value date",
-    "trans date", "tran date", "dt", "txn_dt", "trans_dt"
+    "date",
+    "transaction date",
+    "txn date",
+    "posting date",
+    "value date",
+    "trans date",
+    "tran date",
+    "dt",
+    "txn_dt",
+    "trans_dt",
 ]
 
 DESCRIPTION_COLUMN_NAMES = [
-    "description", "narration", "particulars", "details", "transaction details",
-    "merchant", "merchant name", "trans details", "txn details", "narration",
-    "reference", "ref", "remarks"
+    "description",
+    "narration",
+    "particulars",
+    "details",
+    "transaction details",
+    "merchant",
+    "merchant name",
+    "trans details",
+    "txn details",
+    "narration",
+    "reference",
+    "ref",
+    "remarks",
 ]
 
 AMOUNT_COLUMN_NAMES = [
-    "amount", "transaction amount", "txn amount", "trans amount", "amt",
-    "debit amount", "credit amount", "withdrawal", "deposit"
+    "amount",
+    "transaction amount",
+    "txn amount",
+    "trans amount",
+    "amt",
+    "debit amount",
+    "credit amount",
+    "withdrawal",
+    "deposit",
 ]
 
 TYPE_COLUMN_NAMES = [
-    "type", "dr/cr", "transaction type", "txn type", "trans type", "d/c",
-    "debit/credit", "cr/dr"
+    "type",
+    "dr/cr",
+    "transaction type",
+    "txn type",
+    "trans type",
+    "d/c",
+    "debit/credit",
+    "cr/dr",
 ]
 
 DEBIT_COLUMN_NAMES = [
-    "debit", "dr", "withdrawal", "withdrawal amt", "debit amount", "dr amt",
-    "outflow", "paid out"
+    "debit",
+    "dr",
+    "withdrawal",
+    "withdrawal amt",
+    "debit amount",
+    "dr amt",
+    "outflow",
+    "paid out",
 ]
 
 CREDIT_COLUMN_NAMES = [
-    "credit", "cr", "deposit", "deposit amt", "credit amount", "cr amt",
-    "inflow", "paid in", "received"
+    "credit",
+    "cr",
+    "deposit",
+    "deposit amt",
+    "credit amount",
+    "cr amt",
+    "inflow",
+    "paid in",
+    "received",
 ]
 
 
 # ============================================================
 # CSVImporter Class
 # ============================================================
+
 
 class CSVImporter:
     """
@@ -123,13 +168,17 @@ class CSVImporter:
             # Try different encodings for CSV
             for encoding in ["utf-8", "latin-1", "cp1252", "iso-8859-1"]:
                 try:
-                    df = pd.read_csv(self.file_path, skiprows=skip_rows, encoding=encoding)
+                    df = pd.read_csv(
+                        self.file_path, skiprows=skip_rows, encoding=encoding
+                    )
                     if self.debug:
                         print(f"Read CSV with encoding: {encoding}")
                     return df
                 except UnicodeDecodeError:
                     continue
-            raise ValueError(f"Could not read CSV file with any encoding: {self.file_path}")
+            raise ValueError(
+                f"Could not read CSV file with any encoding: {self.file_path}"
+            )
 
         elif suffix in [".xlsx", ".xls"]:
             df = pd.read_excel(self.file_path, skiprows=skip_rows)
@@ -223,7 +272,14 @@ class CSVImporter:
             return False
 
         # Clean the value
-        cleaned = value_str.replace(",", "").replace("₹", "").replace("Rs.", "").replace("Rs", "").replace("INR", "").strip()
+        cleaned = (
+            value_str.replace(",", "")
+            .replace("₹", "")
+            .replace("Rs.", "")
+            .replace("Rs", "")
+            .replace("INR", "")
+            .strip()
+        )
 
         try:
             float(cleaned)
@@ -244,7 +300,14 @@ class CSVImporter:
             return None
 
         # Clean the value
-        cleaned = value_str.replace(",", "").replace("₹", "").replace("Rs.", "").replace("Rs", "").replace("INR", "").strip()
+        cleaned = (
+            value_str.replace(",", "")
+            .replace("₹", "")
+            .replace("Rs.", "")
+            .replace("Rs", "")
+            .replace("INR", "")
+            .strip()
+        )
 
         # Handle negative values in parentheses (accounting format)
         if cleaned.startswith("(") and cleaned.endswith(")"):
@@ -276,7 +339,9 @@ class CSVImporter:
 
         return None
 
-    def _detect_description_column(self, df: pd.DataFrame, exclude_cols: list[str]) -> str | None:
+    def _detect_description_column(
+        self, df: pd.DataFrame, exclude_cols: list[str]
+    ) -> str | None:
         """Detect which column contains descriptions."""
         columns = [c for c in df.columns.tolist() if c not in exclude_cols]
 
@@ -307,7 +372,9 @@ class CSVImporter:
 
         return str(best_col) if best_col else None
 
-    def _detect_amount_column(self, df: pd.DataFrame, exclude_cols: list[str]) -> str | None:
+    def _detect_amount_column(
+        self, df: pd.DataFrame, exclude_cols: list[str]
+    ) -> str | None:
         """Detect which column contains amounts."""
         columns = [c for c in df.columns.tolist() if c not in exclude_cols]
 
@@ -328,7 +395,9 @@ class CSVImporter:
 
         return None
 
-    def _detect_type_column(self, df: pd.DataFrame, exclude_cols: list[str]) -> str | None:
+    def _detect_type_column(
+        self, df: pd.DataFrame, exclude_cols: list[str]
+    ) -> str | None:
         """Detect which column contains transaction type (DR/CR)."""
         columns = [c for c in df.columns.tolist() if c not in exclude_cols]
 
@@ -352,7 +421,9 @@ class CSVImporter:
 
         return None
 
-    def _detect_debit_credit_columns(self, df: pd.DataFrame, exclude_cols: list[str]) -> tuple[str | None, str | None]:
+    def _detect_debit_credit_columns(
+        self, df: pd.DataFrame, exclude_cols: list[str]
+    ) -> tuple[str | None, str | None]:
         """Detect separate debit and credit columns.
 
         Only returns columns if BOTH debit and credit columns exist and are DIFFERENT.
@@ -538,7 +609,9 @@ class CSVImporter:
                     parsed_date = datetime.strptime(date_str, date_format)
                     formatted_date = parsed_date.strftime("%d/%m/%Y")
                 except ValueError:
-                    warnings.append(f"Row {idx}: Could not parse date '{date_str}', skipping")
+                    warnings.append(
+                        f"Row {idx}: Could not parse date '{date_str}', skipping"
+                    )
                     continue
 
                 # Get description
@@ -553,8 +626,12 @@ class CSVImporter:
 
                 # Case 1: Separate debit/credit columns
                 if debit_col or credit_col:
-                    debit_amt = self._parse_amount(row.get(debit_col)) if debit_col else None
-                    credit_amt = self._parse_amount(row.get(credit_col)) if credit_col else None
+                    debit_amt = (
+                        self._parse_amount(row.get(debit_col)) if debit_col else None
+                    )
+                    credit_amt = (
+                        self._parse_amount(row.get(credit_col)) if credit_col else None
+                    )
 
                     if debit_amt and debit_amt > 0:
                         amount = debit_amt
@@ -563,7 +640,9 @@ class CSVImporter:
                         amount = credit_amt
                         txn_type = "credit"
                     else:
-                        warnings.append(f"Row {idx}: No valid amount in debit/credit columns, skipping")
+                        warnings.append(
+                            f"Row {idx}: No valid amount in debit/credit columns, skipping"
+                        )
                         continue
 
                 # Case 2: Unified amount column
@@ -605,15 +684,17 @@ class CSVImporter:
                 # Categorize
                 category, subcategory = categorize(description, amount)
 
-                transactions.append({
-                    "date": formatted_date,
-                    "description": description,
-                    "original_description": description,
-                    "amount_paise": int(round(amount * 100)),
-                    "type": txn_type,
-                    "category": category,
-                    "subcategory": subcategory,
-                })
+                transactions.append(
+                    {
+                        "date": formatted_date,
+                        "description": description,
+                        "original_description": description,
+                        "amount_paise": int(round(amount * 100)),
+                        "type": txn_type,
+                        "category": category,
+                        "subcategory": subcategory,
+                    }
+                )
 
             except Exception as e:
                 warnings.append(f"Row {idx}: Error processing - {str(e)}")
@@ -635,16 +716,18 @@ class CSVImporter:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Import transactions from CSV/Excel files")
+    parser = argparse.ArgumentParser(
+        description="Import transactions from CSV/Excel files"
+    )
     parser.add_argument("file_path", help="Path to CSV or Excel file")
     parser.add_argument("--debug", action="store_true", help="Enable debug output")
     args = parser.parse_args()
 
     importer = CSVImporter(args.file_path, debug=args.debug)
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"File: {args.file_path}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     detected = importer.detect_format()
 
@@ -665,12 +748,12 @@ if __name__ == "__main__":
 
     print("\nSample Rows:")
     for i, row in enumerate(detected["sample_rows"]):
-        print(f"  Row {i+1}: {row}")
+        print(f"  Row {i + 1}: {row}")
 
     # Try importing with detected mapping
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Testing Import with Detected Mapping")
-    print("="*60 + "\n")
+    print("=" * 60 + "\n")
 
     full_mapping = {
         **mapping,
@@ -687,5 +770,7 @@ if __name__ == "__main__":
     if transactions:
         print("\nFirst 5 transactions:")
         for txn in transactions[:5]:
-            amount_rupees = txn.get('amount_paise', 0) / 100.0
-            print(f"  {txn['date']} | {txn['description'][:30]:<30} | ₹{amount_rupees:>10,.2f} | {txn['type']} | {txn['category']}")
+            amount_rupees = txn.get("amount_paise", 0) / 100.0
+            print(
+                f"  {txn['date']} | {txn['description'][:30]:<30} | ₹{amount_rupees:>10,.2f} | {txn['type']} | {txn['category']}"
+            )

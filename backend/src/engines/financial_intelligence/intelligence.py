@@ -24,6 +24,7 @@ from .models import (
 # Function 1: build_financial_snapshot
 # ============================================================
 
+
 def build_financial_snapshot(
     cashflow: dict[str, Any],
     liquidity: dict[str, Any],
@@ -66,6 +67,7 @@ def build_financial_snapshot(
 # Function 2: generate_financial_priorities
 # ============================================================
 
+
 def generate_financial_priorities(
     optimization_plan: dict[str, Any],
     behaviour: dict[str, Any],
@@ -96,45 +98,56 @@ def generate_financial_priorities(
     # Process recommended actions from optimization (these are already ranked by score)
     for action in recommended_actions:
         action_name = action.get("action", "")
-        reason = _get_action_reason(action_name, optimisation=optimization_plan, behaviour=behaviour)
+        reason = _get_action_reason(
+            action_name, optimisation=optimization_plan, behaviour=behaviour
+        )
         impact = action.get("impact", "medium")
 
-        priorities.append({
-            "rank": rank,
-            "action": action_name,
-            "reason": reason,
-            "impact": impact,
-        })
+        priorities.append(
+            {
+                "rank": rank,
+                "action": action_name,
+                "reason": reason,
+                "impact": impact,
+            }
+        )
         rank += 1
 
     # Add priority for emergency fund shortage (from liquidity forecast)
     liquidity_months = _extract_liquidity_months(liquidity_forecast)
     if liquidity_months < 3:
         # Only add if not already covered by optimization priorities
-        emergency_exists = any(p["action"] == "increase_emergency_fund" for p in priorities)
+        emergency_exists = any(
+            p["action"] == "increase_emergency_fund" for p in priorities
+        )
         if not emergency_exists and rank <= 3:
-            priorities.append({
-                "rank": rank,
-                "action": "increase_emergency_fund",
-                "reason": "emergency_fund_below_target",
-                "impact": "high" if liquidity_months < 1 else "medium",
-            })
+            priorities.append(
+                {
+                    "rank": rank,
+                    "action": "increase_emergency_fund",
+                    "reason": "emergency_fund_below_target",
+                    "impact": "high" if liquidity_months < 1 else "medium",
+                }
+            )
             rank += 1
 
     # Add priority for high credit dependency (behaviour signal)
     credit_revolver_ratio = Decimal(str(behaviour.get("credit_revolver_ratio", 0) or 0))
     if credit_revolver_ratio > Decimal("0.5"):
         credit_priority_exists = any(
-            p["action"] == "pay_credit_card" or p["reason"] == "high_revolving_dependency"
+            p["action"] == "pay_credit_card"
+            or p["reason"] == "high_revolving_dependency"
             for p in priorities
         )
         if not credit_priority_exists and rank <= 3:
-            priorities.append({
-                "rank": rank,
-                "action": "pay_credit_card",
-                "reason": "high_revolving_dependency",
-                "impact": "high",
-            })
+            priorities.append(
+                {
+                    "rank": rank,
+                    "action": "pay_credit_card",
+                    "reason": "high_revolving_dependency",
+                    "impact": "high",
+                }
+            )
             rank += 1
 
     # Sort by rank and return
@@ -150,7 +163,11 @@ def _get_action_reason(
     """Map action names to human-readable reasons."""
     credit_revolver_ratio = Decimal(str(behaviour.get("credit_revolver_ratio", 0) or 0))
     reason_map = {
-        "pay_credit_card": "high_revolving_dependency" if credit_revolver_ratio > Decimal("0.5") else "optimizing_debt",
+        "pay_credit_card": (
+            "high_revolving_dependency"
+            if credit_revolver_ratio > Decimal("0.5")
+            else "optimizing_debt"
+        ),
         "increase_emergency_fund": "emergency_fund_below_target",
         "reduce_expenses": "negative_surplus_detected",
         "increase_investment": "surplus_available_for_investing",
@@ -167,6 +184,7 @@ def _extract_liquidity_months(liquidity_forecast: dict[str, Any]) -> int:
 # ============================================================
 # Function 3: calculate_intelligence_confidence
 # ============================================================
+
 
 def calculate_intelligence_confidence(
     cashflow_history_months: int,
@@ -192,7 +210,9 @@ def calculate_intelligence_confidence(
     Returns:
         ConfidenceMetadata with confidence score, quality label, and factor breakdown
     """
-    months_score = min(Decimal("1"), Decimal(str(cashflow_history_months)) / Decimal("3"))
+    months_score = min(
+        Decimal("1"), Decimal(str(cashflow_history_months)) / Decimal("3")
+    )
     completeness_score = max(Decimal("0"), min(Decimal("1"), transaction_completeness))
     coverage_score = max(Decimal("0"), min(Decimal("1"), account_coverage))
 
@@ -202,10 +222,10 @@ def calculate_intelligence_confidence(
     variance_score = max(Decimal("0"), min(Decimal("1"), variance_score))
 
     confidence = (
-        Decimal("0.25") * months_score +
-        Decimal("0.25") * completeness_score +
-        Decimal("0.25") * coverage_score +
-        Decimal("0.25") * variance_score
+        Decimal("0.25") * months_score
+        + Decimal("0.25") * completeness_score
+        + Decimal("0.25") * coverage_score
+        + Decimal("0.25") * variance_score
     )
 
     if confidence >= Decimal("0.8"):
@@ -232,6 +252,7 @@ def calculate_intelligence_confidence(
 # ============================================================
 # Function 4: generate_financial_intelligence_report
 # ============================================================
+
 
 def generate_financial_intelligence_report(
     financial_state: dict[str, Any],
@@ -297,9 +318,13 @@ def generate_financial_intelligence_report(
 
     confidence = calculate_intelligence_confidence(
         cashflow_history_months=len(forecasts.get("cashflow", {}).get("forecast", [])),
-        transaction_completeness=Decimal(str(behaviour.get("transaction_completeness", 0.8) or 0.8)),
+        transaction_completeness=Decimal(
+            str(behaviour.get("transaction_completeness", 0.8) or 0.8)
+        ),
         account_coverage=Decimal(str(behaviour.get("account_coverage", 0.9) or 0.9)),
-        forecast_variance=Decimal(str(forecasts.get("cashflow", {}).get("confidence", 0.5) or 0.5)),
+        forecast_variance=Decimal(
+            str(forecasts.get("cashflow", {}).get("confidence", 0.5) or 0.5)
+        ),
     )
 
     return IntelligenceReport(
@@ -326,56 +351,70 @@ def _aggregate_risks(
 
     risk_level = liquidity.get("risk_level", "low")
     if risk_level == "high":
-        risks.append({
-            "type": "liquidity_stress",
-            "severity": "critical",
-            "source": "forecasting_engine",
-            "details": {
-                "months_until_stress": liquidity.get("months_until_stress"),
-                "projected_min_balance_paise": liquidity.get("projected_min_balance_paise"),
-            },
-        })
+        risks.append(
+            {
+                "type": "liquidity_stress",
+                "severity": "critical",
+                "source": "forecasting_engine",
+                "details": {
+                    "months_until_stress": liquidity.get("months_until_stress"),
+                    "projected_min_balance_paise": liquidity.get(
+                        "projected_min_balance_paise"
+                    ),
+                },
+            }
+        )
     elif risk_level == "medium":
-        risks.append({
-            "type": "liquidity_stress",
-            "severity": "warning",
-            "source": "forecasting_engine",
-            "details": {
-                "months_until_stress": liquidity.get("months_until_stress"),
-            },
-        })
+        risks.append(
+            {
+                "type": "liquidity_stress",
+                "severity": "warning",
+                "source": "forecasting_engine",
+                "details": {
+                    "months_until_stress": liquidity.get("months_until_stress"),
+                },
+            }
+        )
 
     trend = credit_forecast.get("trend", "stable")
     dependency_ratio = credit_forecast.get("current_dependency_ratio", Decimal("0"))
-    if trend == "worsening" or (isinstance(dependency_ratio, Decimal) and dependency_ratio > Decimal("0.3")):
-        risks.append({
-            "type": "credit_dependency",
-            "severity": "warning",
-            "source": "forecasting_engine",
-            "details": {
-                "trend": trend,
-                "dependency_ratio": str(dependency_ratio),
-            },
-        })
+    if trend == "worsening" or (
+        isinstance(dependency_ratio, Decimal) and dependency_ratio > Decimal("0.3")
+    ):
+        risks.append(
+            {
+                "type": "credit_dependency",
+                "severity": "warning",
+                "source": "forecasting_engine",
+                "details": {
+                    "trend": trend,
+                    "dependency_ratio": str(dependency_ratio),
+                },
+            }
+        )
 
     debt_cycle_score = int(behaviour.get("debt_cycle_score", 0) or 0)
     if debt_cycle_score > 70:
-        risks.append({
-            "type": "debt_cycle",
-            "severity": "warning",
-            "source": "behaviour_engine",
-            "details": {
-                "debt_cycle_score": debt_cycle_score,
-            },
-        })
+        risks.append(
+            {
+                "type": "debt_cycle",
+                "severity": "warning",
+                "source": "behaviour_engine",
+                "details": {
+                    "debt_cycle_score": debt_cycle_score,
+                },
+            }
+        )
 
     for warning in optimisation.get("warnings", []):
-        risks.append({
-            "type": "optimization_warning",
-            "severity": "warning",
-            "source": "optimization_engine",
-            "details": {"message": warning},
-        })
+        risks.append(
+            {
+                "type": "optimization_warning",
+                "severity": "warning",
+                "source": "optimization_engine",
+                "details": {"message": warning},
+            }
+        )
 
     return risks
 
@@ -391,12 +430,14 @@ def _identify_opportunities(
     monthly_surplus = int(cashflow.get("monthly_surplus_paise", 0) or 0)
 
     if monthly_surplus > 500000:
-        opportunities.append({
-            "type": "surplus_investment",
-            "description": "Positive monthly surplus available for investment",
-            "potential_benefit_paise": monthly_surplus * 12,
-            "confidence": "high",
-        })
+        opportunities.append(
+            {
+                "type": "surplus_investment",
+                "description": "Positive monthly surplus available for investment",
+                "potential_benefit_paise": monthly_surplus * 12,
+                "confidence": "high",
+            }
+        )
 
     for goal in goals:
         if goal.get("goal_type") == "emergency_fund" and goal.get("status") == "active":
@@ -404,12 +445,14 @@ def _identify_opportunities(
             current = goal.get("current_amount_paise", 0)
             remaining = target - current
             if remaining > 0 and monthly_surplus > 0:
-                opportunities.append({
-                    "type": "goal_proximity",
-                    "description": "Emergency fund target within reach",
-                    "potential_benefit_paise": remaining,
-                    "confidence": "high",
-                })
+                opportunities.append(
+                    {
+                        "type": "goal_proximity",
+                        "description": "Emergency fund target within reach",
+                        "potential_benefit_paise": remaining,
+                        "confidence": "high",
+                    }
+                )
 
     return opportunities
 
@@ -428,9 +471,9 @@ def _compute_health_score(behaviour: dict[str, Any]) -> Decimal:
     cashflow_stability = Decimal(str(behaviour.get("cashflow_stability", 0.5) or 0.5))
 
     health = (
-        Decimal("0.4") * (Decimal("1") - debt_cycle / Decimal("100")) +
-        Decimal("0.4") * (Decimal("1") - credit_revolver) +
-        Decimal("0.2") * cashflow_stability
+        Decimal("0.4") * (Decimal("1") - debt_cycle / Decimal("100"))
+        + Decimal("0.4") * (Decimal("1") - credit_revolver)
+        + Decimal("0.2") * cashflow_stability
     ) * Decimal("100")
 
     return max(Decimal("0"), min(Decimal("100"), health))

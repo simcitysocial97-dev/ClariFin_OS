@@ -105,7 +105,9 @@ def compute_monthly_interest(
         return 0
 
     interest_decimal: Decimal = outstanding * monthly_rate
-    interest_paise = int(interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    interest_paise = int(
+        interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+    )
 
     return interest_paise
 

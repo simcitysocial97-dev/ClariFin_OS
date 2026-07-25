@@ -100,7 +100,9 @@ class TestEMIFormulaCorrectness:
         tenure = 120
         emi = compute_emi_fixed(principal, rate_bps, tenure)
         expected_emi = 1239857
-        assert abs(emi - expected_emi) <= 10, f"EMI {emi} differs from expected {expected_emi}"
+        assert (
+            abs(emi - expected_emi) <= 10
+        ), f"EMI {emi} differs from expected {expected_emi}"
 
     def test_zero_interest_emi(self):
         """Zero interest loan: EMI should be principal/tenure."""
@@ -178,7 +180,9 @@ class TestScheduleCorrectness:
             start_date="2025-01-01",
         )
         total_principal = sum(row.principal_paise for row in schedule)
-        assert total_principal == principal, f"Principal sum {total_principal} != {principal}"
+        assert (
+            total_principal == principal
+        ), f"Principal sum {total_principal} != {principal}"
 
     def test_schedule_final_balance_zero(self):
         """Final balance should be exactly zero."""
@@ -204,8 +208,8 @@ class TestScheduleCorrectness:
             assert row.month_number == i
         for row in schedule:
             assert len(row.payment_date) == 10
-            assert row.payment_date[4] == '-'
-            assert row.payment_date[7] == '-'
+            assert row.payment_date[4] == "-"
+            assert row.payment_date[7] == "-"
 
     def test_schedule_leap_year_february(self):
         """Schedule starting Feb 29 should handle non-leap years."""
@@ -336,7 +340,9 @@ class TestPrepayment:
         )
         assert len(results) == 2
         assert len(new_schedule) < len(sample_schedule)
-        assert total_interest_paise(new_schedule) < total_interest_paise(sample_schedule)
+        assert total_interest_paise(new_schedule) < total_interest_paise(
+            sample_schedule
+        )
 
     def test_prepayment_with_penalty(self, sample_loan_info):
         """Prepayment with penalty reduces savings."""
@@ -356,7 +362,10 @@ class TestPrepayment:
             mode="reduce_tenure",
             prepayment_penalty_bps=0,
         )
-        assert result_with_penalty.interest_saved_paise < result_without_penalty.interest_saved_paise
+        assert (
+            result_with_penalty.interest_saved_paise
+            < result_without_penalty.interest_saved_paise
+        )
 
     def test_reduce_tenure_saves_both(self):
         """REDUCE_TENURE mode should save interest and months."""
@@ -558,7 +567,12 @@ class TestForeclosure:
         )
         expected_penalty = 1000000
         assert result.penalty_paise == expected_penalty
-        assert result.foreclosure_amount_paise == result.outstanding_paise + result.accrued_interest_paise + result.penalty_paise
+        assert (
+            result.foreclosure_amount_paise
+            == result.outstanding_paise
+            + result.accrued_interest_paise
+            + result.penalty_paise
+        )
 
     def test_penalty_calculation(self):
         """Penalty should be rate * outstanding / 10000."""

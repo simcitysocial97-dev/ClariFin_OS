@@ -1,4 +1,5 @@
 """Behaviour Invariants — Score ranges, normalized metrics, temporal consistency."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -17,7 +18,9 @@ def assert_behaviour_score_valid(score: int | float, score_name: str = "score") 
         AssertionError: If score is out of range
     """
     if not isinstance(score, (int, float)):
-        raise AssertionError(f"{score_name}={score} must be numeric, got {type(score).__name__}")
+        raise AssertionError(
+            f"{score_name}={score} must be numeric, got {type(score).__name__}"
+        )
     if score < 0 or score > 100:
         raise AssertionError(f"{score_name}={score} out of range [0, 100]")
 
@@ -74,9 +77,7 @@ def assert_temporal_pattern_consistency(transactions: list[dict[str, Any]]) -> N
     for txn in transactions:
         date_iso = txn.get("date_iso", txn.get("date", ""))
         if prev_date and date_iso < prev_date:
-            raise AssertionError(
-                f"Transactions not sorted: {date_iso} < {prev_date}"
-            )
+            raise AssertionError(f"Transactions not sorted: {date_iso} < {prev_date}")
         prev_date = date_iso
 
         desc = txn.get("description", "")
@@ -105,6 +106,4 @@ def assert_credit_dependency_ratio_valid(ratio: float) -> None:
             f"credit_dependency_ratio={ratio} must be numeric, got {type(ratio).__name__}"
         )
     if ratio < 0 or ratio > 1:
-        raise AssertionError(
-            f"credit_dependency_ratio={ratio} out of range [0, 1]"
-        )
+        raise AssertionError(f"credit_dependency_ratio={ratio} out of range [0, 1]")

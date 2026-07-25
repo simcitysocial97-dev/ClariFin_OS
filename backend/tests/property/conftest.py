@@ -5,6 +5,7 @@ Profiles:
 - normal: 150 examples (CI)
 - deep: 1000 examples (nightly)
 """
+
 from __future__ import annotations
 
 import os
@@ -24,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 # Hypothesis Profiles
 # ============================================================================
 
+
 def get_profile() -> str:
     """Get current test profile from environment."""
     return os.getenv("HYPOTHESIS_PROFILE", "fast") or "fast"
@@ -38,7 +40,9 @@ def configure_settings() -> settings:
     elif profile == "normal":
         return settings(max_examples=150, phases=[Phase.generate, Phase.shrink])
     elif profile == "deep":
-        return settings(max_examples=1000, phases=[Phase.generate, Phase.shrink, Phase.explain])
+        return settings(
+            max_examples=1000, phases=[Phase.generate, Phase.shrink, Phase.explain]
+        )
     else:
         return settings(max_examples=20)
 
@@ -47,8 +51,11 @@ def configure_settings() -> settings:
 # Domain Strategies (Hypothesis wrapper around plain builders)
 # ============================================================================
 
+
 @st.composite
-def paise_strategy(draw: Any, min_val: int = -100000000, max_val: int = 100000000) -> int:
+def paise_strategy(
+    draw: Any, min_val: int = -100000000, max_val: int = 100000000
+) -> int:
     """Integer paise value strategy.
 
     Uses full int32 range to support large financial values.
@@ -58,7 +65,9 @@ def paise_strategy(draw: Any, min_val: int = -100000000, max_val: int = 10000000
 
 
 @st.composite
-def positive_paise_strategy(draw: Any, min_val: int = 1, max_val: int = 100000000) -> int:
+def positive_paise_strategy(
+    draw: Any, min_val: int = 1, max_val: int = 100000000
+) -> int:
     """Positive integer paise strategy."""
     return cast(int, draw(st.integers(min_value=min_val, max_value=max_val)))
 
@@ -79,7 +88,17 @@ def iso_date_strategy(draw: Any) -> str:
     days_in_month = [
         31,
         29 if (year % 4 == 0 and year % 100 != 0) or year % 400 == 0 else 28,
-        31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 30,
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+        30,
     ]
     day = draw(st.integers(min_value=1, max_value=days_in_month[month - 1]))
 
@@ -142,6 +161,7 @@ def loan_data_strategy(draw: Any) -> dict[str, Any]:
 # ============================================================================
 # Fixtures
 # ============================================================================
+
 
 @pytest.fixture
 def hypothesis_settings() -> settings:

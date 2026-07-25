@@ -20,6 +20,7 @@ from .utils import FOIR_SAFE_THRESHOLD, FOIR_WARNING_THRESHOLD, generate_month_s
 # Scenario Simulation Functions
 # ============================================================
 
+
 def simulate_expense_reduction(
     current_monthly_expense_paise: int,
     reduction_paise: int,
@@ -49,14 +50,20 @@ def simulate_expense_reduction(
     months = generate_month_sequence("2026-08", forecast_months)
 
     for i, month in enumerate(months):
-        base_surplus = int(monthly_surplus_forecast[i].get("expected_surplus_paise", 0) if i < len(monthly_surplus_forecast) else 0)
+        base_surplus = int(
+            monthly_surplus_forecast[i].get("expected_surplus_paise", 0)
+            if i < len(monthly_surplus_forecast)
+            else 0
+        )
         improved_surplus = base_surplus + monthly_savings_created_paise
 
-        forecast.append({
-            "month": month,
-            "projected_surplus_paise": improved_surplus,
-            "monthly_savings_paise": monthly_savings_created_paise,
-        })
+        forecast.append(
+            {
+                "month": month,
+                "projected_surplus_paise": improved_surplus,
+                "monthly_savings_paise": monthly_savings_created_paise,
+            }
+        )
         total_benefit += monthly_savings_created_paise
 
     return {
@@ -94,13 +101,19 @@ def simulate_income_change(
     months = generate_month_sequence("2026-08", forecast_months)
 
     for i, month in enumerate(months):
-        base_surplus = int(monthly_surplus_forecast[i].get("expected_surplus_paise", 0) if i < len(monthly_surplus_forecast) else 0)
+        base_surplus = int(
+            monthly_surplus_forecast[i].get("expected_surplus_paise", 0)
+            if i < len(monthly_surplus_forecast)
+            else 0
+        )
         revised_surplus = base_surplus + change_paise
 
-        revised_forecast.append({
-            "month": month,
-            "expected_surplus_paise": revised_surplus,
-        })
+        revised_forecast.append(
+            {
+                "month": month,
+                "expected_surplus_paise": revised_surplus,
+            }
+        )
 
     return {
         "income_change_paise": change_paise,
@@ -190,7 +203,9 @@ def simulate_new_loan(
     from src.engines.loan_engine.emi import compute_emi_fixed
 
     # Calculate EMI using existing loan engine
-    monthly_emi_paise = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
+    monthly_emi_paise = compute_emi_fixed(
+        principal_paise, annual_rate_bps, tenure_months
+    )
 
     # Calculate FOIR (Financial Obligation Ratio)
     if current_surplus_paise > 0:
@@ -301,25 +316,37 @@ def compare_scenario(
             baseline_val = float(baseline_val)
 
         # Calculate delta
-        if isinstance(scenario_val, (int, float)) and isinstance(baseline_val, (int, float)):
+        if isinstance(scenario_val, (int, float)) and isinstance(
+            baseline_val, (int, float)
+        ):
             change = scenario_val - baseline_val
             delta[metric] = change
 
             # Positive change for surplus/benefit is improvement
             if change > 0:
                 if metric == "monthly_surplus_paise":
-                    improvements.append(f"Monthly surplus increased by ₹{change // 100}")
+                    improvements.append(
+                        f"Monthly surplus increased by ₹{change // 100}"
+                    )
                 elif metric == "cumulative_benefit_paise":
-                    improvements.append(f"Cumulative benefit increased by ₹{change // 100}")
+                    improvements.append(
+                        f"Cumulative benefit increased by ₹{change // 100}"
+                    )
                 elif metric == "interest_saved_paise":
-                    improvements.append(f"Interest savings projected at ₹{change // 100}")
+                    improvements.append(
+                        f"Interest savings projected at ₹{change // 100}"
+                    )
                 elif metric == "foir":
                     improvements.append("FOIR improved below safe threshold")
             elif change < 0:
                 if metric == "monthly_surplus_paise":
                     risks.append(f"Monthly surplus decreased by ₹{abs(change) // 100}")
                 elif metric == "foir":
-                    if float(FOIR_WARNING_THRESHOLD) < scenario_val <= float(FOIR_WARNING_THRESHOLD):
+                    if (
+                        float(FOIR_WARNING_THRESHOLD)
+                        < scenario_val
+                        <= float(FOIR_WARNING_THRESHOLD)
+                    ):
                         pass  # warning zone - no explicit risk
                     else:
                         risks.append("FOIR increased above safe threshold")

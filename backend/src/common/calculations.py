@@ -1,4 +1,5 @@
 """Calculation utilities."""
+
 from collections import defaultdict
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 from typing import Any
@@ -28,15 +29,13 @@ def _parse_amount_paise(amount_str: str | int | float) -> int:
         if isinstance(amount_str, int):
             return amount_str * 100
         # For floats, use Decimal to avoid precision loss
-        paise = Decimal(str(amount_str)) * Decimal('100')
-        return int(paise.quantize(Decimal('1'), rounding=ROUND_HALF_UP))
+        paise = Decimal(str(amount_str)) * Decimal("100")
+        return int(paise.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
     # Handle string input
-    cleaned = (str(amount_str)
-               .replace("Rs", "")
-               .replace("₹", "")
-               .replace(",", "")
-               .strip())
+    cleaned = (
+        str(amount_str).replace("Rs", "").replace("₹", "").replace(",", "").strip()
+    )
 
     if not cleaned:
         raise ValueError(f"Empty amount string: {amount_str!r}")
@@ -44,7 +43,7 @@ def _parse_amount_paise(amount_str: str | int | float) -> int:
     try:
         rupees = Decimal(cleaned)
         # Financial Standard: Use quantization to guarantee safe integer conversion
-        paise = (rupees * Decimal('100')).quantize(Decimal('1'), rounding=ROUND_HALF_UP)
+        paise = (rupees * Decimal("100")).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
         return int(paise)
     except (ValueError, InvalidOperation) as e:
         raise ValueError(f"Invalid amount format '{amount_str}': {e}") from e
@@ -65,11 +64,15 @@ def compute_is_large(transactions: list[Any]) -> list[dict[str, Any]]:
     if not debit_txns:
         return transactions
 
-    avg_debit = sum((t.get("amount_paise", 0) or 0) for t in debit_txns) / len(debit_txns)
+    avg_debit = sum((t.get("amount_paise", 0) or 0) for t in debit_txns) / len(
+        debit_txns
+    )
     threshold = avg_debit * 250000  # 2.5x in paise
 
     for t in transactions:
-        t["is_large"] = bool(t.get("type") == "debit" and (t.get("amount_paise", 0) or 0) > threshold)
+        t["is_large"] = bool(
+            t.get("type") == "debit" and (t.get("amount_paise", 0) or 0) > threshold
+        )
 
     return transactions
 
@@ -83,7 +86,9 @@ def compute_behavioral_insights(transactions: list[Any]) -> list[dict[str, Any]]
         return []
 
     # Get month keys
-    month_keys = sorted({t.get("month_key", "") for t in debit_txns if t.get("month_key")})
+    month_keys = sorted(
+        {t.get("month_key", "") for t in debit_txns if t.get("month_key")}
+    )
     if len(month_keys) < 1:
         return []
 
@@ -96,7 +101,7 @@ def compute_behavioral_insights(transactions: list[Any]) -> list[dict[str, Any]]
         mk = t.get("month_key", "")
         cat = t.get("category", "Uncategorized")
         if mk:
-            cat_monthly[cat][mk] += ((t.get("amount_paise", 0) or 0) / 100.0)
+            cat_monthly[cat][mk] += (t.get("amount_paise", 0) or 0) / 100.0
 
     for cat, monthly_data in cat_monthly.items():
         if len(monthly_data) >= 2:
@@ -107,26 +112,30 @@ def compute_behavioral_insights(transactions: list[Any]) -> list[dict[str, Any]]
                 if avg_other > 0:
                     pct_change = ((this_month_cat - avg_other) / avg_other) * 100
                     if pct_change > 30:
-                        insights.append({
-                            "title": f"{cat} Spending Up",
-                            "description": f"You spent {int(pct_change)}% more on {cat} this month",
-                            "severity": "warning",
-                            "icon": "trending-up",
-                        })
+                        insights.append(
+                            {
+                                "title": f"{cat} Spending Up",
+                                "description": f"You spent {int(pct_change)}% more on {cat} this month",
+                                "severity": "warning",
+                                "icon": "trending-up",
+                            }
+                        )
                     elif pct_change < -30:
-                        insights.append({
-                            "title": f"{cat} Savings",
-                            "description": f"You spent {int(abs(pct_change))}% less on {cat}",
-                            "severity": "positive",
-                            "icon": "trending-down",
-                        })
+                        insights.append(
+                            {
+                                "title": f"{cat} Savings",
+                                "description": f"You spent {int(abs(pct_change))}% less on {cat}",
+                                "severity": "positive",
+                                "icon": "trending-down",
+                            }
+                        )
 
     # Spending trend
     monthly_totals: dict[str, Any] = defaultdict(float)
     for t in debit_txns:
         mk = t.get("month_key", "")
         if mk:
-            monthly_totals[mk] += ((t.get("amount_paise", 0) or 0) / 100.0)
+            monthly_totals[mk] += (t.get("amount_paise", 0) or 0) / 100.0
 
     if len(monthly_totals) >= 2:
         this_month_total = monthly_totals.get(this_month, 0)
@@ -134,33 +143,43 @@ def compute_behavioral_insights(transactions: list[Any]) -> list[dict[str, Any]]
         if other_totals:
             avg_other_total = sum(other_totals) / len(other_totals)
             if avg_other_total > 0:
-                pct_change_total = ((this_month_total - avg_other_total) / avg_other_total) * 100
+                pct_change_total = (
+                    (this_month_total - avg_other_total) / avg_other_total
+                ) * 100
                 if pct_change_total > 15:
-                    insights.append({
-                        "title": "Spending Trending Up",
-                        "description": f"Overall spending is up {int(pct_change_total)}%",
-                        "severity": "warning",
-                        "icon": "alert-triangle",
-                    })
+                    insights.append(
+                        {
+                            "title": "Spending Trending Up",
+                            "description": f"Overall spending is up {int(pct_change_total)}%",
+                            "severity": "warning",
+                            "icon": "alert-triangle",
+                        }
+                    )
                 elif pct_change_total < -15:
-                    insights.append({
-                        "title": "Spending Down",
-                        "description": f"Spending is down {int(abs(pct_change_total))}%",
-                        "severity": "positive",
-                        "icon": "check-circle",
-                    })
+                    insights.append(
+                        {
+                            "title": "Spending Down",
+                            "description": f"Spending is down {int(abs(pct_change_total))}%",
+                            "severity": "positive",
+                            "icon": "check-circle",
+                        }
+                    )
 
     # Largest expense
     this_month_txns = [t for t in debit_txns if t.get("month_key") == this_month]
     if this_month_txns:
-        largest = max(this_month_txns, key=lambda t: (t.get("amount_paise", 0) or 0))
-        desc = (largest.get("description_display") or largest.get("description", ""))[:30]
+        largest = max(this_month_txns, key=lambda t: t.get("amount_paise", 0) or 0)
+        desc = (largest.get("description_display") or largest.get("description", ""))[
+            :30
+        ]
         amt = format_inr((largest.get("amount_paise", 0) or 0) / 100.0)
-        insights.append({
-            "title": "Largest Expense",
-            "description": f"Your biggest: {desc} at {amt}",
-            "severity": "info",
-            "icon": "zap",
-        })
+        insights.append(
+            {
+                "title": "Largest Expense",
+                "description": f"Your biggest: {desc} at {amt}",
+                "severity": "info",
+                "icon": "zap",
+            }
+        )
 
     return insights[:6]

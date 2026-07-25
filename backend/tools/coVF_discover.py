@@ -146,7 +146,9 @@ def extract_parameters(spec: dict[str, Any], method: str) -> list[dict[str, Any]
     return parameters
 
 
-def map_endpoints_to_capabilities(endpoints: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+def map_endpoints_to_capabilities(
+    endpoints: list[dict[str, Any]],
+) -> dict[str, list[dict[str, Any]]]:
     """Group endpoints by capability using router-to-capability mapping."""
     # Load capability manifests
     capability_dir = PROJECT_ROOT / "memory-bank" / "capabilities"
@@ -154,6 +156,7 @@ def map_endpoints_to_capabilities(endpoints: list[dict[str, Any]]) -> dict[str, 
 
     for manifest_file in capability_dir.glob("*.yaml"):
         import yaml
+
         with open(manifest_file) as f:
             manifest = yaml.safe_load(f)
             for router in manifest.get("routers", []):
@@ -174,7 +177,9 @@ def map_endpoints_to_capabilities(endpoints: list[dict[str, Any]]) -> dict[str, 
     return by_capability
 
 
-def generate_coverage_metrics(endpoints: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+def generate_coverage_metrics(
+    endpoints: list[dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
     """Generate coverage metrics per router."""
     coverage: dict[str, dict[str, Any]] = {}
 
@@ -201,14 +206,22 @@ def generate_coverage_metrics(endpoints: list[dict[str, Any]]) -> dict[str, dict
     return coverage
 
 
-def save_artifacts(endpoints: list[dict[str, Any]],
-                   coverage: dict[str, dict[str, Any]]) -> None:
+def save_artifacts(
+    endpoints: list[dict[str, Any]], coverage: dict[str, dict[str, Any]]
+) -> None:
     """Save all generated artifacts."""
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
 
     # api-map.json - all endpoints with full metadata
     with open(GENERATED_DIR / "api-map.json", "w") as f:
-        json.dump({"endpoints": endpoints, "generated_at": str(Path(__file__).stat().st_mtime)}, f, indent=2)
+        json.dump(
+            {
+                "endpoints": endpoints,
+                "generated_at": str(Path(__file__).stat().st_mtime),
+            },
+            f,
+            indent=2,
+        )
 
     # contract-registry.json - simplified registry for tests
     registry = {
@@ -224,13 +237,15 @@ def save_artifacts(endpoints: list[dict[str, Any]],
                 "capability": ep.get("capability", "unknown"),
             }
 
-        registry["routers"][router]["endpoints"].append({
-            "method": ep["method"],
-            "path": ep["endpoint"],
-            "request_schema": ep["request_schema"],
-            "response_schema": ep["response_schema"],
-            "status_codes": ep["status_codes"],
-        })
+        registry["routers"][router]["endpoints"].append(
+            {
+                "method": ep["method"],
+                "path": ep["endpoint"],
+                "request_schema": ep["request_schema"],
+                "response_schema": ep["response_schema"],
+                "status_codes": ep["status_codes"],
+            }
+        )
 
     with open(GENERATED_DIR / "contract-registry.json", "w") as f:
         json.dump(registry, f, indent=2)

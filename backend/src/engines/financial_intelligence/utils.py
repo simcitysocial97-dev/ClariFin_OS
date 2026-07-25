@@ -37,7 +37,9 @@ MEDIUM_INTEREST_THRESHOLD_BPS = 800  # 8% APR
 EMERGENCY_FUND_MIN_MONTHS = 6
 
 # Debt allocation default
-DEFAULT_DEBT_ALLOCATION_RATIO = Decimal("0.60")  # 60% of surplus to debt when high-interest exists
+DEFAULT_DEBT_ALLOCATION_RATIO = Decimal(
+    "0.60"
+)  # 60% of surplus to debt when high-interest exists
 
 # Goal allocation for long-term goals
 LONG_TERM_GOAL_ALLOCATION_RATIO = Decimal("0.40")  # 40% of remaining to long-term goals
@@ -56,6 +58,7 @@ ACTION_WEIGHTS = {
 # ============================================================
 # Date/Month Utilities
 # ============================================================
+
 
 def next_month(month: str) -> str:
     """Get the next month in YYYY-MM format.
@@ -93,6 +96,7 @@ def generate_month_sequence(start_month: str, count: int) -> list[str]:
 # ============================================================
 # Statistical Utilities
 # ============================================================
+
 
 def compute_variance(values: list[int]) -> float:
     """Compute variance of a list of integer values.
@@ -172,6 +176,7 @@ def compute_confidence_from_variance(
 # Credit Utilization Utilities
 # ============================================================
 
+
 def compute_utilization_ratio(
     credit_history: list[dict[str, Any]],
 ) -> Decimal:
@@ -186,10 +191,7 @@ def compute_utilization_ratio(
     if not credit_history:
         return Decimal("0")
 
-    ratios = [
-        Decimal(str(h.get("utilization_ratio", 0) or 0))
-        for h in credit_history
-    ]
+    ratios = [Decimal(str(h.get("utilization_ratio", 0) or 0)) for h in credit_history]
 
     if not ratios:
         return Decimal("0")
@@ -235,6 +237,7 @@ def compute_trend_direction(
 # ============================================================
 # Balance Projection Utilities
 # ============================================================
+
 
 def project_running_balance(
     starting_balance: int,

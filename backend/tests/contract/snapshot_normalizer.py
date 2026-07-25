@@ -36,39 +36,29 @@ def _normalize_string(s: str) -> str:
     """Normalize a string value."""
     # Normalize ISO timestamps
     s = re.sub(
-        r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?',
-        '[TIMESTAMP]',
-        s
+        r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?",
+        "[TIMESTAMP]",
+        s,
     )
     # Normalize date-only strings
-    s = re.sub(
-        r'\d{4}-\d{2}-\d{2}',
-        '[DATE]',
-        s
-    )
+    s = re.sub(r"\d{4}-\d{2}-\d{2}", "[DATE]", s)
     # Normalize UUIDs
     s = re.sub(
-        r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
-        '[UUID]',
+        r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+        "[UUID]",
         s,
-        flags=re.IGNORECASE
+        flags=re.IGNORECASE,
     )
     # Normalize version numbers (semver)
-    s = re.sub(
-        r'\d+\.\d+\.\d+',
-        '[VERSION]',
-        s
-    )
+    s = re.sub(r"\d+\.\d+\.\d+", "[VERSION]", s)
     # Normalize integer IDs (standalone numbers that look like DB IDs)
-    s = re.sub(
-        r'"id":\s*(\d{4,})',
-        '"id": "[ID]"',
-        s
-    )
+    s = re.sub(r'"id":\s*(\d{4,})', '"id": "[ID]"', s)
     return s
 
 
-def save_snapshot(snapshot_dir: Any, router_name: str, endpoint_name: str, data: str) -> None:
+def save_snapshot(
+    snapshot_dir: Any, router_name: str, endpoint_name: str, data: str
+) -> None:
     """Save normalized snapshot to file."""
     from pathlib import Path
 
@@ -80,7 +70,9 @@ def save_snapshot(snapshot_dir: Any, router_name: str, endpoint_name: str, data:
         f.write(data)
 
 
-def load_snapshot(snapshot_dir: Any, router_name: str, endpoint_name: str) -> str | None:
+def load_snapshot(
+    snapshot_dir: Any, router_name: str, endpoint_name: str
+) -> str | None:
     """Load existing snapshot if present."""
     from pathlib import Path
 

@@ -72,7 +72,9 @@ def compute_next_statement_date(
         else:
             next_month = date(reference_date.year, reference_date.month + 1, 1)
         last_day = (next_month - timedelta(days=1)).day
-        candidate = date(reference_date.year, reference_date.month, min(billing_day, last_day))
+        candidate = date(
+            reference_date.year, reference_date.month, min(billing_day, last_day)
+        )
 
     # If candidate is in the past, advance to next month
     if candidate < reference_date:
@@ -142,7 +144,9 @@ def compute_minimum_due(
         return 0
 
     # Calculate percentage-based minimum due
-    pct_amount = Decimal(total_outstanding_paise) * Decimal(min_due_pct_bps) / Decimal(10000)
+    pct_amount = (
+        Decimal(total_outstanding_paise) * Decimal(min_due_pct_bps) / Decimal(10000)
+    )
     pct_amount_paise = int(pct_amount.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
 
     return max(floor_paise, pct_amount_paise)

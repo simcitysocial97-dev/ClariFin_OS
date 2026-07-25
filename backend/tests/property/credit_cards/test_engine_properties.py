@@ -1,4 +1,5 @@
 """Property tests for Credit Cards — statement processing, EMI conversion."""
+
 from __future__ import annotations
 
 import sys
@@ -69,10 +70,17 @@ class TestStatementDetectionProperties:
         self, amount_paise: int, description: str
     ) -> None:
         """Random transactions without loan context return None."""
-        from src.engines.transaction_intelligence.loan_emi_detector import detect_emi_payment
+        from src.engines.transaction_intelligence.loan_emi_detector import (
+            detect_emi_payment,
+        )
 
-        txn = {"id": 1, "account_id": "acct_1", "amount_paise": -amount_paise,
-               "date_iso": "2026-01-15", "description": description}
+        txn = {
+            "id": 1,
+            "account_id": "acct_1",
+            "amount_paise": -amount_paise,
+            "date_iso": "2026-01-15",
+            "description": description,
+        }
         result = detect_emi_payment(txn, [], {})
         assert result is None
 

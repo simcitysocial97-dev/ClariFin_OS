@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 from typing import Any
 
 from src.models.reconciliation import Reconciliation
@@ -80,7 +81,7 @@ class ReconciliationRepository(BaseRepository):
 
     def get_pending_reconciliations(self) -> list[dict[str, Any]]:
         """Get all pending reconciliations."""
-        return self.get_reconciliations(status='pending')
+        return self.get_reconciliations(status="pending")
 
     def insert_reconciliation(
         self,
@@ -120,11 +121,15 @@ class ReconciliationRepository(BaseRepository):
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    debit_txn_id, credit_txn_id,
-                    debit_account_id, credit_account_id,
-                    int(round(amount * 100)), date_diff_days,
-                    round(match_confidence, 4), match_type,
-                    deterministic_key
+                    debit_txn_id,
+                    credit_txn_id,
+                    debit_account_id,
+                    credit_account_id,
+                    int(round(amount * 100)),
+                    date_diff_days,
+                    round(match_confidence, 4),
+                    match_type,
+                    deterministic_key,
                 ),
             )
 

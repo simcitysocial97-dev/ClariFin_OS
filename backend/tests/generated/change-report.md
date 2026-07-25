@@ -1,6 +1,6 @@
 # Change Impact Report
 
-Generated: 2026-07-25T03:42:40.144935+00:00
+Generated: 2026-07-25T11:24:13.856066+00:00
 
 ## Summary
 
@@ -32,7 +32,7 @@ Generated: 2026-07-25T03:42:40.144935+00:00
     - `salary_only`
     - `salary_plus_loan`
   - Invariants:
-    - `tests/invariants/test_cashflow_invariants.py`
+    - `tests/invariant/test_cashflow_invariants.py`
 
 **Recommended Verification:**
 ```bash

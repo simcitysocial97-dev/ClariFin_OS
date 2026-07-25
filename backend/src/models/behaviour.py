@@ -15,8 +15,14 @@ from src.models.base import DomainModel
 WellnessBand = Literal["Excellent", "Healthy", "Developing", "Risk", "Critical"]
 DebtHealthBand = Literal["HEALTHY", "MODERATE", "WARNING", "DANGER"]
 ProfileType = Literal[
-    "SAVER", "BALANCED", "SPENDER", "DEBT_OPTIMIZER", "DEBT_DEPENDENT", "INSUFFICIENT_DATA"
+    "SAVER",
+    "BALANCED",
+    "SPENDER",
+    "DEBT_OPTIMIZER",
+    "DEBT_DEPENDENT",
+    "INSUFFICIENT_DATA",
 ]
+
 
 class WellnessScoreResponse(BaseModel):
     """Response model for wellness score."""
@@ -28,6 +34,7 @@ class WellnessScoreResponse(BaseModel):
     )
     snapshot_date: str = Field(..., description="Date of the snapshot in ISO format")
     version: int = Field(..., description="Version of the scoring algorithm")
+
 
 class DebtHealthResponse(BaseModel):
     """Response model for debt health metrics."""
@@ -45,6 +52,7 @@ class DebtHealthResponse(BaseModel):
     band: DebtHealthBand = Field(..., description="Debt health classification band")
     snapshot_date: str = Field(..., description="Date of the snapshot in ISO format")
 
+
 class CashflowHealthResponse(BaseModel):
     """Response model for cashflow health metrics."""
 
@@ -58,32 +66,45 @@ class CashflowHealthResponse(BaseModel):
     )
     snapshot_date: str = Field(..., description="Date of the snapshot in ISO format")
 
+
 class FinancialPattern(BaseModel):
     """Model for detected financial patterns."""
 
-    pattern_type: str = Field(..., description="Type of pattern (e.g., IMPULSE, SUBSCRIPTION)")
-    pattern_key: str = Field(..., description="Key identifying the pattern (merchant, category)")
+    pattern_type: str = Field(
+        ..., description="Type of pattern (e.g., IMPULSE, SUBSCRIPTION)"
+    )
+    pattern_key: str = Field(
+        ..., description="Key identifying the pattern (merchant, category)"
+    )
     strength: Decimal = Field(..., description="Strength of the pattern (0-1)")
     transaction_count: int = Field(..., description="Number of transactions in pattern")
     total_amount_paise: int = Field(..., description="Total amount in paise")
     first_observed: str = Field(..., description="First observed date in ISO format")
     last_observed: str = Field(..., description="Last observed date in ISO format")
 
+
 class FinancialProfileResponse(BaseModel):
     """Response model for financial personality profile."""
 
     profile_type: ProfileType = Field(..., description="Financial personality profile")
     confidence: Decimal = Field(..., description="Confidence score (0-1)")
-    explanation: str = Field(..., description="Explanation of the profile classification")
+    explanation: str = Field(
+        ..., description="Explanation of the profile classification"
+    )
     snapshot_date: str = Field(..., description="Date of the snapshot in ISO format")
+
 
 class MonthlySummaryResponse(BaseModel):
     """Response model for monthly financial summary."""
 
     period: str = Field(..., description="Summary period (YYYY-MM)")
-    wellness_score: WellnessScoreResponse = Field(..., description="Wellness score for the period")
+    wellness_score: WellnessScoreResponse = Field(
+        ..., description="Wellness score for the period"
+    )
     debt_health: DebtHealthResponse = Field(..., description="Debt health metrics")
-    cashflow_health: CashflowHealthResponse = Field(..., description="Cashflow health metrics")
+    cashflow_health: CashflowHealthResponse = Field(
+        ..., description="Cashflow health metrics"
+    )
     top_patterns: list[FinancialPattern] = Field(
         ..., description="Top detected financial patterns"
     )
@@ -91,6 +112,7 @@ class MonthlySummaryResponse(BaseModel):
     total_income_paise: int = Field(..., description="Total income in paise")
     total_expenses_paise: int = Field(..., description="Total expenses in paise")
     alerts: list[str] = Field(..., description="Financial alerts for the period")
+
 
 class BehaviourSnapshotCreate(DomainModel):
     """Input model for creating a behaviour snapshot."""
@@ -116,9 +138,15 @@ class RecommendationResponse(BaseModel):
     """Response model for a single recommendation."""
 
     title: str = Field(..., description="Short title of the recommendation")
-    reason: str = Field(..., description="Human-readable explanation of the recommendation")
-    metric: str = Field(..., description="The metric value that triggered this recommendation")
-    severity: str = Field(..., description="Severity level (LOW, MEDIUM, HIGH, CRITICAL)")
+    reason: str = Field(
+        ..., description="Human-readable explanation of the recommendation"
+    )
+    metric: str = Field(
+        ..., description="The metric value that triggered this recommendation"
+    )
+    severity: str = Field(
+        ..., description="Severity level (LOW, MEDIUM, HIGH, CRITICAL)"
+    )
     suggested_action: str = Field(..., description="Actionable suggestion for the user")
 
 
@@ -129,4 +157,6 @@ class RecommendationsResponse(BaseModel):
         ..., description="List of triggered recommendations sorted by severity"
     )
     total_count: int = Field(..., description="Total number of recommendations")
-    snapshot_date: str = Field(..., description="Date of the snapshot used for recommendations")
+    snapshot_date: str = Field(
+        ..., description="Date of the snapshot used for recommendations"
+    )

@@ -1,4 +1,5 @@
 """Transaction listing and analytics endpoints."""
+
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
@@ -82,5 +83,3 @@ def get_analytics(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-

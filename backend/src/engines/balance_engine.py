@@ -24,6 +24,7 @@ from typing import Any
 # Date Parsing (consistent with db.py)
 # ============================================================
 
+
 def _parse_date_to_ymd(date_str: str) -> str:
     """
     Parse Indian date formats to YYYY-MM-DD for sorting.
@@ -33,8 +34,14 @@ def _parse_date_to_ymd(date_str: str) -> str:
         return ""
 
     formats = [
-        "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
-        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d/%m/%y",
+        "%d-%m-%y",
+        "%d %b %Y",
+        "%d %b %y",
+        "%d-%b-%Y",
+        "%d-%b-%y",
         "%Y-%m-%d",
     ]
     s = date_str.strip()
@@ -58,6 +65,7 @@ def _parse_date_for_sort(date_str: str) -> str:
 # ============================================================
 # Core Balance Functions
 # ============================================================
+
 
 def compute_running_balance(
     db_path: str,
@@ -126,16 +134,18 @@ def compute_running_balance(
         # Net effect: credit increases balance, debit decreases
         balance += credit - debit
 
-        results.append({
-            "transaction_id": row["id"],
-            "date": row["date"],
-            "date_iso": row.get("date_iso") or _parse_date_to_ymd(row["date"]),
-            "description": row["description"],
-            "debit_paise": debit,
-            "credit_paise": credit,
-            "balance_paise": balance,
-            "bank": row["bank"],
-        })
+        results.append(
+            {
+                "transaction_id": row["id"],
+                "date": row["date"],
+                "date_iso": row.get("date_iso") or _parse_date_to_ymd(row["date"]),
+                "description": row["description"],
+                "debit_paise": debit,
+                "credit_paise": credit,
+                "balance_paise": balance,
+                "bank": row["bank"],
+            }
+        )
 
     return results
 
@@ -293,15 +303,17 @@ def get_accounts_list(db_path: str) -> list[dict[str, Any]]:
         total_credit = row["total_credit"] or 0
         balance = total_credit - total_debit  # Assuming 0 starting balance
 
-        results.append({
-            "account_id": row["bank"],
-            "bank": row["bank"],
-            "transaction_count": row["transaction_count"],
-            "total_debit_paise": total_debit,
-            "total_credit_paise": total_credit,
-            "balance_paise": balance,
-            "balance_display": _format_paise(balance),
-        })
+        results.append(
+            {
+                "account_id": row["bank"],
+                "bank": row["bank"],
+                "transaction_count": row["transaction_count"],
+                "total_debit_paise": total_debit,
+                "total_credit_paise": total_credit,
+                "balance_paise": balance,
+                "balance_display": _format_paise(balance),
+            }
+        )
 
     return results
 
@@ -309,6 +321,7 @@ def get_accounts_list(db_path: str) -> list[dict[str, Any]]:
 # ============================================================
 # Formatting Utilities
 # ============================================================
+
 
 def _format_paise(paise: int) -> str:
     """
@@ -365,7 +378,9 @@ if __name__ == "__main__":
     accounts = get_accounts_list(db_path)
     print(f"Found {len(accounts)} accounts:")
     for acc in accounts:
-        print(f"  {acc['bank']}: {acc['balance_display']} ({acc['transaction_count']} txns)")
+        print(
+            f"  {acc['bank']}: {acc['balance_display']} ({acc['transaction_count']} txns)"
+        )
 
     print()
 
@@ -375,6 +390,8 @@ if __name__ == "__main__":
         print(f"Running balance for {first_account}:")
         running = compute_running_balance(db_path, first_account)
         for r in running[:10]:  # Show first 10
-            print(f"  {r['date_ymd']} | {r['description'][:30]:30s} | D:{r['debit_paise']/100:8.2f} C:{r['credit_paise']/100:8.2f} | Bal: {r['balance_paise']/100:.2f}")
+            print(
+                f"  {r['date_ymd']} | {r['description'][:30]:30s} | D:{r['debit_paise'] / 100:8.2f} C:{r['credit_paise'] / 100:8.2f} | Bal: {r['balance_paise'] / 100:.2f}"
+            )
         if len(running) > 10:
             print(f"  ... and {len(running) - 10} more transactions")

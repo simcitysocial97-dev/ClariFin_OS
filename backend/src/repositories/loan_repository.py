@@ -21,28 +21,50 @@ class LoanRepository(BaseRepository):
     # Loan CRUD Operations
     # ============================================================
 
-    def create_loan(self, name: str, lender: str, loan_type: str, principal_paise: int,
-                    outstanding_paise: int, interest_rate: float,
-                    disbursed_date: str, tenure_months: int | None = None,
-                    emi_paise: int | None = None,
-                    next_emi_date: str | None = None,
-                    gold_weight_grams: float | None = None,
-                    gold_purity: str | None = None,
-                    interest_type: str = 'reducing',
-                    notes: str | None = None) -> int:
+    def create_loan(
+        self,
+        name: str,
+        lender: str,
+        loan_type: str,
+        principal_paise: int,
+        outstanding_paise: int,
+        interest_rate: float,
+        disbursed_date: str,
+        tenure_months: int | None = None,
+        emi_paise: int | None = None,
+        next_emi_date: str | None = None,
+        gold_weight_grams: float | None = None,
+        gold_purity: str | None = None,
+        interest_type: str = "reducing",
+        notes: str | None = None,
+    ) -> int:
         """Create a new loan record. Returns the new loan ID."""
         with self._get_conn() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 INSERT INTO loans (
                     name, lender, loan_type, principal_paise,
                     outstanding_paise, interest_rate, tenure_months,
                     emi_paise, disbursed_date, gold_weight_grams, gold_purity,
                     interest_type, notes
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (name, lender, loan_type, principal_paise,
-                  outstanding_paise, interest_rate, tenure_months,
-                  emi_paise, disbursed_date, gold_weight_grams, gold_purity,
-                  interest_type, notes))
+            """,
+                (
+                    name,
+                    lender,
+                    loan_type,
+                    principal_paise,
+                    outstanding_paise,
+                    interest_rate,
+                    tenure_months,
+                    emi_paise,
+                    disbursed_date,
+                    gold_weight_grams,
+                    gold_purity,
+                    interest_type,
+                    notes,
+                ),
+            )
             conn.commit()
         return cur.lastrowid or 0
 
@@ -82,25 +104,32 @@ class LoanRepository(BaseRepository):
             """).fetchall()
         return [Loan.from_db_row(dict(r)) for r in rows]
 
-    def update_loan(self, loan_id: int | str, **kwargs: str | int | float | None) -> dict[str, Any] | None:
+    def update_loan(
+        self, loan_id: int | str, **kwargs: str | int | float | None
+    ) -> dict[str, Any] | None:
         """Update loan fields. Only updates provided fields."""
         allowed = {
-            'name', 'lender', 'outstanding_paise', 'interest_rate',
-            'tenure_months', 'emi_paise', 'gold_weight_grams',
-            'gold_purity', 'interest_type', 'notes'
+            "name",
+            "lender",
+            "outstanding_paise",
+            "interest_rate",
+            "tenure_months",
+            "emi_paise",
+            "gold_weight_grams",
+            "gold_purity",
+            "interest_type",
+            "notes",
         }
         updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
         if not updates:
             return self.get_loan(loan_id)
 
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause = ", ".join(f"{k} = ?" for k in updates)
         set_clause += ", updated_at = datetime('now')"
         values = list(updates.values()) + [int(loan_id)]
 
         with self._get_conn() as conn:
-            conn.execute(
-                f"UPDATE loans SET {set_clause} WHERE id = ?", values
-            )
+            conn.execute(f"UPDATE loans SET {set_clause} WHERE id = ?", values)
             conn.commit()
         return self.get_loan(loan_id)
 
@@ -109,7 +138,7 @@ class LoanRepository(BaseRepository):
         with self._get_conn() as conn:
             conn.execute(
                 "UPDATE loans SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
-                (int(loan_id),)
+                (int(loan_id),),
             )
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()
@@ -119,8 +148,13 @@ class LoanRepository(BaseRepository):
     # Prepayment Persistence
     # ============================================================
 
-    def add_prepayment(self, loan_id: int | str, amount_paise: int, prepayment_date: str,
-                       mode: str = 'reduce_tenure') -> int:
+    def add_prepayment(
+        self,
+        loan_id: int | str,
+        amount_paise: int,
+        prepayment_date: str,
+        mode: str = "reduce_tenure",
+    ) -> int:
         """Persist a prepayment record. Returns the prepayment ID."""
         with self._get_conn() as conn:
             cur = conn.execute(
@@ -128,7 +162,7 @@ class LoanRepository(BaseRepository):
                 INSERT INTO loan_prepayments (loan_id, amount_paise, prepayment_date, mode)
                 VALUES (?, ?, ?, ?)
                 """,
-                (int(loan_id), amount_paise, prepayment_date, mode)
+                (int(loan_id), amount_paise, prepayment_date, mode),
             )
             conn.commit()
         return cur.lastrowid or 0
@@ -143,7 +177,7 @@ class LoanRepository(BaseRepository):
                 WHERE loan_id = ?
                 ORDER BY prepayment_date DESC
                 """,
-                (int(loan_id),)
+                (int(loan_id),),
             ).fetchall()
         return [dict(r) for r in rows]
 
@@ -159,8 +193,13 @@ class LoanRepository(BaseRepository):
     # Floating Rate Change Persistence
     # ============================================================
 
-    def add_rate_change(self, loan_id: int | str, change_date: str, new_rate_bps: int,
-                        mode: str = 'adjust_emi') -> int:
+    def add_rate_change(
+        self,
+        loan_id: int | str,
+        change_date: str,
+        new_rate_bps: int,
+        mode: str = "adjust_emi",
+    ) -> int:
         """Persist a floating rate change record. Returns the rate change ID."""
         with self._get_conn() as conn:
             cur = conn.execute(
@@ -168,7 +207,7 @@ class LoanRepository(BaseRepository):
                 INSERT INTO loan_rate_changes (loan_id, change_date, new_rate_bps, mode)
                 VALUES (?, ?, ?, ?)
                 """,
-                (int(loan_id), change_date, new_rate_bps, mode)
+                (int(loan_id), change_date, new_rate_bps, mode),
             )
             conn.commit()
         return cur.lastrowid or 0
@@ -183,14 +222,16 @@ class LoanRepository(BaseRepository):
                 WHERE loan_id = ?
                 ORDER BY change_date
                 """,
-                (int(loan_id),)
+                (int(loan_id),),
             ).fetchall()
         return [dict(r) for r in rows]
 
     def remove_rate_change(self, rate_change_id: int) -> bool:
         """Delete a rate change record by ID."""
         with self._get_conn() as conn:
-            conn.execute("DELETE FROM loan_rate_changes WHERE id = ?", (rate_change_id,))
+            conn.execute(
+                "DELETE FROM loan_rate_changes WHERE id = ?", (rate_change_id,)
+            )
             conn.commit()
             changes = conn.execute("SELECT changes()").fetchone()
         return bool(changes[0]) if changes else False
@@ -207,13 +248,16 @@ class LoanRepository(BaseRepository):
             principal_paise, interest_paise, outstanding_after_paise, source.
         """
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT id, loan_id, due_date, emi_amount_paise,
                        principal_paise, interest_paise, outstanding_after_paise, source
                 FROM loan_amortization_schedule
                 WHERE loan_id = ?
                 ORDER BY due_date ASC
-            """, (loan_id,)).fetchall()
+            """,
+                (loan_id,),
+            ).fetchall()
             return [dict(r) for r in rows]
 
     def has_schedule_rows(self, loan_id: int) -> bool:
@@ -225,7 +269,9 @@ class LoanRepository(BaseRepository):
             ).fetchone()
             return row is not None
 
-    def persist_schedule_rows(self, loan_id: int, rows: list[dict[str, Any]], source: str = "computed") -> int:
+    def persist_schedule_rows(
+        self, loan_id: int, rows: list[dict[str, Any]], source: str = "computed"
+    ) -> int:
         """
         Bulk insert schedule rows for a loan.
 
@@ -242,20 +288,23 @@ class LoanRepository(BaseRepository):
         inserted = 0
         with self._get_conn() as conn:
             for row in rows:
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT OR REPLACE INTO loan_amortization_schedule
                         (loan_id, due_date, emi_amount_paise, principal_paise,
                          interest_paise, outstanding_after_paise, source)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    loan_id,
-                    row["due_date"],
-                    row["emi_paise"],
-                    row["principal_paise"],
-                    row["interest_paise"],
-                    row["balance_paise"],
-                    source,
-                ))
+                """,
+                    (
+                        loan_id,
+                        row["due_date"],
+                        row["emi_paise"],
+                        row["principal_paise"],
+                        row["interest_paise"],
+                        row["balance_paise"],
+                        source,
+                    ),
+                )
                 inserted += 1
             conn.commit()
         return inserted
@@ -278,7 +327,8 @@ class LoanRepository(BaseRepository):
         Stub for future statement-import feature. To be wired later.
         """
         with self._get_conn() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 INSERT INTO loan_amortization_schedule
                     (loan_id, due_date, emi_amount_paise, principal_paise,
                      interest_paise, outstanding_after_paise, source)
@@ -289,13 +339,15 @@ class LoanRepository(BaseRepository):
                     principal_paise = excluded.principal_paise,
                     interest_paise = excluded.interest_paise,
                     outstanding_after_paise = excluded.outstanding_after_paise
-            """, (
-                loan_id,
-                due_date,
-                emi_paise,
-                principal_paise,
-                interest_paise,
-                outstanding_after_paise,
-            ))
+            """,
+                (
+                    loan_id,
+                    due_date,
+                    emi_paise,
+                    principal_paise,
+                    interest_paise,
+                    outstanding_after_paise,
+                ),
+            )
             conn.commit()
             return int(cur.lastrowid or 0)

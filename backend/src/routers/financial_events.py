@@ -8,6 +8,7 @@ from src.services.financial_events_service import FinancialEventsService
 
 router = APIRouter(prefix="/api/financial-events", tags=["financial-events"])
 
+
 @router.post("/", response_model=int)
 def create_event(
     event_type: str,
@@ -54,6 +55,7 @@ def create_event(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/", response_model=list)
 def list_events(
     month_bucket: str | None = Query(None),
@@ -72,6 +74,7 @@ def list_events(
             return service.get_events_with_links("", household_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/{event_id}", response_model=dict)
 def get_event(event_id: int = Path(..., description="Event ID")) -> dict[str, Any]:

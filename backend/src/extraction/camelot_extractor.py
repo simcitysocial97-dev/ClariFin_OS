@@ -88,10 +88,14 @@ class CamelotExtractor:
             )
             valid = [t for t in tables if t.df.shape[0] >= self.MIN_ROWS]
             if valid:
-                self._log(f"Page {page_number}: lattice found {len(tables)} tables, {len(valid)} valid")
+                self._log(
+                    f"Page {page_number}: lattice found {len(tables)} tables, {len(valid)} valid"
+                )
                 return list(tables), "lattice"
             else:
-                self._log(f"Page {page_number}: lattice found {len(tables)} tables but none valid (< {self.MIN_ROWS} rows) → trying stream")
+                self._log(
+                    f"Page {page_number}: lattice found {len(tables)} tables but none valid (< {self.MIN_ROWS} rows) → trying stream"
+                )
         except Exception as e:
             self._log(f"Page {page_number}: lattice error: {e} → trying stream")
 
@@ -158,11 +162,7 @@ class CamelotExtractor:
             return -1.0
 
         # Weighted score
-        score = (
-            row_count * 0.4 +
-            numeric_ratio * 30.0 +
-            date_col_ratio * 20.0
-        )
+        score = row_count * 0.4 + numeric_ratio * 30.0 + date_col_ratio * 20.0
 
         return round(score, 3)
 
@@ -242,6 +242,7 @@ class CamelotExtractor:
 
 
 # ========== CLI Entry Point ==========
+
 
 def main() -> None:
     if len(sys.argv) < 2:

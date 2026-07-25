@@ -36,6 +36,7 @@ from typing import Any
 # Date Utilities
 # ============================================================
 
+
 def _parse_date_iso(date_iso: str) -> datetime | None:
     """Parse YYYY-MM-DD date string to datetime."""
     if not date_iso:
@@ -63,6 +64,7 @@ def _date_difference_days(date_a: str, date_b: str) -> int | None:
 # ============================================================
 # Confidence Calculation
 # ============================================================
+
 
 def _calculate_confidence(
     date_diff_days: int,
@@ -118,7 +120,7 @@ def _simple_description_similarity(desc_a: str, desc_b: str) -> float:
     desc_b_lower = desc_b.lower()
 
     # Common transfer-related keywords
-    transfer_keywords = ['transfer', 'neft', 'imps', 'rtgs', 'upi', 'paytm', 'gpay']
+    transfer_keywords = ["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"]
 
     has_keyword_a = any(kw in desc_a_lower for kw in transfer_keywords)
     has_keyword_b = any(kw in desc_b_lower for kw in transfer_keywords)
@@ -133,7 +135,10 @@ def _simple_description_similarity(desc_a: str, desc_b: str) -> float:
 # Matching Rules (Deterministic Only)
 # ============================================================
 
-def _check_match(txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_days: int = 3) -> dict[str, Any] | None:
+
+def _check_match(
+    txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_days: int = 3
+) -> dict[str, Any] | None:
     """
     Check if two transactions match as potential transfer pair.
 
@@ -193,8 +198,7 @@ def _check_match(txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_d
 
     # Calculate confidence
     desc_similarity = _simple_description_similarity(
-        debit_txn.get("description", ""),
-        credit_txn.get("description", "")
+        debit_txn.get("description", ""), credit_txn.get("description", "")
     )
 
     confidence = _calculate_confidence(
@@ -218,11 +222,18 @@ def _check_match(txn_a: dict[str, Any], txn_b: dict[str, Any], max_date_window_d
         "match_confidence": confidence,
         "match_type": match_type,
         "deterministic_key": deterministic_key,
-        "explanation": _generate_explanation(debit_txn, credit_txn, amount_paise, date_diff),
+        "explanation": _generate_explanation(
+            debit_txn, credit_txn, amount_paise, date_diff
+        ),
     }
 
 
-def _generate_explanation(debit_txn: dict[str, Any], credit_txn: dict[str, Any], amount_paise: int, date_diff: int) -> str:
+def _generate_explanation(
+    debit_txn: dict[str, Any],
+    credit_txn: dict[str, Any],
+    amount_paise: int,
+    date_diff: int,
+) -> str:
     """Generate human-readable explanation for a match."""
     amount_rupees = amount_paise / 100
 
@@ -242,7 +253,10 @@ def _generate_explanation(debit_txn: dict[str, Any], credit_txn: dict[str, Any],
 # Core Matching Functions
 # ============================================================
 
-def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[dict[str, Any]]:
+
+def find_potential_matches(
+    db_path: str, max_date_window_days: int = 3
+) -> list[dict[str, Any]]:
     """
     Find potential transfer matches across accounts.
 
@@ -291,7 +305,7 @@ def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[
 
     # Compare all pairs
     for i, txn_a in enumerate(transactions):
-        for txn_b in transactions[i+1:]:
+        for txn_b in transactions[i + 1 :]:
             # Check for match
             match = _check_match(txn_a, txn_b, max_date_window_days)
 
@@ -304,7 +318,9 @@ def find_potential_matches(db_path: str, max_date_window_days: int = 3) -> list[
     return matches
 
 
-def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days: int = 3) -> list[dict[str, Any]]:
+def find_matches_for_transaction(
+    db_path: str, txn_id: int, max_date_window_days: int = 3
+) -> list[dict[str, Any]]:
     """
     Find potential matches for a specific transaction.
 
@@ -320,12 +336,15 @@ def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days
     conn.row_factory = sqlite3.Row
 
     # Get the target transaction
-    cur = conn.execute("""
+    cur = conn.execute(
+        """
         SELECT
             id, date_iso, description, debit, credit, account_id
         FROM transactions
         WHERE id = ?
-    """, (txn_id,))
+    """,
+        (txn_id,),
+    )
 
     target = cur.fetchone()
     if not target:
@@ -348,7 +367,8 @@ def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days
         conn.close()
         return []
 
-    cur = conn.execute(f"""
+    cur = conn.execute(
+        f"""
         SELECT
             id, date_iso, description, debit, credit, account_id
         FROM transactions
@@ -358,7 +378,9 @@ def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days
           AND {match_condition}
           AND date_iso IS NOT NULL AND date_iso != ''
         ORDER BY date_iso ASC, id ASC
-    """, (txn_id, target_dict["account_id"], amount_to_match))
+    """,
+        (txn_id, target_dict["account_id"], amount_to_match),
+    )
 
     candidates = [dict(row) for row in cur.fetchall()]
     conn.close()
@@ -378,7 +400,6 @@ def find_matches_for_transaction(db_path: str, txn_id: int, max_date_window_days
 # ============================================================
 
 if __name__ == "__main__":
-
     db_path = str(Path(__file__).parent.parent / "data" / "finance.db")
 
     print("=" * 60)

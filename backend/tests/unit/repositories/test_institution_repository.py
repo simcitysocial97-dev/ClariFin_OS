@@ -23,8 +23,7 @@ from src.repositories.institution_repository import InstitutionRepository
 def _create_institutions_table(db_path: str) -> None:
     """Create the institutions table for testing."""
     conn = __import__("sqlite3").connect(db_path)
-    conn.execute(
-        """
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS institutions (
             institution_id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
@@ -34,8 +33,7 @@ def _create_institutions_table(db_path: str) -> None:
             created_at TEXT NOT NULL DEFAULT (datetime('now')),
             updated_at TEXT NOT NULL DEFAULT (datetime('now'))
         )
-        """
-    )
+        """)
     conn.commit()
     conn.close()
 

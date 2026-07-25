@@ -165,7 +165,9 @@ def transactor_vs_revolver(
         card_type = "revolver"
         # Confidence based on proportion
         total = settled_count + revolving_count
-        confidence = Decimal(str(revolving_count / total)) if total > 0 else Decimal("0")
+        confidence = (
+            Decimal(str(revolving_count / total)) if total > 0 else Decimal("0")
+        )
     elif settled_count > revolving_count:
         card_type = "transactor"
         total = settled_count + revolving_count
@@ -173,7 +175,9 @@ def transactor_vs_revolver(
     else:
         # Equal counts or no events - default to transactor with low confidence
         card_type = "transactor"
-        confidence = Decimal("0.5") if (settled_count + revolving_count) > 0 else Decimal("0")
+        confidence = (
+            Decimal("0.5") if (settled_count + revolving_count) > 0 else Decimal("0")
+        )
 
     return {
         "type": card_type,
@@ -220,9 +224,7 @@ def revolver_ratio(
         return Decimal("0")
 
     # Count months with any revolving activity
-    revolving_months = sum(
-        1 for m in months_with_credit.values() if m["revolving"] > 0
-    )
+    revolving_months = sum(1 for m in months_with_credit.values() if m["revolving"] > 0)
     total_months = len(months_with_credit)
 
     if total_months == 0:
@@ -306,9 +308,7 @@ def liquidity_extraction_frequency(
     """
     cash_advance_types = ("cash_advance", "credit_card_cash_advance")
     advances = [
-        e
-        for e in financial_events
-        if e.get("event_type", "") in cash_advance_types
+        e for e in financial_events if e.get("event_type", "") in cash_advance_types
     ]
 
     if not advances:
@@ -338,9 +338,7 @@ def liquidity_extraction_frequency(
 
     if len(dates) >= 2:
         dates.sort()
-        total_days = sum(
-            (dates[i + 1] - dates[i]).days for i in range(len(dates) - 1)
-        )
+        total_days = sum((dates[i + 1] - dates[i]).days for i in range(len(dates) - 1))
         avg_days = total_days // len(dates) if len(dates) > 1 else None
 
     return {
@@ -437,9 +435,7 @@ def financial_stress_index(
         "cashflow_deficit": cashflow_score,
     }
 
-    score = sum(
-        Decimal(str(_STRESS_WEIGHTS[k])) * v for k, v in components.items()
-    )
+    score = sum(Decimal(str(_STRESS_WEIGHTS[k])) * v for k, v in components.items())
 
     return {
         "score": Decimal(str(round(float(score), 4))),
@@ -496,14 +492,16 @@ def household_divergence(
 
                 # Cross-owner if different owner_id
                 if event_owner != linked_owner:
-                    divergent_links.append({
-                        "from_owner": event_owner,
-                        "to_owner": linked_owner,
-                        "link_type": link_type,
-                        "event_id": event.get("id", 0),
-                        "linked_event_id": linked_event_id,
-                        "household_id": event_household,
-                    })
+                    divergent_links.append(
+                        {
+                            "from_owner": event_owner,
+                            "to_owner": linked_owner,
+                            "link_type": link_type,
+                            "event_id": event.get("id", 0),
+                            "linked_event_id": linked_event_id,
+                            "household_id": event_household,
+                        }
+                    )
 
     return {
         "flag": len(divergent_links) > 0,

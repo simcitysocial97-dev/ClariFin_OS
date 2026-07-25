@@ -3,6 +3,7 @@
 Coordinates event creation, lineage walking, and persistence.
 No DB access in engines - this layer handles all database writes.
 """
+
 from typing import Any, cast
 
 from src.engines.financial_events.lineage_walker import (
@@ -85,11 +86,20 @@ class FinancialEventsService:
         self.event_repo.get_events_by_type("", household_id)  # Get all types
         all_events = []
         for event_type in [
-            "income", "expense", "transfer", "liability_increase",
-            "liability_decrease", "cash_advance", "emi_payment",
-            "liability_repayment", "credit_card_cash_advance", "transfer_internal"
+            "income",
+            "expense",
+            "transfer",
+            "liability_increase",
+            "liability_decrease",
+            "cash_advance",
+            "emi_payment",
+            "liability_repayment",
+            "credit_card_cash_advance",
+            "transfer_internal",
         ]:
-            all_events.extend(self.event_repo.get_events_by_type(event_type, household_id))
+            all_events.extend(
+                self.event_repo.get_events_by_type(event_type, household_id)
+            )
 
         # Walk lineage
         proposal = walk_lineage(all_events, lookback_days)

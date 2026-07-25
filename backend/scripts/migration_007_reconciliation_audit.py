@@ -37,21 +37,29 @@ def run_migration(db_path: str | None = None) -> None:
     ).fetchone()[0]
 
     if null_rows > 0:
-        print(f"⚠ Found {null_rows} rows where match_confidence IS NULL — left for manual review")
+        print(
+            f"⚠ Found {null_rows} rows where match_confidence IS NULL — left for manual review"
+        )
         # Show the affected rows (fetchall returns tuples without row_factory set)
         problem_rows = conn.execute(
             "SELECT id, debit_txn_id, credit_txn_id, match_confidence FROM reconciliations WHERE match_confidence IS NULL"
         ).fetchall()
         for row in problem_rows:
-            print(f"   NULL confidence: reconciliation id={row[0]} (txns {row[1]}↔{row[2]})")
+            print(
+                f"   NULL confidence: reconciliation id={row[0]} (txns {row[1]}↔{row[2]})"
+            )
 
     if out_of_range_rows > 0:
-        print(f"⚠ Found {out_of_range_rows} rows where match_confidence is outside [0.0, 1.0] — left for manual review")
+        print(
+            f"⚠ Found {out_of_range_rows} rows where match_confidence is outside [0.0, 1.0] — left for manual review"
+        )
         problem_rows = conn.execute(
             "SELECT id, debit_txn_id, credit_txn_id, match_confidence FROM reconciliations WHERE match_confidence IS NOT NULL AND (match_confidence < 0.0 OR match_confidence > 1.0)"
         ).fetchall()
         for row in problem_rows:
-            print(f"   Out-of-range confidence={row[3]}: reconciliation id={row[0]} (txns {row[1]}↔{row[2]})")
+            print(
+                f"   Out-of-range confidence={row[3]}: reconciliation id={row[0]} (txns {row[1]}↔{row[2]})"
+            )
 
     # Backfill only valid rows
     backfill = """

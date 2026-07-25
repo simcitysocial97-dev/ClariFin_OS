@@ -44,17 +44,19 @@ class ReconciliationWorkspaceService(BaseService):
         # Build statement summaries
         statement_summaries = []
         for stmt in statements:
-            statement_summaries.append({
-                "statement_id": stmt.get("id", 0),
-                "bank": stmt.get("bank", ""),
-                "period_from": stmt.get("period_from", ""),
-                "period_to": stmt.get("period_to", ""),
-                "total_debit_paise": stmt.get("total_debit_paise", 0),
-                "total_credit_paise": stmt.get("total_credit_paise", 0),
-                "transaction_count": stmt.get("transaction_count", 0),
-                "reconciled_count": stmt.get("reconciled_count", 0),
-                "status": stmt.get("status", "pending"),
-            })
+            statement_summaries.append(
+                {
+                    "statement_id": stmt.get("id", 0),
+                    "bank": stmt.get("bank", ""),
+                    "period_from": stmt.get("period_from", ""),
+                    "period_to": stmt.get("period_to", ""),
+                    "total_debit_paise": stmt.get("total_debit_paise", 0),
+                    "total_credit_paise": stmt.get("total_credit_paise", 0),
+                    "transaction_count": stmt.get("transaction_count", 0),
+                    "reconciled_count": stmt.get("reconciled_count", 0),
+                    "status": stmt.get("status", "pending"),
+                }
+            )
 
         # Build status overview
         status_overview = {
@@ -64,7 +66,11 @@ class ReconciliationWorkspaceService(BaseService):
             "reconciled": total_reconciled,
             "pending": total_transactions - total_reconciled,
             "discrepancies": 0,
-            "match_rate": int(total_reconciled / total_transactions * 100) if total_transactions > 0 else 0,
+            "match_rate": (
+                int(total_reconciled / total_transactions * 100)
+                if total_transactions > 0
+                else 0
+            ),
         }
 
         # Build discrepancies (placeholder)
@@ -76,11 +82,13 @@ class ReconciliationWorkspaceService(BaseService):
         # Generate insights
         insights = []
         if status_overview["match_rate"] < 80:
-            insights.append({
-                "type": "warning",
-                "severity": "high",
-                "message": f"Match rate is {status_overview['match_rate']}%. Consider reviewing pending reconciliations.",
-            })
+            insights.append(
+                {
+                    "type": "warning",
+                    "severity": "high",
+                    "message": f"Match rate is {status_overview['match_rate']}%. Consider reviewing pending reconciliations.",
+                }
+            )
 
         return {
             "statements": statement_summaries,
@@ -102,7 +110,10 @@ class ReconciliationWorkspaceService(BaseService):
                     {
                         "name": "Match Rate Calculation",
                         "description": "Percentage of reconciled transactions",
-                        "inputs": {"total_transactions": total_transactions, "reconciled": total_reconciled},
+                        "inputs": {
+                            "total_transactions": total_transactions,
+                            "reconciled": total_reconciled,
+                        },
                         "outputs": {"match_rate": status_overview["match_rate"]},
                     },
                 ],

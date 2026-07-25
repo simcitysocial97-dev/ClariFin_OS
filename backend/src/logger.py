@@ -34,6 +34,7 @@ def setup_logging(name: str = "clarifin") -> logging.Logger:
     # Get settings
     try:
         from src.config import settings
+
         log_level = settings.log_level
         log_format = settings.log_format
     except ImportError:
@@ -66,7 +67,9 @@ def log_request(method: str, path: str, status_code: int, **kwargs: Any) -> None
     """
     level = logging.WARNING if status_code >= 400 else logging.INFO
     extra = ", ".join(f"{k}={v}" for k, v in kwargs.items())
-    logger.log(level, f"{method} {path} - {status_code}" + (f" ({extra})" if extra else ""))
+    logger.log(
+        level, f"{method} {path} - {status_code}" + (f" ({extra})" if extra else "")
+    )
 
 
 def log_error(message: str, error: Exception | None = None, **kwargs: Any) -> None:

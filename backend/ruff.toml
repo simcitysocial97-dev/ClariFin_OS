@@ -1,0 +1,44 @@
+# backend/ruff.toml
+# Ruff configuration for ClariFin OS
+
+# Target Python 3.12
+target-version = "py312"
+
+# Line length (match Black)
+line-length = 88
+
+[lint]
+# Rules to enable
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings  
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear (common bugs)
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade (modern Python syntax)
+    "SIM",    # flake8-simplify
+]
+
+# Rules to ignore
+ignore = [
+    "E501",   # line too long — Black handles this
+    "B008",   # do not perform function calls in default arguments (FastAPI uses this)
+    "SIM108", # ternary operator — sometimes less readable
+]
+
+# Files to never lint
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "tests/generated",
+    "*.pyc",
+]
+
+[lint.per-file-ignores]
+# Test files can use assert, magic values, etc.
+"tests/**" = ["S101", "S105", "S106", "PLR2004"]
+# Migration files may have long strings
+"migrations/**" = ["E501"]

@@ -35,7 +35,9 @@ class BehaviorService(BaseService):
         """Cache behavioral profile."""
         set_cached_behavior_profile(self.db_path, profile)
 
-    def generate_insights(self, profile: dict[str, Any] | None = None) -> dict[str, Any]:
+    def generate_insights(
+        self, profile: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """
         Generate behavioral insights and nudges.
 

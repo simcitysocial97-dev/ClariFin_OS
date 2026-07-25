@@ -146,7 +146,9 @@ class AccountService:
             source=source,
         )
 
-    def get_balance_history(self, account_id: str, limit: int = 90) -> list[dict[str, Any]]:
+    def get_balance_history(
+        self, account_id: str, limit: int = 90
+    ) -> list[dict[str, Any]]:
         """Get balance history for an account."""
         return self.balance_repo.get_balance_history(account_id, limit)
 
@@ -169,7 +171,9 @@ class AccountService:
         history = self.balance_repo.get_balance_history(account_id, limit=2)
         if len(history) < 2:
             return 0
-        return compute_balance_change(history[1]["balance_paise"], history[0]["balance_paise"])
+        return compute_balance_change(
+            history[1]["balance_paise"], history[0]["balance_paise"]
+        )
 
     def calculate_balance_growth(self, account_id: str) -> int:
         """Calculate balance growth percentage."""

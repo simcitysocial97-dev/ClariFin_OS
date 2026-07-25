@@ -22,10 +22,13 @@ class DashboardSummaryDTO(BaseModel):
     - emi_paise: EMI amount in paise
     - savings_paise: Savings amount in paise
     """
-    net_cash_flow_paise: int = Field(description="Net cash flow in paise (income - expenses)")
+
+    net_cash_flow_paise: int = Field(
+        description="Net cash flow in paise (income - expenses)"
+    )
     net_cash_flow_rupees: float | None = Field(
         default=None,
-        description="Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise)"
+        description="Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise)",
     )
     total_income_paise: int = Field(description="Total income in paise")
     total_expenses_paise: int = Field(description="Total expenses in paise")
@@ -44,7 +47,7 @@ class DashboardSummaryDTO(BaseModel):
                 "savings_rate": 25.0,
                 "emi_paise": 1250000,  # ₹12,500.00
                 "emi_ratio": 12.5,
-                "buffer_days": 45
+                "buffer_days": 45,
             }
         }
 
@@ -55,10 +58,10 @@ class OverviewDTO(BaseModel):
 
     Contains aggregated financial metrics and chart data.
     """
+
     total_spend_paise: int = Field(description="Total spending in paise")
     total_spend_rupees: float | None = Field(
-        default=None,
-        description="Total spending in rupees (DEPRECATED)"
+        default=None, description="Total spending in rupees (DEPRECATED)"
     )
     transaction_count: int = Field(description="Total number of transactions")
     category_chart: list[dict[str, Any]] = Field(
@@ -79,13 +82,14 @@ class OverviewDTO(BaseModel):
                 "transaction_count": 150,
                 "category_chart": [],
                 "monthly_chart": [],
-                "bank_wise_chart": []
+                "bank_wise_chart": [],
             }
         }
 
 
 class CategoryBreakdownDTO(BaseModel):
     """Category breakdown for analytics."""
+
     category: str = Field(description="Category name")
     amount_paise: int = Field(description="Amount in paise")
     count: int = Field(description="Number of transactions")
@@ -97,6 +101,6 @@ class CategoryBreakdownDTO(BaseModel):
                 "category": "Shopping",
                 "amount_paise": 500000,  # ₹5,000.00
                 "count": 15,
-                "percentage": 25.5
+                "percentage": 25.5,
             }
         }

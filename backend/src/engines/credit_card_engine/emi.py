@@ -7,6 +7,7 @@ loan_engine.emi for consistency and precision.
 All monetary values in paise (integer).
 All rates in basis points (integer).
 """
+
 from src.engines.loan_engine.emi import compute_emi_fixed, compute_monthly_interest
 
 
@@ -66,4 +67,3 @@ def compute_emi_conversion(
         "total_repayment_paise": total_repayment_paise,
         "monthly_interest_paise": first_month_interest,
     }
-

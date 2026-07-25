@@ -1,4 +1,5 @@
 """Smoke tests for Financial Events capability."""
+
 from __future__ import annotations
 
 import sys

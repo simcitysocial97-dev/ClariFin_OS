@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T03:42:36.704864+00:00",
+  "generated_at": "2026-07-25T11:24:08.596272+00:00",
   "capabilities": [
     {
       "id": "account_management",
@@ -8,19 +8,17 @@
       "structural_maturity": "\u2713",
       "evidence": {
         "smoke_tests": 0,
-        "property_tests": 0,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 15,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -84,15 +82,14 @@
         "golden_tests": 2,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 10,
+      "strength": "Strong",
       "gaps": [
         "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -156,15 +153,14 @@
         "golden_tests": 4,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 10,
+      "strength": "Strong",
       "gaps": [
         "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -176,19 +172,17 @@
       "structural_maturity": "\u2713",
       "evidence": {
         "smoke_tests": 0,
-        "property_tests": 0,
+        "property_tests": 1,
         "golden_tests": 2,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 15,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -200,17 +194,16 @@
       "structural_maturity": "\u2713",
       "evidence": {
         "smoke_tests": 0,
-        "property_tests": 0,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
         "invariants": 0,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 12,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
         "No invariant tests",
         "No performance baseline"
@@ -224,19 +217,17 @@
       "structural_maturity": "\u2713",
       "evidence": {
         "smoke_tests": 0,
-        "property_tests": 0,
+        "property_tests": 2,
         "golden_tests": 2,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 15,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -252,15 +243,14 @@
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 2,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 10,
+      "strength": "Strong",
       "gaps": [
         "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0

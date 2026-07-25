@@ -94,7 +94,10 @@ def mixed_transactions() -> list[dict[str, Any]]:
         {"description": "Loan from bank", "amount_paise": 500000},
         {"description": "Refund from Amazon", "amount_paise": 2000},
         {"description": "Business consulting income", "amount_paise": 200000},
-        {"description": "Dividend from stocks", "amount_paise": 50000},  # Added investment
+        {
+            "description": "Dividend from stocks",
+            "amount_paise": 50000,
+        },  # Added investment
     ]
 
 
@@ -113,29 +116,29 @@ class TestSavingsMetrics:
         # Income: ₹5L, Expenses: ₹4L, Fees: ₹10K
         result = compute_true_savings_rate(5000000, 4000000, 100000)
         # (5000000 - 4000000 - 100000) / 5000000 = 0.18
-        assert result == Decimal('0.18')
+        assert result == Decimal("0.18")
 
     def test_true_savings_rate_zero_income(self):
         """Test savings rate with zero income returns 0."""
         result = compute_true_savings_rate(0, 100000, 50000)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_true_savings_rate_negative(self):
         """Test negative savings rate (overspending)."""
         # Income: ₹3L, Expenses: ₹4L, Fees: ₹50K = deficit
         result = compute_true_savings_rate(3000000, 4000000, 50000)
         # (3000000 - 4000000 - 50000) / 3000000 = -0.35
-        assert result == Decimal('-0.35')
+        assert result == Decimal("-0.35")
 
     def test_true_savings_rate_perfect_savings(self):
         """Test zero expenses and zero fees."""
         result = compute_true_savings_rate(5000000, 0, 0)
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_true_savings_rate_zero_fees(self):
         """Test with zero fees."""
         result = compute_true_savings_rate(5000000, 4000000, 0)
-        assert result == Decimal('0.2')
+        assert result == Decimal("0.2")
 
     def test_true_savings_rate_deterministic(self):
         """Test that same inputs produce same outputs."""
@@ -149,23 +152,23 @@ class TestSavingsMetrics:
         """Test normal ratio calculation."""
         result = compute_borrowed_lifestyle_ratio(2000000, 4000000)
         # 2000000 / 4000000 = 0.5
-        assert result == Decimal('0.5')
+        assert result == Decimal("0.5")
 
     def test_borrowed_lifestyle_ratio_zero_expenses(self):
         """Test ratio with zero expenses returns 0."""
         result = compute_borrowed_lifestyle_ratio(1000000, 0)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_borrowed_lifestyle_ratio_all_credit_funded(self):
         """Test when all expenses are credit-funded."""
         result = compute_borrowed_lifestyle_ratio(5000000, 5000000)
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_borrowed_lifestyle_ratio_credit_exceeds_expenses(self):
         """Test when credit funding exceeds reported expenses."""
         result = compute_borrowed_lifestyle_ratio(6000000, 5000000)
         # Ratio > 1 indicates unusual pattern
-        assert result == Decimal('1.2')
+        assert result == Decimal("1.2")
 
     def test_borrowed_lifestyle_ratio_deterministic(self):
         """Test determinism of ratio calculation."""
@@ -210,23 +213,23 @@ class TestCashflowStability:
         """Test stable income returns high stability score."""
         result = compute_income_stability(sample_monthly_incomes)
         # Should be close to 1 for stable income
-        assert Decimal('0.7') < result <= Decimal('1')
+        assert Decimal("0.7") < result <= Decimal("1")
 
     def test_income_stability_volatile(self, volatile_monthly_incomes):
         """Test volatile income returns lower stability score."""
         result = compute_income_stability(volatile_monthly_incomes)
         # Should be lower for volatile income
-        assert result < Decimal('0.5')
+        assert result < Decimal("0.5")
 
     def test_income_stability_single_month(self):
         """Test single month returns 1 (assumed stable)."""
         result = compute_income_stability([5000000])
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_income_stability_empty(self):
         """Test empty list returns 1 (assumed stable)."""
         result = compute_income_stability([])
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_income_stability_deterministic(self):
         """Test determinism of income stability."""
@@ -240,22 +243,22 @@ class TestCashflowStability:
     def test_expense_stability_stable(self, sample_monthly_expenses):
         """Test stable expenses return high stability score."""
         result = compute_expense_stability(sample_monthly_expenses)
-        assert Decimal('0.5') < result <= Decimal('1')
+        assert Decimal("0.5") < result <= Decimal("1")
 
     def test_expense_stability_constant(self):
         """Test constant expenses return 1."""
         result = compute_expense_stability([4000000, 4000000, 4000000])
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_expense_stability_single_month(self):
         """Test single month returns 1."""
         result = compute_expense_stability([4000000])
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_expense_stability_empty(self):
         """Test empty list returns 1."""
         result = compute_expense_stability([])
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     # --- compute_cashflow_stability_index ---
 
@@ -263,16 +266,18 @@ class TestCashflowStability:
         """Test that cashflow index averages income and expense stability."""
         # Income = [5M, 5M, 5M] -> stability = 1
         # Expenses = [4M, 5M, 6M] -> some variance
-        result = compute_cashflow_stability_index([5000000, 5000000, 5000000], [4000000, 5000000, 6000000])
+        result = compute_cashflow_stability_index(
+            [5000000, 5000000, 5000000], [4000000, 5000000, 6000000]
+        )
         # Should be between 0.5 and 1
-        assert Decimal('0.5') < result <= Decimal('1')
+        assert Decimal("0.5") < result <= Decimal("1")
 
     def test_cashflow_stability_index_both_stable(self):
         """Test index when both income and expenses are stable."""
         incomes = [5000000, 5000000, 5000000, 5000000]
         expenses = [4000000, 4000000, 4000000, 4000000]
         result = compute_cashflow_stability_index(incomes, expenses)
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_cashflow_stability_index_deterministic(self):
         """Test determinism of cashflow index."""
@@ -333,7 +338,7 @@ class TestResilienceMetrics:
         )
         # Liquidity = 1.0, Income stability = 1.0
         # Result = 0.6 * 1.0 + 0.4 * 1.0 = 1.0
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_resilience_index_low_liquidity(self):
         """Test low resilience with poor liquidity."""
@@ -345,7 +350,7 @@ class TestResilienceMetrics:
         )
         # Liquidity = 0, Income stability = 1.0
         # Result = 0.6 * 0 + 0.4 * 1.0 = 0.4
-        assert result == Decimal('0.4')
+        assert result == Decimal("0.4")
 
     def test_resilience_index_capped_liquidity(self):
         """Test that liquidity is capped at 12 months."""
@@ -357,7 +362,7 @@ class TestResilienceMetrics:
         )
         # Liquidity capped at 12, stability = 1.0
         # Result = 0.6 * 1.0 + 0.4 * 1.0 = 1.0
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_resilience_index_volatile_income(self):
         """Test resilience with volatile income."""
@@ -368,7 +373,7 @@ class TestResilienceMetrics:
             monthly_incomes_paise=[3000000, 8000000, 2000000],
         )
         # Liquidity = 6 months = 0.5, Income stability < 1
-        assert Decimal('0.2') < result < Decimal('1')
+        assert Decimal("0.2") < result < Decimal("1")
 
 
 # ============================================================
@@ -385,28 +390,28 @@ class TestLifestyleMetrics:
         """Test positive lifestyle inflation."""
         result = compute_lifestyle_inflation(6000000, 4000000)
         # (6M - 4M) / 4M = 0.5
-        assert result == Decimal('0.5')
+        assert result == Decimal("0.5")
 
     def test_lifestyle_inflation_zero(self):
         """Test zero inflation (same spending)."""
         result = compute_lifestyle_inflation(4000000, 4000000)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_lifestyle_inflation_decrease(self):
         """Test negative inflation (reduced spending)."""
         result = compute_lifestyle_inflation(3000000, 4000000)
         # (3M - 4M) / 4M = -0.25
-        assert result == Decimal('-0.25')
+        assert result == Decimal("-0.25")
 
     def test_lifestyle_inflation_zero_previous(self):
         """Test with zero previous spending."""
         result = compute_lifestyle_inflation(500000, 0)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_lifestyle_inflation_zero_current(self):
         """Test with zero current spending."""
         result = compute_lifestyle_inflation(0, 4000000)
-        assert result == Decimal('-1')
+        assert result == Decimal("-1")
 
     def test_lifestyle_inflation_deterministic(self):
         """Test determinism of inflation calculation."""
@@ -419,30 +424,34 @@ class TestLifestyleMetrics:
     def test_lifestyle_creep_index_positive(self):
         """Test positive creep over months."""
         # Spending grew from 2L to 4L over months
-        result = compute_lifestyle_creep_index([2000000, 2500000, 3000000, 3500000, 4000000])
+        result = compute_lifestyle_creep_index(
+            [2000000, 2500000, 3000000, 3500000, 4000000]
+        )
         # (4M - 2M) / 2M = 1.0
-        assert result == Decimal('1')
+        assert result == Decimal("1")
 
     def test_lifestyle_creep_index_negative(self):
         """Test negative creep (decreasing spending)."""
-        result = compute_lifestyle_creep_index([4000000, 3500000, 3000000, 2500000, 2000000])
+        result = compute_lifestyle_creep_index(
+            [4000000, 3500000, 3000000, 2500000, 2000000]
+        )
         # (2M - 4M) / 4M = -0.5
-        assert result == Decimal('-0.5')
+        assert result == Decimal("-0.5")
 
     def test_lifestyle_creep_index_single_month(self):
         """Test single month returns 0 (no trend)."""
         result = compute_lifestyle_creep_index([3000000])
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_lifestyle_creep_index_empty(self):
         """Test empty list returns 0."""
         result = compute_lifestyle_creep_index([])
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_lifestyle_creep_index_zero_earliest(self):
         """Test with zero earliest value."""
         result = compute_lifestyle_creep_index([0, 1000000, 2000000])
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_lifestyle_creep_index_deterministic(self):
         """Test determinism of creep index."""
@@ -462,15 +471,15 @@ class TestMetricsEdgeCases:
 
     def test_all_zero_inputs_savings(self):
         """Test all zeros in savings calculations."""
-        assert compute_true_savings_rate(0, 0, 0) == Decimal('0')
-        assert compute_borrowed_lifestyle_ratio(0, 0) == Decimal('0')
+        assert compute_true_savings_rate(0, 0, 0) == Decimal("0")
+        assert compute_borrowed_lifestyle_ratio(0, 0) == Decimal("0")
         assert compute_monthly_surplus(0, 0, 0) == 0
 
     def test_large_values(self):
         """Test with large monetary values."""
         # ₹10Cr income, ₹8Cr expenses
         result = compute_true_savings_rate(1000000000, 800000000, 10000000)
-        assert result == Decimal('0.19')
+        assert result == Decimal("0.19")
 
     def test_missing_months_handling(self):
         """Test that functions work with whatever data is provided."""
@@ -479,7 +488,7 @@ class TestMetricsEdgeCases:
         partial_expenses = [4000000, 4000000, 4000000]
 
         result = compute_cashflow_stability_index(partial_incomes, partial_expenses)
-        assert result == Decimal('1')  # All equal = stable
+        assert result == Decimal("1")  # All equal = stable
 
     def test_negative_values_savings(self):
         """Test negative values in savings metrics."""
@@ -499,23 +508,35 @@ class TestMetricsDeterminism:
     def test_all_savings_deterministic(self):
         """Test all savings functions produce same output for same input."""
         inputs = {
-            'income': 5000000,
-            'expenses': 4000000,
-            'fees': 100000,
-            'credit_funded': 2000000,
+            "income": 5000000,
+            "expenses": 4000000,
+            "fees": 100000,
+            "credit_funded": 2000000,
         }
 
         # Run each function twice
-        r1 = compute_true_savings_rate(inputs['income'], inputs['expenses'], inputs['fees'])
-        r2 = compute_true_savings_rate(inputs['income'], inputs['expenses'], inputs['fees'])
+        r1 = compute_true_savings_rate(
+            inputs["income"], inputs["expenses"], inputs["fees"]
+        )
+        r2 = compute_true_savings_rate(
+            inputs["income"], inputs["expenses"], inputs["fees"]
+        )
         assert r1 == r2
 
-        r1 = compute_borrowed_lifestyle_ratio(inputs['credit_funded'], inputs['expenses'])
-        r2 = compute_borrowed_lifestyle_ratio(inputs['credit_funded'], inputs['expenses'])
+        r1 = compute_borrowed_lifestyle_ratio(
+            inputs["credit_funded"], inputs["expenses"]
+        )
+        r2 = compute_borrowed_lifestyle_ratio(
+            inputs["credit_funded"], inputs["expenses"]
+        )
         assert r1 == r2
 
-        r1 = compute_monthly_surplus(inputs['income'], inputs['expenses'], inputs['fees'])
-        r2 = compute_monthly_surplus(inputs['income'], inputs['expenses'], inputs['fees'])
+        r1 = compute_monthly_surplus(
+            inputs["income"], inputs["expenses"], inputs["fees"]
+        )
+        r2 = compute_monthly_surplus(
+            inputs["income"], inputs["expenses"], inputs["fees"]
+        )
         assert r1 == r2
 
     def test_all_cashflow_deterministic(self):
@@ -851,22 +872,22 @@ class TestCreditDependencyRatio:
     def test_no_credit_dependency(self):
         """No credit-funded expenses should return 0 ratio."""
         result = compute_credit_dependency_ratio(0, 100000)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_full_credit_dependency(self):
         """All expenses credit-funded should return 1.0 ratio."""
         result = compute_credit_dependency_ratio(100000, 100000)
-        assert result == Decimal('1.0')
+        assert result == Decimal("1.0")
 
     def test_partial_credit_dependency(self):
         """Partial credit dependency returns appropriate ratio."""
         result = compute_credit_dependency_ratio(25000, 100000)
-        assert result == Decimal('0.25')
+        assert result == Decimal("0.25")
 
     def test_credit_exceeds_expenses(self):
         """Credit-funded exceeding total expenses returns > 1 ratio."""
         result = compute_credit_dependency_ratio(150000, 100000)
-        assert result == Decimal('1.5')
+        assert result == Decimal("1.5")
 
 
 # ============================================================
@@ -879,30 +900,30 @@ class TestDebtCycleScore:
 
     def test_no_debt_cycle(self):
         """No credit advances, no revolving, negative trend -> score 0."""
-        result = compute_debt_cycle_score(0, 0, Decimal('-0.5'))
+        result = compute_debt_cycle_score(0, 0, Decimal("-0.5"))
         assert result == 0
 
     def test_increasing_debt_low_advances(self):
         """Low advances but rising trend -> elevated score."""
-        result = compute_debt_cycle_score(1, 1, Decimal('0.7'))
+        result = compute_debt_cycle_score(1, 1, Decimal("0.7"))
         # advance=10, revolve=20, trend=80 -> 0.3*10 + 0.3*20 + 0.4*80 = 3+6+32 = 41
         assert result == 41
 
     def test_high_credit_advances(self):
         """Multiple credit advances -> high score."""
-        result = compute_debt_cycle_score(4, 0, Decimal('0'))
+        result = compute_debt_cycle_score(4, 0, Decimal("0"))
         # advance=60, revolve=0, trend=5 -> 0.3*60 + 0.3*0 + 0.4*5 = 18+0+2 = 20
         assert result == 20
 
     def test_revolving_behavior(self):
         """Heavy revolving -> elevated score."""
-        result = compute_debt_cycle_score(0, 5, Decimal('0.2'))
+        result = compute_debt_cycle_score(0, 5, Decimal("0.2"))
         # advance=0, revolve=80, trend=20 -> 0.3*0 + 0.3*80 + 0.4*20 = 0+24+8 = 32
         assert result == 32
 
     def test_max_debt_cycle(self):
         """Maximum debt cycle behavior -> high score near 100."""
-        result = compute_debt_cycle_score(6, 6, Decimal('0.9'))
+        result = compute_debt_cycle_score(6, 6, Decimal("0.9"))
         # advance=90, revolve=80, trend=80 -> 0.3*90 + 0.3*80 + 0.4*80 = 27+24+32 = 83
         assert result == 83
 
@@ -918,50 +939,50 @@ class TestFOIR:
     def test_no_obligations(self):
         """No obligations and no income -> healthy with 0 ratio."""
         ratio, band = compute_foir(0, 0, 0)
-        assert ratio == Decimal('0')
+        assert ratio == Decimal("0")
         assert band == "HEALTHY"
 
     def test_healthy_foir(self):
         """FOIR under 30% -> healthy band."""
         ratio, band = compute_foir(2000000, 500000, 10000000)  # 25%
-        assert ratio == Decimal('0.25')
+        assert ratio == Decimal("0.25")
         assert band == "HEALTHY"
 
     def test_moderate_foir(self):
         """FOIR 30-50% -> moderate band."""
         ratio, band = compute_foir(3500000, 1500000, 10000000)  # 50%
-        assert ratio == Decimal('0.50')
+        assert ratio == Decimal("0.50")
         assert band == "MODERATE"
 
     def test_warning_foir(self):
         """FOIR 50-60% -> warning band."""
         ratio, band = compute_foir(5500000, 0, 10000000)  # 55% - in warning range
-        assert ratio == Decimal('0.55')
+        assert ratio == Decimal("0.55")
         assert band == "WARNING"
 
     def test_critical_foir(self):
         """FOIR over 60% -> critical band."""
         ratio, band = compute_foir(7000000, 0, 10000000)  # 70% - in critical range
-        assert ratio == Decimal('0.70')
+        assert ratio == Decimal("0.70")
         assert band == "CRITICAL"
 
     def test_foir_exactly_30(self):
         """FOIR exactly 30% -> healthy band is inclusive at 30%."""
         ratio, band = compute_foir(3000000, 0, 10000000)
-        assert ratio == Decimal('0.30')
+        assert ratio == Decimal("0.30")
         assert band == "HEALTHY"
 
     def test_foir_above_30(self):
         """FOIR just above 30% -> moderate band."""
         ratio, band = compute_foir(3100000, 0, 10000000)  # 31%
-        assert ratio == Decimal('0.31')
+        assert ratio == Decimal("0.31")
         assert band == "MODERATE"
 
     def test_emi_heavy_user(self):
         """EMI-heavy user with high FOIR -> critical band."""
         # Income ₹1L, EMI ₹70K, min due ₹5K = 75% FOIR
         ratio, band = compute_foir(7000000, 500000, 10000000)
-        assert ratio == Decimal('0.75')
+        assert ratio == Decimal("0.75")
         assert band == "CRITICAL"
 
 
@@ -976,22 +997,22 @@ class TestCreditRevolverRatio:
     def test_no_credit_activity(self):
         """No credit activity -> 0 ratio."""
         result = compute_credit_revolver_ratio(0, 0)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_full_revolver(self):
         """All active months with partial payment -> 1.0 ratio."""
         result = compute_credit_revolver_ratio(6, 6)
-        assert result == Decimal('1.0')
+        assert result == Decimal("1.0")
 
     def test_partial_revolver(self):
         """Some revolving months -> partial ratio."""
         result = compute_credit_revolver_ratio(3, 6)
-        assert result == Decimal('0.5')
+        assert result == Decimal("0.5")
 
     def test_no_revolving(self):
         """No partial payments -> 0 ratio."""
         result = compute_credit_revolver_ratio(0, 6)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
 
 # ============================================================
@@ -1005,13 +1026,15 @@ class TestDebtDeterminism:
     def test_foir_deterministic(self):
         """Same inputs should produce same outputs."""
         for _ in range(10):
-            ratio, band = compute_foir(4000000, 1500000, 10000000)  # 55% - warning range
-            assert ratio == Decimal('0.55')
+            ratio, band = compute_foir(
+                4000000, 1500000, 10000000
+            )  # 55% - warning range
+            assert ratio == Decimal("0.55")
             assert band == "WARNING"
 
     def test_debt_cycle_deterministic(self):
         """Debt cycle score should be deterministic."""
-        result = compute_debt_cycle_score(3, 2, Decimal('0.25'))
+        result = compute_debt_cycle_score(3, 2, Decimal("0.25"))
         # advance=30, revolve=20, trend=20 -> 0.3*30 + 0.3*20 + 0.4*20 = 9+6+8 = 23
         assert result == 23
 
@@ -1138,43 +1161,43 @@ class TestSalaryDependenceRatio:
     def test_full_dependence(self):
         """Test 100% salary dependence."""
         result = compute_salary_dependence_ratio(5000000, 5000000)
-        assert result == Decimal('1.0')
+        assert result == Decimal("1.0")
 
     def test_partial_dependence(self):
         """Test partial salary dependence."""
         result = compute_salary_dependence_ratio(2500000, 5000000)
-        assert result == Decimal('0.5')
+        assert result == Decimal("0.5")
 
     def test_low_dependence(self):
         """Test low salary dependence (diversified income)."""
         result = compute_salary_dependence_ratio(1000000, 5000000)
-        assert result == Decimal('0.2')
+        assert result == Decimal("0.2")
 
     def test_zero_salary(self):
         """Test zero salary dependence."""
         result = compute_salary_dependence_ratio(0, 5000000)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_zero_true_income(self):
         """Test with zero true income returns 0."""
         result = compute_salary_dependence_ratio(5000000, 0)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_both_zero(self):
         """Test with both zero returns 0."""
         result = compute_salary_dependence_ratio(0, 0)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_salary_exceeds_true_income(self):
         """Test when salary exceeds true income (shouldn't happen, but handle gracefully)."""
         result = compute_salary_dependence_ratio(6000000, 5000000)
-        assert result == Decimal('1.2')
+        assert result == Decimal("1.2")
 
     def test_salary_dependence_deterministic(self):
         """Test determinism of salary dependence ratio."""
         for _ in range(10):
             result = compute_salary_dependence_ratio(3000000, 4000000)
-            assert result == Decimal('0.75')
+            assert result == Decimal("0.75")
 
 
 # ============================================================
@@ -1188,18 +1211,18 @@ class TestIncomeDiversificationScore:
     def test_no_transactions(self):
         """Test empty transactions returns 0."""
         result = compute_income_diversification_score([])
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_single_source_salary_only(self, salary_transactions):
         """Test single source (salary only) returns ~0.33."""
         result = compute_income_diversification_score(salary_transactions)
-        assert result == Decimal('0.3333')  # Only "salary" category, 1/3
+        assert result == Decimal("0.3333")  # Only "salary" category, 1/3
 
     def test_two_sources_salary_investment(self, diversified_transactions):
         """Test two sources (salary + investment) returns ~0.67."""
         result = compute_income_diversification_score(diversified_transactions)
         # "salary" and "investment" categories
-        assert result == Decimal('0.6667')
+        assert result == Decimal("0.6667")
 
     def test_three_sources(self):
         """Test three sources returns 1.0 (capped)."""
@@ -1209,13 +1232,13 @@ class TestIncomeDiversificationScore:
             {"description": "Dividend from stocks"},
         ]
         result = compute_income_diversification_score(txns)
-        assert result == Decimal('1.0')  # All 3 categories = max
+        assert result == Decimal("1.0")  # All 3 categories = max
 
     def test_excludes_transfers(self, mixed_transactions):
         """Test that TRANSFER transactions are excluded from diversification."""
         result = compute_income_diversification_score(mixed_transactions)
         # Only salary + business + investment (transfer, loan, refund excluded)
-        assert result == Decimal('1.0')  # All 3 categories = max
+        assert result == Decimal("1.0")  # All 3 categories = max
 
     def test_excludes_loans(self):
         """Test that BORROWING transactions are excluded from diversification."""
@@ -1226,7 +1249,7 @@ class TestIncomeDiversificationScore:
         ]
         result = compute_income_diversification_score(txns)
         # Only salary + investment (loan excluded) = 2/3
-        assert result == Decimal('0.6667')
+        assert result == Decimal("0.6667")
 
     def test_excludes_refunds(self):
         """Test that REFUND transactions are excluded from diversification."""
@@ -1237,13 +1260,13 @@ class TestIncomeDiversificationScore:
         ]
         result = compute_income_diversification_score(txns)
         # Only salary + business (refund excluded) = 2/3
-        assert result == Decimal('0.6667')
+        assert result == Decimal("0.6667")
 
     def test_diversification_deterministic(self, diversified_transactions):
         """Test that diversification score is deterministic."""
         for _ in range(10):
             result = compute_income_diversification_score(diversified_transactions)
-            assert result == Decimal('0.6667')
+            assert result == Decimal("0.6667")
 
 
 # ============================================================
@@ -1296,7 +1319,7 @@ class TestIncomeEdgeCases:
             {"description": "Business payment", "amount_paise": 500000},
         ]
         result = compute_income_diversification_score(txns)
-        assert result == Decimal('0.6667')
+        assert result == Decimal("0.6667")
 
     def test_missing_description_key(self):
         """Test transactions without description key."""
@@ -1305,7 +1328,7 @@ class TestIncomeEdgeCases:
             {"description": "Dividend income"},
         ]
         result = compute_income_diversification_score(txns)
-        assert result == Decimal('0.3333')  # Only investment
+        assert result == Decimal("0.3333")  # Only investment
 
     def test_all_non_income_sources(self):
         """Test when all transactions are non-income sources."""
@@ -1315,7 +1338,7 @@ class TestIncomeEdgeCases:
             {"description": "Cashback reward"},
         ]
         result = compute_income_diversification_score(txns)
-        assert result == Decimal('0')
+        assert result == Decimal("0")
 
     def test_case_insensitivity(self):
         """Test that classification is case-insensitive."""
@@ -1325,7 +1348,7 @@ class TestIncomeEdgeCases:
             {"description": "DIVIDEND Income"},
         ]
         result = compute_income_diversification_score(txns)
-        assert result == Decimal('1.0')  # All three categories
+        assert result == Decimal("1.0")  # All three categories
 
 
 # ============================================================

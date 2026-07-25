@@ -18,7 +18,12 @@ GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 def test_plan_generation() -> None:
     """SVF must generate selective-plan.md for changed files."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/selective_verify.py", "--plan", "backend/src/engines/cashflow_engine.py"],
+        [
+            sys.executable,
+            "backend/tools/selective_verify.py",
+            "--plan",
+            "backend/src/engines/cashflow_engine.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -38,7 +43,10 @@ def test_duplicate_removal() -> None:
     """SVF must remove duplicate test paths."""
     # Import and test duplicate removal logic
     result = subprocess.run(
-        [sys.executable, "-c", """
+        [
+            sys.executable,
+            "-c",
+            """
 import sys
 sys.path.insert(0, 'backend/tools')
 from selective_verify import build_selective_plan
@@ -65,7 +73,8 @@ assert len(plan.property_tests) == 1, f"Duplicates not removed: {plan.property_t
 assert len(plan.golden_tests) == 1, f"Duplicates not removed: {plan.golden_tests}"
 assert len(plan.invariant_tests) == 1, f"Duplicates not removed: {plan.invariant_tests}"
 print("PASS")
-"""],
+""",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -77,7 +86,12 @@ print("PASS")
 def test_invalid_paths_ignored_safely() -> None:
     """SVF must ignore invalid paths without crashing in its logic."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/selective_verify.py", "--plan", "nonexistent_file.py"],
+        [
+            sys.executable,
+            "backend/tools/selective_verify.py",
+            "--plan",
+            "nonexistent_file.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -91,7 +105,12 @@ def test_invalid_paths_ignored_safely() -> None:
 def test_dry_run_output() -> None:
     """SVF --plan must print plan to stdout."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/selective_verify.py", "--plan", "backend/src/engines/cashflow_engine.py"],
+        [
+            sys.executable,
+            "backend/tools/selective_verify.py",
+            "--plan",
+            "backend/src/engines/cashflow_engine.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -122,7 +141,13 @@ def test_json_parsing() -> None:
 def test_json_summary_flag() -> None:
     """SVF --json must generate selective-summary.json."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/selective_verify.py", "--plan", "--json", "backend/src/engines/cashflow_engine.py"],
+        [
+            sys.executable,
+            "backend/tools/selective_verify.py",
+            "--plan",
+            "--json",
+            "backend/src/engines/cashflow_engine.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -153,13 +178,21 @@ def test_empty_changes_handled() -> None:
     )
     # Should succeed
     assert result.returncode == 0, f"Empty changes handling failed: {result.stderr}"
-    assert "No changes detected" in result.stdout or "selective-plan.md" in result.stdout.lower()
+    assert (
+        "No changes detected" in result.stdout
+        or "selective-plan.md" in result.stdout.lower()
+    )
 
 
 def test_verification_matrix_generated() -> None:
     """SVF must generate verification-matrix.md."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/selective_verify.py", "--plan", "backend/src/engines/cashflow_engine.py"],
+        [
+            sys.executable,
+            "backend/tools/selective_verify.py",
+            "--plan",
+            "backend/src/engines/cashflow_engine.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,

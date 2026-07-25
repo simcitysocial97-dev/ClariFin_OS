@@ -7,7 +7,9 @@ class ForeclosureRequest(BaseModel):
     """Request to compute foreclosure payoff."""
 
     remaining_months: int = Field(ge=1, le=120, description="Remaining EMI months")
-    penalty_bps: int = Field(default=0, ge=0, le=5000, description="Prepayment penalty in basis points")
+    penalty_bps: int = Field(
+        default=0, ge=0, le=5000, description="Prepayment penalty in basis points"
+    )
 
 
 class ForeclosureResponse(BaseModel):

@@ -3,6 +3,7 @@
 Uses lightweight random testing without hypothesis dependency.
 All monetary values use integer paise (₹1 = 100 paise).
 """
+
 from __future__ import annotations
 
 import random

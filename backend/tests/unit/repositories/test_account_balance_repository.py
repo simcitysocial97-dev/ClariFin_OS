@@ -23,8 +23,7 @@ from src.repositories.account_balance_repository import AccountBalanceRepository
 def _create_account_balance_history_table(db_path: str) -> None:
     """Create the account_balance_history table for testing."""
     conn = sqlite3.connect(db_path)
-    conn.execute(
-        """
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS account_balance_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             account_id TEXT NOT NULL REFERENCES accounts(id),
@@ -34,8 +33,7 @@ def _create_account_balance_history_table(db_path: str) -> None:
             created_at TEXT NOT NULL DEFAULT (datetime('now')),
             UNIQUE(account_id, date_iso)
         )
-        """
-    )
+        """)
     conn.execute(
         "CREATE INDEX IF NOT EXISTS idx_abh_account_id ON account_balance_history(account_id)"
     )
@@ -61,12 +59,10 @@ def test_insert_balance_snapshot():
         _create_account_balance_history_table(db_path)
 
         conn = sqlite3.connect(db_path)
-        conn.execute(
-            """
+        conn.execute("""
             INSERT INTO accounts (id, name, bank, account_type, balance_paise)
             VALUES ('ACC001', 'Test Account', 'TestBank', 'savings', 100000)
-            """
-        )
+            """)
         conn.commit()
         conn.close()
 

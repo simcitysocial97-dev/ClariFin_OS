@@ -1,4 +1,5 @@
 """Financial Event Builder - Plain Python builder for financial event data."""
+
 from __future__ import annotations
 
 from typing import Any

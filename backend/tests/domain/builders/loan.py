@@ -1,4 +1,5 @@
 """Loan Builder - Plain Python builder for loan data."""
+
 from __future__ import annotations
 
 from typing import Any

@@ -1,0 +1,50 @@
+# backend/.coveragerc
+# Coverage configuration for pytest-cov
+
+[run]
+# Source directory to measure
+source = .
+
+# Files to exclude from measurement
+omit =
+    */tests/*
+    */migrations/*
+    */__pycache__/*
+    */conftest.py
+    */setup.py
+    */.venv/*
+    */venv/*
+    */site-packages/*
+
+# Enable branch coverage (catches untested branches, not just lines)
+branch = True
+
+[report]
+# Don't report files with 100% coverage (reduces noise)
+skip_covered = False
+
+# Show missing line numbers
+show_missing = True
+
+# Minimum acceptable coverage (CI will fail below this)
+# Matches Phase 1 target
+fail_under = 60
+
+# Exclude these patterns from coverage reporting
+exclude_lines =
+    # Standard exclusions
+    pragma: no cover
+    def __repr__
+    def __str__
+    raise NotImplementedError
+    if TYPE_CHECKING:
+    @abstractmethod
+    if __name__ == .__main__.:
+    \.\.\.$
+    pass$
+
+[html]
+directory = tests/generated/coverage-html
+
+[json]
+output = tests/generated/coverage.json

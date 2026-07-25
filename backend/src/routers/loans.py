@@ -10,7 +10,12 @@ from typing import Any
 from fastapi import APIRouter
 
 from src.errors import NotFoundError
-from src.models.loan import LoanCreateRequest, LoanResponse, LoanUpdateRequest, ScheduleResponse
+from src.models.loan import (
+    LoanCreateRequest,
+    LoanResponse,
+    LoanUpdateRequest,
+    ScheduleResponse,
+)
 from src.models.loan_payment import LoanPaymentCreate
 from src.models.loan_simulation import (
     ForeclosureSimulationResponse,
@@ -26,7 +31,13 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["loans"])
 
 
-def _timed_log(endpoint: str, loan_id: int | None, duration_ms: float, success: bool = True, error: str | None = None) -> None:
+def _timed_log(
+    endpoint: str,
+    loan_id: int | None,
+    duration_ms: float,
+    success: bool = True,
+    error: str | None = None,
+) -> None:
     """Emit structured timing log for loan endpoints."""
     log_data = {
         "type": "loan_request",
@@ -37,7 +48,13 @@ def _timed_log(endpoint: str, loan_id: int | None, duration_ms: float, success: 
     }
     if error:
         log_data["error"] = error
-        logger.warning("[LOAN] %s | loan_id=%s | %.0fms | FAIL: %s", endpoint, loan_id, duration_ms, error)
+        logger.warning(
+            "[LOAN] %s | loan_id=%s | %.0fms | FAIL: %s",
+            endpoint,
+            loan_id,
+            duration_ms,
+            error,
+        )
     else:
         logger.info("[LOAN] %s | loan_id=%s | %.0fms", endpoint, loan_id, duration_ms)
 
@@ -45,6 +62,7 @@ def _timed_log(endpoint: str, loan_id: int | None, duration_ms: float, success: 
 # ============================================================
 # Loan CRUD Endpoints (via LoanService)
 # ============================================================
+
 
 @router.get("/loans")
 def get_loans() -> list[dict[str, Any]]:
@@ -71,7 +89,13 @@ def get_loan(loan_id: int) -> dict[str, Any]:
         _timed_log("GET /loans/{id}", loan_id, (time.monotonic() - start) * 1000)
         return result
     except ValueError as e:
-        _timed_log("GET /loans/{id}", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "GET /loans/{id}",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
@@ -119,7 +143,13 @@ def update_loan(loan_id: int, request: LoanUpdateRequest) -> dict[str, Any]:
 
     updated = service.update_loan(loan_id, **update_data)
     if not updated:
-        _timed_log("PUT /loans/{id}", loan_id, (time.monotonic() - start) * 1000, success=False, error="Not found")
+        _timed_log(
+            "PUT /loans/{id}",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="Not found",
+        )
         raise NotFoundError(f"Loan {loan_id} not found")
     _timed_log("PUT /loans/{id}", loan_id, (time.monotonic() - start) * 1000)
     return {"success": True}
@@ -132,7 +162,13 @@ def delete_loan(loan_id: int) -> dict[str, Any]:
     service = LoanService()
     success = service.delete_loan(loan_id)
     if not success:
-        _timed_log("DELETE /loans/{id}", loan_id, (time.monotonic() - start) * 1000, success=False, error="Not found")
+        _timed_log(
+            "DELETE /loans/{id}",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="Not found",
+        )
         raise NotFoundError(f"Loan {loan_id} not found")
     _timed_log("DELETE /loans/{id}", loan_id, (time.monotonic() - start) * 1000)
     return {"success": True}
@@ -141,6 +177,7 @@ def delete_loan(loan_id: int) -> dict[str, Any]:
 # ============================================================
 # Schedule and Simulation Endpoints
 # ============================================================
+
 
 @router.get("/loans/{loan_id}/schedule")
 def get_loan_schedule(loan_id: int) -> dict[str, Any]:
@@ -158,7 +195,8 @@ def get_loan_schedule(loan_id: int) -> dict[str, Any]:
         if len(schedule_rows) > 360:
             logger.warning(
                 "Large schedule generated: loan_id=%s, rows=%d",
-                loan_id, len(schedule_rows)
+                loan_id,
+                len(schedule_rows),
             )
 
         response = ScheduleResponse.from_schedule_data(
@@ -167,10 +205,18 @@ def get_loan_schedule(loan_id: int) -> dict[str, Any]:
             total_interest_paise=result["total_interest_paise"],
             schedule=schedule_rows,
         ).model_dump()
-        _timed_log("GET /loans/{id}/schedule", loan_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /loans/{id}/schedule", loan_id, (time.monotonic() - start) * 1000
+        )
         return response
     except ValueError as e:
-        _timed_log("GET /loans/{id}/schedule", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "GET /loans/{id}/schedule",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
@@ -197,10 +243,20 @@ def simulate_prepayment(
             interest_saved_paise=result["interest_saved_paise"],
             tenure_saved_months=result["tenure_saved_months"],
         ).model_dump()
-        _timed_log("POST /loans/{id}/prepayment-simulation", loan_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /loans/{id}/prepayment-simulation",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+        )
         return response
     except ValueError as e:
-        _timed_log("POST /loans/{id}/prepayment-simulation", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "POST /loans/{id}/prepayment-simulation",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
@@ -219,10 +275,20 @@ def simulate_foreclosure(loan_id: int) -> dict[str, Any]:
             penalty_paise=result["penalty_paise"],
             foreclosure_amount_paise=result["foreclosure_amount_paise"],
         ).model_dump()
-        _timed_log("POST /loans/{id}/foreclosure-simulation", loan_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /loans/{id}/foreclosure-simulation",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+        )
         return response
     except ValueError as e:
-        _timed_log("POST /loans/{id}/foreclosure-simulation", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "POST /loans/{id}/foreclosure-simulation",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
@@ -238,17 +304,30 @@ def simulate_rate_change(
     start = time.monotonic()
     sim_service = LoanSimulationService()
     try:
-        result = sim_service.simulate_rate_change(loan_id, request.month, request.new_rate_bps)
-        _timed_log("POST /loans/{id}/rate-change-simulation", loan_id, (time.monotonic() - start) * 1000)
+        result = sim_service.simulate_rate_change(
+            loan_id, request.month, request.new_rate_bps
+        )
+        _timed_log(
+            "POST /loans/{id}/rate-change-simulation",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result
     except ValueError as e:
-        _timed_log("POST /loans/{id}/rate-change-simulation", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "POST /loans/{id}/rate-change-simulation",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
 # ============================================================
 # Payment Endpoints
 # ============================================================
+
 
 @router.post("/loans/{loan_id}/payments")
 def record_loan_payment(
@@ -265,20 +344,31 @@ def record_loan_payment(
             amount_paise=request.amount_paise,
             principal_paise=request.principal_paise or 0,
             interest_paise=request.interest_paise or 0,
-            late_fee_paise=request.late_fee_paise if request.late_fee_paise is not None else 0,
+            late_fee_paise=(
+                request.late_fee_paise if request.late_fee_paise is not None else 0
+            ),
             source_account_id=request.source_account_id,
         )
         payment_id = service.record_payment(payment)
-        _timed_log("POST /loans/{id}/payments", loan_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /loans/{id}/payments", loan_id, (time.monotonic() - start) * 1000
+        )
         return PaymentResponse(success=True, payment_id=payment_id).model_dump()
     except ValueError as e:
-        _timed_log("POST /loans/{id}/payments", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "POST /loans/{id}/payments",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
 # ============================================================
 # Analysis Endpoints
 # ============================================================
+
 
 @router.get("/loans/analysis/priority")
 def get_loan_priority() -> list[dict[str, Any]]:
@@ -289,9 +379,16 @@ def get_loan_priority() -> list[dict[str, Any]]:
     start = time.monotonic()
     analysis_service = LoanAnalysisService()
     recommendations = analysis_service.analyze_loan_priority()
-    result = [{"loan_id": r.loan_id, "action": r.action, "reason": r.reason,
-             "interest_saved_paise": r.interest_saved_paise, "tenure_saved_months": r.tenure_saved_months}
-            for r in recommendations]
+    result = [
+        {
+            "loan_id": r.loan_id,
+            "action": r.action,
+            "reason": r.reason,
+            "interest_saved_paise": r.interest_saved_paise,
+            "tenure_saved_months": r.tenure_saved_months,
+        }
+        for r in recommendations
+    ]
     _timed_log("GET /loans/analysis/priority", None, (time.monotonic() - start) * 1000)
     return result
 
@@ -305,7 +402,9 @@ def analyze_prepayment_vs_foreclosure(
     start = time.monotonic()
     analysis_service = LoanAnalysisService()
     try:
-        recommendation = analysis_service.analyze_prepayment_vs_foreclosure(loan_id, request.amount_paise)
+        recommendation = analysis_service.analyze_prepayment_vs_foreclosure(
+            loan_id, request.amount_paise
+        )
         result = {
             "loan_id": recommendation.loan_id,
             "action": recommendation.action,
@@ -313,10 +412,20 @@ def analyze_prepayment_vs_foreclosure(
             "interest_saved_paise": recommendation.interest_saved_paise,
             "tenure_saved_months": recommendation.tenure_saved_months,
         }
-        _timed_log("POST /loans/{id}/analysis/prepayment-vs-foreclosure", loan_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /loans/{id}/analysis/prepayment-vs-foreclosure",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result
     except ValueError as e:
-        _timed_log("POST /loans/{id}/analysis/prepayment-vs-foreclosure", loan_id, (time.monotonic() - start) * 1000, success=False, error=str(e))
+        _timed_log(
+            "POST /loans/{id}/analysis/prepayment-vs-foreclosure",
+            loan_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
         raise NotFoundError(str(e)) from e
 
 
@@ -328,10 +437,21 @@ def analyze_surplus_allocation(request: PaymentRequest) -> dict[str, Any]:
     result = analysis_service.analyze_surplus_allocation(request.amount_paise)
     response = {
         "surplus_paise": result.surplus_paise,
-        "recommendations": [{"loan_id": r.loan_id, "action": r.action, "reason": r.reason,
-                            "interest_saved_paise": r.interest_saved_paise, "tenure_saved_months": r.tenure_saved_months}
-                           for r in result.recommendations],
+        "recommendations": [
+            {
+                "loan_id": r.loan_id,
+                "action": r.action,
+                "reason": r.reason,
+                "interest_saved_paise": r.interest_saved_paise,
+                "tenure_saved_months": r.tenure_saved_months,
+            }
+            for r in result.recommendations
+        ],
         "total_interest_saved_paise": result.total_interest_saved_paise,
     }
-    _timed_log("POST /loans/analysis/surplus-allocation", None, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "POST /loans/analysis/surplus-allocation",
+        None,
+        (time.monotonic() - start) * 1000,
+    )
     return response

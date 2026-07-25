@@ -32,9 +32,13 @@ class InvestmentsWorkspaceService(BaseService):
         # Apply filters
         investments = all_investments
         if investment_types:
-            investments = [i for i in investments if i.get("investment_type") in investment_types]
+            investments = [
+                i for i in investments if i.get("investment_type") in investment_types
+            ]
         if institutions:
-            investments = [i for i in investments if i.get("institution") in institutions]
+            investments = [
+                i for i in investments if i.get("institution") in institutions
+            ]
         if statuses:
             investments = [i for i in investments if i.get("status") in statuses]
 
@@ -46,61 +50,100 @@ class InvestmentsWorkspaceService(BaseService):
         # Build investment summaries
         investment_summaries = []
         for inv in investments:
-            investment_summaries.append({
-                "id": inv.get("investment_id", ""),
-                "name": inv.get("name", ""),
-                "institution": inv.get("institution", ""),
-                "investment_type": inv.get("investment_type", ""),
-                "invested_paise": inv.get("invested_paise", 0),
-                "current_value_paise": inv.get("current_value_paise", 0),
-                "returns_paise": inv.get("current_value_paise", 0) - inv.get("invested_paise", 0),
-                "returns_percentage": int((inv.get("current_value_paise", 0) - inv.get("invested_paise", 0)) / inv.get("invested_paise", 1) * 100) if inv.get("invested_paise", 0) > 0 else 0,
-                "status": inv.get("status", "active"),
-            })
+            investment_summaries.append(
+                {
+                    "id": inv.get("investment_id", ""),
+                    "name": inv.get("name", ""),
+                    "institution": inv.get("institution", ""),
+                    "investment_type": inv.get("investment_type", ""),
+                    "invested_paise": inv.get("invested_paise", 0),
+                    "current_value_paise": inv.get("current_value_paise", 0),
+                    "returns_paise": inv.get("current_value_paise", 0)
+                    - inv.get("invested_paise", 0),
+                    "returns_percentage": (
+                        int(
+                            (
+                                inv.get("current_value_paise", 0)
+                                - inv.get("invested_paise", 0)
+                            )
+                            / inv.get("invested_paise", 1)
+                            * 100
+                        )
+                        if inv.get("invested_paise", 0) > 0
+                        else 0
+                    ),
+                    "status": inv.get("status", "active"),
+                }
+            )
 
         # Build performance data (placeholder)
         performance = []
         for inv in investments:
-            performance.append({
-                "investment_id": inv.get("investment_id", ""),
-                "date": "2025-01-01",
-                "value_paise": inv.get("current_value_paise", 0),
-                "returns_paise": inv.get("current_value_paise", 0) - inv.get("invested_paise", 0),
-            })
+            performance.append(
+                {
+                    "investment_id": inv.get("investment_id", ""),
+                    "date": "2025-01-01",
+                    "value_paise": inv.get("current_value_paise", 0),
+                    "returns_paise": inv.get("current_value_paise", 0)
+                    - inv.get("invested_paise", 0),
+                }
+            )
 
         # Build asset allocation
         allocation = []
         for inv in investments:
-            allocation.append({
-                "investment_id": inv.get("investment_id", ""),
-                "type": inv.get("investment_type", ""),
-                "value_paise": inv.get("current_value_paise", 0),
-                "percentage": int(inv.get("current_value_paise", 0) / total_value * 100) if total_value > 0 else 0,
-            })
+            allocation.append(
+                {
+                    "investment_id": inv.get("investment_id", ""),
+                    "type": inv.get("investment_type", ""),
+                    "value_paise": inv.get("current_value_paise", 0),
+                    "percentage": (
+                        int(inv.get("current_value_paise", 0) / total_value * 100)
+                        if total_value > 0
+                        else 0
+                    ),
+                }
+            )
 
         # Build holdings table
         holdings = []
         for inv in investments:
-            holdings.append({
-                "id": inv.get("investment_id", ""),
-                "name": inv.get("name", ""),
-                "type": inv.get("investment_type", ""),
-                "institution": inv.get("institution", ""),
-                "invested_paise": inv.get("invested_paise", 0),
-                "value_paise": inv.get("current_value_paise", 0),
-                "returns_paise": inv.get("current_value_paise", 0) - inv.get("invested_paise", 0),
-                "returns_percentage": int((inv.get("current_value_paise", 0) - inv.get("invested_paise", 0)) / inv.get("invested_paise", 1) * 100) if inv.get("invested_paise", 0) > 0 else 0,
-                "status": inv.get("status", "active"),
-            })
+            holdings.append(
+                {
+                    "id": inv.get("investment_id", ""),
+                    "name": inv.get("name", ""),
+                    "type": inv.get("investment_type", ""),
+                    "institution": inv.get("institution", ""),
+                    "invested_paise": inv.get("invested_paise", 0),
+                    "value_paise": inv.get("current_value_paise", 0),
+                    "returns_paise": inv.get("current_value_paise", 0)
+                    - inv.get("invested_paise", 0),
+                    "returns_percentage": (
+                        int(
+                            (
+                                inv.get("current_value_paise", 0)
+                                - inv.get("invested_paise", 0)
+                            )
+                            / inv.get("invested_paise", 1)
+                            * 100
+                        )
+                        if inv.get("invested_paise", 0) > 0
+                        else 0
+                    ),
+                    "status": inv.get("status", "active"),
+                }
+            )
 
         # Generate insights
         insights = []
         if total_returns > 0:
-            insights.append({
-                "type": "positive",
-                "severity": "medium",
-                "message": f"Total returns: ₹{total_returns / 100:,.2f}",
-            })
+            insights.append(
+                {
+                    "type": "positive",
+                    "severity": "medium",
+                    "message": f"Total returns: ₹{total_returns / 100:,.2f}",
+                }
+            )
 
         return {
             "investments": investment_summaries,

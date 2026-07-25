@@ -55,6 +55,7 @@ def run_startup_validation() -> bool:
     if settings.database_path.exists():
         try:
             import sqlite3
+
             conn = sqlite3.connect(str(settings.database_path))
             conn.execute("SELECT 1 FROM transactions LIMIT 1")
             conn.close()

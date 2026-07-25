@@ -25,4 +25,4 @@ Usage:
 
 from .money import Money
 
-__all__ = ['Money']
+__all__ = ["Money"]

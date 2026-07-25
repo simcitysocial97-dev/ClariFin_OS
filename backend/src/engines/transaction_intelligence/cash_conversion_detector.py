@@ -5,6 +5,7 @@ Detects when a debit transaction represents cash extracted via a provider
 
 No database access - all data is passed as parameters.
 """
+
 import re
 from dataclasses import dataclass
 from datetime import datetime
@@ -27,6 +28,7 @@ class CashConversionResult:
         narrative: Human-readable explanation.
         match_reason: Why this matched.
     """
+
     matched_credit_transaction_id: int
     provider_name: str | None
     purpose: str | None
@@ -42,6 +44,7 @@ class CashConversionResult:
 # ============================================================
 # Helper Functions
 # ============================================================
+
 
 def _parse_date_iso(date_iso: str) -> datetime | None:
     """Parse YYYY-MM-DD date string to datetime."""
@@ -74,11 +77,15 @@ def _match_description_pattern(description: str, pattern: str) -> bool:
         return False
 
 
-def _match_purpose(description: str, purpose_patterns: list[dict[str, Any]]) -> str | None:
+def _match_purpose(
+    description: str, purpose_patterns: list[dict[str, Any]]
+) -> str | None:
     """Match description against purpose patterns."""
     for pattern in purpose_patterns:
         purpose_val = pattern.get("purpose")
-        if _match_description_pattern(description, pattern["description_pattern"]) and isinstance(purpose_val, str):
+        if _match_description_pattern(
+            description, pattern["description_pattern"]
+        ) and isinstance(purpose_val, str):
             return purpose_val
     return None
 
@@ -155,7 +162,9 @@ def _hungarian_inline(cost_matrix: list[list[float]]) -> list[tuple[int, int]]:
 # ============================================================
 
 # Type alias for candidate with zone info
-_CandidateWithZone = dict[str, Any]  # {credit: dict, fee_paise: int, fee_bps: int, zone: Literal}
+_CandidateWithZone = dict[
+    str, Any
+]  # {credit: dict, fee_paise: int, fee_bps: int, zone: Literal}
 
 
 def detect(
@@ -202,7 +211,8 @@ def detect(
 
         # Filter candidates for savings/current accounts in same household
         eligible_credits = [
-            c for c in candidate_credits
+            c
+            for c in candidate_credits
             if _is_savings_or_current(c.get("account_type", "savings"))
             and c.get("household_id") == cc_debit_txn.get("household_id")
             and int(c.get("credit", 0) or 0) < debit_amount_paise
@@ -217,7 +227,11 @@ def detect(
         target_bps = 225
         best_credit = min(
             eligible_credits,
-            key=lambda c: abs(_calculate_fee_bps(debit_amount_paise, int(c.get("credit", 0) or 0) - target_bps)),
+            key=lambda c: abs(
+                _calculate_fee_bps(
+                    debit_amount_paise, int(c.get("credit", 0) or 0) - target_bps
+                )
+            ),
         )
 
         credit_amount = int(best_credit.get("credit", 0) or 0)
@@ -292,25 +306,33 @@ def detect(
         if zone is None:
             continue
 
-        candidates_with_zones.append({
-            "credit": credit,
-            "fee_paise": fee_paise,
-            "fee_bps": fee_bps,
-            "zone": zone,
-        })
+        candidates_with_zones.append(
+            {
+                "credit": credit,
+                "fee_paise": fee_paise,
+                "fee_bps": fee_bps,
+                "zone": zone,
+            }
+        )
 
     if not candidates_with_zones:
         return None
 
     # Step 5: Disambiguation - pick best match
     if len(candidates_with_zones) > 1:
-        fee_range_midpoint = (matched_provider["fee_min_bps"] + matched_provider["fee_max_bps"]) // 2
+        fee_range_midpoint = (
+            matched_provider["fee_min_bps"] + matched_provider["fee_max_bps"]
+        ) // 2
 
         best = min(
             candidates_with_zones,
             key=lambda c: (
                 0 if c["zone"] == "auto" else 1,
-                abs(c["fee_bps"] - fee_range_midpoint) if c["zone"] == "auto" else c["fee_bps"],
+                (
+                    abs(c["fee_bps"] - fee_range_midpoint)
+                    if c["zone"] == "auto"
+                    else c["fee_bps"]
+                ),
             ),
         )
     else:
@@ -318,7 +340,9 @@ def detect(
 
     # Extract typed values from the best candidate dict
     matched_credit = cast(dict[str, Any], best["credit"])
-    matched_zone: Literal["auto", "review"] = cast(Literal["auto", "review"], best["zone"])
+    matched_zone: Literal["auto", "review"] = cast(
+        Literal["auto", "review"], best["zone"]
+    )
     matched_fee_paise = cast(int, best["fee_paise"])
     matched_fee_bps = cast(int, best["fee_bps"])
 

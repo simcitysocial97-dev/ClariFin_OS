@@ -1,4 +1,5 @@
 """Transaction Invariants — Ordering, sign conventions, amount consistency."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -48,7 +49,9 @@ def assert_amount_sign_convention(transactions: list[dict[str, Any]]) -> None:
         txn_type = txn.get("type", "").lower()
         category = txn.get("category", "").lower()
 
-        is_debit = txn_type in ("debit", "expense", "withdrawal") or category == "expense"
+        is_debit = (
+            txn_type in ("debit", "expense", "withdrawal") or category == "expense"
+        )
         is_credit = txn_type in ("credit", "income", "deposit") or category == "income"
 
         if is_debit and amount > 0:

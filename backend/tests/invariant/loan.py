@@ -1,4 +1,5 @@
 """Loan Invariants - Principal decreases, balance trends downward."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -34,7 +35,9 @@ def assert_loan_schedule_valid(schedule: list[dict[str, Any]]) -> None:
 
         # Interest must be non-negative
         if row.get("interest_paise", 0) < 0:
-            raise AssertionError(f"Negative interest at row {i}: {row.get('interest_paise')}")
+            raise AssertionError(
+                f"Negative interest at row {i}: {row.get('interest_paise')}"
+            )
 
         # All monetary fields must be integers
         assert_money_invariants(row)
@@ -68,7 +71,9 @@ def assert_loan_invariants(loan_data: dict[str, Any]) -> None:
             raise AssertionError("tenure_months cannot be negative")
 
 
-def assert_prepayment_result_valid(original_schedule: list[dict[str, Any]], new_schedule: list[dict[str, Any]]) -> None:
+def assert_prepayment_result_valid(
+    original_schedule: list[dict[str, Any]], new_schedule: list[dict[str, Any]]
+) -> None:
     """Validate prepayment preserves invariants.
 
     INVARIANT: New schedule principal still decreases monotonically.

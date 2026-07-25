@@ -23,8 +23,7 @@ from src.repositories.account_link_repository import AccountLinkRepository
 def _create_account_links_table(db_path: str) -> None:
     """Create the account_links table for testing."""
     conn = sqlite3.connect(db_path)
-    conn.execute(
-        """
+    conn.execute("""
         CREATE TABLE IF NOT EXISTS account_links (
             primary_account_id TEXT NOT NULL REFERENCES accounts(id),
             linked_account_id TEXT NOT NULL REFERENCES accounts(id),
@@ -34,8 +33,7 @@ def _create_account_links_table(db_path: str) -> None:
             created_at TEXT NOT NULL DEFAULT (datetime('now')),
             UNIQUE(primary_account_id, linked_account_id, relationship_type)
         )
-        """
-    )
+        """)
     conn.commit()
     conn.close()
 

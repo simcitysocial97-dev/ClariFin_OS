@@ -1,4 +1,5 @@
 """Member domain repository."""
+
 from typing import Any
 
 from src.repositories.base import BaseRepository
@@ -10,7 +11,9 @@ class MemberRepository(BaseRepository):
     def get_all(self) -> list[dict[str, Any]]:
         """Return all members as list of dicts."""
         with self._get_conn() as conn:
-            cur = conn.execute("SELECT id, name, color, created_at FROM members ORDER BY name")
+            cur = conn.execute(
+                "SELECT id, name, color, created_at FROM members ORDER BY name"
+            )
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 

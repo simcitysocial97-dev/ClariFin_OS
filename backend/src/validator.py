@@ -19,6 +19,7 @@ from fastapi import HTTPException, UploadFile
 # Monetary Validation
 # ============================================================
 
+
 def validate_paise_amount(value: int, field_name: str = "amount") -> int:
     """
     Validate a paise amount.
@@ -36,7 +37,7 @@ def validate_paise_amount(value: int, field_name: str = "amount") -> int:
     if not isinstance(value, int):
         raise HTTPException(
             status_code=400,
-            detail=f"{field_name} must be an integer (paise), got {type(value).__name__}"
+            detail=f"{field_name} must be an integer (paise), got {type(value).__name__}",
         )
 
     # Reasonable bounds for personal finance
@@ -47,8 +48,7 @@ def validate_paise_amount(value: int, field_name: str = "amount") -> int:
 
     if value < MIN_PAISE or value > MAX_PAISE:
         raise HTTPException(
-            status_code=400,
-            detail=f"{field_name} out of valid range: {value} paise"
+            status_code=400, detail=f"{field_name} out of valid range: {value} paise"
         )
 
     return value
@@ -71,7 +71,7 @@ def validate_rupees_amount(value: float, field_name: str = "amount") -> float:
     if not isinstance(value, (int, float)):
         raise HTTPException(
             status_code=400,
-            detail=f"{field_name} must be a number, got {type(value).__name__}"
+            detail=f"{field_name} must be a number, got {type(value).__name__}",
         )
 
     # Reasonable bounds for personal finance
@@ -80,8 +80,7 @@ def validate_rupees_amount(value: float, field_name: str = "amount") -> float:
 
     if value < MIN_RUPEES or value > MAX_RUPEES:
         raise HTTPException(
-            status_code=400,
-            detail=f"{field_name} out of valid range: {value} rupees"
+            status_code=400, detail=f"{field_name} out of valid range: {value} rupees"
         )
 
     return value
@@ -90,6 +89,7 @@ def validate_rupees_amount(value: float, field_name: str = "amount") -> float:
 # ============================================================
 # Date Validation
 # ============================================================
+
 
 def validate_date(date_str: str, field_name: str = "date") -> str:
     """
@@ -106,16 +106,21 @@ def validate_date(date_str: str, field_name: str = "date") -> str:
         HTTPException: If date is invalid
     """
     if not date_str:
-        raise HTTPException(
-            status_code=400,
-            detail=f"{field_name} is required"
-        )
+        raise HTTPException(status_code=400, detail=f"{field_name} is required")
 
     # Try to parse the date
     formats = [
-        "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
-        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
-        "%d %b '%y", "%d %B %Y", "%d %B %y",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d/%m/%y",
+        "%d-%m-%y",
+        "%d %b %Y",
+        "%d %b %y",
+        "%d-%b-%Y",
+        "%d-%b-%y",
+        "%d %b '%y",
+        "%d %B %Y",
+        "%d %B %y",
         "%Y-%m-%d",
     ]
 
@@ -123,7 +128,8 @@ def validate_date(date_str: str, field_name: str = "date") -> str:
 
     # Handle "01 Aug 25" → "01 Aug 2025"
     import re
-    m = re.match(r'^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{2})$', s)
+
+    m = re.match(r"^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{2})$", s)
     if m:
         day, mon, yr = m.group(1), m.group(2), m.group(3)
         yr_full = f"20{yr}" if int(yr) < 50 else f"19{yr}"
@@ -137,8 +143,7 @@ def validate_date(date_str: str, field_name: str = "date") -> str:
             continue
 
     raise HTTPException(
-        status_code=400,
-        detail=f"{field_name} has invalid format: {date_str}"
+        status_code=400, detail=f"{field_name} has invalid format: {date_str}"
     )
 
 
@@ -157,10 +162,7 @@ def validate_iso_date(date_str: str, field_name: str = "date") -> str:
         HTTPException: If date is invalid
     """
     if not date_str:
-        raise HTTPException(
-            status_code=400,
-            detail=f"{field_name} is required"
-        )
+        raise HTTPException(status_code=400, detail=f"{field_name} is required")
 
     try:
         datetime.strptime(date_str, "%Y-%m-%d")
@@ -168,7 +170,7 @@ def validate_iso_date(date_str: str, field_name: str = "date") -> str:
     except ValueError:
         raise HTTPException(
             status_code=400,
-            detail=f"{field_name} must be in YYYY-MM-DD format: {date_str}"
+            detail=f"{field_name} must be in YYYY-MM-DD format: {date_str}",
         )
 
 
@@ -176,10 +178,11 @@ def validate_iso_date(date_str: str, field_name: str = "date") -> str:
 # File Validation
 # ============================================================
 
+
 def validate_file_upload(
     file: UploadFile,
     allowed_extensions: list[str] | None = None,
-    max_size_bytes: int | None = None
+    max_size_bytes: int | None = None,
 ) -> None:
     """
     Validate an uploaded file.
@@ -193,16 +196,10 @@ def validate_file_upload(
         HTTPException: If file is invalid
     """
     if not file:
-        raise HTTPException(
-            status_code=400,
-            detail="No file provided"
-        )
+        raise HTTPException(status_code=400, detail="No file provided")
 
     if not file.filename:
-        raise HTTPException(
-            status_code=400,
-            detail="File has no name"
-        )
+        raise HTTPException(status_code=400, detail="File has no name")
 
     # Check extension
     if allowed_extensions:
@@ -210,16 +207,15 @@ def validate_file_upload(
         if ext not in [e.lower() for e in allowed_extensions]:
             raise HTTPException(
                 status_code=400,
-                detail=f"File type not allowed. Allowed: {', '.join(allowed_extensions)}"
+                detail=f"File type not allowed. Allowed: {', '.join(allowed_extensions)}",
             )
 
     # Check size (if provided)
-    if max_size_bytes and hasattr(file, 'size') and file.size:
+    if max_size_bytes and hasattr(file, "size") and file.size:
         if file.size > max_size_bytes:
             max_mb = max_size_bytes / (1024 * 1024)
             raise HTTPException(
-                status_code=400,
-                detail=f"File too large. Maximum size: {max_mb}MB"
+                status_code=400, detail=f"File too large. Maximum size: {max_mb}MB"
             )
 
 
@@ -227,11 +223,9 @@ def validate_file_upload(
 # String Validation
 # ============================================================
 
+
 def validate_required_string(
-    value: str,
-    field_name: str,
-    min_length: int = 1,
-    max_length: int = 1000
+    value: str, field_name: str, min_length: int = 1, max_length: int = 1000
 ) -> str:
     """
     Validate a required string field.
@@ -249,27 +243,21 @@ def validate_required_string(
         HTTPException: If string is invalid
     """
     if value is None:
-        raise HTTPException(
-            status_code=400,
-            detail=f"{field_name} is required"
-        )
+        raise HTTPException(status_code=400, detail=f"{field_name} is required")
 
     if not isinstance(value, str):
-        raise HTTPException(
-            status_code=400,
-            detail=f"{field_name} must be a string"
-        )
+        raise HTTPException(status_code=400, detail=f"{field_name} must be a string")
 
     if len(value) < min_length:
         raise HTTPException(
             status_code=400,
-            detail=f"{field_name} must be at least {min_length} characters"
+            detail=f"{field_name} must be at least {min_length} characters",
         )
 
     if len(value) > max_length:
         raise HTTPException(
             status_code=400,
-            detail=f"{field_name} must be at most {max_length} characters"
+            detail=f"{field_name} must be at most {max_length} characters",
         )
 
     return value
@@ -301,10 +289,9 @@ def validate_category(category: str) -> str:
 # Query Parameter Validation
 # ============================================================
 
+
 def validate_pagination(
-    limit: int = 100,
-    offset: int = 0,
-    max_limit: int = 1000
+    limit: int = 100, offset: int = 0, max_limit: int = 1000
 ) -> tuple[int, int]:
     """
     Validate pagination parameters.
@@ -321,22 +308,15 @@ def validate_pagination(
         HTTPException: If parameters are invalid
     """
     if limit < 1:
-        raise HTTPException(
-            status_code=400,
-            detail="limit must be at least 1"
-        )
+        raise HTTPException(status_code=400, detail="limit must be at least 1")
 
     if limit > max_limit:
         raise HTTPException(
-            status_code=400,
-            detail=f"limit must be at most {max_limit}"
+            status_code=400, detail=f"limit must be at most {max_limit}"
         )
 
     if offset < 0:
-        raise HTTPException(
-            status_code=400,
-            detail="offset must be at least 0"
-        )
+        raise HTTPException(status_code=400, detail="offset must be at least 0")
 
     return limit, offset
 

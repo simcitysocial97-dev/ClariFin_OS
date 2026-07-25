@@ -38,10 +38,17 @@ def assert_cashflow_result_invariants(result: dict[str, Any]) -> None:
     """
     # All monetary outputs must use integer paise
 
-    for key in ["cash_surplus", "true_savings", "liability_adjusted_savings", "net_worth_impact"]:
+    for key in [
+        "cash_surplus",
+        "true_savings",
+        "liability_adjusted_savings",
+        "net_worth_impact",
+    ]:
         if key in result and result[key] is not None:
             if not isinstance(result[key], int):
-                raise AssertionError(f"{key}={result[key]} must be integer paise, got {type(result[key]).__name__}")
+                raise AssertionError(
+                    f"{key}={result[key]} must be integer paise, got {type(result[key]).__name__}"
+                )
 
     # Month classification must be valid
     valid_classifications = {"surplus", "deficit_covered_by_credit", "deficit"}
@@ -52,6 +59,9 @@ def assert_cashflow_result_invariants(result: dict[str, Any]) -> None:
             )
 
     # Credit dependency ratio must be non-negative
-    if "credit_dependency_ratio" in result and result["credit_dependency_ratio"] is not None:
+    if (
+        "credit_dependency_ratio" in result
+        and result["credit_dependency_ratio"] is not None
+    ):
         if result["credit_dependency_ratio"] < 0:
             raise AssertionError("credit_dependency_ratio must be non-negative")

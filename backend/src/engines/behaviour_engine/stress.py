@@ -21,13 +21,21 @@ from typing import Any
 # Utility Functions (internal)
 # ============================================================
 
+
 def _parse_date(date_str: str) -> datetime | None:
     """Parse various date formats to datetime."""
     if not date_str:
         return None
     formats = [
-        "%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
-        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
+        "%Y-%m-%d",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d/%m/%y",
+        "%d-%m-%y",
+        "%d %b %Y",
+        "%d %b %y",
+        "%d-%b-%Y",
+        "%d-%b-%y",
     ]
     s = date_str.strip()
     for fmt in formats:
@@ -61,6 +69,7 @@ def _coefficient_of_variation(values: list[float]) -> float:
 # ============================================================
 # Loss Aversion Index
 # ============================================================
+
 
 def loss_aversion_index(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
@@ -118,22 +127,28 @@ def loss_aversion_index(transactions: list[dict[str, Any]]) -> dict[str, Any]:
             post_income_spends.append(velocity)
 
     # Calculate average velocity
-    avg_velocity = sum(post_income_spends) / len(post_income_spends) if post_income_spends else 0
+    avg_velocity = (
+        sum(post_income_spends) / len(post_income_spends) if post_income_spends else 0
+    )
 
     # Emotional overspend after large expenses (>2x median)
-    large_expenses = [t for t in debits if (t.get("amount_paise", 0) or 0) / 100.0 > 2 * median_debit]
+    large_expenses = [
+        t for t in debits if (t.get("amount_paise", 0) or 0) / 100.0 > 2 * median_debit
+    ]
 
     # Recovery time calculation (simplified)
     recovery_days = 0
     if large_expenses:
-        avg_large = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in large_expenses) / len(large_expenses)
+        avg_large = sum(
+            (t.get("amount_paise", 0) or 0) / 100.0 for t in large_expenses
+        ) / len(large_expenses)
         recovery_days = min(30, int(avg_large / max(median_debit, 1)))
 
     # Normalize to 0-1 score
     velocity_score = _normalize_score(avg_velocity, 0, 1.5)
     recovery_score = _normalize_score(recovery_days, 0, 30)
 
-    score = (velocity_score * 0.6 + recovery_score * 0.4)
+    score = velocity_score * 0.6 + recovery_score * 0.4
 
     return {
         "score": round(score, 4),
@@ -146,6 +161,7 @@ def loss_aversion_index(transactions: list[dict[str, Any]]) -> dict[str, Any]:
 # ============================================================
 # Impulsivity Score
 # ============================================================
+
 
 def impulsivity_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
@@ -195,19 +211,30 @@ def impulsivity_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
 
     # Weekend vs weekday variance
     if weekend_txns and weekday_txns:
-        weekend_avg = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in weekend_txns) / len(weekend_txns)
-        weekday_avg = sum((t.get("amount_paise", 0) or 0) / 100.0 for t in weekday_txns) / len(weekday_txns)
+        weekend_avg = sum(
+            (t.get("amount_paise", 0) or 0) / 100.0 for t in weekend_txns
+        ) / len(weekend_txns)
+        weekday_avg = sum(
+            (t.get("amount_paise", 0) or 0) / 100.0 for t in weekday_txns
+        ) / len(weekday_txns)
         weekend_ratio = weekend_avg / max(weekday_avg, 1)
     else:
         weekend_ratio = 1.0
 
     # Category switching (discretionary categories)
     discretionary_categories = [
-        "Food & Dining", "Entertainment", "Shopping", "Travel",
-        "Lifestyle", "Groceries", "Online Shopping"
+        "Food & Dining",
+        "Entertainment",
+        "Shopping",
+        "Travel",
+        "Lifestyle",
+        "Groceries",
+        "Online Shopping",
     ]
 
-    discretionary_txns = [t for t in debits if t.get("category") in discretionary_categories]
+    discretionary_txns = [
+        t for t in debits if t.get("category") in discretionary_categories
+    ]
     disc_ratio = len(discretionary_txns) / total_debits if total_debits > 0 else 0
 
     # Compute composite score
@@ -215,7 +242,7 @@ def impulsivity_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     weekend_score = _normalize_score(weekend_ratio, 0.5, 2.0)
     disc_score = _normalize_score(disc_ratio, 0, 0.6)
 
-    score = (micro_score * 0.35 + weekend_score * 0.35 + disc_score * 0.30)
+    score = micro_score * 0.35 + weekend_score * 0.35 + disc_score * 0.30
 
     return {
         "score": round(score, 4),
@@ -229,6 +256,7 @@ def impulsivity_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
 # ============================================================
 # Habit Stability Score
 # ============================================================
+
 
 def habit_stability_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
@@ -253,13 +281,17 @@ def habit_stability_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
         return {"score": 0.5, "category_cv": 0.0, "recurring_predictability": 0.0}
 
     # Monthly category spending (use amount_paise, convert to rupees for analysis)
-    monthly_category: defaultdict[str, defaultdict[str, float]] = defaultdict(lambda: defaultdict(float))
+    monthly_category: defaultdict[str, defaultdict[str, float]] = defaultdict(
+        lambda: defaultdict(float)
+    )
     for txn in debits:
         date_iso = txn.get("date_iso", "")
         if date_iso:
             month = date_iso[:7]  # YYYY-MM
             category = txn.get("category", "Uncategorized")
-            monthly_category[month][category] += (txn.get("amount_paise", 0) or 0) / 100.0
+            monthly_category[month][category] += (
+                txn.get("amount_paise", 0) or 0
+            ) / 100.0
 
     # Category CV across months
     category_cvs: list[float] = []
@@ -269,7 +301,9 @@ def habit_stability_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
             all_categories.update(month_data.keys())
 
         for cat in all_categories:
-            monthly_vals = [monthly_category[m].get(cat, 0) for m in sorted(monthly_category.keys())]
+            monthly_vals = [
+                monthly_category[m].get(cat, 0) for m in sorted(monthly_category.keys())
+            ]
             if len(monthly_vals) >= 2:
                 cv = _coefficient_of_variation(monthly_vals)
                 category_cvs.append(cv)
@@ -311,7 +345,7 @@ def habit_stability_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     # Composite score (lower CV = higher stability)
     cv_score = 1 - _normalize_score(avg_category_cv, 0, 1.5)
 
-    score = (cv_score * 0.40 + recurring_score * 0.30 + rhythm_score * 0.30)
+    score = cv_score * 0.40 + recurring_score * 0.30 + rhythm_score * 0.30
 
     return {
         "score": round(score, 4),
@@ -324,6 +358,7 @@ def habit_stability_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
 # ============================================================
 # Financial Stress Index
 # ============================================================
+
 
 def financial_stress_index(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
@@ -401,7 +436,9 @@ def financial_stress_index(transactions: list[dict[str, Any]]) -> dict[str, Any]
     eom_ratio = eom_spending / max(total_spending, 1)
 
     # Buffer adequacy (days of expenses covered by average balance)
-    avg_balance = abs(sum(running_balance) / len(running_balance)) if running_balance else 0
+    avg_balance = (
+        abs(sum(running_balance) / len(running_balance)) if running_balance else 0
+    )
     daily_avg_spend = total_debit / max(len(daily_net), 1)
     buffer_days = avg_balance / max(daily_avg_spend, 1)
     buffer_score = _normalize_score(buffer_days, 0, 30)
@@ -411,8 +448,12 @@ def financial_stress_index(transactions: list[dict[str, Any]]) -> dict[str, Any]
     dependency_score = _normalize_score(credit_dependency, 0, 2)
     eom_score = _normalize_score(eom_ratio, 0, 0.5)
 
-    score = (volatility_score * 0.30 + dependency_score * 0.30 +
-             eom_score * 0.20 + (1 - buffer_score) * 0.20)
+    score = (
+        volatility_score * 0.30
+        + dependency_score * 0.30
+        + eom_score * 0.20
+        + (1 - buffer_score) * 0.20
+    )
 
     return {
         "score": round(score, 4),
@@ -426,6 +467,7 @@ def financial_stress_index(transactions: list[dict[str, Any]]) -> dict[str, Any]
 # ============================================================
 # Savings Discipline Score
 # ============================================================
+
 
 def savings_discipline_score(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
@@ -446,7 +488,9 @@ def savings_discipline_score(transactions: list[dict[str, Any]]) -> dict[str, An
         return {"score": 0.5, "savings_rate": 0.0, "momentum": 0.0}
 
     # Monthly income vs expenses (use amount_paise, convert to rupees for analysis)
-    monthly_data: defaultdict[str, dict[str, float]] = defaultdict(lambda: {"income": 0.0, "expenses": 0.0})
+    monthly_data: defaultdict[str, dict[str, float]] = defaultdict(
+        lambda: {"income": 0.0, "expenses": 0.0}
+    )
 
     for txn in transactions:
         date_iso = txn.get("date_iso", "")
@@ -481,7 +525,9 @@ def savings_discipline_score(transactions: list[dict[str, Any]]) -> dict[str, An
     # Savings momentum (trend over last 3 months)
     if len(savings_rates) >= 2:
         recent_rates = [r for _, r in savings_rates[-3:]]
-        earlier_rates = [r for _, r in savings_rates[:-3]] if len(savings_rates) > 3 else [0]
+        earlier_rates = (
+            [r for _, r in savings_rates[:-3]] if len(savings_rates) > 3 else [0]
+        )
 
         recent_avg = sum(recent_rates) / len(recent_rates)
         earlier_avg = sum(earlier_rates) / len(earlier_rates) if earlier_rates else 0
@@ -499,7 +545,7 @@ def savings_discipline_score(transactions: list[dict[str, Any]]) -> dict[str, An
     momentum_score = _normalize_score(momentum, -0.3, 0.3)
     consistency_score = consistency
 
-    score = (rate_score * 0.40 + momentum_score * 0.30 + consistency_score * 0.30)
+    score = rate_score * 0.40 + momentum_score * 0.30 + consistency_score * 0.30
 
     return {
         "score": round(score, 4),
@@ -513,6 +559,7 @@ def savings_discipline_score(transactions: list[dict[str, Any]]) -> dict[str, An
 # ============================================================
 # India-Specific Risk Detection
 # ============================================================
+
 
 def detect_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
@@ -553,8 +600,17 @@ def detect_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, Any]:
 
     # Gambling detection
     gambling_keywords = [
-        "dream11", "mpl", "rummy", "bet", "casino", "poker",
-        "teen patti", "my11circle", "fantasy", "betting", "gambl"
+        "dream11",
+        "mpl",
+        "rummy",
+        "bet",
+        "casino",
+        "poker",
+        "teen patti",
+        "my11circle",
+        "fantasy",
+        "betting",
+        "gambl",
     ]
 
     gambling_txns = []

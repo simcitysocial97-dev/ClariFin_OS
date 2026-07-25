@@ -18,6 +18,7 @@ def get_openapi_schema() -> dict[str, Any]:
     """Get OpenAPI schema from live FastAPI application."""
     try:
         from src.api import app
+
         return app.openapi()
     except ImportError as e:
         raise RuntimeError(f"Cannot load FastAPI app: {e}")
@@ -44,7 +45,9 @@ def get_request_body_schema(path: str, method: str) -> dict[str, Any]:
     return json_content.get("schema", {})
 
 
-def get_response_schema(path: str, method: str, status_code: str = "200") -> dict[str, Any]:
+def get_response_schema(
+    path: str, method: str, status_code: str = "200"
+) -> dict[str, Any]:
     """Get response schema for an endpoint."""
     method_spec = get_path_schema(path, method)
     responses = method_spec.get("responses", {})
@@ -83,19 +86,29 @@ def generate_test_cases_from_schema(schema: dict[str, Any]) -> list[dict[str, An
         if prop in required:
             valid[prop] = _get_example_value(prop_schema)
     if valid:
-        test_cases.append({"name": "valid_minimal", "payload": valid, "expected_status": "200"})
+        test_cases.append(
+            {"name": "valid_minimal", "payload": valid, "expected_status": "200"}
+        )
 
     # Generate missing required field cases
     for prop in required:
         missing = {k: v for k, v in valid.items() if k != prop}
-        test_cases.append({"name": f"missing_{prop}", "payload": missing, "expected_status": "422"})
+        test_cases.append(
+            {"name": f"missing_{prop}", "payload": missing, "expected_status": "422"}
+        )
 
     # Generate type violation cases
     for prop, prop_schema in properties.items():
         if prop in required:
             type_violation = dict(valid)
             type_violation[prop] = _get_invalid_type_value(prop_schema)
-            test_cases.append({"name": f"type_violation_{prop}", "payload": type_violation, "expected_status": "422"})
+            test_cases.append(
+                {
+                    "name": f"type_violation_{prop}",
+                    "payload": type_violation,
+                    "expected_status": "422",
+                }
+            )
 
     # Generate boundary cases for integer fields
     for prop, prop_schema in properties.items():
@@ -147,7 +160,9 @@ def _get_invalid_type_value(prop_schema: dict[str, Any]) -> Any:
     return "invalid_type"
 
 
-def _get_boundary_values(prop: str, prop_schema: dict[str, Any]) -> list[dict[str, Any]]:
+def _get_boundary_values(
+    prop: str, prop_schema: dict[str, Any]
+) -> list[dict[str, Any]]:
     """Generate boundary value test cases."""
     test_cases = []
 
@@ -156,15 +171,27 @@ def _get_boundary_values(prop: str, prop_schema: dict[str, Any]) -> list[dict[st
         maximum = prop_schema.get("maximum")
 
         if minimum is not None:
-            test_cases.append({
-                "name": f"boundary_min_{prop}",
-                "payload": {"_target": prop, "value": minimum - 1, "expected_status": "422"}
-            })
+            test_cases.append(
+                {
+                    "name": f"boundary_min_{prop}",
+                    "payload": {
+                        "_target": prop,
+                        "value": minimum - 1,
+                        "expected_status": "422",
+                    },
+                }
+            )
 
         if maximum is not None:
-            test_cases.append({
-                "name": f"boundary_max_{prop}",
-                "payload": {"_target": prop, "value": maximum + 1, "expected_status": "422"}
-            })
+            test_cases.append(
+                {
+                    "name": f"boundary_max_{prop}",
+                    "payload": {
+                        "_target": prop,
+                        "value": maximum + 1,
+                        "expected_status": "422",
+                    },
+                }
+            )
 
     return test_cases

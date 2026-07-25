@@ -1,4 +1,5 @@
 """Statement Invariants - Date integrity, amount validation."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -44,4 +45,6 @@ def assert_statement_detection_invariants(result: dict[str, Any]) -> None:
 
     if "confidence_bps" in result:
         if result["confidence_bps"] < 0 or result["confidence_bps"] > 10000:
-            raise AssertionError(f"confidence_bps out of range: {result['confidence_bps']}")
+            raise AssertionError(
+                f"confidence_bps out of range: {result['confidence_bps']}"
+            )

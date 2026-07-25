@@ -1,4 +1,5 @@
 """Credit Card Builder - Plain Python builder for credit card data."""
+
 from __future__ import annotations
 
 from typing import Any

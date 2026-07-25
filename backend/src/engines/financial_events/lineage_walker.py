@@ -7,6 +7,7 @@ Detects relationships between financial events:
 
 DEFAULT_ROLLOVER_LOOKBACK_DAYS: Window to search for funding sources.
 """
+
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Literal
@@ -23,8 +24,11 @@ class LineageProposal:
 
     Contains all detected links and lifecycle updates without performing DB writes.
     """
+
     proposed_links: list[dict[str, Any]]  # {event_id, linked_event_id, link_type}
-    lifecycle_updates: list[dict[str, Any]]  # {event_id, lifecycle_state, outstanding_paise}
+    lifecycle_updates: list[
+        dict[str, Any]
+    ]  # {event_id, lifecycle_state, outstanding_paise}
     superseded_events: list[int]  # Event IDs that are superseded by this logic
 
 
@@ -50,7 +54,12 @@ def _date_difference_days(date_a: str, date_b: str) -> int:
 def _is_liability_event(event: dict[str, Any]) -> bool:
     """Check if event type represents a liability."""
     event_type = event.get("event_type", "")
-    return event_type in ("liability_increase", "cash_advance", "credit_card_cash_advance", "emi_payment")
+    return event_type in (
+        "liability_increase",
+        "cash_advance",
+        "credit_card_cash_advance",
+        "emi_payment",
+    )
 
 
 def _is_repayment_event(event: dict[str, Any]) -> bool:
@@ -114,7 +123,8 @@ def walk_lineage(
         # Find open advances on this account (liability account)
         account_events = events_by_account.get(account_id, [])
         open_advances = [
-            e for e in account_events
+            e
+            for e in account_events
             if _is_liability_event(e)
             and e.get("lifecycle_state") in ("open", "partially_settled")
             and e.get("id") != event_id
@@ -145,17 +155,21 @@ def walk_lineage(
         new_outstanding = max(0, advance_outstanding - payment_amount)
         new_state = "settled" if new_outstanding == 0 else "partially_settled"
 
-        proposed_links.append({
-            "event_id": event_id,
-            "linked_event_id": matched_advance_id,
-            "link_type": "settles",
-        })
+        proposed_links.append(
+            {
+                "event_id": event_id,
+                "linked_event_id": matched_advance_id,
+                "link_type": "settles",
+            }
+        )
 
-        lifecycle_updates.append({
-            "event_id": matched_advance_id,
-            "lifecycle_state": new_state,
-            "outstanding_paise": new_outstanding,
-        })
+        lifecycle_updates.append(
+            {
+                "event_id": matched_advance_id,
+                "lifecycle_state": new_state,
+                "outstanding_paise": new_outstanding,
+            }
+        )
 
     return LineageProposal(
         proposed_links=proposed_links,
@@ -194,7 +208,11 @@ def detect_rollover_scenarios(
         date_iso = event.get("date_iso", "")
 
         # Look for advance events that might be rollovers
-        if event_type in ("credit_card_cash_advance", "liability_increase", "cash_advance"):
+        if event_type in (
+            "credit_card_cash_advance",
+            "liability_increase",
+            "cash_advance",
+        ):
             if event.get("lifecycle_state") != "open":
                 continue
 
@@ -205,7 +223,8 @@ def detect_rollover_scenarios(
             # Find other advances within lookback window that this might be rolling over
             other_account_events = events  # Would be scoped by account in real impl
             potential_sources = [
-                e for e in other_account_events
+                e
+                for e in other_account_events
                 if _is_liability_event(e)
                 and e.get("id") != event_id
                 and int(e.get("liability_change_paise", 0) or 0) > 0  # Original advance
@@ -222,11 +241,13 @@ def detect_rollover_scenarios(
                     # This advance appears to be rolling over from another
                     (event_id, source.get("id", 0), "rolls_over")
                     # In a real implementation, we'd add to processed_pairs
-                    proposed_links.append({
-                        "event_id": event_id,
-                        "linked_event_id": source.get("id", 0),
-                        "link_type": "rolls_over",
-                    })
+                    proposed_links.append(
+                        {
+                            "event_id": event_id,
+                            "linked_event_id": source.get("id", 0),
+                            "link_type": "rolls_over",
+                        }
+                    )
 
     return LineageProposal(
         proposed_links=proposed_links,

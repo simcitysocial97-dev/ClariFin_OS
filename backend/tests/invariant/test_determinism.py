@@ -27,6 +27,7 @@ from repositories.transaction_repository import TransactionRepository
 # Test Fixtures
 # ============================================================
 
+
 def create_test_db():
     """Create a temporary test database."""
     fd, db_path = tempfile.mkstemp(suffix=".db")
@@ -51,10 +52,30 @@ def populate_test_data(db_path: str):
     # Insert transactions out of chronological order
     # to test ordering
     transactions = [
-        {"date": "15/01/2025", "description": "Transaction C", "amount": 100, "type": "debit"},
-        {"date": "10/01/2025", "description": "Transaction A", "amount": 200, "type": "debit"},
-        {"date": "12/01/2025", "description": "Transaction B", "amount": 50, "type": "credit"},
-        {"date": "10/01/2025", "description": "Transaction A2", "amount": 75, "type": "debit"},  # Same date as A
+        {
+            "date": "15/01/2025",
+            "description": "Transaction C",
+            "amount": 100,
+            "type": "debit",
+        },
+        {
+            "date": "10/01/2025",
+            "description": "Transaction A",
+            "amount": 200,
+            "type": "debit",
+        },
+        {
+            "date": "12/01/2025",
+            "description": "Transaction B",
+            "amount": 50,
+            "type": "credit",
+        },
+        {
+            "date": "10/01/2025",
+            "description": "Transaction A2",
+            "amount": 75,
+            "type": "debit",
+        },  # Same date as A
     ]
 
     txn_repo.insert_transactions(stmt_id, transactions)
@@ -63,6 +84,7 @@ def populate_test_data(db_path: str):
 # ============================================================
 # Test 1: Replay Stability
 # ============================================================
+
 
 def test_replay_stability():
     """
@@ -85,8 +107,12 @@ def test_replay_stability():
         assert len(result1) == len(result2), "Result counts differ"
 
         for r1, r2 in zip(result1, result2, strict=False):
-            assert r1["transaction_id"] == r2["transaction_id"], "Transaction IDs differ"
-            assert r1["balance_paise"] == r2["balance_paise"], f"Balances differ: {r1['balance_paise']} vs {r2['balance_paise']}"
+            assert (
+                r1["transaction_id"] == r2["transaction_id"]
+            ), "Transaction IDs differ"
+            assert (
+                r1["balance_paise"] == r2["balance_paise"]
+            ), f"Balances differ: {r1['balance_paise']} vs {r2['balance_paise']}"
 
         print("✅ PASS: Replay produces identical results")
         print(f"   Transactions: {len(result1)}")
@@ -99,6 +125,7 @@ def test_replay_stability():
 # ============================================================
 # Test 2: Insert Order Independence
 # ============================================================
+
 
 def test_insert_order_independence():
     """
@@ -123,9 +150,24 @@ def test_insert_order_independence():
 
         # Insert in reverse chronological order
         transactions = [
-            {"date": "30/01/2025", "description": "Last", "amount": 100, "type": "debit"},
-            {"date": "20/01/2025", "description": "Middle", "amount": 200, "type": "debit"},
-            {"date": "10/01/2025", "description": "First", "amount": 300, "type": "debit"},
+            {
+                "date": "30/01/2025",
+                "description": "Last",
+                "amount": 100,
+                "type": "debit",
+            },
+            {
+                "date": "20/01/2025",
+                "description": "Middle",
+                "amount": 200,
+                "type": "debit",
+            },
+            {
+                "date": "10/01/2025",
+                "description": "First",
+                "amount": 300,
+                "type": "debit",
+            },
         ]
 
         txn_repo.insert_transactions(stmt_id, transactions)
@@ -139,7 +181,11 @@ def test_insert_order_independence():
 
         # Verify descriptions are in chronological order
         descriptions = [r["description"] for r in result]
-        assert descriptions == ["First", "Middle", "Last"], f"Wrong order: {descriptions}"
+        assert descriptions == [
+            "First",
+            "Middle",
+            "Last",
+        ], f"Wrong order: {descriptions}"
 
         print("✅ PASS: Transactions replayed in correct date order")
         print(f"   Order: {' -> '.join(descriptions)}")
@@ -151,6 +197,7 @@ def test_insert_order_independence():
 # ============================================================
 # Test 3: Duplicate Prevention
 # ============================================================
+
 
 def test_duplicate_prevention():
     """
@@ -173,7 +220,12 @@ def test_duplicate_prevention():
         )
 
         # Insert transaction
-        txn = {"date": "15/01/2025", "description": "Duplicate Test", "amount": 100, "type": "debit"}
+        txn = {
+            "date": "15/01/2025",
+            "description": "Duplicate Test",
+            "amount": 100,
+            "type": "debit",
+        }
 
         count1 = txn_repo.insert_transactions(stmt_id, [txn])
         assert count1 == 1, f"First insert should succeed: {count1}"
@@ -184,7 +236,9 @@ def test_duplicate_prevention():
 
         # Verify only one transaction exists
         conn = sqlite3.connect(db_path)
-        cur = conn.execute("SELECT COUNT(*) FROM transactions WHERE statement_id = ?", (stmt_id,))
+        cur = conn.execute(
+            "SELECT COUNT(*) FROM transactions WHERE statement_id = ?", (stmt_id,)
+        )
         count = cur.fetchone()[0]
         conn.close()
 
@@ -201,6 +255,7 @@ def test_duplicate_prevention():
 # ============================================================
 # Test 4: Update Prevention
 # ============================================================
+
 
 def test_update_prevention():
     """
@@ -246,6 +301,7 @@ def test_update_prevention():
 # Test 5: Delete Prevention
 # ============================================================
 
+
 def test_delete_prevention():
     """
     Test that DELETE on transactions is blocked by trigger.
@@ -290,6 +346,7 @@ def test_delete_prevention():
 # Test 6: Date ISO Migration
 # ============================================================
 
+
 def test_date_iso_migration():
     """
     Test that dates are correctly migrated to ISO format.
@@ -312,9 +369,24 @@ def test_date_iso_migration():
 
         # Insert transactions with various date formats
         transactions = [
-            {"date": "15/01/2025", "description": "DD/MM/YYYY", "amount": 100, "type": "debit"},
-            {"date": "15-01-2025", "description": "DD-MM-YYYY", "amount": 200, "type": "debit"},
-            {"date": "15 Jan 2025", "description": "DD Mon YYYY", "amount": 300, "type": "debit"},
+            {
+                "date": "15/01/2025",
+                "description": "DD/MM/YYYY",
+                "amount": 100,
+                "type": "debit",
+            },
+            {
+                "date": "15-01-2025",
+                "description": "DD-MM-YYYY",
+                "amount": 200,
+                "type": "debit",
+            },
+            {
+                "date": "15 Jan 2025",
+                "description": "DD Mon YYYY",
+                "amount": 300,
+                "type": "debit",
+            },
         ]
 
         txn_repo.insert_transactions(stmt_id, transactions)
@@ -322,12 +394,17 @@ def test_date_iso_migration():
         # Check date_iso values
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT date, date_iso, description FROM transactions WHERE statement_id = ?", (stmt_id,))
+        cur = conn.execute(
+            "SELECT date, date_iso, description FROM transactions WHERE statement_id = ?",
+            (stmt_id,),
+        )
         rows = [dict(r) for r in cur.fetchall()]
         conn.close()
 
         for row in rows:
-            assert row["date_iso"] == "2025-01-15", f"Wrong ISO date for {row['description']}: {row['date_iso']}"
+            assert (
+                row["date_iso"] == "2025-01-15"
+            ), f"Wrong ISO date for {row['description']}: {row['date_iso']}"
 
         print("✅ PASS: All dates correctly converted to ISO format")
         for row in rows:
@@ -340,6 +417,7 @@ def test_date_iso_migration():
 # ============================================================
 # Test 7: Account-Scoped Determinism (Phase 2A.2)
 # ============================================================
+
 
 def test_account_scoped_determinism():
     """
@@ -372,14 +450,34 @@ def test_account_scoped_determinism():
 
         # Insert transactions across multiple statements for same account
         txns1 = [
-            {"date": "10/01/2025", "description": "A-Txn1", "amount": 100, "type": "debit"},
-            {"date": "15/01/2025", "description": "A-Txn2", "amount": 200, "type": "credit"},
+            {
+                "date": "10/01/2025",
+                "description": "A-Txn1",
+                "amount": 100,
+                "type": "debit",
+            },
+            {
+                "date": "15/01/2025",
+                "description": "A-Txn2",
+                "amount": 200,
+                "type": "credit",
+            },
         ]
         txns2 = [
-            {"date": "20/01/2025", "description": "A-Txn3", "amount": 50, "type": "debit"},
+            {
+                "date": "20/01/2025",
+                "description": "A-Txn3",
+                "amount": 50,
+                "type": "debit",
+            },
         ]
         txns3 = [
-            {"date": "12/01/2025", "description": "B-Txn1", "amount": 300, "type": "debit"},
+            {
+                "date": "12/01/2025",
+                "description": "B-Txn1",
+                "amount": 300,
+                "type": "debit",
+            },
         ]
 
         txn_repo.insert_transactions(stmt_id1, txns1)
@@ -394,7 +492,9 @@ def test_account_scoped_determinism():
         rows = [dict(r) for r in cur.fetchall()]
 
         for row in rows:
-            assert row["account_id"] is not None and row["account_id"] != "", f"Missing account_id for {row['description']}"
+            assert (
+                row["account_id"] is not None and row["account_id"] != ""
+            ), f"Missing account_id for {row['description']}"
 
         # Verify account_id matches bank
         cur = conn.execute("""
@@ -403,25 +503,37 @@ def test_account_scoped_determinism():
             JOIN statements s ON t.statement_id = s.id
         """)
         for row in cur.fetchall():
-            assert row["account_id"] == row["bank"], f"account_id mismatch: {row['account_id']} != {row['bank']}"
+            assert (
+                row["account_id"] == row["bank"]
+            ), f"account_id mismatch: {row['account_id']} != {row['bank']}"
 
         # Verify balance engine returns correct transactions for AccountA
         result_a = compute_running_balance(db_path, "AccountA")
         descriptions_a = [r["description"] for r in result_a]
 
-        assert len(result_a) == 3, f"Expected 3 transactions for AccountA, got {len(result_a)}"
-        assert "B-Txn1" not in descriptions_a, "AccountB transaction leaked into AccountA results"
+        assert (
+            len(result_a) == 3
+        ), f"Expected 3 transactions for AccountA, got {len(result_a)}"
+        assert (
+            "B-Txn1" not in descriptions_a
+        ), "AccountB transaction leaked into AccountA results"
 
         # Verify balance engine returns correct transactions for AccountB
         result_b = compute_running_balance(db_path, "AccountB")
-        assert len(result_b) == 1, f"Expected 1 transaction for AccountB, got {len(result_b)}"
+        assert (
+            len(result_b) == 1
+        ), f"Expected 1 transaction for AccountB, got {len(result_b)}"
         assert result_b[0]["description"] == "B-Txn1"
 
         # Verify index exists and is account-scoped
-        cur = conn.execute("SELECT sql FROM sqlite_master WHERE type='index' AND name='idx_account_date_iso'")
+        cur = conn.execute(
+            "SELECT sql FROM sqlite_master WHERE type='index' AND name='idx_account_date_iso'"
+        )
         index_sql = cur.fetchone()
         if index_sql:
-            assert "account_id" in index_sql[0], f"Index not account-scoped: {index_sql[0]}"
+            assert (
+                "account_id" in index_sql[0]
+            ), f"Index not account-scoped: {index_sql[0]}"
 
         conn.close()
 
@@ -437,6 +549,7 @@ def test_account_scoped_determinism():
 # ============================================================
 # Test 8: Hash Signature Uniqueness
 # ============================================================
+
 
 def test_hash_signature_uniqueness():
     """
@@ -454,7 +567,9 @@ def test_hash_signature_uniqueness():
         conn.row_factory = sqlite3.Row
 
         # Check all transactions have hash signatures
-        cur = conn.execute("SELECT id, hash_signature FROM transactions WHERE hash_signature IS NOT NULL")
+        cur = conn.execute(
+            "SELECT id, hash_signature FROM transactions WHERE hash_signature IS NOT NULL"
+        )
         rows = cur.fetchall()
 
         assert len(rows) > 0, "No hash signatures found"
@@ -463,7 +578,9 @@ def test_hash_signature_uniqueness():
         hashes = [r["hash_signature"] for r in rows]
         unique_hashes = set(hashes)
 
-        assert len(hashes) == len(unique_hashes), f"Duplicate hashes found: {len(hashes)} total, {len(unique_hashes)} unique"
+        assert len(hashes) == len(
+            unique_hashes
+        ), f"Duplicate hashes found: {len(hashes)} total, {len(unique_hashes)} unique"
 
         print("✅ PASS: All hash signatures are unique")
         print(f"   Total transactions: {len(rows)}")
@@ -478,6 +595,7 @@ def test_hash_signature_uniqueness():
 # ============================================================
 # Run All Tests
 # ============================================================
+
 
 def run_all_tests():
     """Run all determinism tests."""

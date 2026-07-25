@@ -4,6 +4,7 @@ Filters to unclassified debits, generates loan schedules, invokes EMI detector,
 and persists classifications. Household-aware for multi-user support.
 Also emits FinancialEvents for classified transactions.
 """
+
 from typing import Any
 
 # DEFAULT_ROLLOVER_LOOKBACK_DAYS removed - unused in this file
@@ -109,7 +110,10 @@ class TransactionIntelligenceService:
                 for row in self._schedule_cache[loan_id]:
                     key = (loan_id, row["due_date"])
                     # Bank statement rows take precedence over computed
-                    if key not in schedule_lookup or row.get("source") == "bank_statement":
+                    if (
+                        key not in schedule_lookup
+                        or row.get("source") == "bank_statement"
+                    ):
                         schedule_lookup[key] = row
 
             # Detect EMI payment
@@ -141,15 +145,17 @@ class TransactionIntelligenceService:
                 household_id=household_id or "primary",
             )
 
-            results.append({
-                "transaction_id": txn["id"],
-                "loan_id": detection.matched_entity_id,
-                "classification": detection.classification,
-                "sub_classification": detection.sub_classification,
-                "confidence_bps": detection.confidence_bps,
-                "match_reason": detection.match_reason,
-                "event_id": event_id,
-            })
+            results.append(
+                {
+                    "transaction_id": txn["id"],
+                    "loan_id": detection.matched_entity_id,
+                    "classification": detection.classification,
+                    "sub_classification": detection.sub_classification,
+                    "confidence_bps": detection.confidence_bps,
+                    "match_reason": detection.match_reason,
+                    "event_id": event_id,
+                }
+            )
 
         return results
 
@@ -228,15 +234,17 @@ class TransactionIntelligenceService:
                 matched_statement_id=detection.matched_statement_id,
             )
 
-            results.append({
-                "transaction_id": txn["id"],
-                "matched_statement_id": detection.matched_statement_id,
-                "classification": detection.classification,
-                "lifecycle_state": detection.lifecycle_state,
-                "payment_channel": detection.payment_channel,
-                "confidence_bps": detection.confidence_bps,
-                "match_reason": detection.match_reason,
-            })
+            results.append(
+                {
+                    "transaction_id": txn["id"],
+                    "matched_statement_id": detection.matched_statement_id,
+                    "classification": detection.classification,
+                    "lifecycle_state": detection.lifecycle_state,
+                    "payment_channel": detection.payment_channel,
+                    "confidence_bps": detection.confidence_bps,
+                    "match_reason": detection.match_reason,
+                }
+            )
 
         return results
 
@@ -283,9 +291,17 @@ class TransactionIntelligenceService:
         # Also build account context for statement lookup
         all_accounts_for_context: list[dict[str, Any]] = []
         if household_id:
-            all_accounts_for_context = self.account_repo.get_household_accounts(household_id)
-            household_account_ids = [a["id"] for a in all_accounts_for_context] if all_accounts_for_context else []
-            credit_candidates = self._get_unclassified_credits_for_accounts(household_account_ids)
+            all_accounts_for_context = self.account_repo.get_household_accounts(
+                household_id
+            )
+            household_account_ids = (
+                [a["id"] for a in all_accounts_for_context]
+                if all_accounts_for_context
+                else []
+            )
+            credit_candidates = self._get_unclassified_credits_for_accounts(
+                household_account_ids
+            )
         else:
             all_accounts_for_context = self.account_repo.get_all_accounts()
             credit_candidates = self._get_unclassified_credits()
@@ -317,7 +333,9 @@ class TransactionIntelligenceService:
             # Check if this transaction looks like liquidity extraction
             description = txn.get("description", "")
             has_provider_pattern = any(
-                self._match_description_pattern_for_detection(description, p["description_pattern"])
+                self._match_description_pattern_for_detection(
+                    description, p["description_pattern"]
+                )
                 for p in provider_patterns
             )
 
@@ -360,19 +378,21 @@ class TransactionIntelligenceService:
             # Persist classification
             # For unknown providers, skip auto-classification
             if detection.zone == "unmatched_provider":
-                results.append({
-                    "transaction_id": txn["id"],
-                    "classification": "cash_conversion",
-                    "sub_classification": "unmatched_provider",
-                    "confidence_bps": detection.confidence_bps,
-                    "zone": detection.zone,
-                    "provider_name": detection.provider_name,
-                    "purpose": detection.purpose,
-                    "fee_paise": detection.fee_paise,
-                    "fee_bps": detection.fee_bps,
-                    "match_reason": detection.match_reason,
-                    "narrative": detection.narrative,
-                })
+                results.append(
+                    {
+                        "transaction_id": txn["id"],
+                        "classification": "cash_conversion",
+                        "sub_classification": "unmatched_provider",
+                        "confidence_bps": detection.confidence_bps,
+                        "zone": detection.zone,
+                        "provider_name": detection.provider_name,
+                        "purpose": detection.purpose,
+                        "fee_paise": detection.fee_paise,
+                        "fee_bps": detection.fee_bps,
+                        "match_reason": detection.match_reason,
+                        "narrative": detection.narrative,
+                    }
+                )
                 continue  # Don't persist, just report
 
             # Emit financial event for cash conversion
@@ -391,20 +411,22 @@ class TransactionIntelligenceService:
                 household_id=txn.get("household_id", "primary"),
             )
 
-            results.append({
-                "transaction_id": txn["id"],
-                "matched_credit_transaction_id": detection.matched_credit_transaction_id,
-                "classification": "cash_conversion",
-                "provider_name": detection.provider_name,
-                "purpose": detection.purpose,
-                "zone": detection.zone,
-                "confidence_bps": detection.confidence_bps,
-                "fee_paise": detection.fee_paise,
-                "fee_bps": detection.fee_bps,
-                "match_reason": detection.match_reason,
-                "narrative": detection.narrative,
-                "event_id": event_id,
-            })
+            results.append(
+                {
+                    "transaction_id": txn["id"],
+                    "matched_credit_transaction_id": detection.matched_credit_transaction_id,
+                    "classification": "cash_conversion",
+                    "provider_name": detection.provider_name,
+                    "purpose": detection.purpose,
+                    "zone": detection.zone,
+                    "confidence_bps": detection.confidence_bps,
+                    "fee_paise": detection.fee_paise,
+                    "fee_bps": detection.fee_bps,
+                    "match_reason": detection.match_reason,
+                    "narrative": detection.narrative,
+                    "event_id": event_id,
+                }
+            )
 
         return results
 
@@ -476,7 +498,9 @@ class TransactionIntelligenceService:
             if row:
                 credit_txn_amount = int(row["credit"]) if row["credit"] else 0
 
-        asset_change_paise = credit_txn_amount if credit_txn_amount else amount_paise - fee_paise
+        asset_change_paise = (
+            credit_txn_amount if credit_txn_amount else amount_paise - fee_paise
+        )
         liability_change_paise = amount_paise
         expense_paise = fee_paise
 
@@ -497,9 +521,12 @@ class TransactionIntelligenceService:
         )
         return self.event_repo.insert_event(event)
 
-    def _match_description_pattern_for_detection(self, description: str, pattern: str) -> bool:
+    def _match_description_pattern_for_detection(
+        self, description: str, pattern: str
+    ) -> bool:
         """Check if description matches a regex pattern (case-insensitive)."""
         import re
+
         try:
             return bool(re.search(pattern, description, re.IGNORECASE))
         except re.error:
@@ -520,13 +547,16 @@ class TransactionIntelligenceService:
             """).fetchall()
         return [dict(r) for r in rows]
 
-    def _get_unclassified_credits_for_accounts(self, account_ids: list[str]) -> list[dict[str, Any]]:
+    def _get_unclassified_credits_for_accounts(
+        self, account_ids: list[str]
+    ) -> list[dict[str, Any]]:
         """Get unclassified credit transactions for specific accounts."""
         if not account_ids:
             return []
 
         with self.txn_repo._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT id, account_id, date_iso, credit, amount_paise, description
                 FROM transactions
                 WHERE (id NOT IN (
@@ -536,7 +566,9 @@ class TransactionIntelligenceService:
                 AND credit > 0
                 AND account_id IS NOT NULL AND account_id != ''
                 AND date_iso IS NOT NULL AND date_iso != ''
-            """.format(",".join("?" for _ in account_ids)), account_ids).fetchall()
+            """.format(",".join("?" for _ in account_ids)),
+                account_ids,
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def _get_unclassified_debits(self) -> list[dict[str, Any]]:
@@ -549,19 +581,26 @@ class TransactionIntelligenceService:
             classified_ids = [int(r[0]) for r in rows]
 
         with self.txn_repo._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT id, account_id, date_iso, debit, amount_paise, description
                 FROM transactions
                 WHERE id NOT IN ({})
                   AND debit > 0
                   AND account_id IS NOT NULL AND account_id != ''
                   AND date_iso IS NOT NULL AND date_iso != ''
-            """.format(",".join("?" for _ in classified_ids) if classified_ids else "SELECT id FROM transactions WHERE 1=0"),
+            """.format(
+                    ",".join("?" for _ in classified_ids)
+                    if classified_ids
+                    else "SELECT id FROM transactions WHERE 1=0"
+                ),
                 classified_ids if classified_ids else [],
             ).fetchall()
             return [dict(r) for r in rows]
 
-    def _get_unclassified_debits_for_accounts(self, account_ids: list[str]) -> list[dict[str, Any]]:
+    def _get_unclassified_debits_for_accounts(
+        self, account_ids: list[str]
+    ) -> list[dict[str, Any]]:
         """Get unclassified debit transactions for specific accounts."""
         classified_ids: list[int] = []
         with self.txn_repo._get_conn() as conn:
@@ -575,14 +614,17 @@ class TransactionIntelligenceService:
 
         placeholders = ",".join("?" * len(account_ids))
         with self.txn_repo._get_conn() as conn:
-            rows = conn.execute(f"""
+            rows = conn.execute(
+                f"""
                 SELECT id, account_id, date_iso, debit, amount_paise, description
                 FROM transactions
                 WHERE id NOT IN ({",".join("?" for _ in classified_ids) if classified_ids else "SELECT id FROM transactions WHERE 1=0"})
                   AND account_id IN ({placeholders})
                   AND debit > 0
                   AND date_iso IS NOT NULL AND date_iso != ''
-            """, classified_ids + [str(aid) for aid in account_ids]).fetchall()
+            """,
+                classified_ids + [str(aid) for aid in account_ids],
+            ).fetchall()
             return [dict(r) for r in rows]
 
     def _get_loan_schedule(self, loan_id: int) -> list[dict[str, Any]]:

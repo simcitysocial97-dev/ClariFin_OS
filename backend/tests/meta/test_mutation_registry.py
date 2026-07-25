@@ -93,6 +93,7 @@ def test_capability_exists() -> None:
     # Load capability registry to validate references
     cap_registry_path = GENERATED_DIR / "capability-registry.yaml"
     import yaml
+
     with open(cap_registry_path) as f:
         cap_registry = yaml.safe_load(f)
 
@@ -101,7 +102,9 @@ def test_capability_exists() -> None:
     for entry in data.get("entries", []):
         cap_id = entry.get("capability")
         if cap_id and cap_id != "unknown":
-            assert cap_id in valid_capabilities, f"Invalid capability reference: {cap_id}"
+            assert (
+                cap_id in valid_capabilities
+            ), f"Invalid capability reference: {cap_id}"
 
 
 def test_mutation_types_valid() -> None:
@@ -117,9 +120,14 @@ def test_mutation_types_valid() -> None:
         data = json.load(f)
 
     valid_types = {
-        "Arithmetic", "Comparison", "Boolean",
-        "Constant replacement", "Boundary conditions",
-        "Off-by-one", "Loop termination", "Sign inversion"
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Off-by-one",
+        "Loop termination",
+        "Sign inversion",
     }
 
     for entry in data.get("entries", []):

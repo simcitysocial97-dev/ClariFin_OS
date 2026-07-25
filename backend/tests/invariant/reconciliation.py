@@ -28,7 +28,9 @@ def assert_reconciliation_match_valid(match: dict[str, Any]) -> None:
         )
 
 
-def assert_reconciliation_determinism(matches_1: list[dict[str, Any]], matches_2: list[dict[str, Any]]) -> None:
+def assert_reconciliation_determinism(
+    matches_1: list[dict[str, Any]], matches_2: list[dict[str, Any]]
+) -> None:
     """Validate that two reconciliation runs produce identical results.
 
     INVARIANT: Same dataset → same reconciliation rows.

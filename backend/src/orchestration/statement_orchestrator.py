@@ -96,7 +96,9 @@ class StatementProcessingOrchestrator:
         Returns:
             Behaviour result summary
         """
-        profile = self.behaviour_service.compute_financial_profile(household_id="default")
+        profile = self.behaviour_service.compute_financial_profile(
+            household_id="default"
+        )
         return {
             "profile_generated": bool(profile),
             "profile_type": profile.profile_type if profile else None,

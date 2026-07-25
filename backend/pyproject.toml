@@ -39,6 +39,9 @@ exclude = [
 testpaths = ["tests"]
 pythonpath = ["src"]
 asyncio_default_fixture_loop_scope = "function"
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 markers = [
     "capability: mark test as capability smoke test",
     "contract: mark test as contract test",
@@ -46,11 +49,22 @@ markers = [
     "invariant: mark test as invariant test",
     "golden: mark test as golden dataset test",
     "meta: mark test as meta test",
+    "slow: marks tests as slow (deselect with '-m not slow')",
+    "mutation: marks tests specifically for mutation testing",
+    "integration: marks integration tests",
+    "unit: marks unit tests",
+    "performance: marks performance tests",
 ]
 filterwarnings = [
     "ignore::DeprecationWarning:src.core.dtos.*",
     "ignore::pytest.PytestDeprecationWarning",
 ]
+addopts = [
+    "--strict-markers",
+    "--tb=short",
+    "--no-header",
+]
+timeout = 60
 
 [tool.hypothesis]
 default_profile = "default"
@@ -67,3 +81,26 @@ ignore_missing_imports = true
 # Note: camelot is a PDF table extraction library without type stubs.
 # The import-untyped error is expected and suppressed via ignore_missing_imports.
 # This is a third-party dependency limitation, not a code issue.
+
+[tool.mutmut]
+# Directories to mutate
+paths_to_mutate = "src/engines/"
+# Test runner command
+runner = "python -m pytest tests/unit/ tests/property/ -x -q --timeout=30"
+# Tests directory
+tests_dir = "tests/"
+# Disable progress bar (cleaner CI output)
+no_progress = true
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | __pycache__
+  | tests/generated
+)/
+'''

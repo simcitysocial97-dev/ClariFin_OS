@@ -1,4 +1,5 @@
 """Date Consistency Invariants — ISO format, month bucket alignment, chronology."""
+
 from __future__ import annotations
 
 import re
@@ -23,15 +24,15 @@ def assert_date_iso_format(date_str: str, field_name: str = "date_iso") -> None:
     if not date_str:
         raise AssertionError(f"{field_name} is empty or None")
     if not ISO_DATE_REGEX.match(date_str):
-        raise AssertionError(
-            f"{field_name}={date_str} is not ISO 8601 (YYYY-MM-DD)"
-        )
+        raise AssertionError(f"{field_name}={date_str} is not ISO 8601 (YYYY-MM-DD)")
     # Validate month range
     parts = date_str.split("-")
     month = int(parts[1])
     day = int(parts[2])
     if month < 1 or month > 12:
-        raise AssertionError(f"{field_name}={date_str}: month {month} out of range [1,12]")
+        raise AssertionError(
+            f"{field_name}={date_str}: month {month} out of range [1,12]"
+        )
     if day < 1 or day > 31:
         raise AssertionError(f"{field_name}={date_str}: day {day} out of range [1,31]")
 
@@ -97,7 +98,9 @@ def assert_date_in_range(date_iso: str, start: str, end: str) -> None:
         raise AssertionError(f"date_iso={date_iso} > end={end}")
 
 
-def assert_data_has_required_dates(data: dict[str, Any], date_fields: list[str]) -> None:
+def assert_data_has_required_dates(
+    data: dict[str, Any], date_fields: list[str]
+) -> None:
     """Validate that required date fields are present and valid.
 
     INVARIANT: All required date fields are non-empty ISO 8601 strings.

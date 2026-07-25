@@ -19,8 +19,10 @@ LoanStatus = Literal["active", "closed", "defaulted"]
 
 # ===== Amortization Schedule Types =====
 
+
 class AmortizationEntryDTO(BaseModel):
     """Single entry in amortization schedule."""
+
     payment_number: int = Field(description="Payment number (1-based)")
     date: str = Field(description="Payment date (ISO format)")
     principal_paise: int = Field(description="Principal component in paise")
@@ -31,8 +33,10 @@ class AmortizationEntryDTO(BaseModel):
 
 # ===== Loan Summary Types =====
 
+
 class LoanSummaryDTO(BaseModel):
     """Loan summary information."""
+
     id: str = Field(description="Loan identifier")
     name: str = Field(description="Loan name")
     type: LoanType = Field(description="Loan type")
@@ -50,24 +54,34 @@ class LoanSummaryDTO(BaseModel):
 
 # ===== Payment Progress Types =====
 
+
 class PaymentProgressDTO(BaseModel):
     """Payment progress for a loan."""
+
     loan_id: str = Field(description="Loan identifier")
     total_payments: int = Field(description="Total number of payments made")
     total_principal_paise: int = Field(description="Total principal paid in paise")
     total_interest_paise: int = Field(description="Total interest paid in paise")
-    principal_percentage: float = Field(description="Percentage of principal paid (0-100)")
-    interest_percentage: float = Field(description="Percentage of interest paid (0-100)")
+    principal_percentage: float = Field(
+        description="Percentage of principal paid (0-100)"
+    )
+    interest_percentage: float = Field(
+        description="Percentage of interest paid (0-100)"
+    )
 
 
 # ===== Interest Analysis Types =====
 
+
 class InterestAnalysisDTO(BaseModel):
     """Interest analysis for a loan."""
+
     loan_id: str = Field(description="Loan identifier")
     total_interest_paise: int = Field(description="Total interest to be paid in paise")
     paid_interest_paise: int = Field(description="Interest paid so far in paise")
-    remaining_interest_paise: int = Field(description="Interest remaining to be paid in paise")
+    remaining_interest_paise: int = Field(
+        description="Interest remaining to be paid in paise"
+    )
     interest_ratio: float = Field(description="Interest to principal ratio")
 
 
@@ -79,24 +93,32 @@ LoanInsightSeverity = Literal["low", "medium", "high"]
 
 class LoanInsightDTO(BaseModel):
     """Insight about loan changes or patterns."""
+
     type: LoanInsightType = Field(description="Insight type")
     severity: LoanInsightSeverity = Field(description="Insight severity")
     message: str = Field(description="Human-readable insight message")
-    action_url: str | None = Field(default=None, description="URL for detailed view or action")
+    action_url: str | None = Field(
+        default=None, description="URL for detailed view or action"
+    )
 
 
 # ===== Loan Evidence Types =====
 
+
 class LoanEvidenceItemDTO(BaseModel):
     """Evidence item for loan calculation."""
+
     type: str = Field(description="Evidence type (payment, calculation, adjustment)")
     summary: str = Field(description="Human-readable summary")
     source: str = Field(description="Source reference")
-    confidence: float | None = Field(default=None, description="Confidence score (0-100)")
+    confidence: float | None = Field(
+        default=None, description="Confidence score (0-100)"
+    )
 
 
 class LoanCalculationStepDTO(BaseModel):
     """Calculation step in the loan derivation chain."""
+
     name: str = Field(description="Step name")
     description: str = Field(description="Step description")
     inputs: dict[str, Any] = Field(default_factory=dict, description="Input values")
@@ -105,23 +127,22 @@ class LoanCalculationStepDTO(BaseModel):
 
 class LoanEvidenceChainDTO(BaseModel):
     """Evidence chain for loan calculation."""
+
     summary: str = Field(description="Overall summary of the calculation")
     evidence: list[LoanEvidenceItemDTO] = Field(
-        default_factory=list,
-        description="List of evidence items"
+        default_factory=list, description="List of evidence items"
     )
     calculation_steps: list[LoanCalculationStepDTO] = Field(
-        default_factory=list,
-        description="Calculation chain steps"
+        default_factory=list, description="Calculation chain steps"
     )
     source_references: list[str] = Field(
-        default_factory=list,
-        description="Source references for traceability"
+        default_factory=list, description="Source references for traceability"
     )
     confidence_score: float = Field(description="Overall confidence (0-100)")
 
 
 # ===== Main Loans DTO =====
+
 
 class LoansDTO(BaseModel):
     """
@@ -131,20 +152,20 @@ class LoansDTO(BaseModel):
     - total_outstanding_paise: Total outstanding in paise (canonical)
     - total_emi_paise: Total EMI in paise
     """
+
     loans: list[LoanSummaryDTO] = Field(
-        default_factory=list,
-        description="List of loan summaries"
+        default_factory=list, description="List of loan summaries"
     )
-    total_outstanding_paise: int = Field(description="Total outstanding across all loans in paise")
+    total_outstanding_paise: int = Field(
+        description="Total outstanding across all loans in paise"
+    )
     total_emi_paise: int = Field(description="Total monthly EMI in paise")
     loan_count: int = Field(description="Total number of active loans")
     insights: list[LoanInsightDTO] = Field(
-        default_factory=list,
-        description="List of insights about loans"
+        default_factory=list, description="List of insights about loans"
     )
     evidence_chain: LoanEvidenceChainDTO | None = Field(
-        default=None,
-        description="Evidence chain for explainability"
+        default=None, description="Evidence chain for explainability"
     )
 
     class Config:
@@ -155,33 +176,34 @@ class LoansDTO(BaseModel):
                 "total_emi_paise": 2500000,  # ₹25,000.00
                 "loan_count": 2,
                 "insights": [],
-                "evidence_chain": None
+                "evidence_chain": None,
             }
         }
 
 
 # ===== Loans Response Types =====
 
+
 class LoansAmortizationResponse(BaseModel):
     """Response for amortization schedule endpoint."""
+
     schedule: list[AmortizationEntryDTO] = Field(
-        default_factory=list,
-        description="Amortization schedule entries"
+        default_factory=list, description="Amortization schedule entries"
     )
     total_count: int = Field(description="Total number of entries")
 
 
 class LoansPaymentProgressResponse(BaseModel):
     """Response for payment progress endpoint."""
+
     progress: list[PaymentProgressDTO] = Field(
-        default_factory=list,
-        description="Payment progress for each loan"
+        default_factory=list, description="Payment progress for each loan"
     )
 
 
 class LoansInterestAnalysisResponse(BaseModel):
     """Response for interest analysis endpoint."""
+
     analysis: list[InterestAnalysisDTO] = Field(
-        default_factory=list,
-        description="Interest analysis for each loan"
+        default_factory=list, description="Interest analysis for each loan"
     )

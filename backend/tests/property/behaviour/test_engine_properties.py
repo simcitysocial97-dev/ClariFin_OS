@@ -1,4 +1,5 @@
 """Property tests for Behaviour Engine — behaviour scoring and profile."""
+
 from __future__ import annotations
 
 import sys
@@ -69,9 +70,7 @@ class TestAccountEngineProperties:
         ),
     )
     @settings(max_examples=20)
-    def test_average_balance_integer(
-        self, balances: list[int]
-    ) -> None:
+    def test_average_balance_integer(self, balances: list[int]) -> None:
         """Average balance must be an integer (paise)."""
         from src.engines.account_engine.balance import compute_average_balance
 
@@ -83,9 +82,7 @@ class TestAccountEngineProperties:
         closing=st.integers(min_value=0, max_value=10000000),
     )
     @settings(max_examples=20)
-    def test_balance_change_identity(
-        self, opening: int, closing: int
-    ) -> None:
+    def test_balance_change_identity(self, opening: int, closing: int) -> None:
         """Balance change = closing - opening."""
         from src.engines.account_engine.balance import compute_balance_change
 

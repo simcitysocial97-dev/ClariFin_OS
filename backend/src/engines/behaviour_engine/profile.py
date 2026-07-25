@@ -21,38 +21,41 @@ from decimal import Decimal
 # ============================================================
 
 # SAVER: Savings rate threshold
-SAVER_MIN_SAVINGS_RATE = Decimal('0.20')  # 20%
+SAVER_MIN_SAVINGS_RATE = Decimal("0.20")  # 20%
 
 # SAVER confidence bonus thresholds
-SAVER_STRONG_SAVINGS_THRESHOLD = Decimal('0.25')  # Strong if > 25%
+SAVER_STRONG_SAVINGS_THRESHOLD = Decimal("0.25")  # Strong if > 25%
 
 # DEBT_DEPENDENT: Borrowed lifestyle ratio threshold
-DEBT_DEPENDENT_MIN_BORROWED_RATIO = Decimal('0.20')  # 20%
+DEBT_DEPENDENT_MIN_BORROWED_RATIO = Decimal("0.20")  # 20%
 
 # DEBT_DEPENDENT revolver threshold (indicates recurring debt extraction)
-DEBT_DEPENDENT_MAX_REVOLVER_FOR_POSITIVE = Decimal('0.5')  # High revolver = dependent
-DEBT_DEPENDENT_SAVINGS_THRESHOLD = Decimal('0.10')  # Low savings + high revolver
+DEBT_DEPENDENT_MAX_REVOLVER_FOR_POSITIVE = Decimal("0.5")  # High revolver = dependent
+DEBT_DEPENDENT_SAVINGS_THRESHOLD = Decimal("0.10")  # Low savings + high revolver
 
 # SPENDER: Discretionary spending thresholds
-SPENDER_MIN_DISCRETIONARY_RATIO = Decimal('0.40')  # 40% of expenses
-SPENDER_MIN_IMPULSE_RATIO = Decimal('0.30')  # 30% impulse transactions
-SPENDER_MIN_LIFESTYLE_CREEP = Decimal('0.50')  # Significant creep
+SPENDER_MIN_DISCRETIONARY_RATIO = Decimal("0.40")  # 40% of expenses
+SPENDER_MIN_IMPULSE_RATIO = Decimal("0.30")  # 30% impulse transactions
+SPENDER_MIN_LIFESTYLE_CREEP = Decimal("0.50")  # Significant creep
 
 # DEBT_OPTIMIZER: Responsible debt usage
-DEBT_OPTIMIZER_MIN_REVOLVER_RATIO = Decimal('0.01')  # Some credit usage
-DEBT_OPTIMIZER_MAX_REVOLVER_RATIO = Decimal('0.20')  # Low revolver = pays in full
-DEBT_OPTIMIZER_MIN_SAVINGS_RATE = Decimal('0.05')  # Positive savings
+DEBT_OPTIMIZER_MIN_REVOLVER_RATIO = Decimal("0.01")  # Some credit usage
+DEBT_OPTIMIZER_MAX_REVOLVER_RATIO = Decimal("0.20")  # Low revolver = pays in full
+DEBT_OPTIMIZER_MIN_SAVINGS_RATE = Decimal("0.05")  # Positive savings
 
 # Confidence calculation constants
-CONFIDENCE_BASE = Decimal('0.5')
-CONFIDENCE_STRONG_CONDITION_BONUS = Decimal('0.10')
-CONFIDENCE_SECONDARY_CONDITION_BONUS = Decimal('0.05')
-CONFIDENCE_TRANSACTION_VOLUME_BONUS = Decimal('0.05')  # Per 100 transactions, capped at 0.2
+CONFIDENCE_BASE = Decimal("0.5")
+CONFIDENCE_STRONG_CONDITION_BONUS = Decimal("0.10")
+CONFIDENCE_SECONDARY_CONDITION_BONUS = Decimal("0.05")
+CONFIDENCE_TRANSACTION_VOLUME_BONUS = Decimal(
+    "0.05"
+)  # Per 100 transactions, capped at 0.2
 
 
 # ============================================================
 # Classification Function
 # ============================================================
+
 
 def classify_financial_personality(
     savings_rate: Decimal,
@@ -87,34 +90,65 @@ def classify_financial_personality(
         Profile is one of: "SAVER", "BALANCED", "SPENDER", "DEBT_OPTIMIZER", "DEBT_DEPENDENT"
     """
     # Check DEBT_DEPENDENT first (highest priority)
-    if _is_debt_dependent(borrowed_lifestyle_ratio, credit_revolver_ratio, savings_rate):
-        return _build_result("DEBT_DEPENDENT", savings_rate, borrowed_lifestyle_ratio,
-                            credit_revolver_ratio, transaction_count)
+    if _is_debt_dependent(
+        borrowed_lifestyle_ratio, credit_revolver_ratio, savings_rate
+    ):
+        return _build_result(
+            "DEBT_DEPENDENT",
+            savings_rate,
+            borrowed_lifestyle_ratio,
+            credit_revolver_ratio,
+            transaction_count,
+        )
 
     # Check SAVER
     if _is_saver(savings_rate, borrowed_lifestyle_ratio, credit_revolver_ratio):
-        return _build_result("SAVER", savings_rate, borrowed_lifestyle_ratio,
-                            credit_revolver_ratio, transaction_count)
+        return _build_result(
+            "SAVER",
+            savings_rate,
+            borrowed_lifestyle_ratio,
+            credit_revolver_ratio,
+            transaction_count,
+        )
 
     # Check DEBT_OPTIMIZER
     if _is_debt_optimizer(savings_rate, credit_revolver_ratio):
-        return _build_result("DEBT_OPTIMIZER", savings_rate, borrowed_lifestyle_ratio,
-                            credit_revolver_ratio, transaction_count)
+        return _build_result(
+            "DEBT_OPTIMIZER",
+            savings_rate,
+            borrowed_lifestyle_ratio,
+            credit_revolver_ratio,
+            transaction_count,
+        )
 
     # Check SPENDER
-    if _is_spender(discretionary_spending_ratio, impulse_transaction_ratio, lifestyle_creep_index):
-        return _build_result("SPENDER", savings_rate, borrowed_lifestyle_ratio,
-                            credit_revolver_ratio, transaction_count,
-                            discretionary_spending_ratio, impulse_transaction_ratio)
+    if _is_spender(
+        discretionary_spending_ratio, impulse_transaction_ratio, lifestyle_creep_index
+    ):
+        return _build_result(
+            "SPENDER",
+            savings_rate,
+            borrowed_lifestyle_ratio,
+            credit_revolver_ratio,
+            transaction_count,
+            discretionary_spending_ratio,
+            impulse_transaction_ratio,
+        )
 
     # Default to BALANCED
-    return _build_result("BALANCED", savings_rate, borrowed_lifestyle_ratio,
-                        credit_revolver_ratio, transaction_count)
+    return _build_result(
+        "BALANCED",
+        savings_rate,
+        borrowed_lifestyle_ratio,
+        credit_revolver_ratio,
+        transaction_count,
+    )
 
 
 # ============================================================
 # Profile Detection Helpers
 # ============================================================
+
 
 def _is_debt_dependent(
     borrowed_lifestyle_ratio: Decimal,
@@ -133,8 +167,10 @@ def _is_debt_dependent(
         return True
 
     # Recurring debt extraction: high revolver + low savings
-    if (credit_revolver_ratio >= DEBT_DEPENDENT_MAX_REVOLVER_FOR_POSITIVE
-        and savings_rate < DEBT_DEPENDENT_SAVINGS_THRESHOLD):
+    if (
+        credit_revolver_ratio >= DEBT_DEPENDENT_MAX_REVOLVER_FOR_POSITIVE
+        and savings_rate < DEBT_DEPENDENT_SAVINGS_THRESHOLD
+    ):
         return True
 
     return False
@@ -187,7 +223,7 @@ def _is_debt_optimizer(
         return False  # Revolver too high - not paying in full
 
     # Must have positive savings
-    if savings_rate <= Decimal('0'):
+    if savings_rate <= Decimal("0"):
         return False
 
     return True
@@ -225,6 +261,7 @@ def _is_spender(
 # Result Builder
 # ============================================================
 
+
 def _build_result(
     profile: str,
     savings_rate: Decimal,
@@ -235,11 +272,21 @@ def _build_result(
     impulse_transaction_ratio: Decimal | None = None,
 ) -> tuple[str, Decimal, str]:
     """Build the result tuple with confidence and explanation."""
-    confidence = _calculate_confidence(profile, savings_rate, borrowed_lifestyle_ratio,
-                                     credit_revolver_ratio, transaction_count)
-    explanation = _build_explanation(profile, savings_rate, borrowed_lifestyle_ratio,
-                                   credit_revolver_ratio, discretionary_spending_ratio,
-                                   impulse_transaction_ratio)
+    confidence = _calculate_confidence(
+        profile,
+        savings_rate,
+        borrowed_lifestyle_ratio,
+        credit_revolver_ratio,
+        transaction_count,
+    )
+    explanation = _build_explanation(
+        profile,
+        savings_rate,
+        borrowed_lifestyle_ratio,
+        credit_revolver_ratio,
+        discretionary_spending_ratio,
+        impulse_transaction_ratio,
+    )
     return (profile, confidence, explanation)
 
 
@@ -266,12 +313,12 @@ def _calculate_confidence(
     if profile == "SAVER" and savings_rate >= SAVER_STRONG_SAVINGS_THRESHOLD:
         score += CONFIDENCE_STRONG_CONDITION_BONUS
     elif profile == "DEBT_DEPENDENT":
-        if borrowed_lifestyle_ratio >= Decimal('0.30'):
+        if borrowed_lifestyle_ratio >= Decimal("0.30"):
             score += CONFIDENCE_STRONG_CONDITION_BONUS
-        elif credit_revolver_ratio >= Decimal('0.60'):
+        elif credit_revolver_ratio >= Decimal("0.60"):
             score += CONFIDENCE_STRONG_CONDITION_BONUS
     elif profile == "SPENDER":
-        if borrowed_lifestyle_ratio > Decimal('0.30'):
+        if borrowed_lifestyle_ratio > Decimal("0.30"):
             score += CONFIDENCE_STRONG_CONDITION_BONUS  # Combined stressor
     elif profile == "DEBT_OPTIMIZER":
         # Moderate confidence for this profile
@@ -279,20 +326,20 @@ def _calculate_confidence(
     # BALANCED: base confidence is appropriate
 
     # Secondary condition bonus
-    if profile in ("SAVER", "DEBT_OPTIMIZER") and credit_revolver_ratio > Decimal('0'):
+    if profile in ("SAVER", "DEBT_OPTIMIZER") and credit_revolver_ratio > Decimal("0"):
         score += CONFIDENCE_SECONDARY_CONDITION_BONUS
-    elif profile == "DEBT_DEPENDENT" and savings_rate < Decimal('0'):
+    elif profile == "DEBT_DEPENDENT" and savings_rate < Decimal("0"):
         score += CONFIDENCE_SECONDARY_CONDITION_BONUS  # Combined negative pattern
 
     # Transaction volume bonus (more data = higher confidence)
     volume_bonus = min(
         CONFIDENCE_TRANSACTION_VOLUME_BONUS * (transaction_count // 100),
-        Decimal('0.20')
+        Decimal("0.20"),
     )
     score += volume_bonus
 
     # Clamp between 0 and 1
-    return max(Decimal('0'), min(Decimal('1'), score))
+    return max(Decimal("0"), min(Decimal("1"), score))
 
 
 def _build_explanation(
@@ -338,10 +385,16 @@ def _build_explanation(
 
     elif profile == "SPENDER":
         reasons = []
-        if discretionary_spending_ratio and discretionary_spending_ratio >= SPENDER_MIN_DISCRETIONARY_RATIO:
+        if (
+            discretionary_spending_ratio
+            and discretionary_spending_ratio >= SPENDER_MIN_DISCRETIONARY_RATIO
+        ):
             disc_pct = round(discretionary_spending_ratio * 100, 1)
             reasons.append(f"discretionary spending ratio {disc_pct}%")
-        if impulse_transaction_ratio and impulse_transaction_ratio >= SPENDER_MIN_IMPULSE_RATIO:
+        if (
+            impulse_transaction_ratio
+            and impulse_transaction_ratio >= SPENDER_MIN_IMPULSE_RATIO
+        ):
             impulse_pct = round(impulse_transaction_ratio * 100, 1)
             reasons.append(f"impulse transaction ratio {impulse_pct}%")
 

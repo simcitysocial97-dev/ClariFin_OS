@@ -20,7 +20,9 @@ class CreditCardStatement(DomainModel):
     payment_amount_paise: int | None = None
     interest_charged_paise: int = 0
 
-    @field_validator("total_outstanding_paise", "minimum_due_paise", "interest_charged_paise")
+    @field_validator(
+        "total_outstanding_paise", "minimum_due_paise", "interest_charged_paise"
+    )
     @classmethod
     def validate_non_negative(cls, v: int) -> int:
         """Ensure monetary fields are non-negative."""
@@ -53,8 +55,9 @@ class StatementGenerateRequest(BaseModel):
     """Request to generate a new statement."""
 
     statement_date: str = Field(
-        ..., pattern=r"^\d{4}-\d{2}-\d{2}$",
-        description="ISO 8601 date string for the statement"
+        ...,
+        pattern=r"^\d{4}-\d{2}-\d{2}$",
+        description="ISO 8601 date string for the statement",
     )
 
 
@@ -91,7 +94,6 @@ class PaymentRecordRequest(BaseModel):
     """Request to record a payment on a statement."""
 
     payment_date: str = Field(
-        ..., pattern=r"^\d{4}-\d{2}-\d{2}$",
-        description="ISO 8601 date string"
+        ..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="ISO 8601 date string"
     )
     amount_paise: int = Field(gt=0, description="Payment amount in paise")

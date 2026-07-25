@@ -1,4 +1,5 @@
 """Property tests for Lending domain — Loan Engine + Credit Card Engine."""
+
 from __future__ import annotations
 
 import sys
@@ -30,8 +31,11 @@ class TestLoanEngineProperties:
 
         emi = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
         schedule = generate_schedule(
-            principal_paise, annual_rate_bps, tenure_months,
-            start_date="2026-01-01", emi_paise=emi,
+            principal_paise,
+            annual_rate_bps,
+            tenure_months,
+            start_date="2026-01-01",
+            emi_paise=emi,
         )
         assert len(schedule) == tenure_months
         # Verify balance decreases monotonically
@@ -54,8 +58,11 @@ class TestLoanEngineProperties:
 
         emi = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
         schedule = generate_schedule(
-            principal_paise, annual_rate_bps, tenure_months,
-            start_date="2026-01-01", emi_paise=emi,
+            principal_paise,
+            annual_rate_bps,
+            tenure_months,
+            start_date="2026-01-01",
+            emi_paise=emi,
         )
         if schedule:
             assert schedule[0].balance_paise < principal_paise
@@ -76,14 +83,20 @@ class TestLoanEngineProperties:
         prepayment_paise: int,
     ) -> None:
         """Prepayment must reduce total interest or keep it same."""
-        from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
+        from src.engines.loan_engine.amortization import (
+            generate_schedule,
+            total_interest_paise,
+        )
         from src.engines.loan_engine.emi import compute_emi_fixed
         from src.engines.loan_engine.prepayment import apply_prepayment_at_month
 
         emi = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
         original = generate_schedule(
-            principal_paise, annual_rate_bps, tenure_months,
-            start_date="2026-01-01", emi_paise=emi,
+            principal_paise,
+            annual_rate_bps,
+            tenure_months,
+            start_date="2026-01-01",
+            emi_paise=emi,
         )
         prepay_month = min(3, tenure_months - 1)
         new_schedule, _ = apply_prepayment_at_month(
@@ -100,9 +113,9 @@ class TestLoanEngineProperties:
         principal_paise=st.integers(min_value=100000, max_value=100000000),
         annual_rate_bps=st.integers(min_value=600, max_value=2400),
         tenure_months=st.integers(min_value=6, max_value=360),
-        start_date=st.sampled_from([
-            "2025-01-01", "2025-01-15", "2025-02-28", "2025-03-31"
-        ]),
+        start_date=st.sampled_from(
+            ["2025-01-01", "2025-01-15", "2025-02-28", "2025-03-31"]
+        ),
     )
     @settings(max_examples=20)
     def test_generate_schedule_invariants(

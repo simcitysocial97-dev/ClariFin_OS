@@ -1,4 +1,5 @@
 """Managed accounts endpoints (DB-backed)."""
+
 from typing import Any
 
 from fastapi import APIRouter, HTTPException
@@ -13,6 +14,7 @@ router = APIRouter(prefix="/api", tags=["accounts"])
 
 class AccountCreate(BaseModel):
     """Account creation request."""
+
     name: str
     bank: str
     account_type: str = "savings"
@@ -23,6 +25,7 @@ class AccountCreate(BaseModel):
 
 class AccountUpdate(BaseModel):
     """Account update request."""
+
     name: str | None = None
     bank: str | None = None
     account_type: str | None = None
@@ -53,7 +56,7 @@ def api_create_managed_account(account: AccountCreate) -> dict[str, Any]:
             account_type=account.account_type,
             balance_paise=account.balance_paise,
             account_number_last4=account.account_number_last4,
-            notes=account.notes
+            notes=account.notes,
         )
         return {"success": True, "account": created}
     except Exception as e:
@@ -61,13 +64,15 @@ def api_create_managed_account(account: AccountCreate) -> dict[str, Any]:
 
 
 @router.put("/accounts/manage/{account_id}")
-def api_update_managed_account(account_id: str, account: AccountUpdate) -> dict[str, Any]:
+def api_update_managed_account(
+    account_id: str, account: AccountUpdate
+) -> dict[str, Any]:
     """Update an existing account."""
     try:
         repo = AccountRepository()
         updated = repo.update_account(
             account_id,
-            **{k: v for k, v in account.model_dump().items() if v is not None}
+            **{k: v for k, v in account.model_dump().items() if v is not None},
         )
         if not updated:
             raise NotFoundError(f"Account {account_id} not found")

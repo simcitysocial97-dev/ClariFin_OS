@@ -2,6 +2,7 @@
 
 LOC WATCH: No repository file > 200 LOC.
 """
+
 from typing import Any
 
 from src.repositories.base import BaseRepository
@@ -71,21 +72,24 @@ class LiquidityPatternRepository(BaseRepository):
         Returns the pattern ID.
         """
         with self._get_conn() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 INSERT INTO liquidity_provider_patterns
                     (provider_name, description_pattern, fee_min_bps, fee_max_bps,
                      review_fee_min_bps, review_fee_max_bps, typical_settlement_days,
                      is_active, confirmed_by_user)
                 VALUES (?, ?, ?, ?, ?, ?, ?, 1, 1)
-            """, (
-                provider_name,
-                description_pattern,
-                fee_min_bps,
-                fee_max_bps,
-                review_fee_min_bps,
-                review_fee_max_bps,
-                typical_settlement_days,
-            ))
+            """,
+                (
+                    provider_name,
+                    description_pattern,
+                    fee_min_bps,
+                    fee_max_bps,
+                    review_fee_min_bps,
+                    review_fee_max_bps,
+                    typical_settlement_days,
+                ),
+            )
             conn.commit()
         return int(cur.lastrowid or 0)
 

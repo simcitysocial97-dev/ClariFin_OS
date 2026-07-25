@@ -32,6 +32,7 @@ from repositories.statement_repository import StatementRepository
 # Fixtures
 # ============================================================
 
+
 @pytest.fixture
 def temp_db():
     """Create a temporary database for testing."""
@@ -91,6 +92,7 @@ def populated_db(temp_db):
 # Test 1: Same Dataset → Same Reconciliation Rows
 # ============================================================
 
+
 def test_deterministic_matching(populated_db):
     """Test that same dataset produces same reconciliation matches."""
     db, db_path = populated_db
@@ -111,10 +113,12 @@ def test_deterministic_matching(populated_db):
     # Verify confidence scores are identical
     for m1, m2 in zip(
         sorted(matches_1, key=lambda x: x["deterministic_key"]),
-        sorted(matches_2, key=lambda x: x["deterministic_key"]), strict=False
+        sorted(matches_2, key=lambda x: x["deterministic_key"]),
+        strict=False,
     ):
-        assert m1["match_confidence"] == m2["match_confidence"], \
-            f"Confidence should be identical for {m1['deterministic_key']}"
+        assert (
+            m1["match_confidence"] == m2["match_confidence"]
+        ), f"Confidence should be identical for {m1['deterministic_key']}"
 
 
 def test_deterministic_key_consistency(populated_db):
@@ -143,6 +147,7 @@ def test_deterministic_key_consistency(populated_db):
 # ============================================================
 # Test 2: Re-run Engine → No Duplicates
 # ============================================================
+
 
 def test_idempotent_insert(populated_db):
     """Test that INSERT OR IGNORE prevents duplicates."""
@@ -224,6 +229,7 @@ def test_mirrored_pair_prevention(populated_db):
 # Test 3: Confirmed Rows Remain Unchanged
 # ============================================================
 
+
 def test_confirmed_row_immutable(populated_db):
     """Test that confirmed rows cannot be modified."""
     db, db_path = populated_db
@@ -271,7 +277,10 @@ def test_confirm_does_not_modify_transactions(populated_db):
     # Get transaction states before
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+    cur = conn.execute(
+        "SELECT debit, credit, amount_paise FROM transactions WHERE id = ?",
+        (m["debit_txn_id"],),
+    )
     txn_before = dict(cur.fetchone())
     conn.close()
 
@@ -293,7 +302,10 @@ def test_confirm_does_not_modify_transactions(populated_db):
     # Get transaction states after
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+    cur = conn.execute(
+        "SELECT debit, credit, amount_paise FROM transactions WHERE id = ?",
+        (m["debit_txn_id"],),
+    )
     txn_after = dict(cur.fetchone())
     conn.close()
 
@@ -304,6 +316,7 @@ def test_confirm_does_not_modify_transactions(populated_db):
 # ============================================================
 # Test 4: Ledger Replay Produces Identical Balances
 # ============================================================
+
 
 def test_balance_unaffected_by_reconciliation(populated_db):
     """Test that balance computation is unaffected by reconciliation state."""
@@ -335,8 +348,9 @@ def test_balance_unaffected_by_reconciliation(populated_db):
     balance_after = compute_account_balance(db_path, "Account_A")
 
     # Balances should be identical
-    assert balance_before["balance_paise"] == balance_after["balance_paise"], \
-        "Balance should be unaffected by reconciliation"
+    assert (
+        balance_before["balance_paise"] == balance_after["balance_paise"]
+    ), "Balance should be unaffected by reconciliation"
 
 
 def test_replay_determinism_maintained(populated_db):
@@ -398,6 +412,7 @@ def test_replay_determinism_maintained(populated_db):
 # Test 5: Confidence Calculation Determinism
 # ============================================================
 
+
 def test_confidence_deterministic(populated_db):
     """Test that confidence scores are deterministic."""
     db, db_path = populated_db
@@ -411,8 +426,9 @@ def test_confidence_deterministic(populated_db):
 
     # All runs should produce identical confidence scores
     for i in range(1, len(all_confidences)):
-        assert all_confidences[0] == all_confidences[i], \
-            f"Run {i} produced different confidence scores"
+        assert (
+            all_confidences[0] == all_confidences[i]
+        ), f"Run {i} produced different confidence scores"
 
 
 def test_confidence_bounds(populated_db):
@@ -422,13 +438,15 @@ def test_confidence_bounds(populated_db):
     matches = find_potential_matches(db_path)
 
     for m in matches:
-        assert 0.0 <= m["match_confidence"] <= 1.0, \
-            f"Confidence {m['match_confidence']} out of bounds for {m['deterministic_key']}"
+        assert (
+            0.0 <= m["match_confidence"] <= 1.0
+        ), f"Confidence {m['match_confidence']} out of bounds for {m['deterministic_key']}"
 
         # Verify rounding to 4 decimals
         rounded = round(m["match_confidence"], 4)
-        assert m["match_confidence"] == rounded, \
-            "Confidence should be rounded to 4 decimals"
+        assert (
+            m["match_confidence"] == rounded
+        ), "Confidence should be rounded to 4 decimals"
 
 
 # ============================================================

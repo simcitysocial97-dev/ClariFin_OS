@@ -45,21 +45,69 @@ ACCOUNTS = {
 }
 
 CATEGORIES = {
-    "Salary": {"type": "credit", "accounts": ["SA1", "SA2"], "amount_range": (50000, 80000)},
+    "Salary": {
+        "type": "credit",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (50000, 80000),
+    },
     "Rent": {"type": "debit", "accounts": ["SA1"], "amount_range": (15000, 25000)},
-    "Utilities": {"type": "debit", "accounts": ["SA1", "SA2"], "amount_range": (500, 3000)},
-    "Groceries": {"type": "debit", "accounts": ["SA1", "SA2", "CC1"], "amount_range": (500, 5000)},
-    "Entertainment": {"type": "debit", "accounts": ["CC1", "CC2"], "amount_range": (200, 5000)},
-    "Dining": {"type": "debit", "accounts": ["CC1", "CC2"], "amount_range": (200, 3000)},
-    "Shopping": {"type": "debit", "accounts": ["CC1", "CC2", "CC3"], "amount_range": (500, 15000)},
+    "Utilities": {
+        "type": "debit",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (500, 3000),
+    },
+    "Groceries": {
+        "type": "debit",
+        "accounts": ["SA1", "SA2", "CC1"],
+        "amount_range": (500, 5000),
+    },
+    "Entertainment": {
+        "type": "debit",
+        "accounts": ["CC1", "CC2"],
+        "amount_range": (200, 5000),
+    },
+    "Dining": {
+        "type": "debit",
+        "accounts": ["CC1", "CC2"],
+        "amount_range": (200, 3000),
+    },
+    "Shopping": {
+        "type": "debit",
+        "accounts": ["CC1", "CC2", "CC3"],
+        "amount_range": (500, 15000),
+    },
     "Transport": {"type": "debit", "accounts": ["SA1"], "amount_range": (100, 2000)},
-    "Medical": {"type": "debit", "accounts": ["SA1", "CC1"], "amount_range": (500, 10000)},
+    "Medical": {
+        "type": "debit",
+        "accounts": ["SA1", "CC1"],
+        "amount_range": (500, 10000),
+    },
     "Education": {"type": "debit", "accounts": ["SA1"], "amount_range": (5000, 20000)},
-    "UPI_Micro": {"type": "debit", "accounts": ["SA1", "SA2"], "amount_range": (10, 500)},
-    "Transfer_SA": {"type": "transfer", "accounts": ["SA1", "SA2"], "amount_range": (1000, 50000)},
-    "EMI_Payment": {"type": "emi", "accounts": ["SA1", "SA2"], "amount_range": (5000, 20000)},
-    "CC_Payment": {"type": "cc_payment", "accounts": ["SA1", "SA2"], "amount_range": (5000, 50000)},
-    "Debt_Injection": {"type": "debt", "accounts": ["SA1", "SA2"], "amount_range": (20000, 30000)},
+    "UPI_Micro": {
+        "type": "debit",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (10, 500),
+    },
+    "Transfer_SA": {
+        "type": "transfer",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (1000, 50000),
+    },
+    "EMI_Payment": {
+        "type": "emi",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (5000, 20000),
+    },
+    "CC_Payment": {
+        "type": "cc_payment",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (5000, 50000),
+    },
+    "Debt_Injection": {
+        "type": "debt",
+        "accounts": ["SA1", "SA2"],
+        "amount_range": (20000, 30000),
+    },
 }
 
 # Platform descriptions for debt injections
@@ -105,6 +153,7 @@ SCENARIO_PROFILES = {
 # Helper Functions
 # ============================================================
 
+
 def clear_database(db_path: Path) -> None:
     """Clear all data from the database and ensure schema is up to date."""
     # First, initialize the database with FinanceDB to ensure all columns exist
@@ -138,7 +187,9 @@ def clear_database(db_path: Path) -> None:
     print(f"✓ Cleared existing data from {db_path}")
 
 
-def generate_hash(account_id: str, date_iso: str, description: str, debit: int, credit: int) -> str:
+def generate_hash(
+    account_id: str, date_iso: str, description: str, debit: int, credit: int
+) -> str:
     """Generate deterministic hash signature for a transaction."""
     hash_input = f"{account_id}|{date_iso}|{description}|{debit}|{credit}"
     return hashlib.sha256(hash_input.encode()).hexdigest().lower()
@@ -163,13 +214,45 @@ def generate_description(category: str, platform: str = None) -> str:
     templates = {
         "Salary": ["SALARY CREDIT", "SALARY - {company}", "MONTHLY SALARY"],
         "Rent": ["RENT PAYMENT", "RENT - LANDLORD", "HOUSE RENT"],
-        "Utilities": ["ELECTRICITY BILL", "WATER BILL", "GAS BILL", "INTERNET BILL", "MOBILE RECHARGE"],
-        "Groceries": ["GROCERY STORE", "SUPERMARKET", "DMART", "BIG BASKET", "ZEPTO", "BLINKIT"],
-        "Entertainment": ["NETFLIX", "AMAZON PRIME", "SPOTIFY", "MOVIE TICKET", "GAMING"],
-        "Dining": ["RESTAURANT", "CAFE", "FOOD DELIVERY", "SWIGGY", "ZOMATO", "DOMINOS"],
+        "Utilities": [
+            "ELECTRICITY BILL",
+            "WATER BILL",
+            "GAS BILL",
+            "INTERNET BILL",
+            "MOBILE RECHARGE",
+        ],
+        "Groceries": [
+            "GROCERY STORE",
+            "SUPERMARKET",
+            "DMART",
+            "BIG BASKET",
+            "ZEPTO",
+            "BLINKIT",
+        ],
+        "Entertainment": [
+            "NETFLIX",
+            "AMAZON PRIME",
+            "SPOTIFY",
+            "MOVIE TICKET",
+            "GAMING",
+        ],
+        "Dining": [
+            "RESTAURANT",
+            "CAFE",
+            "FOOD DELIVERY",
+            "SWIGGY",
+            "ZOMATO",
+            "DOMINOS",
+        ],
         "Shopping": ["AMAZON", "FLIPKART", "MYNTRA", "AJIO", "SHOPPING MALL"],
         "Transport": ["UBER", "OLA", "METRO", "FUEL", "PETROL PUMP"],
-        "Medical": ["MEDICINE", "HOSPITAL", "PHARMACY", "MEDICAL STORE", "HEALTH CHECKUP"],
+        "Medical": [
+            "MEDICINE",
+            "HOSPITAL",
+            "PHARMACY",
+            "MEDICAL STORE",
+            "HEALTH CHECKUP",
+        ],
         "Education": ["TUITION FEE", "ONLINE COURSE", "BOOKS", "SCHOOL FEE"],
         "UPI_Micro": ["UPI PAYMENT", "UPI-{merchant}", "UPI TRANSFER"],
         "Transfer_SA": ["NEFT TRANSFER", "IMPS TRANSFER", "BANK TRANSFER"],
@@ -184,13 +267,14 @@ def generate_description(category: str, platform: str = None) -> str:
         bank=random.choice(["HDFC", "ICICI", "SBI", "AXIS", "KOTAK"]),
         card=random.choice(["CC1", "CC2", "CC3"]),
         merchant=random.choice(["MERCHANT", "SHOP", "STORE", "VENDOR"]),
-        platform=platform or "PLATFORM"
+        platform=platform or "PLATFORM",
     )
 
 
 # ============================================================
 # Transaction Generators
 # ============================================================
+
 
 def generate_salary_transactions(
     start_date: datetime,
@@ -216,14 +300,16 @@ def generate_salary_transactions(
         account = random.choice(CATEGORIES["Salary"]["accounts"])
         amount = random.randint(*CATEGORIES["Salary"]["amount_range"])
 
-        transactions.append({
-            "date": salary_date,
-            "account_id": account,
-            "category": "Salary",
-            "description": generate_description("Salary"),
-            "amount": amount,
-            "type": "credit",
-        })
+        transactions.append(
+            {
+                "date": salary_date,
+                "account_id": account,
+                "category": "Salary",
+                "description": generate_description("Salary"),
+                "amount": amount,
+                "type": "credit",
+            }
+        )
 
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
@@ -244,14 +330,16 @@ def generate_regular_expenses(
     while current_month <= end_date:
         rent_date = current_month.replace(day=random.randint(1, 5))
         if rent_date <= end_date:
-            transactions.append({
-                "date": rent_date,
-                "account_id": "SA1",
-                "category": "Rent",
-                "description": generate_description("Rent"),
-                "amount": random.randint(*CATEGORIES["Rent"]["amount_range"]),
-                "type": "debit",
-            })
+            transactions.append(
+                {
+                    "date": rent_date,
+                    "account_id": "SA1",
+                    "category": "Rent",
+                    "description": generate_description("Rent"),
+                    "amount": random.randint(*CATEGORIES["Rent"]["amount_range"]),
+                    "type": "debit",
+                }
+            )
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
 
@@ -261,14 +349,18 @@ def generate_regular_expenses(
         for util in ["ELECTRICITY", "WATER", "INTERNET", "MOBILE"]:
             util_date = current_month.replace(day=random.randint(5, 15))
             if util_date <= end_date:
-                transactions.append({
-                    "date": util_date,
-                    "account_id": random.choice(CATEGORIES["Utilities"]["accounts"]),
-                    "category": "Utilities",
-                    "description": f"{util} BILL",
-                    "amount": random.randint(300, 2000),
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": util_date,
+                        "account_id": random.choice(
+                            CATEGORIES["Utilities"]["accounts"]
+                        ),
+                        "category": "Utilities",
+                        "description": f"{util} BILL",
+                        "amount": random.randint(300, 2000),
+                        "type": "debit",
+                    }
+                )
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
 
@@ -292,47 +384,65 @@ def generate_daily_expenses(
         if random.random() < 0.7 * weekend_factor:
             # Groceries
             if random.random() < 0.3:
-                transactions.append({
-                    "date": current_date,
-                    "account_id": random.choice(CATEGORIES["Groceries"]["accounts"]),
-                    "category": "Groceries",
-                    "description": generate_description("Groceries"),
-                    "amount": random.randint(*CATEGORIES["Groceries"]["amount_range"]),
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": current_date,
+                        "account_id": random.choice(
+                            CATEGORIES["Groceries"]["accounts"]
+                        ),
+                        "category": "Groceries",
+                        "description": generate_description("Groceries"),
+                        "amount": random.randint(
+                            *CATEGORIES["Groceries"]["amount_range"]
+                        ),
+                        "type": "debit",
+                    }
+                )
 
             # Dining
             if random.random() < 0.4 * weekend_factor:
-                transactions.append({
-                    "date": current_date,
-                    "account_id": random.choice(CATEGORIES["Dining"]["accounts"]),
-                    "category": "Dining",
-                    "description": generate_description("Dining"),
-                    "amount": random.randint(*CATEGORIES["Dining"]["amount_range"]),
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": current_date,
+                        "account_id": random.choice(CATEGORIES["Dining"]["accounts"]),
+                        "category": "Dining",
+                        "description": generate_description("Dining"),
+                        "amount": random.randint(*CATEGORIES["Dining"]["amount_range"]),
+                        "type": "debit",
+                    }
+                )
 
             # Entertainment
             if random.random() < 0.2 * weekend_factor:
-                transactions.append({
-                    "date": current_date,
-                    "account_id": random.choice(CATEGORIES["Entertainment"]["accounts"]),
-                    "category": "Entertainment",
-                    "description": generate_description("Entertainment"),
-                    "amount": random.randint(*CATEGORIES["Entertainment"]["amount_range"]),
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": current_date,
+                        "account_id": random.choice(
+                            CATEGORIES["Entertainment"]["accounts"]
+                        ),
+                        "category": "Entertainment",
+                        "description": generate_description("Entertainment"),
+                        "amount": random.randint(
+                            *CATEGORIES["Entertainment"]["amount_range"]
+                        ),
+                        "type": "debit",
+                    }
+                )
 
             # Shopping
             if random.random() < 0.15 * weekend_factor:
-                transactions.append({
-                    "date": current_date,
-                    "account_id": random.choice(CATEGORIES["Shopping"]["accounts"]),
-                    "category": "Shopping",
-                    "description": generate_description("Shopping"),
-                    "amount": random.randint(*CATEGORIES["Shopping"]["amount_range"]),
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": current_date,
+                        "account_id": random.choice(CATEGORIES["Shopping"]["accounts"]),
+                        "category": "Shopping",
+                        "description": generate_description("Shopping"),
+                        "amount": random.randint(
+                            *CATEGORIES["Shopping"]["amount_range"]
+                        ),
+                        "type": "debit",
+                    }
+                )
 
         current_date += timedelta(days=1)
 
@@ -357,14 +467,16 @@ def generate_micro_transactions(
             hour = random.randint(0, 23)
             txn_datetime = current_date.replace(hour=hour, minute=random.randint(0, 59))
 
-            transactions.append({
-                "date": txn_datetime,
-                "account_id": random.choice(CATEGORIES["UPI_Micro"]["accounts"]),
-                "category": "UPI_Micro",
-                "description": f"UPI-{random.choice(['TEA', 'SNACKS', 'AUTO', 'PARKING', 'MILK', 'NEWSPAPER'])}",
-                "amount": random.randint(*CATEGORIES["UPI_Micro"]["amount_range"]),
-                "type": "debit",
-            })
+            transactions.append(
+                {
+                    "date": txn_datetime,
+                    "account_id": random.choice(CATEGORIES["UPI_Micro"]["accounts"]),
+                    "category": "UPI_Micro",
+                    "description": f"UPI-{random.choice(['TEA', 'SNACKS', 'AUTO', 'PARKING', 'MILK', 'NEWSPAPER'])}",
+                    "amount": random.randint(*CATEGORIES["UPI_Micro"]["amount_range"]),
+                    "type": "debit",
+                }
+            )
 
         current_date += timedelta(days=1)
 
@@ -391,26 +503,34 @@ def generate_transfers(
                 from_acc, to_acc = "SA2", "SA1"
 
             # Debit transaction
-            transactions.append({
-                "date": current_date,
-                "account_id": from_acc,
-                "category": "Transfer_SA",
-                "description": f"TRANSFER TO {to_acc}",
-                "amount": amount,
-                "type": "debit",
-            })
+            transactions.append(
+                {
+                    "date": current_date,
+                    "account_id": from_acc,
+                    "category": "Transfer_SA",
+                    "description": f"TRANSFER TO {to_acc}",
+                    "amount": amount,
+                    "type": "debit",
+                }
+            )
 
             # Credit transaction (same day or next day)
-            credit_date = current_date if random.random() < 0.7 else current_date + timedelta(days=1)
+            credit_date = (
+                current_date
+                if random.random() < 0.7
+                else current_date + timedelta(days=1)
+            )
             if credit_date <= end_date:
-                transactions.append({
-                    "date": credit_date,
-                    "account_id": to_acc,
-                    "category": "Transfer_SA",
-                    "description": f"TRANSFER FROM {from_acc}",
-                    "amount": amount,
-                    "type": "credit",
-                })
+                transactions.append(
+                    {
+                        "date": credit_date,
+                        "account_id": to_acc,
+                        "category": "Transfer_SA",
+                        "description": f"TRANSFER FROM {from_acc}",
+                        "amount": amount,
+                        "type": "credit",
+                    }
+                )
 
         current_date += timedelta(days=1)
 
@@ -428,9 +548,21 @@ def generate_emi_payments(
 
     # Create 1-3 active EMIs
     emis = [
-        {"amount": random.randint(10000, 20000), "day": 5, "description": "HOME LOAN EMI"},
-        {"amount": random.randint(5000, 15000), "day": 10, "description": "CAR LOAN EMI"},
-        {"amount": random.randint(3000, 8000), "day": 15, "description": "PERSONAL LOAN EMI"},
+        {
+            "amount": random.randint(10000, 20000),
+            "day": 5,
+            "description": "HOME LOAN EMI",
+        },
+        {
+            "amount": random.randint(5000, 15000),
+            "day": 10,
+            "description": "CAR LOAN EMI",
+        },
+        {
+            "amount": random.randint(3000, 8000),
+            "day": 15,
+            "description": "PERSONAL LOAN EMI",
+        },
     ]
 
     # Select EMIs based on scenario
@@ -445,14 +577,18 @@ def generate_emi_payments(
         for emi in active_emis:
             emi_date = current_month.replace(day=emi["day"])
             if emi_date <= end_date:
-                transactions.append({
-                    "date": emi_date,
-                    "account_id": random.choice(CATEGORIES["EMI_Payment"]["accounts"]),
-                    "category": "EMI_Payment",
-                    "description": emi["description"],
-                    "amount": emi["amount"],
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": emi_date,
+                        "account_id": random.choice(
+                            CATEGORIES["EMI_Payment"]["accounts"]
+                        ),
+                        "category": "EMI_Payment",
+                        "description": emi["description"],
+                        "amount": emi["amount"],
+                        "type": "debit",
+                    }
+                )
 
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
@@ -479,24 +615,28 @@ def generate_cc_payments(
                     amount = random.randint(*CATEGORIES["CC_Payment"]["amount_range"])
 
                     # Debit from SA
-                    transactions.append({
-                        "date": payment_date,
-                        "account_id": random.choice(["SA1", "SA2"]),
-                        "category": "CC_Payment",
-                        "description": f"CREDIT CARD PAYMENT - {cc}",
-                        "amount": amount,
-                        "type": "debit",
-                    })
+                    transactions.append(
+                        {
+                            "date": payment_date,
+                            "account_id": random.choice(["SA1", "SA2"]),
+                            "category": "CC_Payment",
+                            "description": f"CREDIT CARD PAYMENT - {cc}",
+                            "amount": amount,
+                            "type": "debit",
+                        }
+                    )
 
                     # Credit to CC
-                    transactions.append({
-                        "date": payment_date,
-                        "account_id": cc,
-                        "category": "CC_Payment",
-                        "description": "PAYMENT RECEIVED FROM SA",
-                        "amount": amount,
-                        "type": "credit",
-                    })
+                    transactions.append(
+                        {
+                            "date": payment_date,
+                            "account_id": cc,
+                            "category": "CC_Payment",
+                            "description": "PAYMENT RECEIVED FROM SA",
+                            "amount": amount,
+                            "type": "credit",
+                        }
+                    )
 
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
@@ -526,24 +666,28 @@ def generate_debt_injections(
                 to_sa = random.choice(["SA1", "SA2"])
 
                 # Debit from CC (cash advance/transfer)
-                transactions.append({
-                    "date": injection_date,
-                    "account_id": from_cc,
-                    "category": "Debt_Injection",
-                    "description": f"{platform} - DEBT TRANSFER",
-                    "amount": amount,
-                    "type": "debit",
-                })
+                transactions.append(
+                    {
+                        "date": injection_date,
+                        "account_id": from_cc,
+                        "category": "Debt_Injection",
+                        "description": f"{platform} - DEBT TRANSFER",
+                        "amount": amount,
+                        "type": "debit",
+                    }
+                )
 
                 # Credit to SA
-                transactions.append({
-                    "date": injection_date,
-                    "account_id": to_sa,
-                    "category": "Debt_Injection",
-                    "description": f"{platform} - CREDIT",
-                    "amount": amount,
-                    "type": "credit",
-                })
+                transactions.append(
+                    {
+                        "date": injection_date,
+                        "account_id": to_sa,
+                        "category": "Debt_Injection",
+                        "description": f"{platform} - CREDIT",
+                        "amount": amount,
+                        "type": "credit",
+                    }
+                )
 
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
@@ -555,12 +699,13 @@ def generate_debt_injections(
 # Main Generator
 # ============================================================
 
+
 def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
     """Generate a complete scenario dataset."""
     profile = SCENARIO_PROFILES[scenario_name]
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Generating '{scenario_name}' scenario: {profile['description']}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Date range: 8 months
     start_date = datetime(2025, 1, 1)
@@ -607,10 +752,13 @@ def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
     # Create statements for each account
     statement_ids = {}
     for account_id in ACCOUNTS.keys():
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO statements (bank, file_name, source)
             VALUES (?, ?, ?)
-        """, (account_id, f"synthetic_{scenario_name}_{account_id}", "synthetic"))
+        """,
+            (account_id, f"synthetic_{scenario_name}_{account_id}", "synthetic"),
+        )
         statement_ids[account_id] = cursor.lastrowid
 
     # Insert transactions
@@ -622,27 +770,32 @@ def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
         debit = amount_paise if txn["type"] == "debit" else 0
         credit = amount_paise if txn["type"] == "credit" else 0
 
-        hash_sig = generate_hash(txn["account_id"], date_iso, txn["description"], debit, credit)
+        hash_sig = generate_hash(
+            txn["account_id"], date_iso, txn["description"], debit, credit
+        )
 
         try:
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO transactions (
                     statement_id, date, date_iso, description, type,
                     category, debit, credit, amount_paise, hash_signature, account_id
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                statement_ids[txn["account_id"]],
-                date_str,
-                date_iso,
-                txn["description"],
-                txn["type"],
-                txn["category"],
-                debit,
-                credit,
-                amount_paise,
-                hash_sig,
-                txn["account_id"],
-            ))
+            """,
+                (
+                    statement_ids[txn["account_id"]],
+                    date_str,
+                    date_iso,
+                    txn["description"],
+                    txn["type"],
+                    txn["category"],
+                    debit,
+                    credit,
+                    amount_paise,
+                    hash_sig,
+                    txn["account_id"],
+                ),
+            )
             inserted += 1
         except sqlite3.IntegrityError:
             pass  # Duplicate hash, skip
@@ -657,7 +810,9 @@ def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
         "duplicates": len(all_transactions) - inserted,
     }
 
-    print(f"  ✓ Inserted {inserted} transactions ({len(all_transactions) - inserted} duplicates skipped)")
+    print(
+        f"  ✓ Inserted {inserted} transactions ({len(all_transactions) - inserted} duplicates skipped)"
+    )
 
     return stats
 
@@ -666,25 +821,28 @@ def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
 # CLI Entry Point
 # ============================================================
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate synthetic transaction data for ClariFin_OS")
+    parser = argparse.ArgumentParser(
+        description="Generate synthetic transaction data for ClariFin_OS"
+    )
     parser.add_argument(
         "--scenario",
         choices=["healthy", "debt_trap", "erratic", "all"],
         default="debt_trap",
-        help="Scenario to generate (default: debt_trap)"
+        help="Scenario to generate (default: debt_trap)",
     )
     parser.add_argument(
         "--keep-existing",
         action="store_true",
-        help="Keep existing data (don't clear database)"
+        help="Keep existing data (don't clear database)",
     )
 
     args = parser.parse_args()
 
-    print(f"\n{'#'*60}")
+    print(f"\n{'#' * 60}")
     print("# ClariFin_OS Synthetic Data Generator")
-    print(f"{'#'*60}")
+    print(f"{'#' * 60}")
     print(f"\nDatabase: {DB_PATH}")
 
     # Clear database
@@ -708,17 +866,17 @@ def main():
             print(f"\n  Validating {scenario} scenario...")
             # Could add validation here
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print("SUMMARY")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         for stats in all_stats:
             print(f"  {stats['scenario']}: {stats['inserted']} transactions")
     else:
         stats = generate_scenario(args.scenario, DB_PATH)
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print("SUMMARY")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"  Scenario: {stats['scenario']}")
         print(f"  Total generated: {stats['total_generated']}")
         print(f"  Inserted: {stats['inserted']}")

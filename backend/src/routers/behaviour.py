@@ -39,10 +39,18 @@ def _timed_log(
         log_data["error"] = error
         logger.warning(
             "[BEHAVIOUR] %s | household_id=%s | %.0fms | FAIL: %s",
-            endpoint, household_id, duration_ms, error,
+            endpoint,
+            household_id,
+            duration_ms,
+            error,
         )
     else:
-        logger.info("[BEHAVIOUR] %s | household_id=%s | %.0fms", endpoint, household_id, duration_ms)
+        logger.info(
+            "[BEHAVIOUR] %s | household_id=%s | %.0fms",
+            endpoint,
+            household_id,
+            duration_ms,
+        )
 
 
 # ============================================================
@@ -51,7 +59,9 @@ def _timed_log(
 
 
 @router.get("/profile")
-def get_financial_profile(household_id: str = Query("default", description="Household identifier")) -> dict[str, Any]:
+def get_financial_profile(
+    household_id: str = Query("default", description="Household identifier"),
+) -> dict[str, Any]:
     """Get comprehensive financial behaviour profile.
 
     Returns financial personality classification based on transaction and account data.
@@ -67,18 +77,25 @@ def get_financial_profile(household_id: str = Query("default", description="Hous
 
     try:
         result = service.compute_financial_profile(household_id=household_id)
-        _timed_log("GET /behaviour/profile", household_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /behaviour/profile", household_id, (time.monotonic() - start) * 1000
+        )
         return result.model_dump()
     except Exception as e:
         _timed_log(
-            "GET /behaviour/profile", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/profile",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise
 
 
 @router.get("/wellness-score")
-def get_wellness_score(household_id: str = Query("default", description="Household identifier")) -> dict[str, Any]:
+def get_wellness_score(
+    household_id: str = Query("default", description="Household identifier"),
+) -> dict[str, Any]:
     """Get the latest financial wellness score.
 
     Returns wellness score with band classification and component breakdown.
@@ -94,24 +111,36 @@ def get_wellness_score(household_id: str = Query("default", description="Househo
 
     try:
         result = service.get_wellness_score(household_id=household_id)
-        _timed_log("GET /behaviour/wellness-score", household_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /behaviour/wellness-score",
+            household_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result.model_dump()
     except NotFoundError:
         _timed_log(
-            "GET /behaviour/wellness-score", household_id,
-            (time.monotonic() - start) * 1000, success=False, error="No snapshot available",
+            "GET /behaviour/wellness-score",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="No snapshot available",
         )
         raise
     except Exception as e:
         _timed_log(
-            "GET /behaviour/wellness-score", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/wellness-score",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise
 
 
 @router.get("/debt-health")
-def get_debt_health(household_id: str = Query("default", description="Household identifier")) -> dict[str, Any]:
+def get_debt_health(
+    household_id: str = Query("default", description="Household identifier"),
+) -> dict[str, Any]:
     """Get the latest debt health metrics.
 
     Returns FOIR, credit dependency ratio, debt cycle score, and revolver ratio.
@@ -127,24 +156,36 @@ def get_debt_health(household_id: str = Query("default", description="Household 
 
     try:
         result = service.get_debt_health(household_id=household_id)
-        _timed_log("GET /behaviour/debt-health", household_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /behaviour/debt-health",
+            household_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result.model_dump()
     except NotFoundError:
         _timed_log(
-            "GET /behaviour/debt-health", household_id,
-            (time.monotonic() - start) * 1000, success=False, error="No snapshot available",
+            "GET /behaviour/debt-health",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="No snapshot available",
         )
         raise
     except Exception as e:
         _timed_log(
-            "GET /behaviour/debt-health", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/debt-health",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise
 
 
 @router.get("/cashflow-health")
-def get_cashflow_health(household_id: str = Query("default", description="Household identifier")) -> dict[str, Any]:
+def get_cashflow_health(
+    household_id: str = Query("default", description="Household identifier"),
+) -> dict[str, Any]:
     """Get the latest cashflow health metrics.
 
     Returns cashflow stability index, income/expense stability, and monthly surplus.
@@ -160,18 +201,28 @@ def get_cashflow_health(household_id: str = Query("default", description="Househ
 
     try:
         result = service.get_cashflow_health(household_id=household_id)
-        _timed_log("GET /behaviour/cashflow-health", household_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /behaviour/cashflow-health",
+            household_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result.model_dump()
     except NotFoundError:
         _timed_log(
-            "GET /behaviour/cashflow-health", household_id,
-            (time.monotonic() - start) * 1000, success=False, error="No snapshot available",
+            "GET /behaviour/cashflow-health",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="No snapshot available",
         )
         raise
     except Exception as e:
         _timed_log(
-            "GET /behaviour/cashflow-health", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/cashflow-health",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise
 
@@ -179,8 +230,12 @@ def get_cashflow_health(household_id: str = Query("default", description="Househ
 @router.get("/patterns")
 def get_patterns(
     household_id: str = Query("default", description="Household identifier"),
-    pattern_type: str | None = Query(None, description="Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION)"),
-    days: int = Query(30, ge=1, le=365, description="Number of days to look back for patterns"),
+    pattern_type: str | None = Query(
+        None, description="Filter by pattern type (e.g., IMPULSE, SUBSCRIPTION)"
+    ),
+    days: int = Query(
+        30, ge=1, le=365, description="Number of days to look back for patterns"
+    ),
 ) -> list[dict[str, Any]]:
     """Get detected financial patterns.
 
@@ -205,12 +260,17 @@ def get_patterns(
             patterns = [p for p in patterns if p.pattern_type == pattern_type]
 
         result = [p.model_dump() for p in patterns]
-        _timed_log("GET /behaviour/patterns", household_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /behaviour/patterns", household_id, (time.monotonic() - start) * 1000
+        )
         return result
     except Exception as e:
         _timed_log(
-            "GET /behaviour/patterns", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/patterns",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise
 
@@ -218,8 +278,12 @@ def get_patterns(
 @router.get("/recommendations")
 def get_recommendations(
     household_id: str = Query("default", description="Household identifier"),
-    limit: int = Query(10, ge=1, le=50, description="Maximum number of recommendations to return"),
-    severity: str | None = Query(None, description="Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"),
+    limit: int = Query(
+        10, ge=1, le=50, description="Maximum number of recommendations to return"
+    ),
+    severity: str | None = Query(
+        None, description="Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"
+    ),
 ) -> dict[str, Any]:
     """Get financial recommendations based on behaviour metrics.
 
@@ -242,25 +306,37 @@ def get_recommendations(
             limit=limit,
             severity_filter=severity,
         )
-        _timed_log("GET /behaviour/recommendations", household_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /behaviour/recommendations",
+            household_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result.model_dump()
     except NotFoundError:
         _timed_log(
-            "GET /behaviour/recommendations", household_id,
-            (time.monotonic() - start) * 1000, success=False, error="No snapshot available",
+            "GET /behaviour/recommendations",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="No snapshot available",
         )
         raise
     except Exception as e:
         _timed_log(
-            "GET /behaviour/recommendations", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/recommendations",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise
 
 
 @router.get("/monthly-report")
 def get_monthly_report(
-    period: str | None = Query(None, description="Period in YYYY-MM format (default: current month)"),
+    period: str | None = Query(
+        None, description="Period in YYYY-MM format (default: current month)"
+    ),
     household_id: str = Query("default", description="Household identifier"),
 ) -> dict[str, Any]:
     """Generate a monthly financial summary report.
@@ -280,21 +356,34 @@ def get_monthly_report(
     # Use current month if no period specified
     if period is None:
         from datetime import date
+
         period = date.today().strftime("%Y-%m")
 
     try:
-        result = service.generate_monthly_summary(period=period, household_id=household_id)
-        _timed_log("GET /behaviour/monthly-report", household_id, (time.monotonic() - start) * 1000)
+        result = service.generate_monthly_summary(
+            period=period, household_id=household_id
+        )
+        _timed_log(
+            "GET /behaviour/monthly-report",
+            household_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result.model_dump()
     except NotFoundError:
         _timed_log(
-            "GET /behaviour/monthly-report", household_id,
-            (time.monotonic() - start) * 1000, success=False, error="No snapshot available",
+            "GET /behaviour/monthly-report",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error="No snapshot available",
         )
         raise
     except Exception as e:
         _timed_log(
-            "GET /behaviour/monthly-report", household_id,
-            (time.monotonic() - start) * 1000, success=False, error=str(e),
+            "GET /behaviour/monthly-report",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
         )
         raise

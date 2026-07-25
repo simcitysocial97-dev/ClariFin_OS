@@ -77,9 +77,13 @@ class BehaviourWorkspaceService(BaseService):
             "score": 75,
             "total_debt_paise": total_outstanding,
             "debt_to_income_ratio": 0.25,
-            "recommendations": [
-                "Consider prepaying high-interest loans",
-            ] if total_outstanding > 0 else [],
+            "recommendations": (
+                [
+                    "Consider prepaying high-interest loans",
+                ]
+                if total_outstanding > 0
+                else []
+            ),
         }
 
         # Build wellness radar
@@ -94,23 +98,29 @@ class BehaviourWorkspaceService(BaseService):
         # Generate insights
         insights = []
         if wellness_score < 50:
-            insights.append({
-                "type": "alert",
-                "severity": "high",
-                "message": "Financial wellness score is low. Consider reducing debt and increasing savings.",
-            })
+            insights.append(
+                {
+                    "type": "alert",
+                    "severity": "high",
+                    "message": "Financial wellness score is low. Consider reducing debt and increasing savings.",
+                }
+            )
         elif wellness_score < 80:
-            insights.append({
-                "type": "warning",
-                "severity": "medium",
-                "message": "Financial wellness score could be improved.",
-            })
+            insights.append(
+                {
+                    "type": "warning",
+                    "severity": "medium",
+                    "message": "Financial wellness score could be improved.",
+                }
+            )
         else:
-            insights.append({
-                "type": "positive",
-                "severity": "low",
-                "message": "Financial wellness score is good.",
-            })
+            insights.append(
+                {
+                    "type": "positive",
+                    "severity": "low",
+                    "message": "Financial wellness score is good.",
+                }
+            )
 
         return {
             "wellness_score": wellness_score,

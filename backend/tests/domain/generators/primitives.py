@@ -103,4 +103,6 @@ def account_id() -> str:
     """
     banks = ["HDFC", "ICICI", "SBI", "AXIS", "KOTAK"]
     account_types = ["SB", "CA", "CC"]
-    return f"{random.choice(banks)}_{random.choice(account_types)}{random.randint(1, 999)}"
+    return (
+        f"{random.choice(banks)}_{random.choice(account_types)}{random.randint(1, 999)}"
+    )

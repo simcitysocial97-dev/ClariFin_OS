@@ -5,6 +5,7 @@ lifecycle states based on statement matching and payment amounts.
 
 No database access - all data is passed as parameters.
 """
+
 import re
 from dataclasses import dataclass
 from typing import Any, Literal
@@ -26,9 +27,9 @@ LifecycleState = Literal[
 
 # Card number patterns in description (e.g., "XX1234", "1234", masked formats)
 _CARD_NUMBER_PATTERNS = [
-    r"XX(\d{4})",           # XX1234 format
-    r"(\d{4})",              # Last 4 digits standalone
-    r"\*\*\*\*(\d{4})",     # ****1234 format
+    r"XX(\d{4})",  # XX1234 format
+    r"(\d{4})",  # Last 4 digits standalone
+    r"\*\*\*\*(\d{4})",  # ****1234 format
 ]
 
 
@@ -146,6 +147,7 @@ class CCPaymentDetectionResult:
         source: Source of detection
         match_reason: Why this matched (for debugging)
     """
+
     matched_statement_id: int | None
     classification: str
     lifecycle_state: LifecycleState

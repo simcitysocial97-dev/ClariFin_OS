@@ -89,49 +89,122 @@ def temp_db():
 
         # Daily expenses (groceries, food) - values in paise
         if day % 2 == 0:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "GROCERY STORE", 50000, "debit",
-                "Groceries", None, "Self", "ACC001", 50000, None, None
-            ))
+            transactions.append(
+                (
+                    txn_id,
+                    1,
+                    date_iso,
+                    date_iso,
+                    "GROCERY STORE",
+                    50000,
+                    "debit",
+                    "Groceries",
+                    None,
+                    "Self",
+                    "ACC001",
+                    50000,
+                    None,
+                    None,
+                )
+            )
             txn_id += 1
 
         if day % 3 == 0:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "RESTAURANT", 80000, "debit",
-                "Food & Dining", None, "Self", "ACC001", 80000, None, None
-            ))
+            transactions.append(
+                (
+                    txn_id,
+                    1,
+                    date_iso,
+                    date_iso,
+                    "RESTAURANT",
+                    80000,
+                    "debit",
+                    "Food & Dining",
+                    None,
+                    "Self",
+                    "ACC001",
+                    80000,
+                    None,
+                    None,
+                )
+            )
             txn_id += 1
 
         # Monthly salary (1st of each month) - in paise
         if date.day == 1:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "SALARY CREDIT", 5000000, "credit",
-                "Income", None, "Self", "ACC001", None, 5000000, None
-            ))
+            transactions.append(
+                (
+                    txn_id,
+                    1,
+                    date_iso,
+                    date_iso,
+                    "SALARY CREDIT",
+                    5000000,
+                    "credit",
+                    "Income",
+                    None,
+                    "Self",
+                    "ACC001",
+                    None,
+                    5000000,
+                    None,
+                )
+            )
             txn_id += 1
 
         # Monthly EMI (5th of each month) - in paise
         if date.day == 5:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "EMI LOAN REPAYMENT", 1500000, "debit",
-                "EMI", None, "Self", "ACC001", 1500000, None, None
-            ))
+            transactions.append(
+                (
+                    txn_id,
+                    1,
+                    date_iso,
+                    date_iso,
+                    "EMI LOAN REPAYMENT",
+                    1500000,
+                    "debit",
+                    "EMI",
+                    None,
+                    "Self",
+                    "ACC001",
+                    1500000,
+                    None,
+                    None,
+                )
+            )
             txn_id += 1
 
         # Micro transactions (UPI) - in paise
         if day % 1 == 0:
-            transactions.append((
-                txn_id, 1, date_iso, date_iso, "UPI-PAYMENT", 15000, "debit",
-                "Food & Dining", None, "Self", "ACC001", 15000, None, None
-            ))
+            transactions.append(
+                (
+                    txn_id,
+                    1,
+                    date_iso,
+                    date_iso,
+                    "UPI-PAYMENT",
+                    15000,
+                    "debit",
+                    "Food & Dining",
+                    None,
+                    "Self",
+                    "ACC001",
+                    15000,
+                    None,
+                    None,
+                )
+            )
             txn_id += 1
 
-    cur.executemany("""
+    cur.executemany(
+        """
         INSERT INTO transactions (
             id, statement_id, date, date_iso, description, amount_paise, type,
             category, subcategory, member, account_id, debit, credit, balance
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, transactions)
+    """,
+        transactions,
+    )
 
     conn.commit()
     conn.close()
@@ -173,19 +246,97 @@ def minimal_db():
 
     # Just 5 transactions (in paise)
     transactions = [
-        (1, 1, "2025-01-01", "2025-01-01", "TEST DEBIT", 10000, "debit", "Test", None, "Self", "ACC001", 10000, None, None),
-        (2, 1, "2025-01-02", "2025-01-02", "TEST DEBIT", 20000, "debit", "Test", None, "Self", "ACC001", 20000, None, None),
-        (3, 1, "2025-01-03", "2025-01-03", "TEST CREDIT", 100000, "credit", "Income", None, "Self", "ACC001", None, 100000, None),
-        (4, 1, "2025-01-04", "2025-01-04", "TEST DEBIT", 15000, "debit", "Test", None, "Self", "ACC001", 15000, None, None),
-        (5, 1, "2025-01-05", "2025-01-05", "TEST DEBIT", 30000, "debit", "Test", None, "Self", "ACC001", 30000, None, None),
+        (
+            1,
+            1,
+            "2025-01-01",
+            "2025-01-01",
+            "TEST DEBIT",
+            10000,
+            "debit",
+            "Test",
+            None,
+            "Self",
+            "ACC001",
+            10000,
+            None,
+            None,
+        ),
+        (
+            2,
+            1,
+            "2025-01-02",
+            "2025-01-02",
+            "TEST DEBIT",
+            20000,
+            "debit",
+            "Test",
+            None,
+            "Self",
+            "ACC001",
+            20000,
+            None,
+            None,
+        ),
+        (
+            3,
+            1,
+            "2025-01-03",
+            "2025-01-03",
+            "TEST CREDIT",
+            100000,
+            "credit",
+            "Income",
+            None,
+            "Self",
+            "ACC001",
+            None,
+            100000,
+            None,
+        ),
+        (
+            4,
+            1,
+            "2025-01-04",
+            "2025-01-04",
+            "TEST DEBIT",
+            15000,
+            "debit",
+            "Test",
+            None,
+            "Self",
+            "ACC001",
+            15000,
+            None,
+            None,
+        ),
+        (
+            5,
+            1,
+            "2025-01-05",
+            "2025-01-05",
+            "TEST DEBIT",
+            30000,
+            "debit",
+            "Test",
+            None,
+            "Self",
+            "ACC001",
+            30000,
+            None,
+            None,
+        ),
     ]
 
-    cur.executemany("""
+    cur.executemany(
+        """
         INSERT INTO transactions (
             id, statement_id, date, date_iso, description, amount_paise, type,
             category, subcategory, member, account_id, debit, credit, balance
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, transactions)
+    """,
+        transactions,
+    )
 
     conn.commit()
     conn.close()
@@ -262,8 +413,18 @@ class TestBehavioralIndices:
     def test_impulsivity_score_bounds(self):
         """Test that impulsivity score is between 0 and 1."""
         transactions = [
-            {"type": "debit", "amount": 100, "date_iso": "2025-01-01", "category": "Food"},
-            {"type": "debit", "amount": 200, "date_iso": "2025-01-02", "category": "Shopping"},
+            {
+                "type": "debit",
+                "amount": 100,
+                "date_iso": "2025-01-01",
+                "category": "Food",
+            },
+            {
+                "type": "debit",
+                "amount": 200,
+                "date_iso": "2025-01-02",
+                "category": "Shopping",
+            },
         ]
         result = _compute_impulsivity_score(transactions)
         assert 0 <= result["score"] <= 1
@@ -271,8 +432,18 @@ class TestBehavioralIndices:
     def test_habit_stability_score_bounds(self):
         """Test that habit stability score is between 0 and 1."""
         transactions = [
-            {"type": "debit", "amount": 500, "date_iso": "2025-01-01", "category": "Groceries"},
-            {"type": "debit", "amount": 500, "date_iso": "2025-02-01", "category": "Groceries"},
+            {
+                "type": "debit",
+                "amount": 500,
+                "date_iso": "2025-01-01",
+                "category": "Groceries",
+            },
+            {
+                "type": "debit",
+                "amount": 500,
+                "date_iso": "2025-02-01",
+                "category": "Groceries",
+            },
         ]
         result = _compute_habit_stability_score(transactions)
         assert 0 <= result["score"] <= 1
@@ -354,7 +525,9 @@ class TestCoreDeterminism:
         """Test that same input produces same output."""
         profile1 = compute_behavior_profile(temp_db)
         profile2 = compute_behavior_profile(temp_db)
-        assert json.dumps(profile1, sort_keys=True) == json.dumps(profile2, sort_keys=True)
+        assert json.dumps(profile1, sort_keys=True) == json.dumps(
+            profile2, sort_keys=True
+        )
 
     def test_determinism_hash(self, temp_db):
         """Test determinism using hash comparison."""
@@ -515,10 +688,23 @@ class TestCoreEdgeCases:
             )
         """)
         for i in range(10):
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO transactions (date, date_iso, description, amount_paise, type, category, debit, credit, account_id)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (f"2025-01-{i+1:02d}", f"2025-01-{i+1:02d}", "EXPENSE", 100000, "debit", "Test", 100000, 0, "ACC001"))
+            """,
+                (
+                    f"2025-01-{i + 1:02d}",
+                    f"2025-01-{i + 1:02d}",
+                    "EXPENSE",
+                    100000,
+                    "debit",
+                    "Test",
+                    100000,
+                    0,
+                    "ACC001",
+                ),
+            )
         conn.commit()
         conn.close()
         try:
@@ -539,8 +725,18 @@ class TestIndiaRiskPatterns:
     def test_gambling_detection(self):
         """Test gambling transaction detection."""
         transactions = [
-            {"type": "debit", "description": "DREAM11 CRICKET", "amount": 500, "date_iso": "2025-01-01"},
-            {"type": "debit", "description": "MPL GAMING", "amount": 300, "date_iso": "2025-01-02"},
+            {
+                "type": "debit",
+                "description": "DREAM11 CRICKET",
+                "amount": 500,
+                "date_iso": "2025-01-01",
+            },
+            {
+                "type": "debit",
+                "description": "MPL GAMING",
+                "amount": 300,
+                "date_iso": "2025-01-02",
+            },
         ]
         result = detect_india_risk_patterns(transactions)
         assert result["gambling_flag"]
@@ -548,15 +744,33 @@ class TestIndiaRiskPatterns:
 
     def test_upi_micro_spend_detection(self):
         """Test UPI micro-spend clustering detection."""
-        transactions = [{"type": "debit", "description": "UPI PAYMENT", "amount": 100, "date_iso": "2025-01-01"} for i in range(15)]
+        transactions = [
+            {
+                "type": "debit",
+                "description": "UPI PAYMENT",
+                "amount": 100,
+                "date_iso": "2025-01-01",
+            }
+            for i in range(15)
+        ]
         result = detect_india_risk_patterns(transactions)
         assert result["upi_micro_spend_flag"]
 
     def test_loan_app_detection(self):
         """Test loan app pattern detection."""
         transactions = [
-            {"type": "credit", "description": "LOAN CREDIT NBFC", "amount": 5000, "date_iso": "2025-01-01"},
-            {"type": "credit", "description": "INSTANT LOAN", "amount": 3000, "date_iso": "2025-01-05"},
+            {
+                "type": "credit",
+                "description": "LOAN CREDIT NBFC",
+                "amount": 5000,
+                "date_iso": "2025-01-01",
+            },
+            {
+                "type": "credit",
+                "description": "INSTANT LOAN",
+                "amount": 3000,
+                "date_iso": "2025-01-05",
+            },
         ]
         result = detect_india_risk_patterns(transactions)
         assert result["loan_app_pattern_flag"]
@@ -564,8 +778,18 @@ class TestIndiaRiskPatterns:
     def test_emi_ratio_calculation(self):
         """Test EMI ratio calculation."""
         transactions = [
-            {"type": "credit", "description": "SALARY", "amount": 50000, "date_iso": "2025-01-01"},
-            {"type": "debit", "description": "EMI LOAN", "amount": 15000, "date_iso": "2025-01-05"},
+            {
+                "type": "credit",
+                "description": "SALARY",
+                "amount": 50000,
+                "date_iso": "2025-01-01",
+            },
+            {
+                "type": "debit",
+                "description": "EMI LOAN",
+                "amount": 15000,
+                "date_iso": "2025-01-05",
+            },
         ]
         result = detect_india_risk_patterns(transactions)
         assert 0 <= result["emi_ratio"] <= 1
@@ -1025,12 +1249,12 @@ class TestSaverProfile:
     def test_saver_high_savings_no_debt(self):
         """Test SAVER with high savings and no credit dependency."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.25'),  # 25% savings
-            borrowed_lifestyle_ratio=Decimal('0.05'),  # 5% credit funded
-            credit_revolver_ratio=Decimal('0.0'),  # No revolving debt
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.05'),
+            savings_rate=Decimal("0.25"),  # 25% savings
+            borrowed_lifestyle_ratio=Decimal("0.05"),  # 5% credit funded
+            credit_revolver_ratio=Decimal("0.0"),  # No revolving debt
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.05"),
             transaction_count=150,
         )
         assert profile == "SAVER"
@@ -1041,27 +1265,27 @@ class TestSaverProfile:
     def test_saver_strong_savings(self):
         """Test SAVER with strong savings (>25%) gets higher confidence."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.35'),  # 35% savings - strong
-            borrowed_lifestyle_ratio=Decimal('0.0'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.10'),
-            impulse_transaction_ratio=Decimal('0.05'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.35"),  # 35% savings - strong
+            borrowed_lifestyle_ratio=Decimal("0.0"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.10"),
+            impulse_transaction_ratio=Decimal("0.05"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=200,
         )
         assert profile == "SAVER"
         # Strong savings should get confidence bonus
-        assert confidence >= Decimal('0.6')
+        assert confidence >= Decimal("0.6")
 
     def test_saver_threshold_boundary(self):
         """Test SAVER at just above 20% threshold."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.21'),  # Just above 20%
-            borrowed_lifestyle_ratio=Decimal('0.0'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.10'),
-            impulse_transaction_ratio=Decimal('0.05'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.21"),  # Just above 20%
+            borrowed_lifestyle_ratio=Decimal("0.0"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.10"),
+            impulse_transaction_ratio=Decimal("0.05"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
         assert profile == "SAVER"
@@ -1069,12 +1293,12 @@ class TestSaverProfile:
     def test_saver_not_if_high_borrowed_ratio(self):
         """Test SAVER is not assigned when borrowed lifestyle ratio is high."""
         profile, _, _ = classify_financial_personality(
-            savings_rate=Decimal('0.25'),
-            borrowed_lifestyle_ratio=Decimal('0.30'),  # Too high
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.10'),
-            impulse_transaction_ratio=Decimal('0.05'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.25"),
+            borrowed_lifestyle_ratio=Decimal("0.30"),  # Too high
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.10"),
+            impulse_transaction_ratio=Decimal("0.05"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
         assert profile == "DEBT_DEPENDENT"
@@ -1091,26 +1315,29 @@ class TestDebtDependentProfile:
     def test_debt_dependent_high_borrowed_ratio(self):
         """Test DEBT_DEPENDENT with high borrowed lifestyle ratio."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.10'),
-            borrowed_lifestyle_ratio=Decimal('0.25'),  # >20% threshold
-            credit_revolver_ratio=Decimal('0.30'),
-            discretionary_spending_ratio=Decimal('0.40'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.20'),
+            savings_rate=Decimal("0.10"),
+            borrowed_lifestyle_ratio=Decimal("0.25"),  # >20% threshold
+            credit_revolver_ratio=Decimal("0.30"),
+            discretionary_spending_ratio=Decimal("0.40"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.20"),
             transaction_count=100,
         )
         assert profile == "DEBT_DEPENDENT"
-        assert "borrowed lifestyle" in explanation.lower() or "credit" in explanation.lower()
+        assert (
+            "borrowed lifestyle" in explanation.lower()
+            or "credit" in explanation.lower()
+        )
 
     def test_debt_dependent_recurring_extraction(self):
         """Test DEBT_DEPENDENT from high revolver + low savings."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.05'),  # Low savings
-            borrowed_lifestyle_ratio=Decimal('0.10'),  # Below threshold
-            credit_revolver_ratio=Decimal('0.60'),  # High revolver
-            discretionary_spending_ratio=Decimal('0.30'),
-            impulse_transaction_ratio=Decimal('0.20'),
-            lifestyle_creep_index=Decimal('0.10'),
+            savings_rate=Decimal("0.05"),  # Low savings
+            borrowed_lifestyle_ratio=Decimal("0.10"),  # Below threshold
+            credit_revolver_ratio=Decimal("0.60"),  # High revolver
+            discretionary_spending_ratio=Decimal("0.30"),
+            impulse_transaction_ratio=Decimal("0.20"),
+            lifestyle_creep_index=Decimal("0.10"),
             transaction_count=100,
         )
         assert profile == "DEBT_DEPENDENT"
@@ -1118,16 +1345,16 @@ class TestDebtDependentProfile:
     def test_debt_dependent_high_confidence(self):
         """Test DEBT_DEPENDENT gets high confidence with clear signals."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.0'),  # Negative/near-zero
-            borrowed_lifestyle_ratio=Decimal('0.40'),  # Very high
-            credit_revolver_ratio=Decimal('0.70'),
-            discretionary_spending_ratio=Decimal('0.50'),
-            impulse_transaction_ratio=Decimal('0.30'),
-            lifestyle_creep_index=Decimal('0.30'),
+            savings_rate=Decimal("0.0"),  # Negative/near-zero
+            borrowed_lifestyle_ratio=Decimal("0.40"),  # Very high
+            credit_revolver_ratio=Decimal("0.70"),
+            discretionary_spending_ratio=Decimal("0.50"),
+            impulse_transaction_ratio=Decimal("0.30"),
+            lifestyle_creep_index=Decimal("0.30"),
             transaction_count=250,
         )
         assert profile == "DEBT_DEPENDENT"
-        assert confidence >= Decimal('0.7')
+        assert confidence >= Decimal("0.7")
 
 
 # ============================================================
@@ -1141,12 +1368,12 @@ class TestDebtOptimizerProfile:
     def test_debt_optimizer_responsible_usage(self):
         """Test DEBT_OPTIMIZER with responsible credit usage."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.15'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),  # Low credit dependency
-            credit_revolver_ratio=Decimal('0.10'),  # Low revolver, pays in full
-            discretionary_spending_ratio=Decimal('0.25'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.05'),
+            savings_rate=Decimal("0.15"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),  # Low credit dependency
+            credit_revolver_ratio=Decimal("0.10"),  # Low revolver, pays in full
+            discretionary_spending_ratio=Decimal("0.25"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.05"),
             transaction_count=120,
         )
         assert profile == "DEBT_OPTIMIZER"
@@ -1155,26 +1382,26 @@ class TestDebtOptimizerProfile:
     def test_debt_optimizer_confidence(self):
         """Test DEBT_OPTIMIZER gets moderate confidence."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.12'),
-            borrowed_lifestyle_ratio=Decimal('0.08'),
-            credit_revolver_ratio=Decimal('0.05'),
-            discretionary_spending_ratio=Decimal('0.30'),
-            impulse_transaction_ratio=Decimal('0.05'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.12"),
+            borrowed_lifestyle_ratio=Decimal("0.08"),
+            credit_revolver_ratio=Decimal("0.05"),
+            discretionary_spending_ratio=Decimal("0.30"),
+            impulse_transaction_ratio=Decimal("0.05"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
         assert profile == "DEBT_OPTIMIZER"
-        assert Decimal('0.5') <= confidence <= Decimal('0.7')
+        assert Decimal("0.5") <= confidence <= Decimal("0.7")
 
     def test_debt_optimizer_not_if_no_credit(self):
         """Test DEBT_OPTIMIZER requires some credit usage."""
         profile, _, _ = classify_financial_personality(
-            savings_rate=Decimal('0.15'),
-            borrowed_lifestyle_ratio=Decimal('0.0'),
-            credit_revolver_ratio=Decimal('0.0'),  # No credit usage
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.05'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.15"),
+            borrowed_lifestyle_ratio=Decimal("0.0"),
+            credit_revolver_ratio=Decimal("0.0"),  # No credit usage
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.05"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
         # Should be BALANCED since savings < 20% and no credit usage
@@ -1192,12 +1419,14 @@ class TestSpenderProfile:
     def test_spender_high_discretionary(self):
         """Test SPENDER with high discretionary spending."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.05'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),  # No credit usage to avoid DEBT_OPTIMIZER
-            discretionary_spending_ratio=Decimal('0.50'),  # High discretionary
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.10'),
+            savings_rate=Decimal("0.05"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal(
+                "0.0"
+            ),  # No credit usage to avoid DEBT_OPTIMIZER
+            discretionary_spending_ratio=Decimal("0.50"),  # High discretionary
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.10"),
             transaction_count=100,
         )
         assert profile == "SPENDER"
@@ -1206,26 +1435,32 @@ class TestSpenderProfile:
     def test_spender_high_impulse(self):
         """Test SPENDER with high impulse transaction ratio."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.05'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),  # No credit usage to avoid DEBT_OPTIMIZER
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.40'),  # High impulse
-            lifestyle_creep_index=Decimal('0.10'),
+            savings_rate=Decimal("0.05"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal(
+                "0.0"
+            ),  # No credit usage to avoid DEBT_OPTIMIZER
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.40"),  # High impulse
+            lifestyle_creep_index=Decimal("0.10"),
             transaction_count=100,
         )
         assert profile == "SPENDER"
-        assert "impulse" in explanation.lower() or "discretionary" in explanation.lower()
+        assert (
+            "impulse" in explanation.lower() or "discretionary" in explanation.lower()
+        )
 
     def test_spender_high_lifestyle_creep(self):
         """Test SPENDER with high lifestyle creep index."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.05'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),  # No credit usage to avoid DEBT_OPTIMIZER
-            discretionary_spending_ratio=Decimal('0.15'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.60'),  # High creep (>50%)
+            savings_rate=Decimal("0.05"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal(
+                "0.0"
+            ),  # No credit usage to avoid DEBT_OPTIMIZER
+            discretionary_spending_ratio=Decimal("0.15"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.60"),  # High creep (>50%)
             transaction_count=100,
         )
         assert profile == "SPENDER"
@@ -1242,12 +1477,12 @@ class TestBalancedProfile:
     def test_balanced_moderate_values(self):
         """Test BALANCED with moderate savings and low extremes."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.12'),  # Moderate savings
-            borrowed_lifestyle_ratio=Decimal('0.10'),  # Low credit dependency
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.25'),  # Moderate discretionary
-            impulse_transaction_ratio=Decimal('0.15'),
-            lifestyle_creep_index=Decimal('0.10'),
+            savings_rate=Decimal("0.12"),  # Moderate savings
+            borrowed_lifestyle_ratio=Decimal("0.10"),  # Low credit dependency
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.25"),  # Moderate discretionary
+            impulse_transaction_ratio=Decimal("0.15"),
+            lifestyle_creep_index=Decimal("0.10"),
             transaction_count=100,
         )
         assert profile == "BALANCED"
@@ -1256,12 +1491,12 @@ class TestBalancedProfile:
     def test_balanced_default_fallback(self):
         """Test BALANCED is the default when no clear pattern."""
         profile, confidence, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.15'),
-            borrowed_lifestyle_ratio=Decimal('0.05'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.15"),
+            borrowed_lifestyle_ratio=Decimal("0.05"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=50,
         )
         assert profile == "BALANCED"
@@ -1269,12 +1504,12 @@ class TestBalancedProfile:
     def test_balanced_explanation_content(self):
         """Test BALANCED explanation contains key metrics."""
         profile, _, explanation = classify_financial_personality(
-            savings_rate=Decimal('0.15'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),  # No credit usage
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.15"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal("0.0"),  # No credit usage
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
         assert "15.0" in explanation
@@ -1293,34 +1528,34 @@ class TestConfidenceCalculation:
         """Test confidence is always between 0 and 1."""
         for _ in range(10):
             profile, confidence, _ = classify_financial_personality(
-                savings_rate=Decimal('0.15'),
-                borrowed_lifestyle_ratio=Decimal('0.10'),
-                credit_revolver_ratio=Decimal('0.10'),
-                discretionary_spending_ratio=Decimal('0.20'),
-                impulse_transaction_ratio=Decimal('0.10'),
-                lifestyle_creep_index=Decimal('0.05'),
+                savings_rate=Decimal("0.15"),
+                borrowed_lifestyle_ratio=Decimal("0.10"),
+                credit_revolver_ratio=Decimal("0.10"),
+                discretionary_spending_ratio=Decimal("0.20"),
+                impulse_transaction_ratio=Decimal("0.10"),
+                lifestyle_creep_index=Decimal("0.05"),
                 transaction_count=100,
             )
-            assert Decimal('0') <= confidence <= Decimal('1')
+            assert Decimal("0") <= confidence <= Decimal("1")
 
     def test_confidence_increases_with_volume(self):
         """Test confidence increases with more transactions."""
         profile1, confidence1, _ = classify_financial_personality(
-            savings_rate=Decimal('0.10'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.10"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=50,
         )
         profile2, confidence2, _ = classify_financial_personality(
-            savings_rate=Decimal('0.10'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.10"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=400,
         )
         assert confidence2 > confidence1
@@ -1328,15 +1563,15 @@ class TestConfidenceCalculation:
     def test_confidence_saver_strong(self):
         """Test SAVER gets confidence bonus for strong savings."""
         _, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.30'),  # Strong
-            borrowed_lifestyle_ratio=Decimal('0.0'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.10'),
-            impulse_transaction_ratio=Decimal('0.0'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.30"),  # Strong
+            borrowed_lifestyle_ratio=Decimal("0.0"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.10"),
+            impulse_transaction_ratio=Decimal("0.0"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
-        assert confidence >= Decimal('0.6')
+        assert confidence >= Decimal("0.6")
 
 
 # ============================================================
@@ -1350,12 +1585,12 @@ class TestProfileDeterminism:
     def test_same_input_same_output(self):
         """Test that same inputs produce same outputs."""
         inputs = {
-            "savings_rate": Decimal('0.25'),
-            "borrowed_lifestyle_ratio": Decimal('0.05'),
-            "credit_revolver_ratio": Decimal('0.0'),
-            "discretionary_spending_ratio": Decimal('0.20'),
-            "impulse_transaction_ratio": Decimal('0.10'),
-            "lifestyle_creep_index": Decimal('0.05'),
+            "savings_rate": Decimal("0.25"),
+            "borrowed_lifestyle_ratio": Decimal("0.05"),
+            "credit_revolver_ratio": Decimal("0.0"),
+            "discretionary_spending_ratio": Decimal("0.20"),
+            "impulse_transaction_ratio": Decimal("0.10"),
+            "lifestyle_creep_index": Decimal("0.05"),
             "transaction_count": 150,
         }
 
@@ -1370,18 +1605,27 @@ class TestProfileDeterminism:
     def test_deterministic_all_profiles(self):
         """Test determinism across all profile types."""
         test_cases = [
-            ("SAVER", Decimal('0.25'), Decimal('0.0'), Decimal('0.0')),
-            ("DEBT_DEPENDENT", Decimal('0.10'), Decimal('0.30'), Decimal('0.60')),
-            ("DEBT_OPTIMIZER", Decimal('0.12'), Decimal('0.08'), Decimal('0.10')),
-            ("SPENDER", Decimal('0.05'), Decimal('0.10'), Decimal('0.0')),  # No credit for SPENDER
-            ("BALANCED", Decimal('0.15'), Decimal('0.05'), Decimal('0.0')),
+            ("SAVER", Decimal("0.25"), Decimal("0.0"), Decimal("0.0")),
+            ("DEBT_DEPENDENT", Decimal("0.10"), Decimal("0.30"), Decimal("0.60")),
+            ("DEBT_OPTIMIZER", Decimal("0.12"), Decimal("0.08"), Decimal("0.10")),
+            (
+                "SPENDER",
+                Decimal("0.05"),
+                Decimal("0.10"),
+                Decimal("0.0"),
+            ),  # No credit for SPENDER
+            ("BALANCED", Decimal("0.15"), Decimal("0.05"), Decimal("0.0")),
         ]
 
         for expected_profile, savings, borrowed, revolver in test_cases:
             # Use discretionary values that only trigger SPENDER for SPENDER case
-            disc = Decimal('0.50') if expected_profile == "SPENDER" else Decimal('0.25')
-            impulse = Decimal('0.40') if expected_profile == "SPENDER" else Decimal('0.10')
-            creep = Decimal('0.60') if expected_profile == "SPENDER" else Decimal('0.10')
+            disc = Decimal("0.50") if expected_profile == "SPENDER" else Decimal("0.25")
+            impulse = (
+                Decimal("0.40") if expected_profile == "SPENDER" else Decimal("0.10")
+            )
+            creep = (
+                Decimal("0.60") if expected_profile == "SPENDER" else Decimal("0.10")
+            )
 
             result1 = classify_financial_personality(
                 savings_rate=savings,
@@ -1416,12 +1660,12 @@ class TestProfileEdgeCases:
     def test_zero_savings_rate(self):
         """Test with zero savings rate."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0'),
-            borrowed_lifestyle_ratio=Decimal('0.0'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0"),
+            borrowed_lifestyle_ratio=Decimal("0.0"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=50,
         )
         assert profile == "BALANCED"
@@ -1429,12 +1673,12 @@ class TestProfileEdgeCases:
     def test_zero_transaction_count(self):
         """Test with zero transactions."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.15'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.15"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=0,
         )
         # Should still return a valid profile
@@ -1443,12 +1687,12 @@ class TestProfileEdgeCases:
     def test_negative_savings_rate(self):
         """Test with negative savings rate (overspending)."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('-0.10'),
-            borrowed_lifestyle_ratio=Decimal('0.10'),
-            credit_revolver_ratio=Decimal('0.30'),
-            discretionary_spending_ratio=Decimal('0.40'),
-            impulse_transaction_ratio=Decimal('0.20'),
-            lifestyle_creep_index=Decimal('0.10'),
+            savings_rate=Decimal("-0.10"),
+            borrowed_lifestyle_ratio=Decimal("0.10"),
+            credit_revolver_ratio=Decimal("0.30"),
+            discretionary_spending_ratio=Decimal("0.40"),
+            impulse_transaction_ratio=Decimal("0.20"),
+            lifestyle_creep_index=Decimal("0.10"),
             transaction_count=100,
         )
         # Should be SPENDER or DEBT_DEPENDENT
@@ -1457,16 +1701,16 @@ class TestProfileEdgeCases:
     def test_very_high_values(self):
         """Test with very high metric values."""
         profile, confidence, _ = classify_financial_personality(
-            savings_rate=Decimal('0.90'),
-            borrowed_lifestyle_ratio=Decimal('0.0'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.0'),
-            impulse_transaction_ratio=Decimal('0.0'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.90"),
+            borrowed_lifestyle_ratio=Decimal("0.0"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.0"),
+            impulse_transaction_ratio=Decimal("0.0"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=500,
         )
         assert profile == "SAVER"
-        assert confidence >= Decimal('0.8')
+        assert confidence >= Decimal("0.8")
 
 
 # ============================================================
@@ -1480,12 +1724,14 @@ class TestProfilePriority:
     def test_debt_dependent_takes_priority_over_saver(self):
         """DEBT_DEPENDENT should be detected before SAVER."""
         profile, _, _ = classify_financial_personality(
-            savings_rate=Decimal('0.25'),  # Would qualify for SAVER
-            borrowed_lifestyle_ratio=Decimal('0.25'),  # But DEBT_DEPENDENT takes priority
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.20'),
-            impulse_transaction_ratio=Decimal('0.10'),
-            lifestyle_creep_index=Decimal('0.0'),
+            savings_rate=Decimal("0.25"),  # Would qualify for SAVER
+            borrowed_lifestyle_ratio=Decimal(
+                "0.25"
+            ),  # But DEBT_DEPENDENT takes priority
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.20"),
+            impulse_transaction_ratio=Decimal("0.10"),
+            lifestyle_creep_index=Decimal("0.0"),
             transaction_count=100,
         )
         assert profile == "DEBT_DEPENDENT"
@@ -1493,12 +1739,12 @@ class TestProfilePriority:
     def test_saver_takes_priority_over_spender(self):
         """SAVER should be detected before SPENDER."""
         profile, _, _ = classify_financial_personality(
-            savings_rate=Decimal('0.25'),  # SAVER qualifies
-            borrowed_lifestyle_ratio=Decimal('0.05'),
-            credit_revolver_ratio=Decimal('0.0'),
-            discretionary_spending_ratio=Decimal('0.45'),  # SPENDER would also qualify
-            impulse_transaction_ratio=Decimal('0.35'),
-            lifestyle_creep_index=Decimal('0.60'),
+            savings_rate=Decimal("0.25"),  # SAVER qualifies
+            borrowed_lifestyle_ratio=Decimal("0.05"),
+            credit_revolver_ratio=Decimal("0.0"),
+            discretionary_spending_ratio=Decimal("0.45"),  # SPENDER would also qualify
+            impulse_transaction_ratio=Decimal("0.35"),
+            lifestyle_creep_index=Decimal("0.60"),
             transaction_count=100,
         )
         assert profile == "SAVER"

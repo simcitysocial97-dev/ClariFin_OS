@@ -69,24 +69,20 @@ def db_with_confidence_values():
     )
 
     # Insert a row with NULL match_confidence (should be left for manual review)
-    conn.execute(
-        """
+    conn.execute("""
         INSERT INTO reconciliations
             (id, debit_txn_id, credit_txn_id, debit_account_id, credit_account_id,
              amount_paise, date_diff_days, match_confidence, match_type)
         VALUES (8, 15, 16, 'A', 'B', 80000, 0, NULL, 'exact')
-        """
-    )
+        """)
 
     # Insert a row with out-of-range match_confidence (should be left for manual review)
-    conn.execute(
-        """
+    conn.execute("""
         INSERT INTO reconciliations
             (id, debit_txn_id, credit_txn_id, debit_account_id, credit_account_id,
              amount_paise, date_diff_days, match_confidence, match_type)
         VALUES (9, 17, 18, 'A', 'B', 90000, 0, 1.5, 'exact')
-        """
-    )
+        """)
 
     conn.commit()
     conn.close()
@@ -100,6 +96,7 @@ def db_with_confidence_values():
 # Tests
 # ============================================================
 
+
 def test_confidence_bps_backfill_correctness(db_with_confidence_values):
     """Verify that confidence_bps = ROUND(match_confidence * 10000) for valid rows."""
     db_path = db_with_confidence_values
@@ -112,13 +109,13 @@ def test_confidence_bps_backfill_correctness(db_with_confidence_values):
 
     # Check valid rows were backfilled correctly
     expected = {
-        1: 9000,   # 0.9 * 10000
+        1: 9000,  # 0.9 * 10000
         2: 10000,  # 1.0 * 10000
-        3: 6000,   # 0.6 * 10000
-        4: 0,      # 0.0 * 10000
-        5: 5000,   # 0.5 * 10000
-        6: 1234,   # 0.1234 * 10000
-        7: 9999,   # 0.9999 * 10000
+        3: 6000,  # 0.6 * 10000
+        4: 0,  # 0.0 * 10000
+        5: 5000,  # 0.5 * 10000
+        6: 1234,  # 0.1234 * 10000
+        7: 9999,  # 0.9999 * 10000
     }
 
     for rec_id, expected_bps in expected.items():
@@ -127,9 +124,9 @@ def test_confidence_bps_backfill_correctness(db_with_confidence_values):
             (rec_id,),
         ).fetchone()
         assert row is not None, f"Reconciliation {rec_id} not found"
-        assert row["confidence_bps"] == expected_bps, (
-            f"id={rec_id}: expected confidence_bps={expected_bps}, got {row['confidence_bps']}"
-        )
+        assert (
+            row["confidence_bps"] == expected_bps
+        ), f"id={rec_id}: expected confidence_bps={expected_bps}, got {row['confidence_bps']}"
 
     conn.close()
 
@@ -146,9 +143,9 @@ def test_null_match_confidence_left_null(db_with_confidence_values):
         "SELECT confidence_bps FROM reconciliations WHERE id = 8"
     ).fetchone()
     assert row is not None
-    assert row["confidence_bps"] is None, (
-        "Row with NULL match_confidence should have NULL confidence_bps"
-    )
+    assert (
+        row["confidence_bps"] is None
+    ), "Row with NULL match_confidence should have NULL confidence_bps"
 
     conn.close()
 
@@ -165,9 +162,9 @@ def test_out_of_range_confidence_left_null(db_with_confidence_values):
         "SELECT confidence_bps FROM reconciliations WHERE id = 9"
     ).fetchone()
     assert row is not None
-    assert row["confidence_bps"] is None, (
-        "Row with match_confidence=1.5 should have NULL confidence_bps (left for review)"
-    )
+    assert (
+        row["confidence_bps"] is None
+    ), "Row with match_confidence=1.5 should have NULL confidence_bps (left for review)"
 
     conn.close()
 
@@ -193,7 +190,9 @@ def test_migration_idempotent(db_with_confidence_values):
     tables = conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='reconciliation_audit_log'"
     ).fetchone()
-    assert tables is not None, "reconciliation_audit_log table should exist after second run"
+    assert (
+        tables is not None
+    ), "reconciliation_audit_log table should exist after second run"
 
     conn.close()
 

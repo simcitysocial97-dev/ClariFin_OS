@@ -38,7 +38,9 @@ class InstitutionResponse(BaseModel):
     updated_at: str | None = None
 
     @classmethod
-    def from_institution_dict(cls, institution: dict[str, Any]) -> "InstitutionResponse":
+    def from_institution_dict(
+        cls, institution: dict[str, Any]
+    ) -> "InstitutionResponse":
         """Create InstitutionResponse from institution dict."""
         return cls(
             institution_id=institution["institution_id"],

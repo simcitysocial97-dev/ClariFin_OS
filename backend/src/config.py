@@ -71,8 +71,7 @@ class Settings:
     def log_format(self) -> str:
         """Log format string."""
         return os.getenv(
-            "LOG_FORMAT",
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
 
     # Validation Configuration
@@ -137,7 +136,9 @@ class Settings:
         # Validate log level
         valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
         if self.log_level not in valid_levels:
-            errors.append(f"Invalid LOG_LEVEL: {self.log_level}. Must be one of {valid_levels}")
+            errors.append(
+                f"Invalid LOG_LEVEL: {self.log_level}. Must be one of {valid_levels}"
+            )
 
         return errors
 

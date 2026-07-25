@@ -22,8 +22,29 @@ from .utils import round_decimal
 # Order matters: more specific matches should come first
 _INCOME_KEYWORDS: list[tuple[str, list[str]]] = [
     ("salary", ["salary", "payroll", "wages", "professional fee", "salaried"]),
-    ("business", ["business", "consulting", "freelance", "commission", "services", "service fee"]),
-    ("investment", ["dividend", "mutual fund", "stocks", "trading", "capital gains", "interest income", "investment"]),
+    (
+        "business",
+        [
+            "business",
+            "consulting",
+            "freelance",
+            "commission",
+            "services",
+            "service fee",
+        ],
+    ),
+    (
+        "investment",
+        [
+            "dividend",
+            "mutual fund",
+            "stocks",
+            "trading",
+            "capital gains",
+            "interest income",
+            "investment",
+        ],
+    ),
     ("transfer", ["transfer", "own account", "self transfer", "internal transfer"]),
     ("refund", ["refund", "cashback", "reversal", "cash back"]),
     ("borrowing", ["loan", "credit", "borrow", "overdraft", "lending"]),
@@ -84,7 +105,7 @@ def _compute_match_confidence(keyword: str, description: str) -> float:
     words = description.split()
     for word in words:
         # Clean punctuation from word
-        clean_word = word.strip(".,;:!?\'\"-")
+        clean_word = word.strip(".,;:!?'\"-")
         if clean_word == keyword:
             return 1.0
     return 0.8
@@ -115,9 +136,11 @@ def compute_salary_dependence_ratio(
         Decimal ratio between 0 and 1+. Returns Decimal('0') for zero true income.
     """
     if true_income_paise == 0:
-        return Decimal('0')
+        return Decimal("0")
 
-    return round_decimal(Decimal(str(salary_income_paise)) / Decimal(str(true_income_paise)))
+    return round_decimal(
+        Decimal(str(salary_income_paise)) / Decimal(str(true_income_paise))
+    )
 
 
 def compute_income_diversification_score(
@@ -148,7 +171,7 @@ def compute_income_diversification_score(
         Decimal score between 0 and 1. Higher indicates more diversified income.
     """
     if not income_transactions:
-        return Decimal('0')
+        return Decimal("0")
 
     unique_sources: set[str] = set()
 

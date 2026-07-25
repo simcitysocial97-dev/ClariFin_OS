@@ -1,4 +1,5 @@
 """Investment domain repository."""
+
 from typing import Any
 
 from src.models.investment import Investment
@@ -44,23 +45,41 @@ class InvestmentRepository(BaseRepository):
             """).fetchall()
         return [Investment.from_db_row(dict(r)) for r in rows]
 
-    def create(self, name: str, investment_type: str, invested_paise: int,
-               current_value_paise: int,
-               platform: str | None = None, units: float | None = None,
-               purchase_date: str | None = None,
-               maturity_date: str | None = None,
-               linked_account_id: int | None = None,
-               notes: str | None = None) -> int:
+    def create(
+        self,
+        name: str,
+        investment_type: str,
+        invested_paise: int,
+        current_value_paise: int,
+        platform: str | None = None,
+        units: float | None = None,
+        purchase_date: str | None = None,
+        maturity_date: str | None = None,
+        linked_account_id: int | None = None,
+        notes: str | None = None,
+    ) -> int:
         """Create a new investment record."""
         with self._get_conn() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 INSERT INTO investments (name, type, platform, invested_paise,
                                        current_value_paise, units, purchase_date,
                                        maturity_date, linked_account_id, notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (name, investment_type, platform, invested_paise,
-                      current_value_paise, units, purchase_date,
-                      maturity_date, linked_account_id, notes))
+                """,
+                (
+                    name,
+                    investment_type,
+                    platform,
+                    invested_paise,
+                    current_value_paise,
+                    units,
+                    purchase_date,
+                    maturity_date,
+                    linked_account_id,
+                    notes,
+                ),
+            )
             conn.commit()
         return cur.lastrowid or 0
 
@@ -72,24 +91,28 @@ class InvestmentRepository(BaseRepository):
             ).fetchone()
         return dict(row) if row else None
 
-    def update(self, investment_id: int | str, **kwargs: str | int | float | None) -> dict[str, Any] | None:
+    def update(
+        self, investment_id: int | str, **kwargs: str | int | float | None
+    ) -> dict[str, Any] | None:
         """Update investment fields. Only updates provided fields."""
         allowed = {
-            'name', 'units', 'current_price_paise',
-            'current_value_paise', 'as_of_date', 'notes'
+            "name",
+            "units",
+            "current_price_paise",
+            "current_value_paise",
+            "as_of_date",
+            "notes",
         }
         updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
         if not updates:
             return self.get_by_id(investment_id)
 
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause = ", ".join(f"{k} = ?" for k in updates)
         set_clause += ", last_updated = datetime('now')"
         values = list(updates.values()) + [investment_id]
 
         with self._get_conn() as conn:
-            conn.execute(
-                f"UPDATE investments SET {set_clause} WHERE id = ?", values
-            )
+            conn.execute(f"UPDATE investments SET {set_clause} WHERE id = ?", values)
             conn.commit()
         return self.get_by_id(investment_id)
 
@@ -98,7 +121,7 @@ class InvestmentRepository(BaseRepository):
         with self._get_conn() as conn:
             conn.execute(
                 "UPDATE investments SET is_active = 0, last_updated = datetime('now') WHERE id = ?",
-                (investment_id,)
+                (investment_id,),
             )
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()

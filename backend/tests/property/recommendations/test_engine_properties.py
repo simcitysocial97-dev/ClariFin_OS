@@ -1,4 +1,5 @@
 """Property tests for Recommendations — Nudge Engine."""
+
 from __future__ import annotations
 
 import sys

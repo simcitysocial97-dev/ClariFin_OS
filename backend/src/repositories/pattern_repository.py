@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 import json
 from decimal import Decimal
 from typing import Any
@@ -16,23 +17,26 @@ class PatternRepository(BaseRepository):
     def create_pattern(self, pattern_data: dict[str, Any]) -> dict[str, Any] | None:
         """Create a new behaviour pattern."""
         with self._get_conn() as conn:
-            cursor = conn.execute("""
+            cursor = conn.execute(
+                """
                 INSERT INTO behaviour_patterns (
                     pattern_type, pattern_key, household_id, strength_bps,
                     first_observed, last_observed, transaction_count,
                     total_amount_paise, config_json
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                pattern_data['pattern_type'],
-                pattern_data['pattern_key'],
-                pattern_data.get('household_id', 'default'),
-                pattern_data['strength_bps'],
-                pattern_data['first_observed'],
-                pattern_data['last_observed'],
-                pattern_data['transaction_count'],
-                pattern_data['total_amount_paise'],
-                json.dumps(pattern_data.get('config', {}))
-            ))
+            """,
+                (
+                    pattern_data["pattern_type"],
+                    pattern_data["pattern_key"],
+                    pattern_data.get("household_id", "default"),
+                    pattern_data["strength_bps"],
+                    pattern_data["first_observed"],
+                    pattern_data["last_observed"],
+                    pattern_data["transaction_count"],
+                    pattern_data["total_amount_paise"],
+                    json.dumps(pattern_data.get("config", {})),
+                ),
+            )
             conn.commit()
 
         pattern_id = cursor.lastrowid
@@ -54,13 +58,16 @@ class PatternRepository(BaseRepository):
         self, pattern_type: str, pattern_key: str, household_id: str | None = None
     ) -> dict[str, Any] | None:
         """Get a specific behaviour pattern by key."""
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         with self._get_conn() as conn:
-            row = conn.execute("""
+            row = conn.execute(
+                """
                 SELECT * FROM behaviour_patterns
                 WHERE pattern_type = ? AND pattern_key = ? AND household_id = ?
                 LIMIT 1
-            """, (pattern_type, pattern_key, household_id)).fetchone()
+            """,
+                (pattern_type, pattern_key, household_id),
+            ).fetchone()
 
         if not row:
             return None
@@ -71,13 +78,16 @@ class PatternRepository(BaseRepository):
         self, pattern_type: str, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get behaviour patterns by type."""
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT * FROM behaviour_patterns
                 WHERE household_id = ? AND pattern_type = ?
                 ORDER BY strength_bps DESC, last_observed DESC
-            """, (household_id, pattern_type)).fetchall()
+            """,
+                (household_id, pattern_type),
+            ).fetchall()
 
         return [self._map_pattern_row(dict(row)) for row in rows]
 
@@ -86,11 +96,14 @@ class PatternRepository(BaseRepository):
     ) -> bool:
         """Update the strength of a behaviour pattern."""
         with self._get_conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE behaviour_patterns
                 SET strength_bps = ?, last_observed = datetime('now')
                 WHERE id = ?
-            """, (new_strength_bps, pattern_id))
+            """,
+                (new_strength_bps, pattern_id),
+            )
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()
         return bool(changes_row[0]) if changes_row else False
@@ -99,13 +112,16 @@ class PatternRepository(BaseRepository):
         self, days: int = 30, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get recently observed behaviour patterns."""
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT * FROM behaviour_patterns
                 WHERE household_id = ? AND last_observed >= datetime('now', ?)
                 ORDER BY strength_bps DESC, last_observed DESC
-            """, (household_id, f'-{days} days')).fetchall()
+            """,
+                (household_id, f"-{days} days"),
+            ).fetchall()
 
         return [self._map_pattern_row(dict(row)) for row in rows]
 
@@ -117,41 +133,44 @@ class PatternRepository(BaseRepository):
         Args:
             min_strength: Minimum strength in percentage (0-100 range)
         """
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         # Convert percentage to 0-1 range for internal comparison
         min_strength_decimal = Decimal(str(min_strength)) / Decimal(100)
         min_strength_bps = self._decimal_to_bps(min_strength_decimal)
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT * FROM behaviour_patterns
                 WHERE household_id = ? AND strength_bps >= ?
                 ORDER BY strength_bps DESC
-            """, (household_id, min_strength_bps)).fetchall()
+            """,
+                (household_id, min_strength_bps),
+            ).fetchall()
 
         return [self._map_pattern_row(dict(row)) for row in rows]
 
     def _map_pattern_row(self, row: dict[str, Any]) -> dict[str, Any]:
         """Map database row to pattern dictionary with proper typing."""
         result = {
-            'id': row['id'],
-            'pattern_type': row['pattern_type'],
-            'pattern_key': row['pattern_key'],
-            'household_id': row['household_id'],
-            'strength': self._bps_to_decimal(row['strength_bps']) * Decimal(100),
-            'first_observed': row['first_observed'],
-            'last_observed': row['last_observed'],
-            'transaction_count': row['transaction_count'],
-            'total_amount_paise': row['total_amount_paise'],
-            'total_amount': Decimal(row['total_amount_paise']) / Decimal(100),
-            'created_at': row['created_at']
+            "id": row["id"],
+            "pattern_type": row["pattern_type"],
+            "pattern_key": row["pattern_key"],
+            "household_id": row["household_id"],
+            "strength": self._bps_to_decimal(row["strength_bps"]) * Decimal(100),
+            "first_observed": row["first_observed"],
+            "last_observed": row["last_observed"],
+            "transaction_count": row["transaction_count"],
+            "total_amount_paise": row["total_amount_paise"],
+            "total_amount": Decimal(row["total_amount_paise"]) / Decimal(100),
+            "created_at": row["created_at"],
         }
 
         # Parse JSON fields
-        if row['config_json']:
+        if row["config_json"]:
             try:
-                result['config'] = json.loads(row['config_json'])
+                result["config"] = json.loads(row["config_json"])
             except json.JSONDecodeError:
-                result['config'] = {}
+                result["config"] = {}
 
         return result
 

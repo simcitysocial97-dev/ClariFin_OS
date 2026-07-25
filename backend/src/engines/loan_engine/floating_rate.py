@@ -25,7 +25,9 @@ def apply_floating_rate_change(
     - adjust_tenure: Keep EMI same, adjust tenure
     """
     if change_month < 1 or change_month > len(schedule):
-        raise ValueError(f"Change month {change_month} out of range [1, {len(schedule)}]")
+        raise ValueError(
+            f"Change month {change_month} out of range [1, {len(schedule)}]"
+        )
 
     if new_rate_bps < 0:
         raise ValueError("Rate cannot be negative")
@@ -41,7 +43,7 @@ def apply_floating_rate_change(
 
     # Generate new schedule from change month onwards
     new_regenerated = regenerate_schedule(
-        schedule[change_month - 1:],
+        schedule[change_month - 1 :],
         remaining_balance,
         new_rate_bps,
         "reduce_emi" if mode == "adjust_emi" else "reduce_tenure",
@@ -49,7 +51,7 @@ def apply_floating_rate_change(
     )
 
     # Combine completed schedule with regenerated portion
-    completed_portion = schedule[:change_month - 1] if change_month > 1 else []
+    completed_portion = schedule[: change_month - 1] if change_month > 1 else []
     return completed_portion + new_regenerated
 
 
@@ -57,7 +59,9 @@ def simulate_floating_rate_schedule(
     principal_paise: int,
     initial_rate_bps: int,
     tenure_months: int,
-    rate_changes: list[tuple[int, int]] | list[FloatingRateChange],  # (month, new_rate_bps) or FloatingRateChange objects
+    rate_changes: (
+        list[tuple[int, int]] | list[FloatingRateChange]
+    ),  # (month, new_rate_bps) or FloatingRateChange objects
     mode: Literal["adjust_emi", "adjust_tenure"] = "adjust_emi",
     start_date: str | None = None,
 ) -> list[AmortizationRow]:
@@ -81,11 +85,17 @@ def simulate_floating_rate_schedule(
     def get_new_rate(change: tuple[int, int] | FloatingRateChange) -> int:
         return change[1] if isinstance(change, tuple) else change.new_rate_bps
 
-    def get_change_mode(change: tuple[int, int] | FloatingRateChange) -> Literal["adjust_emi", "adjust_tenure"]:
+    def get_change_mode(
+        change: tuple[int, int] | FloatingRateChange,
+    ) -> Literal["adjust_emi", "adjust_tenure"]:
         if isinstance(change, tuple):
             # tuple can have 2 or 3 elements
             return change[2] if len(change) > 2 else "adjust_emi"
-        return change.mode if change.mode in ("adjust_emi", "adjust_tenure") else "adjust_emi"
+        return (
+            change.mode
+            if change.mode in ("adjust_emi", "adjust_tenure")
+            else "adjust_emi"
+        )
 
     sorted_changes = sorted(rate_changes, key=get_change_month)
     for change in sorted_changes:

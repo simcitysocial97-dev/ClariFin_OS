@@ -71,8 +71,18 @@ class CreditCard(DomainModel):
 # ============================================================
 
 VALID_BANKS = {
-    "hdfc", "icici", "sbi", "axis", "kotak", "yes", "indusind",
-    "amex", "citi", "standard_chartered", "hsbc", "other",
+    "hdfc",
+    "icici",
+    "sbi",
+    "axis",
+    "kotak",
+    "yes",
+    "indusind",
+    "amex",
+    "citi",
+    "standard_chartered",
+    "hsbc",
+    "other",
 }
 
 
@@ -85,7 +95,9 @@ class CreditCardCreateRequest(BaseModel):
     card_last4: str | None = Field(default=None, pattern=r"^\d{4}$")
     credit_limit_paise: int = Field(gt=0, description="Credit limit in paise")
     annual_fee_paise: int = Field(default=0, ge=0)
-    interest_rate_bps: int = Field(ge=0, le=5000, description="Annual rate in basis points")
+    interest_rate_bps: int = Field(
+        ge=0, le=5000, description="Annual rate in basis points"
+    )
     billing_day: int | None = Field(default=None, ge=1, le=31)
     due_day_offset: int = Field(default=21, ge=1, le=60)
     notes: str | None = None
