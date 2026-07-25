@@ -1,0 +1,303 @@
+# .github/workflows/backend.yml
+#
+# PURPOSE: Full backend test suite for pull requests
+# TARGET:  Complete in under 15 minutes
+# RUNS:    On PR to main/develop only
+#
+# What it runs:
+#   - All unit tests
+#   - Property tests
+#   - Contract tests
+#   - Capability tests
+#   - Integration tests
+#   - Invariant tests
+#   - Migration tests
+
+name: Backend Full Suite
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      # Only run when backend files change
+      - "backend/**"
+      - ".github/workflows/backend.yml"
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ── Detect what changed ───────────────────────────────────────────────────
+  # This enables selective test running
+  detect-changes:
+    name: "Detect Changed Files"
+    runs-on: ubuntu-latest
+    outputs:
+      engines-changed: ${{ steps.changes.outputs.engines }}
+      routers-changed: ${{ steps.changes.outputs.routers }}
+      repositories-changed: ${{ steps.changes.outputs.repositories }}
+      any-backend: ${{ steps.changes.outputs.backend }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # Need full history for diff
+
+      - name: Detect file changes
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            engines:
+              - 'backend/src/engines/**'
+            routers:
+              - 'backend/src/routers/**'
+            repositories:
+              - 'backend/src/repositories/**'
+            backend:
+              - 'backend/**'
+
+  # ── Property Tests ────────────────────────────────────────────────────────
+  property-tests:
+    name: "Property Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: detect-changes
+    # Always run property tests — they are fast and find real bugs
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run property tests
+        working-directory: backend
+        env:
+          # Hypothesis settings for CI
+          # Fewer examples in CI = faster, but still useful
+          HYPOTHESIS_MAX_EXAMPLES: 50
+        run: |
+          pytest tests/property/ \
+            --timeout=60 \
+            --tb=short \
+            -v \
+            --no-header \
+            -n auto
+
+      - name: Upload property test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: property-results-${{ github.sha }}
+          path: |
+            .hypothesis/
+          retention-days: 14
+
+  # ── Contract Tests ────────────────────────────────────────────────────────
+  contract-tests:
+    name: "Contract Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run contract tests
+        working-directory: backend
+        run: |
+          pytest tests/contract/ \
+            --timeout=60 \
+            --tb=short \
+            -v \
+            --no-header \
+            -n auto \
+            --cov=. \
+            --cov-config=.coveragerc \
+            --cov-report=json:tests/generated/contract-coverage.json \
+            --cov-report=term-missing
+
+      - name: Upload contract results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contract-results-${{ github.sha }}
+          path: |
+            backend/tests/generated/contract-coverage.json
+          retention-days: 30
+
+  # ── Capability Tests ──────────────────────────────────────────────────────
+  capability-tests:
+    name: "Capability Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run capability tests
+        working-directory: backend
+        run: |
+          pytest tests/capability/ \
+            --timeout=60 \
+            --tb=short \
+            -v \
+            --no-header \
+            -n auto
+
+  # ── Integration Tests ─────────────────────────────────────────────────────
+  integration-tests:
+    name: "Integration Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs:
+      - property-tests
+      - contract-tests
+    # Run integration after property + contract pass
+    # This gives a natural gate
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run integration tests
+        working-directory: backend
+        run: |
+          pytest tests/integration/ \
+            --timeout=120 \
+            --tb=short \
+            -v \
+            --no-header
+
+  # ── Invariant Tests ───────────────────────────────────────────────────────
+  invariant-tests:
+    name: "Invariant Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run invariant tests
+        working-directory: backend
+        run: |
+          pytest tests/invariant/ \
+            --timeout=60 \
+            --tb=short \
+            -v \
+            --no-header \
+            -n auto
+
+  # ── Migration Tests ───────────────────────────────────────────────────────
+  migration-tests:
+    name: "Migration Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run migration tests
+        working-directory: backend
+        run: |
+          pytest tests/migrations/ \
+            --timeout=60 \
+            --tb=short \
+            -v \
+            --no-header
+
+  # ── Full Coverage Report ──────────────────────────────────────────────────
+  coverage-report:
+    name: "Full Coverage Report"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs:
+      - property-tests
+      - contract-tests
+      - capability-tests
+      - integration-tests
+      - invariant-tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run all tests with unified coverage
+        working-directory: backend
+        run: |
+          pytest tests/ \
+            --ignore=tests/mutation \
+            --ignore=tests/data \
+            --timeout=120 \
+            --tb=no \
+            -q \
+            --no-header \
+            -n auto \
+            --cov=. \
+            --cov-config=.coveragerc \
+            --cov-report=json:tests/generated/coverage.json \
+            --cov-report=html:tests/generated/coverage-html/ \
+            --cov-report=term-missing
+
+      - name: Upload full coverage
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-full-${{ github.sha }}
+          path: |
+            backend/tests/generated/coverage.json
+            backend/tests/generated/coverage-html/
+          retention-days: 30

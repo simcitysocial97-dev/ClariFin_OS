@@ -11,7 +11,7 @@
  */
 
 import { test, expect } from '../fixtures/test-fixtures';
-import { detectHorizontalOverflow } from '../utils/css-helpers';
+import { detectHorizontalOverflow } from '../fixtures/css-helpers';
 
 // ============================================================================
 // Routes to Test

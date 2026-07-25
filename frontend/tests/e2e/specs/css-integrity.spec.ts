@@ -21,7 +21,7 @@ import {
   validateTableResponsiveness,
   BREAKPOINTS,
   SIDEBAR_WIDTHS,
-} from '../utils/css-helpers';
+} from '../fixtures/css-helpers';
 
 // ============================================================================
 // Sidebar Layout Tests

@@ -13,12 +13,12 @@ import { test, expect } from '../fixtures/test-fixtures';
 import {
   generateDebtLoopScenario,
   SeededRandom,
-} from '../utils/financial-scenarios';
+} from '../fixtures/financial-scenarios';
 import {
   assertRiskScoreDelta,
   assertRiskScoreDeterminism,
   assertBehaviorRiskDelta,
-} from '../utils/financial-assertions';
+} from '../fixtures/financial-assertions';
 
 // Re-export SeededRandom for helper functions at bottom
 export { SeededRandom };

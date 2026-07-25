@@ -11,8 +11,8 @@
  */
 
 import { test, expect } from '../fixtures/test-fixtures';
-import { SeededRandom } from '../utils/financial-scenarios';
-import { assertNoInvalidValues, assertValidPercentage } from '../utils/financial-assertions';
+import { SeededRandom } from '../fixtures/financial-scenarios';
+import { assertNoInvalidValues, assertValidPercentage } from '../fixtures/financial-assertions';
 
 // ============================================================================
 // Edge Case Generators

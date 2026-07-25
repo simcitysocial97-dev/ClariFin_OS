@@ -44,6 +44,7 @@ IDE
 Testing
 coverage/
 .nyc_output/
+backend/tests/generated/
 
 Python virtual environments
 backend/venv/
@@ -58,6 +59,7 @@ Python cache
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.mutmut-cache
 
 Database
 *.db

@@ -1,0 +1,95 @@
+# .github/workflows/golden.yml
+#
+# PURPOSE: Run golden dataset regression tests
+# SCHEDULE: Nightly
+# WHY SEPARATE: Golden tests are slow (full scenarios) but critical
+
+name: Golden Dataset Regression
+
+on:
+  schedule:
+    - cron: "0 3 * * *"    # 3 AM UTC = 8:30 AM IST (after mutation finishes)
+  
+  workflow_dispatch:        # Allow manual trigger
+    inputs:
+      dataset:
+        description: "Specific dataset (or 'all')"
+        required: false
+        default: "all"
+
+jobs:
+
+  golden-regression:
+    name: "Golden Datasets"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run golden regression tests
+        working-directory: backend
+        run: |
+          pytest tests/golden/ \
+            --timeout=120 \
+            --tb=long \
+            -v \
+            --no-header
+
+      - name: Run capability tests with golden data
+        working-directory: backend
+        run: |
+          pytest tests/capability/ \
+            --timeout=120 \
+            --tb=short \
+            -v \
+            --no-header
+
+      - name: Upload golden test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: golden-results-${{ github.run_id }}
+          path: |
+            backend/tests/golden/regressions/
+          retention-days: 90
+
+  # ── Detect Regressions ────────────────────────────────────────────────────
+  regression-comparison:
+    name: "Regression Comparison"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: golden-regression
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download golden results
+        uses: actions/download-artifact@v4
+        with:
+          name: golden-results-${{ github.run_id }}
+          path: new-results/
+
+      - name: Compare with baseline
+        run: |
+          echo "Comparing golden results..."
+          
+          # Check if regression files exist
+          if [ -d "new-results" ] && [ "$(ls -A new-results)" ]; then
+            echo "Golden regression files found"
+            ls -la new-results/
+          else
+            echo "No regression files generated"
+          fi
+          
+          # Future: compare against stored baseline
+          echo "Regression comparison complete"

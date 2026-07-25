@@ -17,7 +17,7 @@ import {
   calculateNetCashflow,
   detectDebtLoops,
   SeededRandom,
-} from '../utils/financial-scenarios';
+} from '../fixtures/financial-scenarios';
 import {
   assertLedgerIntegrity,
   assertNetCashflow,
@@ -28,7 +28,7 @@ import {
   assertNoInvalidValues,
   assertValidPercentage,
   assertResponseTime,
-} from '../utils/financial-assertions';
+} from '../fixtures/financial-assertions';
 
 // ============================================================================
 // Test Data

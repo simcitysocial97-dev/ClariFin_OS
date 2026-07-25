@@ -11,7 +11,7 @@
  */
 
 import { test, expect } from '../fixtures/test-fixtures';
-import { validateElementVisibility, validateGridCardHeights } from '../utils/css-helpers';
+import { validateElementVisibility, validateGridCardHeights } from '../fixtures/css-helpers';
 
 // ============================================================================
 // Dashboard Loading Tests

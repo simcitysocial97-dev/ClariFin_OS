@@ -29,14 +29,14 @@ jobs:
       - name: Run property tests with nightly profile
         run: |
           cd backend
-          pytest tests/properties/ -v --tb=short -m property --hypothesis-profile=nightly
+          pytest tests/property/ -v --tb=short -m property --hypothesis-profile=nightly
 
       - name: Upload property test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: property-test-results
-          path: backend/property-results/
+          path: backend/tests/generated/
           retention-days: 7
 
   performance-tests:
@@ -69,5 +69,5 @@ jobs:
         if: always()
         with:
           name: performance-test-results
-          path: backend/performance-results/
+          path: backend/tests/generated/
           retention-days: 7
