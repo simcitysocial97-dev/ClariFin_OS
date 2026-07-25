@@ -5,6 +5,7 @@ All monetary values are integers in paise (₹1.00 = 100 paise).
 Consumes financial_events (Phase 6) and cashflow_results (Phase 7).
 """
 
+import contextlib
 from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
@@ -331,10 +332,8 @@ def liquidity_extraction_frequency(
     dates = []
     for e in advances:
         date_str = e.get("date_iso", "")
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             dates.append(datetime.strptime(date_str, "%Y-%m-%d"))
-        except (ValueError, TypeError):
-            pass
 
     if len(dates) >= 2:
         dates.sort()

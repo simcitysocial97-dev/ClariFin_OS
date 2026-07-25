@@ -173,20 +173,22 @@ def analyze_function_ast(source_path: Path, function_name: str) -> FunctionAnaly
                     for b in ["sqlite3", "requests", "httpx", "random", "pickle"]
                 ):
                     blockers.append(f"import:{alias.name}")
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                if any(
-                    b in node.module
-                    for b in [
-                        "sqlite3",
-                        "requests",
-                        "httpx",
-                        "random",
-                        "pickle",
-                        "finance_db",
-                    ]
-                ):
-                    blockers.append(f"import:{node.module}")
+        elif (
+            isinstance(node, ast.ImportFrom)
+            and node.module
+            and any(
+                b in node.module
+                for b in [
+                    "sqlite3",
+                    "requests",
+                    "httpx",
+                    "random",
+                    "pickle",
+                    "finance_db",
+                ]
+            )
+        ):
+            blockers.append(f"import:{node.module}")
 
     # Determine purity
     if blockers:

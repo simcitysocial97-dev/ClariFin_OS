@@ -7,9 +7,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
-from hypothesis import given, settings, strategies as st
-
-from engines.reconciliation_engine import find_potential_matches
+from hypothesis import given, settings
+from hypothesis import strategies as st
 
 # --- Strategies ---
 

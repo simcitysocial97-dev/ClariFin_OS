@@ -62,6 +62,5 @@ def assert_cashflow_result_invariants(result: dict[str, Any]) -> None:
     if (
         "credit_dependency_ratio" in result
         and result["credit_dependency_ratio"] is not None
-    ):
-        if result["credit_dependency_ratio"] < 0:
-            raise AssertionError("credit_dependency_ratio must be non-negative")
+    ) and result["credit_dependency_ratio"] < 0:
+        raise AssertionError("credit_dependency_ratio must be non-negative")

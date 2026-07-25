@@ -751,7 +751,7 @@ def generate_scenario(scenario_name: str, db_path: Path) -> dict[str, Any]:
 
     # Create statements for each account
     statement_ids = {}
-    for account_id in ACCOUNTS.keys():
+    for account_id in ACCOUNTS:
         cursor.execute(
             """
             INSERT INTO statements (bank, file_name, source)

@@ -9,13 +9,12 @@ Usage:
 """
 
 import argparse
-import json
 from pathlib import Path
-from typing import Dict, List
+
 from jinja2 import Template
 
 
-def get_openapi_schema() -> Dict:
+def get_openapi_schema() -> dict:
     """Extract OpenAPI schema from FastAPI app"""
     import sys
 
@@ -39,7 +38,7 @@ def get_openapi_schema() -> Dict:
 
 
 def generate_test_for_endpoint(
-    path: str, method: str, operation: Dict, router_name: str
+    path: str, method: str, operation: dict, router_name: str
 ) -> str:
     """Generate pytest test code for one endpoint"""
 
@@ -62,11 +61,11 @@ def test_{{ test_name }}_contract(client):
     {% else %}
     response = client.{{ method }}("{{ path }}")
     {% endif %}
-    
+
     # Validate status code
     assert response.status_code in {{ valid_statuses }}, \\
         f"Expected {{ valid_statuses }}, got {response.status_code}"
-    
+
     {% if response_schema %}
     # Validate response schema
     if response.status_code == 200:
@@ -108,7 +107,7 @@ def test_{{ test_name }}_contract(client):
     )
 
 
-def generate_for_router(router_name: str, schema: Dict, output_dir: Path):
+def generate_for_router(router_name: str, schema: dict, output_dir: Path):
     """Generate tests for one router"""
 
     # Sanitize filename: replace hyphens with underscores
@@ -118,7 +117,7 @@ def generate_for_router(router_name: str, schema: Dict, output_dir: Path):
 
     # Header
     tests.append(f"# Auto-generated contract tests for {router_name} router")
-    tests.append(f"# DO NOT EDIT MANUALLY")
+    tests.append("# DO NOT EDIT MANUALLY")
     tests.append("")
 
     # Generate tests for each endpoint in this router
@@ -155,7 +154,7 @@ def main():
     if args.all:
         # Extract unique router names from paths
         routers = set()
-        for path in schema["paths"].keys():
+        for path in schema["paths"]:
             parts = path.strip("/").split("/")
             if len(parts) >= 2 and parts[0] == "api":
                 routers.add(parts[1])
@@ -184,7 +183,7 @@ def main():
 
     print(f"\n✅ Generated {len(routers)} contract test files")
     print(f"📁 Location: {output_dir}")
-    print(f"\n▶️  Run: pytest tests/contract/generated/ -v")
+    print("\n▶️  Run: pytest tests/contract/generated/ -v")
 
 
 if __name__ == "__main__":

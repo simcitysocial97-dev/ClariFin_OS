@@ -54,9 +54,8 @@ def assert_liquidity_forecast_invariants(result: dict[str, Any]) -> None:
         AssertionError: If liquidity forecast violates invariants
     """
     valid_risk_levels = {"low", "warning", "high"}
-    if "risk_level" in result:
-        if result["risk_level"] not in valid_risk_levels:
-            raise AssertionError(f"Invalid risk_level: {result['risk_level']}")
+    if "risk_level" in result and result["risk_level"] not in valid_risk_levels:
+        raise AssertionError(f"Invalid risk_level: {result['risk_level']}")
 
     if "months_until_stress" in result:
         months = result["months_until_stress"]

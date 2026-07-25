@@ -8,7 +8,6 @@
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -30,7 +29,6 @@ def test_get__api_reconciliations_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -49,7 +47,6 @@ def test_get__api_reconciliations_pending_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -68,7 +65,6 @@ def test_get__api_reconciliations_scan_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -90,7 +86,6 @@ def test_post__api_reconciliations_create_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -109,7 +104,6 @@ def test_post__api_reconciliations_batch_insert_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -131,7 +125,6 @@ def test_post__api_reconciliations_reconciliation_id_confirm_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers reconciliations
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

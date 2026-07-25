@@ -18,9 +18,9 @@ BACKEND_DIR = PROJECT_ROOT / "backend"
 
 def test_coverage_json_exists() -> None:
     """coverage.json must exist in backend/tests/generated/."""
-    assert (
-        GENERATED_DIR / "coverage.json"
-    ).exists(), "coverage.json not found - run check_coverage.py first"
+    assert (GENERATED_DIR / "coverage.json").exists(), (
+        "coverage.json not found - run check_coverage.py first"
+    )
 
 
 def test_coverage_json_valid() -> None:
@@ -123,23 +123,23 @@ def test_all_capability_references_exist() -> None:
 
 def test_coverage_report_md_exists() -> None:
     """coverage.md must exist in memory-bank/generated/."""
-    assert (
-        GENERATED_DIR / "coverage.md"
-    ).exists(), "coverage.md not found - run check_coverage.py first"
+    assert (GENERATED_DIR / "coverage.md").exists(), (
+        "coverage.md not found - run check_coverage.py first"
+    )
 
 
 def test_traceability_md_exists() -> None:
     """traceability.md must exist in memory-bank/generated/."""
-    assert (
-        GENERATED_DIR / "traceability.md"
-    ).exists(), "traceability.md not found - run check_coverage.py first"
+    assert (GENERATED_DIR / "traceability.md").exists(), (
+        "traceability.md not found - run check_coverage.py first"
+    )
 
 
 def test_change_impact_md_exists() -> None:
     """change-impact.md must exist in memory-bank/generated/."""
-    assert (
-        GENERATED_DIR / "change-impact.md"
-    ).exists(), "change-impact.md not found - run check_coverage.py first"
+    assert (GENERATED_DIR / "change-impact.md").exists(), (
+        "change-impact.md not found - run check_coverage.py first"
+    )
 
 
 def test_generated_files_have_content() -> None:
@@ -154,6 +154,6 @@ def test_generated_files_have_content() -> None:
         path = GENERATED_DIR / filename
         if path.exists():
             content = path.read_text()
-            assert (
-                len(content) > 100
-            ), f"{filename} is suspiciously short ({len(content)} bytes)"
+            assert len(content) > 100, (
+                f"{filename} is suspiciously short ({len(content)} bytes)"
+            )

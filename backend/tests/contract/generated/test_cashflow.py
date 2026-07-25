@@ -8,6 +8,7 @@
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
 import pytest
+
 from tests.contract.schema_validators import validate_response_schema
 
 
@@ -30,7 +31,6 @@ def test_get__api_v1_behaviour_cashflow_health_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -53,7 +53,6 @@ def test_get__api_cashflow_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -79,7 +78,6 @@ def test_get__api_cashflow_monthly_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -102,7 +100,6 @@ def test_get__api_cashflow_categories_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -128,7 +125,6 @@ def test_get__api_cashflow_transactions_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers cashflow
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

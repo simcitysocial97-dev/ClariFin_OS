@@ -7,6 +7,7 @@ It produces reports for the Validation Consolidation Phase.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import subprocess
 import time
@@ -72,10 +73,8 @@ def wc_files(glob_pattern: str) -> int:
                 text=True,
             )
             if wc_result.returncode == 0:
-                try:
+                with contextlib.suppress(ValueError, IndexError):
                     total += int(wc_result.stdout.split()[0])
-                except (ValueError, IndexError):
-                    pass
     return total
 
 

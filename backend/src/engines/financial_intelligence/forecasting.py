@@ -208,9 +208,7 @@ def forecast_liquidity(
     # Determine risk level based on projected minimum and stress month
     if projected_min >= emergency_threshold_paise:
         risk_level = "low"
-    elif stress_month == 1:
-        risk_level = "high"
-    elif stress_month is not None and stress_month <= 2:
+    elif stress_month == 1 or stress_month is not None and stress_month <= 2:
         risk_level = "high"
     elif stress_month is not None and stress_month <= 3:
         risk_level = "medium"

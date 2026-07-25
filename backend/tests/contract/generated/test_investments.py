@@ -8,7 +8,6 @@
 # To regenerate: python tools/generate_contract_tests.py --routers investments
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -27,7 +26,6 @@ def test_get__api_investments_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers investments
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -58,7 +56,6 @@ def test_post__api_investments_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers investments
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -89,7 +86,6 @@ def test_put__api_investments_investment_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers investments
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -111,7 +107,6 @@ def test_delete__api_investments_investment_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers investments
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

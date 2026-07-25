@@ -8,6 +8,7 @@
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
+
 from tests.contract.schema_validators import validate_response_schema
 
 
@@ -34,7 +35,6 @@ def test_get__api_v1_accounts_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -65,7 +65,6 @@ def test_post__api_v1_accounts_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -91,7 +90,6 @@ def test_get__api_v1_accounts_account_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -122,7 +120,6 @@ def test_put__api_v1_accounts_account_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -144,7 +141,6 @@ def test_delete__api_v1_accounts_account_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -177,7 +173,6 @@ def test_post__api_v1_accounts_account_id_balance_history_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -203,7 +198,6 @@ def test_get__api_v1_accounts_account_id_balance_history_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -225,7 +219,6 @@ def test_get__api_v1_accounts_account_id_balance_history_latest_contract(client)
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -247,7 +240,6 @@ def test_get__api_v1_accounts_account_id_analytics_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -269,7 +261,6 @@ def test_get__api_v1_accounts_account_id_metrics_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -291,7 +282,6 @@ def test_get__api_v1_accounts_account_id_status_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -313,7 +303,6 @@ def test_get__api_v1_accounts_account_id_dormancy_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -332,7 +321,6 @@ def test_get__api_v1_institutions_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -363,7 +351,6 @@ def test_post__api_v1_institutions_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -385,7 +372,6 @@ def test_get__api_v1_institutions_institution_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -416,7 +402,6 @@ def test_put__api_v1_institutions_institution_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -447,7 +432,6 @@ def test_post__api_v1_accounts_account_id_links_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -469,7 +453,6 @@ def test_get__api_v1_accounts_account_id_links_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -491,7 +474,6 @@ def test_delete__api_v1_accounts_account_id_links_linked_account_id_contract(cli
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -517,7 +499,6 @@ def test_get__api_v1_accounts_account_id_transactions_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -540,7 +521,6 @@ def test_get__api_v1_accounts_summary_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -559,7 +539,6 @@ def test_get__api_v1_accounts_type_breakdown_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -581,7 +560,6 @@ def test_get__api_v1_behaviour_profile_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -603,7 +581,6 @@ def test_get__api_v1_behaviour_wellness_score_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -625,7 +602,6 @@ def test_get__api_v1_behaviour_debt_health_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -647,7 +623,6 @@ def test_get__api_v1_behaviour_cashflow_health_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -669,7 +644,6 @@ def test_get__api_v1_behaviour_patterns_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -691,7 +665,6 @@ def test_get__api_v1_behaviour_recommendations_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -713,7 +686,6 @@ def test_get__api_v1_behaviour_monthly_report_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -735,7 +707,6 @@ def test_get__api_v1_behaviour_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -757,7 +728,6 @@ def test_get__api_v1_credit_cards_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -788,7 +758,6 @@ def test_post__api_v1_credit_cards_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -810,7 +779,6 @@ def test_get__api_v1_credit_cards_card_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -841,7 +809,6 @@ def test_put__api_v1_credit_cards_card_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -863,7 +830,6 @@ def test_delete__api_v1_credit_cards_card_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -885,7 +851,6 @@ def test_get__api_v1_credit_cards_card_id_statements_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -918,7 +883,6 @@ def test_post__api_v1_credit_cards_card_id_statements_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -940,7 +904,6 @@ def test_get__api_v1_credit_cards_card_id_outstanding_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -962,7 +925,6 @@ def test_get__api_v1_credit_cards_card_id_utilization_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -984,7 +946,6 @@ def test_get__api_v1_credit_cards_card_id_metrics_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1006,7 +967,6 @@ def test_get__api_v1_credit_cards_card_id_next_statement_date_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1037,7 +997,6 @@ def test_post__api_v1_credit_cards_card_id_payments_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1070,7 +1029,6 @@ def test_post__api_v1_credit_cards_card_id_emi_conversion_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1103,7 +1061,6 @@ def test_post__api_v1_credit_cards_card_id_foreclosure_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1125,7 +1082,6 @@ def test_get__api_v1_cashflow_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1147,7 +1103,6 @@ def test_get__api_v1_forecast_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1169,7 +1124,6 @@ def test_get__api_v1_investments_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1191,7 +1145,6 @@ def test_get__api_v1_loans_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -1213,7 +1166,6 @@ def test_get__api_v1_net_worth_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers v1
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

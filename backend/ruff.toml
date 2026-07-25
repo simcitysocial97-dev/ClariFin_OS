@@ -22,7 +22,8 @@ select = [
 
 # Rules to ignore
 ignore = [
-    "E501",   # line too long — Black handles this
+    "E501",   # line too long — Black/ruff format handles this
+    "E402",   # module level import not at top of file (common in scripts/tests)
     "B008",   # do not perform function calls in default arguments (FastAPI uses this)
     "SIM108", # ternary operator — sometimes less readable
 ]

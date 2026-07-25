@@ -8,7 +8,6 @@
 # To regenerate: python tools/generate_contract_tests.py --routers financial-events
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -43,7 +42,6 @@ def test_post__api_financial_events__contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers financial-events
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -65,7 +63,6 @@ def test_get__api_financial_events__contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers financial-events
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

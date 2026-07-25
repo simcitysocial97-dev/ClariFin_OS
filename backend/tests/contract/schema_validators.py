@@ -1,13 +1,12 @@
 """Schema validation against OpenAPI spec"""
 
-from jsonschema import validate, ValidationError
-from typing import Dict
+from jsonschema import ValidationError, validate
 
 # Cache for OpenAPI schemas
 _SCHEMA_CACHE = None
 
 
-def get_openapi_schemas() -> Dict:
+def get_openapi_schemas() -> dict:
     """Load OpenAPI schemas from app"""
     global _SCHEMA_CACHE
     if _SCHEMA_CACHE is None:

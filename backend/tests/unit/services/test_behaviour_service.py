@@ -149,9 +149,9 @@ def test_compute_financial_profile_success(
 ) -> None:
     """Test successful financial profile computation."""
     # Setup mocks
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
-        sample_transactions
-    )
+    mock_repositories[
+        "transaction_repo"
+    ].get_all_transactions.return_value = sample_transactions
     mock_repositories["account_repo"].get_all_accounts.return_value = [
         {"id": 1, "balance_paise": 1000000, "account_type": "savings"}
     ]
@@ -215,9 +215,9 @@ def test_compute_financial_profile_error(
 ) -> None:
     """Test financial profile computation with engine error."""
     # Setup mocks
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
-        sample_transactions
-    )
+    mock_repositories[
+        "transaction_repo"
+    ].get_all_transactions.return_value = sample_transactions
     mock_repositories["account_repo"].get_all_accounts.return_value = []
 
     # Mock behaviour engine to raise error
@@ -278,12 +278,12 @@ def test_get_debt_health_success(
 ) -> None:
     """Test successful debt health retrieval."""
     # Setup mocks
-    mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = (
-        sample_snapshot
-    )
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
-        sample_transactions
-    )
+    mock_repositories[
+        "behaviour_repo"
+    ].get_latest_snapshot.return_value = sample_snapshot
+    mock_repositories[
+        "transaction_repo"
+    ].get_all_transactions.return_value = sample_transactions
     mock_repositories["credit_card_repo"].list_cards.return_value = []
     mock_repositories["loan_repo"].list_loans.return_value = []
 
@@ -309,12 +309,12 @@ def test_get_cashflow_health_success(
 ) -> None:
     """Test successful cashflow health retrieval."""
     # Setup mocks
-    mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = (
-        sample_snapshot
-    )
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
-        sample_transactions
-    )
+    mock_repositories[
+        "behaviour_repo"
+    ].get_latest_snapshot.return_value = sample_snapshot
+    mock_repositories[
+        "transaction_repo"
+    ].get_all_transactions.return_value = sample_transactions
 
     # Call service method
     result = behaviour_service.get_cashflow_health()
@@ -412,9 +412,9 @@ def test_snapshot_versioning(
 ) -> None:
     """Test that snapshots are created with version 1."""
     # Setup mocks
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
-        sample_transactions
-    )
+    mock_repositories[
+        "transaction_repo"
+    ].get_all_transactions.return_value = sample_transactions
     mock_repositories["account_repo"].get_all_accounts.return_value = []
     mock_repositories["loan_repo"].list_loans.return_value = []
     mock_repositories["credit_card_repo"].list_cards.return_value = []

@@ -84,8 +84,8 @@ def temp_db():
 
     Creates a temp file and yields the path.
     """
-    import tempfile
     import os
+    import tempfile
 
     fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(fd)

@@ -102,9 +102,9 @@ def test_capability_exists() -> None:
     for entry in data.get("entries", []):
         cap_id = entry.get("capability")
         if cap_id and cap_id != "unknown":
-            assert (
-                cap_id in valid_capabilities
-            ), f"Invalid capability reference: {cap_id}"
+            assert cap_id in valid_capabilities, (
+                f"Invalid capability reference: {cap_id}"
+            )
 
 
 def test_mutation_types_valid() -> None:

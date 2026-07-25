@@ -168,9 +168,9 @@ def test_no_false_positives_different_amounts(populated_db):
         conn.close()
 
         # Debit from one should equal credit from other
-        assert (
-            debit_txn["debit"] == credit_txn["credit"]
-        ), "Matched transactions should have equal debit/credit amounts"
+        assert debit_txn["debit"] == credit_txn["credit"], (
+            "Matched transactions should have equal debit/credit amounts"
+        )
 
 
 def test_no_same_account_matches(populated_db):
@@ -181,9 +181,9 @@ def test_no_same_account_matches(populated_db):
 
     # All matches should be between different accounts
     for m in matches:
-        assert (
-            m["debit_account_id"] != m["credit_account_id"]
-        ), "Should not match transactions from the same account"
+        assert m["debit_account_id"] != m["credit_account_id"], (
+            "Should not match transactions from the same account"
+        )
 
 
 # ============================================================

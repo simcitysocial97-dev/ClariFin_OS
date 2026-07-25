@@ -107,12 +107,12 @@ def test_replay_stability():
         assert len(result1) == len(result2), "Result counts differ"
 
         for r1, r2 in zip(result1, result2, strict=False):
-            assert (
-                r1["transaction_id"] == r2["transaction_id"]
-            ), "Transaction IDs differ"
-            assert (
-                r1["balance_paise"] == r2["balance_paise"]
-            ), f"Balances differ: {r1['balance_paise']} vs {r2['balance_paise']}"
+            assert r1["transaction_id"] == r2["transaction_id"], (
+                "Transaction IDs differ"
+            )
+            assert r1["balance_paise"] == r2["balance_paise"], (
+                f"Balances differ: {r1['balance_paise']} vs {r2['balance_paise']}"
+            )
 
         print("✅ PASS: Replay produces identical results")
         print(f"   Transactions: {len(result1)}")
@@ -402,9 +402,9 @@ def test_date_iso_migration():
         conn.close()
 
         for row in rows:
-            assert (
-                row["date_iso"] == "2025-01-15"
-            ), f"Wrong ISO date for {row['description']}: {row['date_iso']}"
+            assert row["date_iso"] == "2025-01-15", (
+                f"Wrong ISO date for {row['description']}: {row['date_iso']}"
+            )
 
         print("✅ PASS: All dates correctly converted to ISO format")
         for row in rows:
@@ -492,9 +492,9 @@ def test_account_scoped_determinism():
         rows = [dict(r) for r in cur.fetchall()]
 
         for row in rows:
-            assert (
-                row["account_id"] is not None and row["account_id"] != ""
-            ), f"Missing account_id for {row['description']}"
+            assert row["account_id"] is not None and row["account_id"] != "", (
+                f"Missing account_id for {row['description']}"
+            )
 
         # Verify account_id matches bank
         cur = conn.execute("""
@@ -503,26 +503,26 @@ def test_account_scoped_determinism():
             JOIN statements s ON t.statement_id = s.id
         """)
         for row in cur.fetchall():
-            assert (
-                row["account_id"] == row["bank"]
-            ), f"account_id mismatch: {row['account_id']} != {row['bank']}"
+            assert row["account_id"] == row["bank"], (
+                f"account_id mismatch: {row['account_id']} != {row['bank']}"
+            )
 
         # Verify balance engine returns correct transactions for AccountA
         result_a = compute_running_balance(db_path, "AccountA")
         descriptions_a = [r["description"] for r in result_a]
 
-        assert (
-            len(result_a) == 3
-        ), f"Expected 3 transactions for AccountA, got {len(result_a)}"
-        assert (
-            "B-Txn1" not in descriptions_a
-        ), "AccountB transaction leaked into AccountA results"
+        assert len(result_a) == 3, (
+            f"Expected 3 transactions for AccountA, got {len(result_a)}"
+        )
+        assert "B-Txn1" not in descriptions_a, (
+            "AccountB transaction leaked into AccountA results"
+        )
 
         # Verify balance engine returns correct transactions for AccountB
         result_b = compute_running_balance(db_path, "AccountB")
-        assert (
-            len(result_b) == 1
-        ), f"Expected 1 transaction for AccountB, got {len(result_b)}"
+        assert len(result_b) == 1, (
+            f"Expected 1 transaction for AccountB, got {len(result_b)}"
+        )
         assert result_b[0]["description"] == "B-Txn1"
 
         # Verify index exists and is account-scoped
@@ -531,9 +531,9 @@ def test_account_scoped_determinism():
         )
         index_sql = cur.fetchone()
         if index_sql:
-            assert (
-                "account_id" in index_sql[0]
-            ), f"Index not account-scoped: {index_sql[0]}"
+            assert "account_id" in index_sql[0], (
+                f"Index not account-scoped: {index_sql[0]}"
+            )
 
         conn.close()
 
@@ -578,9 +578,9 @@ def test_hash_signature_uniqueness():
         hashes = [r["hash_signature"] for r in rows]
         unique_hashes = set(hashes)
 
-        assert len(hashes) == len(
-            unique_hashes
-        ), f"Duplicate hashes found: {len(hashes)} total, {len(unique_hashes)} unique"
+        assert len(hashes) == len(unique_hashes), (
+            f"Duplicate hashes found: {len(hashes)} total, {len(unique_hashes)} unique"
+        )
 
         print("✅ PASS: All hash signatures are unique")
         print(f"   Total transactions: {len(rows)}")

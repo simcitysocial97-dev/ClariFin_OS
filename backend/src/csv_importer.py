@@ -252,11 +252,7 @@ class CSVImporter:
             r"^\d{4}[/-]\d{1,2}[/-]\d{1,2}$",  # YYYY-MM-DD
             r"^\d{1,2}\s+\w{3,9}\s+\d{2,4}$",  # DD Mon YYYY
         ]
-        for pattern in date_patterns:
-            if re.match(pattern, value_str):
-                return True
-
-        return False
+        return any(re.match(pattern, value_str) for pattern in date_patterns)
 
     def _is_numeric_value(self, value: Any) -> bool:
         """Check if a value is numeric (after cleaning)."""

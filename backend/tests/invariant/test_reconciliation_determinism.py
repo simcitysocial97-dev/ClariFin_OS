@@ -116,9 +116,9 @@ def test_deterministic_matching(populated_db):
         sorted(matches_2, key=lambda x: x["deterministic_key"]),
         strict=False,
     ):
-        assert (
-            m1["match_confidence"] == m2["match_confidence"]
-        ), f"Confidence should be identical for {m1['deterministic_key']}"
+        assert m1["match_confidence"] == m2["match_confidence"], (
+            f"Confidence should be identical for {m1['deterministic_key']}"
+        )
 
 
 def test_deterministic_key_consistency(populated_db):
@@ -348,9 +348,9 @@ def test_balance_unaffected_by_reconciliation(populated_db):
     balance_after = compute_account_balance(db_path, "Account_A")
 
     # Balances should be identical
-    assert (
-        balance_before["balance_paise"] == balance_after["balance_paise"]
-    ), "Balance should be unaffected by reconciliation"
+    assert balance_before["balance_paise"] == balance_after["balance_paise"], (
+        "Balance should be unaffected by reconciliation"
+    )
 
 
 def test_replay_determinism_maintained(populated_db):
@@ -426,9 +426,9 @@ def test_confidence_deterministic(populated_db):
 
     # All runs should produce identical confidence scores
     for i in range(1, len(all_confidences)):
-        assert (
-            all_confidences[0] == all_confidences[i]
-        ), f"Run {i} produced different confidence scores"
+        assert all_confidences[0] == all_confidences[i], (
+            f"Run {i} produced different confidence scores"
+        )
 
 
 def test_confidence_bounds(populated_db):
@@ -438,15 +438,15 @@ def test_confidence_bounds(populated_db):
     matches = find_potential_matches(db_path)
 
     for m in matches:
-        assert (
-            0.0 <= m["match_confidence"] <= 1.0
-        ), f"Confidence {m['match_confidence']} out of bounds for {m['deterministic_key']}"
+        assert 0.0 <= m["match_confidence"] <= 1.0, (
+            f"Confidence {m['match_confidence']} out of bounds for {m['deterministic_key']}"
+        )
 
         # Verify rounding to 4 decimals
         rounded = round(m["match_confidence"], 4)
-        assert (
-            m["match_confidence"] == rounded
-        ), "Confidence should be rounded to 4 decimals"
+        assert m["match_confidence"] == rounded, (
+            "Confidence should be rounded to 4 decimals"
+        )
 
 
 # ============================================================

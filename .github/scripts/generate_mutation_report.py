@@ -21,19 +21,14 @@ OUTPUT_DIR = Path("backend/tests/generated/mutation")
 
 def run_command(cmd: list[str]) -> tuple[str, int]:
     """Run a shell command and return output + exit code."""
-    result = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        cwd="backend"
-    )
+    result = subprocess.run(cmd, capture_output=True, text=True, cwd="backend")
     return result.stdout + result.stderr, result.returncode
 
 
 def get_mutation_results() -> dict:
     """Parse mutmut results into structured data."""
     output, _ = run_command(["mutmut", "results"])
-    
+
     results = {
         "killed": 0,
         "survived": 0,
@@ -41,7 +36,7 @@ def get_mutation_results() -> dict:
         "suspicious": 0,
         "skipped": 0,
     }
-    
+
     for line in output.splitlines():
         line = line.strip()
         if "Killed:" in line:
@@ -59,13 +54,11 @@ def get_mutation_results() -> dict:
                 results["timeout"] = int(line.split(":")[1].strip())
             except (ValueError, IndexError):
                 pass
-    
+
     total = results["killed"] + results["survived"]
     results["total"] = total
-    results["score"] = (
-        round(results["killed"] / total * 100, 1) if total > 0 else 0.0
-    )
-    
+    results["score"] = round(results["killed"] / total * 100, 1) if total > 0 else 0.0
+
     return results
 
 
@@ -78,9 +71,9 @@ def get_surviving_mutants() -> list[str]:
 def generate_report(results: dict, survivors: list[str]) -> str:
     """Generate markdown report."""
     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    
+
     score = results["score"]
-    
+
     # Determine status
     if score >= 80:
         status = "✅ PASSING"
@@ -88,7 +81,7 @@ def generate_report(results: dict, survivors: list[str]) -> str:
         status = "⚠️ BELOW TARGET"
     else:
         status = "❌ FAILING"
-    
+
     report = f"""# Mutation Testing Report
 
 **Generated:** {timestamp}  
@@ -101,10 +94,10 @@ def generate_report(results: dict, survivors: list[str]) -> str:
 
 | Metric | Count |
 |--------|-------|
-| Total Mutants | {results['total']} |
-| Killed | {results['killed']} |
-| Survived | {results['survived']} |
-| Timeout | {results['timeout']} |
+| Total Mutants | {results["total"]} |
+| Killed | {results["killed"]} |
+| Survived | {results["survived"]} |
+| Timeout | {results["timeout"]} |
 | Score | {score}% |
 
 ---
@@ -124,7 +117,7 @@ These mutants were NOT killed by your tests.
 Each one represents a gap in test effectiveness.
 
 """
-    
+
     if survivors:
         report += "```\n"
         report += "\n".join(survivors[:50])  # Limit to 50
@@ -133,50 +126,50 @@ Each one represents a gap in test effectiveness.
         report += "\n```\n"
     else:
         report += "_No surviving mutants! All mutants killed._\n"
-    
+
     report += """
 ---
 
 ## Action Items
 
 """
-    
+
     if results["survived"] > 0:
-        report += f"""- [ ] Review {results['survived']} surviving mutants above
+        report += f"""- [ ] Review {results["survived"]} surviving mutants above
 - [ ] Add targeted tests for each surviving mutant
 - [ ] Re-run mutation testing after adding tests
 """
     else:
         report += "- ✅ No action items — all mutants killed\n"
-    
+
     return report
 
 
 def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    
+
     print("Gathering mutation results...")
     results = get_mutation_results()
-    
+
     print("Getting surviving mutants...")
     survivors = get_surviving_mutants()
-    
+
     print("Generating report...")
     report = generate_report(results, survivors)
-    
+
     # Save markdown report
     report_path = OUTPUT_DIR / "mutation-report.md"
     report_path.write_text(report)
     print(f"Report saved: {report_path}")
-    
+
     # Save JSON for downstream processing
     json_path = OUTPUT_DIR / "mutation-summary.json"
     json_path.write_text(json.dumps(results, indent=2))
     print(f"JSON saved: {json_path}")
-    
+
     # Print summary
     print(f"\nMutation Score: {results['score']}%")
-    
+
     return 0
 
 

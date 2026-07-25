@@ -582,9 +582,8 @@ class ValidationGraph:
             if affected.get("property_tests"):
                 if affected["property_tests"]:
                     pipeline.append("property")
-            if affected.get("invariants"):
-                if affected["invariants"]:
-                    pipeline.append("golden")
+            if affected.get("invariants") and affected["invariants"]:
+                pipeline.append("golden")
 
         return pipeline
 

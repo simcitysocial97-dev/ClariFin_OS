@@ -1,5 +1,6 @@
-
-import yaml, os, sys
+import yaml
+import os
+import sys
 
 # Read mutation workflow
 with open(".github/workflows/mutation.yml") as f:

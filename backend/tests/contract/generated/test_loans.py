@@ -8,7 +8,6 @@
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -27,7 +26,6 @@ def test_get__api_loans_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -58,7 +56,6 @@ def test_post__api_loans_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -80,7 +77,6 @@ def test_get__api_loans_loan_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -111,7 +107,6 @@ def test_put__api_loans_loan_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -133,7 +128,6 @@ def test_delete__api_loans_loan_id_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -155,7 +149,6 @@ def test_get__api_loans_loan_id_schedule_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -188,7 +181,6 @@ def test_post__api_loans_loan_id_prepayment_simulation_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -210,7 +202,6 @@ def test_post__api_loans_loan_id_foreclosure_simulation_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -243,7 +234,6 @@ def test_post__api_loans_loan_id_rate_change_simulation_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -274,7 +264,6 @@ def test_post__api_loans_loan_id_payments_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -293,7 +282,6 @@ def test_get__api_loans_analysis_priority_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -326,7 +314,6 @@ def test_post__api_loans_loan_id_analysis_prepayment_vs_foreclosure_contract(cli
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -357,7 +344,6 @@ def test_post__api_loans_analysis_surplus_allocation_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers loans
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

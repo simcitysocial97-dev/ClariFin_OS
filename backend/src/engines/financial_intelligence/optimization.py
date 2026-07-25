@@ -5,6 +5,7 @@ All interest rates are in basis points (1% = 100 bps).
 No database access. No services. Pure calculation only.
 """
 
+import contextlib
 from decimal import Decimal
 from typing import Any, Literal
 
@@ -408,7 +409,9 @@ def optimize_goal_prioritization(
             (
                 0
                 if g.get("goal_type") == "emergency_fund"
-                else 1 if g.get("goal_type") == "debt_payoff" else 2
+                else 1
+                if g.get("goal_type") == "debt_payoff"
+                else 2
             ),
             int(g.get("priority", 5) or 5),  # Lower number = higher priority
         ),
@@ -710,10 +713,8 @@ def generate_optimization_plan(
     if monthly_surplus_paise > 0:
         confidence = Decimal("0.7")  # Base confidence with data
     if forecast.get("confidence"):
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             confidence = Decimal(str(forecast["confidence"]))
-        except (ValueError, TypeError):
-            pass
 
     return {
         "recommended_actions": recommended_actions,

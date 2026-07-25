@@ -8,7 +8,6 @@
 # To regenerate: python tools/generate_contract_tests.py --routers analytics
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -30,7 +29,6 @@ def test_get__api_v1_accounts_account_id_analytics_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers analytics
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

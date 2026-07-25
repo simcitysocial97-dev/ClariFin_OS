@@ -17,6 +17,7 @@ Usage:
       db.insert_transactions(stmt_id, transactions)
 """
 
+import contextlib
 import sqlite3
 import types
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
@@ -342,12 +343,10 @@ class FinanceDB:
                 pass  # Migration already done or no data
 
             # Phase 2A.1: Add deterministic indexes
-            try:
+            with contextlib.suppress(Exception):
                 conn.execute(
                     "CREATE INDEX IF NOT EXISTS idx_txn_date_iso ON transactions(date_iso)"
                 )
-            except Exception:
-                pass
 
             # Phase 2A.2: Account-scoped determinism
             # Backfill account_id from statements.bank for existing transactions
@@ -390,10 +389,8 @@ class FinanceDB:
                 "CREATE INDEX IF NOT EXISTS idx_loan_rate_changes_loan_date ON loan_rate_changes(loan_id, change_date)",
             ]
             for idx_stmt in _loan_indexes:
-                try:
+                with contextlib.suppress(Exception):
                     conn.execute(idx_stmt)
-                except Exception:
-                    pass
 
             # Phase 2A.1: Add immutability triggers
             try:

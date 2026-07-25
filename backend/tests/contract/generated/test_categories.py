@@ -8,6 +8,7 @@
 # To regenerate: python tools/generate_contract_tests.py --routers categories
 
 import pytest
+
 from tests.contract.schema_validators import validate_response_schema
 
 
@@ -31,7 +32,6 @@ def test_get__api_cashflow_categories_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers categories
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

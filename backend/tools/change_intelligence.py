@@ -621,16 +621,14 @@ def main() -> None:
     for file_path in changed_files:
         lookup_path = file_path.replace("backend/", "")
         for func in mutation_map.get("functions", []):
-            if func.get("module") == lookup_path or lookup_path.endswith(
-                func.get("module", "")
-            ):
-                if func.get("purity") == "PURE":
-                    candidate_name = (
-                        f"{func.get('module', '')}:{func.get('function', '')}"
-                    )
-                    affected_mutation_candidates.setdefault(file_path, []).append(
-                        candidate_name
-                    )
+            if (
+                func.get("module") == lookup_path
+                or lookup_path.endswith(func.get("module", ""))
+            ) and func.get("purity") == "PURE":
+                candidate_name = f"{func.get('module', '')}:{func.get('function', '')}"
+                affected_mutation_candidates.setdefault(file_path, []).append(
+                    candidate_name
+                )
 
     # Build mutation readiness per capability
     mutation_readiness_by_cap: dict[str, str] = {}

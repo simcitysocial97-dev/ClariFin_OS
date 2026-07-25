@@ -1,5 +1,5 @@
-
-import yaml, os, sys
+import os
+import sys
 
 workflows = [
     ".github/workflows/quality.yml",
@@ -22,9 +22,10 @@ for wf in workflows:
     lines = content.splitlines()
     for i, line in enumerate(lines, 1):
         import re
+
         matches = re.findall(r"backend/[\w/._-]+", line)
         for match in matches:
-            path = match.replace("\"", "").replace("\"", "")
+            path = match.replace('"', "").replace('"', "")
             if "." in path or "$" in path:
                 continue
             if "." in os.path.basename(path) or path.endswith("/"):

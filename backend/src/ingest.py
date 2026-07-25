@@ -28,6 +28,7 @@ Example output:
     Done: 1 imported, 1 skipped, 82 transactions total
 """
 
+import contextlib
 import sys
 from collections import Counter
 from pathlib import Path
@@ -198,10 +199,7 @@ def ingest_pdf(
                 if best_diff < 1.0:
                     status = "exact_match"
                     symbol = "✅"
-                elif best_diff < 100.0:
-                    status = "close_match"
-                    symbol = "⚠️"
-                elif best_diff < 500.0:
+                elif best_diff < 100.0 or best_diff < 500.0:
                     status = "close_match"
                     symbol = "⚠️"
                 else:
@@ -253,10 +251,8 @@ def ingest_pdf(
                 import traceback
 
                 traceback.print_exc()
-            try:
+            with contextlib.suppress(Exception):
                 stmt_repo.update_validation_status(stmt_id, "error", 0.0)
-            except Exception:
-                pass
 
     except Exception as e:
         result["status"] = "error"

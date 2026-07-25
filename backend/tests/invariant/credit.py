@@ -23,9 +23,8 @@ def assert_credit_invariants(card_data: dict[str, Any]) -> None:
     assert_money_invariants(card_data)
 
     # Limit must be positive
-    if "credit_limit_paise" in card_data:
-        if card_data["credit_limit_paise"] < 0:
-            raise AssertionError("credit_limit_paise cannot be negative")
+    if "credit_limit_paise" in card_data and card_data["credit_limit_paise"] < 0:
+        raise AssertionError("credit_limit_paise cannot be negative")
 
     # Outstanding cannot exceed limit
     if "credit_limit_paise" in card_data and "outstanding_paise" in card_data:

@@ -8,6 +8,7 @@
 # To regenerate: python tools/generate_contract_tests.py --routers dashboard
 
 import pytest
+
 from tests.contract.schema_validators import validate_response_schema
 
 

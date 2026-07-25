@@ -15,6 +15,7 @@ Architecture:
 Supports: HDFC, ICICI, Axis, SBI, IDFC First, IndusInd
 """
 
+import contextlib
 import json
 import re
 import sys
@@ -134,43 +135,35 @@ def standardize_date(date_str: str) -> str | None:
     # Try DD/MM/YYYY or DD-MM-YYYY
     m = re.match(r"(\d{2})[/\-](\d{2})[/\-](\d{4})", date_str)
     if m:
-        try:
+        with contextlib.suppress(ValueError):
             parsed_date = datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
-        except ValueError:
-            pass
 
     # Try DD/Mon/YYYY (e.g., 03/Sep/2025)
     if not parsed_date:
         m = re.match(r"(\d{2})/(\w{3})/(\d{4})", date_str)
         if m and m.group(2) in months3:
-            try:
+            with contextlib.suppress(ValueError):
                 parsed_date = datetime(
                     int(m.group(3)), months3[m.group(2)], int(m.group(1))
                 )
-            except ValueError:
-                pass
 
     # Try DD Mon YYYY (e.g., 06 Nov 2025)
     if not parsed_date:
         m = re.match(r"(\d{1,2})\s+(\w{3})\s+(\d{4})", date_str)
         if m and m.group(2) in months3:
-            try:
+            with contextlib.suppress(ValueError):
                 parsed_date = datetime(
                     int(m.group(3)), months3[m.group(2)], int(m.group(1))
                 )
-            except ValueError:
-                pass
 
     # Try Month DD, YYYY (e.g., January 19, 2025)
     if not parsed_date:
         m = re.match(r"(\w+)\s+(\d{1,2}),?\s+(\d{4})", date_str)
         if m and m.group(1) in months_full:
-            try:
+            with contextlib.suppress(ValueError):
                 parsed_date = datetime(
                     int(m.group(3)), months_full[m.group(1)], int(m.group(2))
                 )
-            except ValueError:
-                pass
 
     if parsed_date:
         return parsed_date.strftime("%d/%m/%Y")
@@ -282,10 +275,8 @@ def calculate_bill_cycle(statement_date: str) -> dict[str, str | None]:
     # Try DD/MM/YYYY or DD-MM-YYYY
     m = re.match(r"(\d{2})[/\-](\d{2})[/\-](\d{4})", statement_date)
     if m:
-        try:
+        with contextlib.suppress(ValueError):
             end_date = datetime(int(m.group(3)), int(m.group(2)), int(m.group(1)))
-        except ValueError:
-            pass
 
     # Try DD Mon YY(YY)
     if not end_date:
@@ -293,32 +284,26 @@ def calculate_bill_cycle(statement_date: str) -> dict[str, str | None]:
         if m and m.group(2) in months3:
             year_str = m.group(3)
             year = int("20" + year_str) if len(year_str) == 2 else int(year_str)
-            try:
+            with contextlib.suppress(ValueError):
                 end_date = datetime(year, months3[m.group(2)], int(m.group(1)))
-            except ValueError:
-                pass
 
     # Try DD/Mon/YYYY
     if not end_date:
         m = re.match(r"(\d{2})/(\w{3})/(\d{4})", statement_date)
         if m and m.group(2) in months3:
-            try:
+            with contextlib.suppress(ValueError):
                 end_date = datetime(
                     int(m.group(3)), months3[m.group(2)], int(m.group(1))
                 )
-            except ValueError:
-                pass
 
     # Try Month DD, YYYY
     if not end_date:
         m = re.match(r"(\w+)\s+(\d{1,2}),?\s+(\d{4})", statement_date)
         if m and m.group(1) in months_full:
-            try:
+            with contextlib.suppress(ValueError):
                 end_date = datetime(
                     int(m.group(3)), months_full[m.group(1)], int(m.group(2))
                 )
-            except ValueError:
-                pass
 
     if not end_date:
         return {"bill_cycle_start": None, "bill_cycle_end": None}

@@ -9,8 +9,6 @@ Validates interactions between capabilities:
 
 from __future__ import annotations
 
-import pytest
-
 from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 from src.services.cashflow_service import CashflowService
 from src.services.dashboard_service import DashboardService
@@ -28,9 +26,7 @@ class TestCrossCapabilityIntegration:
         # Pipeline should complete without crashing
         assert summary["statement_id"] == 1
         # Either reconciliation succeeded or error was recorded
-        assert (
-            "reconciliation" in summary or True
-        )  # reconciliation is implicit in pipeline
+        assert True  # reconciliation is implicit in pipeline
 
     def test_orchestrator_all_stages_complete(self, temp_db: str) -> None:
         """Test orchestrator completes all 6 stages."""

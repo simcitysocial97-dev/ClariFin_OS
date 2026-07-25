@@ -33,12 +33,12 @@ def test_cif_generates_reports() -> None:
     assert result.returncode == 0, f"CIF failed: {result.stderr}"
 
     # Check reports exist
-    assert (
-        GENERATED_DIR / "change-report.md"
-    ).exists(), "change-report.md not generated"
-    assert (
-        GENERATED_DIR / "change-report.json"
-    ).exists(), "change-report.json not generated"
+    assert (GENERATED_DIR / "change-report.md").exists(), (
+        "change-report.md not generated"
+    )
+    assert (GENERATED_DIR / "change-report.json").exists(), (
+        "change-report.json not generated"
+    )
     assert (GENERATED_DIR / "test-plan.md").exists(), "test-plan.md not generated"
 
 
@@ -214,9 +214,9 @@ def test_unknown_file_handling() -> None:
     # Find the random file entry
     random_entry = next((c for c in data["changes"] if "random" in c["file"]), None)
     if random_entry:
-        assert (
-            random_entry["confidence"] == "LOW"
-        ), "Unknown files should have LOW confidence"
-        assert (
-            "UNKNOWN" in random_entry["capabilities"]
-        ), "Unknown files should have UNKNOWN capability"
+        assert random_entry["confidence"] == "LOW", (
+            "Unknown files should have LOW confidence"
+        )
+        assert "UNKNOWN" in random_entry["capabilities"], (
+            "Unknown files should have UNKNOWN capability"
+        )

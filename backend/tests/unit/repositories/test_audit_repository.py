@@ -186,9 +186,9 @@ def test_insert_audit_log_invalid_fk(audit_repo, db_with_reconciliation):
         actor="test_user",
     )
 
-    assert (
-        log_id is None
-    ), "insert_audit_log should return None when FK constraint fails"
+    assert log_id is None, (
+        "insert_audit_log should return None when FK constraint fails"
+    )
 
 
 def test_insert_audit_log_with_all_fields(audit_repo, db_with_reconciliation):

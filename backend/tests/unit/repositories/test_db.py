@@ -116,9 +116,9 @@ def test_insert_transactions_uses_paise():
         conn.close()
 
         assert row is not None, "Transaction not found"
-        assert (
-            row["amount_paise"] == 123456
-        ), f"amount_paise should be 123456, got {row['amount_paise']}"
+        assert row["amount_paise"] == 123456, (
+            f"amount_paise should be 123456, got {row['amount_paise']}"
+        )
         # debit/credit are GENERATED ALWAYS AS columns, computed from amount_paise and type
         assert row["debit"] == 123456, f"debit should be 123456, got {row['debit']}"
         assert row["credit"] == 0, f"credit should be 0, got {row['credit']}"
@@ -156,9 +156,9 @@ def test_insert_csv_transactions_uses_paise():
         conn.close()
 
         assert row is not None, "Transaction not found"
-        assert (
-            row["amount_paise"] == 99999
-        ), f"amount_paise should be 99999, got {row['amount_paise']}"
+        assert row["amount_paise"] == 99999, (
+            f"amount_paise should be 99999, got {row['amount_paise']}"
+        )
         assert row["debit"] == 0, f"debit should be 0, got {row['debit']}"
         assert row["credit"] == 99999, f"credit should be 99999, got {row['credit']}"
 

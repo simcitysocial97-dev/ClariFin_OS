@@ -8,7 +8,6 @@
 # To regenerate: python tools/generate_contract_tests.py --routers statements
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -27,7 +26,6 @@ def test_get__api_statements_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers statements
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -49,7 +47,6 @@ def test_get__api_statements_statement_id_validate_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers statements
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract
@@ -71,7 +68,6 @@ def test_get__api_v1_credit_cards_card_id_statements_contract(client):
 # To regenerate: python tools/generate_contract_tests.py --routers statements
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
 
 
 @pytest.mark.contract

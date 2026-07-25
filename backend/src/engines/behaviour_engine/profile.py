@@ -167,13 +167,10 @@ def _is_debt_dependent(
         return True
 
     # Recurring debt extraction: high revolver + low savings
-    if (
+    return bool(
         credit_revolver_ratio >= DEBT_DEPENDENT_MAX_REVOLVER_FOR_POSITIVE
         and savings_rate < DEBT_DEPENDENT_SAVINGS_THRESHOLD
-    ):
-        return True
-
-    return False
+    )
 
 
 def _is_saver(
@@ -197,10 +194,7 @@ def _is_saver(
         return False
 
     # Should pay credit in full (low revolver)
-    if credit_revolver_ratio >= DEBT_OPTIMIZER_MAX_REVOLVER_RATIO:
-        return False
-
-    return True
+    return not credit_revolver_ratio >= DEBT_OPTIMIZER_MAX_REVOLVER_RATIO
 
 
 def _is_debt_optimizer(
@@ -223,10 +217,7 @@ def _is_debt_optimizer(
         return False  # Revolver too high - not paying in full
 
     # Must have positive savings
-    if savings_rate <= Decimal("0"):
-        return False
-
-    return True
+    return not savings_rate <= Decimal("0")
 
 
 def _is_spender(
@@ -251,10 +242,7 @@ def _is_spender(
         return True
 
     # Significant lifestyle creep
-    if lifestyle_creep_index >= SPENDER_MIN_LIFESTYLE_CREEP:
-        return True
-
-    return False
+    return lifestyle_creep_index >= SPENDER_MIN_LIFESTYLE_CREEP
 
 
 # ============================================================
@@ -313,9 +301,9 @@ def _calculate_confidence(
     if profile == "SAVER" and savings_rate >= SAVER_STRONG_SAVINGS_THRESHOLD:
         score += CONFIDENCE_STRONG_CONDITION_BONUS
     elif profile == "DEBT_DEPENDENT":
-        if borrowed_lifestyle_ratio >= Decimal("0.30"):
-            score += CONFIDENCE_STRONG_CONDITION_BONUS
-        elif credit_revolver_ratio >= Decimal("0.60"):
+        if borrowed_lifestyle_ratio >= Decimal(
+            "0.30"
+        ) or credit_revolver_ratio >= Decimal("0.60"):
             score += CONFIDENCE_STRONG_CONDITION_BONUS
     elif profile == "SPENDER":
         if borrowed_lifestyle_ratio > Decimal("0.30"):
