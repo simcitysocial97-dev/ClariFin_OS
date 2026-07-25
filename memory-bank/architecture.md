@@ -4,22 +4,20 @@
 
 ```
 backend/src/
-├── 182 .py files organized into 9 layers
 ├── app/           # FastAPI application setup
-├── audits/        # Audit-related code
 ├── common/        # Shared utilities
-├── core/          # Core domain logic
-├── data/          # Data access layer
-├── engines/       # Pure computation engines (12+ packages)
+├── core/          # Domain models and services
+├── engines/       # Pure computation engines (15+ packages)
 ├── extraction/    # PDF/table extraction
-├── models/        # Domain models (19 files)
+├── models/        # Domain models
 ├── reports/       # Report generation
-├── repositories/  # SQL repositories (26 files)
-├── routers/       # FastAPI routers (25 files)
-├── services/      # Orchestration services (17 files)
+├── repositories/  # SQL access layer (extends BaseRepository)
+├── routers/       # HTTP entry points (FastAPI routers)
+├── services/      # Orchestration layer
 ├── structural/    # Structural helpers
 ├── utils/         # Utilities
-└── venv/ + requirements.txt
+├── api.py         # FastAPI app entry point
+└── db.py          # SQLite manager (FinanceDB)
 ```
 
 ## Application Layers
@@ -30,12 +28,12 @@ backend/src/
 Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ Repository (SQL) ─→ SQLite
 ```
 
-| Layer | File Count | Path | Key Contract |
-|-------|------------|------|--------------|
-| Routers | 25 | `src/routers/` | HTTP validation + delegation only |
-| Services | 17 | `src/services/` | Orchestrate only, no raw SQL |
-| Engines | 10+ | `src/engines/` | Pure functions, no DB access |
-| Repositories | 26 | `src/repositories/` | SQL only, extends BaseRepository |
+| Layer | Path | Key Contract |
+|-------|------|--------------|
+| Routers | `src/routers/` | HTTP validation + delegation only |
+| Services | `src/services/` | Orchestrate only, no raw SQL |
+| Engines | `src/engines/` | Pure functions, no DB access |
+| Repositories | `src/repositories/` | SQL only, extends BaseRepository |
 
 ### Allowed/Forbidden Imports
 
@@ -48,7 +46,7 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 
 ## Entry Point
 
-- `backend/src/api.py` — FastAPI app with 22 routers registered
+- `backend/src/api.py` — FastAPI app with routers registered
 - `backend/src/db.py` — FinanceDB SQLite manager with schema creation
 
 ## Key Architectural Rules
@@ -63,6 +61,33 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 | QEA-6 | Confidence: INTEGER bps |
 | QEA-7 | Scope: accounts.owner_id/household_id is source of truth |
 
+## Repository Boundary Rule
+
+**Only `src/repositories/` may import `FinanceDB`.**
+
+Violations:
+- `sqlite3.connect()` calls inside engines (purity violation)
+
+## Test Infrastructure (Decoupled from Memory Bank)
+
+- Capability registry: `backend/tests/generated/capability-registry.yaml`
+- Test suites:
+  - `tests/unit/` — Unit tests
+  - `tests/invariant/` — Invariant tests
+  - `tests/property/` — Property-based tests
+  - `tests/golden/` — Golden dataset tests
+
+## Validation Workflow
+
+```bash
+# Backend
+cd backend && ./venv/bin/python3 -m ruff check .
+cd backend && ./venv/bin/python3 -m mypy .
+
+# Frontend
+cd frontend && npx tsc --noEmit
+```
+
 ## Known Duplicate Code (Technical Debt)
 
 | Component | Duplicate | Status |
@@ -70,7 +95,3 @@ Router (HTTP) ─→ Service (orchestration) ─→ Engine (pure logic) ─→ R
 | `routers/behavior.py` | `routers/behaviour.py` | US/UK spelling |
 | `services/behavior_service.py` | `services/behaviour_service.py` | Legacy wrapper |
 | `engines/behavior_engine.py` | `engines/behaviour_engine/` | Deprecated vs canonical |
-
-## Engine Purity Violations
-
-Some engines call `sqlite3.connect()` directly instead of accepting data via parameters, violating the Repository Boundary Rule.
