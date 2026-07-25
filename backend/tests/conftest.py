@@ -73,6 +73,12 @@ def test_client(finance_db: Any) -> Any:
 
 
 @pytest.fixture
+def client(test_client: Any) -> Any:
+    """Alias for test_client fixture for contract and e2e tests."""
+    return test_client
+
+
+@pytest.fixture
 def temp_db():
     """Temporary database fixture for testing.
 

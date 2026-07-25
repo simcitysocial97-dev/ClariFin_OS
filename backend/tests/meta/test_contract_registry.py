@@ -187,7 +187,7 @@ def test_snapshot_normalization_works() -> None:
             sys.executable, "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tests/contracts')
+sys.path.insert(0, 'backend/tests/contract')
 from snapshot_normalizer import normalize_response
 
 # Test timestamp normalization
@@ -214,7 +214,7 @@ print("PASS")
 def test_contract_tests_collectable() -> None:
     """Contract tests must be discoverable by pytest."""
     result = subprocess.run(
-        ["pytest", "tests/contracts", "--collect-only", "-q"],
+        ["pytest", "tests/contract", "--collect-only", "-q"],
         cwd=BACKEND_DIR,
         capture_output=True,
         text=True,
@@ -227,7 +227,7 @@ def test_contract_tests_collectable() -> None:
 def test_contract_tests_run() -> None:
     """Contract tests must execute without import errors."""
     result = subprocess.run(
-        ["pytest", "tests/contracts/routers/test_accounts.py", "-v", "--tb=short"],
+        ["pytest", "tests/contract/routers/test_accounts.py", "-v", "--tb=short"],
         cwd=BACKEND_DIR,
         capture_output=True,
         text=True,

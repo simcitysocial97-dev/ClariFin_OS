@@ -1,22 +1,22 @@
 # Validation Strength Report
 
-Generated: 2026-07-24T04:33:51.562534+00:00
+Generated: 2026-07-25T03:42:36.705591+00:00
 
 ## Strength Classification
 
 | Capability | Criticality | Strength | Score | Evidence | Gaps |
 |------------|-------------|----------|-------|----------|------|
-| Account Management | high | Critical | 15 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests, No performance baseline |
-| Credit Cards | high | Critical | 15 | property(1), golden(3), smoke(1) | No contract tests, No invariant tests, No performance baseline |
-| Debt Management | high | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
-| Financial Health | high | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
-| Household Cashflow | high | Critical | 18 | property(1), golden(4), smoke(1), invariants(1) | No contract tests, No performance baseline |
-| Reconciliation | high | Critical | 15 | property(2), golden(2), smoke(1) | No contract tests, No invariant tests, No performance baseline |
-| Transaction Intelligence | high | Critical | 15 | property(2), golden(3), smoke(1) | No contract tests, No invariant tests, No performance baseline |
-| Financial Events | medium | Strong | 10 | golden(2), smoke(1) | No property tests, No contract tests, No invariant tests, No performance baseline |
-| Forecasting | medium | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
-| Pattern Analysis | medium | Critical | 15 | property(1), golden(2), smoke(1) | No contract tests, No invariant tests, No performance baseline |
-| Recommendations | medium | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
+| Account Management | high | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Credit Cards | high | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Debt Management | high | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Financial Health | high | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Household Cashflow | high | Moderate | 7 | golden(4) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Reconciliation | high | Moderate | 7 | golden(2) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Transaction Intelligence | high | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Financial Events | medium | Moderate | 7 | golden(2) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Forecasting | medium | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Pattern Analysis | medium | Moderate | 7 | golden(2) | No property tests, No contract tests, No invariant tests, No performance baseline |
+| Recommendations | medium | Moderate | 7 | golden(3) | No property tests, No contract tests, No invariant tests, No performance baseline |
 
 ## Scoring Legend
 

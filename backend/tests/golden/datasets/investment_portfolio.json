@@ -1,0 +1,71 @@
+{
+  "scenario": "investment_portfolio",
+  "description": "Household with diversified investment portfolio",
+  "household": {
+    "members": 2,
+    "monthly_income_paise": 3000000,
+    "monthly_expenses_paise": 1800000,
+    "monthly_surplus_paise": 1200000
+  },
+  "accounts": [
+    {
+      "id": "Primary_SB",
+      "bank": "HDFC",
+      "type": "savings",
+      "balance_paise": 5000000
+    },
+    {
+      "id": "Investment_Account",
+      "bank": "Zerodha",
+      "type": "investment",
+      "balance_paise": 15000000
+    }
+  ],
+  "investments": [
+    {
+      "symbol": "INF174K01AA4",
+      "name": "Axis Bluechip Fund",
+      "quantity": 100,
+      "price_paise": 25000,
+      "value_paise": 2500000,
+      "type": "mutual_fund"
+    },
+    {
+      "symbol": "INE002A01018",
+      "name": "Reliance Industries",
+      "quantity": 50,
+      "price_paise": 150000,
+      "value_paise": 7500000,
+      "type": "stock"
+    },
+    {
+      "symbol": "INF194A01014",
+      "name": "HDFC Hybrid Equity Fund",
+      "quantity": 200,
+      "price_paise": 12500,
+      "value_paise": 2500000,
+      "type": "mutual_fund"
+    },
+    {
+      "symbol": "INE466B01015",
+      "name": "Uti Hybrid Equity Fund",
+      "quantity": 150,
+      "price_paise": 8000,
+      "value_paise": 1200000,
+      "type": "mutual_fund"
+    },
+    {
+      "symbol": "GOLD_ETF",
+      "name": "Gold ETF",
+      "quantity": 100,
+      "price_paise": 50000,
+      "value_paise": 5000000,
+      "type": "etf"
+    }
+  ],
+  "expected_portfolio": {
+    "total_value_paise": 18700000,
+    "total_holdings": 5,
+    "diversification_score": 0.85
+  }
+}

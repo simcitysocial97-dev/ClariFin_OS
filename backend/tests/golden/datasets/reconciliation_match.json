@@ -1,0 +1,62 @@
+{
+  "scenario": "reconciliation_match",
+  "description": "Two accounts with matching debit/credit transactions for reconciliation",
+  "accounts": [
+    {
+      "id": "Account_A",
+      "bank": "TestBank",
+      "type": "savings",
+      "balance_paise": 50000
+    },
+    {
+      "id": "Account_B",
+      "bank": "TestBank",
+      "type": "savings",
+      "balance_paise": 50000
+    }
+  ],
+  "transactions": [
+    {
+      "account_id": "Account_A",
+      "date_iso": "2025-01-01",
+      "description": "Transfer to B",
+      "amount_paise": 100000,
+      "type": "debit"
+    },
+    {
+      "account_id": "Account_A",
+      "date_iso": "2025-01-05",
+      "description": "Transfer to B late",
+      "amount_paise": 200000,
+      "type": "debit"
+    },
+    {
+      "account_id": "Account_B",
+      "date_iso": "2025-01-01",
+      "description": "Transfer from A",
+      "amount_paise": 100000,
+      "type": "credit"
+    },
+    {
+      "account_id": "Account_B",
+      "date_iso": "2025-01-07",
+      "description": "Transfer from A late",
+      "amount_paise": 200000,
+      "type": "credit"
+    }
+  ],
+  "expected_matches": [
+    {
+      "debit_txn_id": 1,
+      "credit_txn_id": 3,
+      "amount_paise": 100000,
+      "confidence_bps": 9500
+    },
+    {
+      "debit_txn_id": 2,
+      "credit_txn_id": 4,
+      "amount_paise": 200000,
+      "confidence_bps": 9000
+    }
+  ]
+}

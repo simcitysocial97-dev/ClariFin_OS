@@ -1,6 +1,6 @@
 # Mutation Readiness Report
 
-Generated: 2026-07-24T04:33:50.726225+00:00
+Generated: 2026-07-25T03:42:36.092069+00:00
 
 ## Engine Readiness Status
 
@@ -33,6 +33,7 @@ Generated: 2026-07-24T04:33:50.726225+00:00
 | `src/engines/account_engine/lifecycle.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/account_engine/metrics.py` | 1 | 0 | Ready | HIGH |
 | `src/engines/recommendation_engine/recommendations.py` | 5 | 0 | Ready | HIGH |
+| `src/engines/behaviour_engine/core.py` | 0 | 0 | Partial | UNKNOWN |
 | `src/engines/behaviour_engine/income.py` | 5 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/cashflow.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/temporal.py` | 6 | 0 | Ready | MEDIUM |
