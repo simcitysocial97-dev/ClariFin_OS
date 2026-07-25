@@ -49,9 +49,8 @@ jobs:
       - name: Ruff — lint check
         working-directory: backend
         run: |
-          ruff check . \
-            --output-format=github \
-            --statistics
+          ruff check . --output-format=github
+          ruff check . --statistics
 
       - name: Black — format check
         working-directory: backend
