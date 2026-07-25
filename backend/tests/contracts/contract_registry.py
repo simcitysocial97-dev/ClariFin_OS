@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-GENERATED_DIR = PROJECT_ROOT / "memory-bank" / "generated"
+GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 
 
 def load_registry() -> dict[str, Any]:

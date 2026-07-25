@@ -60,6 +60,8 @@ def test_client(finance_db: Any) -> Any:
     """Create a FastAPI TestClient with an isolated database.
 
     Uses the finance_db fixture for proper isolation.
+    Uses raise_server_exceptions=False so that 500 errors are returned
+    as HTTP responses rather than raising in the test process.
     """
     from fastapi.testclient import TestClient
 
@@ -67,7 +69,21 @@ def test_client(finance_db: Any) -> Any:
 
     # Override the db_path in the app
     app.state.db_path = str(finance_db.db_path)
-    return TestClient(app)
+    return TestClient(app, raise_server_exceptions=False)
+
+
+@pytest.fixture
+def temp_db():
+    """Temporary database fixture for testing.
+
+    Creates a temp file and yields the path.
+    """
+    import tempfile
+    import os
+    fd, db_path = tempfile.mkstemp(suffix=".db")
+    os.close(fd)
+    yield db_path
+    os.unlink(db_path)
 
 
 # ============================================================================

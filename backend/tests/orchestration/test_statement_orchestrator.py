@@ -14,15 +14,6 @@ import pytest
 from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 
 
-@pytest.fixture
-def temp_db():
-    """Create a temporary database for testing."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    yield db_path
-    os.unlink(db_path)
-
-
 class TestStatementProcessingOrchestrator:
     """Tests for StatementProcessingOrchestrator."""
 

@@ -9,26 +9,12 @@ Validates interactions between capabilities:
 
 from __future__ import annotations
 
-import os
-import tempfile
-
 import pytest
 
-from src.db import FinanceDB
 from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 from src.services.cashflow_service import CashflowService
 from src.services.dashboard_service import DashboardService
 from src.services.reconciliation_service import ReconciliationService
-
-
-@pytest.fixture
-def temp_db():
-    """Create a temporary database for testing."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    FinanceDB(db_path=db_path)
-    yield db_path
-    os.unlink(db_path)
 
 
 class TestCrossCapabilityIntegration:
