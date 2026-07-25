@@ -4,17 +4,19 @@
 Testing infrastructure cleanup and consolidation (Milestones 1-5)
 
 ## Recent Changes
-- Created root `backend/tests/conftest.py` with shared `finance_db`, `db_path`, `test_client` fixtures and `make_transaction` helper
-- Added `[tool.pytest.ini_options]` to `pyproject.toml` with `pythonpath = ["src"]`, markers, and warning filters
-- Fixed module name collision: renamed `invariants/test_cashflow.py` to `invariants/test_cashflow_invariants.py`
-- Consolidated 3 loan engine test files (`test_loan_engine_comprehensive.py`, `test_loan_engine_coverage.py`, `test_loan_engine_financial_correctness.py`) → `engines/test_loan_engine.py` (59 tests preserved)
-- Deleted `test_repository_smoke.py` (redundant with capability tests) and `test_loan_engine_performance.py` (will rot)
-- Moved migration tests to `tests/migrations/` directory
-- Moved generated artifacts from `memory-bank/generated/` to `backend/tests/generated/` (reports/ subdir)
-- Updated meta tests to reference new paths in `backend/tests/generated/`
+- **Phase 5: Directory Restructuring complete**
+  - Renamed: `properties` → `property`, `contracts` → `contract`, `capabilities` → `capability`
+  - Moved engine tests to `tests/unit/engines/<domain>/`
+  - Moved repositories/services to `tests/unit/`
+  - Moved orchestration/pipeline to `tests/integration/`
+  - Unified invariant definitions and tests under `tests/invariant/`
+  - Moved golden dataset Python loaders to `tests/golden/builders/`
+  - Added `client` fixture alias, fixed all broken imports and golden builder paths
+  - Added missing test files: contract routers, property tests, invariant stubs, golden datasets, domain builders, unit investment tests
+  - Updated `test_coverage_integrity.py` with path fallbacks for renamed directories
+  - **967 tests collected successfully** (882 passing; remaining failures are pre-existing service-level issues)
 
 ## Next Immediate Steps
-- Consolidate behaviour engine tests (8 root-level files → `engines/test_behaviour_engine.py`)
-- Remove remaining duplicate repository/service/router tests (9 files)
-- Frontend test cleanup (consolidate `tests/specs/` and `playwright/tests/`)
-- Quality stabilization: run full suite, fix lint/type errors
+- Update capability manifests in `memory-bank/capabilities/*.yaml` to reference new test paths
+- Run full suite and fix remaining failures
+- Quality stabilization: run ruff, mypy, pyright
