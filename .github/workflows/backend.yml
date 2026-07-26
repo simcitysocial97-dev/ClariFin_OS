@@ -87,7 +87,7 @@ jobs:
           # Fewer examples in CI = faster, but still useful
           HYPOTHESIS_MAX_EXAMPLES: 50
         run: |
-          pytest tests/property/ \
+          pytest tests/properties/ \
             --timeout=60 \
             --tb=short \
             -v \
@@ -220,7 +220,7 @@ jobs:
       - name: Run invariant tests
         working-directory: backend
         run: |
-          pytest tests/invariant/ \
+          pytest tests/invariants/ \
             --timeout=60 \
             --tb=short \
             -v \

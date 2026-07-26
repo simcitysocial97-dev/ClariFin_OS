@@ -1,10 +1,15 @@
 name: Full Stack Validation
 
+# SUPERSEDED by backend.yml (Phase 0 CI infrastructure)
+# Keeping for reference — disabled automatic triggers to prevent duplicate runs
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:    # Manual only
+
+# on:
+#   push:
+#     branches: [main]
+#   pull_request:
+#     branches: [main]
   workflow_dispatch:
 
 jobs:

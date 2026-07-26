@@ -196,5 +196,27 @@
     ],
     "runtime_seconds": 8.471294403076172,
     "pass": true
+  },
+  {
+    "timestamp": "2026-07-26T15:42:38.165275+00:00",
+    "changed_files": [
+      "nonexistent_file.py"
+    ],
+    "executed_suites": [
+      "full"
+    ],
+    "runtime_seconds": 5.8496551513671875,
+    "pass": false
+  },
+  {
+    "timestamp": "2026-07-26T15:48:09.998093+00:00",
+    "changed_files": [
+      "nonexistent_file.py"
+    ],
+    "executed_suites": [
+      "full"
+    ],
+    "runtime_seconds": 4.198108673095703,
+    "pass": false
   }
 ]

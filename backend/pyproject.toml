@@ -87,7 +87,7 @@ ignore_missing_imports = true
 # Directories to mutate
 paths_to_mutate = "src/engines/"
 # Test runner command
-runner = "python -m pytest tests/unit/ tests/property/ -x -q --timeout=30"
+runner = "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30"
 # Tests directory
 tests_dir = "tests/"
 # Disable progress bar (cleaner CI output)

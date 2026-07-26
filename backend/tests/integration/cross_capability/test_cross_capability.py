@@ -25,8 +25,16 @@ class TestCrossCapabilityIntegration:
 
         # Pipeline should complete without crashing
         assert summary["statement_id"] == 1
-        # Either reconciliation succeeded or error was recorded
-        assert True  # reconciliation is implicit in pipeline
+        expected_keys = {
+            "statement_id",
+            "behaviour",
+            "cashflow",
+            "intelligence",
+            "recommendations",
+            "dashboard",
+            "transaction_intelligence",
+        }
+        assert expected_keys.issubset(summary.keys())
 
     def test_orchestrator_all_stages_complete(self, temp_db: str) -> None:
         """Test orchestrator completes all 6 stages."""

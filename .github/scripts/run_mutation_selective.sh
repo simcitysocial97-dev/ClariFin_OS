@@ -29,7 +29,7 @@ else
 fi
 
 echo "Mutation target: $TARGET_PATH"
-echo "Test runner: pytest tests/unit/ tests/property/"
+echo "Test runner: pytest tests/unit/ tests/properties/"
 echo ""
 
 # Run mutmut with specific path
@@ -37,7 +37,7 @@ echo ""
 mutmut run \
   --paths-to-mutate "$TARGET_PATH" \
   --tests-dir "tests/" \
-  --runner "python -m pytest tests/unit/ tests/property/ -x -q --timeout=30" \
+  --runner "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30" \
   2>&1 | tee "$MUTATION_OUTPUT_DIR/mutation-run.log"
 
 # Generate results

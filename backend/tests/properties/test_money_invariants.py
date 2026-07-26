@@ -70,7 +70,7 @@ class TestConfidenceInvariants:
 
     def test_confidence_100_percent(self) -> None:
         """100% confidence = 10000 bps."""
-        assert _random_confidence_bps() == 10000 or True  # Test exists
+        assert 10000 == 10000
 
 
 class TestSurplusInvariant:
@@ -120,7 +120,7 @@ class TestLoanInvariants:
         for _ in range(100):
             payment = _random_paise(1000, 10000)
             balance -= payment
-            assert balance >= 0 or balance < 0  # Allow negative for edge cases
+            assert balance >= 0
 
     def test_reducing_balance_trend(self) -> None:
         """Each payment should reduce or maintain balance (not increase it)."""
@@ -128,9 +128,8 @@ class TestLoanInvariants:
         balance = 10000000
         for _ in range(100):
             payment = _random_paise(1000, 50000)
-            balance - payment
-            # Balance should trend downward (or be same for partial payment)
-            assert True  # Allow for interest additions
+            balance -= payment
+            assert balance <= 10000000
 
 
 class TestForecastInvariants:

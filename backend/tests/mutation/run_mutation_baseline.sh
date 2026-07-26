@@ -14,7 +14,7 @@ rm -rf .mutmut-cache
 "$BACKEND_DIR/venv/bin/mutmut" run \
     --paths-to-mutate src/engines/cashflow_engine.py \
     --tests-dir tests/ \
-    --runner "$BACKEND_DIR/venv/bin/python -m pytest -q tests/capability/household_cashflow/test_capability.py tests/property/cashflow/test_engine_properties.py tests/invariant/cashflow.py tests/unit/engines/cashflow" \
+    --runner "$BACKEND_DIR/venv/bin/python -m pytest -q tests/capability/household_cashflow/test_capability.py tests/properties/cashflow/test_engine_properties.py tests/invariants/test_cashflow_invariants.py tests/unit/engines/cashflow" \
     || true  # Don't fail on surviving mutants
 
 # Generate HTML report

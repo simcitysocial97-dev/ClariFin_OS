@@ -40,27 +40,30 @@ jobs:
         run: |
           # Generate the OpenAPI schema from your FastAPI app
           # Adjust the import path to match your app structure
-          python -c "
-          import json
-          import sys
-          
-          # Try different common app locations
-          try:
-              from app.main import app
-          except ImportError:
-              try:
-                  from src.main import app
-              except ImportError:
-                  print('ERROR: Could not import FastAPI app')
-                  print('Adjust the import in frontend.yml')
-                  sys.exit(1)
-          
-          schema = app.openapi()
-          with open('tests/generated/openapi-current.json', 'w') as f:
-              json.dump(schema, f, indent=2)
-          
-          print(f'Schema generated: {len(schema[\"paths\"])} endpoints')
-          "
+python -c "
+import json
+import sys
+
+# Try different common app locations
+try:
+    from api import app
+except ImportError:
+    try:
+        from app.main import app
+    except ImportError:
+        try:
+            from src.main import app
+        except ImportError:
+            print('ERROR: Could not import FastAPI app')
+            print('Adjust the import in frontend.yml')
+            sys.exit(1)
+
+schema = app.openapi()
+with open('tests/generated/openapi-current.json', 'w') as f:
+    json.dump(schema, f, indent=2)
+
+print(f'Schema generated: {len(schema[\"paths\"])} endpoints')
+"
 
       - name: Compare with committed schema
         working-directory: backend

@@ -25,7 +25,7 @@ from typing import Any
 
 class MonthClassification:
     SURPLUS = "surplus"
-    DEFICIT_COVERED_BY_CREDIT = "XXdeficit_covered_by_creditXX"
+    DEFICIT_COVERED_BY_CREDIT = "deficit_covered_by_credit"
     DEFICIT = "deficit"
 
 

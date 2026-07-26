@@ -111,7 +111,7 @@ jobs:
           # Run mutmut on this specific engine
           mutmut run \
             --paths-to-mutate "$ENGINE_PATH" \
-            --runner "python -m pytest tests/unit/ tests/property/ -x -q --timeout=30 2>&1" \
+            --runner "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30 2>&1" \
             2>&1 | tee "tests/generated/mutation/${ENGINE_NAME}-run.log"
           
           # Capture results
