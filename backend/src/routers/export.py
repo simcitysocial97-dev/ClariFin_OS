@@ -66,4 +66,4 @@ def export_csv(
             headers={"Content-Disposition": "attachment; filename=transactions.csv"},
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

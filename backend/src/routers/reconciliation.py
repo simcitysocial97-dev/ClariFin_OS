@@ -35,7 +35,7 @@ def api_get_reconciliations(status: str | None = None) -> dict[str, Any]:
 
         return {"reconciliations": reconciliations}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/pending")
@@ -64,7 +64,7 @@ def api_scan_reconciliations() -> dict[str, Any]:
 
         return {"matches": matches, "count": len(matches)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/create")
@@ -100,7 +100,7 @@ def api_create_reconciliation(
         )
         return {"success": True, "inserted": inserted}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/batch-insert")
@@ -137,7 +137,7 @@ def api_batch_insert_reconciliations() -> dict[str, Any]:
             "skipped": len(matches) - inserted_count,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/{reconciliation_id}/confirm")
@@ -158,7 +158,7 @@ def api_confirm_reconciliation(reconciliation_id: int) -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/{reconciliation_id}/reject")
@@ -179,4 +179,4 @@ def api_reject_reconciliation(reconciliation_id: int) -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

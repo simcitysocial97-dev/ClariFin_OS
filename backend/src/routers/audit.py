@@ -28,4 +28,4 @@ def api_audit_report() -> dict[str, Any]:
         report = service.run_full_audit()
         return report
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

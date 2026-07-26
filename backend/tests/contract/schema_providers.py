@@ -21,7 +21,7 @@ def get_openapi_schema() -> dict[str, Any]:
 
         return app.openapi()
     except ImportError as e:
-        raise RuntimeError(f"Cannot load FastAPI app: {e}")
+        raise RuntimeError(f"Cannot load FastAPI app: {e}") from e
 
 
 def get_path_schema(path: str, method: str) -> dict[str, Any]:

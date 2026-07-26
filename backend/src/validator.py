@@ -171,7 +171,7 @@ def validate_iso_date(date_str: str, field_name: str = "date") -> str:
         raise HTTPException(
             status_code=400,
             detail=f"{field_name} must be in YYYY-MM-DD format: {date_str}",
-        )
+        ) from None
 
 
 # ============================================================
@@ -211,12 +211,16 @@ def validate_file_upload(
             )
 
     # Check size (if provided)
-    if max_size_bytes and hasattr(file, "size") and file.size:
-        if file.size > max_size_bytes:
-            max_mb = max_size_bytes / (1024 * 1024)
-            raise HTTPException(
-                status_code=400, detail=f"File too large. Maximum size: {max_mb}MB"
-            )
+    if (
+        max_size_bytes
+        and hasattr(file, "size")
+        and file.size
+        and file.size > max_size_bytes
+    ):
+        max_mb = max_size_bytes / (1024 * 1024)
+        raise HTTPException(
+            status_code=400, detail=f"File too large. Maximum size: {max_mb}MB"
+        )
 
 
 # ============================================================

@@ -94,12 +94,15 @@ def compute_monthly_cashflow(
             total_credit_funded += abs(asset_change)
             total_liability_increase += event_amount
 
-        if event_type in ("cash_advance", "credit_card_cash_advance"):
+        if (
+            event_type in ("cash_advance", "credit_card_cash_advance")
+            and event_amount > 0
+            and asset_change > 0
+        ):
             # Fee = amount_transacted - asset_received
             # For CRED: amount (debit) > asset_change (credit received)
-            if event_amount > 0 and asset_change > 0:
-                fee_estimate = event_amount - asset_change
-                total_fees += max(0, fee_estimate)
+            fee_estimate = event_amount - asset_change
+            total_fees += max(0, fee_estimate)
 
         # Track asset changes
         total_asset_change += asset_change

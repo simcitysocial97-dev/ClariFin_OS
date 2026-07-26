@@ -97,7 +97,7 @@ def get_statements() -> list[dict[str, Any]]:
 
         return statements
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/cards")
@@ -211,7 +211,7 @@ def get_cards() -> dict[str, Any]:
             "total_utilization_percent": total_utilization,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/statements/{statement_id}/validate")
@@ -227,4 +227,4 @@ def api_validate_statement(
         result = service.validate_statement(statement_id, claimed_balance_paise)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

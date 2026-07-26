@@ -245,7 +245,7 @@ class BehaviourService:
             logger.error(f"Error computing financial profile: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to compute financial profile: {str(e)}",
-            )
+            ) from e
 
     def get_wellness_score(
         self, household_id: str = "default"
@@ -311,7 +311,7 @@ class BehaviourService:
             logger.error(f"Error getting wellness score: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to get wellness score: {str(e)}",
-            )
+            ) from e
 
     def get_debt_health(self, household_id: str = "default") -> DebtHealthResponse:
         """Get the latest debt health metrics.
@@ -372,7 +372,7 @@ class BehaviourService:
             logger.error(f"Error getting debt health: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to get debt health: {str(e)}",
-            )
+            ) from e
 
     def get_cashflow_health(
         self, household_id: str = "default"
@@ -423,7 +423,7 @@ class BehaviourService:
             logger.error(f"Error getting cashflow health: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to get cashflow health: {str(e)}",
-            )
+            ) from e
 
     def get_patterns(
         self, household_id: str = "default", limit: int = 5
@@ -463,7 +463,7 @@ class BehaviourService:
             logger.error(f"Error getting patterns: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to get patterns: {str(e)}",
-            )
+            ) from e
 
     def generate_monthly_summary(
         self, period: str, household_id: str = "default"
@@ -615,7 +615,7 @@ class BehaviourService:
             logger.error(f"Error generating monthly summary: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to generate monthly summary: {str(e)}",
-            )
+            ) from e
 
     def get_recommendations(
         self,
@@ -740,7 +740,7 @@ class BehaviourService:
             logger.error(f"Error getting recommendations: {str(e)}", exc_info=True)
             raise AppError(
                 message=f"Failed to get recommendations: {str(e)}",
-            )
+            ) from e
 
     # ============================================================
     # Helper Methods

@@ -23,7 +23,7 @@ def get_cashflow() -> CashflowSummaryDTO:
         service = CashflowService()
         return service.calculate_summary()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/cashflow/monthly")
@@ -38,7 +38,7 @@ def get_cashflow_monthly(
         service = CashflowService()
         return service.get_monthly(months=months)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/cashflow/categories")
@@ -51,7 +51,7 @@ def get_cashflow_categories() -> CashflowCategoryResponse:
         service = CashflowService()
         return service.get_categories()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/cashflow/transactions")
@@ -67,4 +67,4 @@ def get_cashflow_transactions(
         service = CashflowService()
         return service.get_transactions(limit=limit, offset=offset)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

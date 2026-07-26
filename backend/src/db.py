@@ -295,10 +295,8 @@ class FinanceDB:
                 ("transactions", "account_id", "TEXT"),
             ]
             for table, col, col_type in _migration_columns:
-                try:
+                with contextlib.suppress(Exception):
                     conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}")
-                except Exception:
-                    pass  # column already exists
 
             # Insert default member if not exists
             conn.execute("""
@@ -327,7 +325,7 @@ class FinanceDB:
                 pass  # Migration already done or no data
 
             # Phase 2A.1: Compute hash_signature for existing transactions
-            try:
+            with contextlib.suppress(Exception):
                 conn.execute("""
                     UPDATE transactions SET
                         hash_signature = LOWER(HEX(SHA256(
@@ -339,8 +337,6 @@ class FinanceDB:
                         )))
                     WHERE hash_signature IS NULL AND date_iso IS NOT NULL
                 """)
-            except Exception:
-                pass  # Migration already done or no data
 
             # Phase 2A.1: Add deterministic indexes
             with contextlib.suppress(Exception):
@@ -350,14 +346,12 @@ class FinanceDB:
 
             # Phase 2A.2: Account-scoped determinism
             # Backfill account_id from statements.bank for existing transactions
-            try:
+            with contextlib.suppress(Exception):
                 conn.execute("""
                     UPDATE transactions SET
                         account_id = (SELECT bank FROM statements WHERE id = statement_id)
                     WHERE account_id IS NULL OR account_id = ''
                 """)
-            except Exception:
-                pass  # Migration already done or no data
 
             # Phase 2A.2: Drop old statement-scoped index, create account-scoped index
             try:
@@ -369,12 +363,10 @@ class FinanceDB:
                 pass
 
             # Phase 2A.1: Add unique index on hash_signature (if not exists)
-            try:
+            with contextlib.suppress(Exception):
                 conn.execute(
                     "CREATE UNIQUE INDEX IF NOT EXISTS idx_transaction_hash ON transactions(hash_signature)"
                 )
-            except Exception:
-                pass  # May fail if duplicates exist
 
             # Phase 6C: Add loan-related indexes for query performance
             _loan_indexes = [

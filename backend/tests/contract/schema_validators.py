@@ -41,4 +41,4 @@ def validate_response_schema(response_data: dict, schema_name: str):
             f"Response validation failed for schema '{schema_name}':\n"
             f"  Error: {e.message}\n"
             f"  Path: {' -> '.join(str(p) for p in e.path)}"
-        )
+        ) from e

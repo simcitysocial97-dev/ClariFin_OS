@@ -17,6 +17,7 @@ Usage:
 """
 
 import argparse
+import contextlib
 import hashlib
 import random
 import sqlite3
@@ -168,16 +169,12 @@ def clear_database(db_path: Path) -> None:
     # Clear tables (with error handling for missing tables)
     tables_to_clear = ["reconciliations", "transactions", "statements"]
     for table in tables_to_clear:
-        try:
+        with contextlib.suppress(sqlite3.OperationalError):
             cursor.execute(f"DELETE FROM {table}")
-        except sqlite3.OperationalError:
-            pass  # Table doesn't exist
 
     # Keep Self member
-    try:
+    with contextlib.suppress(sqlite3.OperationalError):
         cursor.execute("DELETE FROM members WHERE name != 'Self'")
-    except sqlite3.OperationalError:
-        pass  # Table doesn't exist
 
     # Re-enable foreign keys
     cursor.execute("PRAGMA foreign_keys = ON")

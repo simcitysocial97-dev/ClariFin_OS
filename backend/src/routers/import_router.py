@@ -170,7 +170,7 @@ async def upload_statement(
             "log": log,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/import/detect")
@@ -202,7 +202,7 @@ async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
             "skip_rows": detected.get("skip_rows", 0),
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/import/execute")
@@ -244,4 +244,4 @@ def import_execute(data: ImportExecute) -> dict[str, Any]:
             "errors": warnings,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

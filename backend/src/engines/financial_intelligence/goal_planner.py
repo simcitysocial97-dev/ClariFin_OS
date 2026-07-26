@@ -96,8 +96,7 @@ def calculate_goal_projection(
             except (ValueError, TypeError):
                 pass
 
-    for month_data in monthly_surplus_forecast:
-        months_count += 1
+    for months_count, month_data in enumerate(monthly_surplus_forecast, 1):
         expected_surplus = int(month_data.get("expected_surplus_paise", 0) or 0)
 
         # Only positive surplus contributes to goal

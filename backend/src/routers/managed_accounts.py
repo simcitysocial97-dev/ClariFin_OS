@@ -42,7 +42,7 @@ def api_get_managed_accounts() -> dict[str, Any]:
         accounts = repo.get_all_accounts()
         return {"accounts": accounts, "total": len(accounts)}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/accounts/manage")
@@ -60,7 +60,7 @@ def api_create_managed_account(account: AccountCreate) -> dict[str, Any]:
         )
         return {"success": True, "account": created}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.put("/accounts/manage/{account_id}")
@@ -80,7 +80,7 @@ def api_update_managed_account(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.delete("/accounts/manage/{account_id}")
@@ -95,7 +95,7 @@ def api_delete_managed_account(account_id: str) -> dict[str, Any]:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/accounts/{account_id}/balance")
@@ -106,7 +106,7 @@ def api_get_account_balance(account_id: str) -> dict[str, Any]:
         balance = service.compute_account_balance(account_id)
         return balance
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/accounts/{account_id}/running-balance")
@@ -117,4 +117,4 @@ def api_get_account_running_balance(account_id: str) -> list[dict[str, Any]]:
         running = service.compute_running_balance(account_id)
         return running
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

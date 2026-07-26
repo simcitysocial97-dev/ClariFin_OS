@@ -26,4 +26,4 @@ def api_dashboard_summary() -> DashboardSummaryDTO:
         service = DashboardService()
         return service.get_summary()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

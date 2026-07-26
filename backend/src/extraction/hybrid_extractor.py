@@ -72,10 +72,13 @@ def _count_vertical_lines_in_bbox(
                 ly0 = ln.get("top", ln.get("y0", 0))
                 ly1 = ln.get("bottom", ln.get("y1", 0))
                 # Vertical line: x0 ≈ x1
-                if abs(lx0 - lx1) < 2:
+                if (
+                    abs(lx0 - lx1) < 2
+                    and x0 <= lx0 <= x1
+                    and not (ly1 < y0 or ly0 > y1)
+                ):
                     # Must be inside bbox horizontally and overlap vertically
-                    if x0 <= lx0 <= x1 and not (ly1 < y0 or ly0 > y1):
-                        count += 1
+                    count += 1
             return count
     except Exception:
         return 0

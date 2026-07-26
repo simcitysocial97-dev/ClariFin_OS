@@ -20,22 +20,21 @@ def assert_account_state_valid(account_data: dict[str, Any]) -> None:
     Raises:
         AssertionError: If account state violates invariants
     """
-    if "status" in account_data and account_data["status"] is not None:
-        if account_data["status"] not in VALID_ACCOUNT_STATUSES:
-            raise AssertionError(
-                f"Invalid account status: {account_data['status']}. "
-                f"Must be one of {VALID_ACCOUNT_STATUSES}"
-            )
+    if "status" in account_data and account_data["status"] is not None and account_data["status"] not in VALID_ACCOUNT_STATUSES:
+        raise AssertionError(
+            f"Invalid account status: {account_data['status']}. "
+            f"Must be one of {VALID_ACCOUNT_STATUSES}"
+        )
 
     # Credit limit must be non-negative for credit accounts
     if (
         "credit_limit_paise" in account_data
         and account_data["credit_limit_paise"] is not None
+        and account_data["credit_limit_paise"] < 0
     ):
-        if account_data["credit_limit_paise"] < 0:
-            raise AssertionError(
-                f"credit_limit_paise ({account_data['credit_limit_paise']}) cannot be negative"
-            )
+        raise AssertionError(
+            f"credit_limit_paise ({account_data['credit_limit_paise']}) cannot be negative"
+        )
 
 
 def assert_owner_scope_valid(account_data: dict[str, Any]) -> None:

@@ -40,7 +40,7 @@ def run_startup_validation() -> bool:
             db_dir.mkdir(parents=True, exist_ok=True)
         except Exception as e:
             log_error(f"Cannot create database directory: {db_dir}", error=e)
-            raise RuntimeError(f"Cannot create database directory: {e}")
+            raise RuntimeError(f"Cannot create database directory: {e}") from e
 
     upload_dir = settings.upload_dir
     if not upload_dir.exists():
@@ -49,7 +49,7 @@ def run_startup_validation() -> bool:
             upload_dir.mkdir(parents=True, exist_ok=True)
         except Exception as e:
             log_error(f"Cannot create upload directory: {upload_dir}", error=e)
-            raise RuntimeError(f"Cannot create upload directory: {e}")
+            raise RuntimeError(f"Cannot create upload directory: {e}") from e
 
     # Check database connectivity (if exists)
     if settings.database_path.exists():
@@ -62,7 +62,7 @@ def run_startup_validation() -> bool:
             log_info("Database connectivity verified")
         except Exception as e:
             log_error("Database connectivity check failed", error=e)
-            raise RuntimeError(f"Database connectivity check failed: {e}")
+            raise RuntimeError(f"Database connectivity check failed: {e}") from e
     else:
         log_info("Database not found - will be created on first use")
 

@@ -438,10 +438,9 @@ class StatementRepository(BaseRepository):
                     except ValueError:
                         continue
 
-                if start_dt and end_dt:
+                if start_dt and end_dt and start_dt <= payment_dt <= end_dt:
                     # Payment falls within bill cycle window
-                    if start_dt <= payment_dt <= end_dt:
-                        bill_cycle_matches.append(row_dict)
+                    bill_cycle_matches.append(row_dict)
 
         # Prefer due_date matches over bill_cycle matches
         if matching_statements:

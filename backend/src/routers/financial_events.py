@@ -53,7 +53,7 @@ def create_event(
             owner_id=owner_id,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/", response_model=list)
@@ -73,7 +73,7 @@ def list_events(
             # Return all events (no month filter) using get_events_with_links
             return service.get_events_with_links("", household_id)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/{event_id}", response_model=dict)
@@ -90,4 +90,4 @@ def get_event(event_id: int = Path(..., description="Event ID")) -> dict[str, An
             raise HTTPException(status_code=404, detail="Event not found")
         return event
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

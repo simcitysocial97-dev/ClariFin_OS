@@ -273,9 +273,12 @@ def debt_rolling_flag(
 
         # Also check lifecycle_state independently
         lifecycle_state = event.get("lifecycle_state", "")
-        if lifecycle_state == "rolls_over" and event_id:
-            if int(event_id) not in rolling_event_ids:
-                rolling_event_ids.append(int(event_id))
+        if (
+            lifecycle_state == "rolls_over"
+            and event_id
+            and int(event_id) not in rolling_event_ids
+        ):
+            rolling_event_ids.append(int(event_id))
 
     return {
         "flag": len(rolling_event_ids) > 0,

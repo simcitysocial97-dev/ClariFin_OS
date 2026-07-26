@@ -82,10 +82,9 @@ class ColumnMapper:
 
             # Find best match
             best_match = self._find_best_match(col_lower)
-            if best_match:
+            if best_match and best_match not in mapping:
                 # Don't overwrite existing mappings
-                if best_match not in mapping:
-                    mapping[best_match] = col
+                mapping[best_match] = col
 
         return mapping
 

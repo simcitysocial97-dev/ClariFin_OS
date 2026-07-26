@@ -160,9 +160,12 @@ class TableExtractor:
 
         # Also try to merge single-row tables (ICICI style)
         merged = self._merge_single_row_tables(all_tables)
-        if merged is not None and not merged.empty:
-            if self._is_transaction_table(merged):
-                transaction_tables.append(merged)
+        if (
+            merged is not None
+            and not merged.empty
+            and self._is_transaction_table(merged)
+        ):
+            transaction_tables.append(merged)
 
         return transaction_tables
 
