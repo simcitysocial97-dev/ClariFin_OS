@@ -5,7 +5,6 @@ Validates csv_importer, statement_extractor, column_mapper, and ingest.
 
 from __future__ import annotations
 
-from pathlib import Path
 
 
 class TestCSVImporter:

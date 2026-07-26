@@ -7,14 +7,11 @@ Uses mocks to verify engine and repository delegation.
 Run: cd backend && ./venv/bin/python3 -m pytest tests/test_account_service.py -v
 """
 
-import sys
-from pathlib import Path
 from typing import Any
 from unittest.mock import patch
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
 # ============================================================

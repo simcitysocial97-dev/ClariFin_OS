@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T09:07:48.431913+00:00",
+  "generated_at": "2026-07-26T14:24:05.131317+00:00",
   "capabilities": [
     {
       "id": "account_management",
@@ -7,15 +7,15 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 1,
+        "smoke_tests": 1,
+        "property_tests": 2,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 15,
+      "weighted_score": 18,
       "strength": "Critical",
       "gaps": [
         "No contract tests",
@@ -29,20 +29,18 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 0,
+        "smoke_tests": 1,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 18,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -53,20 +51,18 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 0,
+        "smoke_tests": 1,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 18,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -77,7 +73,7 @@
       "criticality": "medium",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
+        "smoke_tests": 1,
         "property_tests": 0,
         "golden_tests": 2,
         "contract_tests": 0,
@@ -85,8 +81,8 @@
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 10,
-      "strength": "Strong",
+      "weighted_score": 13,
+      "strength": "Critical",
       "gaps": [
         "No property tests",
         "No contract tests",
@@ -100,20 +96,18 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 0,
+        "smoke_tests": 1,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 18,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -124,20 +118,18 @@
       "criticality": "medium",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 0,
+        "smoke_tests": 1,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 7,
-      "strength": "Moderate",
+      "weighted_score": 18,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -148,18 +140,17 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 0,
+        "smoke_tests": 1,
+        "property_tests": 1,
         "golden_tests": 4,
         "contract_tests": 0,
         "performance_tests": 0,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 10,
-      "strength": "Strong",
+      "weighted_score": 18,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
         "No performance baseline"
       ],
@@ -171,7 +162,7 @@
       "criticality": "medium",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
+        "smoke_tests": 1,
         "property_tests": 1,
         "golden_tests": 2,
         "contract_tests": 0,
@@ -179,7 +170,7 @@
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 15,
+      "weighted_score": 18,
       "strength": "Critical",
       "gaps": [
         "No contract tests",
@@ -193,19 +184,18 @@
       "criticality": "medium",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
+        "smoke_tests": 1,
         "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
-        "invariants": 0,
+        "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 12,
+      "weighted_score": 18,
       "strength": "Critical",
       "gaps": [
         "No contract tests",
-        "No invariant tests",
         "No performance baseline"
       ],
       "invariant_count": 0
@@ -216,7 +206,7 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
+        "smoke_tests": 1,
         "property_tests": 2,
         "golden_tests": 2,
         "contract_tests": 0,
@@ -224,7 +214,7 @@
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 15,
+      "weighted_score": 18,
       "strength": "Critical",
       "gaps": [
         "No contract tests",
@@ -238,18 +228,17 @@
       "criticality": "high",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 0,
-        "property_tests": 0,
+        "smoke_tests": 1,
+        "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
         "invariants": 2,
         "architecture_tests": 2
       },
-      "weighted_score": 10,
-      "strength": "Strong",
+      "weighted_score": 18,
+      "strength": "Critical",
       "gaps": [
-        "No property tests",
         "No contract tests",
         "No performance baseline"
       ],

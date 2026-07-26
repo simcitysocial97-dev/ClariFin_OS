@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tests.invariant import assert_cashflow_result_invariants
-from tests.property.conftest import cash_summary_strategy, financial_event_strategy
+from tests.invariants import assert_cashflow_result_invariants
+from tests.properties.conftest import cash_summary_strategy, financial_event_strategy
 
 
 class TestCashflowEngineProperties:

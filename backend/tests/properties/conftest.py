@@ -9,8 +9,6 @@ Profiles:
 from __future__ import annotations
 
 import os
-import sys
-from pathlib import Path
 from typing import Any, cast
 
 import pytest
@@ -18,7 +16,6 @@ from hypothesis import Phase, settings
 from hypothesis import strategies as st
 
 # Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 
 # ============================================================================

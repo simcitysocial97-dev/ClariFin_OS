@@ -9,13 +9,10 @@ Run: python -m pytest tests/test_migration_confidence_bps.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from scripts.migration_007_reconciliation_audit import run_migration
 

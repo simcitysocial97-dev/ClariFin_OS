@@ -10,22 +10,10 @@ This conftest provides:
 from __future__ import annotations
 
 import os
-import sys
 from collections.abc import Generator
-from pathlib import Path
 from typing import Any
 
 import pytest
-
-# Ensure src is on path for all tests
-_src_path = str(Path(__file__).parent.parent / "src")
-if _src_path not in sys.path:
-    sys.path.insert(0, _src_path)
-
-
-# ============================================================================
-# Database Fixtures
-# ============================================================================
 
 
 @pytest.fixture

@@ -11,12 +11,7 @@ Or directly: python tests/test_determinism.py
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
-
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
 from engines.balance_engine import compute_running_balance

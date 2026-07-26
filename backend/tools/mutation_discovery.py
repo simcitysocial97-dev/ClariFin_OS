@@ -473,7 +473,7 @@ def generate_mutation_registry(
             "mutation_types": list(all_mutation_types),
             "existing_tests": {
                 "smoke_tests": (
-                    f"tests/capabilities/{cap_id}" if cap_id != "unknown" else None
+                    f"tests/capability/{cap_id}" if cap_id != "unknown" else None
                 ),
                 "property_tests": cap_info.get("property_tests", []),
                 "golden_tests": cap_info.get("golden_datasets", []),

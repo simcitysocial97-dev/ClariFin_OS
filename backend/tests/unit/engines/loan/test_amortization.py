@@ -7,12 +7,9 @@ Tests leap years, month-end dates, and invariant validation.
 Run: python -m pytest tests/test_amortization.py -v
 """
 
-import sys
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from engines.loan_engine import generate_schedule, validate_schedule_invariants
 from engines.loan_engine.amortization import _add_months

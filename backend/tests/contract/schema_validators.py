@@ -10,10 +10,7 @@ def get_openapi_schemas() -> dict:
     """Load OpenAPI schemas from app"""
     global _SCHEMA_CACHE
     if _SCHEMA_CACHE is None:
-        import sys
-        from pathlib import Path
 
-        sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
         from main import app
 

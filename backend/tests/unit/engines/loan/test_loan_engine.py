@@ -8,12 +8,9 @@ Covers: amortization, prepayment, foreclosure, floating rate, metrics, edge case
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from engines.loan_engine import (
     apply_floating_rate_change,

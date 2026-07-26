@@ -577,7 +577,7 @@ class ValidationGraph:
             affected = selective_plan.get("affected", {})
             if affected.get("capability_tests"):
                 for cap in affected["capability_tests"]:
-                    cap_name = cap.replace("tests/capabilities/", "")
+                    cap_name = cap.replace("tests/capability/", "")
                     pipeline.append(cap_name)
             if affected.get("property_tests") and affected["property_tests"]:
                 pipeline.append("property")

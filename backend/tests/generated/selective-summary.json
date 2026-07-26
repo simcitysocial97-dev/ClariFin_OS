@@ -1,10 +1,10 @@
 {
   "mode": "selective",
-  "generated_at": "2026-07-26 09:07:53 UTC",
-  "runtime_seconds": 4.71953821182251,
-  "tests_run": 90,
+  "generated_at": "2026-07-26 14:24:14 UTC",
+  "runtime_seconds": 8.471294403076172,
+  "tests_run": 95,
   "tests_skipped": 0,
-  "result": "FAIL",
+  "result": "PASS",
   "suites": {
     "architecture": true,
     "capability": [],

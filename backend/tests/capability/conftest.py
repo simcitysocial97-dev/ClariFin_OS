@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pytest
 import yaml
 
 # Ensure src is on path for all capability tests
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 
 def pytest_configure(config: pytest.Config) -> None:

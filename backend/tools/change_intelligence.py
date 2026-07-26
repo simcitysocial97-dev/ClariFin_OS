@@ -111,7 +111,7 @@ def build_file_graph(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
             graph[path]["property_tests"].add(
                 f"tests/properties/{cap_id.replace('_', '')}"
             )
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
         # Map services
         for service in cap.get("services", []):
@@ -125,7 +125,7 @@ def build_file_graph(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
                     "capability_tests": [],
                 }
             graph[path]["capabilities"].add(cap_id)
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
         # Map engines
         for engine in cap.get("engines", []):
@@ -157,7 +157,7 @@ def build_file_graph(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
             for inv in cap.get("invariants", []):
                 graph[path]["invariants"].add(inv)
 
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
         # Map repositories
         for repo in cap.get("repositories", []):
@@ -171,7 +171,7 @@ def build_file_graph(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
                     "capability_tests": [],
                 }
             graph[path]["capabilities"].add(cap_id)
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
     # Convert sets to sorted lists
     for path in graph:
@@ -302,7 +302,7 @@ def analyze_change(
 
         # Build recommended commands grouped by capability
         for cap_id in impact.capabilities:
-            impact.recommended_commands.append(f"pytest tests/capabilities/{cap_id} -q")
+            impact.recommended_commands.append(f"pytest tests/capability/{cap_id} -q")
 
         for prop_test in impact.affected["property_tests"]:
             impact.recommended_commands.append(f"pytest {prop_test} -q")
@@ -513,7 +513,7 @@ def generate_test_plan(impacts: list[ChangeImpact]) -> str:
         lines.append("## Stage 3: Capability Smoke Tests (Affected)")
         lines.append("")
         for cap_id in sorted(all_capabilities):
-            lines.append(f"- ✓ pytest tests/capabilities/{cap_id} -q")
+            lines.append(f"- ✓ pytest tests/capability/{cap_id} -q")
         lines.append("")
 
     # Stage 4: Property Tests

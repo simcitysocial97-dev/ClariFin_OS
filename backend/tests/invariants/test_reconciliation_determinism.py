@@ -13,14 +13,9 @@ Run: python -m pytest tests/test_reconciliation_determinism.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
-
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
 from engines.balance_engine import compute_account_balance

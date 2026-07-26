@@ -7,12 +7,9 @@ Tests for _parse_amount_paise function to verify integer paise parsing.
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import pytest
 

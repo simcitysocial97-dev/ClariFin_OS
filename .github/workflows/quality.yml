@@ -90,11 +90,16 @@ jobs:
             --no-header \
             -n auto \
             --cov=. \
-            --cov-report=json:tests/generated/coverage.json \
+            --cov-report=json:tests/generated/raw-coverage.json \
             --cov-report=xml:tests/generated/coverage.xml \
             --cov-report=term-missing \
             --cov-config=.coveragerc \
             -q
+
+      - name: Enrich coverage with capabilities
+        working-directory: backend
+        run: |
+          python tools/check_coverage.py
 
       - name: Check coverage threshold
         working-directory: backend

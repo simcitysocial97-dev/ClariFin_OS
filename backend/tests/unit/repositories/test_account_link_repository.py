@@ -8,13 +8,10 @@ Run: cd backend && ./venv/bin/python3 -m pytest tests/test_account_link_reposito
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
 from src.repositories.account_link_repository import AccountLinkRepository

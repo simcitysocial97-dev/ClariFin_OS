@@ -9,13 +9,10 @@ Run: python -m pytest tests/test_audit_repository.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from repositories.reconciliation_audit_repository import ReconciliationAuditRepository
 

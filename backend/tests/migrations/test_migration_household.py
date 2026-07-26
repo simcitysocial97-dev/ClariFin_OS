@@ -9,13 +9,10 @@ Run: python -m pytest tests/test_migration_household.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from scripts.migration_006_household import run_migration
 

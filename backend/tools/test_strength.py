@@ -114,7 +114,7 @@ def analyze_capability_strength(cap: dict[str, Any]) -> CapabilityStrength:
     )
 
     # Count smoke tests (capability test files)
-    cap_test_path = f"tests/capabilities/{cap_id}"
+    cap_test_path = f"tests/capability/{cap_id}"
     if (BACKEND_DIR / cap_test_path).exists():
         for _f in (BACKEND_DIR / cap_test_path).glob("test_*.py"):
             strength.smoke_tests += 1

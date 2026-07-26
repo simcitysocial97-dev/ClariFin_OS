@@ -87,7 +87,7 @@ def audit_stage_runtime() -> dict[str, float]:
         ("golden", ["pytest", "tests/golden", "-q", "--tb=short"]),
         (
             "capability",
-            ["pytest", "tests/capabilities/household_cashflow", "-q", "--tb=short"],
+            ["pytest", "tests/capability/household_cashflow", "-q", "--tb=short"],
         ),
         (
             "properties",

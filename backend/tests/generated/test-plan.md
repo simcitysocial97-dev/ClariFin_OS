@@ -1,6 +1,6 @@
 # Recommended Verification Plan
 
-Generated: 2026-07-26T09:07:55.156013+00:00
+Generated: 2026-07-26T14:24:15.785090+00:00
 
 ## Stage 1: Lint & Type Check
 
@@ -16,7 +16,7 @@ pytest tests/architecture -q --tb=short
 
 ## Stage 3: Capability Smoke Tests (Affected)
 
-- ✓ pytest tests/capabilities/household_cashflow -q
+- ✓ pytest tests/capability/household_cashflow -q
 
 ## Stage 4: Property Tests (Affected)
 

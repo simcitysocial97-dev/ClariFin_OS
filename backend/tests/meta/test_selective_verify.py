@@ -58,7 +58,7 @@ report = {
             "file": "backend/src/engines/cashflow_engine.py",
             "capabilities": ["household_cashflow"],
             "affected": {
-                "capability_tests": ["tests/capabilities/household_cashflow", "tests/capabilities/household_cashflow"],
+                "capability_tests": ["tests/capability/household_cashflow", "tests/capability/household_cashflow"],
                 "property_tests": ["tests/properties/cashflow", "tests/properties/cashflow"],
                 "golden_tests": ["normal_household", "normal_household"],
                 "invariants": ["tests/invariants/test_cashflow.py", "tests/invariants/test_cashflow.py"],

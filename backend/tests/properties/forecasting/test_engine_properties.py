@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
 from typing import Any
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tests.invariant import assert_forecast_invariants
+from tests.invariants import assert_forecast_invariants
 
 
 class TestForecastEngineProperties:

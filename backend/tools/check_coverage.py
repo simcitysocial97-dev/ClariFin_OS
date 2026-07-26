@@ -24,8 +24,9 @@ import yaml
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 BACKEND_SRC = PROJECT_ROOT / "backend" / "src"
 BACKEND_TESTS = PROJECT_ROOT / "backend" / "tests"
-MEMORY_BANK = PROJECT_ROOT / "memory-bank"
-CAPABILITIES_DIR = MEMORY_BANK / "capabilities"
+# Capability registry location
+CAPABILITY_REGISTRY = BACKEND_TESTS / "generated" / "capability-registry.yaml"
+
 GENERATED_DIR = BACKEND_TESTS / "generated"
 
 
@@ -74,18 +75,15 @@ class CapabilityCoverage:
 
 
 def load_capability_manifests() -> list[dict[str, Any]]:
-    """Load all capability manifests from memory-bank/capabilities/."""
-    manifests: list[dict[str, Any]] = []
-    if not CAPABILITIES_DIR.exists():
-        return manifests
+    """Load capabilities from generated capability registry."""
 
-    for yaml_file in sorted(CAPABILITIES_DIR.glob("*.yaml")):
-        with open(yaml_file) as f:
-            manifest: dict[str, Any] | None = yaml.safe_load(f)
-            if manifest:
-                manifests.append(manifest)
+    if not CAPABILITY_REGISTRY.exists():
+        return []
 
-    return manifests
+    with open(CAPABILITY_REGISTRY) as f:
+        registry = yaml.safe_load(f) or {}
+
+    return registry.get("capabilities", [])
 
 
 def check_path_exists(
@@ -171,7 +169,8 @@ def get_all_production_files() -> dict[str, set[str]]:
 
 
 def get_all_test_files() -> dict[str, set[str]]:
-    """Discover all test files by category."""
+    """Discover all test files by actual repository structure."""
+
     files: dict[str, set[str]] = {
         "smoke_tests": set(),
         "property_tests": set(),
@@ -179,54 +178,49 @@ def get_all_test_files() -> dict[str, set[str]]:
         "golden_datasets": set(),
     }
 
-    # Capability smoke tests
-    capabilities_dir = BACKEND_TESTS / "capabilities"
-    if capabilities_dir.exists():
-        for capability_dir in capabilities_dir.iterdir():
-            if capability_dir.is_dir():
-                for f in capability_dir.glob("test_*.py"):
+    # Capability tests
+    capability_dir = BACKEND_TESTS / "capability"
+
+    if capability_dir.exists():
+        for capability in capability_dir.iterdir():
+            if capability.is_dir():
+                for f in capability.glob("test_*.py"):
                     files["smoke_tests"].add(
-                        f"tests/capabilities/{capability_dir.name}/{f.name}"
+                        f"tests/capability/{capability.name}/{f.name}"
                     )
 
+
     # Property tests
-    properties_dir = BACKEND_TESTS / "properties"
-    if properties_dir.exists():
-        for f in properties_dir.glob("test_*.py"):
-            files["property_tests"].add(f"tests/properties/{f.name}")
-        for subdir in properties_dir.iterdir():
-            if subdir.is_dir():
-                for f in subdir.glob("*.py"):
-                    if f.name != "__init__.py" and f.name != "conftest.py":
-                        files["property_tests"].add(
-                            f"tests/properties/{subdir.name}/{f.name}"
-                        )
+    property_dir = BACKEND_TESTS / "property"
 
-    # Invariant tests - check both tests/invariants/ and tests/domain/invariants/
-    invariants_dir = BACKEND_TESTS / "invariants"
-    if invariants_dir.exists():
-        for f in invariants_dir.glob("test_*.py"):
-            files["invariants"].add(f"tests/invariants/{f.name}")
-        for subdir in invariants_dir.iterdir():
-            if subdir.is_dir():
-                for f in subdir.glob("*.py"):
-                    if f.name != "__init__.py":
-                        files["invariants"].add(
-                            f"tests/invariants/{subdir.name}/{f.name}"
-                        )
+    if property_dir.exists():
+        for f in property_dir.rglob("test_*.py"):
+            relative = f.relative_to(BACKEND_TESTS)
+            files["property_tests"].add(
+                f"tests/{relative}"
+            )
 
-    # Check tests/domain/invariants/ for modules
-    domain_invariants_dir = BACKEND_TESTS / "domain" / "invariants"
-    if domain_invariants_dir.exists():
-        for f in domain_invariants_dir.glob("*.py"):
-            if f.name != "__init__.py":
-                files["invariants"].add(f"tests/domain/invariants/{f.name}")
+
+    # Invariant tests
+    invariant_dir = BACKEND_TESTS / "invariant"
+
+    if invariant_dir.exists():
+        for f in invariant_dir.rglob("test_*.py"):
+            relative = f.relative_to(BACKEND_TESTS)
+            files["invariants"].add(
+                f"tests/{relative}"
+            )
+
 
     # Golden datasets
-    golden_datasets_dir = BACKEND_TESTS / "golden" / "datasets"
-    if golden_datasets_dir.exists():
-        for f in golden_datasets_dir.glob("*.json"):
-            files["golden_datasets"].add(f"tests/golden/datasets/{f.name}")
+    golden_dir = BACKEND_TESTS / "golden" / "datasets"
+
+    if golden_dir.exists():
+        for f in golden_dir.glob("*.json"):
+            files["golden_datasets"].add(
+                f"tests/golden/datasets/{f.name}"
+            )
+
 
     return files
 
@@ -348,16 +342,10 @@ def generate_capability_registry(
     capabilities: list[CapabilityCoverage],
 ) -> dict[str, Any]:
     """Generate capability-registry.yaml structure from manifests."""
-    registry: dict[str, Any] = {"capabilities": []}
-
-    for cap in capabilities:
-        # Load original manifest to get full structure
-        manifest_path = CAPABILITIES_DIR / f"{cap.id}.yaml"
-        with open(manifest_path) as f:
-            manifest = yaml.safe_load(f)
-        registry["capabilities"].append(manifest)
-
-    return registry
+    if not CAPABILITY_REGISTRY.exists():
+        return {"capabilities": []}
+    with open(CAPABILITY_REGISTRY) as f:
+        return yaml.safe_load(f) or {"capabilities": []}
 
 
 def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
@@ -671,7 +659,15 @@ def main() -> None:
         f.write(coverage_md)
     print("Generated: coverage.md")
 
-    # Generate coverage.json
+    # Generate coverage.json (enriched with raw pytest-cov data)
+    raw_path = GENERATED_DIR / "raw-coverage.json"
+    if not raw_path.exists():
+        raise FileNotFoundError(
+            "raw-coverage.json missing. Run pytest with --cov-report=json first."
+        )
+    with open(raw_path) as f:
+        raw_coverage = json.load(f)
+
     coverage_json = {
         "generated_at": str(os.popen("date -Iseconds").read().strip()),
         "capabilities": [
@@ -699,6 +695,8 @@ def main() -> None:
             }
             for cap in capabilities
         ],
+        "files": raw_coverage.get("files", {}),
+        "totals": raw_coverage.get("totals", {}),
     }
     with open(GENERATED_DIR / "coverage.json", "w") as f:
         json.dump(coverage_json, f, indent=2)

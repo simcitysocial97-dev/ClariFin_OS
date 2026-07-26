@@ -1,6 +1,6 @@
 # Verification Matrix
 
-Generated: 2026-07-26 09:07:55 UTC
+Generated: 2026-07-26 14:24:15 UTC
 
 ## Changed Files
 
@@ -17,7 +17,7 @@ Generated: 2026-07-26 09:07:55 UTC
 | normal_household (golden) | ✓ |
 | salary_only (golden) | ✓ |
 | salary_plus_loan (golden) | ✓ |
-| tests/invariant/test_cashflow_invariants.py (invariant) | ✓ |
+| tests/invariants/test_cashflow_invariants.py (invariant) | ✓ |
 
 ## Skipped
 
@@ -34,4 +34,4 @@ Generated: 2026-07-26 09:07:55 UTC
 
 ## Result: PLANNED
 
-## Runtime Saved: ~73%
+## Runtime Saved: ~74%

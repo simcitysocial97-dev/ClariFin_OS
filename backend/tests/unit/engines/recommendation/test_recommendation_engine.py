@@ -7,11 +7,8 @@ All tests verify:
 - Recommendation structure (title, reason, metric, severity, suggested_action)
 """
 
-import sys
 from decimal import Decimal
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from engines.recommendation_engine import (
     check_debt_dependency,

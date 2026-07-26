@@ -7,11 +7,8 @@ No mandatory Schemathesis dependency - uses manual generation when unavailable.
 from __future__ import annotations
 
 # Add src to path
-import sys
-from pathlib import Path
 from typing import Any
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 
 def get_openapi_schema() -> dict[str, Any]:

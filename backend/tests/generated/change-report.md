@@ -1,6 +1,6 @@
 # Change Impact Report
 
-Generated: 2026-07-26T09:07:55.151592+00:00
+Generated: 2026-07-26T14:24:15.781670+00:00
 
 ## Summary
 
@@ -23,7 +23,7 @@ Generated: 2026-07-26T09:07:55.151592+00:00
 **Affected Tests:**
 
   - Capability Smoke Tests:
-    - `tests/capabilities/household_cashflow`
+    - `tests/capability/household_cashflow`
   - Property Tests:
     - `tests/properties/cashflow`
   - Golden Datasets:
@@ -32,11 +32,11 @@ Generated: 2026-07-26T09:07:55.151592+00:00
     - `salary_only`
     - `salary_plus_loan`
   - Invariants:
-    - `tests/invariant/test_cashflow_invariants.py`
+    - `tests/invariants/test_cashflow_invariants.py`
 
 **Recommended Verification:**
 ```bash
-pytest tests/capabilities/household_cashflow -q
+pytest tests/capability/household_cashflow -q
 pytest tests/properties/cashflow -q
 pytest tests/golden -k 'family_household,normal_household,salary_only' -q
 ```

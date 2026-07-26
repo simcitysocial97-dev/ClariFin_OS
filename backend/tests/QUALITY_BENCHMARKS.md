@@ -40,7 +40,7 @@
 
 ### Always-Pass Test Patterns Found
 The following files contain `or True` patterns that render tests always-passing:
-- `backend/tests/property/test_money_invariants.py` (2 instances)
+- `backend/tests/properties/test_money_invariants.py` (2 instances)
 - `backend/tests/integration/cross_capability/test_cross_capability.py` (1 instance)
 
 ---

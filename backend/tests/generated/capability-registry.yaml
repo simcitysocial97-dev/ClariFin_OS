@@ -35,7 +35,7 @@ capabilities:
   - tests/unit/engines/account/test_account_engine.py
   - tests/properties/behaviour/test_engine_properties.py
   invariants:
-  - tests/invariant/test_account.py
+  - tests/invariants/test_account.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -169,7 +169,7 @@ capabilities:
   - tests/golden/datasets/salary_plus_loan.json
   property_tests: []
   invariants:
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -221,7 +221,7 @@ capabilities:
   property_tests:
   - tests/properties/behaviour/test_engine_properties.py
   invariants:
-  - tests/domain/invariants/behaviour.py
+  - tests/invariants/behaviour.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -267,7 +267,7 @@ capabilities:
   property_tests:
   - tests/properties/forecasting/test_engine_properties.py
   invariants:
-  - tests/domain/invariants/forecast.py
+  - tests/invariants/forecast.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -311,7 +311,7 @@ capabilities:
   property_tests:
   - tests/properties/cashflow/test_engine_properties.py
   invariants:
-  - tests/invariant/test_cashflow_invariants.py
+  - tests/invariants/test_cashflow_invariants.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -346,7 +346,7 @@ capabilities:
   property_tests:
   - tests/unit/repositories/test_pattern_repository.py
   invariants:
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -387,7 +387,7 @@ capabilities:
   property_tests:
   - tests/unit/engines/recommendation/test_recommendation_engine.py
   invariants:
-  - tests/domain/invariants/behaviour.py
+  - tests/invariants/behaviour.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -427,9 +427,9 @@ capabilities:
   - tests/golden/datasets/salary_plus_loan.json
   property_tests:
   - tests/unit/engines/reconciliation/test_reconciliation.py
-  - tests/invariant/test_reconciliation_determinism.py
+  - tests/invariants/test_reconciliation_determinism.py
   invariants:
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -473,10 +473,9 @@ capabilities:
   - tests/golden/datasets/normal_household.json
   property_tests:
   - tests/properties/credit_cards/test_engine_properties.py
-  - tests/properties/transaction_intelligence/__init__.py
   invariants:
-  - tests/invariant/test_statement.py
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_statement.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:

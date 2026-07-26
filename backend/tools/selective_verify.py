@@ -162,8 +162,8 @@ def build_selective_plan(change_report: dict[str, Any]) -> SelectivePlan:
 
         # Capability smoke tests
         for cap_test in affected.get("capability_tests", []):
-            if cap_test.startswith("tests/capabilities/"):
-                cap_name = cap_test.replace("tests/capabilities/", "")
+            if cap_test.startswith("tests/capability/"):
+                cap_name = cap_test.replace("tests/capability/", "")
                 plan.capability_tests.add(cap_name)
 
         # Property tests (directory paths) - use full path
@@ -451,7 +451,7 @@ def run_tests_sequential(plan: SelectivePlan) -> tuple[int, float]:
     # Capability smoke tests
     for cap in sorted(plan.capability_tests):
         result = subprocess.run(
-            ["pytest", f"tests/capabilities/{cap}", "-q", "--tb=short"],
+            ["pytest", f"tests/capability/{cap}", "-q", "--tb=short"],
             cwd=BACKEND_DIR,
         )
         if result.returncode != 0:
@@ -513,7 +513,7 @@ def run_full_verification() -> tuple[int, float]:
         return result.returncode, time.time() - start_time
 
     result = subprocess.run(
-        ["pytest", "tests/capabilities", "-q", "--tb=short", "--maxfail=3"],
+        ["pytest", "tests/capability", "-q", "--tb=short", "--maxfail=3"],
         cwd=BACKEND_DIR,
     )
     if result.returncode != 0:

@@ -8,13 +8,10 @@ Run: cd backend && ./venv/bin/python3 -m pytest tests/test_institution_repositor
 
 import json
 import os
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from db import FinanceDB
 from src.repositories.institution_repository import InstitutionRepository
