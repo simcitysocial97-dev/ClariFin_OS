@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T11:24:07.452992+00:00",
+  "generated_at": "2026-07-26T09:07:47.656224+00:00",
   "functions": [
     {
       "module": "src/engines/balance_engine.py",
@@ -249,6 +249,7 @@
         "Boolean",
         "Constant replacement",
         "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
         "Sign inversion"
       ],
