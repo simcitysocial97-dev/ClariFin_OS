@@ -157,9 +157,8 @@ def main() -> None:
         routers: list[str] = []
         for path in schema["paths"]:
             parts = path.strip("/").split("/")
-            if len(parts) >= 2 and parts[0] == "api":
-                if parts[1] not in routers:
-                    routers.append(parts[1])
+            if len(parts) >= 2 and parts[0] == "api" and parts[1] not in routers:
+                routers.append(parts[1])
         routers = sorted(routers)
     elif args.routers:
         routers = [r.strip() for r in args.routers.split(",")]
