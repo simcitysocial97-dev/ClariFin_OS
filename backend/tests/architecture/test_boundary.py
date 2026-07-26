@@ -8,12 +8,10 @@ Covers validator.py, errors.py, and boundary conditions.
 Run: python -m pytest tests/test_boundary.py -v
 """
 
-
 import pytest
 from fastapi import HTTPException
 
 # Add src to path
-
 from errors import (
     AppError,
     DatabaseError,

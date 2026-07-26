@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-
-
 from tests.golden.builders.credit_card_revolver import load_credit_card_revolver
 
 

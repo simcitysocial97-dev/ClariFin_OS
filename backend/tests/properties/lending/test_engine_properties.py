@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-
 from hypothesis import given, settings
 from hypothesis import strategies as st
-
 
 from tests.invariants import assert_loan_schedule_valid
 

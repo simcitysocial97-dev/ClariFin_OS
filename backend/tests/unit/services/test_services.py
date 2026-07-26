@@ -14,7 +14,6 @@ import tempfile
 import pytest
 
 # Add src to path
-
 from db import FinanceDB
 from services.behavior_service import BehaviorService
 from services.dashboard_service import DashboardService

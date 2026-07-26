@@ -11,6 +11,7 @@ Or directly: python tests/test_determinism.py
 
 import os
 import sqlite3
+import sys
 import tempfile
 
 from db import FinanceDB

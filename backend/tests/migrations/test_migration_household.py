@@ -13,7 +13,6 @@ import tempfile
 
 import pytest
 
-
 from scripts.migration_006_household import run_migration
 
 

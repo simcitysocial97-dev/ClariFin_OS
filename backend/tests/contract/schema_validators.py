@@ -11,7 +11,6 @@ def get_openapi_schemas() -> dict:
     global _SCHEMA_CACHE
     if _SCHEMA_CACHE is None:
 
-
         from main import app
 
         openapi = app.openapi()

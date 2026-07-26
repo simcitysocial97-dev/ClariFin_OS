@@ -13,7 +13,6 @@ import tempfile
 
 import pytest
 
-
 from repositories.account_repository import AccountRepository
 
 

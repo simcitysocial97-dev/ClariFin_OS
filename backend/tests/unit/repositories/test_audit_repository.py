@@ -13,7 +13,6 @@ import tempfile
 
 import pytest
 
-
 from repositories.reconciliation_audit_repository import ReconciliationAuditRepository
 
 

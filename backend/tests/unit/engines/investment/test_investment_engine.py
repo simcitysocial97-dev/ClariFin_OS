@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 
-
-
 class TestInvestmentEngine:
     """Unit tests for investment engine."""
 

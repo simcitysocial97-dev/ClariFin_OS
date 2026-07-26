@@ -10,7 +10,6 @@ import sqlite3
 import tempfile
 
 # Add src to path
-
 import pytest
 
 from db import FinanceDB, _parse_amount_paise

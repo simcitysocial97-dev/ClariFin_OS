@@ -12,7 +12,6 @@ import tempfile
 
 import pytest
 
-
 from db import FinanceDB
 from src.repositories.account_balance_repository import AccountBalanceRepository
 

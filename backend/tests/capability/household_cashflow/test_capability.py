@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-
-
 from tests.golden.builders.normal_household import load_normal_household
 from tests.invariants import assert_cashflow_result_invariants
 

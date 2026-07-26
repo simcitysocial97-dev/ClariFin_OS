@@ -13,7 +13,6 @@ import tempfile
 
 import pytest
 
-
 from scripts.migration_007_reconciliation_audit import run_migration
 
 

@@ -7,7 +7,6 @@ from typing import Any
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-
 from tests.invariants import assert_forecast_invariants
 
 

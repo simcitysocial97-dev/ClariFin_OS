@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-
-
 from tests.golden.builders.high_debt_household import load_high_debt_household
 
 

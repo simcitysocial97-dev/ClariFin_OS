@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-
-
 from tests.golden.builders.normal_household import load_normal_household
 
 

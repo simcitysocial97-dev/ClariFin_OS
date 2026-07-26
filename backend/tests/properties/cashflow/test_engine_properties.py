@@ -7,7 +7,6 @@ from typing import Any
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-
 from tests.invariants import assert_cashflow_result_invariants
 from tests.properties.conftest import cash_summary_strategy, financial_event_strategy
 

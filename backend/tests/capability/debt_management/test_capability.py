@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-
-
 from tests.golden.builders.salary_plus_loan import load_salary_plus_loan
 
 

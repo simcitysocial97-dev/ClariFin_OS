@@ -29,7 +29,9 @@ def test_coverage_json_valid() -> None:
     with open(GENERATED_DIR / "coverage.json") as f:
         data = json.load(f)
 
-    assert "generated_at" in data or "meta" in data, "coverage.json missing 'generated_at' or 'meta'"
+    assert (
+        "generated_at" in data or "meta" in data
+    ), "coverage.json missing 'generated_at' or 'meta'"
     assert "capabilities" in data, "coverage.json missing 'capabilities'"
     assert isinstance(data["capabilities"], list), "'capabilities' must be a list"
 

@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import Any
 
 
-
 def get_openapi_schema() -> dict[str, Any]:
     """Get OpenAPI schema from live FastAPI application."""
     try:

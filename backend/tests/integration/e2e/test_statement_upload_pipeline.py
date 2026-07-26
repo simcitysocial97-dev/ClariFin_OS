@@ -5,9 +5,7 @@ Tests the full pipeline: API upload → statement parsing → transaction insert
 
 from __future__ import annotations
 
-
 from fastapi.testclient import TestClient
-
 
 
 class TestStatementUploadPipeline:

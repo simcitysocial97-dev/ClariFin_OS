@@ -189,17 +189,13 @@ def get_all_test_files() -> dict[str, set[str]]:
                         f"tests/capability/{capability.name}/{f.name}"
                     )
 
-
     # Property tests
     property_dir = BACKEND_TESTS / "property"
 
     if property_dir.exists():
         for f in property_dir.rglob("test_*.py"):
             relative = f.relative_to(BACKEND_TESTS)
-            files["property_tests"].add(
-                f"tests/{relative}"
-            )
-
+            files["property_tests"].add(f"tests/{relative}")
 
     # Invariant tests
     invariant_dir = BACKEND_TESTS / "invariant"
@@ -207,20 +203,14 @@ def get_all_test_files() -> dict[str, set[str]]:
     if invariant_dir.exists():
         for f in invariant_dir.rglob("test_*.py"):
             relative = f.relative_to(BACKEND_TESTS)
-            files["invariants"].add(
-                f"tests/{relative}"
-            )
-
+            files["invariants"].add(f"tests/{relative}")
 
     # Golden datasets
     golden_dir = BACKEND_TESTS / "golden" / "datasets"
 
     if golden_dir.exists():
         for f in golden_dir.glob("*.json"):
-            files["golden_datasets"].add(
-                f"tests/golden/datasets/{f.name}"
-            )
-
+            files["golden_datasets"].add(f"tests/golden/datasets/{f.name}")
 
     return files
 
