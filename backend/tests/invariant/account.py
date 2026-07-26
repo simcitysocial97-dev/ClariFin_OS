@@ -20,7 +20,11 @@ def assert_account_state_valid(account_data: dict[str, Any]) -> None:
     Raises:
         AssertionError: If account state violates invariants
     """
-    if "status" in account_data and account_data["status"] is not None and account_data["status"] not in VALID_ACCOUNT_STATUSES:
+    if (
+        "status" in account_data
+        and account_data["status"] is not None
+        and account_data["status"] not in VALID_ACCOUNT_STATUSES
+    ):
         raise AssertionError(
             f"Invalid account status: {account_data['status']}. "
             f"Must be one of {VALID_ACCOUNT_STATUSES}"

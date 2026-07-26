@@ -9,11 +9,10 @@ Usage:
     python check_coverage_threshold.py --coverage-file path/to/coverage.json
 """
 
+import argparse
 import json
 import sys
-import argparse
 from pathlib import Path
-
 
 # ── Thresholds per phase ──────────────────────────────────────────────────────
 # Update these as you progress through phases

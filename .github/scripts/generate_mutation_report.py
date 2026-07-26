@@ -9,12 +9,11 @@ Usage:
     python generate_mutation_report.py
 """
 
-import subprocess
 import json
+import subprocess
 import sys
-from pathlib import Path
 from datetime import datetime
-
+from pathlib import Path
 
 OUTPUT_DIR = Path("backend/tests/generated/mutation")
 

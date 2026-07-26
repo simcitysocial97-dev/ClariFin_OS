@@ -1,6 +1,7 @@
-import yaml
 import os
 import sys
+
+import yaml
 
 # Read mutation workflow
 with open(".github/workflows/mutation.yml") as f:

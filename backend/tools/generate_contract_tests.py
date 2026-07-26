@@ -96,19 +96,24 @@ def test_{{ test_name }}_contract(client):
     test_name = f"{method}_{path.replace('/', '_').replace('{', '').replace('}', '')}"
     test_name = test_name.replace("-", "_")
 
-    return cast(str, template.render(
-        method=method,
-        path=path,
-        test_name=test_name,
-        router_name=router_name,
-        timestamp=datetime.now().isoformat(),
-        request_body=operation.get("requestBody"),
-        response_schema=response_schema,
-        valid_statuses=valid_statuses,
-    ))
+    return cast(
+        str,
+        template.render(
+            method=method,
+            path=path,
+            test_name=test_name,
+            router_name=router_name,
+            timestamp=datetime.now().isoformat(),
+            request_body=operation.get("requestBody"),
+            response_schema=response_schema,
+            valid_statuses=valid_statuses,
+        ),
+    )
 
 
-def generate_for_router(router_name: str, schema: dict[str, Any], output_dir: Path) -> None:
+def generate_for_router(
+    router_name: str, schema: dict[str, Any], output_dir: Path
+) -> None:
     """Generate tests for one router"""
 
     # Sanitize filename: replace hyphens with underscores
