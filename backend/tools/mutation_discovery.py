@@ -20,7 +20,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 # Project root from this file's location (backend/tools → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -212,7 +212,7 @@ def analyze_function_ast(source_path: Path, function_name: str) -> FunctionAnaly
     return FunctionAnalysis(
         module=module_path,
         function=function_name,
-        purity=purity,
+        purity=cast(Literal["PURE", "IMPURE", "UNKNOWN"], purity),
         confidence=confidence,
         mutation_types=mutation_types,
         blockers=blockers,

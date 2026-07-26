@@ -15,7 +15,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Project root from this file's location (backend/tools → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -140,7 +140,7 @@ def load_change_report() -> dict[str, Any]:
                 json.dump(empty_report, f, indent=2)
 
     with open(report_path) as f:
-        return json.load(f)
+        return cast(dict[str, Any], json.load(f))
 
 
 def build_selective_plan(change_report: dict[str, Any]) -> SelectivePlan:
@@ -419,7 +419,7 @@ def load_history() -> list[dict[str, Any]]:
     history_path = GENERATED_DIR / "selective-history.json"
     if history_path.exists():
         with open(history_path) as f:
-            return json.load(f)
+            return cast(list[dict[str, Any]], json.load(f))
     return []
 
 

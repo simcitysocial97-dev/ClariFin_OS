@@ -389,7 +389,7 @@ def _compute_temporal_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
             dt = datetime.strptime(date_str, "%Y-%m-%d")
             weekday = dt.strftime("%A")
             weekly_pattern[weekday].append(amount)
-        except:
+        except (ValueError, TypeError, AttributeError):
             pass
 
     weekly_avg = {
@@ -544,7 +544,7 @@ def _compute_impulsivity_score(transactions: list[dict[str, Any]]) -> dict[str, 
                     weekend_txns.append(txn)
                 else:
                     weekday_txns.append(txn)
-            except:
+            except (ValueError, TypeError):
                 pass
 
     # Weekend vs weekday variance
@@ -750,7 +750,7 @@ def _compute_financial_stress_index(
                 dt = datetime.strptime(date_iso, "%Y-%m-%d")
                 if dt.day >= 26:  # Last 5 days
                     eom_spending += amount
-            except:
+            except (ValueError, TypeError):
                 pass
 
     eom_ratio = eom_spending / max(total_spending, 1)

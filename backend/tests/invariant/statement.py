@@ -39,12 +39,10 @@ def assert_statement_detection_invariants(result: dict[str, Any]) -> None:
     Raises:
         AssertionError: If detection violates invariants
     """
-    if "total_outstanding_paise" in result:
-        if result["total_outstanding_paise"] < 0:
-            raise AssertionError("total_outstanding_paise cannot be negative")
+    if "total_outstanding_paise" in result and result["total_outstanding_paise"] < 0:
+        raise AssertionError("total_outstanding_paise cannot be negative")
 
-    if "confidence_bps" in result:
-        if result["confidence_bps"] < 0 or result["confidence_bps"] > 10000:
-            raise AssertionError(
-                f"confidence_bps out of range: {result['confidence_bps']}"
-            )
+    if "confidence_bps" in result and (
+        result["confidence_bps"] < 0 or result["confidence_bps"] > 10000
+    ):
+        raise AssertionError(f"confidence_bps out of range: {result['confidence_bps']}")

@@ -27,11 +27,10 @@ def assert_loan_schedule_valid(schedule: list[dict[str, Any]]) -> None:
 
     for i, row in enumerate(schedule):
         # Principal should decrease or stay same (not increase)
-        if prev_balance is not None:
-            if row.get("balance_paise", 0) > prev_balance:
-                raise AssertionError(
-                    f"Balance increased at row {i}: {row.get('balance_paise')} > {prev_balance}"
-                )
+        if prev_balance is not None and row.get("balance_paise", 0) > prev_balance:
+            raise AssertionError(
+                f"Balance increased at row {i}: {row.get('balance_paise')} > {prev_balance}"
+            )
 
         # Interest must be non-negative
         if row.get("interest_paise", 0) < 0:
@@ -60,15 +59,13 @@ def assert_loan_invariants(loan_data: dict[str, Any]) -> None:
     principal = loan_data.get("principal_paise", 0)
     outstanding = loan_data.get("outstanding_paise", 0)
 
-    if principal is not None and outstanding is not None:
-        if outstanding > principal:
-            raise AssertionError(
-                f"outstanding_paise ({outstanding}) > principal_paise ({principal})"
-            )
+    if principal is not None and outstanding is not None and outstanding > principal:
+        raise AssertionError(
+            f"outstanding_paise ({outstanding}) > principal_paise ({principal})"
+        )
 
-    if loan_data.get("tenure_months") is not None:
-        if loan_data["tenure_months"] < 0:
-            raise AssertionError("tenure_months cannot be negative")
+    if loan_data.get("tenure_months") is not None and loan_data["tenure_months"] < 0:
+        raise AssertionError("tenure_months cannot be negative")
 
 
 def assert_prepayment_result_valid(

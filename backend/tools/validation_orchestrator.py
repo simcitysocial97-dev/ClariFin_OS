@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Project root from this file's location
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -579,9 +579,8 @@ class ValidationGraph:
                 for cap in affected["capability_tests"]:
                     cap_name = cap.replace("tests/capabilities/", "")
                     pipeline.append(cap_name)
-            if affected.get("property_tests"):
-                if affected["property_tests"]:
-                    pipeline.append("property")
+            if affected.get("property_tests") and affected["property_tests"]:
+                pipeline.append("property")
             if affected.get("invariants") and affected["invariants"]:
                 pipeline.append("golden")
 
@@ -684,7 +683,7 @@ def load_cache() -> dict[str, Any]:
     cache_path = CACHE_DIR / "validation-cache.json"
     if cache_path.exists():
         with open(cache_path) as f:
-            return json.load(f)
+            return cast(dict[str, Any], json.load(f))
     return {"runs": []}
 
 
@@ -707,7 +706,7 @@ def check_cached_run(changed_files: list[str], strategy: str) -> dict[str, Any] 
     key = get_cache_key(changed_files, strategy)
     for run in cache.get("runs", []):
         if run.get("cache_key") == key:
-            return run.get("manifest")
+            return cast(dict[str, Any] | None, run.get("manifest"))
     return None
 
 
@@ -728,7 +727,7 @@ def load_manifest() -> dict[str, Any] | None:
     manifest_path = GENERATED_DIR / "validation-manifest.json"
     if manifest_path.exists():
         with open(manifest_path) as f:
-            return json.load(f)
+            return cast(dict[str, Any] | None, json.load(f))
     return None
 
 
@@ -753,7 +752,7 @@ def load_history() -> list[dict[str, Any]]:
     history_path = GENERATED_DIR / "validation-history.json"
     if history_path.exists():
         with open(history_path) as f:
-            return json.load(f)
+            return cast(list[dict[str, Any]], json.load(f))
     return []
 
 
@@ -788,7 +787,7 @@ def load_selective_plan() -> dict[str, Any] | None:
     change_report_path = GENERATED_DIR / "change-report.json"
     if change_report_path.exists():
         with open(change_report_path) as f:
-            return json.load(f)
+            return cast(dict[str, Any] | None, json.load(f))
     return None
 
 
@@ -879,8 +878,8 @@ def explain_decision(tree: bool = False) -> None:
 
     change_report_path = GENERATED_DIR / "change-report.json"
     if change_report_path.exists():
-        with open(change_report_path) as f:
-            report: dict[str, Any] = json.load(f)
+        with open(change_report_path) as fh:
+            report: dict[str, Any] = json.load(fh)
         caps = set()
         for c in report.get("changes", []):
             for cap in c.get("capabilities", []):

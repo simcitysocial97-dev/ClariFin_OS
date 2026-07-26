@@ -40,6 +40,7 @@ def assert_all_paise_integers(data: dict[str, Any]) -> None:
         AssertionError: If any paise field violates integer constraint
     """
     for key, value in data.items():
-        if key.endswith("_paise") or "paise" in key:
-            if not isinstance(value, int) or value is None:
-                raise AssertionError(f"{key}={value} is not integer paise")
+        if (key.endswith("_paise") or "paise" in key) and (
+            not isinstance(value, int) or value is None
+        ):
+            raise AssertionError(f"{key}={value} is not integer paise")

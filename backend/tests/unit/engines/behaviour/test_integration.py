@@ -310,9 +310,9 @@ class TestIntegrationDebtDependency:
         ratio = compute_credit_dependency_ratio(credit_funded, total_expenses)
 
         # Credit expenses: 300,000 / 1,100,000 = 27% (> 20% threshold)
-        assert ratio > DEBT_DEPENDENT_MIN_BORROWED_RATIO, (
-            f"Borrowed lifestyle ratio {ratio} should exceed {DEBT_DEPENDENT_MIN_BORROWED_RATIO}"
-        )
+        assert (
+            ratio > DEBT_DEPENDENT_MIN_BORROWED_RATIO
+        ), f"Borrowed lifestyle ratio {ratio} should exceed {DEBT_DEPENDENT_MIN_BORROWED_RATIO}"
 
     def test_foir_calculated_correctly(self, loan_data, credit_card_data):
         """FOIR should be calculated from EMI and minimum due."""
@@ -354,9 +354,9 @@ class TestIntegrationDebtDependency:
         score = compute_debt_cycle_score(credit_advances, revolving_months, debt_trend)
 
         # Score should be elevated (not low)
-        assert score > 50, (
-            f"Debt cycle score {score} should be elevated with advances and revolving"
-        )
+        assert (
+            score > 50
+        ), f"Debt cycle score {score} should be elevated with advances and revolving"
 
 
 # ============================================================
@@ -381,9 +381,9 @@ class TestIntegrationFOIRCalculation:
         expected_ratio = Decimal(str(expected_total)) / Decimal("800000")
 
         # Allow for rounding differences
-        assert abs(foir - expected_ratio) < Decimal("0.001"), (
-            f"FOIR {foir} should be close to {expected_ratio}"
-        )
+        assert abs(foir - expected_ratio) < Decimal(
+            "0.001"
+        ), f"FOIR {foir} should be close to {expected_ratio}"
 
     def test_foir_above_threshold(self, loan_data):
         """FOIR above 50% should trigger HIGH severity recommendation."""
@@ -524,9 +524,7 @@ class TestIntegrationWellnessScore:
             "Risk",
             "Critical",
             "Developing",
-        ], (
-            f"Wellness band should be Risk/Critical/Developing, got {band} with score {wellness}"
-        )
+        ], f"Wellness band should be Risk/Critical/Developing, got {band} with score {wellness}"
 
     def test_negative_savings_clamped_in_wellness(self):
         """Negative savings rate should be clamped to 0 in wellness calculation."""
@@ -569,9 +567,9 @@ class TestIntegrationRecommendations:
 
         rec = check_debt_dependency(borrowed_ratio)
 
-        assert rec is not None, (
-            "Should generate recommendation for debt dependency >20%"
-        )
+        assert (
+            rec is not None
+        ), "Should generate recommendation for debt dependency >20%"
         assert rec.title == "Lifestyle Debt Alert"
         assert rec.severity == "HIGH"
         assert "borrowed money" in rec.reason
@@ -666,9 +664,9 @@ class TestIntegrationMetricConsistency:
         ratio1 = compute_credit_dependency_ratio(credit_funded, total_expenses)
         ratio2 = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
 
-        assert ratio1 == ratio2, (
-            "Credit dependency ratio should equal borrowed lifestyle ratio"
-        )
+        assert (
+            ratio1 == ratio2
+        ), "Credit dependency ratio should equal borrowed lifestyle ratio"
 
     def test_negative_savings_handled(self, debt_dependent_transactions):
         """Engine should handle savings rate correctly for scenario."""
@@ -686,9 +684,9 @@ class TestIntegrationMetricConsistency:
         savings_rate = compute_true_savings_rate(total_income, total_expenses, 0)
 
         # Savings should be negative when expenses > income
-        assert savings_rate < Decimal("0"), (
-            f"Savings rate should be negative, got {savings_rate}"
-        )
+        assert savings_rate < Decimal(
+            "0"
+        ), f"Savings rate should be negative, got {savings_rate}"
 
 
 # ============================================================

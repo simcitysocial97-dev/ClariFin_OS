@@ -7,7 +7,7 @@ single import path for tests and consumers.
 All monetary values are integers in paise (₹1.00 = 100 paise).
 """
 
-from engines.behavior_engine import (
+from src.engines.behavior_engine import (
     _coefficient_of_variation,
     _compute_financial_stress_index,
     _compute_habit_stability_score,
@@ -19,11 +19,11 @@ from engines.behavior_engine import (
     compute_behavior_profile,
     detect_india_risk_patterns,
 )
-from engines.insight_generator import (
+from src.engines.insight_generator import (
     generate_behavioral_insights,
     generate_summary_text,
 )
-from engines.nudge_engine import (
+from src.engines.nudge_engine import (
     generate_nudges,
     get_top_nudge,
 )

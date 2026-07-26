@@ -124,9 +124,9 @@ def test_confidence_bps_backfill_correctness(db_with_confidence_values):
             (rec_id,),
         ).fetchone()
         assert row is not None, f"Reconciliation {rec_id} not found"
-        assert row["confidence_bps"] == expected_bps, (
-            f"id={rec_id}: expected confidence_bps={expected_bps}, got {row['confidence_bps']}"
-        )
+        assert (
+            row["confidence_bps"] == expected_bps
+        ), f"id={rec_id}: expected confidence_bps={expected_bps}, got {row['confidence_bps']}"
 
     conn.close()
 
@@ -143,9 +143,9 @@ def test_null_match_confidence_left_null(db_with_confidence_values):
         "SELECT confidence_bps FROM reconciliations WHERE id = 8"
     ).fetchone()
     assert row is not None
-    assert row["confidence_bps"] is None, (
-        "Row with NULL match_confidence should have NULL confidence_bps"
-    )
+    assert (
+        row["confidence_bps"] is None
+    ), "Row with NULL match_confidence should have NULL confidence_bps"
 
     conn.close()
 
@@ -162,9 +162,9 @@ def test_out_of_range_confidence_left_null(db_with_confidence_values):
         "SELECT confidence_bps FROM reconciliations WHERE id = 9"
     ).fetchone()
     assert row is not None
-    assert row["confidence_bps"] is None, (
-        "Row with match_confidence=1.5 should have NULL confidence_bps (left for review)"
-    )
+    assert (
+        row["confidence_bps"] is None
+    ), "Row with match_confidence=1.5 should have NULL confidence_bps (left for review)"
 
     conn.close()
 
@@ -190,9 +190,9 @@ def test_migration_idempotent(db_with_confidence_values):
     tables = conn.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='reconciliation_audit_log'"
     ).fetchone()
-    assert tables is not None, (
-        "reconciliation_audit_log table should exist after second run"
-    )
+    assert (
+        tables is not None
+    ), "reconciliation_audit_log table should exist after second run"
 
     conn.close()
 

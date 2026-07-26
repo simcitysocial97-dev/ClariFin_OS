@@ -100,9 +100,9 @@ class TestEMIFormulaCorrectness:
         tenure = 120
         emi = compute_emi_fixed(principal, rate_bps, tenure)
         expected_emi = 1239857
-        assert abs(emi - expected_emi) <= 10, (
-            f"EMI {emi} differs from expected {expected_emi}"
-        )
+        assert (
+            abs(emi - expected_emi) <= 10
+        ), f"EMI {emi} differs from expected {expected_emi}"
 
     def test_zero_interest_emi(self):
         """Zero interest loan: EMI should be principal/tenure."""
@@ -180,9 +180,9 @@ class TestScheduleCorrectness:
             start_date="2025-01-01",
         )
         total_principal = sum(row.principal_paise for row in schedule)
-        assert total_principal == principal, (
-            f"Principal sum {total_principal} != {principal}"
-        )
+        assert (
+            total_principal == principal
+        ), f"Principal sum {total_principal} != {principal}"
 
     def test_schedule_final_balance_zero(self):
         """Final balance should be exactly zero."""

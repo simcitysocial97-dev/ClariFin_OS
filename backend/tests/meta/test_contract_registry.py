@@ -155,9 +155,9 @@ print("PASS")
         capture_output=True,
         text=True,
     )
-    assert result.returncode == 0, (
-        f"ContractStage registration test failed: {result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"ContractStage registration test failed: {result.stderr}"
     assert "PASS" in result.stdout
 
 
@@ -215,9 +215,9 @@ print("PASS")
         capture_output=True,
         text=True,
     )
-    assert result.returncode == 0, (
-        f"Snapshot normalization test failed: {result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"Snapshot normalization test failed: {result.stderr}"
     assert "PASS" in result.stdout
 
 
@@ -231,9 +231,9 @@ def test_contract_tests_collectable() -> None:
     )
     # Should find tests
     assert result.returncode == 0, f"Test collection failed: {result.stderr}"
-    assert "test_" in result.stdout or "test session" in result.stdout.lower(), (
-        "No tests collected"
-    )
+    assert (
+        "test_" in result.stdout or "test session" in result.stdout.lower()
+    ), "No tests collected"
 
 
 def test_contract_tests_run() -> None:
@@ -247,6 +247,6 @@ def test_contract_tests_run() -> None:
     # Tests may fail but shouldn't error on import
     output = result.stdout + result.stderr
     assert "ImportError" not in output, f"Import errors in contract tests: {output}"
-    assert "ModuleNotFoundError" not in output, (
-        f"Module not found in contract tests: {output}"
-    )
+    assert (
+        "ModuleNotFoundError" not in output
+    ), f"Module not found in contract tests: {output}"

@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Add src to path for FastAPI app import
 BACKEND_DIR = Path(__file__).parent.parent  # backend/
@@ -102,7 +102,7 @@ def extract_request_schema(spec: dict[str, Any], method: str) -> dict[str, Any]:
     json_content = content.get("application/json", {})
     schema = json_content.get("schema", {})
 
-    return schema
+    return cast(dict[str, Any], schema)
 
 
 def extract_response_schema(spec: dict[str, Any]) -> dict[str, Any]:
@@ -116,7 +116,7 @@ def extract_response_schema(spec: dict[str, Any]) -> dict[str, Any]:
             json_content = content.get("application/json", {})
             schema = json_content.get("schema", {})
             if schema:
-                return schema
+                return cast(dict[str, Any], schema)
 
     # Fallback: get any response with schema
     for _code, response in responses.items():
@@ -124,7 +124,7 @@ def extract_response_schema(spec: dict[str, Any]) -> dict[str, Any]:
         json_content = content.get("application/json", {})
         schema = json_content.get("schema", {})
         if schema:
-            return schema
+            return cast(dict[str, Any], schema)
 
     return {}
 
@@ -143,7 +143,7 @@ def extract_parameters(spec: dict[str, Any], method: str) -> list[dict[str, Any]
         # Also check for query parameters in requestBody (some FastAPI patterns)
         pass
 
-    return parameters
+    return cast(list[dict[str, Any]], parameters)
 
 
 def map_endpoints_to_capabilities(
@@ -224,7 +224,7 @@ def save_artifacts(
         )
 
     # contract-registry.json - simplified registry for tests
-    registry = {
+    registry: dict[str, Any] = {
         "routers": {},
         "generated_at": str(Path(__file__).stat().st_mtime),
     }

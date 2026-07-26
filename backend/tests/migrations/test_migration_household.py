@@ -102,12 +102,12 @@ def test_household_defaults_backfilled(db_with_existing_accounts):
     assert len(rows) == 3, "Should have 3 accounts"
 
     for row in rows:
-        assert row["owner_id"] == "self", (
-            f"Account {row['id']}: expected owner_id='self', got '{row['owner_id']}'"
-        )
-        assert row["household_id"] == "primary", (
-            f"Account {row['id']}: expected household_id='primary', got '{row['household_id']}'"
-        )
+        assert (
+            row["owner_id"] == "self"
+        ), f"Account {row['id']}: expected owner_id='self', got '{row['owner_id']}'"
+        assert (
+            row["household_id"] == "primary"
+        ), f"Account {row['id']}: expected household_id='primary', got '{row['household_id']}'"
 
     conn.close()
 
@@ -150,9 +150,9 @@ def test_new_accounts_get_defaults(db_with_existing_accounts):
         "SELECT owner_id, household_id FROM accounts WHERE name = 'New Account'"
     ).fetchone()
     assert row["owner_id"] == "self", "New account should get default owner_id"
-    assert row["household_id"] == "primary", (
-        "New account should get default household_id"
-    )
+    assert (
+        row["household_id"] == "primary"
+    ), "New account should get default household_id"
 
     conn.close()
 

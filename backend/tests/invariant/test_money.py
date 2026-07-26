@@ -7,9 +7,10 @@ PAISE_FIELDS = ("amount_paise", "balance_paise", "principal_paise", "outstanding
 def assert_all_paise_integers(data):
     """Fail if any float/None in paise fields."""
     for key, value in data.items():
-        if key.endswith("_paise") or "paise" in key:
-            if not isinstance(value, int) or value is None:
-                raise AssertionError(f"{key}={value} is not integer paise")
+        if (key.endswith("_paise") or "paise" in key) and (
+            not isinstance(value, int) or value is None
+        ):
+            raise AssertionError(f"{key}={value} is not integer paise")
 
 
 def test_money_invariants():

@@ -10,11 +10,12 @@ Usage:
 
 import argparse
 from pathlib import Path
+from typing import Any, cast
 
 from jinja2 import Template
 
 
-def get_openapi_schema() -> dict:
+def get_openapi_schema() -> dict[str, Any]:
     """Extract OpenAPI schema from FastAPI app"""
     import sys
 
@@ -33,12 +34,12 @@ def get_openapi_schema() -> dict:
         if frontend_schema.exists():
             import json
 
-            return json.loads(frontend_schema.read_text())
+            return cast(dict[str, Any], json.loads(frontend_schema.read_text()))
         raise
 
 
 def generate_test_for_endpoint(
-    path: str, method: str, operation: dict, router_name: str
+    path: str, method: str, operation: dict[str, Any], router_name: str
 ) -> str:
     """Generate pytest test code for one endpoint"""
 
@@ -95,7 +96,7 @@ def test_{{ test_name }}_contract(client):
     test_name = f"{method}_{path.replace('/', '_').replace('{', '').replace('}', '')}"
     test_name = test_name.replace("-", "_")
 
-    return template.render(
+    return cast(str, template.render(
         method=method,
         path=path,
         test_name=test_name,
@@ -104,10 +105,10 @@ def test_{{ test_name }}_contract(client):
         request_body=operation.get("requestBody"),
         response_schema=response_schema,
         valid_statuses=valid_statuses,
-    )
+    ))
 
 
-def generate_for_router(router_name: str, schema: dict, output_dir: Path):
+def generate_for_router(router_name: str, schema: dict[str, Any], output_dir: Path) -> None:
     """Generate tests for one router"""
 
     # Sanitize filename: replace hyphens with underscores
@@ -134,7 +135,7 @@ def generate_for_router(router_name: str, schema: dict, output_dir: Path):
     print(f"✅ Generated: {output_file}")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Generate contract tests from OpenAPI")
     parser.add_argument(
         "--routers", help="Comma-separated router names (e.g., cashflow,accounts)"
@@ -153,11 +154,12 @@ def main():
     # Determine routers
     if args.all:
         # Extract unique router names from paths
-        routers = set()
+        routers: list[str] = []
         for path in schema["paths"]:
             parts = path.strip("/").split("/")
             if len(parts) >= 2 and parts[0] == "api":
-                routers.add(parts[1])
+                if parts[1] not in routers:
+                    routers.append(parts[1])
         routers = sorted(routers)
     elif args.routers:
         routers = [r.strip() for r in args.routers.split(",")]

@@ -27,12 +27,15 @@ def assert_credit_invariants(card_data: dict[str, Any]) -> None:
         raise AssertionError("credit_limit_paise cannot be negative")
 
     # Outstanding cannot exceed limit
-    if "credit_limit_paise" in card_data and "outstanding_paise" in card_data:
-        if card_data["outstanding_paise"] > card_data["credit_limit_paise"]:
-            raise AssertionError(
-                f"outstanding_paise ({card_data['outstanding_paise']}) "
-                f"> credit_limit_paise ({card_data['credit_limit_paise']})"
-            )
+    if (
+        "credit_limit_paise" in card_data
+        and "outstanding_paise" in card_data
+        and card_data["outstanding_paise"] > card_data["credit_limit_paise"]
+    ):
+        raise AssertionError(
+            f"outstanding_paise ({card_data['outstanding_paise']}) "
+            f"> credit_limit_paise ({card_data['credit_limit_paise']})"
+        )
 
 
 def assert_utilization_valid(

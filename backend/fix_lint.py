@@ -2,11 +2,11 @@ import os
 import re
 
 
-def fix_lint_errors(directory="."):
+def fix_lint_errors(directory: str = ".") -> None:
     total_b904 = 0
     total_e722 = 0
 
-    def b904_replacer(match):
+    def b904_replacer(match: re.Match[str]) -> str:
         nonlocal total_b904
         block = match.group(0)
 

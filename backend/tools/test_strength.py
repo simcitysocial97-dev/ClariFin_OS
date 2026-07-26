@@ -162,8 +162,8 @@ def analyze_capability_strength(cap: dict[str, Any]) -> CapabilityStrength:
     inv_path = f"tests/invariants/{cap_id}.py"
     if check_path_exists(inv_path):
         try:
-            with open(BACKEND_DIR / inv_path) as f:
-                content = f.read()
+            with open(BACKEND_DIR / inv_path) as fh:
+                content = fh.read()
                 strength.invariant_count = content.count("assert ")
         except Exception:
             pass

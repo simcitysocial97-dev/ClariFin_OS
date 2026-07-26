@@ -27,11 +27,10 @@ def assert_forecast_invariants(forecast_result: dict[str, Any]) -> None:
                 raise AssertionError(
                     f"Confidence {confidence} out of bps range (0-10000)"
                 )
-        elif isinstance(confidence, (int, float)):
-            if confidence < 0 or confidence > 10000:
-                raise AssertionError(
-                    f"Confidence {confidence} out of bps range (0-10000)"
-                )
+        elif isinstance(confidence, (int, float)) and (
+            confidence < 0 or confidence > 10000
+        ):
+            raise AssertionError(f"Confidence {confidence} out of bps range (0-10000)")
 
     # All paise values must be integers
     from .money import assert_money_invariants
@@ -63,6 +62,8 @@ def assert_liquidity_forecast_invariants(result: dict[str, Any]) -> None:
             raise AssertionError("months_until_stress cannot be negative")
 
     # Projected min balance must be non-negative
-    if "projected_min_balance_paise" in result:
-        if result["projected_min_balance_paise"] < 0:
-            raise AssertionError("projected_min_balance_paise cannot be negative")
+    if (
+        "projected_min_balance_paise" in result
+        and result["projected_min_balance_paise"] < 0
+    ):
+        raise AssertionError("projected_min_balance_paise cannot be negative")
