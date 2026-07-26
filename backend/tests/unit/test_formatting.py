@@ -5,7 +5,6 @@ Tests cover INR formatting with lakh/crore grouping, date display,
 and description cleaning — all pure functions with no DB dependency.
 """
 
-
 from src.common.formatting import clean_description, format_date_display, format_inr
 
 # ============================================================================

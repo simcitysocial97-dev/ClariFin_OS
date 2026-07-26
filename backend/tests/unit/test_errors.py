@@ -5,7 +5,6 @@ Tests cover error constants, custom exception classes, error hierarchy,
 and error response formatting — without requiring FastAPI infrastructure.
 """
 
-
 from src.errors import (
     AMOUNT_INVALID,
     INVALID_REQUEST,
