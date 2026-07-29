@@ -1,6 +1,6 @@
 # Mutation Validation Gaps Report
 
-Generated: 2026-07-26T15:48:04.818407+00:00
+Generated: 2026-07-28T00:20:59.336417+00:00
 
 ## Summary
 
@@ -73,10 +73,10 @@ Generated: 2026-07-26T15:48:04.818407+00:00
 ### `src/engines/behavior_engine.py`
 
 ✗ No pure functions - blocked for mutation testing
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 ✗ Impure functions (blockers): 5
   - `invalidate_behavior_cache`: blocked by ['import:sqlite3']
   - `get_cached_behavior_profile`: blocked by ['import:sqlite3']

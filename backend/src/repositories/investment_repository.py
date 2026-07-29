@@ -15,7 +15,7 @@ class InvestmentRepository(BaseRepository):
             rows = conn.execute("""
                 SELECT id, name, investment_type, units, buy_price_paise,
                        current_price_paise, invested_paise, current_value_paise,
-                       as_of_date, is_active, notes, created_at, last_updated
+                       as_of_date, is_active, notes, created_at, updated_at
                 FROM investments
                 WHERE is_active = 1
                 ORDER BY current_value_paise DESC
@@ -62,7 +62,7 @@ class InvestmentRepository(BaseRepository):
         with self._get_conn() as conn:
             cur = conn.execute(
                 """
-                INSERT INTO investments (name, type, platform, invested_paise,
+                INSERT INTO investments (name, investment_type, invested_paise,
                                        current_value_paise, units, purchase_date,
                                        maturity_date, linked_account_id, notes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -108,7 +108,7 @@ class InvestmentRepository(BaseRepository):
             return self.get_by_id(investment_id)
 
         set_clause = ", ".join(f"{k} = ?" for k in updates)
-        set_clause += ", last_updated = datetime('now')"
+        set_clause += ", updated_at = datetime('now')"
         values = list(updates.values()) + [investment_id]
 
         with self._get_conn() as conn:
@@ -120,7 +120,7 @@ class InvestmentRepository(BaseRepository):
         """Soft delete an investment."""
         with self._get_conn() as conn:
             conn.execute(
-                "UPDATE investments SET is_active = 0, last_updated = datetime('now') WHERE id = ?",
+                "UPDATE investments SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
                 (investment_id,),
             )
             conn.commit()

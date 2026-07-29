@@ -29,7 +29,8 @@ jobs:
       - name: Run property tests with nightly profile
         run: |
           cd backend
-          pytest tests/properties/ -v --tb=short -m property --hypothesis-profile=nightly
+          python -m runtime.ci_targets --property > ci-property-targets.txt
+          xargs pytest < ci-property-targets.txt -v --tb=short --hypothesis-profile=nightly
 
       - name: Upload property test results
         uses: actions/upload-artifact@v4

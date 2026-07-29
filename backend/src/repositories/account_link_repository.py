@@ -25,7 +25,7 @@ class AccountLinkRepository(BaseRepository):
 
     def link_accounts(
         self,
-        primary_account_id: str,
+        account_id: str,
         linked_account_id: str,
         relationship_type: RelationshipType,
     ) -> bool:
@@ -39,10 +39,10 @@ class AccountLinkRepository(BaseRepository):
                 conn.execute(
                     """
                     INSERT INTO account_links (
-                        primary_account_id, linked_account_id, relationship_type
+                        account_id, linked_account_id, relationship_type
                     ) VALUES (?, ?, ?)
                     """,
-                    (primary_account_id, linked_account_id, relationship_type),
+                    (account_id, linked_account_id, relationship_type),
                 )
                 conn.commit()
                 return True
@@ -50,15 +50,15 @@ class AccountLinkRepository(BaseRepository):
                 # Link already exists
                 return False
 
-    def unlink_accounts(self, primary_account_id: str, linked_account_id: str) -> bool:
+    def unlink_accounts(self, account_id: str, linked_account_id: str) -> bool:
         """Remove a link between two accounts."""
         with self._get_conn() as conn:
             conn.execute(
                 """
                 DELETE FROM account_links
-                WHERE primary_account_id = ? AND linked_account_id = ?
+                WHERE account_id = ? AND linked_account_id = ?
                 """,
-                (primary_account_id, linked_account_id),
+                (account_id, linked_account_id),
             )
             conn.commit()
             changes = conn.execute("SELECT changes()").fetchone()
@@ -72,9 +72,9 @@ class AccountLinkRepository(BaseRepository):
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
-                SELECT primary_account_id, linked_account_id, relationship_type, created_at
+                SELECT account_id, linked_account_id, relationship_type, created_at
                 FROM account_links
-                WHERE primary_account_id = ? OR linked_account_id = ?
+                WHERE account_id = ? OR linked_account_id = ?
                 ORDER BY created_at DESC
                 """,
                 (account_id, account_id),
@@ -83,7 +83,7 @@ class AccountLinkRepository(BaseRepository):
 
     def relationship_exists(
         self,
-        primary_account_id: str,
+        account_id: str,
         linked_account_id: str,
         relationship_type: RelationshipType | None = None,
     ) -> bool:
@@ -93,17 +93,17 @@ class AccountLinkRepository(BaseRepository):
                 row = conn.execute(
                     """
                     SELECT 1 FROM account_links
-                    WHERE primary_account_id = ? AND linked_account_id = ?
+                    WHERE account_id = ? AND linked_account_id = ?
                     AND relationship_type = ?
                     """,
-                    (primary_account_id, linked_account_id, relationship_type),
+                    (account_id, linked_account_id, relationship_type),
                 ).fetchone()
             else:
                 row = conn.execute(
                     """
                     SELECT 1 FROM account_links
-                    WHERE primary_account_id = ? AND linked_account_id = ?
+                    WHERE account_id = ? AND linked_account_id = ?
                     """,
-                    (primary_account_id, linked_account_id),
+                    (account_id, linked_account_id),
                 ).fetchone()
         return row is not None

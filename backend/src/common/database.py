@@ -10,7 +10,6 @@ in db.py itself.
 
 from pathlib import Path
 
-from src.config import settings
 from src.db import FinanceDB
 
 # Global database path constant (kept for backward compatibility)
@@ -24,4 +23,4 @@ def get_db() -> FinanceDB:
     FinanceDB now only handles schema management and migrations.
     Domain queries should use repository classes directly.
     """
-    return FinanceDB(db_path=str(settings.database_path) or DB_PATH)
+    return FinanceDB()

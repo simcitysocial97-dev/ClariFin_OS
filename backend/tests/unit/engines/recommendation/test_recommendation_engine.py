@@ -9,7 +9,7 @@ All tests verify:
 
 from decimal import Decimal
 
-from engines.recommendation_engine import (
+from src.engines.recommendation_engine import (
     check_debt_dependency,
     check_foir,
     check_liquidity,

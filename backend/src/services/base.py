@@ -2,7 +2,10 @@
 Base service class for business orchestration.
 """
 
-from src.common import DB_PATH
+import os
+from pathlib import Path
+
+from src.config import settings
 
 
 class BaseService:
@@ -14,4 +17,12 @@ class BaseService:
     """
 
     def __init__(self, db_path: str | None = None):
-        self.db_path = db_path or DB_PATH
+        if db_path is None:
+            db_path = (
+                getattr(settings, "_database_path_override", None)
+                or os.getenv("FINANCE_DB_PATH")
+                or str(
+                    Path(__file__).resolve().parent.parent / "data" / "finance.db"
+                )
+            )
+        self.db_path = str(db_path)

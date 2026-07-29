@@ -13,7 +13,7 @@ class TestStatementUploadPipeline:
 
     def test_upload_statement_returns_200(self, client: TestClient) -> None:
         """POST /upload returns 200 or 500 (no crash)."""
-        response = client.post("/api/v1/upload")
+        response = client.post("/api/upload")
         assert response.status_code in (200, 400, 422, 500)
 
     def test_upload_statement_with_file(self, client: TestClient) -> None:
@@ -21,7 +21,7 @@ class TestStatementUploadPipeline:
         # Create a minimal test file
         test_content = b"Date,Description,Amount\n"
         response = client.post(
-            "/api/v1/upload",
+            "/api/upload",
             files={"file": ("test.csv", test_content, "text/csv")},
         )
         assert response.status_code in (200, 400, 422, 500)
@@ -29,7 +29,7 @@ class TestStatementUploadPipeline:
     def test_upload_invalid_file_type(self, client: TestClient) -> None:
         """POST /upload rejects invalid file types."""
         response = client.post(
-            "/api/v1/upload",
+            "/api/upload",
             files={"file": ("test.xyz", b"invalid", "application/octet-stream")},
         )
         assert response.status_code in (400, 422, 500)

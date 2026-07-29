@@ -34,23 +34,44 @@ on:
 
 jobs:
 
+  # ── Discover Mutation Targets ────────────────────────────────────────────
+  discover:
+    name: "Discover Mutation Targets"
+    runs-on: ubuntu-latest
+    outputs:
+      engines: ${{ steps.discover.outputs.engines }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Discover engines from runtime
+        id: discover
+        working-directory: backend
+        run: |
+          python -m runtime.ci_targets --mutation --json > mutation-targets.json
+          ENGINES=$(python -c "import json; data=json.load(open('mutation-targets.json')); print(json.dumps([p.split('/')[-1].replace('.py','') for p in data['mutation']]))")
+          echo "engines=$ENGINES" >> "$GITHUB_OUTPUT"
+          echo "Discovered engines: $ENGINES"
+
   # ── Selective Mutation (Nightly) ──────────────────────────────────────────
   mutation-engines:
     name: "Mutation — Engines"
     runs-on: ubuntu-latest
     timeout-minutes: 90    # Mutation is slow — give it time
+    needs: discover
     
     strategy:
       # Run mutation for each engine in parallel
       # This distributes the work across multiple runners
       matrix:
-        engine:
-          - balance
-          - behavior
-          - cashflow
-          - ledger_audit
-          - nudge
-          - reconciliation
+        engine: ${{ fromJson(needs.discover.outputs.engines) }}
       
       # Continue other engines even if one fails
       fail-fast: false
@@ -69,32 +90,17 @@ jobs:
         id: find-engine
         working-directory: backend
         run: |
-          # Search for the engine file
           ENGINE="${{ matrix.engine }}"
+          ENGINE_PATH="src/engines/${ENGINE}.py"
           
-          # Try different naming conventions
-          PATHS=(
-            "src/engines/${ENGINE}_engine.py"
-            "src/engines/${ENGINE}.py"
-          )
-          
-          FOUND=""
-          for path in "${PATHS[@]}"; do
-            if [ -f "$path" ]; then
-              FOUND="$path"
-              break
-            fi
-          done
-          
-          if [ -z "$FOUND" ]; then
+          if [ -f "$ENGINE_PATH" ]; then
+            echo "Found: $ENGINE_PATH"
+            echo "engine-path=$ENGINE_PATH" >> "$GITHUB_OUTPUT"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
             echo "Engine file not found for: $ENGINE"
-            echo "Searched: ${PATHS[*]}"
             echo "engine-path=" >> "$GITHUB_OUTPUT"
             echo "found=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Found: $FOUND"
-            echo "engine-path=$FOUND" >> "$GITHUB_OUTPUT"
-            echo "found=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run mutation testing

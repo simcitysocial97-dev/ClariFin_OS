@@ -1,6 +1,6 @@
 # Mutation Readiness Report
 
-Generated: 2026-07-26T15:48:04.816234+00:00
+Generated: 2026-07-28T00:20:59.333201+00:00
 
 ## Engine Readiness Status
 
@@ -49,9 +49,9 @@ Generated: 2026-07-26T15:48:04.816234+00:00
 | `src/engines/behaviour_engine/savings.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/stress.py` | 5 | 1 | Partial | MEDIUM |
 | `src/engines/loan_engine/models.py` | 0 | 0 | Partial | UNKNOWN |
-| `src/engines/loan_engine/amortization.py` | 6 | 0 | Ready | HIGH |
+| `src/engines/loan_engine/amortization.py` | 7 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/prepayment.py` | 5 | 0 | Ready | HIGH |
-| `src/engines/loan_engine/emi.py` | 4 | 0 | Ready | HIGH |
+| `src/engines/loan_engine/emi.py` | 6 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/metrics.py` | 5 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/utils.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/foreclosure.py` | 2 | 0 | Ready | HIGH |

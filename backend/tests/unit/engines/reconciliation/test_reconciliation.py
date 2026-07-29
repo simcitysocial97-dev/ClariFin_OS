@@ -23,7 +23,7 @@ import pytest
 
 # Add parent directory to path
 from db import FinanceDB
-from engines.reconciliation_engine import (
+from src.engines.reconciliation_engine import (
     _calculate_confidence,
     _check_match,
     _date_difference_days,
@@ -215,9 +215,9 @@ def test_confirm_no_transaction_mutation(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
 
@@ -289,9 +289,9 @@ def test_reject_no_transaction_mutation(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
 
@@ -363,9 +363,9 @@ def test_prevent_duplicate_pairs(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_1 is True
@@ -376,9 +376,9 @@ def test_prevent_duplicate_pairs(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_2 is False, "Duplicate should be ignored"
@@ -412,9 +412,9 @@ def test_prevent_mirrored_pairs(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_1 is True
@@ -426,9 +426,9 @@ def test_prevent_mirrored_pairs(populated_db):
         credit_txn_id=m["debit_txn_id"],
         debit_account_id=m["credit_account_id"],
         credit_account_id=m["debit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_2 is False, "Mirrored pair should be ignored"

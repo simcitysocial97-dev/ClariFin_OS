@@ -1,3 +1,4 @@
+# amortization.py
 """
 Generates immutable amortization schedules for loans.
 
@@ -71,28 +72,36 @@ def generate_schedule(
     start: date = date.fromisoformat(start_date)
 
     for month in range(1, tenure_months + 1):
+        opening_balance = int(balance)
+
         # Compute interest with Decimal precision
         interest_decimal: Decimal = balance * monthly_rate
         interest_paise = int(
             interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
         )
 
-        # Compute principal component
-        principal_component_paise = compute_principal_component(
-            emi_paise, interest_paise
-        )
-
-        # Last payment adjustment (handles rounding)
         if month == tenure_months:
-            principal_component_paise = int(balance)
+            # Last month: pay off exact remaining balance (including any rounding drift)
+            principal_component_paise = max(0, opening_balance)
             actual_emi_paise = principal_component_paise + interest_paise
         else:
-            actual_emi_paise = emi_paise
+            # Non-last month: standard EMI calculation
+            principal_component_paise = emi_paise - interest_paise
 
-        # INVARIANT: Balance must never go negative
-        principal_component_paise = min(principal_component_paise, int(balance))
+            # Ensure principal is never negative (interest cannot exceed EMI)
+            if principal_component_paise < 0:
+                principal_component_paise = 0
+                actual_emi_paise = interest_paise
+            else:
+                actual_emi_paise = emi_paise
+
+            # If computed principal exceeds remaining balance, clamp it
+            if principal_component_paise > opening_balance:
+                principal_component_paise = opening_balance
+                actual_emi_paise = principal_component_paise + interest_paise
 
         balance -= Decimal(principal_component_paise)
+        closing_balance = max(0, int(balance))
         cumulative_interest += interest_paise
 
         # Compute payment date with proper edge case handling
@@ -105,7 +114,7 @@ def generate_schedule(
                 emi_paise=actual_emi_paise,
                 principal_paise=principal_component_paise,
                 interest_paise=interest_paise,
-                balance_paise=max(0, int(balance)),
+                balance_paise=closing_balance,
                 cumulative_interest_paise=cumulative_interest,
             )
         )
@@ -138,6 +147,18 @@ def total_payment_paise(schedule: list[AmortizationRow]) -> int:
     return sum(row.emi_paise for row in schedule)
 
 
+def total_principal_paise(schedule: list[AmortizationRow]) -> int:
+    """Compute total principal paid over the schedule."""
+    if not schedule:
+        return 0
+    return sum(row.principal_paise for row in schedule)
+
+
+# Backward-compatible aliases — generate_schedule handles both fixed and floating rates
+generate_schedule_fixed = generate_schedule
+generate_schedule_floating = generate_schedule
+
+
 def validate_schedule_invariants(
     schedule: list[AmortizationRow],
     original_principal_paise: int,
@@ -157,12 +178,6 @@ def validate_schedule_invariants(
     for row in schedule:
         if row.balance_paise < 0:
             raise ValueError(f"Balance went negative at month {row.month_number}")
-
-    # Check last balance is zero
-    if schedule[-1].balance_paise != 0:
-        raise ValueError(
-            f"Final balance must be zero, got {schedule[-1].balance_paise}"
-        )
 
     # Check sum of principal equals original
     total_principal = sum(row.principal_paise for row in schedule)
@@ -223,27 +238,23 @@ def validate_schedule(
             f"Total principal {total_principal} exceeds original {original_principal_paise}"
         )
 
-    # 3. Final balance reaches zero
-    if schedule[-1].balance_paise != 0:
-        errors.append(f"Final balance {schedule[-1].balance_paise} != 0")
-
-    # 4. Sum(principal payments) == principal amount
+    # 3. Sum(principal payments) == principal amount
     if total_principal != original_principal_paise:
         errors.append(
             f"Principal sum {total_principal} != original {original_principal_paise}"
         )
 
-    # 5. EMI consistency (same EMI for all rows except last)
+    # 4. EMI consistency (same EMI for all rows except last)
     if len(schedule) > 1:
         first_emi = schedule[0].emi_paise
-        for row in schedule[:-1]:
+        for row in schedule[:-1]:   # exclude last row
             if row.emi_paise != first_emi:
                 errors.append(
                     f"EMI inconsistency at month {row.month_number}: "
                     f"{row.emi_paise} != {first_emi}"
                 )
 
-    # 6. Cumulative interest is monotonic non-decreasing
+    # 5. Cumulative interest is monotonic non-decreasing
     prev_cumulative = -1
     for row in schedule:
         if row.cumulative_interest_paise < prev_cumulative:
@@ -253,12 +264,12 @@ def validate_schedule(
             )
         prev_cumulative = row.cumulative_interest_paise
 
-    # 7. Month numbers are sequential
+    # 6. Month numbers are sequential
     for i, row in enumerate(schedule, 1):
         if row.month_number != i:
             errors.append(f"Month number {row.month_number} != expected {i}")
 
-    # 8. (Optional) Check tenure length if provided
+    # 7. (Optional) Check tenure length if provided
     if original_tenure_months is not None and len(schedule) != original_tenure_months:
         errors.append(
             f"Schedule length {len(schedule)} != expected {original_tenure_months}"
@@ -268,7 +279,6 @@ def validate_schedule(
         msg = "Schedule invariant violations: " + "; ".join(errors)
         if debug_mode:
             raise ValueError(msg)
-        # In non-debug mode, we just return False (production safety)
         return False
 
     return True

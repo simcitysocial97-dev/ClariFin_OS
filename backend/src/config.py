@@ -26,7 +26,12 @@ class Settings:
     @property
     def database_path(self) -> Path:
         """Path to SQLite database file."""
-        return Path(os.getenv("DATABASE_PATH", "data/finance.db"))
+        # Allow instance-level or environment-level override
+        if hasattr(self, "_database_path_override") and self._database_path_override:
+            return Path(self._database_path_override)
+
+        db_path = os.getenv("FINANCE_DB_PATH") or os.getenv("DATABASE_PATH") or "data/finance.db"
+        return Path(db_path)
 
     @property
     def upload_dir(self) -> Path:

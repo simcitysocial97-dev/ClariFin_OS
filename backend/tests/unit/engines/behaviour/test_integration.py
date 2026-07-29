@@ -19,7 +19,7 @@ from decimal import Decimal
 
 import pytest
 
-from engines.behaviour_engine import (
+from src.engines.behaviour_engine import (
     classify_financial_personality,
     compute_borrowed_lifestyle_ratio,
     compute_credit_dependency_ratio,
@@ -29,25 +29,25 @@ from engines.behaviour_engine import (
     compute_resilience_index,
     compute_true_savings_rate,
 )
-from engines.behaviour_engine.income import (
+from src.engines.behaviour_engine.income import (
     classify_income_source,
     compute_true_income_total,
     filter_true_income,
 )
-from engines.behaviour_engine.profile import (
+from src.engines.behaviour_engine.profile import (
     DEBT_DEPENDENT_MIN_BORROWED_RATIO,
 )
-from engines.behaviour_engine.wellness import (
+from src.engines.behaviour_engine.wellness import (
     classify_wellness_band,
     compute_wellness_score,
 )
-from engines.recommendation_engine import (
+from src.engines.recommendation_engine import (
     check_debt_dependency,
     check_foir,
     check_liquidity,
     compute_recommendations,
 )
-from engines.recommendation_engine.recommendations import (
+from src.engines.recommendation_engine.recommendations import (
     FOIR_THRESHOLD,
 )
 

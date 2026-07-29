@@ -16,7 +16,7 @@ from typing import Any
 
 import pytest
 
-from engines.behaviour_engine import (
+from src.engines.behaviour_engine import (
     classify_income_source,
     compute_account_concentration,
     compute_borrowed_lifestyle_ratio,

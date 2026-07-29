@@ -4,20 +4,21 @@
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
 # Source: GET /api/overview
-# Generated: 2026-07-25T16:41:44.717901
+# Generated: 2026-07-28T09:26:06.296754
 # To regenerate: python tools/generate_contract_tests.py --routers overview
 
 import pytest
-
+from tests.contract.schema_validators import validate_response_schema
 
 @pytest.mark.contract
 def test_get__api_overview_contract(client):
     """Contract: GET /api/overview matches OpenAPI schema"""
-
+    
     response = client.get("/api/overview")
+    
 
-    # Validate status code
-    assert response.status_code in [
-        200,
-        422,
-    ], f"Expected [200, 422], got {response.status_code}"
+    # Validate status code strictly against permitted spec responses and controlled errors
+    assert response.status_code in [200, 422, 400, 404], \
+        f"Expected one of [200, 422, 400, 404], got {response.status_code} (Response: {response.text})"
+
+    

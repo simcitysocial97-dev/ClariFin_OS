@@ -1,6 +1,20 @@
 from datetime import date
 from typing import Any
 
+
+def _to_date(value: Any) -> date:
+    """Convert a string or date to a date object."""
+    if isinstance(value, date):
+        return value
+    if not value:
+        return date.today()
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            return date.fromisoformat(value) if "-" in value else __import__("datetime").datetime.strptime(value, fmt).date()
+        except (ValueError, TypeError):
+            continue
+    return date.today()
+
 from src.models.base import DomainModel, Money
 
 
@@ -28,7 +42,7 @@ class Transaction(DomainModel):
         return cls(
             id=row["id"],
             statement_id=row["statement_id"],
-            date=row["date"],
+            date=_to_date(row["date"]),
             description=row["description"],
             amount=Money(paise=row["amount_paise"]),
             category=row["category"],

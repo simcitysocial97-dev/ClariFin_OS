@@ -9,9 +9,9 @@ Run: python -m pytest tests/test_amortization.py -v
 
 import pytest
 
-from engines.loan_engine import generate_schedule, validate_schedule_invariants
-from engines.loan_engine.amortization import _add_months
-from engines.loan_engine.emi import compute_emi_fixed
+from src.engines.loan_engine import generate_schedule, validate_schedule_invariants
+from src.engines.loan_engine.amortization import _add_months
+from src.engines.loan_engine.emi import compute_emi_fixed
 
 # ============================================================
 # Fixtures
@@ -177,7 +177,7 @@ class TestScheduleInvariants:
     def test_validate_schedule_negative_balance_raises(self):
         """Invariant check raises on negative balance."""
         # Create a schedule with negative balance (simulated)
-        from engines.loan_engine.models import AmortizationRow
+        from src.engines.loan_engine.models import AmortizationRow
 
         schedule = [
             AmortizationRow(

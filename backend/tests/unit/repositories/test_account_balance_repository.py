@@ -22,7 +22,7 @@ def _create_account_balance_history_table(db_path: str) -> None:
     conn.execute("""
         CREATE TABLE IF NOT EXISTS account_balance_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            account_id TEXT NOT NULL REFERENCES accounts(id),
+            account_id INTEGER NOT NULL REFERENCES accounts(id),
             balance_paise INTEGER NOT NULL,
             date_iso TEXT NOT NULL,
             source TEXT NOT NULL CHECK(source IN ('actual','projected','adjusted')),
@@ -57,7 +57,7 @@ def test_insert_balance_snapshot():
         conn = sqlite3.connect(db_path)
         conn.execute("""
             INSERT INTO accounts (id, name, bank, account_type, balance_paise)
-            VALUES ('ACC001', 'Test Account', 'TestBank', 'savings', 100000)
+            VALUES (1, 'Test Account', 'TestBank', 'savings', 100000)
             """)
         conn.commit()
         conn.close()
@@ -66,7 +66,7 @@ def test_insert_balance_snapshot():
 
         # Insert snapshot
         snapshot_id = repo.insert_balance_snapshot(
-            account_id="ACC001",
+            account_id=1,
             balance_paise=150000,
             date_iso="2026-07-01",
             source="actual",
@@ -75,7 +75,7 @@ def test_insert_balance_snapshot():
         assert snapshot_id > 0, "Should return valid snapshot ID"
 
         # Verify data
-        snapshot = repo.get_balance_on_date("ACC001", "2026-07-01")
+        snapshot = repo.get_balance_on_date(1, "2026-07-01")
         assert snapshot is not None
         assert snapshot["balance_paise"] == 150000
         assert snapshot["source"] == "actual"
@@ -95,19 +95,19 @@ def test_get_balance_history():
 
         conn = sqlite3.connect(db_path)
         conn.execute(
-            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES ('ACC001', 'Test', 'Bank', 'savings', 100000)"
+            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES (1, 'Test', 'Bank', 'savings', 100000)"
         )
         conn.commit()
         conn.close()
 
         repo = AccountBalanceRepository(db_path=db_path)
 
-        # Insert multiple snapshots
-        repo.insert_balance_snapshot("ACC001", 100000, "2026-01-01", "actual")
-        repo.insert_balance_snapshot("ACC001", 110000, "2026-02-01", "actual")
-        repo.insert_balance_snapshot("ACC001", 120000, "2026-03-01", "actual")
+        # Insert multiple snapshots using integer account ID 1
+        repo.insert_balance_snapshot(1, 100000, "2026-01-01", "actual")
+        repo.insert_balance_snapshot(1, 110000, "2026-02-01", "actual")
+        repo.insert_balance_snapshot(1, 120000, "2026-03-01", "actual")
 
-        history = repo.get_balance_history("ACC001")
+        history = repo.get_balance_history(1)
         assert len(history) == 3, "Should have 3 snapshots"
 
         # Most recent first
@@ -130,19 +130,19 @@ def test_get_latest_balance():
 
         conn = sqlite3.connect(db_path)
         conn.execute(
-            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES ('ACC001', 'Test', 'Bank', 'savings', 100000)"
+            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES (1, 'Test', 'Bank', 'savings', 100000)"
         )
         conn.commit()
         conn.close()
 
         repo = AccountBalanceRepository(db_path=db_path)
 
-        # Insert snapshots
-        repo.insert_balance_snapshot("ACC001", 100000, "2026-01-01")
-        repo.insert_balance_snapshot("ACC001", 150000, "2026-02-01")
-        repo.insert_balance_snapshot("ACC001", 200000, "2026-03-01")
+        # Insert snapshots using integer account ID 1
+        repo.insert_balance_snapshot(1, 100000, "2026-01-01")
+        repo.insert_balance_snapshot(1, 150000, "2026-02-01")
+        repo.insert_balance_snapshot(1, 200000, "2026-03-01")
 
-        latest = repo.get_latest_balance("ACC001")
+        latest = repo.get_latest_balance(1)
         assert latest is not None
         assert latest["balance_paise"] == 200000
         assert latest["date_iso"] == "2026-03-01"
@@ -162,24 +162,24 @@ def test_get_balance_on_date():
 
         conn = sqlite3.connect(db_path)
         conn.execute(
-            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES ('ACC001', 'Test', 'Bank', 'savings', 100000)"
+            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES (1, 'Test', 'Bank', 'savings', 100000)"
         )
         conn.commit()
         conn.close()
 
         repo = AccountBalanceRepository(db_path=db_path)
 
-        # Insert snapshots for different dates
-        repo.insert_balance_snapshot("ACC001", 100000, "2026-01-15")
-        repo.insert_balance_snapshot("ACC001", 150000, "2026-02-15")
+        # Insert snapshots for different dates using integer account ID 1
+        repo.insert_balance_snapshot(1, 100000, "2026-01-15")
+        repo.insert_balance_snapshot(1, 150000, "2026-02-15")
 
         # Get specific date
-        balance = repo.get_balance_on_date("ACC001", "2026-01-15")
+        balance = repo.get_balance_on_date(1, "2026-01-15")
         assert balance is not None
         assert balance["balance_paise"] == 100000
 
         # Non-existent date
-        balance = repo.get_balance_on_date("ACC001", "2026-03-15")
+        balance = repo.get_balance_on_date(1, "2026-03-15")
         assert balance is None
 
     finally:
@@ -197,23 +197,23 @@ def test_duplicate_snapshot_protection():
 
         conn = sqlite3.connect(db_path)
         conn.execute(
-            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES ('ACC001', 'Test', 'Bank', 'savings', 100000)"
+            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES (1, 'Test', 'Bank', 'savings', 100000)"
         )
         conn.commit()
         conn.close()
 
         repo = AccountBalanceRepository(db_path=db_path)
 
-        # Insert first snapshot
-        id1 = repo.insert_balance_snapshot("ACC001", 100000, "2026-01-01")
+        # Insert first snapshot using integer account ID 1
+        id1 = repo.insert_balance_snapshot(1, 100000, "2026-01-01")
         assert id1 > 0
 
         # Try duplicate - should return 0
-        id2 = repo.insert_balance_snapshot("ACC001", 150000, "2026-01-01")
+        id2 = repo.insert_balance_snapshot(1, 150000, "2026-01-01")
         assert id2 == 0, "Duplicate should return 0"
 
         # Verify original data preserved
-        history = repo.get_balance_history("ACC001")
+        history = repo.get_balance_history(1)
         assert len(history) == 1
         assert history[0]["balance_paise"] == 100000, "Original balance preserved"
 
@@ -232,20 +232,20 @@ def test_delete_snapshot():
 
         conn = sqlite3.connect(db_path)
         conn.execute(
-            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES ('ACC001', 'Test', 'Bank', 'savings', 100000)"
+            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES (1, 'Test', 'Bank', 'savings', 100000)"
         )
         conn.commit()
         conn.close()
 
         repo = AccountBalanceRepository(db_path=db_path)
 
-        snapshot_id = repo.insert_balance_snapshot("ACC001", 100000, "2026-01-01")
-        assert repo.get_balance_on_date("ACC001", "2026-01-01") is not None
+        snapshot_id = repo.insert_balance_snapshot(1, 100000, "2026-01-01")
+        assert repo.get_balance_on_date(1, "2026-01-01") is not None
 
         result = repo.delete_snapshot(snapshot_id)
         assert result is True
 
-        assert repo.get_balance_on_date("ACC001", "2026-01-01") is None
+        assert repo.get_balance_on_date(1, "2026-01-01") is None
 
     finally:
         os.unlink(db_path)
@@ -262,19 +262,19 @@ def test_different_sources():
 
         conn = sqlite3.connect(db_path)
         conn.execute(
-            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES ('ACC001', 'Test', 'Bank', 'savings', 100000)"
+            "INSERT INTO accounts (id, name, bank, account_type, balance_paise) VALUES (1, 'Test', 'Bank', 'savings', 100000)"
         )
         conn.commit()
         conn.close()
 
         repo = AccountBalanceRepository(db_path=db_path)
 
-        # Insert with different sources
-        repo.insert_balance_snapshot("ACC001", 100000, "2026-01-01", "actual")
-        repo.insert_balance_snapshot("ACC001", 110000, "2026-02-01", "projected")
-        repo.insert_balance_snapshot("ACC001", 120000, "2026-03-01", "adjusted")
+        # Insert with different sources using integer account ID 1
+        repo.insert_balance_snapshot(1, 100000, "2026-01-01", "actual")
+        repo.insert_balance_snapshot(1, 110000, "2026-02-01", "projected")
+        repo.insert_balance_snapshot(1, 120000, "2026-03-01", "adjusted")
 
-        history = repo.get_balance_history("ACC001")
+        history = repo.get_balance_history(1)
         assert len(history) == 3
 
         sources = {h["source"] for h in history}

@@ -301,7 +301,7 @@ class LoanRepository(BaseRepository):
                         row["emi_paise"],
                         row["principal_paise"],
                         row["interest_paise"],
-                        row["balance_paise"],
+                        row["outstanding_after_paise"],
                         source,
                     ),
                 )

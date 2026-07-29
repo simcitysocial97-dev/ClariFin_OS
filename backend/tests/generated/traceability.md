@@ -60,6 +60,9 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/cash_advance.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/cc_statement_scenario.json` | ✓ |
 | Property Test | `tests/properties/credit_cards/test_engine_properties.py` | ✓ |
+| Property Test | `tests/properties/credit_card_engine/test_billing_properties.py` | ✓ |
+| Property Test | `tests/properties/credit_card_engine/test_emi_properties.py` | ✓ |
+| Property Test | `tests/properties/credit_card_engine/test_interest_properties.py` | ✓ |
 | Invariant | `tests/invariants/test_credit.py` | ✓ |
 
 ## Debt Management
@@ -122,6 +125,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Router | `src/routers/behaviour.py` | ✓ |
 | Router | `src/routers/behaviour_workspace.py` | ✓ |
 | Service | `src/services/behaviour_service.py` | ✓ |
+| Engine | `src/engines/behavior_engine.py` | ✓ |
 | Engine | `src/engines/behaviour_engine/account.py` | ✓ |
 | Engine | `src/engines/behaviour_engine/cashflow.py` | ✓ |
 | Engine | `src/engines/behaviour_engine/credit_dependency.py` | ✓ |
@@ -142,6 +146,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/high_debt_household.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/irregular_income.json` | ✓ |
 | Property Test | `tests/properties/behaviour/test_engine_properties.py` | ✓ |
+| Property Test | `tests/unit/engines/behaviour/test_core.py` | ✓ |
 | Invariant | `tests/invariants/behaviour.py` | ✓ |
 
 ## Forecasting

@@ -1,8 +1,8 @@
 """
-Migration 007: confidence_bps on reconciliations + reconciliation_audit_log table
-=================================================================================
-Adds confidence_bps (INTEGER) column to the reconciliations table for authoritative
-precision, and creates the reconciliation_audit_log table for tracking all actions.
+Migration 007: amount_paise and confidence_bps standardization on reconciliations + audit log table
+=============================================================================================
+Ensures amount_paise and confidence_bps (INTEGER) columns exist on the reconciliations table,
+and creates the reconciliation_audit_log table for tracking all actions.
 
 Run: cd backend && ./venv/bin/python3 scripts/migration_007_reconciliation_audit.py
 """
@@ -14,65 +14,57 @@ DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
 
 
 def run_migration(db_path: str | None = None) -> None:
-    """Add confidence_bps column and create audit log table idempotently."""
+    """Ensure amount_paise, confidence_bps columns and create audit log table idempotently."""
     path = db_path or DB_PATH
     conn = sqlite3.connect(path)
     conn.execute("PRAGMA foreign_keys=ON")
 
-    # ── Step 1: Add confidence_bps column ──────────────────────────────────
+    # ── Step 1: Add amount_paise column if missing ───────────────────────────
+    try:
+        conn.execute("ALTER TABLE reconciliations ADD COLUMN amount_paise INTEGER")
+        print("✓ ALTER TABLE reconciliations ADD COLUMN amount_paise INTEGER")
+    except sqlite3.OperationalError as e:
+        print(f"⊘ ALTER TABLE reconciliations ADD COLUMN amount_paise INTEGER - {e}")
+
+    # Backfill amount_paise from legacy amount if amount column exists
+    try:
+        conn.execute("""
+            UPDATE reconciliations
+            SET amount_paise = CAST(ROUND(amount * 100) AS INTEGER)
+            WHERE amount_paise IS NULL AND amount IS NOT NULL
+        """)
+        print("✓ Backfilled amount_paise from legacy amount column")
+    except sqlite3.OperationalError:
+        pass  # legacy amount column might not exist, which is fine
+
+    # ── Step 2: Add confidence_bps column if missing ─────────────────────────
     try:
         conn.execute("ALTER TABLE reconciliations ADD COLUMN confidence_bps INTEGER")
         print("✓ ALTER TABLE reconciliations ADD COLUMN confidence_bps INTEGER")
     except sqlite3.OperationalError as e:
         print(f"⊘ ALTER TABLE reconciliations ADD COLUMN confidence_bps INTEGER - {e}")
 
-    # ── Step 2: Backfill confidence_bps from match_confidence ──────────────
-    # First, find and report problematic rows
-    null_rows = conn.execute(
-        "SELECT COUNT(*) FROM reconciliations WHERE match_confidence IS NULL"
-    ).fetchone()[0]
+    # Backfill confidence_bps from match_confidence if match_confidence column exists
+    try:
+        null_rows = conn.execute(
+            "SELECT COUNT(*) FROM reconciliations WHERE match_confidence IS NULL"
+        ).fetchone()[0]
 
-    out_of_range_rows = conn.execute(
-        "SELECT COUNT(*) FROM reconciliations WHERE match_confidence IS NOT NULL AND (match_confidence < 0.0 OR match_confidence > 1.0)"
-    ).fetchone()[0]
+        if null_rows > 0:
+            print(f"⚠ Found {null_rows} rows where match_confidence IS NULL — left for manual review")
 
-    if null_rows > 0:
-        print(
-            f"⚠ Found {null_rows} rows where match_confidence IS NULL — left for manual review"
-        )
-        # Show the affected rows (fetchall returns tuples without row_factory set)
-        problem_rows = conn.execute(
-            "SELECT id, debit_txn_id, credit_txn_id, match_confidence FROM reconciliations WHERE match_confidence IS NULL"
-        ).fetchall()
-        for row in problem_rows:
-            print(
-                f"   NULL confidence: reconciliation id={row[0]} (txns {row[1]}↔{row[2]})"
-            )
-
-    if out_of_range_rows > 0:
-        print(
-            f"⚠ Found {out_of_range_rows} rows where match_confidence is outside [0.0, 1.0] — left for manual review"
-        )
-        problem_rows = conn.execute(
-            "SELECT id, debit_txn_id, credit_txn_id, match_confidence FROM reconciliations WHERE match_confidence IS NOT NULL AND (match_confidence < 0.0 OR match_confidence > 1.0)"
-        ).fetchall()
-        for row in problem_rows:
-            print(
-                f"   Out-of-range confidence={row[3]}: reconciliation id={row[0]} (txns {row[1]}↔{row[2]})"
-            )
-
-    # Backfill only valid rows
-    backfill = """
-        UPDATE reconciliations
-        SET confidence_bps = ROUND(match_confidence * 10000)
-        WHERE match_confidence IS NOT NULL
-          AND match_confidence >= 0.0
-          AND match_confidence <= 1.0
-          AND confidence_bps IS NULL
-    """
-    conn.execute(backfill)
-    backfill_count = conn.execute("SELECT changes()").fetchone()[0]
-    print(f"⊘ Backfilled confidence_bps → {backfill_count} rows")
+        conn.execute("""
+            UPDATE reconciliations
+            SET confidence_bps = ROUND(match_confidence * 10000)
+            WHERE match_confidence IS NOT NULL
+              AND match_confidence >= 0.0
+              AND match_confidence <= 1.0
+              AND confidence_bps IS NULL
+        """)
+        backfill_count = conn.execute("SELECT changes()").fetchone()[0]
+        print(f"✓ Backfilled confidence_bps → {backfill_count} rows")
+    except sqlite3.OperationalError:
+        pass  # match_confidence column might not exist in clean environments
 
     # ── Step 3: Create reconciliation_audit_log table ──────────────────────
     conn.execute("""
@@ -101,17 +93,17 @@ def run_migration(db_path: str | None = None) -> None:
 
     # ── Summary ────────────────────────────────────────────────────────────
     total = conn.execute("SELECT COUNT(*) FROM reconciliations").fetchone()[0]
-    backfilled = conn.execute(
-        "SELECT COUNT(*) FROM reconciliations WHERE confidence_bps IS NOT NULL"
+    backfilled_amt = conn.execute(
+        "SELECT COUNT(*) FROM reconciliations WHERE amount_paise IS NOT NULL"
     ).fetchone()[0]
-    still_null = conn.execute(
-        "SELECT COUNT(*) FROM reconciliations WHERE confidence_bps IS NULL"
+    backfilled_bps = conn.execute(
+        "SELECT COUNT(*) FROM reconciliations WHERE confidence_bps IS NOT NULL"
     ).fetchone()[0]
 
     print("\n[MIGRATION 007] Summary:")
     print(f"  Total reconciliations:      {total}")
-    print(f"  Backfilled confidence_bps:  {backfilled}")
-    print(f"  Still NULL (left for review): {still_null}")
+    print(f"  Populated amount_paise:     {backfilled_amt}")
+    print(f"  Populated confidence_bps:   {backfilled_bps}")
 
     conn.close()
     print("[MIGRATION 007] Reconciliation audit migration complete.")

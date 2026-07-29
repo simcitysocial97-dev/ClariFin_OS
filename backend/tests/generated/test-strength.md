@@ -1,15 +1,15 @@
 # Validation Strength Report
 
-Generated: 2026-07-26T15:48:05.343871+00:00
+Generated: 2026-07-28T00:21:14.370281+00:00
 
 ## Strength Classification
 
 | Capability | Criticality | Strength | Score | Evidence | Gaps |
 |------------|-------------|----------|-------|----------|------|
 | Account Management | high | Critical | 18 | property(2), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
-| Credit Cards | high | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
+| Credit Cards | high | Critical | 18 | property(4), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
 | Debt Management | high | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
-| Financial Health | high | Critical | 18 | property(1), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
+| Financial Health | high | Critical | 18 | property(2), golden(3), smoke(1), invariants(1) | No contract tests, No performance baseline |
 | Household Cashflow | high | Critical | 18 | property(1), golden(4), smoke(1), invariants(1) | No contract tests, No performance baseline |
 | Reconciliation | high | Critical | 18 | property(2), golden(2), smoke(1), invariants(1) | No contract tests, No performance baseline |
 | Transaction Intelligence | high | Critical | 18 | property(1), golden(3), smoke(1), invariants(2) | No contract tests, No performance baseline |

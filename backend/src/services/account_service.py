@@ -261,7 +261,10 @@ class AccountService:
         if not history:
             return True  # No activity = dormant
 
-        last_activity = history[0]["date_iso"]
+        last_activity = history[0]["date_iso"] or history[0].get("timestamp")
+        if not last_activity:
+            return True  # No valid activity date = dormant
+
         today = date.today().isoformat()
         days = compute_days_since_activity(last_activity, today)
         return is_account_dormant(days, threshold_days)
@@ -275,7 +278,10 @@ class AccountService:
         if not history:
             return 0
 
-        last_activity = history[0]["date_iso"]
+        last_activity = history[0]["date_iso"] or history[0].get("timestamp")
+        if not last_activity:
+            return 0
+
         today = date.today().isoformat()
         return compute_days_since_activity(last_activity, today)
 
@@ -299,8 +305,10 @@ class AccountService:
         history = self.balance_repo.get_balance_history(account_id, limit=1)
         days_since = 0
         if history:
-            today = date.today().isoformat()
-            days_since = compute_days_since_activity(history[0]["date_iso"], today)
+            last_activity = history[0]["date_iso"] or history[0].get("timestamp")
+            if last_activity:
+                today = date.today().isoformat()
+                days_since = compute_days_since_activity(last_activity, today)
 
         # Without transaction integration, use placeholders
         cash_in = 0

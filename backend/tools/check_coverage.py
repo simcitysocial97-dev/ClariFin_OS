@@ -16,7 +16,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 
@@ -83,7 +83,7 @@ def load_capability_manifests() -> list[dict[str, Any]]:
     with open(CAPABILITY_REGISTRY) as f:
         registry = yaml.safe_load(f) or {}
 
-    return registry.get("capabilities", [])
+    return cast(list[dict[str, Any]], registry.get("capabilities", []))
 
 
 def check_path_exists(

@@ -21,18 +21,19 @@ def temp_db():
 
     # Create tables
     conn.execute("""
-        CREATE TABLE behaviour_patterns (
+        CREATE TABLE IF NOT EXISTS behaviour_patterns (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             pattern_type TEXT NOT NULL,
             pattern_key TEXT NOT NULL,
             household_id TEXT NOT NULL DEFAULT 'default',
             strength_bps INTEGER NOT NULL,
-            first_observed TEXT NOT NULL,
-            last_observed TEXT NOT NULL,
-            transaction_count INTEGER NOT NULL,
-            total_amount_paise INTEGER NOT NULL,
-            config_json TEXT,
-            created_at TEXT NOT NULL DEFAULT (datetime('now'))
+            first_observed TEXT,
+            last_observed TEXT,
+            transaction_count INTEGER DEFAULT 1,
+            total_amount_paise INTEGER NOT NULL DEFAULT 0,
+            metadata_json TEXT,
+            created_at TEXT DEFAULT (datetime('now')),
+            UNIQUE(pattern_type, pattern_key, household_id)
         )
     """)
     conn.commit()

@@ -1,7 +1,277 @@
 {
-  "generated_at": "2026-07-26T15:48:10.665239+00:00",
-  "git_sha": "52e79914fa1439b0440e8fd5570533d7f0f26264",
+  "generated_at": "2026-07-28T03:59:18.182694+00:00",
+  "git_sha": "836c9c632caad689e20e59974729b11f49c6273d",
   "changes": [
+    {
+      "file": ".github/actions/setup-python-env/action.yml",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": ".github/workflows/backend.yml",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": ".github/workflows/mutation.yml",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": ".github/workflows/nightly-property-tests.yml",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": ".github/workflows/quality.yml",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/.coverage",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/html/index.html",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/html/src/engines/cashflow_engine.py.html",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "household_cashflow"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/requirements-frozen.txt",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/scripts/migration_007_reconciliation_audit.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/api.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/common/database.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/config.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/data/finance.db",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/db.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
     {
       "file": "backend/src/engines/cashflow_engine.py",
       "risk": "CRITICAL",
@@ -34,11 +304,1589 @@
         "pytest tests/properties/cashflow -q",
         "pytest tests/golden -k 'family_household,normal_household,salary_only' -q"
       ]
+    },
+    {
+      "file": "backend/src/engines/loan_engine/amortization.py",
+      "risk": "CRITICAL",
+      "confidence": "HIGH",
+      "capabilities": [
+        "debt_management"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [
+          "tests/properties/lending"
+        ],
+        "golden_tests": [
+          "high_debt_household",
+          "multiple_loans",
+          "salary_plus_loan"
+        ],
+        "invariants": [
+          "tests/invariants/test_loan.py"
+        ],
+        "capability_tests": [
+          "tests/capability/debt_management"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/debt_management -q",
+        "pytest tests/properties/lending -q",
+        "pytest tests/golden -k 'high_debt_household,multiple_loans,salary_plus_loan' -q"
+      ]
+    },
+    {
+      "file": "backend/src/engines/loan_engine/emi.py",
+      "risk": "CRITICAL",
+      "confidence": "HIGH",
+      "capabilities": [
+        "debt_management"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [
+          "tests/properties/lending"
+        ],
+        "golden_tests": [
+          "high_debt_household",
+          "multiple_loans",
+          "salary_plus_loan"
+        ],
+        "invariants": [
+          "tests/invariants/test_loan.py"
+        ],
+        "capability_tests": [
+          "tests/capability/debt_management"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/debt_management -q",
+        "pytest tests/properties/lending -q",
+        "pytest tests/golden -k 'high_debt_household,multiple_loans,salary_plus_loan' -q"
+      ]
+    },
+    {
+      "file": "backend/src/models/account_balance.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/models/account_link.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/models/transaction.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/repositories/account_balance_repository.py",
+      "risk": "HIGH",
+      "confidence": "HIGH",
+      "capabilities": [
+        "account_management"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/account_management"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/account_management -q"
+      ]
+    },
+    {
+      "file": "backend/src/repositories/account_link_repository.py",
+      "risk": "HIGH",
+      "confidence": "HIGH",
+      "capabilities": [
+        "account_management"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/account_management"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/account_management -q"
+      ]
+    },
+    {
+      "file": "backend/src/repositories/base.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/repositories/investment_repository.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/repositories/loan_repository.py",
+      "risk": "HIGH",
+      "confidence": "HIGH",
+      "capabilities": [
+        "debt_management"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/debt_management"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/debt_management -q"
+      ]
+    },
+    {
+      "file": "backend/src/repositories/pattern_repository.py",
+      "risk": "HIGH",
+      "confidence": "HIGH",
+      "capabilities": [
+        "pattern_analysis",
+        "transaction_intelligence"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/pattern_analysis",
+          "tests/capability/transaction_intelligence"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/pattern_analysis -q",
+        "pytest tests/capability/transaction_intelligence -q"
+      ]
+    },
+    {
+      "file": "backend/src/repositories/reconciliation_repository.py",
+      "risk": "HIGH",
+      "confidence": "HIGH",
+      "capabilities": [
+        "reconciliation"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/reconciliation"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/reconciliation -q"
+      ]
+    },
+    {
+      "file": "backend/src/repositories/transaction_repository.py",
+      "risk": "HIGH",
+      "confidence": "HIGH",
+      "capabilities": [
+        "transaction_intelligence"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/transaction_intelligence"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/transaction_intelligence -q"
+      ]
+    },
+    {
+      "file": "backend/src/routers/financial_events.py",
+      "risk": "MEDIUM",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/src/routers/reconciliation.py",
+      "risk": "MEDIUM",
+      "confidence": "HIGH",
+      "capabilities": [
+        "reconciliation"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [
+          "tests/properties/reconciliation"
+        ],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/reconciliation"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/reconciliation -q",
+        "pytest tests/properties/reconciliation -q"
+      ]
+    },
+    {
+      "file": "backend/src/services/account_service.py",
+      "risk": "MEDIUM",
+      "confidence": "HIGH",
+      "capabilities": [
+        "account_management"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": [
+          "tests/capability/account_management"
+        ]
+      },
+      "recommended_commands": [
+        "pytest tests/capability/account_management -q"
+      ]
+    },
+    {
+      "file": "backend/src/services/base.py",
+      "risk": "MEDIUM",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/audits/test_audit_minimal.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/conftest.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_accounts.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_analytics.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_audit.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_banks.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_cards.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_cashflow.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_categories.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_dashboard.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_export.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_financial_events.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_import.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_investments.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_loans.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_members.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_networth.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_overview.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_reconciliations.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_statements.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_transactions.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_upload.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/generated/test_v1.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/contract/schema_validators.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/capability-registry.yaml",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/change-impact.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/change-report.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/change-report.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/coverage.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/mutation-gaps.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/mutation-map.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/mutation-readiness.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/mutation-readiness.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/mutation-registry.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/selective-history.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/selective-plan.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/selective-summary.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/test-plan.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/test-strength.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/test-strength.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/traceability.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/validation-manifest.json",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/generated/verification-matrix.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/integration/e2e/test_statement_upload_pipeline.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/invariants/test_determinism.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/invariants/test_reconciliation_determinism.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/meta/test_selective_verify.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/properties/behaviour/test_engine_properties.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/properties/forecasting/test_engine_properties.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/properties/reconciliation/test_engine_properties.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/account/test_account_engine.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/behaviour/test_core.py",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/behaviour/test_integration.py",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/loan/test_amortization.py",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "risk": "CRITICAL",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/repositories/test_account_balance_repository.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/repositories/test_account_link_repository.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tests/unit/repositories/test_pattern_repository.py",
+      "risk": "HIGH",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tools/check_coverage.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tools/generate_contract_tests.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "backend/tools/selective_verify.py",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "memory-bank/activeContext.md",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
+    },
+    {
+      "file": "servers",
+      "risk": "LOW",
+      "confidence": "LOW",
+      "capabilities": [
+        "UNKNOWN"
+      ],
+      "affected": {
+        "services": [],
+        "engines": [],
+        "repositories": [],
+        "property_tests": [],
+        "golden_tests": [],
+        "invariants": [],
+        "capability_tests": []
+      },
+      "recommended_commands": []
     }
   ],
   "overall": {
     "risk": "CRITICAL",
-    "score": 8
+    "score": 222
   },
   "mutation_readiness": {
     "account_management": "Critical",
@@ -56,6 +1904,23 @@
   "affected_mutation_candidates": {
     "backend/src/engines/cashflow_engine.py": [
       "src/engines/cashflow_engine.py:compute_monthly_cashflow"
+    ],
+    "backend/src/engines/loan_engine/amortization.py": [
+      "src/engines/loan_engine/amortization.py:generate_schedule",
+      "src/engines/loan_engine/amortization.py:find_schedule_row",
+      "src/engines/loan_engine/amortization.py:total_interest_paise",
+      "src/engines/loan_engine/amortization.py:total_payment_paise",
+      "src/engines/loan_engine/amortization.py:total_principal_paise",
+      "src/engines/loan_engine/amortization.py:validate_schedule_invariants",
+      "src/engines/loan_engine/amortization.py:validate_schedule"
+    ],
+    "backend/src/engines/loan_engine/emi.py": [
+      "src/engines/loan_engine/emi.py:compute_emi_fixed",
+      "src/engines/loan_engine/emi.py:compute_emi_floating",
+      "src/engines/loan_engine/emi.py:compute_monthly_interest",
+      "src/engines/loan_engine/emi.py:compute_principal_component",
+      "src/engines/loan_engine/emi.py:compute_principal_from_emi",
+      "src/engines/loan_engine/emi.py:compute_tenure_from_emi"
     ]
   },
   "test_strength": {

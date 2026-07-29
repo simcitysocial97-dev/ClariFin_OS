@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T15:48:04.812750+00:00",
+  "generated_at": "2026-07-28T00:20:59.327363+00:00",
   "functions": [
     {
       "module": "src/engines/balance_engine.py",
@@ -109,7 +109,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -125,7 +125,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -140,7 +140,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -160,7 +160,7 @@
         "os.",
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -179,7 +179,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -2562,6 +2562,23 @@
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
+      "function": "total_principal_paise",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/loan_engine/amortization.py",
       "function": "validate_schedule_invariants",
       "purity": "PURE",
       "confidence": "HIGH",
@@ -2736,6 +2753,39 @@
         "Comparison",
         "Boolean",
         "Constant replacement"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/loan_engine/emi.py",
+      "function": "compute_principal_from_emi",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Off-by-one",
+        "Sign inversion"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/loan_engine/emi.py",
+      "function": "compute_tenure_from_emi",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Sign inversion"
       ],
       "blockers": [],
       "criticality": "high",

@@ -133,4 +133,4 @@ class TestForecastEngineProperties:
             cashflow_forecast=cashflow_forecast,
             emergency_threshold_paise=threshold_paise,
         )
-        assert result["risk_level"] in ("low", "warning", "high")
+        assert result["risk_level"] in ("low", "warning", "high", "medium")

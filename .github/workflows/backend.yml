@@ -12,6 +12,7 @@
 #   - Integration tests
 #   - Invariant tests
 #   - Migration tests
+#   - Phase 3.2 capability validation tests
 
 name: Backend Full Suite
 
@@ -334,6 +335,36 @@ jobs:
             -v \
             --no-header
 
+  # ── Phase 3.2 Capability Validation Tests ─────────────────────────────────
+  capability-validation:
+    name: "Phase 3.2 Capability Validation"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: detect-changes
+    if: ${{ needs.intelligence-analysis.outputs.strategy == 'full' || contains(needs.intelligence-analysis.outputs.must_run, 'meta') }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run Phase 3.2 validation tests
+        working-directory: backend
+        run: |
+          pytest tests/meta/test_capability_audit.py \
+            tests/meta/test_capability_coverage.py \
+            tests/meta/test_graph_integrity.py \
+            tests/meta/test_capability_isolation.py \
+            tests/meta/test_false_positive_measurement.py \
+            tests/meta/test_false_negative_measurement.py \
+            tests/meta/test_github_actions_validation.py \
+            -v --tb=short
+
   # ── Full Coverage Report ──────────────────────────────────────────────────
   coverage-report:
     name: "Full Coverage Report"
@@ -410,6 +441,7 @@ jobs:
         working-directory: backend
         run: |
           python -m pytest tests/meta/test_determinism.py -v --tb=short -q
+          python -m pytest tests/meta/test_longitudinal_determinism.py -v --tb=short -q
 
       - name: Verify generated artifacts are deterministic
         working-directory: backend

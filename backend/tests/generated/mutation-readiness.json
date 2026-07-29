@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T15:48:04.815522+00:00",
+  "generated_at": "2026-07-28T00:20:59.332072+00:00",
   "engines": [
     {
       "module_path": "src/engines/balance_engine.py",
@@ -395,7 +395,7 @@
     },
     {
       "module_path": "src/engines/loan_engine/amortization.py",
-      "pure_functions": 6,
+      "pure_functions": 7,
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
@@ -411,7 +411,7 @@
     },
     {
       "module_path": "src/engines/loan_engine/emi.py",
-      "pure_functions": 4,
+      "pure_functions": 6,
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",

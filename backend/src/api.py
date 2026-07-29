@@ -48,7 +48,6 @@ register_health_routes(app)
 # Register routers
 from src.routers import (
     accounts,
-    accounts_router,
     audit,
     banks,
     behaviour,
@@ -77,7 +76,6 @@ from src.routers import (
 )
 
 app.include_router(accounts.router)
-app.include_router(accounts_router.router)
 app.include_router(audit.router)
 app.include_router(banks.router)
 app.include_router(behaviour.router)

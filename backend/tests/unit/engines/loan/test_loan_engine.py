@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pytest
 
-from engines.loan_engine import (
+from src.engines.loan_engine import (
     apply_floating_rate_change,
     apply_prepayment,
     compute_emi_fixed,
@@ -23,25 +23,25 @@ from engines.loan_engine import (
     validate_schedule,
     validate_schedule_invariants,
 )
-from engines.loan_engine.amortization import (
+from src.engines.loan_engine.amortization import (
     find_schedule_row,
     total_payment_paise,
 )
-from engines.loan_engine.floating_rate import (
+from src.engines.loan_engine.floating_rate import (
     simulate_floating_rate_schedule,
 )
-from engines.loan_engine.foreclosure import (
+from src.engines.loan_engine.foreclosure import (
     compute_foreclosure_amount,
     compute_prepayment_breakup,
 )
-from engines.loan_engine.metrics import (
+from src.engines.loan_engine.metrics import (
     calculate_interest_saved,
     calculate_tenure_saved,
     get_emi_component,
     get_interest_component,
 )
-from engines.loan_engine.models import FloatingRateChange
-from engines.loan_engine.prepayment import (
+from src.engines.loan_engine.models import FloatingRateChange
+from src.engines.loan_engine.prepayment import (
     apply_multiple_prepayments,
     apply_prepayment_at_month,
 )

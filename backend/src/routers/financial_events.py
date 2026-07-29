@@ -89,5 +89,7 @@ def get_event(event_id: int = Path(..., description="Event ID")) -> dict[str, An
         if not event:
             raise HTTPException(status_code=404, detail="Event not found")
         return event
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e

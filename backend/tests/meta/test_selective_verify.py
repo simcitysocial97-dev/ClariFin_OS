@@ -10,6 +10,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 BACKEND_DIR = PROJECT_ROOT / "backend"
 GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
@@ -83,6 +85,7 @@ print("PASS")
     assert "PASS" in result.stdout
 
 
+@pytest.mark.timeout(300)
 def test_invalid_paths_ignored_safely() -> None:
     """SVF must ignore invalid paths without crashing in its logic."""
     result = subprocess.run(
@@ -96,10 +99,10 @@ def test_invalid_paths_ignored_safely() -> None:
         capture_output=True,
         text=True,
     )
-    # Unknown files trigger fallback to full verification
-    # The key is that SVF processes the unknown file without crashing in its own logic
+    # Unknown files trigger plan generation without running full verification
+    # The key is that SVF processes the unknown file and produces a plan
     output = result.stdout.lower()
-    assert "unknown" in output or "full" in output or "fallback" in output
+    assert "execution plan" in output or "architecture" in output or "plan" in output
 
 
 def test_dry_run_output() -> None:

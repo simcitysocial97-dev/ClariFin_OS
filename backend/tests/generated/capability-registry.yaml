@@ -82,6 +82,9 @@ capabilities:
   - tests/golden/datasets/cc_statement_scenario.json
   property_tests:
   - tests/properties/credit_cards/test_engine_properties.py
+  - tests/properties/credit_card_engine/test_billing_properties.py
+  - tests/properties/credit_card_engine/test_emi_properties.py
+  - tests/properties/credit_card_engine/test_interest_properties.py
   invariants:
   - tests/invariants/test_credit.py
   architecture_tests:
@@ -196,6 +199,7 @@ capabilities:
   services:
   - src/services/behaviour_service.py
   engines:
+  - src/engines/behavior_engine.py
   - src/engines/behaviour_engine/account.py
   - src/engines/behaviour_engine/cashflow.py
   - src/engines/behaviour_engine/credit_dependency.py
@@ -220,6 +224,7 @@ capabilities:
   - tests/golden/datasets/irregular_income.json
   property_tests:
   - tests/properties/behaviour/test_engine_properties.py
+  - tests/unit/engines/behaviour/test_core.py
   invariants:
   - tests/invariants/behaviour.py
   architecture_tests:

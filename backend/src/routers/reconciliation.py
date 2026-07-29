@@ -31,7 +31,7 @@ def api_get_reconciliations(status: str | None = None) -> dict[str, Any]:
             amount_paise = r.get("amount_paise", 0) or 0
             amount = amount_paise / 100.0 if amount_paise else 0
             r["amount_display"] = format_inr(amount)
-            r["confidence_display"] = f"{r.get('match_confidence', 0) * 100:.0f}%"
+            r["confidence_display"] = f"{r.get('confidence_bps', r.get('match_confidence', 0)) / 100:.0f}%"
 
         return {"reconciliations": reconciliations}
     except Exception as e:
@@ -59,8 +59,16 @@ def api_scan_reconciliations() -> dict[str, Any]:
 
         # Enrich with display fields
         for m in matches:
-            m["amount_display"] = format_inr(m.get("amount", 0))
-            m["confidence_display"] = f"{m.get('match_confidence', 0) * 100:.0f}%"
+            amount_val = m.get("amount_paise", m.get("amount", 0))
+            if amount_val > 1000 and "amount_paise" not in m:  # heuristic if amount is in paise/rupees
+                amount_rupees = amount_val / 100.0
+            else:
+                amount_rupees = amount_val if "amount_paise" in m else amount_val
+            m["amount_display"] = format_inr(amount_rupees)
+
+            conf = m.get("confidence_bps", m.get("match_confidence", 0))
+            conf_pct = conf / 100.0 if conf > 1 else conf * 100
+            m["confidence_display"] = f"{conf_pct:.0f}%"
 
         return {"matches": matches, "count": len(matches)}
     except Exception as e:
@@ -93,9 +101,9 @@ def api_create_reconciliation(
             credit_txn_id=credit_txn_id,
             debit_account_id=debit_account_id,
             credit_account_id=credit_account_id,
-            amount=amount,
+            amount_paise=int(amount * 100),
             date_diff_days=date_diff_days,
-            match_confidence=match_confidence,
+            confidence_bps=int(match_confidence * 10000 if match_confidence <= 1.0 else match_confidence),
             match_type=match_type,
         )
         return {"success": True, "inserted": inserted}
@@ -117,14 +125,17 @@ def api_batch_insert_reconciliations() -> dict[str, Any]:
         repo = ReconciliationRepository()
         inserted_count = 0
         for m in matches:
+            amt_paise = m.get("amount_paise") or int(m.get("amount", 0) * 100)
+            conf_bps = m.get("confidence_bps") or int(m.get("match_confidence", 0) * 10000)
+
             inserted = repo.insert_reconciliation(
                 debit_txn_id=m["debit_txn_id"],
                 credit_txn_id=m["credit_txn_id"],
                 debit_account_id=m["debit_account_id"],
                 credit_account_id=m["credit_account_id"],
-                amount=m["amount"],
+                amount_paise=amt_paise,
                 date_diff_days=m["date_diff_days"],
-                match_confidence=m["match_confidence"],
+                confidence_bps=conf_bps,
                 match_type=m["match_type"],
             )
             if inserted:

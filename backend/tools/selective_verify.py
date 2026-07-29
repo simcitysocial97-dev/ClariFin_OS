@@ -641,7 +641,7 @@ def main() -> None:
         "UNKNOWN" in str(c.get("capabilities", []))
         for c in change_report.get("changes", [])
     )
-    if has_unknown and len(plan.changed_files) > 0:
+    if has_unknown and len(plan.changed_files) > 0 and not args.plan:
         print("Unknown capability detected - falling back to full verification...")
         exit_code, runtime = run_full_verification()
 

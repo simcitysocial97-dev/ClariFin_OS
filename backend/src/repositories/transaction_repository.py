@@ -131,7 +131,7 @@ class TransactionRepository(BaseRepository):
 
         sql = f"""
             SELECT
-                t.id, t.statement_id, t.date, t.description, t.amount_paise,
+                t.id, t.statement_id, t.date, t.date_iso, t.description, t.amount_paise,
                 t.type, t.category, t.subcategory, t.raw_description, t.created_at,
                 s.bank, s.file_name, s.statement_period_from, s.statement_period_to
             FROM transactions t

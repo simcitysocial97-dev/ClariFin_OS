@@ -10,7 +10,7 @@ All monetary values are integers in paise (₹1.00 = 100 paise).
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from engines.behaviour_engine import (
+from src.engines.behaviour_engine import (
     compute_night_spend_ratio,
     compute_weekend_spend_ratio,
     detect_impulse_transactions,

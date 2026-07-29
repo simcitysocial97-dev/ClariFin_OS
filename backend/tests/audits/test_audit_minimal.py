@@ -22,7 +22,7 @@ import pytest
 
 # Add parent directory to path
 from db import FinanceDB
-from engines.ledger_audit_engine import (
+from src.engines.ledger_audit_engine import (
     run_full_audit,
     validate_ledger_integrity,
     verify_hash_signatures,
@@ -362,11 +362,11 @@ def test_integrity_detects_duplicate_hash():
     # Insert two transactions with same hash
     conn.execute("""
         INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
-        VALUES ('2025-01-01', 'Test1', 100, 10000, 0, 'ACC1', 'duplicate_hash')
+        VALUES ('2025-01-01', 'Test1', 100, 10000, 0, 1, 'duplicate_hash')
     """)
     conn.execute("""
         INSERT INTO transactions (date_iso, description, amount, debit, credit, account_id, hash_signature)
-        VALUES ('2025-01-02', 'Test2', 200, 20000, 0, 'ACC1', 'duplicate_hash')
+        VALUES ('2025-01-02', 'Test2', 200, 20000, 0, 1, 'duplicate_hash')
     """)
     conn.commit()
     conn.close()

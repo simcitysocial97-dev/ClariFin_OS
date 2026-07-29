@@ -22,7 +22,7 @@ class PatternRepository(BaseRepository):
                 INSERT INTO behaviour_patterns (
                     pattern_type, pattern_key, household_id, strength_bps,
                     first_observed, last_observed, transaction_count,
-                    total_amount_paise, config_json
+                    total_amount_paise, metadata_json
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
                 (
@@ -33,7 +33,7 @@ class PatternRepository(BaseRepository):
                     pattern_data["first_observed"],
                     pattern_data["last_observed"],
                     pattern_data["transaction_count"],
-                    pattern_data["total_amount_paise"],
+                    pattern_data.get("total_amount_paise", 0),
                     json.dumps(pattern_data.get("config", {})),
                 ),
             )
@@ -160,15 +160,15 @@ class PatternRepository(BaseRepository):
             "first_observed": row["first_observed"],
             "last_observed": row["last_observed"],
             "transaction_count": row["transaction_count"],
-            "total_amount_paise": row["total_amount_paise"],
+            
             "total_amount": Decimal(row["total_amount_paise"]) / Decimal(100),
             "created_at": row["created_at"],
         }
 
         # Parse JSON fields
-        if row["config_json"]:
+        if row["metadata_json"]:
             try:
-                result["config"] = json.loads(row["config_json"])
+                result["config"] = json.loads(row["metadata_json"])
             except json.JSONDecodeError:
                 result["config"] = {}
 

@@ -8,7 +8,7 @@ All rates in basis points (integer).
 
 Reuses _add_months from loan_engine for month-end-safe date arithmetic.
 """
-
+import calendar
 from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
 
@@ -58,8 +58,19 @@ def compute_next_statement_date(
         raise ValueError("billing_day must be between 1 and 31")
 
     if last_statement_date is not None:
-        # Advance by 1 month from last statement
-        return _add_months(last_statement_date, 1)
+        # Advance to the next occurrence of billing_day after last_statement_date
+        # Handle month-end and leap-year edge cases
+        candidate = _next_billing_day_after(last_statement_date, billing_day)
+
+        # If candidate is not after the last statement date, advance one more month
+        if candidate <= last_statement_date:
+            candidate = _add_months(candidate, 1)
+
+        # If candidate is in the past relative to reference_date, advance
+        if candidate < reference_date:
+            candidate = _add_months(candidate, 1)
+
+        return candidate
 
     # First statement: use current month's billing_day
     try:
@@ -80,6 +91,21 @@ def compute_next_statement_date(
     if candidate < reference_date:
         return _add_months(candidate, 1)
 
+    return candidate
+
+
+def _next_billing_day_after(start_date: date, billing_day: int) -> date:
+    """Find the next occurrence of billing_day on or after start_date."""
+    _, last_day_current = calendar.monthrange(start_date.year, start_date.month)
+    try:
+        candidate = date(start_date.year, start_date.month, min(billing_day, last_day_current))
+    except ValueError:
+        # Fallback safety (though min() with monthrange prevents ValueError)
+        if start_date.month == 12:
+            candidate = date(start_date.year + 1, 1, min(billing_day, 31))
+        else:
+            _, last_day_next = calendar.monthrange(start_date.year, start_date.month + 1)
+            candidate = date(start_date.year, start_date.month + 1, min(billing_day, last_day_next))
     return candidate
 
 
@@ -149,4 +175,5 @@ def compute_minimum_due(
     )
     pct_amount_paise = int(pct_amount.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
 
-    return max(floor_paise, pct_amount_paise)
+    result = max(floor_paise, pct_amount_paise)
+    return min(result, total_outstanding_paise)

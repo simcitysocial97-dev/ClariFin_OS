@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T15:48:05.343072+00:00",
+  "generated_at": "2026-07-28T00:21:14.369578+00:00",
   "capabilities": [
     {
       "id": "account_management",
@@ -30,7 +30,7 @@
       "structural_maturity": "\u2713",
       "evidence": {
         "smoke_tests": 1,
-        "property_tests": 1,
+        "property_tests": 4,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,
@@ -97,7 +97,7 @@
       "structural_maturity": "\u2713",
       "evidence": {
         "smoke_tests": 1,
-        "property_tests": 1,
+        "property_tests": 2,
         "golden_tests": 3,
         "contract_tests": 0,
         "performance_tests": 0,

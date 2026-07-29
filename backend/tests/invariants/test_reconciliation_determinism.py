@@ -18,8 +18,8 @@ import tempfile
 import pytest
 
 from db import FinanceDB
-from engines.balance_engine import compute_account_balance
-from engines.reconciliation_engine import find_potential_matches
+from src.engines.balance_engine import compute_account_balance
+from src.engines.reconciliation_engine import find_potential_matches
 from repositories.reconciliation_repository import ReconciliationRepository
 from repositories.statement_repository import StatementRepository
 
@@ -159,9 +159,9 @@ def test_idempotent_insert(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_1 is True, "First insert should succeed"
@@ -172,9 +172,9 @@ def test_idempotent_insert(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_2 is False, "Second insert should be ignored"
@@ -199,9 +199,9 @@ def test_mirrored_pair_prevention(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_1 is True
@@ -212,9 +212,9 @@ def test_mirrored_pair_prevention(populated_db):
         credit_txn_id=m["debit_txn_id"],  # Reversed
         debit_account_id=m["credit_account_id"],
         credit_account_id=m["debit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_2 is False, "Mirrored pair should be ignored"
@@ -239,9 +239,9 @@ def test_confirmed_row_immutable(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
 
@@ -285,9 +285,9 @@ def test_confirm_does_not_modify_transactions(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
 
@@ -329,9 +329,9 @@ def test_balance_unaffected_by_reconciliation(populated_db):
             credit_txn_id=m["credit_txn_id"],
             debit_account_id=m["debit_account_id"],
             credit_account_id=m["credit_account_id"],
-            amount=m["amount"],
+            amount_paise=int(m["amount"] * 100),
             date_diff_days=m["date_diff_days"],
-            match_confidence=m["match_confidence"],
+            confidence_bps=int(m["match_confidence"] * 10000),
             match_type=m["match_type"],
         )
 
@@ -373,9 +373,9 @@ def test_replay_determinism_maintained(populated_db):
             credit_txn_id=m["credit_txn_id"],
             debit_account_id=m["debit_account_id"],
             credit_account_id=m["credit_account_id"],
-            amount=m["amount"],
+            amount_paise=int(m["amount"] * 100),
             date_diff_days=m["date_diff_days"],
-            match_confidence=m["match_confidence"],
+            confidence_bps=int(m["match_confidence"] * 10000),
             match_type=m["match_type"],
         )
 

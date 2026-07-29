@@ -15,7 +15,7 @@ import sys
 import tempfile
 
 from db import FinanceDB
-from engines.balance_engine import compute_running_balance
+from src.engines.balance_engine import compute_running_balance
 from repositories.statement_repository import StatementRepository
 from repositories.transaction_repository import TransactionRepository
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-26T15:48:04.816856+00:00",
+  "generated_at": "2026-07-28T00:20:59.334141+00:00",
   "entries": [
     {
       "module": "src/engines/balance_engine.py",
@@ -7,12 +7,12 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -30,12 +30,12 @@
       "capability": "household_cashflow",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/household_cashflow",
@@ -57,25 +57,32 @@
     {
       "module": "src/engines/behavior_engine.py",
       "function": "multiple",
-      "capability": "unknown",
+      "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
-        "smoke_tests": null,
-        "property_tests": [],
-        "golden_tests": []
+        "smoke_tests": "tests/capability/financial_health",
+        "property_tests": [
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
+        ],
+        "golden_tests": [
+          "tests/golden/datasets/normal_household.json",
+          "tests/golden/datasets/high_debt_household.json",
+          "tests/golden/datasets/irregular_income.json"
+        ]
       },
-      "property_tests": false,
-      "golden_tests": false,
-      "contracts": false,
+      "property_tests": true,
+      "golden_tests": true,
+      "contracts": true,
       "performance_tests": false
     },
     {
@@ -84,12 +91,12 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -107,14 +114,14 @@
       "capability": "reconciliation",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
+        "Arithmetic",
+        "Boundary conditions",
         "Off-by-one",
-        "Constant replacement",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/reconciliation",
@@ -138,13 +145,13 @@
       "capability": "pattern_analysis",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/pattern_analysis",
@@ -167,13 +174,13 @@
       "capability": "recommendations",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/recommendations",
@@ -197,13 +204,13 @@
       "capability": "transaction_intelligence",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/transaction_intelligence",
@@ -227,12 +234,12 @@
       "capability": "transaction_intelligence",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/transaction_intelligence",
@@ -256,12 +263,12 @@
       "capability": "transaction_intelligence",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/transaction_intelligence",
@@ -285,15 +292,18 @@
       "capability": "credit_cards",
       "risk": "medium",
       "mutation_types": [
+        "Constant replacement",
         "Boolean",
         "Arithmetic",
-        "Constant replacement",
         "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -312,17 +322,20 @@
       "capability": "credit_cards",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -341,16 +354,19 @@
       "capability": "credit_cards",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -369,16 +385,19 @@
       "capability": "credit_cards",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -398,14 +417,17 @@
       "risk": "medium",
       "mutation_types": [
         "Constant replacement",
-        "Loop termination",
         "Arithmetic",
+        "Loop termination",
         "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -424,17 +446,20 @@
       "capability": "credit_cards",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Off-by-one",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -460,7 +485,10 @@
       "existing_tests": {
         "smoke_tests": "tests/capability/credit_cards",
         "property_tests": [
-          "tests/properties/credit_cards/test_engine_properties.py"
+          "tests/properties/credit_cards/test_engine_properties.py",
+          "tests/properties/credit_card_engine/test_billing_properties.py",
+          "tests/properties/credit_card_engine/test_emi_properties.py",
+          "tests/properties/credit_card_engine/test_interest_properties.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/credit_card_revolver.json",
@@ -479,12 +507,12 @@
       "capability": "financial_events",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_events",
@@ -505,13 +533,13 @@
       "capability": "forecasting",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/forecasting",
@@ -535,13 +563,13 @@
       "capability": "forecasting",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/forecasting",
@@ -565,13 +593,13 @@
       "capability": "forecasting",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/forecasting",
@@ -595,14 +623,14 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
-        "Boundary conditions",
         "Constant replacement",
+        "Boolean",
+        "Sign inversion",
+        "Off-by-one",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Sign inversion"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -620,14 +648,14 @@
       "capability": "recommendations",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
+        "Arithmetic",
+        "Boundary conditions",
         "Off-by-one",
-        "Constant replacement",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/recommendations",
@@ -651,14 +679,14 @@
       "capability": "forecasting",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
+        "Arithmetic",
+        "Boundary conditions",
         "Off-by-one",
-        "Constant replacement",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/forecasting",
@@ -709,11 +737,11 @@
       "capability": "account_management",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/account_management",
@@ -738,12 +766,12 @@
       "capability": "account_management",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/account_management",
@@ -768,11 +796,11 @@
       "capability": "account_management",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/account_management",
@@ -798,8 +826,8 @@
       "risk": "low",
       "mutation_types": [
         "Constant replacement",
-        "Loop termination",
         "Arithmetic",
+        "Loop termination",
         "Comparison"
       ],
       "existing_tests": {
@@ -825,13 +853,13 @@
       "capability": "account_management",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/account_management",
@@ -856,13 +884,13 @@
       "capability": "recommendations",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Boundary conditions",
         "Constant replacement",
+        "Boolean",
+        "Sign inversion",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Sign inversion"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/recommendations",
@@ -886,18 +914,19 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -916,17 +945,18 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -945,13 +975,13 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -969,18 +999,19 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Boundary conditions",
         "Constant replacement",
+        "Boolean",
+        "Sign inversion",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Sign inversion"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -999,11 +1030,11 @@
       "capability": "unknown",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": null,
@@ -1021,17 +1052,18 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1050,17 +1082,18 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1079,19 +1112,20 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
+        "Arithmetic",
+        "Boundary conditions",
         "Off-by-one",
-        "Constant replacement",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1110,17 +1144,18 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
-        "Sign inversion"
+        "Boolean",
+        "Sign inversion",
+        "Off-by-one",
+        "Arithmetic",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1139,17 +1174,18 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1168,16 +1204,17 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1196,19 +1233,20 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
+        "Arithmetic",
+        "Boundary conditions",
         "Off-by-one",
-        "Constant replacement",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1227,17 +1265,18 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1256,18 +1295,19 @@
       "capability": "financial_health",
       "risk": "low",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/financial_health",
         "property_tests": [
-          "tests/properties/behaviour/test_engine_properties.py"
+          "tests/properties/behaviour/test_engine_properties.py",
+          "tests/unit/engines/behaviour/test_core.py"
         ],
         "golden_tests": [
           "tests/golden/datasets/normal_household.json",
@@ -1286,14 +1326,14 @@
       "capability": "debt_management",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
+        "Constant replacement",
         "Boolean",
         "Sign inversion",
-        "Comparison",
         "Off-by-one",
-        "Constant replacement",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/debt_management",
@@ -1317,13 +1357,13 @@
       "capability": "debt_management",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/debt_management",
@@ -1347,12 +1387,13 @@
       "capability": "debt_management",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
-        "Loop termination"
+        "Boolean",
+        "Sign inversion",
+        "Off-by-one",
+        "Arithmetic",
+        "Loop termination",
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/debt_management",
@@ -1376,12 +1417,12 @@
       "capability": "debt_management",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/debt_management",
@@ -1431,12 +1472,12 @@
       "capability": "debt_management",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/debt_management",
@@ -1460,13 +1501,13 @@
       "capability": "debt_management",
       "risk": "medium",
       "mutation_types": [
-        "Arithmetic",
-        "Boolean",
-        "Comparison",
-        "Off-by-one",
         "Constant replacement",
+        "Boolean",
+        "Arithmetic",
+        "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
-        "Boundary conditions"
+        "Comparison"
       ],
       "existing_tests": {
         "smoke_tests": "tests/capability/debt_management",

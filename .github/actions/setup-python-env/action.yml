@@ -86,3 +86,10 @@ runs:
         python --version
         pytest --version
         echo "Environment ready"
+
+    # Step 3e: Add tests to PYTHONPATH for runtime imports
+    - name: Configure PYTHONPATH
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "PYTHONPATH=$$PYTHONPATH:tests" >> $GITHUB_ENV

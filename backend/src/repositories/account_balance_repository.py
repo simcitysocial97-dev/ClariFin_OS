@@ -34,7 +34,7 @@ class AccountBalanceRepository(BaseRepository):
         results: list[dict[str, Any]] = []
         with self._get_conn() as conn:
             cursor = conn.execute(
-                "SELECT date, amount FROM transactions "
+                "SELECT date, amount_paise FROM transactions "
                 "WHERE account_id = ? OR ? IS NULL ORDER BY date ASC",
                 (account_id, account_id),
             )
@@ -73,10 +73,10 @@ class AccountBalanceRepository(BaseRepository):
                 cur = conn.execute(
                     """
                     INSERT INTO account_balance_history (
-                        account_id, balance_paise, date_iso, source
-                    ) VALUES (?, ?, ?, ?)
+                        account_id, balance_paise, date_iso, source, timestamp
+                    ) VALUES (?, ?, ?, ?, ?)
                     """,
-                    (account_id, balance_paise, date_iso, source),
+                    (account_id, balance_paise, date_iso, source, date_iso),
                 )
                 conn.commit()
                 return cur.lastrowid or 0

@@ -17,8 +17,8 @@ class AccountLinkRequest(BaseModel):
 class AccountLinkResponse(BaseModel):
     """Account link response model."""
 
-    primary_account_id: str
-    linked_account_id: str
+    account_id: int
+    linked_account_id: int
     relationship_type: str
     created_at: str | None = None
 
@@ -26,7 +26,7 @@ class AccountLinkResponse(BaseModel):
     def from_link_dict(cls, link: dict[str, Any]) -> "AccountLinkResponse":
         """Create AccountLinkResponse from link dict."""
         return cls(
-            primary_account_id=link["primary_account_id"],
+            account_id=link["account_id"],
             linked_account_id=link["linked_account_id"],
             relationship_type=link["relationship_type"],
             created_at=link.get("created_at"),
