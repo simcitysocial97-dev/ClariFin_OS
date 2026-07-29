@@ -9,6 +9,7 @@ Discovers API endpoints from live FastAPI application and generates:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -51,7 +52,6 @@ def discover_endpoints() -> list[dict[str, Any]]:
 
     return endpoints
 
-
 def extract_router_from_path(path: str, tags: list[str] | None = None) -> str:
     """Extract router name from path or tags.
 
@@ -90,7 +90,6 @@ def extract_router_from_path(path: str, tags: list[str] | None = None) -> str:
 
     return first.replace("-", "_")
 
-
 def extract_request_schema(spec: dict[str, Any], method: str) -> dict[str, Any]:
     """Extract request schema from OpenAPI operation spec."""
     request_body = spec.get("requestBody", {})
@@ -103,7 +102,6 @@ def extract_request_schema(spec: dict[str, Any], method: str) -> dict[str, Any]:
     schema = json_content.get("schema", {})
 
     return cast(dict[str, Any], schema)
-
 
 def extract_response_schema(spec: dict[str, Any]) -> dict[str, Any]:
     """Extract response schema from OpenAPI operation spec."""
@@ -128,12 +126,10 @@ def extract_response_schema(spec: dict[str, Any]) -> dict[str, Any]:
 
     return {}
 
-
 def extract_status_codes(spec: dict[str, Any]) -> list[str]:
     """Extract all status codes from operation spec."""
     responses = spec.get("responses", {})
     return list(responses.keys())
-
 
 def extract_parameters(spec: dict[str, Any], method: str) -> list[dict[str, Any]]:
     """Extract path/query parameters from operation spec."""
@@ -144,7 +140,6 @@ def extract_parameters(spec: dict[str, Any], method: str) -> list[dict[str, Any]
         pass
 
     return cast(list[dict[str, Any]], parameters)
-
 
 def map_endpoints_to_capabilities(
     endpoints: list[dict[str, Any]],
@@ -176,7 +171,6 @@ def map_endpoints_to_capabilities(
 
     return by_capability
 
-
 def generate_coverage_metrics(
     endpoints: list[dict[str, Any]],
 ) -> dict[str, dict[str, Any]]:
@@ -205,19 +199,23 @@ def generate_coverage_metrics(
 
     return coverage
 
-
 def save_artifacts(
     endpoints: list[dict[str, Any]], coverage: dict[str, dict[str, Any]]
 ) -> None:
     """Save all generated artifacts."""
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Deterministic content hash instead of mtime timestamp
+    content_hash = hashlib.sha256(
+        json.dumps(endpoints, sort_keys=True).encode()
+    ).hexdigest()[:16]
+
     # api-map.json - all endpoints with full metadata
     with open(GENERATED_DIR / "api-map.json", "w") as f:
         json.dump(
             {
                 "endpoints": endpoints,
-                "generated_at": str(Path(__file__).stat().st_mtime),
+                "generated_at": content_hash,
             },
             f,
             indent=2,
@@ -226,7 +224,7 @@ def save_artifacts(
     # contract-registry.json - simplified registry for tests
     registry: dict[str, Any] = {
         "routers": {},
-        "generated_at": str(Path(__file__).stat().st_mtime),
+        "generated_at": content_hash,
     }
 
     for ep in endpoints:
@@ -254,7 +252,6 @@ def save_artifacts(
     with open(GENERATED_DIR / "contract-coverage.json", "w") as f:
         json.dump(coverage, f, indent=2)
 
-
 def main() -> None:
     """Main discovery entry point."""
     print("Discovering API endpoints from FastAPI...")
@@ -274,7 +271,6 @@ def main() -> None:
     save_artifacts(endpoints, coverage)
 
     print("Done!")
-
 
 if __name__ == "__main__":
     main()

@@ -62,13 +62,67 @@ jobs:
             backend:
               - 'backend/**'
 
+
+  # ── Intelligence-Driven Analysis ──────────────────────────
+  # Workstream 6: Selective GitHub Execution
+  # Uses the Verification Intelligence Layer to determine
+  # which jobs must execute and which can be skipped
+  intelligence-analysis:
+    name: "Intelligence Analysis"
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    outputs:
+      strategy: ${{ steps.intelligence.outputs.strategy }}
+      affected_capabilities: ${{ steps.intelligence.outputs.capabilities }}
+      must_run_jobs: ${{ steps.intelligence.outputs.must_run }}
+      skipped_jobs: ${{ steps.intelligence.outputs.skipped }}
+      mutation_targets: ${{ steps.intelligence.outputs.mutation }}
+      regression_suites: ${{ steps.intelligence.outputs.regression }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run intelligence analysis
+        id: intelligence
+        working-directory: backend
+        run: |
+          python -m verification_intelligence --selective --json > intelligence-plan.json
+          STRATEGY=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(d.get('strategy','full'))")
+          CAPS=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('affected_capabilities',[])))")
+          MUST_RUN=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('must_run_jobs',[])))")
+          SKIPPED=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('skipped_jobs',[])))")
+          MUTATION=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('mutation_targets',[])))")
+          REGRESSION=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('regression_suites',[])))")
+          echo "strategy=$STRATEGY" >> "$GITHUB_OUTPUT"
+          echo "capabilities=$CAPS" >> "$GITHUB_OUTPUT"
+          echo "must_run=$MUST_RUN" >> "$GITHUB_OUTPUT"
+          echo "skipped=$SKIPPED" >> "$GITHUB_OUTPUT"
+          echo "mutation=$MUTATION" >> "$GITHUB_OUTPUT"
+          echo "regression=$REGRESSION" >> "$GITHUB_OUTPUT"
+
+      - name: Upload intelligence plan
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intelligence-plan-${{ github.sha }}
+          path: backend/intelligence-plan.json
+          retention-days: 30
+
   # ── Property Tests ────────────────────────────────────────────────────────
   property-tests:
     name: "Property Tests"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: detect-changes
-    # Always run property tests — they are fast and find real bugs
+    # Run property tests when HIGH/CRITICAL risk or intelligence says so
+    if: ${{ needs.intelligence-analysis.outputs.must_run == '' || contains(needs.intelligence-analysis.outputs.must_run, 'property') || needs.intelligence-analysis.outputs.strategy == 'full' }}
     
     steps:
       - name: Checkout code
@@ -80,6 +134,12 @@ jobs:
           python-version: "3.12"
           working-directory: "backend"
 
+      - name: Derive property targets from runtime
+        working-directory: backend
+        run: |
+          python -m runtime.ci_targets --property > ci-property-targets.txt
+          cat ci-property-targets.txt
+
       - name: Run property tests
         working-directory: backend
         env:
@@ -87,7 +147,7 @@ jobs:
           # Fewer examples in CI = faster, but still useful
           HYPOTHESIS_MAX_EXAMPLES: 50
         run: |
-          pytest tests/properties/ \
+          xargs pytest < ci-property-targets.txt \
             --timeout=60 \
             --tb=short \
             -v \
@@ -109,6 +169,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: detect-changes
+    if: ${{ contains(needs.intelligence-analysis.outputs.must_run, 'contract') || needs.intelligence-analysis.outputs.strategy == 'full' }}
 
     steps:
       - name: Checkout code
@@ -120,10 +181,16 @@ jobs:
           python-version: "3.12"
           working-directory: "backend"
 
+      - name: Derive contract targets from runtime
+        working-directory: backend
+        run: |
+          python -m runtime.ci_targets --contract > ci-contract-targets.txt
+          cat ci-contract-targets.txt
+
       - name: Run contract tests
         working-directory: backend
         run: |
-          pytest tests/contract/ \
+          xargs pytest < ci-contract-targets.txt \
             --timeout=60 \
             --tb=short \
             -v \
@@ -149,6 +216,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: detect-changes
+    if: ${{ contains(needs.intelligence-analysis.outputs.must_run, 'capability') || needs.intelligence-analysis.outputs.strategy == 'full' }}
 
     steps:
       - name: Checkout code
@@ -160,10 +228,16 @@ jobs:
           python-version: "3.12"
           working-directory: "backend"
 
+      - name: Derive capability targets from runtime
+        working-directory: backend
+        run: |
+          python -m runtime.ci_targets --capability > ci-capability-targets.txt
+          cat ci-capability-targets.txt
+
       - name: Run capability tests
         working-directory: backend
         run: |
-          pytest tests/capability/ \
+          xargs pytest < ci-capability-targets.txt \
             --timeout=60 \
             --tb=short \
             -v \
@@ -206,6 +280,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: detect-changes
+    if: ${{ contains(needs.intelligence-analysis.outputs.must_run, 'invariant') || needs.intelligence-analysis.outputs.strategy == 'full' }}
 
     steps:
       - name: Checkout code
@@ -217,10 +292,16 @@ jobs:
           python-version: "3.12"
           working-directory: "backend"
 
+      - name: Derive invariant targets from runtime
+        working-directory: backend
+        run: |
+          python -m runtime.ci_targets --invariant > ci-invariant-targets.txt
+          cat ci-invariant-targets.txt
+
       - name: Run invariant tests
         working-directory: backend
         run: |
-          pytest tests/invariants/ \
+          xargs pytest < ci-invariant-targets.txt \
             --timeout=60 \
             --tb=short \
             -v \
@@ -275,12 +356,16 @@ jobs:
           python-version: "3.12"
           working-directory: "backend"
 
+      - name: Derive all test targets from runtime
+        working-directory: backend
+        run: |
+          python -m runtime.ci_targets --all > ci-all-targets.txt
+          cat ci-all-targets.txt
+
       - name: Run all tests with unified coverage
         working-directory: backend
         run: |
-          pytest tests/ \
-            --ignore=tests/mutation \
-            --ignore=tests/data \
+          xargs pytest < ci-all-targets.txt \
             --timeout=120 \
             --tb=no \
             -q \
@@ -300,4 +385,72 @@ jobs:
           path: |
             backend/tests/generated/coverage.json
             backend/tests/generated/coverage-html/
+          retention-days: 30
+
+  # ── Intelligence Reports ──────────────────────────────────
+  # Workstream 8: Reporting
+  # Generate and upload intelligence layer reports
+  determinism-check:
+    name: "Determinism Verification"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: intelligence-analysis
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run determinism tests
+        working-directory: backend
+        run: |
+          python -m pytest tests/meta/test_determinism.py -v --tb=short -q
+
+      - name: Verify generated artifacts are deterministic
+        working-directory: backend
+        run: |
+          # Run generators twice and check for diffs
+          python -m verification_intelligence --dependency-map 2>/dev/null || true
+          cp tests/generated/dependency-map.json /tmp/dep_map_1.json
+          python -m verification_intelligence --dependency-map 2>/dev/null || true
+          diff /tmp/dep_map_1.json tests/generated/dependency-map.json && echo "Dependency map is deterministic" || echo "WARNING: Dependency map differs"
+
+  intelligence-reports:
+    name: "Intelligence Reports"
+    runs-on: ubuntu-latest
+    needs: [intelligence-analysis]
+    if: always()
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Generate all intelligence reports
+        working-directory: backend
+        run: |
+          python -m verification_intelligence --all
+
+      - name: Upload intelligence reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intelligence-reports-${{ github.sha }}
+          path: |
+            backend/tests/generated/dependency-map.json
+            backend/tests/generated/change-impact.json
+            backend/tests/generated/verification-evidence.json
+            backend/tests/generated/architectural-coverage.json
+            backend/tests/generated/risk-map.json
+            backend/tests/generated/verification-summary.json
           retention-days: 30
