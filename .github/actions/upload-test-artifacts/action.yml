@@ -1,0 +1,28 @@
+name: "Upload Test Artifacts"
+description: "Standardized artifact upload with retention"
+inputs:
+  name:
+    description: "Artifact name prefix"
+    required: true
+  path:
+    description: "Path to upload"
+    required: true
+  retention-days:
+    description: "Retention in days"
+    required: false
+    default: "30"
+  if-condition:
+    description: "Condition for upload"
+    required: false
+    default: "always()"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload ${{ inputs.name }}
+      if: ${{ inputs.if-condition }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.name }}-${{ github.sha }}
+        path: ${{ inputs.path }}
+        retention-days: ${{ inputs.retention-days }}
