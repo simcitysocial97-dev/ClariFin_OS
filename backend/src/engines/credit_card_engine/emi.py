@@ -49,20 +49,12 @@ def compute_emi_conversion(
     tenure_months: int,
 ) -> dict[str, int]:
     """Compute EMI for a credit card conversion independently."""
-    if amount_paise < 0:
-        raise ValueError("amount_paise must be non-negative")
+    if amount_paise <= 0:
+        raise ValueError("amount_paise must be positive")
     if annual_rate_bps < 0:
         raise ValueError("annual_rate_bps must be non-negative")
     if tenure_months <= 0:
         raise ValueError("tenure_months must be positive")
-
-    if amount_paise == 0:
-        return {
-            "emi_paise": 0,
-            "total_interest_paise": 0,
-            "total_repayment_paise": 0,
-            "monthly_interest_paise": 0,
-        }
 
     emi_paise = compute_emi_fixed(
         principal_paise=amount_paise,
