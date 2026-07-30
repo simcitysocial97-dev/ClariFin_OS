@@ -22,6 +22,7 @@ def _hash_file(path: Path) -> str:
     def _normalize_json(content: str) -> str:
         """Remove generated_at timestamps for deterministic comparison."""
         import json
+
         try:
             data = json.loads(content)
         except (json.JSONDecodeError, UnicodeDecodeError):
@@ -29,7 +30,11 @@ def _hash_file(path: Path) -> str:
 
         def _strip_generated_at(obj):
             if isinstance(obj, dict):
-                return {k: _strip_generated_at(v) for k, v in obj.items() if k != "generated_at"}
+                return {
+                    k: _strip_generated_at(v)
+                    for k, v in obj.items()
+                    if k != "generated_at"
+                }
             if isinstance(obj, list):
                 return [_strip_generated_at(item) for item in obj]
             return obj
