@@ -78,6 +78,7 @@ jobs:
         with:
           name: golden-results-${{ github.run_id }}
           path: new-results/
+          fail-on-error: false
 
       - name: Compare with baseline
         run: |

@@ -18,7 +18,29 @@ GENERATED_DIR = TESTS_DIR / "generated"
 
 def _hash_file(path: Path) -> str:
     """Return SHA-256 hash of a file's contents."""
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    def _normalize_json(content: str) -> str:
+        """Remove generated_at timestamps for deterministic comparison."""
+        import json
+        try:
+            data = json.loads(content)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return content
+
+        def _strip_generated_at(obj):
+            if isinstance(obj, dict):
+                return {k: _strip_generated_at(v) for k, v in obj.items() if k != "generated_at"}
+            if isinstance(obj, list):
+                return [_strip_generated_at(item) for item in obj]
+            return obj
+
+        return json.dumps(_strip_generated_at(data), sort_keys=True, indent=2)
+
+    content = path.read_text(encoding="utf-8", errors="replace")
+    if path.suffix == ".json":
+        content = _normalize_json(content)
+
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
 
 
 def _run_generator_and_collect() -> dict[str, str]:

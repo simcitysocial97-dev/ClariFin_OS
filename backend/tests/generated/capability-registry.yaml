@@ -171,7 +171,9 @@ capabilities:
   golden_datasets:
   - tests/golden/datasets/cc_statement_scenario.json
   - tests/golden/datasets/salary_plus_loan.json
-  property_tests: []
+  property_tests:
+  - tests/properties/financial_events/test_engine_properties.py
+  - tests/properties/financial_events/test_lineage_properties.py
   invariants:
   - tests/invariants/test_transaction.py
   architecture_tests:
@@ -442,6 +444,7 @@ capabilities:
   - tests/invariants/test_reconciliation_determinism.py
   invariants:
   - tests/invariants/test_transaction.py
+  - tests/invariants/test_reconciliation_properties.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -501,3 +504,23 @@ capabilities:
   failure_impact: Hidden financial obligations go undetected. Users miss credit card
     payments, loan EMIs, and cash conversion cycles, leading to inaccurate cashflow
     and unexpected charges.
+- id: verification
+  name: Verification
+  description: 'Verification platform including runtime self-validation, intelligence
+    reports, dependency mapping, and coverage analysis.
+    '
+  criticality: medium
+  risk: low
+  routers: []
+  services: []
+  engines: []
+  repositories: []
+  tables: []
+  golden_datasets: []
+  property_tests: []
+  invariants: []
+  architecture_tests: []
+  contracts: []
+  dependencies: []
+  failure_impact: Verification gaps go undetected. Regression risks, broken contracts,
+    and missing test coverage increase deployment risk.
