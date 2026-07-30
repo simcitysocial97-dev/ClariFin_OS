@@ -103,7 +103,7 @@ class TestImpactAnalyzer:
         analyzer = ImpactAnalyzer(service, max_depth=2)
 
         # Start from m1 - should reach m2 (depth 1) but not m3 (depth 2) or m4 (depth 3)
-        result = analyzer.analyze_file("/mod/m1")
+        analyzer.analyze_file("/mod/m1")
 
         # Check endpoints were limited by depth
         # We expect limited nodes based on depth boundary

@@ -138,11 +138,11 @@ class RepositoryGraphService:
                 self._graph.add_node(node)
 
             # Reconstruct GraphEdge objects (de-duplicate by source/target/relationship)
-            seen_edges: set[tuple[str, str, str]] = set()
+            seen_edges1: set[tuple[str, str, str]] = set()
             for ed in data.get("edges", []):
                 key = (ed["source"], ed["target"], ed["relationship"])
-                if key not in seen_edges:
-                    seen_edges.add(key)
+                if key not in seen_edges1:
+                    seen_edges1.add(key)
                     edge = GraphEdge(
                         source=ed["source"],
                         target=ed["target"],
@@ -175,11 +175,12 @@ class RepositoryGraphService:
                 )
                 self._graph.add_node(node)
 
-            seen_edges: set[tuple[str, str, str]] = set()
+            # Reconstruct GraphEdge objects (de-duplicate)
+            seen_edges2: set[tuple[str, str, str]] = set()
             for ed in graph_data.get("edges", []):
                 key = (ed["source"], ed["target"], ed["relationship"])
-                if key not in seen_edges:
-                    seen_edges.add(key)
+                if key not in seen_edges2:
+                    seen_edges2.add(key)
                     edge = GraphEdge(
                         source=ed["source"],
                         target=ed["target"],
@@ -528,15 +529,15 @@ class RepositoryGraphService:
 
         # Check all nodes have required fields
         for n in self._graph.nodes:
-            for field in ("id", "type", "name", "path", "source"):
-                if getattr(n, field) is None or getattr(n, field) == "":
-                    warnings.append(f"Node {n.id} missing field '{field}'")
+            for attr in ("id", "type", "name", "path", "source"):
+                if getattr(n, attr) is None or getattr(n, attr) == "":
+                    warnings.append(f"Node {n.id} missing field '{attr}'")
 
         # Check edges have required fields
         for e in self._graph.edges:
-            for field in ("source", "target", "relationship"):
-                if getattr(e, field) is None or getattr(e, field) == "":
-                    warnings.append(f"Edge missing field '{field}' from {e.source}->{e.target}")
+            for attr in ("source", "target", "relationship"):
+                if getattr(e, attr) is None or getattr(e, attr) == "":
+                    warnings.append(f"Edge missing field '{attr}' from {e.source}->{e.target}")
 
         valid = len(errors) == 0
         return {

@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 import tempfile
+import pytest
 
 from repo_intelligence.builder import RepositoryBuilder, ValidationSummary
 from repo_intelligence.schema import GraphNode, GraphEdge, RepositoryGraph
@@ -142,7 +143,6 @@ def test_builder_get_metrics() -> None:
     builder.graph.add_edge(edge)
     builder.graph.generated_at = "test"
     builder._assign_ownership()
-    gaps = builder._detect_gaps()
 
     metrics = builder.get_builder_metrics()
     assert metrics["total_nodes"] == 2
