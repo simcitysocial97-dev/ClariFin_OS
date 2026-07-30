@@ -6,7 +6,7 @@ class DomainModel(BaseModel):
 
     model_config = ConfigDict(
         from_attributes=True,  # Allow ORM mode (dict/Row conversion)
-        frozen=False,          # Allow mutation for now
+        frozen=False,  # Allow mutation for now
         validate_assignment=True,
         str_strip_whitespace=True,
     )
@@ -14,6 +14,7 @@ class DomainModel(BaseModel):
 
 class Money(BaseModel):
     """Money value in paise (₹1.00 = 100 paise)"""
+
     paise: int
 
     @property

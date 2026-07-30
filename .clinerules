@@ -10,7 +10,11 @@ You must manage the memory bank autonomously. **Do not wait for the user to tell
 
 - **On Conversation Start (First Turn):** Quietly read *only* `memory-bank/projectbrief.md` and `memory-bank/activeContext.md` to establish current business intent.
 - **During the Task:** DO NOT read or write to `systemPatterns.md`, `techContext.md`, or `progress.md` (They are DEPRECATED; use CGC graph queries instead).
-- **On Conversation End (Task Completion):** Right before declaring your task finished (and before running Git commands), you MUST automatically update `memory-bank/activeContext.md` with a 2-3 line bulleted summary of your changes and the next immediate steps. Keep this file under 50 lines by pruning old history.
+- **On Conversation End (Task Completion):** Right before declaring your task finished and running Git commands, you MUST:
+  1. Automatically update `memory-bank/activeContext.md` with a 2-3 line bulleted summary of your changes and next steps (keep under 50 lines).
+  2. Update `memory-bank/architecture.md` if any structural, engine layout, or boundary rules changed.
+  3. Run `git status` and `git diff --name-only` to check *only* the modified files.
+  4. Run targeted validation (`ruff`, `mypy`) specifically on those changed files before staging and committing.
 
 ---
 

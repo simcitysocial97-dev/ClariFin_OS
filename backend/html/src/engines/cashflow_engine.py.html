@@ -1,0 +1,873 @@
+<html><body><h1>src/engines/cashflow_engine.py</h1>Killed 9 out of 112 mutants<h2>Timeouts</h2>Mutants that made the test suite take a lot longer so the tests were killed.<h3>Mutant 11</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -71,7 +71,7 @@
+             - total_credit_advance_paise: Sum of credit advance amounts
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+-    income = int(cash_summary.get("income_paise", 0) or 0)
++    income = None
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts
+</pre><h3>Mutant 16</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -72,7 +72,7 @@
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+     income = int(cash_summary.get("income_paise", 0) or 0)
+-    expense = int(cash_summary.get("expense_paise", 0) or 0)
++    expense = None
+ 
+     # Aggregate event impacts
+     total_fees = 0
+</pre><h3>Mutant 18</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -75,7 +75,7 @@
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts
+-    total_fees = 0
++    total_fees = None
+     total_asset_change = 0
+     total_liability_increase = 0  # Only positive liability changes (borrowing)
+     total_credit_funded = 0
+</pre><h3>Mutant 20</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -76,7 +76,7 @@
+ 
+     # Aggregate event impacts
+     total_fees = 0
+-    total_asset_change = 0
++    total_asset_change = None
+     total_liability_increase = 0  # Only positive liability changes (borrowing)
+     total_credit_funded = 0
+ 
+</pre><h3>Mutant 22</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -77,7 +77,7 @@
+     # Aggregate event impacts
+     total_fees = 0
+     total_asset_change = 0
+-    total_liability_increase = 0  # Only positive liability changes (borrowing)
++    total_liability_increase = None  # Only positive liability changes (borrowing)
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+</pre><h3>Mutant 24</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -78,7 +78,7 @@
+     total_fees = 0
+     total_asset_change = 0
+     total_liability_increase = 0  # Only positive liability changes (borrowing)
+-    total_credit_funded = 0
++    total_credit_funded = None
+ 
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+</pre><h3>Mutant 63</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -109,7 +109,7 @@
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities
+-    cash_surplus = income - expense + total_credit_funded
++    cash_surplus = None
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal
+</pre><h3>Mutant 66</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -113,7 +113,7 @@
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal
+-    true_savings = income - expense - total_fees
++    true_savings = None
+ 
+     # Liability-adjusted: true savings minus liability increases (principal borrowed)
+     # This represents the net savings after accounting for borrowed money
+</pre><h3>Mutant 101</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -150,7 +150,7 @@
+     effective_liquidity_cost_annualized = total_fees * 12
+ 
+     return {
+-        "cash_surplus": cash_surplus,
++        "XXcash_surplusXX": cash_surplus,
+         "true_savings": true_savings,
+         "liability_adjusted_savings": liability_adjusted,
+         "net_worth_impact": net_worth_impact,
+</pre><h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 8</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -71,7 +71,7 @@
+             - total_credit_advance_paise: Sum of credit advance amounts
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+-    income = int(cash_summary.get("income_paise", 0) or 0)
++    income = int(cash_summary.get("income_paise", 1) or 0)
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts
+</pre><h3>Mutant 9</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -71,7 +71,7 @@
+             - total_credit_advance_paise: Sum of credit advance amounts
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+-    income = int(cash_summary.get("income_paise", 0) or 0)
++    income = int(cash_summary.get("income_paise", 0) or 1)
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts
+</pre><h3>Mutant 12</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -72,7 +72,7 @@
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+     income = int(cash_summary.get("income_paise", 0) or 0)
+-    expense = int(cash_summary.get("expense_paise", 0) or 0)
++    expense = int(cash_summary.get("XXexpense_paiseXX", 0) or 0)
+ 
+     # Aggregate event impacts
+     total_fees = 0
+</pre><h3>Mutant 13</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -72,7 +72,7 @@
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+     income = int(cash_summary.get("income_paise", 0) or 0)
+-    expense = int(cash_summary.get("expense_paise", 0) or 0)
++    expense = int(cash_summary.get("expense_paise", 1) or 0)
+ 
+     # Aggregate event impacts
+     total_fees = 0
+</pre><h3>Mutant 14</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -72,7 +72,7 @@
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+     income = int(cash_summary.get("income_paise", 0) or 0)
+-    expense = int(cash_summary.get("expense_paise", 0) or 0)
++    expense = int(cash_summary.get("expense_paise", 0) or 1)
+ 
+     # Aggregate event impacts
+     total_fees = 0
+</pre><h3>Mutant 15</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -72,7 +72,7 @@
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+     income = int(cash_summary.get("income_paise", 0) or 0)
+-    expense = int(cash_summary.get("expense_paise", 0) or 0)
++    expense = int(cash_summary.get("expense_paise", 0) and 0)
+ 
+     # Aggregate event impacts
+     total_fees = 0
+</pre><h3>Mutant 19</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -76,7 +76,7 @@
+ 
+     # Aggregate event impacts
+     total_fees = 0
+-    total_asset_change = 0
++    total_asset_change = 1
+     total_liability_increase = 0  # Only positive liability changes (borrowing)
+     total_credit_funded = 0
+ 
+</pre><h3>Mutant 21</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -77,7 +77,7 @@
+     # Aggregate event impacts
+     total_fees = 0
+     total_asset_change = 0
+-    total_liability_increase = 0  # Only positive liability changes (borrowing)
++    total_liability_increase = 1  # Only positive liability changes (borrowing)
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+</pre><h3>Mutant 25</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -81,7 +81,7 @@
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+-        event_amount = int(event.get("amount_paise", 0) or 0)
++        event_amount = int(event.get("XXamount_paiseXX", 0) or 0)
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+</pre><h3>Mutant 26</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -81,7 +81,7 @@
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+-        event_amount = int(event.get("amount_paise", 0) or 0)
++        event_amount = int(event.get("amount_paise", 1) or 0)
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+</pre><h3>Mutant 27</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -81,7 +81,7 @@
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+-        event_amount = int(event.get("amount_paise", 0) or 0)
++        event_amount = int(event.get("amount_paise", 0) or 1)
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+</pre><h3>Mutant 28</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -81,7 +81,7 @@
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+-        event_amount = int(event.get("amount_paise", 0) or 0)
++        event_amount = int(event.get("amount_paise", 0) and 0)
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+</pre><h3>Mutant 30</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -82,7 +82,7 @@
+ 
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+-        event_type = event.get("event_type", "")
++        event_type = event.get("XXevent_typeXX", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+         if event_type in (
+</pre><h3>Mutant 31</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -82,7 +82,7 @@
+ 
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+-        event_type = event.get("event_type", "")
++        event_type = event.get("event_type", "XXXX")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+         if event_type in (
+</pre><h3>Mutant 32</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -82,7 +82,7 @@
+ 
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+-        event_type = event.get("event_type", "")
++        event_type = None
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+         if event_type in (
+</pre><h3>Mutant 33</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -83,7 +83,7 @@
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+         event_type = event.get("event_type", "")
+-        asset_change = int(event.get("asset_change_paise", 0) or 0)
++        asset_change = int(event.get("XXasset_change_paiseXX", 0) or 0)
+ 
+         if event_type in (
+             "cash_advance",
+</pre><h3>Mutant 34</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -83,7 +83,7 @@
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+         event_type = event.get("event_type", "")
+-        asset_change = int(event.get("asset_change_paise", 0) or 0)
++        asset_change = int(event.get("asset_change_paise", 1) or 0)
+ 
+         if event_type in (
+             "cash_advance",
+</pre><h3>Mutant 35</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -83,7 +83,7 @@
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+         event_type = event.get("event_type", "")
+-        asset_change = int(event.get("asset_change_paise", 0) or 0)
++        asset_change = int(event.get("asset_change_paise", 0) or 1)
+ 
+         if event_type in (
+             "cash_advance",
+</pre><h3>Mutant 36</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -83,7 +83,7 @@
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+         event_type = event.get("event_type", "")
+-        asset_change = int(event.get("asset_change_paise", 0) or 0)
++        asset_change = int(event.get("asset_change_paise", 0) and 0)
+ 
+         if event_type in (
+             "cash_advance",
+</pre><h3>Mutant 42</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -91,7 +91,7 @@
+             "liability_increase",
+         ):
+             # Cash advance adds to credit-funded pool
+-            total_credit_funded += abs(asset_change)
++            total_credit_funded = abs(asset_change)
+             total_liability_increase += event_amount
+ 
+         if (
+</pre><h3>Mutant 44</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -92,7 +92,7 @@
+         ):
+             # Cash advance adds to credit-funded pool
+             total_credit_funded += abs(asset_change)
+-            total_liability_increase += event_amount
++            total_liability_increase = event_amount
+ 
+         if (
+             event_type in ("cash_advance", "credit_card_cash_advance")
+</pre><h3>Mutant 45</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -92,7 +92,7 @@
+         ):
+             # Cash advance adds to credit-funded pool
+             total_credit_funded += abs(asset_change)
+-            total_liability_increase += event_amount
++            total_liability_increase -= event_amount
+ 
+         if (
+             event_type in ("cash_advance", "credit_card_cash_advance")
+</pre><h3>Mutant 59</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -105,7 +105,7 @@
+             total_fees += max(0, fee_estimate)
+ 
+         # Track asset changes
+-        total_asset_change += asset_change
++        total_asset_change = asset_change
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities
+</pre><h3>Mutant 60</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -105,7 +105,7 @@
+             total_fees += max(0, fee_estimate)
+ 
+         # Track asset changes
+-        total_asset_change += asset_change
++        total_asset_change -= asset_change
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities
+</pre><h3>Mutant 62</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -109,7 +109,7 @@
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities
+-    cash_surplus = income - expense + total_credit_funded
++    cash_surplus = income - expense - total_credit_funded
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal
+</pre><h3>Mutant 65</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -113,7 +113,7 @@
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal
+-    true_savings = income - expense - total_fees
++    true_savings = income - expense + total_fees
+ 
+     # Liability-adjusted: true savings minus liability increases (principal borrowed)
+     # This represents the net savings after accounting for borrowed money
+</pre><h3>Mutant 67</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -117,7 +117,7 @@
+ 
+     # Liability-adjusted: true savings minus liability increases (principal borrowed)
+     # This represents the net savings after accounting for borrowed money
+-    liability_adjusted = true_savings - total_liability_increase
++    liability_adjusted = true_savings + total_liability_increase
+ 
+     # Net worth impact = assets - liabilities
+     net_worth_impact = total_asset_change - total_liability_increase
+</pre><h3>Mutant 68</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -117,7 +117,7 @@
+ 
+     # Liability-adjusted: true savings minus liability increases (principal borrowed)
+     # This represents the net savings after accounting for borrowed money
+-    liability_adjusted = true_savings - total_liability_increase
++    liability_adjusted = None
+ 
+     # Net worth impact = assets - liabilities
+     net_worth_impact = total_asset_change - total_liability_increase
+</pre><h3>Mutant 69</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -120,7 +120,7 @@
+     liability_adjusted = true_savings - total_liability_increase
+ 
+     # Net worth impact = assets - liabilities
+-    net_worth_impact = total_asset_change - total_liability_increase
++    net_worth_impact = total_asset_change + total_liability_increase
+ 
+     # Month classification
+     has_credit_events = any(
+</pre><h3>Mutant 70</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -120,7 +120,7 @@
+     liability_adjusted = true_savings - total_liability_increase
+ 
+     # Net worth impact = assets - liabilities
+-    net_worth_impact = total_asset_change - total_liability_increase
++    net_worth_impact = None
+ 
+     # Month classification
+     has_credit_events = any(
+</pre><h3>Mutant 76</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -123,11 +123,7 @@
+     net_worth_impact = total_asset_change - total_liability_increase
+ 
+     # Month classification
+-    has_credit_events = any(
+-        e.get("event_type")
+-        in ("cash_advance", "credit_card_cash_advance", "liability_increase")
+-        for e in financial_events
+-    )
++    has_credit_events = None
+ 
+     if cash_surplus > 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+</pre><h3>Mutant 77</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -129,7 +129,7 @@
+         for e in financial_events
+     )
+ 
+-    if cash_surplus > 0 and not has_credit_events:
++    if cash_surplus >= 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+</pre><h3>Mutant 78</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -129,7 +129,7 @@
+         for e in financial_events
+     )
+ 
+-    if cash_surplus > 0 and not has_credit_events:
++    if cash_surplus > 1 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+</pre><h3>Mutant 79</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -129,7 +129,7 @@
+         for e in financial_events
+     )
+ 
+-    if cash_surplus > 0 and not has_credit_events:
++    if cash_surplus > 0 and  has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+</pre><h3>Mutant 80</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -129,7 +129,7 @@
+         for e in financial_events
+     )
+ 
+-    if cash_surplus > 0 and not has_credit_events:
++    if cash_surplus > 0 or not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+</pre><h3>Mutant 82</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -131,7 +131,7 @@
+ 
+     if cash_surplus > 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+-    elif cash_surplus <= 0 and has_credit_events:
++    elif cash_surplus < 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+     elif cash_surplus <= 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+</pre><h3>Mutant 83</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -131,7 +131,7 @@
+ 
+     if cash_surplus > 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+-    elif cash_surplus <= 0 and has_credit_events:
++    elif cash_surplus <= 1 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+     elif cash_surplus <= 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+</pre><h3>Mutant 84</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -131,7 +131,7 @@
+ 
+     if cash_surplus > 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+-    elif cash_surplus <= 0 and has_credit_events:
++    elif cash_surplus <= 0 or has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+     elif cash_surplus <= 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+</pre><h3>Mutant 86</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -133,7 +133,7 @@
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+-    elif cash_surplus <= 0 and not has_credit_events:
++    elif cash_surplus < 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+         month_classification = MonthClassification.SURPLUS
+</pre><h3>Mutant 87</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -133,7 +133,7 @@
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+-    elif cash_surplus <= 0 and not has_credit_events:
++    elif cash_surplus <= 1 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+         month_classification = MonthClassification.SURPLUS
+</pre><h3>Mutant 88</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -133,7 +133,7 @@
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+-    elif cash_surplus <= 0 and not has_credit_events:
++    elif cash_surplus <= 0 and  has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+         month_classification = MonthClassification.SURPLUS
+</pre><h3>Mutant 89</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -133,7 +133,7 @@
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+-    elif cash_surplus <= 0 and not has_credit_events:
++    elif cash_surplus <= 0 or not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+         month_classification = MonthClassification.SURPLUS
+</pre><h3>Mutant 92</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -139,7 +139,7 @@
+         month_classification = MonthClassification.SURPLUS
+ 
+     # Credit dependency ratio
+-    if expense > 0:
++    if expense >= 0:
+         credit_dependency_ratio = Decimal(str(total_credit_funded)) / Decimal(
+             str(expense)
+         )
+</pre><h3>Mutant 93</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -139,7 +139,7 @@
+         month_classification = MonthClassification.SURPLUS
+ 
+     # Credit dependency ratio
+-    if expense > 0:
++    if expense > 1:
+         credit_dependency_ratio = Decimal(str(total_credit_funded)) / Decimal(
+             str(expense)
+         )
+</pre><h3>Mutant 96</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -144,7 +144,7 @@
+             str(expense)
+         )
+     else:
+-        credit_dependency_ratio = Decimal("0")
++        credit_dependency_ratio = Decimal("XX0XX")
+ 
+     # Effective liquidity cost annualized (simple: fee * 12)
+     effective_liquidity_cost_annualized = total_fees * 12
+</pre><h3>Mutant 97</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -144,7 +144,7 @@
+             str(expense)
+         )
+     else:
+-        credit_dependency_ratio = Decimal("0")
++        credit_dependency_ratio = None
+ 
+     # Effective liquidity cost annualized (simple: fee * 12)
+     effective_liquidity_cost_annualized = total_fees * 12
+</pre><h3>Mutant 98</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -147,7 +147,7 @@
+         credit_dependency_ratio = Decimal("0")
+ 
+     # Effective liquidity cost annualized (simple: fee * 12)
+-    effective_liquidity_cost_annualized = total_fees * 12
++    effective_liquidity_cost_annualized = total_fees / 12
+ 
+     return {
+         "cash_surplus": cash_surplus,
+</pre><h3>Mutant 99</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -147,7 +147,7 @@
+         credit_dependency_ratio = Decimal("0")
+ 
+     # Effective liquidity cost annualized (simple: fee * 12)
+-    effective_liquidity_cost_annualized = total_fees * 12
++    effective_liquidity_cost_annualized = total_fees * 13
+ 
+     return {
+         "cash_surplus": cash_surplus,
+</pre><h3>Mutant 100</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -147,7 +147,7 @@
+         credit_dependency_ratio = Decimal("0")
+ 
+     # Effective liquidity cost annualized (simple: fee * 12)
+-    effective_liquidity_cost_annualized = total_fees * 12
++    effective_liquidity_cost_annualized = None
+ 
+     return {
+         "cash_surplus": cash_surplus,
+</pre><h3>Mutant 103</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -152,7 +152,7 @@
+     return {
+         "cash_surplus": cash_surplus,
+         "true_savings": true_savings,
+-        "liability_adjusted_savings": liability_adjusted,
++        "XXliability_adjusted_savingsXX": liability_adjusted,
+         "net_worth_impact": net_worth_impact,
+         "month_classification": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+</pre><h3>Mutant 104</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -153,7 +153,7 @@
+         "cash_surplus": cash_surplus,
+         "true_savings": true_savings,
+         "liability_adjusted_savings": liability_adjusted,
+-        "net_worth_impact": net_worth_impact,
++        "XXnet_worth_impactXX": net_worth_impact,
+         "month_classification": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+         "total_fees_paise": total_fees,
+</pre><h3>Mutant 107</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -155,7 +155,7 @@
+         "liability_adjusted_savings": liability_adjusted,
+         "net_worth_impact": net_worth_impact,
+         "month_classification": month_classification,
+-        "credit_dependency_ratio": round(credit_dependency_ratio, 4),
++        "credit_dependency_ratio": round(credit_dependency_ratio, 5),
+         "total_fees_paise": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+</pre><h3>Mutant 108</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -156,7 +156,7 @@
+         "net_worth_impact": net_worth_impact,
+         "month_classification": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+-        "total_fees_paise": total_fees,
++        "XXtotal_fees_paiseXX": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+         "scope": scope,
+</pre><h3>Mutant 109</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -157,7 +157,7 @@
+         "month_classification": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+         "total_fees_paise": total_fees,
+-        "total_credit_advance_paise": total_credit_funded,
++        "XXtotal_credit_advance_paiseXX": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+         "scope": scope,
+         "owner_id": owner_id,
+</pre><h3>Mutant 110</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -158,7 +158,7 @@
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+         "total_fees_paise": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+-        "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
++        "XXeffective_liquidity_cost_annualizedXX": effective_liquidity_cost_annualized,
+         "scope": scope,
+         "owner_id": owner_id,
+     }
+</pre><h3>Mutant 111</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -159,7 +159,7 @@
+         "total_fees_paise": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+-        "scope": scope,
++        "XXscopeXX": scope,
+         "owner_id": owner_id,
+     }
+ 
+</pre><h3>Mutant 112</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -160,6 +160,6 @@
+         "total_credit_advance_paise": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+         "scope": scope,
+-        "owner_id": owner_id,
++        "XXowner_idXX": owner_id,
+     }
+ 
+</pre><h2>Suspicious</h2>Mutants that made the test suite take longer, but otherwise seemed ok<h3>Mutant 3</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -25,7 +25,7 @@
+ 
+ class MonthClassification:
+     SURPLUS = "surplus"
+-    DEFICIT_COVERED_BY_CREDIT = "deficit_covered_by_credit"
++    DEFICIT_COVERED_BY_CREDIT = "XXdeficit_covered_by_creditXX"
+     DEFICIT = "deficit"
+ 
+ 
+</pre><h3>Mutant 7</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -71,7 +71,7 @@
+             - total_credit_advance_paise: Sum of credit advance amounts
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+-    income = int(cash_summary.get("income_paise", 0) or 0)
++    income = int(cash_summary.get("XXincome_paiseXX", 0) or 0)
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts
+</pre><h3>Mutant 10</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -71,7 +71,7 @@
+             - total_credit_advance_paise: Sum of credit advance amounts
+             - effective_liquidity_cost_annualized: Simple annualized fee estimate
+     """
+-    income = int(cash_summary.get("income_paise", 0) or 0)
++    income = int(cash_summary.get("income_paise", 0) and 0)
+     expense = int(cash_summary.get("expense_paise", 0) or 0)
+ 
+     # Aggregate event impacts
+</pre><h3>Mutant 23</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -78,7 +78,7 @@
+     total_fees = 0
+     total_asset_change = 0
+     total_liability_increase = 0  # Only positive liability changes (borrowing)
+-    total_credit_funded = 0
++    total_credit_funded = 1
+ 
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+</pre><h3>Mutant 29</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -81,7 +81,7 @@
+     total_credit_funded = 0
+ 
+     for event in financial_events:
+-        event_amount = int(event.get("amount_paise", 0) or 0)
++        event_amount = None
+         event_type = event.get("event_type", "")
+         asset_change = int(event.get("asset_change_paise", 0) or 0)
+ 
+</pre><h3>Mutant 37</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -83,7 +83,7 @@
+     for event in financial_events:
+         event_amount = int(event.get("amount_paise", 0) or 0)
+         event_type = event.get("event_type", "")
+-        asset_change = int(event.get("asset_change_paise", 0) or 0)
++        asset_change = None
+ 
+         if event_type in (
+             "cash_advance",
+</pre><h3>Mutant 61</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -109,7 +109,7 @@
+ 
+     # Cash surplus (cash basis): income - expenses + credit advances received
+     # Credit advances inflate available cash but create liabilities
+-    cash_surplus = income - expense + total_credit_funded
++    cash_surplus = income + expense + total_credit_funded
+ 
+     # True savings (accrual basis): income - expenses - fees
+     # Fees are the actual cost of credit, not the liability principal
+</pre><h3>Mutant 81</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -130,7 +130,7 @@
+     )
+ 
+     if cash_surplus > 0 and not has_credit_events:
+-        month_classification = MonthClassification.SURPLUS
++        month_classification = None
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+     elif cash_surplus <= 0 and not has_credit_events:
+</pre><h3>Mutant 85</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -132,7 +132,7 @@
+     if cash_surplus > 0 and not has_credit_events:
+         month_classification = MonthClassification.SURPLUS
+     elif cash_surplus <= 0 and has_credit_events:
+-        month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
++        month_classification = None
+     elif cash_surplus <= 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+</pre><h3>Mutant 90</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -134,7 +134,7 @@
+     elif cash_surplus <= 0 and has_credit_events:
+         month_classification = MonthClassification.DEFICIT_COVERED_BY_CREDIT
+     elif cash_surplus <= 0 and not has_credit_events:
+-        month_classification = MonthClassification.DEFICIT
++        month_classification = None
+     else:
+         month_classification = MonthClassification.SURPLUS
+ 
+</pre><h3>Mutant 91</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -136,7 +136,7 @@
+     elif cash_surplus <= 0 and not has_credit_events:
+         month_classification = MonthClassification.DEFICIT
+     else:
+-        month_classification = MonthClassification.SURPLUS
++        month_classification = None
+ 
+     # Credit dependency ratio
+     if expense > 0:
+</pre><h3>Mutant 105</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -154,7 +154,7 @@
+         "true_savings": true_savings,
+         "liability_adjusted_savings": liability_adjusted,
+         "net_worth_impact": net_worth_impact,
+-        "month_classification": month_classification,
++        "XXmonth_classificationXX": month_classification,
+         "credit_dependency_ratio": round(credit_dependency_ratio, 4),
+         "total_fees_paise": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+</pre><h3>Mutant 106</h3><pre>--- src/engines/cashflow_engine.py
++++ src/engines/cashflow_engine.py
+@@ -155,7 +155,7 @@
+         "liability_adjusted_savings": liability_adjusted,
+         "net_worth_impact": net_worth_impact,
+         "month_classification": month_classification,
+-        "credit_dependency_ratio": round(credit_dependency_ratio, 4),
++        "XXcredit_dependency_ratioXX": round(credit_dependency_ratio, 4),
+         "total_fees_paise": total_fees,
+         "total_credit_advance_paise": total_credit_funded,
+         "effective_liquidity_cost_annualized": effective_liquidity_cost_annualized,
+</pre></body></html>

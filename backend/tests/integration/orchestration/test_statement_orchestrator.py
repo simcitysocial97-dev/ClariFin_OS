@@ -5,11 +5,7 @@ Validates the post-upload pipeline stages and graceful degradation.
 
 from __future__ import annotations
 
-import os
-import tempfile
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from src.orchestration.statement_orchestrator import StatementProcessingOrchestrator
 
@@ -48,8 +44,12 @@ class TestStatementProcessingOrchestrator:
 
         # All stages should either succeed or record an error
         stages = [
-            "behaviour", "cashflow", "intelligence",
-            "recommendations", "dashboard", "transaction_intelligence",
+            "behaviour",
+            "cashflow",
+            "intelligence",
+            "recommendations",
+            "dashboard",
+            "transaction_intelligence",
         ]
         for stage in stages:
             assert stage in summary
@@ -57,11 +57,15 @@ class TestStatementProcessingOrchestrator:
             assert stage in summary or f"{stage}_error" in summary
 
     @patch("src.orchestration.statement_orchestrator.BehaviourService")
-    def test_run_behaviour_returns_dict(self, mock_behaviour: MagicMock, temp_db: str) -> None:
+    def test_run_behaviour_returns_dict(
+        self, mock_behaviour: MagicMock, temp_db: str
+    ) -> None:
         """Test _run_behaviour returns expected dict structure."""
         mock_profile = MagicMock()
         mock_profile.profile_type = "saver"
-        mock_behaviour.return_value.compute_financial_profile.return_value = mock_profile
+        mock_behaviour.return_value.compute_financial_profile.return_value = (
+            mock_profile
+        )
 
         orchestrator = StatementProcessingOrchestrator(db_path=temp_db)
         result = orchestrator._run_behaviour()
@@ -70,7 +74,9 @@ class TestStatementProcessingOrchestrator:
         assert result["profile_type"] == "saver"
 
     @patch("src.orchestration.statement_orchestrator.CashflowService")
-    def test_run_cashflow_returns_dict(self, mock_cashflow: MagicMock, temp_db: str) -> None:
+    def test_run_cashflow_returns_dict(
+        self, mock_cashflow: MagicMock, temp_db: str
+    ) -> None:
         """Test _run_cashflow returns expected dict structure."""
         mock_summary = MagicMock()
         mock_summary.net_cashflow_paise = 50000
@@ -83,11 +89,19 @@ class TestStatementProcessingOrchestrator:
         assert result["net_cashflow_paise"] == 50000
 
     @patch("src.orchestration.statement_orchestrator.FinancialIntelligenceService")
-    def test_run_intelligence_returns_dict(self, mock_intelligence: MagicMock, temp_db: str) -> None:
+    def test_run_intelligence_returns_dict(
+        self, mock_intelligence: MagicMock, temp_db: str
+    ) -> None:
         """Test _run_intelligence returns expected dict structure."""
-        mock_intelligence.return_value.get_financial_outlook.return_value = {"outlook": "positive"}
-        mock_intelligence.return_value.get_optimization_plan.return_value = {"plan": "save more"}
-        mock_intelligence.return_value.get_financial_intelligence_report.return_value = {"report": "good"}
+        mock_intelligence.return_value.get_financial_outlook.return_value = {
+            "outlook": "positive"
+        }
+        mock_intelligence.return_value.get_optimization_plan.return_value = {
+            "plan": "save more"
+        }
+        mock_intelligence.return_value.get_financial_intelligence_report.return_value = {
+            "report": "good"
+        }
 
         orchestrator = StatementProcessingOrchestrator(db_path=temp_db)
         result = orchestrator._run_intelligence()
@@ -97,7 +111,9 @@ class TestStatementProcessingOrchestrator:
         assert result["report_generated"] is True
 
     @patch("src.orchestration.statement_orchestrator.DashboardService")
-    def test_run_dashboard_refresh_returns_dict(self, mock_dashboard: MagicMock, temp_db: str) -> None:
+    def test_run_dashboard_refresh_returns_dict(
+        self, mock_dashboard: MagicMock, temp_db: str
+    ) -> None:
         """Test _run_dashboard_refresh returns expected dict structure."""
         mock_summary = MagicMock()
         mock_dashboard.return_value.get_summary.return_value = mock_summary
@@ -109,7 +125,9 @@ class TestStatementProcessingOrchestrator:
         assert result["summary_available"] is True
 
     @patch("src.orchestration.statement_orchestrator.TransactionIntelligenceService")
-    def test_run_transaction_intelligence_returns_dict(self, mock_ti: MagicMock, temp_db: str) -> None:
+    def test_run_transaction_intelligence_returns_dict(
+        self, mock_ti: MagicMock, temp_db: str
+    ) -> None:
         """Test _run_transaction_intelligence returns expected dict structure."""
         mock_ti.return_value.classify_emi_payments.return_value = [1, 2]
         mock_ti.return_value.classify_cc_payments.return_value = [3]

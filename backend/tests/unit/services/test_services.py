@@ -9,15 +9,11 @@ Run: python -m pytest tests/test_services.py -v
 """
 
 import os
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from db import FinanceDB
 from services.behavior_service import BehaviorService
 from services.dashboard_service import DashboardService
@@ -26,6 +22,7 @@ from services.reconciliation_service import ReconciliationService
 # ============================================================
 # Fixtures
 # ============================================================
+
 
 @pytest.fixture
 def temp_db():
@@ -43,6 +40,7 @@ def temp_db():
 # ============================================================
 # Dashboard Service Tests
 # ============================================================
+
 
 class TestDashboardService:
     """Tests for DashboardService."""
@@ -75,6 +73,7 @@ class TestDashboardService:
 # ============================================================
 # Reconciliation Service Tests
 # ============================================================
+
 
 class TestReconciliationService:
     """Tests for ReconciliationService."""
@@ -126,6 +125,7 @@ class TestReconciliationService:
 # Behavior Service Tests
 # ============================================================
 
+
 class TestBehaviorService:
     """Tests for BehaviorService."""
 
@@ -173,6 +173,7 @@ class TestBehaviorService:
 # ============================================================
 # Loan Service Tests
 # ============================================================
+
 
 class TestLoanService:
     """Tests for LoanService."""
@@ -243,6 +244,7 @@ class TestLoanService:
 # ============================================================
 # Loan Simulation Service Tests
 # ============================================================
+
 
 class TestLoanSimulationService:
     """Tests for LoanSimulationService."""
@@ -329,6 +331,7 @@ class TestLoanSimulationService:
 # ============================================================
 # Loan Analysis Service Tests
 # ============================================================
+
 
 class TestLoanAnalysisService:
     """Tests for LoanAnalysisService."""

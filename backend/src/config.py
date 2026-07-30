@@ -26,7 +26,16 @@ class Settings:
     @property
     def database_path(self) -> Path:
         """Path to SQLite database file."""
-        return Path(os.getenv("DATABASE_PATH", "data/finance.db"))
+        # Allow instance-level or environment-level override
+        if hasattr(self, "_database_path_override") and self._database_path_override:
+            return Path(self._database_path_override)
+
+        db_path = (
+            os.getenv("FINANCE_DB_PATH")
+            or os.getenv("DATABASE_PATH")
+            or "data/finance.db"
+        )
+        return Path(db_path)
 
     @property
     def upload_dir(self) -> Path:
@@ -71,8 +80,7 @@ class Settings:
     def log_format(self) -> str:
         """Log format string."""
         return os.getenv(
-            "LOG_FORMAT",
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            "LOG_FORMAT", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         )
 
     # Validation Configuration
@@ -137,7 +145,9 @@ class Settings:
         # Validate log level
         valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
         if self.log_level not in valid_levels:
-            errors.append(f"Invalid LOG_LEVEL: {self.log_level}. Must be one of {valid_levels}")
+            errors.append(
+                f"Invalid LOG_LEVEL: {self.log_level}. Must be one of {valid_levels}"
+            )
 
         return errors
 

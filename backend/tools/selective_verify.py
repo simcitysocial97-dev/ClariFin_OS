@@ -15,7 +15,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Project root from this file's location (backend/tools → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -26,8 +26,11 @@ GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 @dataclass
 class SelectivePlan:
     """Plan for selective verification."""
+
     changed_files: list[str] = field(default_factory=list)
-    architecture_tests: list[str] = field(default_factory=lambda: ["tests/architecture"])
+    architecture_tests: list[str] = field(
+        default_factory=lambda: ["tests/architecture"]
+    )
     capability_tests: set[str] = field(default_factory=set)
     property_tests: set[str] = field(default_factory=set)
     golden_tests: set[str] = field(default_factory=set)
@@ -38,11 +41,11 @@ class SelectivePlan:
     def total_test_suites(self) -> int:
         """Count of unique test suites to run."""
         return (
-            len(self.capability_tests) +
-            len(self.property_tests) +
-            len(self.golden_tests) +
-            len(self.invariant_tests) +
-            (1 if self.architecture_tests else 0)
+            len(self.capability_tests)
+            + len(self.property_tests)
+            + len(self.golden_tests)
+            + len(self.invariant_tests)
+            + (1 if self.architecture_tests else 0)
         )
 
 
@@ -112,7 +115,10 @@ def load_change_report() -> dict[str, Any]:
         changed_files = get_git_changed_files()
         if changed_files:
             print("Generating change-report.json...")
-            file_args = [sys.executable, str(BACKEND_DIR / "tools" / "change_intelligence.py")] + changed_files
+            file_args = [
+                sys.executable,
+                str(BACKEND_DIR / "tools" / "change_intelligence.py"),
+            ] + changed_files
             regenerate_result = subprocess.run(
                 file_args,
                 cwd=PROJECT_ROOT,
@@ -134,7 +140,7 @@ def load_change_report() -> dict[str, Any]:
                 json.dump(empty_report, f, indent=2)
 
     with open(report_path) as f:
-        return json.load(f)
+        return cast(dict[str, Any], json.load(f))
 
 
 def build_selective_plan(change_report: dict[str, Any]) -> SelectivePlan:
@@ -156,15 +162,17 @@ def build_selective_plan(change_report: dict[str, Any]) -> SelectivePlan:
 
         # Capability smoke tests
         for cap_test in affected.get("capability_tests", []):
-            if cap_test.startswith("tests/capabilities/"):
-                cap_name = cap_test.replace("tests/capabilities/", "")
+            if cap_test.startswith("tests/capability/"):
+                cap_name = cap_test.replace("tests/capability/", "")
                 plan.capability_tests.add(cap_name)
 
         # Property tests (directory paths) - use full path
         for prop_test in affected.get("property_tests", []):
             if prop_test.startswith("tests/properties"):
                 plan.property_tests.add(prop_test)
-            elif "/" in prop_test and prop_test.rsplit("/", 1)[0].startswith("tests/properties"):
+            elif "/" in prop_test and prop_test.rsplit("/", 1)[0].startswith(
+                "tests/properties"
+            ):
                 plan.property_tests.add(prop_test.rsplit("/", 1)[0])
 
         # Golden tests (dataset names)
@@ -194,7 +202,9 @@ def estimate_runtime(plan: SelectivePlan) -> float:
         total += estimates["architecture"]
     total += len(plan.capability_tests) * estimates["capability"]
     total += len(plan.property_tests) * estimates["property"]
-    total += len(plan.golden_tests) * estimates.get("golden", 1) if plan.golden_tests else 0
+    total += (
+        len(plan.golden_tests) * estimates.get("golden", 1) if plan.golden_tests else 0
+    )
     total += len(plan.invariant_tests) * estimates["invariant"]
 
     return round(total, 1)
@@ -210,18 +220,22 @@ def generate_plan_md(plan: SelectivePlan) -> str:
     ]
 
     if plan.changed_files:
-        lines.extend([
-            "## Changed Files",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Changed Files",
+                "",
+            ]
+        )
         for f in plan.changed_files:
             lines.append(f"- `{f}`")
         lines.append("")
 
-    lines.extend([
-        "## Execution Plan",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Execution Plan",
+            "",
+        ]
+    )
 
     # Count unique items
     counts = {
@@ -249,26 +263,32 @@ def generate_plan_md(plan: SelectivePlan) -> str:
         lines.append(f"{idx}. Invariant tests ({counts['invariant']})")
         idx += 1
 
-    lines.extend([
-        "",
-        f"## Estimated Runtime: {estimate_runtime(plan)} seconds",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            f"## Estimated Runtime: {estimate_runtime(plan)} seconds",
+            "",
+        ]
+    )
 
     if not plan.changed_files:
-        lines.extend([
-            "*No changes detected - no targeted verification needed.*",
-            "",
-        ])
+        lines.extend(
+            [
+                "*No changes detected - no targeted verification needed.*",
+                "",
+            ]
+        )
 
     return "\n".join(lines)
 
 
-def generate_summary_json(plan: SelectivePlan, runtime_seconds: float, tests_run: int, result: str) -> dict[str, Any]:
+def generate_summary_json(
+    plan: SelectivePlan, runtime_seconds: float, tests_run: int, result: str
+) -> dict[str, Any]:
     """Generate machine-readable summary."""
     return {
         "mode": "selective",
-        "generated_at": datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC'),
+        "generated_at": datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "runtime_seconds": runtime_seconds,
         "tests_run": tests_run,
         "tests_skipped": get_all_test_count() - tests_run,
@@ -298,18 +318,22 @@ def generate_verification_matrix(plan: SelectivePlan, result: str) -> str:
     ]
 
     if plan.changed_files:
-        lines.extend([
-            "## Changed Files",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Changed Files",
+                "",
+            ]
+        )
         for f in plan.changed_files:
             lines.append(f"- `{f}`")
         lines.append("")
 
-    lines.extend([
-        "## Executed",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Executed",
+            "",
+        ]
+    )
 
     if plan.architecture_tests:
         lines.append("| Suite | Status |")
@@ -331,23 +355,27 @@ def generate_verification_matrix(plan: SelectivePlan, result: str) -> str:
     for inv in sorted(plan.invariant_tests):
         lines.append(f"| {inv} (invariant) | ✓ |")
 
-    lines.extend([
-        "",
-        "## Skipped",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Skipped",
+            "",
+        ]
+    )
 
     skipped_caps = all_capabilities - executed_caps - {"UNKNOWN"}
     for cap in sorted(skipped_caps):
         lines.append(f"| {cap} | ✓ |")
 
-    lines.extend([
-        "",
-        f"## Result: {result}",
-        "",
-        f"## Runtime Saved: ~{calculate_savings(plan)}%",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            f"## Result: {result}",
+            "",
+            f"## Runtime Saved: ~{calculate_savings(plan)}%",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -355,6 +383,7 @@ def generate_verification_matrix(plan: SelectivePlan, result: str) -> str:
 def get_all_capabilities() -> set[str]:
     """Get all capability IDs from registry."""
     import yaml
+
     registry_path = GENERATED_DIR / "capability-registry.yaml"
     if not registry_path.exists():
         return set()
@@ -368,6 +397,7 @@ def get_all_capabilities() -> set[str]:
 def get_all_test_count() -> int:
     """Count all test files for skipped metric."""
     import os
+
     count = 0
     for _root, _dirs, files in os.walk(BACKEND_DIR / "tests"):
         count += len([f for f in files if f.startswith("test_") and f.endswith(".py")])
@@ -389,7 +419,7 @@ def load_history() -> list[dict[str, Any]]:
     history_path = GENERATED_DIR / "selective-history.json"
     if history_path.exists():
         with open(history_path) as f:
-            return json.load(f)
+            return cast(list[dict[str, Any]], json.load(f))
     return []
 
 
@@ -421,7 +451,7 @@ def run_tests_sequential(plan: SelectivePlan) -> tuple[int, float]:
     # Capability smoke tests
     for cap in sorted(plan.capability_tests):
         result = subprocess.run(
-            ["pytest", f"tests/capabilities/{cap}", "-q", "--tb=short"],
+            ["pytest", f"tests/capability/{cap}", "-q", "--tb=short"],
             cwd=BACKEND_DIR,
         )
         if result.returncode != 0:
@@ -483,7 +513,7 @@ def run_full_verification() -> tuple[int, float]:
         return result.returncode, time.time() - start_time
 
     result = subprocess.run(
-        ["pytest", "tests/capabilities", "-q", "--tb=short", "--maxfail=3"],
+        ["pytest", "tests/capability", "-q", "--tb=short", "--maxfail=3"],
         cwd=BACKEND_DIR,
     )
     if result.returncode != 0:
@@ -582,7 +612,10 @@ def main() -> None:
     # If files were explicitly provided, generate report directly; otherwise use git diff
     if args.files:
         # Generate report for specific files
-        file_args = [sys.executable, str(BACKEND_DIR / "tools" / "change_intelligence.py")] + args.files
+        file_args = [
+            sys.executable,
+            str(BACKEND_DIR / "tools" / "change_intelligence.py"),
+        ] + args.files
         result = subprocess.run(
             file_args,
             cwd=PROJECT_ROOT,
@@ -604,25 +637,32 @@ def main() -> None:
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
 
     # Check for UNKNOWN capabilities - fall back to full
-    has_unknown = any("UNKNOWN" in str(c.get("capabilities", [])) for c in change_report.get("changes", []))
-    if has_unknown and len(plan.changed_files) > 0:
+    has_unknown = any(
+        "UNKNOWN" in str(c.get("capabilities", []))
+        for c in change_report.get("changes", [])
+    )
+    if has_unknown and len(plan.changed_files) > 0 and not args.plan:
         print("Unknown capability detected - falling back to full verification...")
         exit_code, runtime = run_full_verification()
 
         # Generate summary for full run
-        summary = generate_summary_json(plan, runtime, get_all_test_count(), "PASS" if exit_code == 0 else "FAIL")
+        summary = generate_summary_json(
+            plan, runtime, get_all_test_count(), "PASS" if exit_code == 0 else "FAIL"
+        )
         with open(GENERATED_DIR / "selective-summary.json", "w") as f:
             json.dump(summary, f, indent=2)
 
         # Save history
         history = load_history()
-        history.append({
-            "timestamp": datetime.now(UTC).isoformat(),
-            "changed_files": plan.changed_files,
-            "executed_suites": ["full"],
-            "runtime_seconds": runtime,
-            "pass": exit_code == 0,
-        })
+        history.append(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "changed_files": plan.changed_files,
+                "executed_suites": ["full"],
+                "runtime_seconds": runtime,
+                "pass": exit_code == 0,
+            }
+        )
         save_history(history)
 
         if args.json:
@@ -653,29 +693,35 @@ def main() -> None:
         exit_code, runtime = run_tests_sequential(plan)
 
         # Generate summary
-        summary = generate_summary_json(plan, runtime, plan.total_test_suites, "PASS" if exit_code == 0 else "FAIL")
+        summary = generate_summary_json(
+            plan, runtime, plan.total_test_suites, "PASS" if exit_code == 0 else "FAIL"
+        )
         with open(GENERATED_DIR / "selective-summary.json", "w") as f:
             json.dump(summary, f, indent=2)
 
         # Generate verification matrix
         with open(GENERATED_DIR / "verification-matrix.md", "w") as f:
-            f.write(generate_verification_matrix(plan, "PASS" if exit_code == 0 else "FAIL"))
+            f.write(
+                generate_verification_matrix(plan, "PASS" if exit_code == 0 else "FAIL")
+            )
 
         # Save history
         history = load_history()
-        history.append({
-            "timestamp": datetime.now(UTC).isoformat(),
-            "changed_files": plan.changed_files,
-            "executed_suites": {
-                "architecture": len(plan.architecture_tests) > 0,
-                "capability": list(plan.capability_tests),
-                "property": list(plan.property_tests),
-                "golden": list(plan.golden_tests),
-                "invariant": list(plan.invariant_tests),
-            },
-            "runtime_seconds": runtime,
-            "pass": exit_code == 0,
-        })
+        history.append(
+            {
+                "timestamp": datetime.now(UTC).isoformat(),
+                "changed_files": plan.changed_files,
+                "executed_suites": {
+                    "architecture": len(plan.architecture_tests) > 0,
+                    "capability": list(plan.capability_tests),
+                    "property": list(plan.property_tests),
+                    "golden": list(plan.golden_tests),
+                    "invariant": list(plan.invariant_tests),
+                },
+                "runtime_seconds": runtime,
+                "pass": exit_code == 0,
+            }
+        )
         save_history(history)
 
         if args.json:

@@ -1,10 +1,6 @@
 """Smoke tests for Debt Management capability."""
+
 from __future__ import annotations
-
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
 from tests.golden.builders.salary_plus_loan import load_salary_plus_loan
 

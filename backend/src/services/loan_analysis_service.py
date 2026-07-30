@@ -44,16 +44,20 @@ class LoanAnalysisService:
                     start_date=loan.get("disbursed_date") or "2025-01-01",
                 )
 
-                recommendations.append(LoanRecommendation(
-                    loan_id=int(loan["id"]),
-                    action="PREPAY",
-                    reason=f"Highest interest rate ({loan['interest_rate']}%) saves ₹{result.interest_saved_paise / 100:.0f}",
-                    interest_saved_paise=result.interest_saved_paise,
-                    tenure_saved_months=result.months_saved,
-                ))
+                recommendations.append(
+                    LoanRecommendation(
+                        loan_id=int(loan["id"]),
+                        action="PREPAY",
+                        reason=f"Highest interest rate ({loan['interest_rate']}%) saves ₹{result.interest_saved_paise / 100:.0f}",
+                        interest_saved_paise=result.interest_saved_paise,
+                        tenure_saved_months=result.months_saved,
+                    )
+                )
 
         # Sort by interest saved (highest first), then by interest rate
-        recommendations.sort(key=lambda r: (-r.interest_saved_paise, -r.tenure_saved_months))
+        recommendations.sort(
+            key=lambda r: (-r.interest_saved_paise, -r.tenure_saved_months)
+        )
 
         return recommendations
 
@@ -164,13 +168,15 @@ class LoanAnalysisService:
                     start_date=loan.get("disbursed_date") or "2025-01-01",
                 )
 
-                recommendations.append(LoanRecommendation(
-                    loan_id=int(loan["id"]),
-                    action="PREPAY",
-                    reason=f"Allocate ₹{allocation / 100:.0f} to {loan['name']} (rate: {loan['interest_rate']}%)",
-                    interest_saved_paise=result.interest_saved_paise,
-                    tenure_saved_months=result.months_saved,
-                ))
+                recommendations.append(
+                    LoanRecommendation(
+                        loan_id=int(loan["id"]),
+                        action="PREPAY",
+                        reason=f"Allocate ₹{allocation / 100:.0f} to {loan['name']} (rate: {loan['interest_rate']}%)",
+                        interest_saved_paise=result.interest_saved_paise,
+                        tenure_saved_months=result.months_saved,
+                    )
+                )
 
                 remaining_surplus -= allocation
 

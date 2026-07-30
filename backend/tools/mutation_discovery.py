@@ -20,7 +20,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 # Project root from this file's location (backend/tools → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -47,6 +47,7 @@ KILLABILITY_UNKNOWN = "UNKNOWN"
 @dataclass
 class FunctionAnalysis:
     """Analysis result for a single function."""
+
     module: str
     function: str
     purity: Literal["PURE", "IMPURE", "UNKNOWN"] = "UNKNOWN"
@@ -60,6 +61,7 @@ class FunctionAnalysis:
 @dataclass
 class EngineReadiness:
     """Readiness analysis for an engine module."""
+
     module_path: str
     pure_functions: int = 0
     impure_functions: int = 0
@@ -71,19 +73,43 @@ class EngineReadiness:
 # AST-based purity blockers - these indicate impure functions
 PURITY_BLOCKERS = {
     # Database access
-    "sqlite3", "FinanceDB", "get_db", "session", "Session",
+    "sqlite3",
+    "FinanceDB",
+    "get_db",
+    "session",
+    "Session",
     # Filesystem
-    "open", "pathlib", "os.", "os.path", "pickle", "shutil", "tempfile",
+    "open",
+    "pathlib",
+    "os.",
+    "os.path",
+    "pickle",
+    "shutil",
+    "tempfile",
     # Network
-    "requests", "httpx", "urllib", "http.client", "socket",
+    "requests",
+    "httpx",
+    "urllib",
+    "http.client",
+    "socket",
     # Subprocess
-    "subprocess", "multiprocessing",
+    "subprocess",
+    "multiprocessing",
     # Randomness/Non-determinism
-    "random", "uuid", "secrets", "datetime.now", "time.time",
+    "random",
+    "uuid",
+    "secrets",
+    "datetime.now",
+    "time.time",
     # Environment
-    "os.environ", "os.getenv", "os.putenv", "sys.argv",
+    "os.environ",
+    "os.getenv",
+    "os.putenv",
+    "sys.argv",
     # Threading
-    "threading", "asyncio.create_task", "concurrent.futures",
+    "threading",
+    "asyncio.create_task",
+    "concurrent.futures",
 }
 
 
@@ -142,12 +168,27 @@ def analyze_function_ast(source_path: Path, function_name: str) -> FunctionAnaly
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                if any(b in alias.name for b in ["sqlite3", "requests", "httpx", "random", "pickle"]):
+                if any(
+                    b in alias.name
+                    for b in ["sqlite3", "requests", "httpx", "random", "pickle"]
+                ):
                     blockers.append(f"import:{alias.name}")
-        elif isinstance(node, ast.ImportFrom):
-            if node.module:
-                if any(b in node.module for b in ["sqlite3", "requests", "httpx", "random", "pickle", "finance_db"]):
-                    blockers.append(f"import:{node.module}")
+        elif (
+            isinstance(node, ast.ImportFrom)
+            and node.module
+            and any(
+                b in node.module
+                for b in [
+                    "sqlite3",
+                    "requests",
+                    "httpx",
+                    "random",
+                    "pickle",
+                    "finance_db",
+                ]
+            )
+        ):
+            blockers.append(f"import:{node.module}")
 
     # Determine purity
     if blockers:
@@ -155,8 +196,8 @@ def analyze_function_ast(source_path: Path, function_name: str) -> FunctionAnaly
         confidence = CONFIDENCE_HIGH if blockers else CONFIDENCE_LOW
     else:
         # Check for monetary operations that suggest business logic
-        has_arithmetic = bool(re.search(r'\+|-|\*|/', func_source))
-        has_comparison = bool(re.search(r'[<>]|=|!=|<=|>=', func_source))
+        has_arithmetic = bool(re.search(r"\+|-|\*|/", func_source))
+        has_comparison = bool(re.search(r"[<>]|=|!=|<=|>=", func_source))
 
         if has_arithmetic or has_comparison:
             purity = "PURE"
@@ -171,7 +212,7 @@ def analyze_function_ast(source_path: Path, function_name: str) -> FunctionAnaly
     return FunctionAnalysis(
         module=module_path,
         function=function_name,
-        purity=purity,
+        purity=cast(Literal["PURE", "IMPURE", "UNKNOWN"], purity),
         confidence=confidence,
         mutation_types=mutation_types,
         blockers=blockers,
@@ -191,35 +232,35 @@ def identify_mutation_types(source: str) -> list[str]:
     types: list[str] = []
 
     # Arithmetic operators
-    if re.search(r'\+|-|\*|/', source):
+    if re.search(r"\+|-|\*|/", source):
         types.append("Arithmetic")
 
     # Comparison operators
-    if re.search(r'==|!=|<=|>=|<|>', source):
+    if re.search(r"==|!=|<=|>=|<|>", source):
         types.append("Comparison")
 
     # Boolean operators
-    if re.search(r'\band\b|\bor\b|\bnot\b', source):
+    if re.search(r"\band\b|\bor\b|\bnot\b", source):
         types.append("Boolean")
 
     # Constants (numeric literals)
-    if re.search(r'\d+\.?\d*', source):
+    if re.search(r"\d+\.?\d*", source):
         types.append("Constant replacement")
 
     # Boundary conditions
-    if re.search(r'range|len\(|for .+ in|while', source):
+    if re.search(r"range|len\(|for .+ in|while", source):
         types.append("Boundary conditions")
 
     # Off-by-one patterns
-    if re.search(r'\+ 1|- 1|[-+]=[+-]?1', source):
+    if re.search(r"\+ 1|- 1|[-+]=[+-]?1", source):
         types.append("Off-by-one")
 
     # Loop patterns
-    if re.search(r'\bfor\b|\bwhile\b', source):
+    if re.search(r"\bfor\b|\bwhile\b", source):
         types.append("Loop termination")
 
     # Sign inversion potential
-    if re.search(r'-1|negate|inverse|invert', source, re.I):
+    if re.search(r"-1|negate|inverse|invert", source, re.I):
         types.append("Sign inversion")
 
     return types
@@ -277,6 +318,7 @@ def discover_engine_files() -> list[Path]:
 def load_capability_registry() -> dict[str, Any]:
     """Load the capability registry for criticality mapping."""
     import yaml
+
     registry_path = GENERATED_DIR / "capability-registry.yaml"
     if registry_path.exists():
         with open(registry_path) as f:
@@ -284,24 +326,34 @@ def load_capability_registry() -> dict[str, Any]:
     return {"capabilities": []}
 
 
-def get_capability_for_engine(engine_path: Path, registry: dict[str, Any]) -> tuple[str, str, str]:
+def get_capability_for_engine(
+    engine_path: Path, registry: dict[str, Any]
+) -> tuple[str, str, str]:
     """Get capability info for an engine file.
 
     Returns:
         Tuple of (capability_id, criticality, risk)
     """
-    relative_path = f"src/engines/{engine_path.relative_to(BACKEND_DIR / 'src' / 'engines')}"
+    relative_path = (
+        f"src/engines/{engine_path.relative_to(BACKEND_DIR / 'src' / 'engines')}"
+    )
     relative_path = str(relative_path).replace("//", "/")
 
     for cap in registry.get("capabilities", []):
         for engine in cap.get("engines", []):
             if engine in relative_path:
-                return cap.get("id", "unknown"), cap.get("criticality", "medium"), cap.get("risk", "low")
+                return (
+                    cap.get("id", "unknown"),
+                    cap.get("criticality", "medium"),
+                    cap.get("risk", "low"),
+                )
 
     return "unknown", "medium", "low"
 
 
-def compute_killability(functions: list[FunctionAnalysis], cap_info: dict[str, Any]) -> str:
+def compute_killability(
+    functions: list[FunctionAnalysis], cap_info: dict[str, Any]
+) -> str:
     """Estimate mutation killability based on function coverage.
 
     Score based on:
@@ -321,7 +373,9 @@ def compute_killability(functions: list[FunctionAnalysis], cap_info: dict[str, A
 
     # High killability if mostly pure functions with good test coverage
     if impure_count == 0 and pure_count > 0:
-        has_types = any(len(f.mutation_types) > 0 for f in functions if f.purity == "PURE")
+        has_types = any(
+            len(f.mutation_types) > 0 for f in functions if f.purity == "PURE"
+        )
         if has_types and (has_property or has_golden):
             return KILLABILITY_HIGH
         return KILLABILITY_MEDIUM
@@ -333,7 +387,9 @@ def compute_killability(functions: list[FunctionAnalysis], cap_info: dict[str, A
     return KILLABILITY_MEDIUM
 
 
-def analyze_engine_readiness(engine_path: Path, functions: list[FunctionAnalysis]) -> EngineReadiness:
+def analyze_engine_readiness(
+    engine_path: Path, functions: list[FunctionAnalysis]
+) -> EngineReadiness:
     """Compute readiness status for an engine."""
     pure_count = sum(1 for f in functions if f.purity == "PURE")
     impure_count = sum(1 for f in functions if f.purity == "IMPURE")
@@ -380,7 +436,9 @@ def generate_mutation_map(functions: list[FunctionAnalysis]) -> dict[str, Any]:
     }
 
 
-def generate_mutation_registry(functions: list[FunctionAnalysis], registry: dict[str, Any]) -> dict[str, Any]:
+def generate_mutation_registry(
+    functions: list[FunctionAnalysis], registry: dict[str, Any]
+) -> dict[str, Any]:
     """Generate the full mutation-registry.json with test coverage mapping."""
     entries = []
 
@@ -414,7 +472,9 @@ def generate_mutation_registry(functions: list[FunctionAnalysis], registry: dict
             "risk": funcs[0].risk if funcs else "low",
             "mutation_types": list(all_mutation_types),
             "existing_tests": {
-                "smoke_tests": f"tests/capabilities/{cap_id}" if cap_id != "unknown" else None,
+                "smoke_tests": (
+                    f"tests/capability/{cap_id}" if cap_id != "unknown" else None
+                ),
                 "property_tests": cap_info.get("property_tests", []),
                 "golden_tests": cap_info.get("golden_datasets", []),
             },
@@ -450,7 +510,9 @@ def generate_readiness_report(engines: list[EngineReadiness]) -> dict[str, Any]:
     }
 
 
-def generate_readiness_markdown(engines: list[EngineReadiness], registry: dict[str, Any]) -> str:
+def generate_readiness_markdown(
+    engines: list[EngineReadiness], registry: dict[str, Any]
+) -> str:
     """Generate mutation-readiness.md human-readable report."""
     lines = [
         "# Mutation Readiness Report",
@@ -468,30 +530,34 @@ def generate_readiness_markdown(engines: list[EngineReadiness], registry: dict[s
             f"| `{e.module_path}` | {e.pure_functions} | {e.impure_functions} | {e.readiness} | {e.killability_estimate} |"
         )
 
-    lines.extend([
-        "",
-        "## Readiness Legend",
-        "",
-        "| Status | Description |",
-        "|--------|-------------|",
-        "| Ready | Pure functions with no blockers - ready for mutation testing |",
-        "| Partial | Mix of pure/impure functions - limited mutation candidates |",
-        "| Blocked | Impure functions prevent safe mutation testing |",
-        "",
-        "## Killability Estimate Legend",
-        "",
-        "| Estimate | Meaning |",
-        "|----------|---------|",
-        "| HIGH | Strong test coverage likely to catch mutations |",
-        "| MEDIUM | Some coverage, may miss edge cases |",
-        "| LOW | Weak coverage, mutations may survive |",
-        "| UNKNOWN | Unable to determine |",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Readiness Legend",
+            "",
+            "| Status | Description |",
+            "|--------|-------------|",
+            "| Ready | Pure functions with no blockers - ready for mutation testing |",
+            "| Partial | Mix of pure/impure functions - limited mutation candidates |",
+            "| Blocked | Impure functions prevent safe mutation testing |",
+            "",
+            "## Killability Estimate Legend",
+            "",
+            "| Estimate | Meaning |",
+            "|----------|---------|",
+            "| HIGH | Strong test coverage likely to catch mutations |",
+            "| MEDIUM | Some coverage, may miss edge cases |",
+            "| LOW | Weak coverage, mutations may survive |",
+            "| UNKNOWN | Unable to determine |",
+        ]
+    )
 
     return "\n".join(lines)
 
 
-def generate_gaps_report(functions: list[FunctionAnalysis], registry: dict[str, Any]) -> str:
+def generate_gaps_report(
+    functions: list[FunctionAnalysis], registry: dict[str, Any]
+) -> str:
     """Generate mutation-gaps.md - actionable report of validation gaps."""
     lines = [
         "# Mutation Validation Gaps Report",
@@ -510,10 +576,12 @@ def generate_gaps_report(functions: list[FunctionAnalysis], registry: dict[str, 
         modules[f.module].append(f)
 
     for module_path, funcs in sorted(modules.items()):
-        lines.extend([
-            f"### `{module_path}`",
-            "",
-        ])
+        lines.extend(
+            [
+                f"### `{module_path}`",
+                "",
+            ]
+        )
 
         # Get capability info
         cap_id = "unknown"
@@ -613,7 +681,9 @@ def main() -> None:
 
         # Analyze engine readiness
         engine_readiness = analyze_engine_readiness(engine_path, engine_functions)
-        engine_readiness.killability_estimate = compute_killability(engine_functions, cap_info)
+        engine_readiness.killability_estimate = compute_killability(
+            engine_functions, cap_info
+        )
         all_engines.append(engine_readiness)
 
     # Generate outputs
@@ -648,10 +718,14 @@ def main() -> None:
     print("Generated: mutation-gaps.md")
 
     # Summary
-    print(f"\nDiscovered {len(all_functions)} functions in {len(engine_files)} engine files")
+    print(
+        f"\nDiscovered {len(all_functions)} functions in {len(engine_files)} engine files"
+    )
     pure = sum(1 for f in all_functions if f.purity == "PURE")
     impure = sum(1 for f in all_functions if f.purity == "IMPURE")
-    print(f"Pure: {pure}, Impure: {impure}, Unknown: {len(all_functions) - pure - impure}")
+    print(
+        f"Pure: {pure}, Impure: {impure}, Unknown: {len(all_functions) - pure - impure}"
+    )
 
 
 if __name__ == "__main__":

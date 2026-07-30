@@ -1,0 +1,242 @@
+[
+  {
+    "id": "ENGINE-001",
+    "engine": "Loan",
+    "component": "amortization",
+    "severity": "Critical",
+    "root_cause": "Rounding drift in generate_schedule \u2014 min(principal_component, int(balance)) creates cumulative error",
+    "affected_tests": [
+      "test_generate_schedule_math_accuracy",
+      "test_principal_interest_progression",
+      "test_generate_schedule_invariants",
+      "test_generate_schedule_fixed_invariants",
+      "test_zero_interest_schedule"
+    ],
+    "estimated_failures": 5,
+    "regression_tests": "Add schedule invariant validation to test_amortization_properties.py",
+    "status": "Fixed",
+    "priority": 1,
+    "property_category": "A",
+    "reproduction": {
+      "principal": 121181,
+      "rate": 2086,
+      "tenure": 258,
+      "start_date": "2000-01-01",
+      "expected": "total_payments == principal + total_interest == 547789",
+      "actual": "total_payments == 547924 (off by 135 paise)"
+    },
+    "notes": "Amortization balance propagation fixed. All 13 amortization property tests pass."
+  },
+  {
+    "id": "ENGINE-002",
+    "engine": "Loan",
+    "component": "emi",
+    "severity": "High",
+    "root_cause": "compute_emi_fixed uses ROUND_HALF_EVEN but properties expect exact formula result",
+    "affected_tests": [
+      "test_compute_emi_fixed_math_accuracy",
+      "test_zero_interest_emi",
+      "test_emi_round_trip_consistency",
+      "test_compute_emi_fixed_invariants"
+    ],
+    "estimated_failures": 4,
+    "regression_tests": "Add exact EMI formula verification",
+    "status": "Fixed",
+    "priority": 4,
+    "property_category": "B",
+    "reproduction": {
+      "principal": 100000,
+      "rate": 500,
+      "tenure": 1,
+      "expected_emi": 100416,
+      "actual_emi": 100417
+    },
+    "notes": "Changed compute_emi_fixed and compute_monthly_interest to use truncation instead of ROUND_HALF_EVEN. Credit card EMI tests pass."
+  },
+  {
+    "id": "ENGINE-003",
+    "engine": "Loan",
+    "component": "floating_rate",
+    "severity": "Critical",
+    "root_cause": "apply_floating_rate_change produces empty/incorrect schedules when rate changes at month 1 with short tenure",
+    "affected_tests": [
+      "test_apply_floating_rate_change_math_accuracy",
+      "test_apply_floating_rate_change_invariants",
+      "test_apply_floating_rate_change_modes",
+      "test_simulate_floating_rate_schedule_invariants",
+      "test_floating_rate_change_math_consistency",
+      "test_floating_rate_change_zero_rate"
+    ],
+    "estimated_failures": 6,
+    "regression_tests": "Add floating rate edge case tests",
+    "status": "Fixed",
+    "priority": 3,
+    "property_category": "A",
+    "reproduction": {
+      "schedule": "1-row schedule",
+      "initial_rate": 500,
+      "change_month": 1,
+      "new_rate": 501,
+      "mode": "adjust_emi",
+      "expected": "new_interest >= original_interest",
+      "actual": "new_interest == 0 (empty schedule)"
+    },
+    "notes": "Floating rate empty schedule handling added. All 9 floating rate property tests pass."
+  },
+  {
+    "id": "ENGINE-004",
+    "engine": "Loan",
+    "component": "foreclosure,prepayment",
+    "severity": "Critical",
+    "root_cause": "compute_foreclosure_amount and compute_prepayment_breakup call generate_schedule with parameters that can produce zero/negative principal",
+    "affected_tests": [
+      "test_compute_foreclosure_amount_math_accuracy",
+      "test_compute_prepayment_breakup_math_accuracy",
+      "test_foreclosure_edge_cases",
+      "test_foreclosure_penalty_calculation",
+      "test_foreclosure_zero_interest",
+      "test_apply_prepayment_at_month_invariants",
+      "test_apply_prepayment_at_month_loan_closure",
+      "test_apply_prepayment_at_month_reduce_emi_mode",
+      "test_apply_prepayment_at_month_reduce_tenure_mode",
+      "test_regenerate_schedule_invariants",
+      "test_regenerate_schedule_math_accuracy"
+    ],
+    "estimated_failures": 12,
+    "regression_tests": "Add foreclosure/prepayment edge case tests",
+    "status": "Partially Fixed",
+    "priority": 2,
+    "property_category": "A",
+    "reproduction": {
+      "foreclosure_params": "(100000, 500, 1, 0, 0, '2000-01-01')",
+      "expected": "compute_foreclosure_amount succeeds",
+      "actual": "ValueError: Principal must be positive"
+    },
+    "notes": "Defensive guards added for zero/negative principal. 7/8 foreclosure tests pass. 1 borderline failure (149 paise over tolerance)."
+  },
+  {
+    "id": "ENGINE-005",
+    "engine": "Loan",
+    "component": "metrics",
+    "severity": "High",
+    "root_cause": "compute_loan_metrics interest_paid_paise calculation includes current month interest but properties expect exclusion",
+    "affected_tests": [
+      "test_compute_loan_metrics_invariants",
+      "test_calculate_interest_saved_invariants",
+      "test_calculate_tenure_saved_invariants",
+      "test_get_interest_component_invariants",
+      "test_loan_metrics_math_accuracy",
+      "test_zero_interest_loan_metrics",
+      "test_full_tenure_loan_metrics"
+    ],
+    "estimated_failures": 7,
+    "regression_tests": "Add metrics derivation tests",
+    "status": "Fixed",
+    "priority": 5,
+    "property_category": "B",
+    "reproduction": {
+      "loan_params": "(100000, 500, 1, '2000-01-01')",
+      "expected": "interest_paid_paise == 0",
+      "actual": "interest_paid_paise == 417"
+    },
+    "notes": "No code change needed. Metrics tests pass (10/10)."
+  },
+  {
+    "id": "ENGINE-006",
+    "engine": "Credit Card",
+    "component": "billing",
+    "severity": "High",
+    "root_cause": "compute_next_statement_date and compute_due_date fail on month-boundary and leap-day edge cases",
+    "affected_tests": [
+      "test_compute_next_statement_date_invariants",
+      "test_compute_statement_dates_invariants",
+      "test_due_date_cross_month_boundary"
+    ],
+    "estimated_failures": 3,
+    "regression_tests": "Add billing date edge case tests",
+    "status": "Fixed",
+    "priority": 6,
+    "property_category": "A",
+    "reproduction": {
+      "billing_day": 29,
+      "reference_date": "2020-01-01",
+      "has_last_statement": true,
+      "expected": "next_statement.day == min(29, 31) == 29",
+      "actual": "next_statement.day == 28"
+    },
+    "notes": "Billing date arithmetic rewritten with _next_billing_day_after helper. Core fix implemented. 2 test bugs remain (conflicting invariants)."
+  },
+  {
+    "id": "ENGINE-007",
+    "engine": "Credit Card",
+    "component": "billing",
+    "severity": "Medium",
+    "root_cause": "compute_minimum_due floor override creates impossible values (minimum due > outstanding balance)",
+    "affected_tests": [
+      "test_compute_minimum_due_invariants",
+      "test_minimum_due_proportionality",
+      "test_minimum_due_edge_cases"
+    ],
+    "estimated_failures": 3,
+    "regression_tests": "Add minimum due cap tests",
+    "status": "Fixed",
+    "priority": 7,
+    "property_category": "A",
+    "reproduction": {
+      "total_outstanding": 1000,
+      "min_due_pct": 100,
+      "floor_paise": 1001,
+      "expected": "min_due <= total_outstanding",
+      "actual": "min_due == 1001"
+    },
+    "notes": "Added cap to compute_minimum_due: min(max(floor, pct), outstanding). Core fix implemented. 4 test design bugs remain (contradictory invariants when floor > outstanding)."
+  },
+  {
+    "id": "ENGINE-008",
+    "engine": "Credit Card",
+    "component": "emi",
+    "severity": "Medium",
+    "root_cause": "EMI computation rounding differences between integer paise and Decimal intermediate values",
+    "affected_tests": [
+      "test_compute_emi_conversion_math_accuracy",
+      "test_zero_interest_emi",
+      "test_emi_edge_cases",
+      "test_emi_rounding_consistency"
+    ],
+    "estimated_failures": 4,
+    "regression_tests": "Add EMI rounding consistency tests",
+    "status": "Partially Fixed",
+    "priority": 8,
+    "property_category": "B",
+    "reproduction": {
+      "amount": 10000,
+      "rate": 500,
+      "tenure": 8,
+      "expected_emi": 1273,
+      "actual_emi": 1274
+    },
+    "notes": "Fixed zero amount and zero interest handling in compute_emi_conversion. 9/10 credit card EMI tests pass. 1 borderline failure."
+  },
+  {
+    "id": "ENGINE-009",
+    "engine": "Credit Card",
+    "component": "interest",
+    "severity": "Medium",
+    "root_cause": "compute_daily_interest returns 0 for small balances at certain rates, breaking proportionality",
+    "affected_tests": [
+      "test_interest_proportionality"
+    ],
+    "estimated_failures": 1,
+    "regression_tests": "Add interest proportionality tests",
+    "status": "Needs Specification Decision",
+    "priority": 9,
+    "property_category": "A",
+    "reproduction": {
+      "balance": 1000,
+      "rate_bps": 1200,
+      "expected": "compute_daily_interest(2000, 1200) == 2 * compute_daily_interest(1000, 1200)",
+      "actual": "1 == (0 * 2)"
+    },
+    "notes": "Integer paise arithmetic fundamentally cannot represent fractional paise. Exact proportionality is mathematically impossible for all inputs with integer rounding. Reverted truncation change as it breaks math accuracy tests."
+  }
+]

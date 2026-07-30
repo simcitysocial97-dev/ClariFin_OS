@@ -30,7 +30,7 @@ class AccountMapper:
         account_type: str,
         balance: Money,
         last_updated: str,
-        include_rupees_field: bool = True
+        include_rupees_field: bool = True,
     ) -> AccountDTO:
         """
         Convert account data to AccountDTO.
@@ -65,7 +65,7 @@ class AccountMapper:
     @staticmethod
     def to_list_response(
         accounts: list[tuple[str, str, str, str, int, str]],
-        include_rupees_field: bool = True
+        include_rupees_field: bool = True,
     ) -> AccountListResponse:
         """
         Convert list of account tuples to AccountListResponse.
@@ -96,14 +96,14 @@ class AccountMapper:
                 account_type=account_type,
                 balance=balance,
                 last_updated=last_updated,
-                include_rupees_field=include_rupees_field
+                include_rupees_field=include_rupees_field,
             )
             account_dtos.append(dto)
 
         return AccountListResponse(
             accounts=account_dtos,
             total_accounts=len(account_dtos),
-            total_balance_paise=total_balance_paise
+            total_balance_paise=total_balance_paise,
         )
 
     @staticmethod
@@ -114,7 +114,7 @@ class AccountMapper:
         account_type: str,
         balance: Money,
         last_updated: str,
-        include_rupees_field: bool = True
+        include_rupees_field: bool = True,
     ) -> dict[str, Any]:
         """
         Convert account data to dictionary (for direct JSON response).
@@ -132,6 +132,6 @@ class AccountMapper:
             account_type=account_type,
             balance=balance,
             last_updated=last_updated,
-            include_rupees_field=include_rupees_field
+            include_rupees_field=include_rupees_field,
         )
         return dto.model_dump()

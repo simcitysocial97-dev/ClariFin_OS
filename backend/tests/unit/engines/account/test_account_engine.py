@@ -7,14 +7,9 @@ All monetary values in paise (integer).
 All rates in basis points (integer).
 """
 
-import sys
-from pathlib import Path
-
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from engines.account_engine import (
+from src.engines.account_engine import (
     compute_account_metrics,
     compute_account_status,
     compute_average_balance,

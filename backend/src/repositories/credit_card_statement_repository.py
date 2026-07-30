@@ -30,17 +30,23 @@ class CreditCardStatementRepository(BaseRepository):
         Uses UNIQUE(card_id, statement_date) constraint to prevent duplicates.
         """
         with self._get_conn() as conn:
-            cur = conn.execute("""
+            cur = conn.execute(
+                """
                 INSERT INTO credit_card_statements (
                     card_id, statement_date, due_date,
                     total_outstanding_paise, minimum_due_paise,
                     interest_charged_paise
                 ) VALUES (?, ?, ?, ?, ?, ?)
-            """, (
-                card_id, statement_date, due_date,
-                total_outstanding_paise, minimum_due_paise,
-                interest_charged_paise,
-            ))
+            """,
+                (
+                    card_id,
+                    statement_date,
+                    due_date,
+                    total_outstanding_paise,
+                    minimum_due_paise,
+                    interest_charged_paise,
+                ),
+            )
             conn.commit()
         return cur.lastrowid or 0
 
@@ -48,31 +54,36 @@ class CreditCardStatementRepository(BaseRepository):
         """Get a single statement by ID as a raw dict."""
         with self._get_conn() as conn:
             row = conn.execute(
-                "SELECT * FROM credit_card_statements WHERE id = ?",
-                (statement_id,)
+                "SELECT * FROM credit_card_statements WHERE id = ?", (statement_id,)
             ).fetchone()
         return dict(row) if row else None
 
     def get_latest_statement(self, card_id: str) -> dict[str, Any] | None:
         """Get the most recent statement for a card."""
         with self._get_conn() as conn:
-            row = conn.execute("""
+            row = conn.execute(
+                """
                 SELECT * FROM credit_card_statements
                 WHERE card_id = ?
                 ORDER BY statement_date DESC
                 LIMIT 1
-            """, (card_id,)).fetchone()
+            """,
+                (card_id,),
+            ).fetchone()
         return dict(row) if row else None
 
     def get_latest_open_statement(self, card_id: str) -> dict[str, Any] | None:
         """Get the most recent statement without a payment."""
         with self._get_conn() as conn:
-            row = conn.execute("""
+            row = conn.execute(
+                """
                 SELECT * FROM credit_card_statements
                 WHERE card_id = ? AND payment_date IS NULL
                 ORDER BY statement_date DESC
                 LIMIT 1
-            """, (card_id,)).fetchone()
+            """,
+                (card_id,),
+            ).fetchone()
         return dict(row) if row else None
 
     def list_statements(
@@ -82,12 +93,15 @@ class CreditCardStatementRepository(BaseRepository):
     ) -> list[dict[str, Any]]:
         """Get statement history for a card, most recent first."""
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT * FROM credit_card_statements
                 WHERE card_id = ?
                 ORDER BY statement_date DESC
                 LIMIT ?
-            """, (card_id, limit)).fetchall()
+            """,
+                (card_id, limit),
+            ).fetchall()
         return [dict(r) for r in rows]
 
     def update_payment(
@@ -98,11 +112,14 @@ class CreditCardStatementRepository(BaseRepository):
     ) -> bool:
         """Record a payment on a statement."""
         with self._get_conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE credit_card_statements
                 SET payment_date = ?, payment_amount_paise = ?
                 WHERE id = ?
-            """, (payment_date, amount_paise, statement_id))
+            """,
+                (payment_date, amount_paise, statement_id),
+            )
             conn.commit()
             changes = conn.execute("SELECT changes()").fetchone()
         return bool(changes[0]) if changes else False

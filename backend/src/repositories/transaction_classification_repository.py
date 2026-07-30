@@ -2,6 +2,7 @@
 
 LOC WATCH: No repository file > 200 LOC.
 """
+
 from typing import Any
 
 from src.repositories.base import BaseRepository

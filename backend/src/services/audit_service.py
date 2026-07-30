@@ -1,6 +1,7 @@
 """
 Audit business orchestration service.
 """
+
 from typing import Any
 
 from src.engines.ledger_audit_engine import run_full_audit

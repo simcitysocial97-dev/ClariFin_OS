@@ -40,7 +40,9 @@ def compute_outstanding(
     if total_payments_paise < 0:
         raise ValueError("total_payments_paise must be non-negative")
 
-    outstanding = total_spend_paise + total_emi_paise + total_fees_paise - total_payments_paise
+    outstanding = (
+        total_spend_paise + total_emi_paise + total_fees_paise - total_payments_paise
+    )
 
     # INVARIANT 5: Balance must never be negative
     return max(0, outstanding)

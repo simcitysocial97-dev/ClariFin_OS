@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 
 class SpendingTrendPoint(BaseModel):
     """Monthly spending trend data point."""
+
     month: str = Field(description="Month label (e.g., 'Jan 25')")
     amount_paise: int = Field(description="Total spending in paise")
     average_paise: int = Field(description="Average monthly spending in paise")
@@ -20,6 +21,7 @@ class SpendingTrendPoint(BaseModel):
 
 class DayOfWeekData(BaseModel):
     """Day-of-week spending breakdown."""
+
     day: str = Field(description="Day name (e.g., 'Mon')")
     amount_paise: int = Field(description="Total spending in paise")
     count: int = Field(description="Number of transactions")
@@ -27,6 +29,7 @@ class DayOfWeekData(BaseModel):
 
 class MerchantData(BaseModel):
     """Top merchant spending data."""
+
     merchant: str = Field(description="Merchant description")
     amount_paise: int = Field(description="Total spending in paise")
     count: int = Field(description="Number of transactions")
@@ -34,6 +37,7 @@ class MerchantData(BaseModel):
 
 class RecurringCharge(BaseModel):
     """Recurring charge detection result."""
+
     description: str = Field(description="Charge description")
     frequency: int = Field(description="Number of occurrences")
     avg_amount_paise: int = Field(description="Average amount in paise")
@@ -42,6 +46,7 @@ class RecurringCharge(BaseModel):
 
 class LargestTransaction(BaseModel):
     """Largest transaction detail."""
+
     rank: int = Field(description="Rank (1-based)")
     date_display: str = Field(description="Formatted date")
     description: str = Field(description="Transaction description")
@@ -51,12 +56,12 @@ class LargestTransaction(BaseModel):
 
 class AnalyticsResponse(BaseModel):
     """Analytics API response."""
+
     highest_month: str = Field(description="Month with highest spending")
     highest_month_amount_paise: int = Field(description="Highest month amount in paise")
     avg_monthly_paise: int = Field(description="Average monthly spending in paise")
     biggest_transaction: dict[str, Any] | None = Field(
-        default=None,
-        description="Biggest single transaction details"
+        default=None, description="Biggest single transaction details"
     )
     unique_merchants: int = Field(description="Number of unique merchants")
     spending_trend: list[SpendingTrendPoint] = Field(
@@ -65,9 +70,7 @@ class AnalyticsResponse(BaseModel):
     day_of_week: list[DayOfWeekData] = Field(
         description="Day-of-week spending breakdown"
     )
-    top_merchants: list[MerchantData] = Field(
-        description="Top merchants by spending"
-    )
+    top_merchants: list[MerchantData] = Field(description="Top merchants by spending")
     recurring_charges: list[RecurringCharge] = Field(
         description="Detected recurring charges"
     )
@@ -87,6 +90,6 @@ class AnalyticsResponse(BaseModel):
                 "day_of_week": [],
                 "top_merchants": [],
                 "recurring_charges": [],
-                "largest_transactions": []
+                "largest_transactions": [],
             }
         }

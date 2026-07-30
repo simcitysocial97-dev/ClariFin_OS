@@ -49,7 +49,9 @@ class NetWorthService(BaseService):
         seen_cards: set[str] = set()
         for stmt in sorted(
             statements,
-            key=lambda s: str(s.get("statement_period_to") or s.get("imported_at") or ""),
+            key=lambda s: str(
+                s.get("statement_period_to") or s.get("imported_at") or ""
+            ),
             reverse=True,
         ):
             card_key = f"{stmt.get('bank', '')}_{stmt.get('card_last4', '')}"

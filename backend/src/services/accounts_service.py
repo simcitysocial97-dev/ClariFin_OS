@@ -19,11 +19,17 @@ from src.core.dtos.accounts_dto import (
     AccountTypeBreakdownDTO,
     BalanceHistoryDTO,
 )
-from src.repositories import AccountBalanceRepository, AccountRepository, TransactionRepository
+from src.repositories import (
+    AccountBalanceRepository,
+    AccountRepository,
+    TransactionRepository,
+)
 from src.services.base import BaseService
 
 # Type alias for account type
-AccountType = Literal["savings", "current", "credit_card", "investment", "loan", "other"]
+AccountType = Literal[
+    "savings", "current", "credit_card", "investment", "loan", "other"
+]
 
 
 class AccountsService(BaseService):
@@ -64,9 +70,7 @@ class AccountsService(BaseService):
             accounts = [a for a in accounts if a.get("status") in statuses]
 
         # Calculate total balance
-        total_balance_paise = sum(
-            int(a.get("balance_paise", 0) or 0) for a in accounts
-        )
+        total_balance_paise = sum(int(a.get("balance_paise", 0) or 0) for a in accounts)
 
         # Calculate type breakdown
         type_breakdown = self._compute_type_breakdown(accounts)
@@ -182,12 +186,13 @@ class AccountsService(BaseService):
         # Filter by account if specified
         if account_id:
             transactions = [
-                t for t in transactions
+                t
+                for t in transactions
                 if str(t.get("account_id", "")) == str(account_id)
             ]
 
         # Apply pagination
-        paginated = transactions[offset:offset + limit]
+        paginated = transactions[offset : offset + limit]
 
         txn_dtos = [
             AccountTransactionDTO(

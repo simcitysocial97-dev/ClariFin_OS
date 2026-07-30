@@ -63,7 +63,11 @@ class TransactionMapper:
             date=date,
             description=description,
             amount=MoneyDTO(paise=amount.paise, rupees=amount.to_rupees()),
-            balance=MoneyDTO(paise=balance.paise, rupees=balance.to_rupees()) if balance else None,
+            balance=(
+                MoneyDTO(paise=balance.paise, rupees=balance.to_rupees())
+                if balance
+                else None
+            ),
             category=category,
             subcategory=subcategory,
             bank=bank,
@@ -125,10 +129,7 @@ class TransactionMapper:
             transaction_dtos.append(dto)
 
         return TransactionListResponse(
-            transactions=transaction_dtos,
-            total=total,
-            limit=limit,
-            offset=offset
+            transactions=transaction_dtos, total=total, limit=limit, offset=offset
         )
 
     @staticmethod

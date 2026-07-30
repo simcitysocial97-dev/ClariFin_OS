@@ -42,12 +42,18 @@ class DashboardService(BaseService):
 
         # Calculate income and expenses this month
         this_month_cutoff = datetime.now().replace(day=1).strftime("%Y-%m-%d")
-        this_month_txns = [t for t in transactions if t.get("parsed_date", "") >= this_month_cutoff]
+        this_month_txns = [
+            t for t in transactions if t.get("parsed_date", "") >= this_month_cutoff
+        ]
         total_income_paise = sum(
-            t.get("amount_paise", 0) for t in this_month_txns if t.get("type") == "credit"
+            t.get("amount_paise", 0)
+            for t in this_month_txns
+            if t.get("type") == "credit"
         )
         total_expenses_paise = sum(
-            t.get("amount_paise", 0) for t in this_month_txns if t.get("type") == "debit"
+            t.get("amount_paise", 0)
+            for t in this_month_txns
+            if t.get("type") == "debit"
         )
         net_cash_flow_paise = total_income_paise - total_expenses_paise
 

@@ -9,7 +9,11 @@ This is the ONLY location where dashboard API responses are constructed.
 from typing import Any
 
 from src.core.domain.money import Money
-from src.core.dtos.dashboard_dto import CategoryBreakdownDTO, DashboardSummaryDTO, OverviewDTO
+from src.core.dtos.dashboard_dto import (
+    CategoryBreakdownDTO,
+    DashboardSummaryDTO,
+    OverviewDTO,
+)
 
 
 class DashboardMapper:
@@ -32,7 +36,7 @@ class DashboardMapper:
         emi: Money,
         emi_ratio: float,
         buffer_days: int,
-        include_rupees_field: bool = True
+        include_rupees_field: bool = True,
     ) -> DashboardSummaryDTO:
         """
         Convert dashboard summary data to DashboardSummaryDTO.
@@ -73,7 +77,7 @@ class DashboardMapper:
         category_chart: list[dict[str, Any]],
         monthly_chart: list[dict[str, Any]],
         bank_wise_chart: list[dict[str, Any]],
-        include_rupees_field: bool = True
+        include_rupees_field: bool = True,
     ) -> OverviewDTO:
         """
         Convert overview data to OverviewDTO.
@@ -105,10 +109,7 @@ class DashboardMapper:
 
     @staticmethod
     def to_category_breakdown(
-        category: str,
-        amount_paise: int,
-        count: int,
-        percentage: float
+        category: str, amount_paise: int, count: int, percentage: float
     ) -> CategoryBreakdownDTO:
         """
         Convert category breakdown data to CategoryBreakdownDTO.
@@ -126,5 +127,5 @@ class DashboardMapper:
             category=category,
             amount_paise=amount_paise,
             count=count,
-            percentage=percentage
+            percentage=percentage,
         )

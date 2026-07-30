@@ -1,10 +1,15 @@
 name: CI
 
+# SUPERSEDED by quality.yml and backend.yml (Phase 0 CI infrastructure)
+# Keeping for reference — disabled automatic triggers to prevent duplicate runs
 on:
-  push:
-    branches: [main, "feat/*"]
-  pull_request:
-    branches: [main]
+  workflow_dispatch:    # Manual only until Phase 1 consolidation
+
+# on:
+#   push:
+#     branches: [main, "feat/*"]
+#   pull_request:
+#     branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -33,7 +38,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set fetch-retries 5
+          npm ci
 
       - name: TypeScript check
         run: npx tsc --noEmit
@@ -89,7 +97,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set fetch-retries 5
+          npm ci
 
       - name: Run Vitest
         run: npm test -- --reporter=verbose
@@ -148,7 +159,10 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set fetch-retries 5
+          npm ci
 
       - name: Build
         run: npm run build
@@ -188,7 +202,10 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm ci
+        run: |
+          npm config set fetch-retry-maxtimeout 120000
+          npm config set fetch-retries 5
+          npm ci
 
       - name: Install Playwright browsers
         working-directory: frontend

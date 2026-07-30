@@ -106,7 +106,8 @@ def test_all_routers_discovered() -> None:
     # Get expected routers (excluding __init__ and __pycache__)
     routers_dir = BACKEND_DIR / "src" / "routers"
     expected_routers = [
-        f.stem for f in routers_dir.glob("*.py")
+        f.stem
+        for f in routers_dir.glob("*.py")
         if not f.name.startswith("_") and not f.name.startswith("__")
     ]
 
@@ -117,7 +118,9 @@ def test_all_routers_discovered() -> None:
 
     for router in expected_routers:
         # Router might be mapped to a canonical name
-        if router not in registered_routers and router not in registry.get("routers", {}):
+        if router not in registered_routers and router not in registry.get(
+            "routers", {}
+        ):
             # Check if any registered router matches pattern
             any(
                 router in str(r) or r.replace("_", "-") == router
@@ -134,7 +137,8 @@ def test_contract_stage_registered() -> None:
     """ContractStage must be registered in ValidationGraph."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -145,13 +149,15 @@ stages = [s.stage_id for s in graph.get_all_stages()]
 
 assert 'contract' in stages, f"ContractStage not registered. Available: {stages}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
     )
-    assert result.returncode == 0, f"ContractStage registration test failed: {result.stderr}"
+    assert (
+        result.returncode == 0
+    ), f"ContractStage registration test failed: {result.stderr}"
     assert "PASS" in result.stdout
 
 
@@ -159,7 +165,8 @@ def test_full_pipeline_includes_contract() -> None:
     """Full pipeline must include contract stage."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tools')
@@ -170,7 +177,7 @@ full_pipeline = graph.get_full_pipeline()
 
 assert 'contract' in full_pipeline, f"Full pipeline missing contract stage. Got: {full_pipeline}"
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
@@ -184,7 +191,8 @@ def test_snapshot_normalization_works() -> None:
     """normalize_response must handle various data types."""
     result = subprocess.run(
         [
-            sys.executable, "-c",
+            sys.executable,
+            "-c",
             """
 import sys
 sys.path.insert(0, 'backend/tests/contract')
@@ -201,13 +209,15 @@ normalized = normalize_response(data)
 assert "[UUID]" in normalized, f"UUID not normalized: {normalized}"
 
 print("PASS")
-"""
+""",
         ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
     )
-    assert result.returncode == 0, f"Snapshot normalization test failed: {result.stderr}"
+    assert (
+        result.returncode == 0
+    ), f"Snapshot normalization test failed: {result.stderr}"
     assert "PASS" in result.stdout
 
 
@@ -221,7 +231,9 @@ def test_contract_tests_collectable() -> None:
     )
     # Should find tests
     assert result.returncode == 0, f"Test collection failed: {result.stderr}"
-    assert "test_" in result.stdout or "test session" in result.stdout.lower(), "No tests collected"
+    assert (
+        "test_" in result.stdout or "test session" in result.stdout.lower()
+    ), "No tests collected"
 
 
 def test_contract_tests_run() -> None:
@@ -235,4 +247,6 @@ def test_contract_tests_run() -> None:
     # Tests may fail but shouldn't error on import
     output = result.stdout + result.stderr
     assert "ImportError" not in output, f"Import errors in contract tests: {output}"
-    assert "ModuleNotFoundError" not in output, f"Module not found in contract tests: {output}"
+    assert (
+        "ModuleNotFoundError" not in output
+    ), f"Module not found in contract tests: {output}"

@@ -18,6 +18,10 @@ class StatementService(BaseService):
         super().__init__(db_path)
         self.repo = StatementRepository(self.db_path)
 
-    def validate_statement(self, statement_id: int, claimed_balance_paise: int) -> dict[str, Any]:
+    def validate_statement(
+        self, statement_id: int, claimed_balance_paise: int
+    ) -> dict[str, Any]:
         """Validate a statement's closing balance against computed balance."""
-        return validate_statement_balance(self.db_path, statement_id, claimed_balance_paise)
+        return validate_statement_balance(
+            self.db_path, statement_id, claimed_balance_paise
+        )

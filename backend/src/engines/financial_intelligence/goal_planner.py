@@ -27,6 +27,7 @@ DEFAULT_EMERGENCY_MONTHS = 6
 # Goal Projection
 # ============================================================
 
+
 def calculate_goal_projection(
     target_amount_paise: int,
     current_amount_paise: int,
@@ -95,8 +96,7 @@ def calculate_goal_projection(
             except (ValueError, TypeError):
                 pass
 
-    for month_data in monthly_surplus_forecast:
-        months_count += 1
+    for months_count, month_data in enumerate(monthly_surplus_forecast, 1):
         expected_surplus = int(month_data.get("expected_surplus_paise", 0) or 0)
 
         # Only positive surplus contributes to goal
@@ -126,6 +126,7 @@ def calculate_goal_projection(
 # ============================================================
 # Emergency Fund Target Calculation
 # ============================================================
+
 
 def calculate_emergency_fund_target(
     monthly_expenses_paise: int,
@@ -162,6 +163,7 @@ def calculate_emergency_fund_target(
 # ============================================================
 # Debt Payoff Projection
 # ============================================================
+
 
 def _months_to_payoff(
     outstanding_paise: int,
@@ -216,26 +218,30 @@ def calculate_debt_payoff_projection(
     for loan in loans:
         outstanding = int(loan.get("outstanding_paise", 0) or 0)
         if outstanding > 0:
-            all_debts.append({
-                "id": loan.get("id"),
-                "type": "loan",
-                "name": loan.get("name", "Unknown Loan"),
-                "outstanding_paise": outstanding,
-                "interest_rate_bps": int(loan.get("interest_rate_bps", 0) or 0),
-                "emi_paise": int(loan.get("emi_paise", 0) or 0),
-            })
+            all_debts.append(
+                {
+                    "id": loan.get("id"),
+                    "type": "loan",
+                    "name": loan.get("name", "Unknown Loan"),
+                    "outstanding_paise": outstanding,
+                    "interest_rate_bps": int(loan.get("interest_rate_bps", 0) or 0),
+                    "emi_paise": int(loan.get("emi_paise", 0) or 0),
+                }
+            )
 
     for card in credit_cards:
         outstanding = int(card.get("outstanding_paise", 0) or 0)
         if outstanding > 0:
-            all_debts.append({
-                "id": card.get("id"),
-                "type": "credit_card",
-                "name": card.get("name", "Unknown Card"),
-                "outstanding_paise": outstanding,
-                "interest_rate_bps": int(card.get("interest_rate_bps", 0) or 0),
-                "minimum_due_paise": int(card.get("minimum_due_paise", 0) or 0),
-            })
+            all_debts.append(
+                {
+                    "id": card.get("id"),
+                    "type": "credit_card",
+                    "name": card.get("name", "Unknown Card"),
+                    "outstanding_paise": outstanding,
+                    "interest_rate_bps": int(card.get("interest_rate_bps", 0) or 0),
+                    "minimum_due_paise": int(card.get("minimum_due_paise", 0) or 0),
+                }
+            )
 
     if not all_debts:
         return {
@@ -246,12 +252,16 @@ def calculate_debt_payoff_projection(
         }
 
     # Sort by interest rate (debt avalanche - highest rate first)
-    payoff_order = sorted(all_debts, key=lambda d: d.get("interest_rate_bps", 0), reverse=True)
+    payoff_order = sorted(
+        all_debts, key=lambda d: d.get("interest_rate_bps", 0), reverse=True
+    )
 
     # Calculate available monthly allocation
-    monthly_allocation = int(
-        monthly_surplus_paise * allocation_ratio
-    ) if monthly_surplus_paise > 0 else 0
+    monthly_allocation = (
+        int(monthly_surplus_paise * allocation_ratio)
+        if monthly_surplus_paise > 0
+        else 0
+    )
 
     # Simple estimate: sum of months to payoff each debt
     total_months = 0
@@ -289,6 +299,7 @@ def calculate_debt_payoff_projection(
 # Goal Health Scoring
 # ============================================================
 
+
 def calculate_goal_health(
     target_amount_paise: int,
     current_amount_paise: int,
@@ -325,7 +336,9 @@ def calculate_goal_health(
         }
 
     # Calculate progress ratio
-    progress_ratio = Decimal(str(current_amount_paise)) / Decimal(str(target_amount_paise))
+    progress_ratio = Decimal(str(current_amount_paise)) / Decimal(
+        str(target_amount_paise)
+    )
     progress_ratio = min(Decimal("1"), progress_ratio)  # Cap at 100%
 
     # Determine status based on timeline
@@ -362,9 +375,10 @@ def calculate_goal_health(
         # Simple month comparison
         try:
             target_year, target_mon = int(target_month[:4]), int(target_month[5:7])
-            proj_year, proj_mon = int(
-                projected_completion_month[:4]
-            ), int(projected_completion_month[5:7])
+            proj_year, proj_mon = (
+                int(projected_completion_month[:4]),
+                int(projected_completion_month[5:7]),
+            )
 
             target_total = target_year * 12 + target_mon
             proj_total = proj_year * 12 + proj_mon
@@ -417,6 +431,7 @@ def calculate_goal_health(
 # Goal Summary Calculation
 # ============================================================
 
+
 def calculate_household_goal_summary(
     goals: list[dict[str, Any]],
     projections: list[dict[str, Any]],
@@ -456,12 +471,14 @@ def calculate_household_goal_summary(
             at_risk += 1
 
         if goal.get("priority") == "critical" and status != "completed":
-            critical_goals.append({
-                "id": goal.get("id"),
-                "name": goal.get("name"),
-                "goal_type": goal.get("goal_type"),
-                "health": health_status,
-            })
+            critical_goals.append(
+                {
+                    "id": goal.get("id"),
+                    "name": goal.get("name"),
+                    "goal_type": goal.get("goal_type"),
+                    "health": health_status,
+                }
+            )
 
     return {
         "total_goals": total_goals,

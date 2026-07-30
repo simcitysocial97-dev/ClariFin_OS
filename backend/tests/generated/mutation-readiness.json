@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T03:42:36.091194+00:00",
+  "generated_at": "2026-07-29T06:28:29.835185+00:00",
   "engines": [
     {
       "module_path": "src/engines/balance_engine.py",
@@ -107,7 +107,7 @@
     },
     {
       "module_path": "src/engines/credit_card_engine/emi.py",
-      "pure_functions": 1,
+      "pure_functions": 3,
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
@@ -295,7 +295,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "MEDIUM"
+      "killability_estimate": "HIGH"
     },
     {
       "module_path": "src/engines/behaviour_engine/lifestyle.py",
@@ -311,7 +311,7 @@
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
-      "killability_estimate": "MEDIUM"
+      "killability_estimate": "HIGH"
     },
     {
       "module_path": "src/engines/behaviour_engine/resilience.py",
@@ -396,22 +396,22 @@
     {
       "module_path": "src/engines/loan_engine/amortization.py",
       "pure_functions": 6,
-      "impure_functions": 0,
+      "impure_functions": 1,
       "unknown_functions": 0,
-      "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/prepayment.py",
-      "pure_functions": 5,
-      "impure_functions": 0,
+      "pure_functions": 4,
+      "impure_functions": 1,
       "unknown_functions": 0,
-      "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/emi.py",
-      "pure_functions": 4,
+      "pure_functions": 6,
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
@@ -419,11 +419,11 @@
     },
     {
       "module_path": "src/engines/loan_engine/metrics.py",
-      "pure_functions": 5,
-      "impure_functions": 0,
+      "pure_functions": 4,
+      "impure_functions": 1,
       "unknown_functions": 0,
-      "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/loan_engine/utils.py",
@@ -443,11 +443,11 @@
     },
     {
       "module_path": "src/engines/loan_engine/floating_rate.py",
-      "pure_functions": 2,
-      "impure_functions": 0,
+      "pure_functions": 1,
+      "impure_functions": 1,
       "unknown_functions": 0,
-      "readiness": "Ready",
-      "killability_estimate": "HIGH"
+      "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
     }
   ]
 }

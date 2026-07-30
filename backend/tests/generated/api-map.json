@@ -39,78 +39,27 @@
       "capability": "unknown"
     },
     {
-      "router": "accounts_intelligence",
+      "router": "accounts",
       "endpoint": "/api/v1/accounts",
       "method": "GET",
       "tags": [
-        "accounts-intelligence"
+        "accounts"
       ],
-      "summary": "Get Accounts",
-      "operation_id": "get_accounts_api_v1_accounts_get",
+      "summary": "List Accounts",
+      "operation_id": "list_accounts_api_v1_accounts_get",
       "request_schema": {},
       "response_schema": {
-        "$ref": "#/components/schemas/AccountsDTO"
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "type": "array",
+        "title": "Response List Accounts Api V1 Accounts Get"
       },
       "status_codes": [
-        "200",
-        "422"
+        "200"
       ],
-      "parameters": [
-        {
-          "name": "account_types",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Comma-separated account types",
-            "title": "Account Types"
-          },
-          "description": "Comma-separated account types"
-        },
-        {
-          "name": "institutions",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Comma-separated institutions",
-            "title": "Institutions"
-          },
-          "description": "Comma-separated institutions"
-        },
-        {
-          "name": "statuses",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Comma-separated statuses",
-            "title": "Statuses"
-          },
-          "description": "Comma-separated statuses"
-        }
-      ],
+      "parameters": [],
       "capability": "unknown"
     },
     {
@@ -126,8 +75,8 @@
         "$ref": "#/components/schemas/AccountCreateRequest"
       },
       "response_schema": {
-        "type": "object",
         "additionalProperties": true,
+        "type": "object",
         "title": "Response Create Account Api V1 Accounts Post"
       },
       "status_codes": [
@@ -135,20 +84,22 @@
         "422"
       ],
       "parameters": [],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
-      "router": "accounts_intelligence",
+      "router": "accounts",
       "endpoint": "/api/v1/accounts/{account_id}",
       "method": "GET",
       "tags": [
-        "accounts-intelligence"
+        "accounts"
       ],
       "summary": "Get Account",
       "operation_id": "get_account_api_v1_accounts__account_id__get",
       "request_schema": {},
       "response_schema": {
-        "$ref": "#/components/schemas/AccountDetailDTO"
+        "type": "object",
+        "additionalProperties": true,
+        "title": "Response Get Account Api V1 Accounts  Account Id  Get"
       },
       "status_codes": [
         "200",
@@ -213,7 +164,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -252,7 +203,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -293,20 +244,25 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
-      "router": "accounts_intelligence",
+      "router": "accounts",
       "endpoint": "/api/v1/accounts/{account_id}/balance-history",
       "method": "GET",
       "tags": [
-        "accounts-intelligence"
+        "accounts"
       ],
-      "summary": "Get Account Balance History",
-      "operation_id": "get_account_balance_history_api_v1_accounts__account_id__balance_history_get",
+      "summary": "Get Balance History",
+      "operation_id": "get_balance_history_api_v1_accounts__account_id__balance_history_get",
       "request_schema": {},
       "response_schema": {
-        "$ref": "#/components/schemas/AccountsHistoryResponse"
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "title": "Response Get Balance History Api V1 Accounts  Account Id  Balance History Get"
       },
       "status_codes": [
         "200",
@@ -381,7 +337,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -420,7 +376,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -459,7 +415,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -500,7 +456,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -539,7 +495,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -563,7 +519,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -587,7 +543,7 @@
         "422"
       ],
       "parameters": [],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -619,7 +575,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -653,7 +609,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -694,7 +650,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -736,7 +692,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -791,109 +747,6 @@
           }
         }
       ],
-      "capability": "account_management"
-    },
-    {
-      "router": "accounts_intelligence",
-      "endpoint": "/api/v1/accounts/{account_id}/transactions",
-      "method": "GET",
-      "tags": [
-        "accounts-intelligence"
-      ],
-      "summary": "Get Account Transactions",
-      "operation_id": "get_account_transactions_api_v1_accounts__account_id__transactions_get",
-      "request_schema": {},
-      "response_schema": {
-        "$ref": "#/components/schemas/AccountsTransactionsResponse"
-      },
-      "status_codes": [
-        "200",
-        "422"
-      ],
-      "parameters": [
-        {
-          "name": "account_id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "title": "Account Id"
-          }
-        },
-        {
-          "name": "limit",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "maximum": 100,
-            "minimum": 1,
-            "default": 50,
-            "title": "Limit"
-          }
-        },
-        {
-          "name": "offset",
-          "in": "query",
-          "required": false,
-          "schema": {
-            "type": "integer",
-            "minimum": 0,
-            "default": 0,
-            "title": "Offset"
-          }
-        }
-      ],
-      "capability": "unknown"
-    },
-    {
-      "router": "accounts_intelligence",
-      "endpoint": "/api/v1/accounts/summary",
-      "method": "GET",
-      "tags": [
-        "accounts-intelligence"
-      ],
-      "summary": "Get Accounts Summary",
-      "operation_id": "get_accounts_summary_api_v1_accounts_summary_get",
-      "request_schema": {},
-      "response_schema": {
-        "$ref": "#/components/schemas/AccountsDTO"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
-      "capability": "unknown"
-    },
-    {
-      "router": "accounts_intelligence",
-      "endpoint": "/api/v1/accounts/type-breakdown",
-      "method": "GET",
-      "tags": [
-        "accounts-intelligence"
-      ],
-      "summary": "Get Accounts Type Breakdown",
-      "operation_id": "get_accounts_type_breakdown_api_v1_accounts_type_breakdown_get",
-      "request_schema": {},
-      "response_schema": {
-        "items": {
-          "additionalProperties": true,
-          "type": "object"
-        },
-        "type": "array",
-        "title": "Response Get Accounts Type Breakdown Api V1 Accounts Type Breakdown Get"
-      },
-      "status_codes": [
-        "200"
-      ],
-      "parameters": [],
       "capability": "unknown"
     },
     {
@@ -973,7 +826,7 @@
           "description": "Household identifier"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour",
@@ -1008,7 +861,7 @@
           "description": "Household identifier"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour",
@@ -1043,7 +896,7 @@
           "description": "Household identifier"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour",
@@ -1078,7 +931,7 @@
           "description": "Household identifier"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour",
@@ -1148,7 +1001,7 @@
           "description": "Number of days to look back for patterns"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour",
@@ -1215,7 +1068,7 @@
           "description": "Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour",
@@ -1268,7 +1121,7 @@
           "description": "Household identifier"
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     {
       "router": "behaviour_workspace",
@@ -1471,7 +1324,7 @@
         "422"
       ],
       "parameters": [],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1503,7 +1356,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1537,7 +1390,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1569,7 +1422,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1614,7 +1467,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1648,7 +1501,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1682,7 +1535,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1716,7 +1569,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1750,7 +1603,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1784,7 +1637,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1818,7 +1671,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1854,7 +1707,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "credit_cards",
@@ -1890,7 +1743,7 @@
           }
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     {
       "router": "cashflow",
@@ -1909,7 +1762,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "household_cashflow"
+      "capability": "unknown"
     },
     {
       "router": "cashflow",
@@ -1942,7 +1795,7 @@
           }
         }
       ],
-      "capability": "household_cashflow"
+      "capability": "unknown"
     },
     {
       "router": "cashflow",
@@ -1961,7 +1814,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "household_cashflow"
+      "capability": "unknown"
     },
     {
       "router": "cashflow",
@@ -2005,7 +1858,7 @@
           }
         }
       ],
-      "capability": "household_cashflow"
+      "capability": "unknown"
     },
     {
       "router": "cashflow_workspace",
@@ -2758,7 +2611,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2782,7 +2635,7 @@
         "422"
       ],
       "parameters": [],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2814,7 +2667,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2848,7 +2701,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2880,7 +2733,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2912,7 +2765,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2946,7 +2799,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -2978,7 +2831,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -3012,7 +2865,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -3046,7 +2899,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -3070,7 +2923,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -3104,7 +2957,7 @@
           }
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans",
@@ -3128,7 +2981,7 @@
         "422"
       ],
       "parameters": [],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     {
       "router": "loans_workspace",
@@ -3220,7 +3073,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -3244,7 +3097,7 @@
         "422"
       ],
       "parameters": [],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -3278,7 +3131,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -3310,7 +3163,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -3342,7 +3195,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "accounts",
@@ -3377,7 +3230,7 @@
           }
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     {
       "router": "members",
@@ -3547,7 +3400,7 @@
           }
         }
       ],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3568,7 +3421,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3589,7 +3442,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3702,7 +3555,7 @@
           "description": "'exact', 'window', 'fuzzy', or 'manual'"
         }
       ],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3723,7 +3576,7 @@
         "200"
       ],
       "parameters": [],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3755,7 +3608,7 @@
           }
         }
       ],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation",
@@ -3787,7 +3640,7 @@
           }
         }
       ],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     {
       "router": "reconciliation_workspace",
@@ -3975,7 +3828,7 @@
           }
         }
       ],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     },
     {
       "router": "transactions",
@@ -4025,7 +3878,7 @@
           }
         }
       ],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     },
     {
       "router": "transactions",
@@ -4091,7 +3944,7 @@
           }
         }
       ],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     },
     {
       "router": "transactions",
@@ -4141,8 +3994,8 @@
           }
         }
       ],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     }
   ],
-  "generated_at": "1784727957.18391"
+  "generated_at": "ae0e7a00848455e9"
 }

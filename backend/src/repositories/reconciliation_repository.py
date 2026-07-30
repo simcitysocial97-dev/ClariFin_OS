@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 from typing import Any
 
 from src.models.reconciliation import Reconciliation
@@ -10,28 +11,17 @@ from src.repositories.base import BaseRepository
 
 
 class ReconciliationRepository(BaseRepository):
-    """Repository for reconciliation operations.
-
-    DEPRECATED:
-        match_confidence (REAL) is retained only for backward compatibility.
-        confidence_bps (INTEGER basis points) is the authoritative confidence field.
-        All new writes must populate both fields until match_confidence is removed.
-    """
+    """Repository for reconciliation operations using integer paise and basis points."""
 
     def get_all_models(self) -> list[Reconciliation]:
-        """
-        Return all reconciliations as Reconciliation domain models.
-
-        The `amount_paise` column stores integer paise (₹1.00 = 100).
-        Handles backward compatibility for legacy databases with `amount REAL`.
-        """
+        """Return all reconciliations as Reconciliation domain models."""
         with self._get_conn() as conn:
             rows = conn.execute("""
                 SELECT id, debit_txn_id, credit_txn_id,
                        debit_account_id, credit_account_id,
-                       COALESCE(amount_paise, CAST(amount AS INTEGER)) as amount_paise,
+                       amount_paise,
                        date_diff_days,
-                       match_confidence, match_type, status
+                       confidence_bps, match_type, status
                 FROM reconciliations
                 ORDER BY created_at DESC
             """).fetchall()
@@ -58,7 +48,7 @@ class ReconciliationRepository(BaseRepository):
                     r.debit_account_id, r.credit_account_id,
                     r.amount_paise,
                     r.date_diff_days,
-                    r.match_confidence, r.match_type,
+                    r.confidence_bps, r.match_type,
                     r.status, r.deterministic_key,
                     r.created_at, r.confirmed_at,
                     dt.date as debit_date, dt.date_iso as debit_date_iso,
@@ -76,11 +66,13 @@ class ReconciliationRepository(BaseRepository):
 
             cur = conn.execute(sql, params)
             rows = [dict(row) for row in cur.fetchall()]
+            for row in rows:
+                row["match_confidence"] = row.get("confidence_bps", 0) / 10000
         return rows
 
     def get_pending_reconciliations(self) -> list[dict[str, Any]]:
         """Get all pending reconciliations."""
-        return self.get_reconciliations(status='pending')
+        return self.get_reconciliations(status="pending")
 
     def insert_reconciliation(
         self,
@@ -88,9 +80,9 @@ class ReconciliationRepository(BaseRepository):
         credit_txn_id: int,
         debit_account_id: str,
         credit_account_id: str,
-        amount: float,
+        amount_paise: int,
         date_diff_days: int = 0,
-        match_confidence: float = 0.0,
+        confidence_bps: int = 0,
         match_type: str = "exact",
     ) -> bool:
         """
@@ -103,28 +95,30 @@ class ReconciliationRepository(BaseRepository):
             True if inserted, False if already exists (ignored)
         """
         with self._get_conn() as conn:
-            # Generate deterministic key (smaller id first for consistency)
             min_id = min(debit_txn_id, credit_txn_id)
             max_id = max(debit_txn_id, credit_txn_id)
             deterministic_key = f"{min_id}:{max_id}"
 
-            # Use INSERT OR IGNORE for idempotency
             cur = conn.execute(
                 """
                 INSERT OR IGNORE INTO reconciliations (
                     debit_txn_id, credit_txn_id,
                     debit_account_id, credit_account_id,
                     amount_paise, date_diff_days,
-                    match_confidence, match_type,
+                    confidence_bps, match_type,
                     deterministic_key
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
-                    debit_txn_id, credit_txn_id,
-                    debit_account_id, credit_account_id,
-                    int(round(amount * 100)), date_diff_days,
-                    round(match_confidence, 4), match_type,
-                    deterministic_key
+                    debit_txn_id,
+                    credit_txn_id,
+                    debit_account_id,
+                    credit_account_id,
+                    amount_paise,
+                    date_diff_days,
+                    confidence_bps,
+                    match_type,
+                    deterministic_key,
                 ),
             )
 

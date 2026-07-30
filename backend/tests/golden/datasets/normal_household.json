@@ -1,17 +1,289 @@
 {
   "scenario": "normal_household",
+  "description": "Golden test dataset for account management metrics including balance, cashflow, dormancy, and lifecycle",
   "household": {
     "id": "primary",
     "members": [{"id": "m1", "name": "Primary"}]
   },
   "accounts": [
-    {"id": "a1", "name": "Salary Account", "balance_paise": 5000000}
+    {"id": "a1", "name": "Salary Account", "balance_paise": 5000000, "type": "savings", "status": "active", "opened_date": "2020-01-01", "last_transaction_date": "2025-02-01"},
+    {"id": "a2", "name": "Savings Account", "balance_paise": 3000000, "type": "savings", "status": "active", "opened_date": "2019-06-15", "last_transaction_date": "2025-01-28"},
+    {"id": "a3", "name": "Emergency Fund", "balance_paise": 2000000, "type": "savings", "status": "active", "opened_date": "2021-03-10", "last_transaction_date": "2025-02-01"},
+    {"id": "a4", "name": "Zero Balance Account", "balance_paise": 0, "type": "savings", "status": "active", "opened_date": "2022-01-01", "last_transaction_date": "2024-12-01"},
+    {"id": "a5", "name": "Overdrawn Account", "balance_paise": -150000, "type": "current", "status": "active", "opened_date": "2023-01-01", "last_transaction_date": "2025-01-15"},
+    {"id": "a6", "name": "Dormant Account", "balance_paise": 50000, "type": "savings", "status": "inactive", "opened_date": "2018-01-01", "last_transaction_date": "2023-01-01"},
+    {"id": "a7", "name": "Closed Account", "balance_paise": 0, "type": "savings", "status": "closed", "opened_date": "2017-01-01", "closed_date": "2024-12-31", "last_transaction_date": "2024-12-31"},
+    {"id": "a8", "name": "Frozen Account", "balance_paise": 1000000, "type": "savings", "status": "frozen", "opened_date": "2022-06-01", "last_transaction_date": "2025-01-01"}
   ],
   "transactions": [
-    {"date_iso": "2025-01", "income_paise": 8000000, "expense_paise": 5000000, "surplus_paise": 3000000}
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-01",
+      "description": "Salary Credit",
+      "amount_paise": 8000000,
+      "type": "credit",
+      "category": "income"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-05",
+      "description": "Rent Payment",
+      "amount_paise": 2000000,
+      "type": "debit",
+      "category": "expense"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-10",
+      "description": "Transfer to Savings",
+      "amount_paise": 1000000,
+      "type": "debit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-15",
+      "description": "Groceries",
+      "amount_paise": 500000,
+      "type": "debit",
+      "category": "expense"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-20",
+      "description": "Monthly Transfer to Emergency",
+      "amount_paise": 500000,
+      "type": "debit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-25",
+      "description": "Electricity Bill",
+      "amount_paise": 100000,
+      "type": "debit",
+      "category": "expense"
+    },
+    {
+      "account_id": "a2",
+      "date_iso": "2025-01-10",
+      "description": "Transfer from Salary Account",
+      "amount_paise": 1000000,
+      "type": "credit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a2",
+      "date_iso": "2025-01-12",
+      "description": "Interest Credit",
+      "amount_paise": 5000,
+      "type": "credit",
+      "category": "income"
+    },
+    {
+      "account_id": "a2",
+      "date_iso": "2025-01-18",
+      "description": "Unmatched Debit",
+      "amount_paise": 200000,
+      "type": "debit",
+      "category": "expense"
+    },
+    {
+      "account_id": "a3",
+      "date_iso": "2025-01-20",
+      "description": "Transfer from Salary Account",
+      "amount_paise": 500000,
+      "type": "credit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a3",
+      "date_iso": "2025-01-22",
+      "description": "Partial Match Debit",
+      "amount_paise": 300000,
+      "type": "debit",
+      "category": "expense"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-22",
+      "description": "Partial Match Credit",
+      "amount_paise": 300000,
+      "type": "credit",
+      "category": "income"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-28",
+      "description": "Duplicate Transfer to Savings",
+      "amount_paise": 1000000,
+      "type": "debit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a2",
+      "date_iso": "2025-01-28",
+      "description": "Duplicate Transfer from Salary",
+      "amount_paise": 1000000,
+      "type": "credit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-01-30",
+      "description": "Zero Amount Transaction",
+      "amount_paise": 0,
+      "type": "debit",
+      "category": "expense"
+    },
+    {
+      "account_id": "a1",
+      "date_iso": "2025-02-01",
+      "description": "Recurring Monthly Transfer",
+      "amount_paise": 500000,
+      "type": "debit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a3",
+      "date_iso": "2025-02-01",
+      "description": "Recurring Monthly Transfer",
+      "amount_paise": 500000,
+      "type": "credit",
+      "category": "transfer"
+    },
+    {
+      "account_id": "a5",
+      "date_iso": "2025-01-15",
+      "description": "Overdraft Fee",
+      "amount_paise": 150000,
+      "type": "debit",
+      "category": "fee"
+    },
+    {
+      "account_id": "a5",
+      "date_iso": "2025-01-10",
+      "description": "Salary Advance",
+      "amount_paise": 1000000,
+      "type": "credit",
+      "category": "income"
+    },
+    {
+      "account_id": "a4",
+      "date_iso": "2024-12-01",
+      "description": "Last Transaction",
+      "amount_paise": 100,
+      "type": "debit",
+      "category": "expense"
+    }
   ],
   "loans": [],
   "credit_cards": [],
+  "expected_reconciliation": {
+    "exact_matches": [
+      {
+        "debit_txn_id": 3,
+        "credit_txn_id": 7,
+        "amount_paise": 1000000,
+        "confidence_bps": 9500,
+        "match_type": "exact"
+      },
+      {
+        "debit_txn_id": 5,
+        "credit_txn_id": 10,
+        "amount_paise": 500000,
+        "confidence_bps": 9500,
+        "match_type": "exact"
+      }
+    ],
+    "window_matches": [
+      {
+        "debit_txn_id": 16,
+        "credit_txn_id": 13,
+        "amount_paise": 300000,
+        "confidence_bps": 7000,
+        "match_type": "window"
+      }
+    ],
+    "duplicate_matches": [
+      {
+        "debit_txn_id": 14,
+        "credit_txn_id": 15,
+        "amount_paise": 1000000,
+        "confidence_bps": 9500,
+        "match_type": "exact"
+      }
+    ],
+    "recurring_matches": [
+      {
+        "debit_txn_id": 17,
+        "credit_txn_id": 18,
+        "amount_paise": 500000,
+        "confidence_bps": 9000,
+        "match_type": "exact"
+      }
+    ],
+    "unmatched_transactions": [2, 4, 6, 8, 9, 12],
+    "validation": {
+      "no_duplicate_matches": true,
+      "no_cycles": true,
+      "deterministic_output": true
+    }
+  },
+  "expected_account_metrics": {
+    "balance_metrics": {
+      "zero_balance_accounts": ["a4"],
+      "positive_balance_accounts": ["a1", "a2", "a3", "a6", "a8"],
+      "negative_balance_accounts": ["a5"],
+      "total_balance_paise": 10850000,
+      "validation": {
+        "non_negative": false,
+        "monotonic": true,
+        "deterministic": true
+      }
+    },
+    "cashflow_metrics": {
+      "surplus_accounts": ["a1", "a2", "a3"],
+      "deficit_accounts": ["a5"],
+      "neutral_accounts": ["a4"],
+      "total_income_paise": 10805000,
+      "total_expenses_paise": 5350100,
+      "net_cashflow_paise": 5454900,
+      "validation": {
+        "non_negative_income": true,
+        "non_negative_expenses": true,
+        "monotonic": true,
+        "deterministic": true
+      }
+    },
+    "dormancy_metrics": {
+      "dormant_accounts": ["a6"],
+      "active_accounts": ["a1", "a2", "a3", "a4", "a5", "a8"],
+      "dormancy_threshold_days": 365,
+      "validation": {
+        "non_negative": true,
+        "deterministic": true
+      }
+    },
+    "lifecycle_metrics": {
+      "active_accounts": ["a1", "a2", "a3", "a4", "a5", "a8"],
+      "closed_accounts": ["a7"],
+      "frozen_accounts": ["a8"],
+      "validation": {
+        "non_negative": true,
+        "deterministic": true
+      }
+    },
+    "edge_cases": {
+      "zero_transactions": ["a7"],
+      "single_transaction": ["a4"],
+      "fractional_paise": [],
+      "validation": {
+        "non_negative": true,
+        "deterministic": true
+      }
+    }
+  },
   "expected_output": {
     "monthly_surplus_paise": 3000000,
     "confidence_bps": 8500,

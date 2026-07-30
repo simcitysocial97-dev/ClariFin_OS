@@ -9,6 +9,7 @@ All rates in basis points (integer).
 Reuses _add_months from loan_engine for month-end-safe date arithmetic.
 """
 
+import calendar
 from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
 
@@ -58,8 +59,19 @@ def compute_next_statement_date(
         raise ValueError("billing_day must be between 1 and 31")
 
     if last_statement_date is not None:
-        # Advance by 1 month from last statement
-        return _add_months(last_statement_date, 1)
+        # Advance to the next occurrence of billing_day after last_statement_date
+        # Handle month-end and leap-year edge cases
+        candidate = _next_billing_day_after(last_statement_date, billing_day)
+
+        # If candidate is not after the last statement date, advance one more month
+        if candidate <= last_statement_date:
+            candidate = _add_months(candidate, 1)
+
+        # If candidate is in the past relative to reference_date, advance
+        if candidate < reference_date:
+            candidate = _add_months(candidate, 1)
+
+        return candidate
 
     # First statement: use current month's billing_day
     try:
@@ -72,13 +84,34 @@ def compute_next_statement_date(
         else:
             next_month = date(reference_date.year, reference_date.month + 1, 1)
         last_day = (next_month - timedelta(days=1)).day
-        candidate = date(reference_date.year, reference_date.month, min(billing_day, last_day))
+        candidate = date(
+            reference_date.year, reference_date.month, min(billing_day, last_day)
+        )
 
     # If candidate is in the past, advance to next month
     if candidate < reference_date:
         return _add_months(candidate, 1)
 
     return candidate
+
+
+def _next_billing_day_after(start_date: date, billing_day: int) -> date:
+    """Find the next occurrence of billing_day on or after start_date."""
+    # Move to the billing day of the current month first
+    _, last_day_current = calendar.monthrange(start_date.year, start_date.month)
+    target_day = min(billing_day, last_day_current)
+    candidate = date(start_date.year, start_date.month, target_day)
+
+    # If this candidate is already strictly after start_date, it's our next day
+    if candidate > start_date:
+        return candidate
+
+    # Otherwise, advance by one month using month-end safe arithmetic
+    next_month_ref = _add_months(date(start_date.year, start_date.month, 1), 1)
+    _, last_day_next = calendar.monthrange(next_month_ref.year, next_month_ref.month)
+    return date(
+        next_month_ref.year, next_month_ref.month, min(billing_day, last_day_next)
+    )
 
 
 def compute_statement_dates(
@@ -142,7 +175,10 @@ def compute_minimum_due(
         return 0
 
     # Calculate percentage-based minimum due
-    pct_amount = Decimal(total_outstanding_paise) * Decimal(min_due_pct_bps) / Decimal(10000)
+    pct_amount = (
+        Decimal(total_outstanding_paise) * Decimal(min_due_pct_bps) / Decimal(10000)
+    )
     pct_amount_paise = int(pct_amount.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
 
-    return max(floor_paise, pct_amount_paise)
+    result = max(floor_paise, pct_amount_paise)
+    return min(result, total_outstanding_paise)

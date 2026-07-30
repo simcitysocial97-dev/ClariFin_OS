@@ -1,4 +1,5 @@
 """Statement Builder - Plain Python builder for statement data."""
+
 from __future__ import annotations
 
 from typing import Any

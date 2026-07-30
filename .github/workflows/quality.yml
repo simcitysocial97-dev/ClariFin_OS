@@ -1,0 +1,249 @@
+# .github/workflows/quality.yml
+#
+# PURPOSE: Fast quality gate that runs on every push
+# TARGET:  Complete in under 5 minutes
+# BLOCKS:  Merging if it fails
+#
+# What it checks:
+#   - Ruff (linting)
+#   - Black (formatting)
+#   - Unit tests
+#   - Architecture boundary tests
+#   - Basic coverage threshold
+
+name: Quality Gate
+
+on:
+  push:
+    branches:
+      - "**"          # Every branch, every push
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# Cancel previous runs on the same branch
+# This prevents queue buildup when you push frequently
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # ── Job 1: Lint and Format ────────────────────────────────────────────────
+  lint:
+    name: "Lint & Format"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Ruff — lint check
+        working-directory: backend
+        run: |
+          ruff check . --output-format=github
+          ruff check . --statistics
+
+      - name: Black — format check
+        working-directory: backend
+        run: |
+          black --check --diff .
+
+      - name: Ruff — import sort check
+        working-directory: backend
+        run: |
+          ruff check . --select I --output-format=github
+
+  # ── Job 2: Unit Tests ─────────────────────────────────────────────────────
+  unit-tests:
+    name: "Unit Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: lint          # Only run if lint passes
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run unit tests with coverage
+        working-directory: backend
+        run: |
+          pytest tests/unit/ \
+            -x \
+            --timeout=30 \
+            --tb=short \
+            -v \
+            --no-header \
+            -n auto \
+            --cov=. \
+            --cov-report=json:tests/generated/raw-coverage.json \
+            --cov-report=xml:tests/generated/coverage.xml \
+            --cov-report=term-missing \
+            --cov-config=.coveragerc \
+            -q
+
+      - name: Enrich coverage with capabilities
+        working-directory: backend
+        run: |
+          python tools/check_coverage.py
+
+      - name: Check coverage threshold
+        working-directory: backend
+        run: |
+          python ../.github/scripts/check_coverage_threshold.py \
+            --coverage-file tests/generated/coverage.json \
+            --phase 1
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()      # Upload even if tests fail (for debugging)
+        with:
+          name: coverage-unit-${{ github.sha }}
+          path: |
+            backend/tests/generated/coverage.json
+            backend/tests/generated/coverage.xml
+          retention-days: 30
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          file: backend/tests/generated/coverage.xml
+          flags: unit
+          fail_ci_if_error: false    # Don't fail CI if Codecov is down
+
+  # ── Job 3: Architecture Tests ─────────────────────────────────────────────
+  architecture:
+    name: "Architecture Boundaries"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run architecture boundary tests
+        working-directory: backend
+        run: |
+          pytest tests/architecture/ \
+            --timeout=30 \
+            --tb=short \
+            -v \
+            --no-header
+
+  # ── Job 4: Meta Tests ─────────────────────────────────────────────────────
+  meta:
+    name: "Meta / Registry Tests"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run meta tests
+        working-directory: backend
+        run: |
+          pytest tests/meta/ \
+            --timeout=30 \
+            --tb=short \
+            -v \
+            --no-header
+
+
+  # ── Intelligence-Driven Quality Gate ──────────────────────
+  # Workstream 6: Selective GitHub Execution
+  intelligence-quality:
+    name: "Intelligence Quality Gate"
+    runs-on: ubuntu-latest
+    needs: meta
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Run intelligence analysis
+        working-directory: backend
+        run: |
+          python -m verification_intelligence --selective --json > intelligence-plan.json
+          cat intelligence-plan.json
+
+      - name: Upload intelligence report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: intelligence-quality-${{ github.sha }}
+          path: backend/intelligence-plan.json
+          retention-days: 30
+
+  # ── Summary Job ───────────────────────────────────────────────────────────
+  # This job is what branch protection rules should check
+  # It only passes if ALL the above jobs pass
+  quality-gate:
+    name: "Quality Gate — PASS/FAIL"
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+      - unit-tests
+      - architecture
+      - meta
+      - intelligence-quality
+    if: always()    # Run even if some jobs failed — so we get the summary
+
+    steps:
+      - name: Check all jobs passed
+        run: |
+          echo "lint: ${{ needs.lint.result }}"
+          echo "unit-tests: ${{ needs.unit-tests.result }}"
+          echo "architecture: ${{ needs.architecture.result }}"
+          echo "meta: ${{ needs.meta.result }}"
+          
+          # Fail if any required job failed
+          if [[ "${{ needs.lint.result }}" != "success" ]]; then
+            echo "ERROR: lint failed"
+            exit 1
+          fi
+          if [[ "${{ needs.unit-tests.result }}" != "success" ]]; then
+            echo "ERROR: unit-tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.architecture.result }}" != "success" ]]; then
+            echo "ERROR: architecture tests failed"
+            exit 1
+          fi
+          
+          echo "All required checks passed!"

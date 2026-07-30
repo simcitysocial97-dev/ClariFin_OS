@@ -28,6 +28,7 @@ from src.services.behaviour_service import BehaviourService
 # Test Fixtures
 # ============================================================
 
+
 @pytest.fixture
 def mock_repositories() -> dict[str, Any]:
     """Create mock repositories for testing."""
@@ -103,7 +104,9 @@ def sample_snapshot() -> dict[str, Any]:
         # For wellness_score (0-100 model range), this is correct
         # For cashflow_stability_score (0-1 model range), this needs adjustment in service
         "savings_discipline_score": Decimal("72.00"),  # 0-100 range for model
-        "cashflow_stability_score": Decimal("80.00"),  # Repository returns * 100, but model expects 0-1
+        "cashflow_stability_score": Decimal(
+            "80.00"
+        ),  # Repository returns * 100, but model expects 0-1
         "salary_dependence_ratio": Decimal("90.00"),
         "lifestyle_inflation_rate": Decimal("5.00"),
         "subscription_burn_rate": Decimal("10.00"),
@@ -142,11 +145,13 @@ def sample_patterns() -> list[dict[str, Any]]:
 def test_compute_financial_profile_success(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
-    sample_transactions: list[dict[str, Any]]
+    sample_transactions: list[dict[str, Any]],
 ) -> None:
     """Test successful financial profile computation."""
     # Setup mocks
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = sample_transactions
+    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
+        sample_transactions
+    )
     mock_repositories["account_repo"].get_all_accounts.return_value = [
         {"id": 1, "balance_paise": 1000000, "account_type": "savings"}
     ]
@@ -158,8 +163,14 @@ def test_compute_financial_profile_success(
     }
 
     # Mock behaviour engine functions
-    with patch("src.services.behaviour_service.classify_financial_personality") as mock_classify:
-        mock_classify.return_value = ("SAVER", Decimal("0.85"), "High savings rate detected")
+    with patch(
+        "src.services.behaviour_service.classify_financial_personality"
+    ) as mock_classify:
+        mock_classify.return_value = (
+            "SAVER",
+            Decimal("0.85"),
+            "High savings rate detected",
+        )
 
         # Call service method
         result = behaviour_service.compute_financial_profile()
@@ -181,8 +192,7 @@ def test_compute_financial_profile_success(
 
 
 def test_compute_financial_profile_insufficient_data(
-    behaviour_service: BehaviourService,
-    mock_repositories: dict[str, Any]
+    behaviour_service: BehaviourService, mock_repositories: dict[str, Any]
 ) -> None:
     """Test financial profile computation with insufficient data."""
     # Setup mocks
@@ -201,15 +211,20 @@ def test_compute_financial_profile_insufficient_data(
 def test_compute_financial_profile_error(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
-    sample_transactions: list[dict[str, Any]]
+    sample_transactions: list[dict[str, Any]],
 ) -> None:
     """Test financial profile computation with engine error."""
     # Setup mocks
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = sample_transactions
+    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
+        sample_transactions
+    )
     mock_repositories["account_repo"].get_all_accounts.return_value = []
 
     # Mock behaviour engine to raise error
-    with patch("src.services.behaviour_service.compute_true_savings_rate", side_effect=ValueError("Test error")):
+    with patch(
+        "src.services.behaviour_service.compute_true_savings_rate",
+        side_effect=ValueError("Test error"),
+    ):
         # Call service method and verify error
         with pytest.raises(AppError) as exc_info:
             behaviour_service.compute_financial_profile()
@@ -220,7 +235,7 @@ def test_compute_financial_profile_error(
 def test_get_wellness_score_success(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
-    sample_snapshot: dict[str, Any]
+    sample_snapshot: dict[str, Any],
 ) -> None:
     """Test successful wellness score retrieval."""
     # Setup mocks - use wellness_score 80.00 for "Healthy" band
@@ -242,8 +257,7 @@ def test_get_wellness_score_success(
 
 
 def test_get_wellness_score_not_found(
-    behaviour_service: BehaviourService,
-    mock_repositories: dict[str, Any]
+    behaviour_service: BehaviourService, mock_repositories: dict[str, Any]
 ) -> None:
     """Test wellness score retrieval when no snapshot exists."""
     # Setup mocks
@@ -260,12 +274,16 @@ def test_get_debt_health_success(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
     sample_snapshot: dict[str, Any],
-    sample_transactions: list[dict[str, Any]]
+    sample_transactions: list[dict[str, Any]],
 ) -> None:
     """Test successful debt health retrieval."""
     # Setup mocks
-    mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = sample_snapshot
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = sample_transactions
+    mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = (
+        sample_snapshot
+    )
+    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
+        sample_transactions
+    )
     mock_repositories["credit_card_repo"].list_cards.return_value = []
     mock_repositories["loan_repo"].list_loans.return_value = []
 
@@ -287,26 +305,32 @@ def test_get_cashflow_health_success(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
     sample_snapshot: dict[str, Any],
-    sample_transactions: list[dict[str, Any]]
+    sample_transactions: list[dict[str, Any]],
 ) -> None:
     """Test successful cashflow health retrieval."""
     # Setup mocks
-    mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = sample_snapshot
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = sample_transactions
+    mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = (
+        sample_snapshot
+    )
+    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
+        sample_transactions
+    )
 
     # Call service method
     result = behaviour_service.get_cashflow_health()
 
     # Verify result - cashflow_stability_score is returned as * 100 by repository
     assert isinstance(result, CashflowHealthResponse)
-    assert result.cashflow_stability_index == Decimal("80.00")  # Repository returns * 100
+    assert result.cashflow_stability_index == Decimal(
+        "80.00"
+    )  # Repository returns * 100
     assert result.snapshot_date == "2023-01-15"
 
 
 def test_get_patterns_success(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
-    sample_patterns: list[dict[str, Any]]
+    sample_patterns: list[dict[str, Any]],
 ) -> None:
     """Test successful pattern retrieval."""
     # Setup mocks
@@ -328,11 +352,13 @@ def test_generate_monthly_summary_success(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
     sample_snapshot: dict[str, Any],
-    sample_patterns: list[dict[str, Any]]
+    sample_patterns: list[dict[str, Any]],
 ) -> None:
     """Test successful monthly summary generation."""
     # Setup mocks
-    mock_repositories["behaviour_repo"].get_snapshots_by_date_range.return_value = [sample_snapshot]
+    mock_repositories["behaviour_repo"].get_snapshots_by_date_range.return_value = [
+        sample_snapshot
+    ]
     mock_repositories["pattern_repo"].get_recent_patterns.return_value = sample_patterns
     mock_repositories["transaction_repo"].get_all_transactions.return_value = [
         {
@@ -382,36 +408,44 @@ def test_dependency_injection() -> None:
 def test_snapshot_versioning(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
-    sample_transactions: list[dict[str, Any]]
+    sample_transactions: list[dict[str, Any]],
 ) -> None:
     """Test that snapshots are created with version 1."""
     # Setup mocks
-    mock_repositories["transaction_repo"].get_all_transactions.return_value = sample_transactions
+    mock_repositories["transaction_repo"].get_all_transactions.return_value = (
+        sample_transactions
+    )
     mock_repositories["account_repo"].get_all_accounts.return_value = []
     mock_repositories["loan_repo"].list_loans.return_value = []
     mock_repositories["credit_card_repo"].list_cards.return_value = []
     mock_repositories["behaviour_repo"].create_snapshot.return_value = {"id": 1}
 
     # Mock behaviour engine functions
-    with patch("src.services.behaviour_service.classify_financial_personality") as mock_classify:
+    with patch(
+        "src.services.behaviour_service.classify_financial_personality"
+    ) as mock_classify:
         mock_classify.return_value = ("SAVER", Decimal("0.85"), "High savings rate")
 
         # Call service method
         behaviour_service.compute_financial_profile()
 
         # Verify snapshot creation with version 1
-        snapshot_data = mock_repositories["behaviour_repo"].create_snapshot.call_args[0][0]
+        snapshot_data = mock_repositories["behaviour_repo"].create_snapshot.call_args[
+            0
+        ][0]
         assert snapshot_data["version"] == 1
 
 
 def test_error_handling(
     behaviour_service: BehaviourService,
     mock_repositories: dict[str, Any],
-    sample_transactions: list[dict[str, Any]]
+    sample_transactions: list[dict[str, Any]],
 ) -> None:
     """Test error handling in service methods."""
     # Test repository error
-    mock_repositories["transaction_repo"].get_all_transactions.side_effect = Exception("DB error")
+    mock_repositories["transaction_repo"].get_all_transactions.side_effect = Exception(
+        "DB error"
+    )
 
     with pytest.raises(AppError) as exc_info:
         behaviour_service.compute_financial_profile()

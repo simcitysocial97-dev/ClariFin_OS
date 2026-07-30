@@ -10,7 +10,6 @@ Provides factual state transitions only — no recommendations or heuristics.
 """
 
 
-
 def compute_account_status(
     is_active: bool,
     last_transaction_date: str | None,

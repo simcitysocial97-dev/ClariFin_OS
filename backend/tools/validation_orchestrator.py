@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Project root from this file's location
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -37,6 +37,7 @@ RISK_UNKNOWN = "UNKNOWN"
 @dataclass
 class ValidationMetrics:
     """Metrics for a single stage."""
+
     duration: float = 0.0
     status: str = "PENDING"
     tests_run: int = 0
@@ -46,6 +47,7 @@ class ValidationMetrics:
 @dataclass
 class ValidationManifest:
     """Rich validation manifest for a single run."""
+
     timestamp: str
     changed_files: list[str] = field(default_factory=list)
     strategy: str = "fast"
@@ -73,6 +75,7 @@ class ValidationManifest:
 # =============================================================================
 # Validation Stage Plugin Interface
 # =============================================================================
+
 
 class ValidationStage(ABC):
     """Abstract base class for validation stages."""
@@ -116,6 +119,7 @@ class ValidationStage(ABC):
 # =============================================================================
 # Concrete Stage Implementations
 # =============================================================================
+
 
 class FastStage(ValidationStage):
     """Fast verification: ruff + mypy/pyright."""
@@ -246,7 +250,9 @@ class ArchitectureStage(ValidationStage):
         return ["change_intelligence"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("pytest tests/architecture -q --tb=short --maxfail=3")
+        manifest.commands_executed.append(
+            "pytest tests/architecture -q --tb=short --maxfail=3"
+        )
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -280,7 +286,9 @@ class CapabilityStage(ValidationStage):
         return ["change_intelligence"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("pytest tests/capabilities -q --tb=short --maxfail=3")
+        manifest.commands_executed.append(
+            "pytest tests/capabilities -q --tb=short --maxfail=3"
+        )
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -314,7 +322,9 @@ class PropertyStage(ValidationStage):
         return ["change_intelligence"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("pytest tests/properties -q --tb=short --maxfail=3")
+        manifest.commands_executed.append(
+            "pytest tests/properties -q --tb=short --maxfail=3"
+        )
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -348,7 +358,9 @@ class GoldenStage(ValidationStage):
         return ["change_intelligence"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("pytest tests/golden -q --tb=short --maxfail=3")
+        manifest.commands_executed.append(
+            "pytest tests/golden -q --tb=short --maxfail=3"
+        )
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -404,6 +416,7 @@ class MetaStage(ValidationStage):
 # Contract Stage (CoVF)
 # =============================================================================
 
+
 class ContractStage(ValidationStage):
     """Contract tests - validates API endpoints against OpenAPI schema."""
 
@@ -420,7 +433,9 @@ class ContractStage(ValidationStage):
         return ["fast", "coverage"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("pytest tests/contracts -q --tb=short --maxfail=3")
+        manifest.commands_executed.append(
+            "pytest tests/contracts -q --tb=short --maxfail=3"
+        )
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -441,6 +456,7 @@ class ContractStage(ValidationStage):
 # =============================================================================
 # Mutation Readiness Stage (RMVF)
 # =============================================================================
+
 
 class MutationReadinessStage(ValidationStage):
     """Mutation readiness analysis - discovers and analyzes mutation candidates.
@@ -503,6 +519,7 @@ class MutationReadinessStage(ValidationStage):
 # Validation Graph
 # =============================================================================
 
+
 class ValidationGraph:
     """Graph-based validation pipeline with plugin stages."""
 
@@ -512,9 +529,18 @@ class ValidationGraph:
 
     def _register_default_stages(self) -> None:
         """Register all default validation stages."""
-        for stage_cls in [FastStage, CoverageStage, ChangeIntelligenceStage,
-                          ArchitectureStage, CapabilityStage, PropertyStage,
-                          GoldenStage, MetaStage, ContractStage, MutationReadinessStage]:
+        for stage_cls in [
+            FastStage,
+            CoverageStage,
+            ChangeIntelligenceStage,
+            ArchitectureStage,
+            CapabilityStage,
+            PropertyStage,
+            GoldenStage,
+            MetaStage,
+            ContractStage,
+            MutationReadinessStage,
+        ]:
             stage = stage_cls()  # type: ignore[abstract]
             self.stages[stage.stage_id] = stage
 
@@ -528,10 +554,22 @@ class ValidationGraph:
 
     def get_full_pipeline(self) -> list[str]:
         """Get stage IDs for full verification pipeline."""
-        return ["fast", "coverage", "change_intelligence", "mutation_readiness",
-                "architecture", "capability", "property", "golden", "contract", "meta"]
+        return [
+            "fast",
+            "coverage",
+            "change_intelligence",
+            "mutation_readiness",
+            "architecture",
+            "capability",
+            "property",
+            "golden",
+            "contract",
+            "meta",
+        ]
 
-    def get_selective_pipeline(self, selective_plan: dict[str, Any] | None = None) -> list[str]:
+    def get_selective_pipeline(
+        self, selective_plan: dict[str, Any] | None = None
+    ) -> list[str]:
         """Get stage IDs for selective verification."""
         pipeline = ["fast", "coverage", "change_intelligence", "mutation_readiness"]
 
@@ -539,14 +577,12 @@ class ValidationGraph:
             affected = selective_plan.get("affected", {})
             if affected.get("capability_tests"):
                 for cap in affected["capability_tests"]:
-                    cap_name = cap.replace("tests/capabilities/", "")
+                    cap_name = cap.replace("tests/capability/", "")
                     pipeline.append(cap_name)
-            if affected.get("property_tests"):
-                if affected["property_tests"]:
-                    pipeline.append("property")
-            if affected.get("invariants"):
-                if affected["invariants"]:
-                    pipeline.append("golden")
+            if affected.get("property_tests") and affected["property_tests"]:
+                pipeline.append("property")
+            if affected.get("invariants") and affected["invariants"]:
+                pipeline.append("golden")
 
         return pipeline
 
@@ -559,9 +595,11 @@ class ValidationGraph:
 # Risk Rules Engine
 # =============================================================================
 
+
 def load_risk_rules() -> dict[str, Any]:
     """Load risk rules from YAML file."""
     import yaml
+
     rules_path = GENERATED_DIR / "risk-rules.yaml"
     if rules_path.exists():
         with open(rules_path) as f:
@@ -573,7 +611,9 @@ def match_pattern(file_path: str, pattern: str) -> bool:
     """Check if file path matches a glob pattern."""
     if "**" in pattern:
         pattern = pattern.replace("**/", "").replace("**", "*")
-    return fnmatch.fnmatch(file_path, pattern) or fnmatch.fnmatch(file_path, "*/" + pattern)
+    return fnmatch.fnmatch(file_path, pattern) or fnmatch.fnmatch(
+        file_path, "*/" + pattern
+    )
 
 
 def determine_strategy(changed_files: list[str]) -> tuple[str, str, str]:
@@ -595,7 +635,13 @@ def determine_strategy(changed_files: list[str]) -> tuple[str, str, str]:
                 strategy = rule.get("strategy", "fast")
                 risk = rule.get("risk", RISK_LOW)
                 matching_strategies.append(strategy)
-                risk_priority = {RISK_LOW: 1, RISK_MEDIUM: 2, RISK_HIGH: 3, RISK_CRITICAL: 4, RISK_UNKNOWN: 5}
+                risk_priority = {
+                    RISK_LOW: 1,
+                    RISK_MEDIUM: 2,
+                    RISK_HIGH: 3,
+                    RISK_CRITICAL: 4,
+                    RISK_UNKNOWN: 5,
+                }
                 if risk_priority.get(risk, 0) > risk_priority.get(highest_risk, 0):
                     highest_risk = risk
 
@@ -612,6 +658,7 @@ def determine_strategy(changed_files: list[str]) -> tuple[str, str, str]:
 # =============================================================================
 # Caching
 # =============================================================================
+
 
 def get_git_sha() -> str:
     """Get current git SHA."""
@@ -636,7 +683,7 @@ def load_cache() -> dict[str, Any]:
     cache_path = CACHE_DIR / "validation-cache.json"
     if cache_path.exists():
         with open(cache_path) as f:
-            return json.load(f)
+            return cast(dict[str, Any], json.load(f))
     return {"runs": []}
 
 
@@ -659,13 +706,14 @@ def check_cached_run(changed_files: list[str], strategy: str) -> dict[str, Any] 
     key = get_cache_key(changed_files, strategy)
     for run in cache.get("runs", []):
         if run.get("cache_key") == key:
-            return run.get("manifest")
+            return cast(dict[str, Any] | None, run.get("manifest"))
     return None
 
 
 # =============================================================================
 # Manifest and History
 # =============================================================================
+
 
 def save_manifest(manifest: ValidationManifest) -> None:
     """Save validation manifest."""
@@ -679,7 +727,7 @@ def load_manifest() -> dict[str, Any] | None:
     manifest_path = GENERATED_DIR / "validation-manifest.json"
     if manifest_path.exists():
         with open(manifest_path) as f:
-            return json.load(f)
+            return cast(dict[str, Any] | None, json.load(f))
     return None
 
 
@@ -704,7 +752,7 @@ def load_history() -> list[dict[str, Any]]:
     history_path = GENERATED_DIR / "validation-history.json"
     if history_path.exists():
         with open(history_path) as f:
-            return json.load(f)
+            return cast(list[dict[str, Any]], json.load(f))
     return []
 
 
@@ -739,7 +787,7 @@ def load_selective_plan() -> dict[str, Any] | None:
     change_report_path = GENERATED_DIR / "change-report.json"
     if change_report_path.exists():
         with open(change_report_path) as f:
-            return json.load(f)
+            return cast(dict[str, Any] | None, json.load(f))
     return None
 
 
@@ -747,7 +795,10 @@ def load_selective_plan() -> dict[str, Any] | None:
 # Main Orchestrator
 # =============================================================================
 
-def run_pipeline(stage_ids: list[str], strategy: str) -> tuple[int, dict[str, ValidationMetrics], ValidationManifest]:
+
+def run_pipeline(
+    stage_ids: list[str], strategy: str
+) -> tuple[int, dict[str, ValidationMetrics], ValidationManifest]:
     """Execute validation pipeline stages."""
     graph = ValidationGraph()
     metrics: dict[str, ValidationMetrics] = {}
@@ -788,11 +839,15 @@ def run_auto_mode() -> tuple[int, dict[str, ValidationMetrics], ValidationManife
 
     if cached:
         print("[CACHE HIT] Reusing previous validation plan")
-        return run_pipeline(["fast", "coverage", "change_intelligence"], strategy)[0:2] + (ValidationManifest(
-            timestamp=cached.get("timestamp", ""),
-            strategy=cached.get("strategy", strategy),
-            reason=f"cached: {cached.get('reason', reason)}",
-        ),)
+        return run_pipeline(["fast", "coverage", "change_intelligence"], strategy)[
+            0:2
+        ] + (
+            ValidationManifest(
+                timestamp=cached.get("timestamp", ""),
+                strategy=cached.get("strategy", strategy),
+                reason=f"cached: {cached.get('reason', reason)}",
+            ),
+        )
 
     if strategy == "fast":
         stages = ["fast"]
@@ -823,8 +878,8 @@ def explain_decision(tree: bool = False) -> None:
 
     change_report_path = GENERATED_DIR / "change-report.json"
     if change_report_path.exists():
-        with open(change_report_path) as f:
-            report: dict[str, Any] = json.load(f)
+        with open(change_report_path) as fh:
+            report: dict[str, Any] = json.load(fh)
         caps = set()
         for c in report.get("changes", []):
             for cap in c.get("capabilities", []):
@@ -859,15 +914,29 @@ def explain_decision(tree: bool = False) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Validation Orchestrator Framework")
-    parser.add_argument("--auto", action="store_true", help="Auto-determine validation strategy")
-    parser.add_argument("--fast", action="store_true", help="Run fast verification only")
-    parser.add_argument("--selective", action="store_true", help="Run selective verification")
+    parser.add_argument(
+        "--auto", action="store_true", help="Auto-determine validation strategy"
+    )
+    parser.add_argument(
+        "--fast", action="store_true", help="Run fast verification only"
+    )
+    parser.add_argument(
+        "--selective", action="store_true", help="Run selective verification"
+    )
     parser.add_argument("--full", action="store_true", help="Run full verification")
-    parser.add_argument("--coverage", action="store_true", help="Run coverage scan only")
-    parser.add_argument("--plan", action="store_true", help="Generate plan only, don't execute")
-    parser.add_argument("--json", action="store_true", help="Print machine-readable summary")
+    parser.add_argument(
+        "--coverage", action="store_true", help="Run coverage scan only"
+    )
+    parser.add_argument(
+        "--plan", action="store_true", help="Generate plan only, don't execute"
+    )
+    parser.add_argument(
+        "--json", action="store_true", help="Print machine-readable summary"
+    )
     parser.add_argument("--explain", action="store_true", help="Explain decision tree")
-    parser.add_argument("--tree", action="store_true", help="Show full validation graph")
+    parser.add_argument(
+        "--tree", action="store_true", help="Show full validation graph"
+    )
     args = parser.parse_args()
 
     if args.explain:
@@ -916,32 +985,49 @@ def main() -> None:
             print(json.dumps(manifest.to_dict(), indent=2))
         sys.exit(0)
 
-    exit_code, metrics, manifest = run_auto_mode() if args.auto else run_pipeline(
-        ["fast"] if strategy == "fast" else
-        ["fast", "coverage"] if strategy == "coverage" else
-        ValidationGraph().get_full_pipeline(),
-        strategy
+    exit_code, metrics, manifest = (
+        run_auto_mode()
+        if args.auto
+        else run_pipeline(
+            (
+                ["fast"]
+                if strategy == "fast"
+                else (
+                    ["fast", "coverage"]
+                    if strategy == "coverage"
+                    else ValidationGraph().get_full_pipeline()
+                )
+            ),
+            strategy,
+        )
     )
 
     save_manifest(manifest)
     save_metrics(metrics)
 
     history = load_history()
-    history.append({
-        "timestamp": manifest.timestamp,
-        "strategy": strategy,
-        "runtime_seconds": sum(m.duration for m in metrics.values()),
-        "result": "PASS" if exit_code == 0 else "FAIL",
-    })
-    save_history(history)
-
-    if args.json:
-        print(json.dumps({
+    history.append(
+        {
+            "timestamp": manifest.timestamp,
             "strategy": strategy,
             "runtime_seconds": sum(m.duration for m in metrics.values()),
             "result": "PASS" if exit_code == 0 else "FAIL",
-            "metrics": manifest.to_dict(),
-        }, indent=2))
+        }
+    )
+    save_history(history)
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "strategy": strategy,
+                    "runtime_seconds": sum(m.duration for m in metrics.values()),
+                    "result": "PASS" if exit_code == 0 else "FAIL",
+                    "metrics": manifest.to_dict(),
+                },
+                indent=2,
+            )
+        )
     else:
         print(f"\nValidation complete: {'PASS' if exit_code == 0 else 'FAIL'}")
 

@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1", tags=["cashflow-workspace"])
 
 
-def _timed_log(endpoint: str, duration_ms: float, success: bool = True, error: str | None = None) -> None:
+def _timed_log(
+    endpoint: str, duration_ms: float, success: bool = True, error: str | None = None
+) -> None:
     """Emit structured timing log for cashflow workspace endpoints."""
     log_data = {
         "type": "cashflow_workspace_request",
@@ -25,7 +27,9 @@ def _timed_log(endpoint: str, duration_ms: float, success: bool = True, error: s
     }
     if error:
         log_data["error"] = error
-        logger.warning("[CASHFLOW-WS] %s | %.0fms | FAIL: %s", endpoint, duration_ms, error)
+        logger.warning(
+            "[CASHFLOW-WS] %s | %.0fms | FAIL: %s", endpoint, duration_ms, error
+        )
     else:
         logger.info("[CASHFLOW-WS] %s | %.0fms", endpoint, duration_ms)
 

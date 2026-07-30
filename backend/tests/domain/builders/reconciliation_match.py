@@ -1,4 +1,5 @@
 """Reconciliation Match Builder - Plain Python builder for reconciliation match data."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -40,7 +41,9 @@ class ReconciliationMatchBuilder:
         self._data["match_type"] = match_type
         return self
 
-    def with_accounts(self, debit_id: str, credit_id: str) -> ReconciliationMatchBuilder:
+    def with_accounts(
+        self, debit_id: str, credit_id: str
+    ) -> ReconciliationMatchBuilder:
         """Set debit and credit account IDs."""
         self._data["debit_account_id"] = debit_id
         self._data["credit_account_id"] = credit_id

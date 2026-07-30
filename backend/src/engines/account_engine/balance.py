@@ -39,7 +39,9 @@ def compute_average_balance(daily_balances: list[int]) -> int:
     return int(avg_decimal.quantize(Decimal(1), rounding=ROUND_HALF_UP))
 
 
-def compute_balance_change(opening_balance_paise: int, closing_balance_paise: int) -> int:
+def compute_balance_change(
+    opening_balance_paise: int, closing_balance_paise: int
+) -> int:
     """
     Compute absolute balance change.
 

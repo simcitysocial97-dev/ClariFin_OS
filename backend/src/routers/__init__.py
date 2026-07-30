@@ -1,4 +1,5 @@
 """API routers organized by domain."""
+
 from . import (
     accounts,
     accounts_router,

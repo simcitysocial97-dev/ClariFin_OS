@@ -1,19 +1,31 @@
 """Base repository with common database access pattern."""
+
+# src/repositories/base.py
+
+import os
 import sqlite3
 from pathlib import Path
 
-# Default database path (relative to this file)
-DB_PATH = str(Path(__file__).parent.parent / "data" / "finance.db")
+from src.config import settings
+
+# Fallback default path only if no environment or setting override exists
+DEFAULT_DB_PATH = str(Path(__file__).parent.parent / "data" / "finance.db")
 
 
 class BaseRepository:
-    """Base class for domain-specific repositories."""
+    """Base class for domain-specific repositories with enterprise-grade path resolution."""
 
     def __init__(self, db_path: str | None = None):
-        self.db_path = db_path or DB_PATH
+        if db_path is None:
+            db_path = (
+                getattr(settings, "_database_path_override", None)
+                or os.getenv("FINANCE_DB_PATH")
+                or DEFAULT_DB_PATH
+            )
+        self.db_path = str(db_path)
 
     def _get_conn(self) -> sqlite3.Connection:
-        """Get a database connection for this repository."""
+        """Get an isolated database connection for this repository."""
         conn = sqlite3.connect(self.db_path)
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA foreign_keys=ON")

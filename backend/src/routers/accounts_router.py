@@ -21,8 +21,12 @@ router = APIRouter(prefix="/api/v1", tags=["accounts-intelligence"])
 
 @router.get("/accounts")
 def get_accounts(
-    account_types: str | None = Query(default=None, description="Comma-separated account types"),
-    institutions: str | None = Query(default=None, description="Comma-separated institutions"),
+    account_types: str | None = Query(
+        default=None, description="Comma-separated account types"
+    ),
+    institutions: str | None = Query(
+        default=None, description="Comma-separated institutions"
+    ),
     statuses: str | None = Query(default=None, description="Comma-separated statuses"),
 ) -> AccountsDTO:
     """
@@ -57,6 +61,7 @@ def get_account(account_id: int | str) -> AccountDetailDTO:
     result = service.get_account_detail(account_id)
     if not result:
         from fastapi import HTTPException
+
         raise HTTPException(status_code=404, detail=f"Account {account_id} not found")
     return result
 

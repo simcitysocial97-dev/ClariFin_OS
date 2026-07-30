@@ -15,11 +15,14 @@ from src.engines.loan_engine.models import PrepaymentMode
 # Prepayment Simulation DTOs
 # ============================================================
 
+
 class PrepaymentSimulationRequest(BaseModel):
     """Prepayment simulation request."""
 
     amount_paise: int = Field(gt=0, description="Prepayment amount in paise")
-    month: int | None = Field(default=1, ge=1, description="Month number for prepayment")
+    month: int | None = Field(
+        default=1, ge=1, description="Month number for prepayment"
+    )
     mode: PrepaymentMode | str = PrepaymentMode.REDUCE_TENURE
 
     @field_validator("amount_paise")
@@ -52,6 +55,7 @@ class PrepaymentSimulationResponse(BaseModel):
 # Foreclosure Simulation DTOs
 # ============================================================
 
+
 class ForeclosureSimulationResponse(BaseModel):
     """Foreclosure simulation response model matching spec."""
 
@@ -64,11 +68,14 @@ class ForeclosureSimulationResponse(BaseModel):
 # Rate Change Simulation DTOs
 # ============================================================
 
+
 class RateChangeSimulationRequest(BaseModel):
     """Rate change simulation request."""
 
     month: int = Field(ge=1, description="Month number when rate changes")
-    new_rate_bps: int = Field(ge=0, le=5000, description="New annual rate in basis points (0-5000)")
+    new_rate_bps: int = Field(
+        ge=0, le=5000, description="New annual rate in basis points (0-5000)"
+    )
 
     @field_validator("month")
     @classmethod
@@ -100,11 +107,14 @@ class RateChangeSimulationResponse(BaseModel):
 # Payment Request DTO
 # ============================================================
 
+
 class PaymentRequest(BaseModel):
     """Record payment request model."""
 
     amount_paise: int = Field(gt=0, description="Payment amount in paise")
-    payment_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$", description="ISO 8601 date")
+    payment_date: str = Field(
+        pattern=r"^\d{4}-\d{2}-\d{2}$", description="ISO 8601 date"
+    )
     principal_paise: int | None = None
     interest_paise: int | None = None
     late_fee_paise: int | None = None

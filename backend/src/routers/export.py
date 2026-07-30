@@ -1,4 +1,5 @@
 """Export endpoints."""
+
 import io
 
 from fastapi import APIRouter, HTTPException
@@ -41,14 +42,20 @@ def export_csv(
         for txn in raw:
             date = format_date_display(txn.get("date", ""))
             bank_name = txn.get("bank", "")
-            desc = (clean_description(txn.get("description", ""))).replace(",", ";").replace('"', '""')
+            desc = (
+                (clean_description(txn.get("description", "")))
+                .replace(",", ";")
+                .replace('"', '""')
+            )
             # Use amount_paise and convert to rupees for display
             amount_paise = txn.get("amount_paise", 0) or 0
             amount = amount_paise / 100.0 if amount_paise else 0
             txn_type = txn.get("type", "")
             cat = txn.get("category", "")
 
-            output.write(f'"{date}","{bank_name}","{desc}",{amount},"{txn_type}","{cat}"\n')
+            output.write(
+                f'"{date}","{bank_name}","{desc}",{amount},"{txn_type}","{cat}"\n'
+            )
 
         csv_data = output.getvalue()
         output.close()
@@ -56,7 +63,7 @@ def export_csv(
         return StreamingResponse(
             io.StringIO(csv_data),
             media_type="text/csv",
-            headers={"Content-Disposition": "attachment; filename=transactions.csv"}
+            headers={"Content-Disposition": "attachment; filename=transactions.csv"},
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

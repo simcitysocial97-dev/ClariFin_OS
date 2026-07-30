@@ -1,4 +1,5 @@
 """Member management endpoints."""
+
 from typing import Any
 
 from fastapi import APIRouter
@@ -11,6 +12,7 @@ router = APIRouter(prefix="/api", tags=["members"])
 
 class MemberCreate(BaseModel):
     """Member creation request."""
+
     name: str
     color: str = "#6366F1"
 

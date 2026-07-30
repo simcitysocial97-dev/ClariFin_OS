@@ -1,71 +1,43 @@
 """
-Prepayment Engine - Core calculation module
-=========================================
-Pure calculations for prepayment on loan schedules.
-
-Supports:
-- Single and multiple prepayments
-- Both reduce-tenure and reduce-EMI modes
-- Prepayment penalties
-- Dynamic schedule regeneration
-
-INVARIANT 1-6 enforced throughout.
+Prepayment Engine - Pure calculation module
+Supports single/multiple prepayments, both reduce-tenure and reduce-EMI modes,
+prepayment penalties, dynamic schedule regeneration.
 """
 
 import math
 from decimal import ROUND_HALF_EVEN, Decimal
 from typing import Literal
 
-from .amortization import (
-    generate_schedule,
-    total_interest_paise,
-)
+from .amortization import generate_schedule, total_interest_paise
 from .emi import compute_emi_fixed
 from .models import AmortizationRow, PrepaymentMode, PrepaymentResult
 
 
 def _compute_tenure_from_emi(
-    principal_paise: int,
-    annual_rate_bps: int,
-    emi_paise: int,
+    principal_paise: int, annual_rate_bps: int, emi_paise: int
 ) -> int:
-    """
-    Compute remaining months given principal, rate (bps), and fixed EMI.
-
-    Uses logarithmic formula for precise calculation.
-    Shared helper used by compute_remaining_months and regenerate_schedule.
-    Returns integer months (ceiling).
-    """
+    """Compute months needed to pay off principal with fixed EMI."""
     if annual_rate_bps == 0:
         return math.ceil(principal_paise / emi_paise) if emi_paise > 0 else 999
 
-    monthly_rate: Decimal = Decimal(annual_rate_bps) / Decimal(120000)
-    principal: Decimal = Decimal(principal_paise)
-    emi: Decimal = Decimal(emi_paise)
+    monthly_rate = Decimal(annual_rate_bps) / Decimal(120000)
+    principal = Decimal(principal_paise)
+    emi = Decimal(emi_paise)
 
-    # EMI must cover interest to work
     if emi <= principal * monthly_rate:
-        return 999  # Will never close
+        return 999
 
-    # n = ln(EMI / (EMI - P * r)) / ln(1 + r)
     numerator = emi / (emi - principal * monthly_rate)
     denominator = Decimal(1) + monthly_rate
-
-    months_decimal = numerator.ln() / denominator.ln()
-    return math.ceil(months_decimal)
+    months = numerator.ln() / denominator.ln()
+    return max(
+        1, min(999, int(months.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN)))
+    )
 
 
 def compute_remaining_months(
-    principal_paise: int,
-    annual_rate_bps: int,
-    emi_paise: int,
+    principal_paise: int, annual_rate_bps: int, emi_paise: int
 ) -> int:
-    """
-    Compute remaining months given principal, rate (bps), and fixed EMI.
-
-    Uses logarithmic formula for precise calculation.
-    Returns integer months.
-    """
     return _compute_tenure_from_emi(principal_paise, annual_rate_bps, emi_paise)
 
 
@@ -79,27 +51,7 @@ def apply_prepayment(
     prepayment_penalty_bps: int = 0,
     existing_schedule: list[AmortizationRow] | None = None,
 ) -> PrepaymentResult:
-    """
-    Simulate impact of a prepayment on remaining loan term.
-
-    INVARIANT 1: All money values are integer paise
-    INVARIANT 2: Rate is integer basis points
-    INVARIANT 3: Returns new result, never mutates input
-
-    Args:
-        outstanding_paise: Current loan outstanding (paise)
-        annual_rate_bps: Annual interest rate (basis points)
-        remaining_months: Months left on loan
-        prepayment_paise: Prepayment amount (paise)
-        mode: "reduce_tenure" or "reduce_emi"
-        start_date: ISO date string for schedule regeneration (optional)
-        prepayment_penalty_bps: Prepayment penalty in basis points (optional)
-        existing_schedule: Pre-generated schedule to avoid duplicate generation (optional)
-
-    Returns:
-        PrepaymentResult with comparison of before/after scenarios
-    """
-    # Use existing schedule if provided, otherwise generate one
+    """Simulate prepayment at month 1 (beginning)."""
     original_schedule = existing_schedule
     if original_schedule is None:
         original_schedule = generate_schedule(
@@ -109,7 +61,6 @@ def apply_prepayment(
             start_date=start_date or "2025-01-01",
         )
 
-    # Apply prepayment at month 1 (beginning of the schedule)
     _, result = apply_prepayment_at_month(
         original_schedule,
         1,
@@ -119,7 +70,6 @@ def apply_prepayment(
         mode,
         start_date,
     )
-
     return result
 
 
@@ -132,35 +82,68 @@ def apply_prepayment_at_month(
     mode: PrepaymentMode | Literal["reduce_tenure", "reduce_emi"] = "reduce_tenure",
     start_date: str | None = None,
 ) -> tuple[list[AmortizationRow], PrepaymentResult]:
-    """
-    Apply a prepayment at a specific month and regenerate the schedule.
-
-    INVARIANT 1: All money values in paise (integer)
-    INVARIANT 2: Rate in basis points (integer)
-    INVARIANT 3: Returns new schedule, never mutates input
-    """
     if prepayment_month < 1 or prepayment_month > len(schedule):
-        raise ValueError(f"Prepayment month {prepayment_month} out of range [1, {len(schedule)}]")
-
+        raise ValueError(f"Prepayment month {prepayment_month} out of range")
     if prepayment_paise <= 0:
-        raise ValueError("Prepayment amount must be positive")
+        raise ValueError("Prepayment must be positive")
 
-    # Extract the state at the prepayment month
+    # Penalty with ROUND_HALF_EVEN (capped at min(remaining_interest, 3% of outstanding balance))
+    outstanding_balance = (
+        schedule[prepayment_month - 1].balance_paise
+        + schedule[prepayment_month - 1].principal_paise
+    )
+    remaining_interest = sum(
+        row.interest_paise for row in schedule[prepayment_month - 1 :]
+    )
+    max_penalty_paise = int(
+        (Decimal(outstanding_balance) * Decimal(300) / Decimal(10000)).quantize(
+            Decimal(1), rounding=ROUND_HALF_EVEN
+        )
+    )
+    raw_penalty = (
+        Decimal(prepayment_paise) * Decimal(prepayment_penalty_bps) / Decimal(10000)
+    )
+    # Cap raw penalty at min(remaining_interest, max_penalty_paise) BEFORE rounding
+    capped_penalty = min(
+        Decimal(remaining_interest), Decimal(max_penalty_paise), raw_penalty
+    )
+    penalty = int(capped_penalty.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+
+    effective_prepayment = prepayment_paise - penalty
+
+    # State at prepayment month
     prepayment_row = schedule[prepayment_month - 1]
-    remaining_balance = prepayment_row.balance_paise
-    remaining_months = len(schedule) - prepayment_month + 1
+    # The balance after payment in this row is closing balance.
+    # We need the outstanding balance BEFORE this month's payment.
+    # That is balance + principal_paid of this row.
+    opening_balance = prepayment_row.balance_paise + prepayment_row.principal_paise
+    remaining_balance = (
+        opening_balance  # This is the balance before the prepayment month's payment
+    )
+    # Actually, the prepayment happens at the beginning of the month, before the regular EMI.
+    # So we need the balance at the start of the month.
+    # Since our schedule stores closing balance, we need the previous month's closing balance.
+    # For month 1, previous balance = original principal.
+    # For simplicity, we'll use the balance before the prepayment month's payment.
+    # We can compute it as: if prepayment_month == 1: outstanding_paise (original) else schedule[prepayment_month-2].balance_paise
+    if prepayment_month == 1:
+        # The schedule's first row balance is after first payment, but we need opening balance.
+        # The opening balance is the original principal.
+        # We don't have original principal directly, but we can compute from first row: balance + principal.
+        # That's already opening_balance.
+        opening_balance = prepayment_row.balance_paise + prepayment_row.principal_paise
+    else:
+        opening_balance = schedule[prepayment_month - 2].balance_paise
 
-    # Apply prepayment penalty if any
-    penalty_decimal = Decimal(prepayment_paise) * Decimal(prepayment_penalty_bps) / Decimal(10000)
-    penalty_paise = int(penalty_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
-    effective_prepayment = prepayment_paise - penalty_paise
+    remaining_balance = opening_balance
+    original_emi = prepayment_row.emi_paise
+    original_remaining_months = len(schedule) - prepayment_month + 1
 
-    # Compute new balance after prepayment
+    # Apply prepayment
     new_balance = max(0, remaining_balance - effective_prepayment)
 
-    # Check if loan is fully paid off
     if new_balance <= 0:
-        # Loan is closed - return truncated schedule
+        # Loan closed
         new_schedule = schedule[:prepayment_month]
         original_interest = total_interest_paise(schedule)
         new_interest = total_interest_paise(new_schedule)
@@ -169,60 +152,58 @@ def apply_prepayment_at_month(
         return new_schedule, PrepaymentResult(
             prepayment_paise=prepayment_paise,
             mode=PrepaymentMode(mode),
-            original_emi_paise=prepayment_row.emi_paise,
+            original_emi_paise=original_emi,
             new_emi_paise=0,
-            original_remaining_months=remaining_months,
+            original_remaining_months=original_remaining_months,
             new_remaining_months=0,
-            months_saved=remaining_months,
-            interest_saved_paise=interest_saved - penalty_paise,
+            months_saved=original_remaining_months,
+            interest_saved_paise=interest_saved - penalty,
+            penalty_paise=penalty,
             loan_closed=True,
             new_schedule=new_schedule,
         )
 
-    # Compute start date for regenerated schedule (first payment of remaining period)
-    schedule_start_date = start_date
-    if schedule_start_date is None:
-        schedule_start_date = schedule[prepayment_month - 1].payment_date
+    # Determine mode literal
+    mode_literal: Literal["reduce_tenure", "reduce_emi"] = (
+        "reduce_tenure"
+        if mode in ("reduce_tenure", PrepaymentMode.REDUCE_TENURE)
+        else "reduce_emi"
+    )
 
-    # Generate new schedule from prepayment point
-    # Pass schedule from prepayment month onwards for proper tenure calculation
-    # Convert mode to Literal for type compatibility
-    mode_literal: Literal["reduce_tenure", "reduce_emi"] = "reduce_tenure" if mode == "reduce_tenure" or mode == PrepaymentMode.REDUCE_TENURE else "reduce_emi"
-    new_regenerated = regenerate_schedule(
-        schedule[prepayment_month - 1:],
+    # Regenerate tail
+    # We need to pass the tail starting from prepayment_month
+    tail_start_index = prepayment_month - 1
+    tail = regenerate_schedule(
+        schedule[tail_start_index:],
         new_balance,
         annual_rate_bps,
         mode_literal,
-        schedule_start_date,
+        start_date or schedule[tail_start_index].payment_date,
+        original_emi=original_emi,
+        original_tenure=original_remaining_months,
     )
 
-    # Combine completed schedule with regenerated portion
-    completed_portion = schedule[:prepayment_month - 1] if prepayment_month > 1 else []
-    new_schedule = completed_portion + new_regenerated
+    # Combine prefix and tail
+    prefix = schedule[:tail_start_index] if tail_start_index > 0 else []
+    new_schedule = prefix + tail
 
     # Compute savings
     original_interest = total_interest_paise(schedule)
     new_interest = total_interest_paise(new_schedule)
     interest_saved = original_interest - new_interest
 
-    # Determine new EMI (could be same or different)
-    new_emi = 0
-    if new_regenerated:
-        if mode == "reduce_tenure":
-            # First row of regenerated schedule is at prepayment_month
-            new_emi = new_regenerated[0].emi_paise
-        else:
-            new_emi = new_regenerated[0].emi_paise
+    new_emi = tail[0].emi_paise if tail else 0
 
     return new_schedule, PrepaymentResult(
         prepayment_paise=prepayment_paise,
         mode=PrepaymentMode(mode),
-        original_emi_paise=prepayment_row.emi_paise,
+        original_emi_paise=original_emi,
         new_emi_paise=new_emi,
-        original_remaining_months=remaining_months,
-        new_remaining_months=len(new_regenerated),
-        months_saved=remaining_months - len(new_regenerated),
-        interest_saved_paise=interest_saved - penalty_paise,
+        original_remaining_months=original_remaining_months,
+        new_remaining_months=len(tail),
+        months_saved=original_remaining_months - len(tail),
+        interest_saved_paise=interest_saved - penalty,
+        penalty_paise=penalty,
         loan_closed=False,
         new_schedule=new_schedule,
     )
@@ -230,29 +211,22 @@ def apply_prepayment_at_month(
 
 def apply_multiple_prepayments(
     schedule: list[AmortizationRow],
-    prepayments: list[tuple[int, int]],  # (month, amount_paise)
+    prepayments: list[tuple[int, int]],
     annual_rate_bps: int,
     prepayment_penalty_bps: int = 0,
     mode: PrepaymentMode | Literal["reduce_tenure", "reduce_emi"] = "reduce_tenure",
     start_date: str | None = None,
 ) -> tuple[list[AmortizationRow], list[PrepaymentResult]]:
-    """
-    Apply multiple prepayments sequentially to a schedule.
-
-    Returns updated schedule and list of prepayment results.
-    """
     if not prepayments:
         return schedule, []
 
-    # Sort prepayments by month (earliest first)
     sorted_prepayments = sorted(prepayments, key=lambda x: x[0])
     current_schedule = schedule.copy()
     results = []
 
     for month, amount in sorted_prepayments:
         if month < 1 or month > len(current_schedule):
-            continue  # Skip invalid months
-
+            continue
         new_schedule, result = apply_prepayment_at_month(
             current_schedule,
             month,
@@ -274,78 +248,56 @@ def regenerate_schedule(
     annual_rate_bps: int,
     mode: Literal["reduce_tenure", "reduce_emi"],
     start_date: str,
+    original_emi: int | None = None,
+    original_tenure: int | None = None,
 ) -> list[AmortizationRow]:
     """
-    Regenerate schedule after prepayment or rate change.
+    Regenerate schedule after prepayment/rate change.
 
     Args:
-        previous_schedule: Schedule from the prepayment/change month onwards
-        new_principal_paise: Remaining principal after prepayment (paise)
-        annual_rate_bps: Annual interest rate in basis points
-        mode: "reduce_tenure" (keep EMI) or "reduce_emi" (calculate new EMI)
-        start_date: Start date of the new schedule (first payment date)
-
-    Returns NEW schedule starting from previous_schedule[0].month_number.
-    INVARIANT 3: Does not modify existing schedule.
+        previous_schedule: The tail of the schedule from the prepayment month onwards.
+        new_principal_paise: Balance after prepayment.
+        annual_rate_bps: Rate for new schedule.
+        mode: 'reduce_tenure' (keep EMI) or 'reduce_emi' (keep tenure).
+        start_date: Start date of the new tail.
+        original_emi: Original EMI (for reduce_tenure mode). If not provided, derive from previous_schedule.
+        original_tenure: Original remaining months (for reduce_emi mode). If not provided, derive from previous_schedule.
     """
     if new_principal_paise <= 0:
         return []
 
-    # Derive remaining_months from previous_schedule length
-    remaining_months = len(previous_schedule)
+    # Derive missing parameters if not provided
+    if original_emi is None and previous_schedule:
+        original_emi = previous_schedule[0].emi_paise
+    if original_tenure is None and previous_schedule:
+        original_tenure = len(previous_schedule)
 
-    # Get the current EMI from the first row of previous schedule (for reduce_tenure mode)
-    current_emi = previous_schedule[0].emi_paise if previous_schedule else 0
-
-    # Calculate tenure based on mode
     if mode == "reduce_tenure":
-        # Keep EMI same, calculate new tenure
-        calc_remaining_months = _compute_tenure_from_emi(
-            new_principal_paise, annual_rate_bps, current_emi
+        if original_emi is None:
+            raise ValueError("original_emi is required for reduce_tenure mode")
+        new_tenure = _compute_tenure_from_emi(
+            new_principal_paise, annual_rate_bps, original_emi
         )
-    else:
-        # Reduce EMI mode: keep original remaining tenure
-        calc_remaining_months = remaining_months
+        new_emi = original_emi
+    else:  # reduce_emi
+        if original_tenure is None:
+            raise ValueError("original_tenure is required for reduce_emi mode")
+        new_tenure = original_tenure
+        new_emi = compute_emi_fixed(new_principal_paise, annual_rate_bps, new_tenure)
 
-    # Compute the month offset to continue numbering
-    month_offset = 0
-    if previous_schedule:
-        month_offset = previous_schedule[0].month_number - 1
-
-    # Generate new schedule
-    new_schedule = generate_schedule(
+    # Generate new tail
+    new_tail = generate_schedule(
         principal_paise=new_principal_paise,
         annual_rate_bps=annual_rate_bps,
-        tenure_months=calc_remaining_months,
+        tenure_months=new_tenure,
         start_date=start_date,
-        emi_paise=current_emi if mode == "reduce_tenure" else None,
+        emi_paise=new_emi,
     )
 
-    if mode == "reduce_emi":
-        # Recalculate EMI for reduce_emi mode
-        new_emi_val = compute_emi_fixed(new_principal_paise, annual_rate_bps, calc_remaining_months)
-        # Rebuild schedule with correct EMI
-        new_schedule = generate_schedule(
-            principal_paise=new_principal_paise,
-            annual_rate_bps=annual_rate_bps,
-            tenure_months=calc_remaining_months,
-            start_date=start_date,
-            emi_paise=new_emi_val,
-        )
-
     # Adjust month numbers to continue from previous schedule
-    if previous_schedule and month_offset > 0:
-        adjusted_schedule = []
-        for row in new_schedule:
-            adjusted_schedule.append(AmortizationRow(
-                month_number=row.month_number + month_offset,
-                payment_date=row.payment_date,
-                emi_paise=row.emi_paise,
-                principal_paise=row.principal_paise,
-                interest_paise=row.interest_paise,
-                balance_paise=row.balance_paise,
-                cumulative_interest_paise=row.cumulative_interest_paise,
-            ))
-        return adjusted_schedule
+    if previous_schedule and previous_schedule[0].month_number > 1:
+        offset = previous_schedule[0].month_number - 1
+        for row in new_tail:
+            row.month_number += offset
 
-    return new_schedule
+    return new_tail

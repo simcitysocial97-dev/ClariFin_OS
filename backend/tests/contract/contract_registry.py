@@ -54,9 +54,11 @@ def get_endpoint_schema(router_name: str, method: str, path: str) -> dict[str, A
     api_map = load_api_map()
 
     for endpoint in api_map.get("endpoints", []):
-        if (endpoint["router"] == router_name and
-            endpoint["method"] == method.upper() and
-            endpoint["endpoint"] == path):
+        if (
+            endpoint["router"] == router_name
+            and endpoint["method"] == method.upper()
+            and endpoint["endpoint"] == path
+        ):
             return {
                 "request_schema": endpoint.get("request_schema", {}),
                 "response_schema": endpoint.get("response_schema", {}),

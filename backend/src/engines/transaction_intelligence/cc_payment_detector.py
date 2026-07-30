@@ -5,6 +5,7 @@ lifecycle states based on statement matching and payment amounts.
 
 No database access - all data is passed as parameters.
 """
+
 import re
 from dataclasses import dataclass
 from typing import Any, Literal
@@ -26,9 +27,9 @@ LifecycleState = Literal[
 
 # Card number patterns in description (e.g., "XX1234", "1234", masked formats)
 _CARD_NUMBER_PATTERNS = [
-    r"XX(\d{4})",           # XX1234 format
-    r"(\d{4})",              # Last 4 digits standalone
-    r"\*\*\*\*(\d{4})",     # ****1234 format
+    r"XX(\d{4})",  # XX1234 format
+    r"(\d{4})",  # Last 4 digits standalone
+    r"\*\*\*\*(\d{4})",  # ****1234 format
 ]
 
 
@@ -146,6 +147,7 @@ class CCPaymentDetectionResult:
         source: Source of detection
         match_reason: Why this matched (for debugging)
     """
+
     matched_statement_id: int | None
     classification: str
     lifecycle_state: LifecycleState
@@ -287,11 +289,15 @@ def detect_cc_payment(
         # Check if amount looks like a CC payment (typically round amounts like 5000, 10000)
         amount = int(debit_txn.get("amount_paise", 0) or 0)
         # Common minimum due amounts (₹100-₹5000 in paise)
-        if amount > 10000 and amount <= 500000 and not has_card_pattern:
+        if (
+            amount > 10000
+            and amount <= 500000
+            and not has_card_pattern
+            and statement_row is None
+        ):
             # Still could be a CC payment - pass through for loose matching
             # But only if we have a statement match
-            if statement_row is None:
-                return None
+            return None
 
     # Determine payment channel from description
     payment_channel = determine_payment_channel(debit_txn.get("description", ""))

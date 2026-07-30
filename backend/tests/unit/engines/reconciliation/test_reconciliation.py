@@ -17,28 +17,25 @@ Run: python -m pytest tests/test_reconciliation.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from db import FinanceDB
-from engines.reconciliation_engine import (
+from repositories.reconciliation_repository import ReconciliationRepository
+from repositories.statement_repository import StatementRepository
+from src.engines.reconciliation_engine import (
     _calculate_confidence,
     _check_match,
     _date_difference_days,
     find_potential_matches,
 )
-from repositories.reconciliation_repository import ReconciliationRepository
-from repositories.statement_repository import StatementRepository
 
 # ============================================================
 # Fixtures
 # ============================================================
+
 
 @pytest.fixture
 def temp_db():
@@ -101,6 +98,7 @@ def populated_db(temp_db):
 # Test 1: Exact Match Detection
 # ============================================================
 
+
 def test_exact_match_detection(populated_db):
     """Test that exact matches (same amount, same date, different accounts) are detected."""
     db, db_path = populated_db
@@ -121,6 +119,7 @@ def test_exact_match_detection(populated_db):
 # ============================================================
 # Test 2: Date Window Detection
 # ============================================================
+
 
 def test_date_window_detection(populated_db):
     """Test that date window matches (same amount, within 3 days) are detected."""
@@ -143,6 +142,7 @@ def test_date_window_detection(populated_db):
 # Test 3: No False Positives When Amounts Differ
 # ============================================================
 
+
 def test_no_false_positives_different_amounts(populated_db):
     """Test that transactions with different amounts are NOT matched."""
     db, db_path = populated_db
@@ -153,15 +153,20 @@ def test_no_false_positives_different_amounts(populated_db):
     for m in matches:
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+        cur = conn.execute(
+            "SELECT debit, credit FROM transactions WHERE id = ?", (m["debit_txn_id"],)
+        )
         debit_txn = cur.fetchone()
-        cur = conn.execute("SELECT debit, credit FROM transactions WHERE id = ?", (m["credit_txn_id"],))
+        cur = conn.execute(
+            "SELECT debit, credit FROM transactions WHERE id = ?", (m["credit_txn_id"],)
+        )
         credit_txn = cur.fetchone()
         conn.close()
 
         # Debit from one should equal credit from other
-        assert debit_txn["debit"] == credit_txn["credit"], \
-            "Matched transactions should have equal debit/credit amounts"
+        assert (
+            debit_txn["debit"] == credit_txn["credit"]
+        ), "Matched transactions should have equal debit/credit amounts"
 
 
 def test_no_same_account_matches(populated_db):
@@ -172,13 +177,15 @@ def test_no_same_account_matches(populated_db):
 
     # All matches should be between different accounts
     for m in matches:
-        assert m["debit_account_id"] != m["credit_account_id"], \
-            "Should not match transactions from the same account"
+        assert (
+            m["debit_account_id"] != m["credit_account_id"]
+        ), "Should not match transactions from the same account"
 
 
 # ============================================================
 # Test 4: Confirm Does Not Mutate Transactions
 # ============================================================
+
 
 def test_confirm_no_transaction_mutation(populated_db):
     """Test that confirming a reconciliation does NOT modify transaction records."""
@@ -187,7 +194,20 @@ def test_confirm_no_transaction_mutation(populated_db):
 
     # Get a match to work with
     matches = find_potential_matches(db_path)
-    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
+    m = (
+        matches[0]
+        if matches
+        else {
+            "debit_txn_id": 1,
+            "credit_txn_id": 5,
+            "debit_account_id": "Account_A",
+            "credit_account_id": "Account_B",
+            "amount": 1000.00,
+            "date_diff_days": 0,
+            "match_confidence": 0.8,
+            "match_type": "exact",
+        }
+    )
 
     # Create a reconciliation
     inserted = rec_repo.insert_reconciliation(
@@ -195,9 +215,9 @@ def test_confirm_no_transaction_mutation(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
 
@@ -211,7 +231,10 @@ def test_confirm_no_transaction_mutation(populated_db):
         # Get transaction states before confirm
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+        cur = conn.execute(
+            "SELECT debit, credit, amount_paise FROM transactions WHERE id = ?",
+            (m["debit_txn_id"],),
+        )
         txn_before = dict(cur.fetchone())
         conn.close()
 
@@ -222,7 +245,10 @@ def test_confirm_no_transaction_mutation(populated_db):
         # Get transaction states after confirm
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+        cur = conn.execute(
+            "SELECT debit, credit, amount_paise FROM transactions WHERE id = ?",
+            (m["debit_txn_id"],),
+        )
         txn_after = dict(cur.fetchone())
         conn.close()
 
@@ -234,6 +260,7 @@ def test_confirm_no_transaction_mutation(populated_db):
 # Test 5: Reject Does Not Mutate Transactions
 # ============================================================
 
+
 def test_reject_no_transaction_mutation(populated_db):
     """Test that rejecting a reconciliation does NOT modify transaction records."""
     db, db_path = populated_db
@@ -241,7 +268,20 @@ def test_reject_no_transaction_mutation(populated_db):
 
     # Get a match to work with
     matches = find_potential_matches(db_path)
-    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
+    m = (
+        matches[0]
+        if matches
+        else {
+            "debit_txn_id": 1,
+            "credit_txn_id": 5,
+            "debit_account_id": "Account_A",
+            "credit_account_id": "Account_B",
+            "amount": 1000.00,
+            "date_diff_days": 0,
+            "match_confidence": 0.8,
+            "match_type": "exact",
+        }
+    )
 
     # Create a reconciliation
     inserted = rec_repo.insert_reconciliation(
@@ -249,9 +289,9 @@ def test_reject_no_transaction_mutation(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
 
@@ -265,7 +305,10 @@ def test_reject_no_transaction_mutation(populated_db):
         # Get transaction states before reject
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+        cur = conn.execute(
+            "SELECT debit, credit, amount_paise FROM transactions WHERE id = ?",
+            (m["debit_txn_id"],),
+        )
         txn_before = dict(cur.fetchone())
         conn.close()
 
@@ -276,7 +319,10 @@ def test_reject_no_transaction_mutation(populated_db):
         # Get transaction states after reject
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
-        cur = conn.execute("SELECT debit, credit, amount_paise FROM transactions WHERE id = ?", (m["debit_txn_id"],))
+        cur = conn.execute(
+            "SELECT debit, credit, amount_paise FROM transactions WHERE id = ?",
+            (m["debit_txn_id"],),
+        )
         txn_after = dict(cur.fetchone())
         conn.close()
 
@@ -288,6 +334,7 @@ def test_reject_no_transaction_mutation(populated_db):
 # Test 6: Duplicate Reconciliation Prevention
 # ============================================================
 
+
 def test_prevent_duplicate_pairs(populated_db):
     """Test that duplicate reconciliation pairs are prevented via idempotent insert."""
     db, db_path = populated_db
@@ -295,7 +342,20 @@ def test_prevent_duplicate_pairs(populated_db):
 
     # Get a match to work with
     matches = find_potential_matches(db_path)
-    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
+    m = (
+        matches[0]
+        if matches
+        else {
+            "debit_txn_id": 1,
+            "credit_txn_id": 5,
+            "debit_account_id": "Account_A",
+            "credit_account_id": "Account_B",
+            "amount": 1000.00,
+            "date_diff_days": 0,
+            "match_confidence": 0.8,
+            "match_type": "exact",
+        }
+    )
 
     # Create first reconciliation
     inserted_1 = rec_repo.insert_reconciliation(
@@ -303,9 +363,9 @@ def test_prevent_duplicate_pairs(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_1 is True
@@ -316,9 +376,9 @@ def test_prevent_duplicate_pairs(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_2 is False, "Duplicate should be ignored"
@@ -331,7 +391,20 @@ def test_prevent_mirrored_pairs(populated_db):
 
     # Get a match to work with
     matches = find_potential_matches(db_path)
-    m = matches[0] if matches else {"debit_txn_id": 1, "credit_txn_id": 5, "debit_account_id": "Account_A", "credit_account_id": "Account_B", "amount": 1000.00, "date_diff_days": 0, "match_confidence": 0.8, "match_type": "exact"}
+    m = (
+        matches[0]
+        if matches
+        else {
+            "debit_txn_id": 1,
+            "credit_txn_id": 5,
+            "debit_account_id": "Account_A",
+            "credit_account_id": "Account_B",
+            "amount": 1000.00,
+            "date_diff_days": 0,
+            "match_confidence": 0.8,
+            "match_type": "exact",
+        }
+    )
 
     # Create first reconciliation
     inserted_1 = rec_repo.insert_reconciliation(
@@ -339,9 +412,9 @@ def test_prevent_mirrored_pairs(populated_db):
         credit_txn_id=m["credit_txn_id"],
         debit_account_id=m["debit_account_id"],
         credit_account_id=m["credit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_1 is True
@@ -353,9 +426,9 @@ def test_prevent_mirrored_pairs(populated_db):
         credit_txn_id=m["debit_txn_id"],
         debit_account_id=m["credit_account_id"],
         credit_account_id=m["debit_account_id"],
-        amount=m["amount"],
+        amount_paise=int(m["amount"] * 100),
         date_diff_days=m["date_diff_days"],
-        match_confidence=m["match_confidence"],
+        confidence_bps=int(m["match_confidence"] * 10000),
         match_type=m["match_type"],
     )
     assert inserted_2 is False, "Mirrored pair should be ignored"
@@ -365,10 +438,25 @@ def test_prevent_mirrored_pairs(populated_db):
 # Additional Tests: Unit Tests for Matching Functions
 # ============================================================
 
+
 def test_check_match_same_account():
     """Test that match returns None for same account."""
-    txn_a = {"id": 1, "account_id": "Account_A", "debit": 100000, "credit": 0, "date_iso": "2025-01-01", "description": "Test"}
-    txn_b = {"id": 2, "account_id": "Account_A", "debit": 0, "credit": 100000, "date_iso": "2025-01-01", "description": "Test"}
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Test",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_A",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-01",
+        "description": "Test",
+    }
 
     result = _check_match(txn_a, txn_b)
     assert result is None
@@ -376,8 +464,22 @@ def test_check_match_same_account():
 
 def test_check_match_different_amounts():
     """Test that match returns None for different amounts."""
-    txn_a = {"id": 1, "account_id": "Account_A", "debit": 100000, "credit": 0, "date_iso": "2025-01-01", "description": "Test"}
-    txn_b = {"id": 2, "account_id": "Account_B", "debit": 0, "credit": 50000, "date_iso": "2025-01-01", "description": "Test"}
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Test",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 50000,
+        "date_iso": "2025-01-01",
+        "description": "Test",
+    }
 
     result = _check_match(txn_a, txn_b)
     assert result is None
@@ -385,8 +487,22 @@ def test_check_match_different_amounts():
 
 def test_check_match_valid():
     """Test that match returns valid result for matching transactions."""
-    txn_a = {"id": 1, "account_id": "Account_A", "debit": 100000, "credit": 0, "date_iso": "2025-01-01", "description": "Transfer"}
-    txn_b = {"id": 2, "account_id": "Account_B", "debit": 0, "credit": 100000, "date_iso": "2025-01-01", "description": "Transfer"}
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
 
     result = _check_match(txn_a, txn_b)
 
@@ -398,8 +514,22 @@ def test_check_match_valid():
 
 def test_check_match_date_window():
     """Test that match detects window match for dates within 3 days."""
-    txn_a = {"id": 1, "account_id": "Account_A", "debit": 100000, "credit": 0, "date_iso": "2025-01-01", "description": "Transfer"}
-    txn_b = {"id": 2, "account_id": "Account_B", "debit": 0, "credit": 100000, "date_iso": "2025-01-03", "description": "Transfer"}
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-03",
+        "description": "Transfer",
+    }
 
     result = _check_match(txn_a, txn_b)
 
@@ -410,8 +540,22 @@ def test_check_match_date_window():
 
 def test_check_match_outside_window():
     """Test that match returns None for dates outside 3 days."""
-    txn_a = {"id": 1, "account_id": "Account_A", "debit": 100000, "credit": 0, "date_iso": "2025-01-01", "description": "Transfer"}
-    txn_b = {"id": 2, "account_id": "Account_B", "debit": 0, "credit": 100000, "date_iso": "2025-01-10", "description": "Transfer"}
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-10",
+        "description": "Transfer",
+    }
 
     result = _check_match(txn_a, txn_b, max_date_window_days=3)
     assert result is None
@@ -428,7 +572,9 @@ def test_calculate_confidence():
     assert conf == 0.7  # 0.3 (date) + 0.4 (amount)
 
     # With description similarity
-    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=1.0)
+    conf = _calculate_confidence(
+        date_diff_days=0, amount_exact=True, description_similarity=1.0
+    )
     assert conf == 1.0  # 0.4 + 0.4 + 0.2 = 1.0 (capped)
 
 

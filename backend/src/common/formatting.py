@@ -1,4 +1,5 @@
 """Display formatting utilities."""
+
 import re
 
 
@@ -29,6 +30,7 @@ def format_inr(amount: float) -> str:
 def format_date_display(date_str: str) -> str:
     """Convert any date format to: 15 Jun 2025"""
     from .parsing import parse_date
+
     dt = parse_date(date_str)
     if dt:
         return dt.strftime("%d %b %Y")
@@ -40,9 +42,9 @@ def clean_description(desc: str) -> str:
     if not desc:
         return ""
     # Remove leading date+time
-    cleaned = re.sub(r'^\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+', '', desc)
+    cleaned = re.sub(r"^\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2}\s+", "", desc)
     # Remove leading timestamp
-    cleaned = re.sub(r'^\d{2}:\d{2}:\d{2}\s+', '', cleaned)
+    cleaned = re.sub(r"^\d{2}:\d{2}:\d{2}\s+", "", cleaned)
     # Collapse multiple spaces
-    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
     return cleaned

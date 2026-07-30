@@ -6,7 +6,9 @@ Returns aggregated net worth data matching NetWorthViewModel format.
 from typing import Any
 
 from src.repositories.account_repository import AccountRepository
-from src.repositories.credit_card_statement_repository import CreditCardStatementRepository
+from src.repositories.credit_card_statement_repository import (
+    CreditCardStatementRepository,
+)
 from src.repositories.investment_repository import InvestmentRepository
 from src.repositories.loan_repository import LoanRepository
 from src.services.base import BaseService
@@ -53,7 +55,9 @@ class NetWorthWorkspaceService(BaseService):
 
         # Calculate totals
         account_balance_paise = sum(a.get("balance_paise", 0) for a in accounts)
-        investment_value_paise = sum(i.get("current_value_paise", 0) for i in investments)
+        investment_value_paise = sum(
+            i.get("current_value_paise", 0) for i in investments
+        )
         total_assets_paise = account_balance_paise + investment_value_paise
 
         loan_outstanding_paise = sum(loan.get("outstanding_paise", 0) for loan in loans)
@@ -63,7 +67,9 @@ class NetWorthWorkspaceService(BaseService):
         seen_cards: set[str] = set()
         for stmt in sorted(
             all_statements,
-            key=lambda s: str(s.get("statement_period_to") or s.get("imported_at") or ""),
+            key=lambda s: str(
+                s.get("statement_period_to") or s.get("imported_at") or ""
+            ),
             reverse=True,
         ):
             card_key = f"{stmt.get('bank', '')}_{stmt.get('card_last4', '')}"
@@ -79,41 +85,55 @@ class NetWorthWorkspaceService(BaseService):
         asset_breakdown = []
         for acc in accounts:
             balance = acc.get("balance_paise", 0)
-            percentage = int(balance / total_assets_paise * 100) if total_assets_paise > 0 else 0
-            asset_breakdown.append({
-                "id": acc.get("account_id", ""),
-                "name": acc.get("name", ""),
-                "type": acc.get("account_type", ""),
-                "balance_paise": balance,
-                "percentage": percentage,
-                "contribution_paise": balance,
-            })
+            percentage = (
+                int(balance / total_assets_paise * 100) if total_assets_paise > 0 else 0
+            )
+            asset_breakdown.append(
+                {
+                    "id": acc.get("account_id", ""),
+                    "name": acc.get("name", ""),
+                    "type": acc.get("account_type", ""),
+                    "balance_paise": balance,
+                    "percentage": percentage,
+                    "contribution_paise": balance,
+                }
+            )
 
         for inv in investments:
             value = inv.get("current_value_paise", 0)
-            percentage = int(value / total_assets_paise * 100) if total_assets_paise > 0 else 0
-            asset_breakdown.append({
-                "id": inv.get("investment_id", ""),
-                "name": inv.get("name", ""),
-                "type": inv.get("investment_type", ""),
-                "balance_paise": value,
-                "percentage": percentage,
-                "contribution_paise": value,
-            })
+            percentage = (
+                int(value / total_assets_paise * 100) if total_assets_paise > 0 else 0
+            )
+            asset_breakdown.append(
+                {
+                    "id": inv.get("investment_id", ""),
+                    "name": inv.get("name", ""),
+                    "type": inv.get("investment_type", ""),
+                    "balance_paise": value,
+                    "percentage": percentage,
+                    "contribution_paise": value,
+                }
+            )
 
         # Build liability breakdown
         liability_breakdown = []
         for loan in loans:
             outstanding = loan.get("outstanding_paise", 0)
-            percentage = int(outstanding / total_liabilities_paise * 100) if total_liabilities_paise > 0 else 0
-            liability_breakdown.append({
-                "id": loan.get("loan_id", ""),
-                "name": loan.get("name", ""),
-                "type": loan.get("loan_type", ""),
-                "balance_paise": -outstanding,  # Negative for liabilities
-                "percentage": percentage,
-                "contribution_paise": -outstanding,
-            })
+            percentage = (
+                int(outstanding / total_liabilities_paise * 100)
+                if total_liabilities_paise > 0
+                else 0
+            )
+            liability_breakdown.append(
+                {
+                    "id": loan.get("loan_id", ""),
+                    "name": loan.get("name", ""),
+                    "type": loan.get("loan_type", ""),
+                    "balance_paise": -outstanding,  # Negative for liabilities
+                    "percentage": percentage,
+                    "contribution_paise": -outstanding,
+                }
+            )
 
         for stmt in all_statements:
             if stmt.get("bank") and stmt.get("card_last4"):
@@ -121,32 +141,42 @@ class NetWorthWorkspaceService(BaseService):
                 if card_key in seen_cards:
                     due = stmt.get("total_amount_due", 0) or 0
                     due_paise = int(round(due * 100))
-                    percentage = int(due_paise / total_liabilities_paise * 100) if total_liabilities_paise > 0 else 0
-                    liability_breakdown.append({
-                        "id": f"card_{card_key}",
-                        "name": f"Credit Card {stmt.get('card_last4', '')}",
-                        "type": "credit_card",
-                        "balance_paise": -due_paise,
-                        "percentage": percentage,
-                        "contribution_paise": -due_paise,
-                    })
+                    percentage = (
+                        int(due_paise / total_liabilities_paise * 100)
+                        if total_liabilities_paise > 0
+                        else 0
+                    )
+                    liability_breakdown.append(
+                        {
+                            "id": f"card_{card_key}",
+                            "name": f"Credit Card {stmt.get('card_last4', '')}",
+                            "type": "credit_card",
+                            "balance_paise": -due_paise,
+                            "percentage": percentage,
+                            "contribution_paise": -due_paise,
+                        }
+                    )
                     seen_cards.discard(card_key)  # Only add once
 
         # Generate insights
         insights = []
         if net_worth_paise > 0:
-            insights.append({
-                "type": "positive",
-                "severity": "medium",
-                "message": f"Net worth is positive: ₹{net_worth_paise / 100:,.2f}",
-            })
+            insights.append(
+                {
+                    "type": "positive",
+                    "severity": "medium",
+                    "message": f"Net worth is positive: ₹{net_worth_paise / 100:,.2f}",
+                }
+            )
 
         if total_liabilities_paise > total_assets_paise:
-            insights.append({
-                "type": "warning",
-                "severity": "high",
-                "message": "Liabilities exceed assets. Consider debt reduction strategies.",
-            })
+            insights.append(
+                {
+                    "type": "warning",
+                    "severity": "high",
+                    "message": "Liabilities exceed assets. Consider debt reduction strategies.",
+                }
+            )
 
         return {
             "total_net_worth_paise": net_worth_paise,

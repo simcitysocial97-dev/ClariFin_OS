@@ -55,10 +55,15 @@ def _timed_log(
         log_data["error"] = error
         logger.warning(
             "[ACCOUNT] %s | account_id=%s | %.0fms | FAIL: %s",
-            endpoint, account_id, duration_ms, error,
+            endpoint,
+            account_id,
+            duration_ms,
+            error,
         )
     else:
-        logger.info("[ACCOUNT] %s | account_id=%s | %.0fms", endpoint, account_id, duration_ms)
+        logger.info(
+            "[ACCOUNT] %s | account_id=%s | %.0fms", endpoint, account_id, duration_ms
+        )
 
 
 # ============================================================
@@ -91,9 +96,9 @@ def create_account(request: AccountCreateRequest) -> dict[str, Any]:
         account_number_last4=request.account_number_last4,
         notes=request.notes,
     )
-    created_id = created.get('id') if created else None
-    _timed_log('POST /accounts', created_id, (time.monotonic() - start) * 1000)
-    return {'success': True, 'account_id': created_id}
+    created_id = created.get("id") if created else None
+    _timed_log("POST /accounts", created_id, (time.monotonic() - start) * 1000)
+    return {"success": True, "account_id": created_id}
 
 
 @router.get("/accounts/{account_id}")
@@ -105,9 +110,11 @@ def get_account(account_id: int | str) -> dict[str, Any]:
         account = service.get_account(account_id)
         if not account:
             _timed_log(
-                "GET /accounts/{id}", account_id,
+                "GET /accounts/{id}",
+                account_id,
                 (time.monotonic() - start) * 1000,
-                success=False, error="Not found",
+                success=False,
+                error="Not found",
             )
             raise NotFoundError(f"Account {account_id} not found")
         result = AccountResponse.from_account_dict(account).model_dump()
@@ -115,9 +122,11 @@ def get_account(account_id: int | str) -> dict[str, Any]:
         return result
     except ValueError as e:
         _timed_log(
-            "GET /accounts/{id}", account_id,
+            "GET /accounts/{id}",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -148,9 +157,11 @@ def update_account(
     updated = service.update_account(account_id, **update_data)
     if not updated:
         _timed_log(
-            "PUT /accounts/{id}", account_id,
+            "PUT /accounts/{id}",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="Not found",
+            success=False,
+            error="Not found",
         )
         raise NotFoundError(f"Account {account_id} not found")
     _timed_log("PUT /accounts/{id}", account_id, (time.monotonic() - start) * 1000)
@@ -166,9 +177,11 @@ def deactivate_account(account_id: int | str) -> dict[str, Any]:
     success = service.deactivate_account(account_id)
     if not success:
         _timed_log(
-            "DELETE /accounts/{id}", account_id,
+            "DELETE /accounts/{id}",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="Not found",
+            success=False,
+            error="Not found",
         )
         raise NotFoundError(f"Account {account_id} not found")
     _timed_log("DELETE /accounts/{id}", account_id, (time.monotonic() - start) * 1000)
@@ -200,12 +213,18 @@ def insert_balance_snapshot(
     snapshot = service.get_balance_history(str(account_id), limit=1)
     if snapshot:
         result = BalanceSnapshotResponse.from_snapshot_dict(snapshot[0]).model_dump()
-        _timed_log("POST /accounts/{id}/balance-history", account_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /accounts/{id}/balance-history",
+            account_id,
+            (time.monotonic() - start) * 1000,
+        )
         return {"success": True, "snapshot_id": snapshot_id, "snapshot": result}
     _timed_log(
-        "POST /accounts/{id}/balance-history", account_id,
+        "POST /accounts/{id}/balance-history",
+        account_id,
         (time.monotonic() - start) * 1000,
-        success=False, error="Failed to create snapshot",
+        success=False,
+        error="Failed to create snapshot",
     )
     raise NotFoundError("Failed to create balance snapshot")
 
@@ -220,8 +239,14 @@ def get_balance_history(
     service = AccountService()
 
     history = service.get_balance_history(str(account_id), limit)
-    result = [BalanceSnapshotResponse.from_snapshot_dict(h).model_dump() for h in history]
-    _timed_log("GET /accounts/{id}/balance-history", account_id, (time.monotonic() - start) * 1000)
+    result = [
+        BalanceSnapshotResponse.from_snapshot_dict(h).model_dump() for h in history
+    ]
+    _timed_log(
+        "GET /accounts/{id}/balance-history",
+        account_id,
+        (time.monotonic() - start) * 1000,
+    )
     return result
 
 
@@ -234,14 +259,20 @@ def get_latest_balance(account_id: int | str) -> dict[str, Any]:
     snapshot = service.get_latest_balance(str(account_id))
     if not snapshot:
         _timed_log(
-            "GET /accounts/{id}/balance-history/latest", account_id,
+            "GET /accounts/{id}/balance-history/latest",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="No balance history",
+            success=False,
+            error="No balance history",
         )
         raise NotFoundError(f"No balance history for account {account_id}")
 
     result = BalanceSnapshotResponse.from_snapshot_dict(snapshot).model_dump()
-    _timed_log("GET /accounts/{id}/balance-history/latest", account_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "GET /accounts/{id}/balance-history/latest",
+        account_id,
+        (time.monotonic() - start) * 1000,
+    )
     return result
 
 
@@ -271,7 +302,9 @@ def get_account_analytics(account_id: int | str) -> dict[str, Any]:
         velocity_paise_per_day=velocity,
     ).model_dump()
 
-    _timed_log("GET /accounts/{id}/analytics", account_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "GET /accounts/{id}/analytics", account_id, (time.monotonic() - start) * 1000
+    )
     return response
 
 
@@ -283,13 +316,17 @@ def get_account_metrics(account_id: int | str) -> dict[str, Any]:
 
     try:
         metrics = service.get_account_metrics(str(account_id))
-        _timed_log("GET /accounts/{id}/metrics", account_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /accounts/{id}/metrics", account_id, (time.monotonic() - start) * 1000
+        )
         return metrics
     except ValueError as e:
         _timed_log(
-            "GET /accounts/{id}/metrics", account_id,
+            "GET /accounts/{id}/metrics",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -302,13 +339,17 @@ def get_account_status(account_id: int | str) -> dict[str, str]:
 
     try:
         status = service.get_account_status(str(account_id))
-        _timed_log("GET /accounts/{id}/status", account_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /accounts/{id}/status", account_id, (time.monotonic() - start) * 1000
+        )
         return {"status": status}
     except ValueError as e:
         _timed_log(
-            "GET /accounts/{id}/status", account_id,
+            "GET /accounts/{id}/status",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -323,7 +364,9 @@ def get_account_dormancy(account_id: int | str) -> dict[str, Any]:
     is_dormant = service.is_account_dormant(str(account_id), threshold_days=365)
     days = service.get_days_since_activity(str(account_id))
 
-    _timed_log("GET /accounts/{id}/dormancy", account_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "GET /accounts/{id}/dormancy", account_id, (time.monotonic() - start) * 1000
+    )
     return {"dormant": is_dormant, "days_since_activity": days}
 
 
@@ -339,7 +382,10 @@ def list_institutions() -> list[dict[str, Any]]:
     service = AccountService()
 
     institutions = service.list_institutions()
-    result = [InstitutionResponse.from_institution_dict(inst).model_dump() for inst in institutions]
+    result = [
+        InstitutionResponse.from_institution_dict(inst).model_dump()
+        for inst in institutions
+    ]
     _timed_log("GET /institutions", None, (time.monotonic() - start) * 1000)
     return result
 
@@ -371,20 +417,26 @@ def get_institution(institution_id: str) -> dict[str, Any]:
         institution = service.get_institution(institution_id)
         if not institution:
             _timed_log(
-                "GET /institutions/{id}", institution_id,
+                "GET /institutions/{id}",
+                institution_id,
                 (time.monotonic() - start) * 1000,
-                success=False, error="Not found",
+                success=False,
+                error="Not found",
             )
             raise NotFoundError(f"Institution {institution_id} not found")
 
         result = InstitutionResponse.from_institution_dict(institution).model_dump()
-        _timed_log("GET /institutions/{id}", institution_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /institutions/{id}", institution_id, (time.monotonic() - start) * 1000
+        )
         return result
     except ValueError as e:
         _timed_log(
-            "GET /institutions/{id}", institution_id,
+            "GET /institutions/{id}",
+            institution_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -411,13 +463,17 @@ def update_institution(
     updated = service.update_institution(institution_id, **update_data)
     if not updated:
         _timed_log(
-            "PUT /institutions/{id}", institution_id,
+            "PUT /institutions/{id}",
+            institution_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="Not found",
+            success=False,
+            error="Not found",
         )
         raise NotFoundError(f"Institution {institution_id} not found")
 
-    _timed_log("PUT /institutions/{id}", institution_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "PUT /institutions/{id}", institution_id, (time.monotonic() - start) * 1000
+    )
     return {"success": True}
 
 
@@ -441,13 +497,17 @@ def link_accounts(
             linked_account_id=request.linked_account_id,
             relationship_type=request.relationship_type,
         )
-        _timed_log("POST /accounts/{id}/links", account_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /accounts/{id}/links", account_id, (time.monotonic() - start) * 1000
+        )
         return {"success": success}
     except ValueError as e:
         _timed_log(
-            "POST /accounts/{id}/links", account_id,
+            "POST /accounts/{id}/links",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -464,13 +524,19 @@ def unlink_accounts(
     success = service.unlink_accounts(str(account_id), str(linked_account_id))
     if not success:
         _timed_log(
-            "DELETE /accounts/{id}/links/{linked_id}", account_id,
+            "DELETE /accounts/{id}/links/{linked_id}",
+            account_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="Link not found",
+            success=False,
+            error="Link not found",
         )
         raise NotFoundError("Link not found")
 
-    _timed_log("DELETE /accounts/{id}/links/{linked_id}", account_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "DELETE /accounts/{id}/links/{linked_id}",
+        account_id,
+        (time.monotonic() - start) * 1000,
+    )
     return {"success": True}
 
 
@@ -482,5 +548,7 @@ def get_linked_accounts(account_id: int | str) -> list[dict[str, Any]]:
 
     links = service.get_linked_accounts(str(account_id))
     result = [AccountLinkResponse.from_link_dict(link).model_dump() for link in links]
-    _timed_log("GET /accounts/{id}/links", account_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "GET /accounts/{id}/links", account_id, (time.monotonic() - start) * 1000
+    )
     return result

@@ -37,7 +37,7 @@ def _moving_average(values: list[float], window: int = 7) -> list[float]:
     result = []
     for i in range(len(values)):
         start = max(0, i - window + 1)
-        window_vals = values[start:i + 1]
+        window_vals = values[start : i + 1]
         result.append(sum(window_vals) / len(window_vals))
     return result
 
@@ -56,7 +56,7 @@ def compute_daily_spending(transactions: list[dict[str, Any]]) -> dict[str, floa
         if txn.get("type") == "debit":
             date_iso = txn.get("date_iso", "")
             if date_iso:
-                daily_spend[date_iso] += (txn.get("amount_paise", 0) or 0)
+                daily_spend[date_iso] += txn.get("amount_paise", 0) or 0
 
     return dict(daily_spend)
 

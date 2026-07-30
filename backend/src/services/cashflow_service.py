@@ -52,12 +52,20 @@ class CashflowService(BaseService):
         if len(monthly_data) >= 2:
             last_month = monthly_data[-1]
             prev_month = monthly_data[-2]
-            last_net = int(last_month.get("income_paise", 0) or 0) - int(last_month.get("expense_paise", 0) or 0)
-            prev_net = int(prev_month.get("income_paise", 0) or 0) - int(prev_month.get("expense_paise", 0) or 0)
+            last_net = int(last_month.get("income_paise", 0) or 0) - int(
+                last_month.get("expense_paise", 0) or 0
+            )
+            prev_net = int(prev_month.get("income_paise", 0) or 0) - int(
+                prev_month.get("expense_paise", 0) or 0
+            )
 
             if prev_net != 0:
                 percentage_change = ((last_net - prev_net) / abs(prev_net)) * 100
-                direction: Literal["up", "down", "flat"] = "up" if percentage_change > 0 else "down" if percentage_change < 0 else "flat"
+                direction: Literal["up", "down", "flat"] = (
+                    "up"
+                    if percentage_change > 0
+                    else "down" if percentage_change < 0 else "flat"
+                )
             else:
                 percentage_change = 0.0
                 direction = "flat"
@@ -100,15 +108,19 @@ class CashflowService(BaseService):
             income = int(row.get("income_paise", 0) or 0)
             expense = int(row.get("expense_paise", 0) or 0)
 
-            monthly_data.append(CashflowMonthlyDTO(
-                month=month_key,
-                income_paise=income,
-                expenses_paise=expense,
-                net_paise=income - expense,
-                transaction_count=int(row.get("transaction_count", 0) or 0),
-            ))
+            monthly_data.append(
+                CashflowMonthlyDTO(
+                    month=month_key,
+                    income_paise=income,
+                    expenses_paise=expense,
+                    net_paise=income - expense,
+                    transaction_count=int(row.get("transaction_count", 0) or 0),
+                )
+            )
 
-        return CashflowMonthlyResponse(months=monthly_data, total_count=len(monthly_data))
+        return CashflowMonthlyResponse(
+            months=monthly_data, total_count=len(monthly_data)
+        )
 
     def get_categories(self) -> CashflowCategoryResponse:
         """
@@ -132,16 +144,26 @@ class CashflowService(BaseService):
 
         # Build response
         categories: list[CashflowCategoryDTO] = []
-        for category_id, amount in sorted(category_totals.items(), key=lambda x: x[1], reverse=True):
-            categories.append(CashflowCategoryDTO(
-                category_id=category_id,
-                category_name=category_id.replace("_", " ").title(),
-                amount_paise=amount,
-                percentage=(amount / total * 100) if total > 0 else 0.0,
-                transaction_count=sum(1 for t in transactions if (t.get("category") or "uncategorized") == category_id),
-            ))
+        for category_id, amount in sorted(
+            category_totals.items(), key=lambda x: x[1], reverse=True
+        ):
+            categories.append(
+                CashflowCategoryDTO(
+                    category_id=category_id,
+                    category_name=category_id.replace("_", " ").title(),
+                    amount_paise=amount,
+                    percentage=(amount / total * 100) if total > 0 else 0.0,
+                    transaction_count=sum(
+                        1
+                        for t in transactions
+                        if (t.get("category") or "uncategorized") == category_id
+                    ),
+                )
+            )
 
-        return CashflowCategoryResponse(categories=categories, total_count=len(categories))
+        return CashflowCategoryResponse(
+            categories=categories, total_count=len(categories)
+        )
 
     def get_transactions(
         self,
@@ -161,18 +183,20 @@ class CashflowService(BaseService):
         transactions = self.transaction_repo.get_all_transactions()
 
         # Apply pagination
-        paginated = transactions[offset:offset + limit]
+        paginated = transactions[offset : offset + limit]
 
         txn_data: list[CashflowTransactionDTO] = []
         for txn in paginated:
-            txn_data.append(CashflowTransactionDTO(
-                id=str(txn.get("id", "")),
-                date=txn.get("date_iso", "") or "",
-                description=txn.get("description", "") or "",
-                amount_paise=int(txn.get("amount_paise", 0) or 0),
-                category=txn.get("category", "uncategorized") or "uncategorized",
-                merchant=txn.get("merchant"),
-            ))
+            txn_data.append(
+                CashflowTransactionDTO(
+                    id=str(txn.get("id", "")),
+                    date=txn.get("date_iso", "") or "",
+                    description=txn.get("description", "") or "",
+                    amount_paise=int(txn.get("amount_paise", 0) or 0),
+                    category=txn.get("category", "uncategorized") or "uncategorized",
+                    merchant=txn.get("merchant"),
+                )
+            )
 
         return CashflowTransactionResponse(
             transactions=txn_data,

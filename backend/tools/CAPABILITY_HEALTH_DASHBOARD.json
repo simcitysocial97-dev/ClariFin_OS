@@ -1,0 +1,101 @@
+{
+  "account_management": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "credit_cards": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "medium"
+  },
+  "debt_management": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "financial_events": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "medium"
+  },
+  "financial_health": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "forecasting": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "household_cashflow": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "pattern_analysis": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "recommendations": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "reconciliation": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  },
+  "transaction_intelligence": {
+    "capability_tests": 0,
+    "contracts": 0,
+    "coverage": 0,
+    "health": "red",
+    "last_validation": "e3b0c44298fc1c14",
+    "property_tests": 0,
+    "risk": "low"
+  }
+}

@@ -21,7 +21,11 @@ def test_cif_generates_reports() -> None:
     """CIF must generate change-report.md and change-report.json."""
     # Run CIF with a known production file
     result = subprocess.run(
-        [sys.executable, "backend/tools/change_intelligence.py", "backend/src/engines/cashflow_engine.py"],
+        [
+            sys.executable,
+            "backend/tools/change_intelligence.py",
+            "backend/src/engines/cashflow_engine.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -29,8 +33,12 @@ def test_cif_generates_reports() -> None:
     assert result.returncode == 0, f"CIF failed: {result.stderr}"
 
     # Check reports exist
-    assert (GENERATED_DIR / "change-report.md").exists(), "change-report.md not generated"
-    assert (GENERATED_DIR / "change-report.json").exists(), "change-report.json not generated"
+    assert (
+        GENERATED_DIR / "change-report.md"
+    ).exists(), "change-report.md not generated"
+    assert (
+        GENERATED_DIR / "change-report.json"
+    ).exists(), "change-report.json not generated"
     assert (GENERATED_DIR / "test-plan.md").exists(), "test-plan.md not generated"
 
 
@@ -95,7 +103,15 @@ def test_json_schema_valid() -> None:
 
         # Check affected structure
         affected = change["affected"]
-        for key in ["services", "engines", "repositories", "property_tests", "golden_tests", "invariants", "capability_tests"]:
+        for key in [
+            "services",
+            "engines",
+            "repositories",
+            "property_tests",
+            "golden_tests",
+            "invariants",
+            "capability_tests",
+        ]:
             assert key in affected, f"'affected' missing '{key}'"
 
 
@@ -198,5 +214,9 @@ def test_unknown_file_handling() -> None:
     # Find the random file entry
     random_entry = next((c for c in data["changes"] if "random" in c["file"]), None)
     if random_entry:
-        assert random_entry["confidence"] == "LOW", "Unknown files should have LOW confidence"
-        assert "UNKNOWN" in random_entry["capabilities"], "Unknown files should have UNKNOWN capability"
+        assert (
+            random_entry["confidence"] == "LOW"
+        ), "Unknown files should have LOW confidence"
+        assert (
+            "UNKNOWN" in random_entry["capabilities"]
+        ), "Unknown files should have UNKNOWN capability"

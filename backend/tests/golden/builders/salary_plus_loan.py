@@ -1,4 +1,5 @@
 """Loader for salary_plus_loan golden dataset."""
+
 from __future__ import annotations
 
 import json

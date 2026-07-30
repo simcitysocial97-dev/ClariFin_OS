@@ -5,6 +5,7 @@ All interest rates are in basis points (1% = 100 bps).
 No database access. No services. Pure calculation only.
 """
 
+import contextlib
 from decimal import Decimal
 from typing import Any, Literal
 
@@ -27,7 +28,10 @@ ActionImpact = Literal["high", "medium", "low"]
 # Cash Advance Debt Entry Helper
 # ============================================================
 
-def derive_cash_advance_debt_entry(event: dict[str, Any], holding_period_days: int) -> dict[str, Any]:
+
+def derive_cash_advance_debt_entry(
+    event: dict[str, Any], holding_period_days: int
+) -> dict[str, Any]:
     """
     Converts a credit_card_cash_advance financial_event into a debt-list entry
     compatible with rank_debt_payoff_strategy()'s expected shape.
@@ -80,6 +84,7 @@ def derive_cash_advance_debt_entry(event: dict[str, Any], holding_period_days: i
 # Function 1: optimize_surplus_allocation
 # ============================================================
 
+
 def optimize_surplus_allocation(
     monthly_surplus_paise: int,
     debts: list[dict[str, Any]],
@@ -118,72 +123,93 @@ def optimize_surplus_allocation(
     if emergency_deficit and emergency_deficit > 0:
         emergency_allocation = min(remaining_surplus, emergency_deficit)
         if emergency_allocation > 0:
-            allocation.append({
-                "category": "emergency_fund",
-                "amount_paise": emergency_allocation,
-                "reason": "emergency_fund_below_target",
-            })
+            allocation.append(
+                {
+                    "category": "emergency_fund",
+                    "amount_paise": emergency_allocation,
+                    "reason": "emergency_fund_below_target",
+                }
+            )
             remaining_surplus -= emergency_allocation
 
     # 2. High-interest debt (avalanche priority)
     if remaining_surplus > 0 and debts:
         high_interest_debts = [
-            d for d in debts
+            d
+            for d in debts
             if int(d.get("interest_rate_bps", 0) or 0) >= HIGH_INTEREST_THRESHOLD_BPS
         ]
         if high_interest_debts:
             # Allocate portion to high-interest debt
             debt_allocation = int(remaining_surplus * DEFAULT_DEBT_ALLOCATION_RATIO)
             if debt_allocation > 0:
-                allocation.append({
-                    "category": "debt_payment",
-                    "amount_paise": debt_allocation,
-                    "reason": "high_interest_debt",
-                    "debt_ids": [d.get("id") for d in high_interest_debts if d.get("id")],
-                })
+                allocation.append(
+                    {
+                        "category": "debt_payment",
+                        "amount_paise": debt_allocation,
+                        "reason": "high_interest_debt",
+                        "debt_ids": [
+                            d.get("id") for d in high_interest_debts if d.get("id")
+                        ],
+                    }
+                )
                 remaining_surplus -= debt_allocation
 
     # 3. Medium-interest debt
     if remaining_surplus > 0 and debts:
         medium_interest_debts = [
-            d for d in debts
-            if MEDIUM_INTEREST_THRESHOLD_BPS <= int(d.get("interest_rate_bps", 0) or 0) < HIGH_INTEREST_THRESHOLD_BPS
+            d
+            for d in debts
+            if MEDIUM_INTEREST_THRESHOLD_BPS
+            <= int(d.get("interest_rate_bps", 0) or 0)
+            < HIGH_INTEREST_THRESHOLD_BPS
         ]
         if medium_interest_debts:
             debt_allocation = int(remaining_surplus * DEFAULT_DEBT_ALLOCATION_RATIO)
             if debt_allocation > 0:
-                allocation.append({
-                    "category": "debt_payment",
-                    "amount_paise": debt_allocation,
-                    "reason": "medium_interest_debt",
-                    "debt_ids": [d.get("id") for d in medium_interest_debts if d.get("id")],
-                })
+                allocation.append(
+                    {
+                        "category": "debt_payment",
+                        "amount_paise": debt_allocation,
+                        "reason": "medium_interest_debt",
+                        "debt_ids": [
+                            d.get("id") for d in medium_interest_debts if d.get("id")
+                        ],
+                    }
+                )
                 remaining_surplus -= debt_allocation
 
     # 4. Long-term goals (excluding emergency fund which already handled)
     if remaining_surplus > 0 and goals:
         long_term_goals = [
-            g for g in goals
+            g
+            for g in goals
             if g.get("goal_type") != "emergency_fund" and g.get("status") == "active"
         ]
         if long_term_goals:
             goal_allocation = int(remaining_surplus * LONG_TERM_GOAL_ALLOCATION_RATIO)
             if goal_allocation > 0:
-                allocation.append({
-                    "category": "goal_saving",
-                    "amount_paise": goal_allocation,
-                    "reason": "long_term_goals",
-                    "goal_ids": [g.get("id") for g in long_term_goals if g.get("id")],
-                })
+                allocation.append(
+                    {
+                        "category": "goal_saving",
+                        "amount_paise": goal_allocation,
+                        "reason": "long_term_goals",
+                        "goal_ids": [
+                            g.get("id") for g in long_term_goals if g.get("id")
+                        ],
+                    }
+                )
                 remaining_surplus -= goal_allocation
 
     # 5. Remaining to investment allocation
     if remaining_surplus > 0:
-        allocation.append({
-            "category": "investment",
-            "amount_paise": remaining_surplus,
-            "reason": "remaining_surplus",
-        })
+        allocation.append(
+            {
+                "category": "investment",
+                "amount_paise": remaining_surplus,
+                "reason": "remaining_surplus",
+            }
+        )
 
     return {
         "allocation": allocation,
@@ -197,6 +223,7 @@ def optimize_surplus_allocation(
 # ============================================================
 # Function 2: rank_debt_payoff_strategy
 # ============================================================
+
 
 def rank_debt_payoff_strategy(
     debts: list[dict[str, Any]],
@@ -231,7 +258,12 @@ def rank_debt_payoff_strategy(
 
     # Filter debts with positive balance
     active_debts = [
-        {**d, "outstanding_paise": int(d.get("outstanding_paise", 0) or d.get("balance_paise", 0) or 0)}
+        {
+            **d,
+            "outstanding_paise": int(
+                d.get("outstanding_paise", 0) or d.get("balance_paise", 0) or 0
+            ),
+        }
         for d in debts
         if int(d.get("outstanding_paise", 0) or d.get("balance_paise", 0) or 0) > 0
     ]
@@ -257,16 +289,22 @@ def rank_debt_payoff_strategy(
         # Smallest balance first
         priority_order = sorted(
             active_debts,
-            key=lambda d: int(d.get("outstanding_paise", 0) or d.get("balance_paise", 0) or 0),
+            key=lambda d: int(
+                d.get("outstanding_paise", 0) or d.get("balance_paise", 0) or 0
+            ),
         )
     else:  # balanced
         # Hybrid: weight interest (70%) and inverse balance (30%)
         def balanced_score(debt: dict[str, Any]) -> float:
             rate_bps = int(debt.get("interest_rate_bps", 0) or 0)
-            balance = int(debt.get("outstanding_paise", 0) or debt.get("balance_paise", 0) or 1)
+            balance = int(
+                debt.get("outstanding_paise", 0) or debt.get("balance_paise", 0) or 1
+            )
             # Normalized score: higher rate + smaller balance = higher priority
             rate_score = rate_bps / 5000.0  # Max reasonable rate ~50%
-            balance_score = 100000 / max(balance, 1000)  # Inverse, min balance 1000 paise
+            balance_score = 100000 / max(
+                balance, 1000
+            )  # Inverse, min balance 1000 paise
             return rate_score * 0.7 + balance_score * 0.3
 
         priority_order = sorted(active_debts, key=balanced_score, reverse=True)
@@ -277,9 +315,13 @@ def rank_debt_payoff_strategy(
             {
                 "id": d.get("id"),
                 "type": d.get("type", "unknown"),
-                "outstanding_paise": d.get("outstanding_paise", d.get("balance_paise", 0)),
+                "outstanding_paise": d.get(
+                    "outstanding_paise", d.get("balance_paise", 0)
+                ),
                 "interest_rate_bps": d.get("interest_rate_bps", 0),
-                "minimum_payment_paise": d.get("minimum_payment_paise", d.get("minimum_due_paise", 0)),
+                "minimum_payment_paise": d.get(
+                    "minimum_payment_paise", d.get("minimum_due_paise", 0)
+                ),
             }
             for d in priority_order
         ],
@@ -292,6 +334,7 @@ def rank_debt_payoff_strategy(
 # ============================================================
 # Function 3: optimize_goal_prioritization
 # ============================================================
+
 
 def optimize_goal_prioritization(
     goals: list[dict[str, Any]],
@@ -363,9 +406,11 @@ def optimize_goal_prioritization(
     sorted_goals = sorted(
         active_goals,
         key=lambda g: (
-            0 if g.get("goal_type") == "emergency_fund" else
-            1 if g.get("goal_type") == "debt_payoff" else
-            2,
+            (
+                0
+                if g.get("goal_type") == "emergency_fund"
+                else 1 if g.get("goal_type") == "debt_payoff" else 2
+            ),
             int(g.get("priority", 5) or 5),  # Lower number = higher priority
         ),
     )
@@ -381,16 +426,20 @@ def optimize_goal_prioritization(
 
     recommendations = []
     if emergency_fund_status and emergency_fund_status.get("deficit_paise", 0) > 0:
-        recommendations.append({
-            "recommendation": "prioritize_emergency_fund",
-            "reason": "Emergency fund below target threshold",
-        })
+        recommendations.append(
+            {
+                "recommendation": "prioritize_emergency_fund",
+                "reason": "Emergency fund below target threshold",
+            }
+        )
 
     if debt_status and debt_status.get("total_high_interest_debt_paise", 0) > 0:
-        recommendations.append({
-            "recommendation": "consider_debt_consolidation",
-            "reason": "High-interest debt present",
-        })
+        recommendations.append(
+            {
+                "recommendation": "consider_debt_consolidation",
+                "reason": "High-interest debt present",
+            }
+        )
 
     return {
         "priority_order": priority_order,
@@ -401,6 +450,7 @@ def optimize_goal_prioritization(
 # ============================================================
 # Function 4: calculate_financial_action_score
 # ============================================================
+
 
 def calculate_financial_action_score(
     action: str,
@@ -428,8 +478,10 @@ def calculate_financial_action_score(
         Dict with action, score, impact, and drivers
     """
     valid_actions = {
-        "pay_credit_card", "increase_emergency_fund",
-        "increase_investment", "reduce_expenses",
+        "pay_credit_card",
+        "increase_emergency_fund",
+        "increase_investment",
+        "reduce_expenses",
     }
 
     if action not in valid_actions:
@@ -457,7 +509,9 @@ def calculate_financial_action_score(
 
     # Risk reduction factor (30%)
     if action == "pay_credit_card":
-        credit_revolver_ratio = Decimal(str(context.get("credit_revolver_ratio", 0) or 0))
+        credit_revolver_ratio = Decimal(
+            str(context.get("credit_revolver_ratio", 0) or 0)
+        )
         if credit_revolver_ratio > Decimal("0.5"):
             risk_score = Decimal("0.9")
             drivers.append("reduces_revolver_risk")
@@ -535,6 +589,7 @@ def calculate_financial_action_score(
 # Function 5: generate_optimization_plan
 # ============================================================
 
+
 def generate_optimization_plan(
     financial_state: dict[str, Any],
 ) -> dict[str, Any]:
@@ -573,7 +628,11 @@ def generate_optimization_plan(
     monthly_surplus_paise = int(surplus.get("monthly_surplus_paise", 0) or 0)
 
     # Build emergency fund status
-    emergency_deficit = max(0, int(forecast.get("emergency_threshold_paise", 3000000)) - int(forecast.get("current_liquidity_paise", 0) or 0))
+    emergency_deficit = max(
+        0,
+        int(forecast.get("emergency_threshold_paise", 3000000))
+        - int(forecast.get("current_liquidity_paise", 0) or 0),
+    )
     emergency_fund_status: dict[str, Any] = {
         "current_paise": int(forecast.get("current_liquidity_paise", 0) or 0),
         "target_paise": forecast.get("emergency_threshold_paise", 3000000),
@@ -606,8 +665,12 @@ def generate_optimization_plan(
     context = {
         "emergency_deficit_paise": emergency_fund_status["deficit_paise"],
         "months_until_stress": forecast.get("months_until_stress"),
-        "credit_revolver_ratio": Decimal(str(risk.get("credit_revolver_ratio", "0") or "0")),
-        "debt_goals_count": sum(1 for g in goals if g.get("goal_type") == "debt_payoff"),
+        "credit_revolver_ratio": Decimal(
+            str(risk.get("credit_revolver_ratio", "0") or "0")
+        ),
+        "debt_goals_count": sum(
+            1 for g in goals if g.get("goal_type") == "debt_payoff"
+        ),
     }
 
     action_scores = [
@@ -648,10 +711,8 @@ def generate_optimization_plan(
     if monthly_surplus_paise > 0:
         confidence = Decimal("0.7")  # Base confidence with data
     if forecast.get("confidence"):
-        try:
+        with contextlib.suppress(ValueError, TypeError):
             confidence = Decimal(str(forecast["confidence"]))
-        except (ValueError, TypeError):
-            pass
 
     return {
         "recommended_actions": recommended_actions,

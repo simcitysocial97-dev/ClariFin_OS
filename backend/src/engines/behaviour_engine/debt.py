@@ -30,11 +30,11 @@ _REVOLVING_MONTH_SCORES = {
 }
 
 _DEBT_TREND_SCORES = [
-    (-1.0, 1.0, 0),      # negative -> 0
-    (0.0, 0.1, 5),       # 0 to 0.1 -> 5
-    (0.1, 0.3, 20),      # 0.1 to 0.3 -> 20
-    (0.3, 0.6, 50),      # 0.3 to 0.6 -> 50
-    (0.6, 1.0, 80),      # 0.6+ -> 80
+    (-1.0, 1.0, 0),  # negative -> 0
+    (0.0, 0.1, 5),  # 0 to 0.1 -> 5
+    (0.1, 0.3, 20),  # 0.1 to 0.3 -> 20
+    (0.3, 0.6, 50),  # 0.3 to 0.6 -> 50
+    (0.6, 1.0, 80),  # 0.6+ -> 80
 ]
 
 
@@ -60,7 +60,9 @@ def compute_credit_dependency_ratio(
     Returns:
         Decimal ratio between 0 and 1+. Returns Decimal('0') for zero expenses.
     """
-    return compute_borrowed_lifestyle_ratio(credit_funded_expenses_paise, total_expenses_paise)
+    return compute_borrowed_lifestyle_ratio(
+        credit_funded_expenses_paise, total_expenses_paise
+    )
 
 
 def _score_credit_advances(credit_advances_count: int) -> int:
@@ -93,15 +95,15 @@ def _score_revolving_months(revolving_months: int) -> int:
 
 def _score_debt_trend(debt_increase_trend: Decimal) -> int:
     """Score debt increase trend (Decimal from -1 to 1)."""
-    if debt_increase_trend < Decimal('0'):
+    if debt_increase_trend < Decimal("0"):
         return 0
-    if Decimal('0') <= debt_increase_trend < Decimal('0.1'):
+    if Decimal("0") <= debt_increase_trend < Decimal("0.1"):
         return 5
-    if Decimal('0.1') <= debt_increase_trend < Decimal('0.3'):
+    if Decimal("0.1") <= debt_increase_trend < Decimal("0.3"):
         return 20
-    if Decimal('0.3') <= debt_increase_trend < Decimal('0.6'):
+    if Decimal("0.3") <= debt_increase_trend < Decimal("0.6"):
         return 50
-    if debt_increase_trend >= Decimal('0.6'):
+    if debt_increase_trend >= Decimal("0.6"):
         return 80
     return 0
 
@@ -184,17 +186,17 @@ def compute_foir(
         Returns (Decimal('0'), "HEALTHY") for zero income.
     """
     if monthly_income_paise == 0:
-        return Decimal('0'), "HEALTHY"
+        return Decimal("0"), "HEALTHY"
 
     total_obligations = loan_emi_paise + credit_card_min_due_paise
     ratio = Decimal(str(total_obligations)) / Decimal(str(monthly_income_paise))
 
     # Determine band (inclusive upper bounds per spec bands)
-    if ratio <= Decimal('0.30'):
+    if ratio <= Decimal("0.30"):
         band = "HEALTHY"
-    elif ratio <= Decimal('0.50'):
+    elif ratio <= Decimal("0.50"):
         band = "MODERATE"
-    elif ratio < Decimal('0.60'):
+    elif ratio < Decimal("0.60"):
         band = "WARNING"
     else:
         band = "CRITICAL"
@@ -222,7 +224,7 @@ def compute_credit_revolver_ratio(
         Decimal ratio between 0 and 1+. Returns Decimal('0') for zero active months.
     """
     if active_credit_months == 0:
-        return Decimal('0')
+        return Decimal("0")
 
     ratio = Decimal(str(months_partial_payment)) / Decimal(str(active_credit_months))
     return round_decimal(ratio)

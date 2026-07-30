@@ -1,6 +1,6 @@
 # Mutation Validation Gaps Report
 
-Generated: 2026-07-25T03:42:36.095331+00:00
+Generated: 2026-07-29T06:28:29.837778+00:00
 
 ## Summary
 
@@ -60,10 +60,10 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ### `src/engines/balance_engine.py`
 
 ✗ No pure functions - blocked for mutation testing
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 ✗ Impure functions (blockers): 4
   - `compute_running_balance`: blocked by ['sqlite3', 'import:sqlite3']
   - `compute_account_balance`: blocked by ['sqlite3', 'import:sqlite3']
@@ -73,10 +73,10 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ### `src/engines/behavior_engine.py`
 
 ✗ No pure functions - blocked for mutation testing
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 ✗ Impure functions (blockers): 5
   - `invalidate_behavior_cache`: blocked by ['import:sqlite3']
   - `get_cached_behavior_profile`: blocked by ['import:sqlite3']
@@ -180,18 +180,18 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ### `src/engines/behaviour_engine/temporal.py`
 
 ✓ Pure functions detected
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 
 ### `src/engines/behaviour_engine/utils.py`
 
 ✓ Pure functions detected
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 
 ### `src/engines/behaviour_engine/wellness.py`
 
@@ -321,10 +321,10 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ### `src/engines/financial_intelligence/utils.py`
 
 ✓ Pure functions detected
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 ✗ Impure functions (blockers): 1
   - `compute_trend_direction`: blocked by ['os.']
 
@@ -339,10 +339,10 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ### `src/engines/ledger_audit_engine.py`
 
 ✗ No pure functions - blocked for mutation testing
-✗ No property tests
-✗ No golden datasets
-✗ No invariant tests
-✗ No contract tests
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
 ✗ Impure functions (blockers): 3
   - `validate_ledger_integrity`: blocked by ['sqlite3', 'import:sqlite3']
   - `verify_hash_signatures`: blocked by ['sqlite3', 'import:sqlite3']
@@ -355,6 +355,8 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
+✗ Impure functions (blockers): 1
+  - `generate_schedule`: blocked by ['open']
 
 ### `src/engines/loan_engine/emi.py`
 
@@ -371,6 +373,8 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
+✗ Impure functions (blockers): 1
+  - `apply_floating_rate_change`: blocked by ['open']
 
 ### `src/engines/loan_engine/foreclosure.py`
 
@@ -387,6 +391,8 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
+✗ Impure functions (blockers): 1
+  - `compute_loan_metrics`: blocked by ['open']
 
 ### `src/engines/loan_engine/prepayment.py`
 
@@ -395,6 +401,8 @@ Generated: 2026-07-25T03:42:36.095331+00:00
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
+✗ Impure functions (blockers): 1
+  - `apply_prepayment_at_month`: blocked by ['open']
 
 ### `src/engines/loan_engine/utils.py`
 

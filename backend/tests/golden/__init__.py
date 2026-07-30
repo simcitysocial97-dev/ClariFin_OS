@@ -1,4 +1,5 @@
 """Golden datasets package."""
+
 from tests.golden.builders.credit_card_revolver import load_credit_card_revolver
 from tests.golden.builders.high_debt_household import load_high_debt_household
 from tests.golden.builders.irregular_income import load_irregular_income

@@ -5,6 +5,7 @@ reconciliation records for full traceability.
 
 LOC WATCH: No repository file > 200 LOC.
 """
+
 from typing import Any
 
 from src.repositories.base import BaseRepository
@@ -60,9 +61,7 @@ class ReconciliationAuditRepository(BaseRepository):
                 # FK violation or other constraint error
                 return None
 
-    def get_audit_trail(
-        self, reconciliation_id: int
-    ) -> list[dict[str, Any]]:
+    def get_audit_trail(self, reconciliation_id: int) -> list[dict[str, Any]]:
         """Retrieve all audit log entries for a reconciliation, oldest first.
 
         Args:

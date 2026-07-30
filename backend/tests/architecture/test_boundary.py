@@ -8,15 +8,10 @@ Covers validator.py, errors.py, and boundary conditions.
 Run: python -m pytest tests/test_boundary.py -v
 """
 
-import sys
-from pathlib import Path
-
 import pytest
 from fastapi import HTTPException
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from errors import (
     AppError,
     DatabaseError,
@@ -38,6 +33,7 @@ from validator import (
 # ============================================================
 # Paise Amount Validation Tests
 # ============================================================
+
 
 class TestPaiseValidation:
     """Tests for validate_paise_amount boundary conditions."""
@@ -76,6 +72,7 @@ class TestPaiseValidation:
 # Rupees Amount Validation Tests
 # ============================================================
 
+
 class TestRupeesValidation:
     """Tests for validate_rupees_amount boundary conditions."""
 
@@ -105,6 +102,7 @@ class TestRupeesValidation:
 # ============================================================
 # Date Validation Tests
 # ============================================================
+
 
 class TestDateValidation:
     """Tests for validate_date boundary conditions."""
@@ -139,6 +137,7 @@ class TestDateValidation:
 # ISO Date Validation Tests
 # ============================================================
 
+
 class TestIsoDateValidation:
     """Tests for validate_iso_date boundary conditions."""
 
@@ -162,6 +161,7 @@ class TestIsoDateValidation:
 # ============================================================
 # String Validation Tests
 # ============================================================
+
 
 class TestStringValidation:
     """Tests for validate_required_string boundary conditions."""
@@ -198,6 +198,7 @@ class TestStringValidation:
 # ============================================================
 # Pagination Validation Tests
 # ============================================================
+
 
 class TestPaginationValidation:
     """Tests for validate_pagination boundary conditions."""
@@ -237,6 +238,7 @@ class TestPaginationValidation:
 # Member Validation Tests
 # ============================================================
 
+
 class TestMemberValidation:
     """Tests for validate_member boundary conditions."""
 
@@ -261,6 +263,7 @@ class TestMemberValidation:
 # Category Validation Tests
 # ============================================================
 
+
 class TestCategoryValidation:
     """Tests for validate_category boundary conditions."""
 
@@ -280,6 +283,7 @@ class TestCategoryValidation:
 # ============================================================
 # Error Class Tests
 # ============================================================
+
 
 class TestErrorClasses:
     """Tests for custom error classes."""

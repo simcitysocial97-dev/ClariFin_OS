@@ -2,6 +2,7 @@
 PURE TABLE EXTRACTION - NO REGEX ALLOWED
 Extract tables from PDF using pdfplumber's table detection
 """
+
 from pathlib import Path
 from typing import Any
 
@@ -21,7 +22,7 @@ class TableExtractor:
                 "horizontal_strategy": "lines",
                 "snap_tolerance": 5,
                 "join_tolerance": 5,
-            }
+            },
         },
         {
             "name": "text",
@@ -29,7 +30,7 @@ class TableExtractor:
                 "vertical_strategy": "text",
                 "horizontal_strategy": "text",
                 "snap_tolerance": 5,
-            }
+            },
         },
         {
             "name": "lines_explicit",
@@ -39,7 +40,7 @@ class TableExtractor:
                 "intersection_tolerance": 3,
                 "join_tolerance": 3,
                 "snap_tolerance": 3,
-            }
+            },
         },
     ]
 
@@ -60,7 +61,9 @@ class TableExtractor:
 
         return all_tables
 
-    def _extract_page_tables(self, page: pdfplumber.page.Page, page_num: int) -> list[pd.DataFrame]:
+    def _extract_page_tables(
+        self, page: pdfplumber.page.Page, page_num: int
+    ) -> list[pd.DataFrame]:
         """Extract tables from a single page using multiple strategies"""
 
         dfs = []
@@ -81,7 +84,9 @@ class TableExtractor:
         # Remove duplicates (same table detected by multiple strategies)
         return self._deduplicate_tables(dfs)
 
-    def _table_to_dataframe(self, table: list[Any], page_num: int) -> pd.DataFrame | None:
+    def _table_to_dataframe(
+        self, table: list[Any], page_num: int
+    ) -> pd.DataFrame | None:
         """Convert raw table data to DataFrame"""
 
         if not table or len(table) < 1:
@@ -99,14 +104,16 @@ class TableExtractor:
             data = table
         else:
             # First row as headers
-            headers = [str(h).strip() if h else f"col_{i}" for i, h in enumerate(first_row)]
+            headers = [
+                str(h).strip() if h else f"col_{i}" for i, h in enumerate(first_row)
+            ]
             data = table[1:]
 
         # Create DataFrame
         df = pd.DataFrame(data, columns=headers)
 
         # Add metadata
-        df['_page'] = page_num
+        df["_page"] = page_num
 
         return df
 
@@ -121,11 +128,17 @@ class TableExtractor:
 
         for df in dfs:
             # Create hash based on shape and first row content
-            content_hash = hash((
-                df.shape[0],
-                df.shape[1],
-                tuple(str(v) for v in df.iloc[0].values if pd.notna(v)) if len(df) > 0 else ()
-            ))
+            content_hash = hash(
+                (
+                    df.shape[0],
+                    df.shape[1],
+                    (
+                        tuple(str(v) for v in df.iloc[0].values if pd.notna(v))
+                        if len(df) > 0
+                        else ()
+                    ),
+                )
+            )
 
             if content_hash not in seen_hashes:
                 seen_hashes.add(content_hash)
@@ -147,13 +160,18 @@ class TableExtractor:
 
         # Also try to merge single-row tables (ICICI style)
         merged = self._merge_single_row_tables(all_tables)
-        if merged is not None and not merged.empty:
-            if self._is_transaction_table(merged):
-                transaction_tables.append(merged)
+        if (
+            merged is not None
+            and not merged.empty
+            and self._is_transaction_table(merged)
+        ):
+            transaction_tables.append(merged)
 
         return transaction_tables
 
-    def _merge_single_row_tables(self, tables: list[pd.DataFrame]) -> pd.DataFrame | None:
+    def _merge_single_row_tables(
+        self, tables: list[pd.DataFrame]
+    ) -> pd.DataFrame | None:
         """
         Merge tables that have similar column structure.
         This handles cases like ICICI where each row is a separate table.
@@ -162,7 +180,7 @@ class TableExtractor:
         # Find tables with similar column counts
         col_counts: dict[int, list[pd.DataFrame]] = {}
         for df in tables:
-            n_cols = len([c for c in df.columns if not c.startswith('_')])
+            n_cols = len([c for c in df.columns if not c.startswith("_")])
             if n_cols not in col_counts:
                 col_counts[n_cols] = []
             col_counts[n_cols].append(df)
@@ -172,8 +190,13 @@ class TableExtractor:
             if len(dfs) >= 3 and n_cols >= 4:  # At least 3 tables with 4+ columns
                 # Check if they look like transaction data
                 all_have_date = all(
-                    any(self._looks_like_date(str(v)) for v in df.iloc[0].values if pd.notna(v))
-                    for df in dfs if len(df) > 0
+                    any(
+                        self._looks_like_date(str(v))
+                        for v in df.iloc[0].values
+                        if pd.notna(v)
+                    )
+                    for df in dfs
+                    if len(df) > 0
                 )
 
                 if all_have_date:
@@ -190,17 +213,19 @@ class TableExtractor:
             return False
 
         # Check columns for transaction-like names
-        col_names = ' '.join(str(c).lower() for c in df.columns)
+        col_names = " ".join(str(c).lower() for c in df.columns)
 
-        has_date = any(kw in col_names for kw in ['date', 'txn'])
-        has_amount = any(kw in col_names for kw in ['amount', 'rs', 'debit', 'credit', 'dr', 'cr'])
+        has_date = any(kw in col_names for kw in ["date", "txn"])
+        has_amount = any(
+            kw in col_names for kw in ["amount", "rs", "debit", "credit", "dr", "cr"]
+        )
 
         if has_date and has_amount:
             return True
 
         # Check if any column has date-like values
         for col in df.columns:
-            if col.startswith('_'):
+            if col.startswith("_"):
                 continue
 
             date_count = 0
@@ -219,8 +244,8 @@ class TableExtractor:
         value = str(value).strip()
 
         # Check for common separators
-        if '/' in value or '-' in value:
-            parts = value.replace('/', '-').replace(' ', '-').split('-')
+        if "/" in value or "-" in value:
+            parts = value.replace("/", "-").replace(" ", "-").split("-")
             if len(parts) >= 2:
                 try:
                     # Check if parts are numbers in date ranges
@@ -236,8 +261,20 @@ class TableExtractor:
         if len(parts) >= 3:
             try:
                 int(parts[0])  # Day
-                months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
-                         'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+                months = [
+                    "jan",
+                    "feb",
+                    "mar",
+                    "apr",
+                    "may",
+                    "jun",
+                    "jul",
+                    "aug",
+                    "sep",
+                    "oct",
+                    "nov",
+                    "dec",
+                ]
                 if parts[1].lower()[:3] in months:
                     return True
             except ValueError:
@@ -252,8 +289,8 @@ class TableExtractor:
 
         # Remove common amount characters
         cleaned = value
-        for char in ['₹', ',', ' ', 'Rs', '.', 'Cr', 'Dr', 'INR']:
-            cleaned = cleaned.replace(char, '')
+        for char in ["₹", ",", " ", "Rs", ".", "Cr", "Dr", "INR"]:
+            cleaned = cleaned.replace(char, "")
 
         # Check if remaining is numeric
         try:
@@ -262,7 +299,7 @@ class TableExtractor:
         except ValueError:
             return False
 
-    def debug_tables(self, output_dir: str = 'debug') -> None:
+    def debug_tables(self, output_dir: str = "debug") -> None:
         """Save visual debug images showing detected tables"""
 
         Path(output_dir).mkdir(parents=True, exist_ok=True)

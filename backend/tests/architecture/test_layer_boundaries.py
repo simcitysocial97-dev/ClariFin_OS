@@ -17,9 +17,8 @@ def get_imports(file_path: pathlib.Path) -> set[str]:
             if isinstance(node, ast.Import):
                 for alias in node.names:
                     imports.add(alias.name)
-            elif isinstance(node, ast.ImportFrom):
-                if node.module:
-                    imports.add(node.module)
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                imports.add(node.module)
     except SyntaxError:
         pass
     return imports
@@ -56,7 +55,9 @@ class TestEngineBoundaries:
                     imports = get_imports(py_file)
                     if "sqlite3" in imports:
                         violations.append(f"{rel_path}: imports sqlite3 (forbidden)")
-        assert not violations, "NEW Engine sqlite3 violations:\n" + "\n".join(violations)
+        assert not violations, "NEW Engine sqlite3 violations:\n" + "\n".join(
+            violations
+        )
 
     def test_engines_no_sqlalchemy_import(self):
         """Engines cannot import sqlalchemy."""
@@ -66,7 +67,9 @@ class TestEngineBoundaries:
             for py_file in engine_dir.rglob("*.py"):
                 imports = get_imports(py_file)
                 if "sqlalchemy" in imports:
-                    violations.append(f"{py_file.relative_to(BACKEND_SRC)}: imports sqlalchemy (forbidden)")
+                    violations.append(
+                        f"{py_file.relative_to(BACKEND_SRC)}: imports sqlalchemy (forbidden)"
+                    )
         assert not violations, "Engine sqlalchemy violations:\n" + "\n".join(violations)
 
     def test_engines_no_repository_imports(self):
@@ -78,7 +81,9 @@ class TestEngineBoundaries:
                 imports = get_imports(py_file)
                 for imp in imports:
                     if "repositories" in imp or imp == "base":
-                        violations.append(f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)")
+                        violations.append(
+                            f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)"
+                        )
         assert not violations, "Engine repository violations:\n" + "\n".join(violations)
 
     def test_engines_no_router_imports(self):
@@ -90,7 +95,9 @@ class TestEngineBoundaries:
                 imports = get_imports(py_file)
                 for imp in imports:
                     if "routers" in imp:
-                        violations.append(f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)")
+                        violations.append(
+                            f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)"
+                        )
         assert not violations, "Engine router violations:\n" + "\n".join(violations)
 
     def test_engines_no_fastapi_imports(self):
@@ -102,7 +109,9 @@ class TestEngineBoundaries:
                 imports = get_imports(py_file)
                 for imp in imports:
                     if "fastapi" in imp:
-                        violations.append(f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)")
+                        violations.append(
+                            f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)"
+                        )
         assert not violations, "Engine FastAPI violations:\n" + "\n".join(violations)
 
 
@@ -118,7 +127,9 @@ class TestRepositoryBoundaries:
                 imports = get_imports(py_file)
                 for imp in imports:
                     if "engines" in imp and "engine" in imp.lower():
-                        violations.append(f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)")
+                        violations.append(
+                            f"{py_file.relative_to(BACKEND_SRC)}: imports {imp} (forbidden)"
+                        )
         assert not violations, "Repository engine violations:\n" + "\n".join(violations)
 
     def test_repositories_only_sql_allowed(self):
@@ -139,7 +150,9 @@ class TestRouterBoundaries:
                 content = py_file.read_text()
                 # Check for direct repository imports
                 if "from ..repositories" in content or "from .repositories" in content:
-                    violations.append(f"{py_file.relative_to(BACKEND_SRC)}: direct repository import (forbidden)")
+                    violations.append(
+                        f"{py_file.relative_to(BACKEND_SRC)}: direct repository import (forbidden)"
+                    )
         assert not violations, "Router repository violations:\n" + "\n".join(violations)
 
     def test_routers_no_business_logic_complexity(self):
@@ -159,5 +172,7 @@ class TestServiceBoundaries:
             for py_file in service_dir.rglob("*.py"):
                 content = py_file.read_text()
                 if "sqlite3.connect" in content or "sqlite3.Connection" in content:
-                    violations.append(f"{py_file.relative_to(BACKEND_SRC)}: direct sqlite3 usage (forbidden)")
+                    violations.append(
+                        f"{py_file.relative_to(BACKEND_SRC)}: direct sqlite3 usage (forbidden)"
+                    )
         assert not violations, "Service SQL violations:\n" + "\n".join(violations)

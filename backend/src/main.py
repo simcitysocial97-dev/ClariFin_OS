@@ -2,6 +2,7 @@
 Main entry point - orchestrates table extraction and parsing
 PURE TABLE EXTRACTION - NO REGEX FOR TRANSACTION MATCHING
 """
+
 import json
 from pathlib import Path
 from typing import Any
@@ -11,16 +12,18 @@ from src.table_extractor import TableExtractor
 from src.transaction_parser import TransactionParser
 
 
-def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[dict[str, Any]]:
+def extract_transactions(
+    pdf_path: str, bank_name: str | None = None
+) -> list[dict[str, Any]]:
     """
     Extract transactions from bank statement PDF.
     Uses PURE TABLE EXTRACTION - no regex patterns for transaction matching.
     """
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"Extracting: {Path(pdf_path).name}")
     print(f"Bank: {bank_name or 'Auto-detect'}")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     # Step 1: Extract all tables from PDF
     extractor = TableExtractor(pdf_path)
@@ -37,7 +40,7 @@ def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[di
 
         # Show table info for debugging
         for i, df in enumerate(all_tables):
-            print(f"\n  Table {i+1}: {len(df)} rows x {len(df.columns)} cols")
+            print(f"\n  Table {i + 1}: {len(df)} rows x {len(df.columns)} cols")
             print(f"  Columns: {list(df.columns)[:5]}...")
 
         return []
@@ -48,7 +51,7 @@ def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[di
     mapper = ColumnMapper()
 
     for i, df in enumerate(transaction_tables):
-        print(f"\n--- Processing Table {i+1} ---")
+        print(f"\n--- Processing Table {i + 1} ---")
         print(f"  Rows: {len(df)}")
         print(f"  Columns: {list(df.columns)}")
 
@@ -62,7 +65,7 @@ def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[di
             continue
 
         # Step 3: Parse rows into transactions
-        parser = TransactionParser(column_map, bank_name or 'Unknown')
+        parser = TransactionParser(column_map, bank_name or "Unknown")
         transactions = parser.parse_dataframe(df)
 
         print(f"  ✅ Extracted {len(transactions)} transactions")
@@ -71,7 +74,9 @@ def extract_transactions(pdf_path: str, bank_name: str | None = None) -> list[di
     return all_transactions
 
 
-def test_bank(pdf_path: str, json_path: str, bank_name: str | None = None) -> tuple[float, int, int]:
+def test_bank(
+    pdf_path: str, json_path: str, bank_name: str | None = None
+) -> tuple[float, int, int]:
     """Test extraction for a single bank"""
 
     # Extract
@@ -80,7 +85,9 @@ def test_bank(pdf_path: str, json_path: str, bank_name: str | None = None) -> tu
     # Load expected
     with open(json_path) as f:
         data = json.load(f)
-        expected: list[dict[str, Any]] = data.get('transactions', data) if isinstance(data, dict) else data
+        expected: list[dict[str, Any]] = (
+            data.get("transactions", data) if isinstance(data, dict) else data
+        )
 
     # Compare
     print("\n📈 Results:")
@@ -91,7 +98,7 @@ def test_bank(pdf_path: str, json_path: str, bank_name: str | None = None) -> tu
     matches = 0
     for tx in transactions:
         for exp in expected:
-            if tx['date'] == exp['date'] and abs(tx['amount'] - exp['amount']) < 1:
+            if tx["date"] == exp["date"] and abs(tx["amount"] - exp["amount"]) < 1:
                 matches += 1
                 break
 
@@ -105,22 +112,22 @@ def test_bank(pdf_path: str, json_path: str, bank_name: str | None = None) -> tu
 def main() -> None:
     """Test all banks"""
 
-    base_path = Path(__file__).parent.parent.parent / 'backup-core' / 'test'
+    base_path = Path(__file__).parent.parent.parent / "backup-core" / "test"
 
     test_cases: list[tuple[str, str, str]] = [
-        ('hdfc_Apr.pdf', 'hdfc_Apr.json', 'HDFC Bank'),
-        ('idfc_Aug.pdf', 'idfc_Aug.json', 'IDFC First Bank'),
-        ('icici_feb.pdf', 'icici_feb.json', 'ICICI Bank'),
-        ('sbi_oct.pdf', 'sbi_oct.json', 'SBI Card'),
-        ('Axis_Apr.pdf', 'Axis_Apr.json', 'Axis Bank'),
-        ('Indusind_jun.pdf', 'Indusind_jun.json', 'IndusInd Bank'),
+        ("hdfc_Apr.pdf", "hdfc_Apr.json", "HDFC Bank"),
+        ("idfc_Aug.pdf", "idfc_Aug.json", "IDFC First Bank"),
+        ("icici_feb.pdf", "icici_feb.json", "ICICI Bank"),
+        ("sbi_oct.pdf", "sbi_oct.json", "SBI Card"),
+        ("Axis_Apr.pdf", "Axis_Apr.json", "Axis Bank"),
+        ("Indusind_jun.pdf", "Indusind_jun.json", "IndusInd Bank"),
     ]
 
     results: list[dict[str, Any]] = []
 
     for pdf_file, json_file, bank_name in test_cases:
-        pdf_path = base_path / 'statements' / pdf_file
-        json_path = base_path / 'expected' / json_file
+        pdf_path = base_path / "statements" / pdf_file
+        json_path = base_path / "expected" / json_file
 
         if not pdf_path.exists():
             print(f"❌ PDF not found: {pdf_path}")
@@ -130,27 +137,33 @@ def main() -> None:
             print(f"❌ JSON not found: {json_path}")
             continue
 
-        accuracy, matches, expected = test_bank(str(pdf_path), str(json_path), bank_name)
-        results.append({
-            'bank': bank_name,
-            'pdf': pdf_file,
-            'accuracy': accuracy,
-            'matches': matches,
-            'expected': expected
-        })
+        accuracy, matches, expected = test_bank(
+            str(pdf_path), str(json_path), bank_name
+        )
+        results.append(
+            {
+                "bank": bank_name,
+                "pdf": pdf_file,
+                "accuracy": accuracy,
+                "matches": matches,
+                "expected": expected,
+            }
+        )
 
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("SUMMARY")
-    print("="*70)
+    print("=" * 70)
 
-    total_matches = sum(r['matches'] for r in results)
-    total_expected = sum(r['expected'] for r in results)
+    total_matches = sum(r["matches"] for r in results)
+    total_expected = sum(r["expected"] for r in results)
     overall = (total_matches / total_expected * 100) if total_expected > 0 else 0
 
     for r in results:
-        status = "✅" if r['accuracy'] >= 100 else "❌"
-        print(f"{status} {r['bank']:15} | {r['accuracy']:6.2f}% | {r['matches']}/{r['expected']}")
+        status = "✅" if r["accuracy"] >= 100 else "❌"
+        print(
+            f"{status} {r['bank']:15} | {r['accuracy']:6.2f}% | {r['matches']}/{r['expected']}"
+        )
 
     print(f"\n🎯 Overall: {overall:.2f}% ({total_matches}/{total_expected})")
 

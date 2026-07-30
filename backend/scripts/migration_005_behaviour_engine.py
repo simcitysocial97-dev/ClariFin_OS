@@ -12,6 +12,7 @@ from pathlib import Path
 
 DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
 
+
 def run_migration(db_path: str | None = None) -> None:
     """Create behaviour engine tables if they don't exist."""
     path = db_path or DB_PATH
@@ -97,24 +98,47 @@ def run_migration(db_path: str | None = None) -> None:
     """)
 
     # Create indexes for performance
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_snapshots_date ON behaviour_snapshots(snapshot_date)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_snapshots_household ON behaviour_snapshots(household_id)")
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_snapshots_date ON behaviour_snapshots(snapshot_date)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_snapshots_household ON behaviour_snapshots(household_id)"
+    )
 
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_patterns_type ON behaviour_patterns(pattern_type)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_patterns_household ON behaviour_patterns(household_id)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_patterns_last_observed ON behaviour_patterns(last_observed)")
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_patterns_type ON behaviour_patterns(pattern_type)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_patterns_household ON behaviour_patterns(household_id)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_patterns_last_observed ON behaviour_patterns(last_observed)"
+    )
 
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_household ON behaviour_alerts(household_id)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_severity ON behaviour_alerts(severity)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_acknowledged ON behaviour_alerts(is_acknowledged)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_alert_code ON behaviour_alerts(alert_code)")
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_household ON behaviour_alerts(household_id)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_severity ON behaviour_alerts(severity)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_acknowledged ON behaviour_alerts(is_acknowledged)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_behaviour_alerts_alert_code ON behaviour_alerts(alert_code)"
+    )
 
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_financial_profiles_household ON financial_profiles(household_id)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_financial_profiles_type ON financial_profiles(profile_type)")
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_financial_profiles_household ON financial_profiles(household_id)"
+    )
+    cursor.execute(
+        "CREATE INDEX IF NOT EXISTS idx_financial_profiles_type ON financial_profiles(profile_type)"
+    )
 
     conn.commit()
     conn.close()
     print("[MIGRATION 005] Behaviour engine tables created successfully.")
+
 
 if __name__ == "__main__":
     run_migration()

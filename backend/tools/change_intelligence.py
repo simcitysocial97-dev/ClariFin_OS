@@ -45,19 +45,22 @@ CONF_HIGH = "HIGH"
 @dataclass
 class ChangeImpact:
     """Impact analysis for a single changed file."""
+
     file: str
     risk: str = RISK_LOW
     confidence: str = CONF_HIGH
     capabilities: list[str] = field(default_factory=list)
-    affected: dict[str, list[str]] = field(default_factory=lambda: {
-        "services": [],
-        "engines": [],
-        "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": [],
-    })
+    affected: dict[str, list[str]] = field(
+        default_factory=lambda: {
+            "services": [],
+            "engines": [],
+            "repositories": [],
+            "property_tests": [],
+            "golden_tests": [],
+            "invariants": [],
+            "capability_tests": [],
+        }
+    )
     recommended_commands: list[str] = field(default_factory=list)
 
 
@@ -65,7 +68,9 @@ def load_capability_registry() -> dict[str, Any]:
     """Load the capability registry YAML."""
     registry_path = GENERATED_DIR / "capability-registry.yaml"
     if not registry_path.exists():
-        raise FileNotFoundError("capability-registry.yaml not found - run check_coverage.py first")
+        raise FileNotFoundError(
+            "capability-registry.yaml not found - run check_coverage.py first"
+        )
     with open(registry_path) as f:
         data: dict[str, Any] | None = yaml.safe_load(f)
         return data if data else {"capabilities": []}
@@ -95,24 +100,44 @@ def build_file_graph(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
         for router in cap.get("routers", []):
             path = router.lstrip("/")
             if path not in graph:
-                graph[path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set(), "invariants": set(), "capability_tests": []}
+                graph[path] = {
+                    "capabilities": set(),
+                    "property_tests": set(),
+                    "golden_tests": set(),
+                    "invariants": set(),
+                    "capability_tests": [],
+                }
             graph[path]["capabilities"].add(cap_id)
-            graph[path]["property_tests"].add(f"tests/properties/{cap_id.replace('_', '')}")
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["property_tests"].add(
+                f"tests/properties/{cap_id.replace('_', '')}"
+            )
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
         # Map services
         for service in cap.get("services", []):
             path = service.lstrip("/")
             if path not in graph:
-                graph[path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set(), "invariants": set(), "capability_tests": []}
+                graph[path] = {
+                    "capabilities": set(),
+                    "property_tests": set(),
+                    "golden_tests": set(),
+                    "invariants": set(),
+                    "capability_tests": [],
+                }
             graph[path]["capabilities"].add(cap_id)
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
         # Map engines
         for engine in cap.get("engines", []):
             path = engine.lstrip("/")
             if path not in graph:
-                graph[path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set(), "invariants": set(), "capability_tests": []}
+                graph[path] = {
+                    "capabilities": set(),
+                    "property_tests": set(),
+                    "golden_tests": set(),
+                    "invariants": set(),
+                    "capability_tests": [],
+                }
             graph[path]["capabilities"].add(cap_id)
 
             # Add property tests from capability
@@ -123,22 +148,30 @@ def build_file_graph(registry: dict[str, Any]) -> dict[str, dict[str, Any]]:
             # Add golden test names
             for dataset in cap.get("golden_datasets", []):
                 if dataset.startswith("tests/golden/datasets/"):
-                    dataset_name = dataset.replace("tests/golden/datasets/", "").replace(".json", "")
+                    dataset_name = dataset.replace(
+                        "tests/golden/datasets/", ""
+                    ).replace(".json", "")
                     graph[path]["golden_tests"].add(dataset_name)
 
             # Add invariants
             for inv in cap.get("invariants", []):
                 graph[path]["invariants"].add(inv)
 
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
         # Map repositories
         for repo in cap.get("repositories", []):
             path = repo.lstrip("/")
             if path not in graph:
-                graph[path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set(), "invariants": set(), "capability_tests": []}
+                graph[path] = {
+                    "capabilities": set(),
+                    "property_tests": set(),
+                    "golden_tests": set(),
+                    "invariants": set(),
+                    "capability_tests": [],
+                }
             graph[path]["capabilities"].add(cap_id)
-            graph[path]["capability_tests"].append(f"tests/capabilities/{cap_id}")
+            graph[path]["capability_tests"].append(f"tests/capability/{cap_id}")
 
     # Convert sets to sorted lists
     for path in graph:
@@ -176,8 +209,22 @@ def classify_risk(file_path: str) -> tuple[str, str]:
     # Engines - CRITICAL risk (financial logic)
     if "/engines/" in file_path:
         # Double-check for financial calculation keywords
-        engine_path = file_path.split("/engines/")[-1] if "/engines/" in file_path else ""
-        if any(kw in engine_path for kw in ["cashflow", "loan", "forecast", "interest", "amortization", "behaviour", "behavior", "credit_card"]):
+        engine_path = (
+            file_path.split("/engines/")[-1] if "/engines/" in file_path else ""
+        )
+        if any(
+            kw in engine_path
+            for kw in [
+                "cashflow",
+                "loan",
+                "forecast",
+                "interest",
+                "amortization",
+                "behaviour",
+                "behavior",
+                "credit_card",
+            ]
+        ):
             return RISK_CRITICAL, CONF_HIGH
         return RISK_HIGH, CONF_MEDIUM  # Engine but not obviously financial
 
@@ -226,7 +273,9 @@ def get_transitive_capabilities(cap_id: str, graph: dict[str, list[str]]) -> set
     return result
 
 
-def analyze_change(file_path: str, file_graph: dict[str, Any], registry: dict[str, Any]) -> ChangeImpact:
+def analyze_change(
+    file_path: str, file_graph: dict[str, Any], registry: dict[str, Any]
+) -> ChangeImpact:
     """Analyze a single changed file."""
     impact = ChangeImpact(file=file_path)
 
@@ -244,21 +293,27 @@ def analyze_change(file_path: str, file_graph: dict[str, Any], registry: dict[st
     if graph_entry:
         impact.capabilities = graph_entry["capabilities"]
         # Remove duplicates from capability_tests
-        impact.affected["capability_tests"] = sorted(set(graph_entry["capability_tests"]))
+        impact.affected["capability_tests"] = sorted(
+            set(graph_entry["capability_tests"])
+        )
         impact.affected["property_tests"] = graph_entry["property_tests"]
         impact.affected["golden_tests"] = graph_entry["golden_tests"]
         impact.affected["invariants"] = graph_entry["invariants"]
 
         # Build recommended commands grouped by capability
         for cap_id in impact.capabilities:
-            impact.recommended_commands.append(f"pytest tests/capabilities/{cap_id} -q")
+            impact.recommended_commands.append(f"pytest tests/capability/{cap_id} -q")
 
         for prop_test in impact.affected["property_tests"]:
             impact.recommended_commands.append(f"pytest {prop_test} -q")
 
         if impact.affected["golden_tests"]:
-            golden_keywords = ",".join(impact.affected["golden_tests"][:3])  # Limit to avoid huge commands
-            impact.recommended_commands.append(f"pytest tests/golden -k '{golden_keywords}' -q")
+            golden_keywords = ",".join(
+                impact.affected["golden_tests"][:3]
+            )  # Limit to avoid huge commands
+            impact.recommended_commands.append(
+                f"pytest tests/golden -k '{golden_keywords}' -q"
+            )
     else:
         # File not in graph - unknown impact
         impact.confidence = CONF_LOW
@@ -308,17 +363,21 @@ def generate_markdown_report(impacts: list[ChangeImpact]) -> str:
     ]
 
     if not impacts:
-        lines.extend([
-            "No changes detected.",
-            "",
-        ])
+        lines.extend(
+            [
+                "No changes detected.",
+                "",
+            ]
+        )
         return "\n".join(lines)
 
     # Summary table
-    lines.extend([
-        "| File | Risk | Capabilities | Confidence |",
-        "|------|------|--------------|------------|",
-    ])
+    lines.extend(
+        [
+            "| File | Risk | Capabilities | Confidence |",
+            "|------|------|--------------|------------|",
+        ]
+    )
     for i in impacts:
         caps = ", ".join(i.capabilities) if i.capabilities else "UNKNOWN"
         lines.append(f"| `{i.file}` | {i.risk} | {caps} | {i.confidence} |")
@@ -326,14 +385,16 @@ def generate_markdown_report(impacts: list[ChangeImpact]) -> str:
     lines.extend(["", "## Detailed Analysis", ""])
 
     for i in impacts:
-        lines.extend([
-            f"### Changed: `{i.file}`",
-            "",
-            f"**Risk:** {i.risk}",
-            "",
-            f"**Confidence:** {i.confidence}",
-            "",
-        ])
+        lines.extend(
+            [
+                f"### Changed: `{i.file}`",
+                "",
+                f"**Risk:** {i.risk}",
+                "",
+                f"**Confidence:** {i.confidence}",
+                "",
+            ]
+        )
 
         if i.capabilities and "UNKNOWN" not in i.capabilities:
             lines.append("**Affected Capabilities:**")
@@ -378,14 +439,16 @@ def generate_markdown_report(impacts: list[ChangeImpact]) -> str:
 
     # Overall risk
     overall_risk, score = compute_overall_risk(impacts)
-    lines.extend([
-        "## Overall Assessment",
-        "",
-        f"**Risk Level:** {overall_risk}",
-        "",
-        f"**Risk Score:** {score}",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Overall Assessment",
+            "",
+            f"**Risk Level:** {overall_risk}",
+            "",
+            f"**Risk Score:** {score}",
+            "",
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -400,10 +463,12 @@ def generate_test_plan(impacts: list[ChangeImpact]) -> str:
     ]
 
     if not impacts:
-        lines.extend([
-            "No changes detected - no targeted verification needed.",
-            "",
-        ])
+        lines.extend(
+            [
+                "No changes detected - no targeted verification needed.",
+                "",
+            ]
+        )
         return "\n".join(lines)
 
     # Collect unique capabilities
@@ -419,54 +484,62 @@ def generate_test_plan(impacts: list[ChangeImpact]) -> str:
         all_golden_keywords.update(i.affected["golden_tests"])
 
     # Stage 1: Verify-fast
-    lines.extend([
-        "## Stage 1: Lint & Type Check",
-        "",
-        "```bash",
-        "scripts/verify-fast.sh",
-        "```",
-        "",
-    ])
+    lines.extend(
+        [
+            "## Stage 1: Lint & Type Check",
+            "",
+            "```bash",
+            "scripts/verify-fast.sh",
+            "```",
+            "",
+        ]
+    )
 
     # Stage 2: Architecture
     if all_capabilities:
-        lines.extend([
-            "## Stage 2: Architecture Tests",
-            "",
-            "```bash",
-            "pytest tests/architecture -q --tb=short",
-            "```",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Stage 2: Architecture Tests",
+                "",
+                "```bash",
+                "pytest tests/architecture -q --tb=short",
+                "```",
+                "",
+            ]
+        )
 
     # Stage 3: Affected Capabilities
     if all_capabilities:
         lines.append("## Stage 3: Capability Smoke Tests (Affected)")
         lines.append("")
         for cap_id in sorted(all_capabilities):
-            lines.append(f"- ✓ pytest tests/capabilities/{cap_id} -q")
+            lines.append(f"- ✓ pytest tests/capability/{cap_id} -q")
         lines.append("")
 
     # Stage 4: Property Tests
     if all_property_tests:
-        lines.extend([
-            "## Stage 4: Property Tests (Affected)",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Stage 4: Property Tests (Affected)",
+                "",
+            ]
+        )
         for prop in sorted(all_property_tests):
             lines.append(f"- ✓ {prop}")
         lines.append("")
 
     # Stage 5: Golden Tests
     if all_golden_keywords:
-        lines.extend([
-            "## Stage 5: Golden Tests (Affected)",
-            "",
-            "```bash",
-            f"pytest tests/golden -k '{','.join(sorted(all_golden_keywords)[:5])}' -q --tb=short",
-            "```",
-            "",
-        ])
+        lines.extend(
+            [
+                "## Stage 5: Golden Tests (Affected)",
+                "",
+                "```bash",
+                f"pytest tests/golden -k '{','.join(sorted(all_golden_keywords)[:5])}' -q --tb=short",
+                "```",
+                "",
+            ]
+        )
 
     return "\n".join(lines)
 
@@ -494,7 +567,10 @@ def main() -> None:
 
             empty_json: dict[str, Any] = {
                 "generated_at": datetime.now(UTC).isoformat(),
-                "git_sha": os.popen("git rev-parse HEAD 2>/dev/null || echo 'unknown'").read().strip() or "unknown",
+                "git_sha": os.popen("git rev-parse HEAD 2>/dev/null || echo 'unknown'")
+                .read()
+                .strip()
+                or "unknown",
                 "changes": [],
                 "overall": {"risk": RISK_LOW, "score": 0},
             }
@@ -545,10 +621,14 @@ def main() -> None:
     for file_path in changed_files:
         lookup_path = file_path.replace("backend/", "")
         for func in mutation_map.get("functions", []):
-            if func.get("module") == lookup_path or lookup_path.endswith(func.get("module", "")):
-                if func.get("purity") == "PURE":
-                    candidate_name = f"{func.get('module', '')}:{func.get('function', '')}"
-                    affected_mutation_candidates.setdefault(file_path, []).append(candidate_name)
+            if (
+                func.get("module") == lookup_path
+                or lookup_path.endswith(func.get("module", ""))
+            ) and func.get("purity") == "PURE":
+                candidate_name = f"{func.get('module', '')}:{func.get('function', '')}"
+                affected_mutation_candidates.setdefault(file_path, []).append(
+                    candidate_name
+                )
 
     # Build mutation readiness per capability
     mutation_readiness_by_cap: dict[str, str] = {}
@@ -570,7 +650,10 @@ def main() -> None:
     # JSON report with mutation data
     json_report: dict[str, Any] = {
         "generated_at": datetime.now(UTC).isoformat(),
-        "git_sha": os.popen("git rev-parse HEAD 2>/dev/null || echo 'unknown'").read().strip() or "unknown",
+        "git_sha": os.popen("git rev-parse HEAD 2>/dev/null || echo 'unknown'")
+        .read()
+        .strip()
+        or "unknown",
         "changes": [
             {
                 "file": i.file,
@@ -588,7 +671,10 @@ def main() -> None:
         },
         "mutation_readiness": mutation_readiness_by_cap,
         "affected_mutation_candidates": affected_mutation_candidates,
-        "test_strength": {cap.get("id"): cap.get("strength", "Weak") for cap in test_strength.get("capabilities", [])},
+        "test_strength": {
+            cap.get("id"): cap.get("strength", "Weak")
+            for cap in test_strength.get("capabilities", [])
+        },
     }
     with open(GENERATED_DIR / "change-report.json", "w") as f:
         json.dump(json_report, f, indent=2)

@@ -3,6 +3,7 @@
 Pure detectors for classifying transactions based on patterns.
 Supports EMI detection, credit card payments, cash conversions, etc.
 """
+
 from .cash_conversion_detector import (
     CashConversionResult,
 )

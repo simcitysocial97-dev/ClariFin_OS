@@ -38,7 +38,9 @@ def run_migration(db_path: str | None = None) -> None:
     owner_count = conn.execute("SELECT changes()").fetchone()[0]
     print(f"⊘ Backfilled owner_id → {owner_count} rows")
 
-    backfill_household = "UPDATE accounts SET household_id = 'primary' WHERE household_id IS NULL"
+    backfill_household = (
+        "UPDATE accounts SET household_id = 'primary' WHERE household_id IS NULL"
+    )
     conn.execute(backfill_household)
     household_count = conn.execute("SELECT changes()").fetchone()[0]
     print(f"⊘ Backfilled household_id → {household_count} rows")
@@ -46,7 +48,9 @@ def run_migration(db_path: str | None = None) -> None:
     conn.commit()
 
     # Verify
-    cur = conn.execute("SELECT COUNT(*) FROM accounts WHERE owner_id IS NULL OR household_id IS NULL")
+    cur = conn.execute(
+        "SELECT COUNT(*) FROM accounts WHERE owner_id IS NULL OR household_id IS NULL"
+    )
     null_count = cur.fetchone()[0]
     if null_count == 0:
         print("✓ All rows have owner_id and household_id populated.")

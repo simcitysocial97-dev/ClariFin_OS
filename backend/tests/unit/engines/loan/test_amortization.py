@@ -7,20 +7,16 @@ Tests leap years, month-end dates, and invariant validation.
 Run: python -m pytest tests/test_amortization.py -v
 """
 
-import sys
-from pathlib import Path
-
 import pytest
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from engines.loan_engine import generate_schedule, validate_schedule_invariants
-from engines.loan_engine.amortization import _add_months
-from engines.loan_engine.emi import compute_emi_fixed
+from src.engines.loan_engine import generate_schedule, validate_schedule_invariants
+from src.engines.loan_engine.amortization import _add_months
+from src.engines.loan_engine.emi import compute_emi_fixed
 
 # ============================================================
 # Fixtures
 # ============================================================
+
 
 @pytest.fixture
 def sample_loan():
@@ -37,24 +33,28 @@ def sample_loan():
 # Date Edge Case Tests
 # ============================================================
 
+
 class TestDateEdgeCases:
     """Tests for leap years and month-end date handling."""
 
     def test_jan_31_to_feb(self):
         """Jan 31 + 1 month should resolve to Feb 28."""
         from datetime import date
+
         result = _add_months(date(2025, 1, 31), 1)
         assert result == date(2025, 2, 28)
 
     def test_jan_31_to_mar(self):
         """Jan 31 + 2 months should resolve to Mar 31."""
         from datetime import date
+
         result = _add_months(date(2025, 1, 31), 2)
         assert result == date(2025, 3, 31)
 
     def test_feb_29_leap_year(self):
         """Feb 29, 2024 + 12 months should be Feb 28, 2025."""
         from datetime import date
+
         result = _add_months(date(2024, 2, 29), 12)
         # 2025 is not a leap year
         assert result == date(2025, 2, 28)
@@ -62,24 +62,28 @@ class TestDateEdgeCases:
     def test_feb_29_to_leap_year(self):
         """Feb 29, 2024 + 36 months should be Feb 29, 2027."""
         from datetime import date
+
         result = _add_months(date(2024, 2, 29), 36)
         assert result == date(2027, 2, 28)
 
     def test_feb_28_non_leap_to_feb_28(self):
         """Feb 28, 2025 + 12 months should stay Feb 28."""
         from datetime import date
+
         result = _add_months(date(2025, 2, 28), 12)
         assert result == date(2026, 2, 28)
 
     def test_month_end_regular_month(self):
         """Jan 31 -> Mar 31 works correctly."""
         from datetime import date
+
         result = _add_months(date(2025, 1, 31), 3)
         assert result == date(2025, 4, 30)
 
     def test_full_year_progression(self):
         """Start date + 12 months works correctly."""
         from datetime import date
+
         result = _add_months(date(2025, 1, 15), 12)
         assert result == date(2026, 1, 15)
 
@@ -87,6 +91,7 @@ class TestDateEdgeCases:
 # ============================================================
 # Schedule Generation Tests
 # ============================================================
+
 
 class TestScheduleGeneration:
     """Tests for core schedule generation."""
@@ -129,6 +134,7 @@ class TestScheduleGeneration:
 # Invariant Validation Tests
 # ============================================================
 
+
 class TestScheduleInvariants:
     """Tests for schedule invariant validation."""
 
@@ -147,7 +153,10 @@ class TestScheduleInvariants:
         """Cumulative interest never decreases."""
         schedule = generate_schedule(**sample_loan)
         for i in range(1, len(schedule)):
-            assert schedule[i].cumulative_interest_paise >= schedule[i-1].cumulative_interest_paise
+            assert (
+                schedule[i].cumulative_interest_paise
+                >= schedule[i - 1].cumulative_interest_paise
+            )
 
     def test_interest_calculation_accuracy(self, sample_loan):
         """Interest matches mathematical formula."""
@@ -163,12 +172,13 @@ class TestScheduleInvariants:
         """Balance strictly decreases until zero."""
         schedule = generate_schedule(**sample_loan)
         for i in range(1, len(schedule)):
-            assert schedule[i].balance_paise < schedule[i-1].balance_paise
+            assert schedule[i].balance_paise < schedule[i - 1].balance_paise
 
     def test_validate_schedule_negative_balance_raises(self):
         """Invariant check raises on negative balance."""
         # Create a schedule with negative balance (simulated)
-        from engines.loan_engine.models import AmortizationRow
+        from src.engines.loan_engine.models import AmortizationRow
+
         schedule = [
             AmortizationRow(
                 month_number=1,
@@ -187,6 +197,7 @@ class TestScheduleInvariants:
 # ============================================================
 # Edge Case Loan Tests
 # ============================================================
+
 
 class TestEdgeCaseLoans:
     """Tests for edge case loan scenarios."""

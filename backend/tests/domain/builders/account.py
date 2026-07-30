@@ -1,4 +1,5 @@
 """Account Builder - Plain Python builder for account data."""
+
 from __future__ import annotations
 
 from typing import Any

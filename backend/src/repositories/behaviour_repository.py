@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 from decimal import Decimal
 from typing import Any
 
@@ -15,25 +16,28 @@ class BehaviourRepository(BaseRepository):
     def create_snapshot(self, snapshot_data: dict[str, Any]) -> dict[str, Any] | None:
         """Create a new behaviour snapshot."""
         with self._get_conn() as conn:
-            cursor = conn.execute("""
+            cursor = conn.execute(
+                """
                 INSERT INTO behaviour_snapshots (
                     snapshot_date, household_id, savings_discipline_score_bps,
                     cashflow_stability_score_bps, salary_dependence_ratio_bps,
                     lifestyle_inflation_rate_bps, subscription_burn_rate_bps,
                     resilience_index_bps, wellness_score_bps, version
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                snapshot_data['snapshot_date'],
-                snapshot_data.get('household_id', 'default'),
-                snapshot_data['savings_discipline_score_bps'],
-                snapshot_data['cashflow_stability_score_bps'],
-                snapshot_data['salary_dependence_ratio_bps'],
-                snapshot_data['lifestyle_inflation_rate_bps'],
-                snapshot_data['subscription_burn_rate_bps'],
-                snapshot_data['resilience_index_bps'],
-                snapshot_data['wellness_score_bps'],
-                snapshot_data.get('version', 1)
-            ))
+            """,
+                (
+                    snapshot_data["snapshot_date"],
+                    snapshot_data.get("household_id", "default"),
+                    snapshot_data["savings_discipline_score_bps"],
+                    snapshot_data["cashflow_stability_score_bps"],
+                    snapshot_data["salary_dependence_ratio_bps"],
+                    snapshot_data["lifestyle_inflation_rate_bps"],
+                    snapshot_data["subscription_burn_rate_bps"],
+                    snapshot_data["resilience_index_bps"],
+                    snapshot_data["wellness_score_bps"],
+                    snapshot_data.get("version", 1),
+                ),
+            )
             conn.commit()
 
         snapshot_id = cursor.lastrowid
@@ -51,16 +55,21 @@ class BehaviourRepository(BaseRepository):
 
         return self._map_snapshot_row(dict(row))
 
-    def get_latest_snapshot(self, household_id: str | None = None) -> dict[str, Any] | None:
+    def get_latest_snapshot(
+        self, household_id: str | None = None
+    ) -> dict[str, Any] | None:
         """Get the most recent behaviour snapshot."""
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         with self._get_conn() as conn:
-            row = conn.execute("""
+            row = conn.execute(
+                """
                 SELECT * FROM behaviour_snapshots
                 WHERE household_id = ?
                 ORDER BY snapshot_date DESC
                 LIMIT 1
-            """, (household_id,)).fetchone()
+            """,
+                (household_id,),
+            ).fetchone()
 
         if not row:
             return None
@@ -71,13 +80,16 @@ class BehaviourRepository(BaseRepository):
         self, start_date: str, end_date: str, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get behaviour snapshots within a date range."""
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT * FROM behaviour_snapshots
                 WHERE household_id = ? AND snapshot_date BETWEEN ? AND ?
                 ORDER BY snapshot_date
-            """, (household_id, start_date, end_date)).fetchall()
+            """,
+                (household_id, start_date, end_date),
+            ).fetchall()
 
         return [self._map_snapshot_row(dict(row)) for row in rows]
 
@@ -85,24 +97,32 @@ class BehaviourRepository(BaseRepository):
         self, metric: str, months: int = 6, household_id: str | None = None
     ) -> list[dict[str, Any]]:
         """Get trend data for a specific metric."""
-        household_id = household_id or 'default'
+        household_id = household_id or "default"
         valid_metrics = [
-            'savings_discipline_score_bps', 'cashflow_stability_score_bps',
-            'salary_dependence_ratio_bps', 'lifestyle_inflation_rate_bps',
-            'subscription_burn_rate_bps', 'resilience_index_bps',
-            'wellness_score_bps'
+            "savings_discipline_score_bps",
+            "cashflow_stability_score_bps",
+            "salary_dependence_ratio_bps",
+            "lifestyle_inflation_rate_bps",
+            "subscription_burn_rate_bps",
+            "resilience_index_bps",
+            "wellness_score_bps",
         ]
 
         if metric not in valid_metrics:
-            raise ValueError(f"Invalid metric: {metric}. Must be one of {valid_metrics}")
+            raise ValueError(
+                f"Invalid metric: {metric}. Must be one of {valid_metrics}"
+            )
 
         with self._get_conn() as conn:
-            rows = conn.execute(f"""
+            rows = conn.execute(
+                f"""
                 SELECT snapshot_date, {metric}, version
                 FROM behaviour_snapshots
                 WHERE household_id = ?
                 ORDER BY snapshot_date
-            """, (household_id,)).fetchall()
+            """,
+                (household_id,),
+            ).fetchall()
 
             # Filter rows by date in Python to handle test dates correctly
             filtered_rows = []
@@ -116,10 +136,10 @@ class BehaviourRepository(BaseRepository):
 
         return [
             {
-                'snapshot_date': row['snapshot_date'],
-                'metric_value': self._bps_to_decimal(row[metric]) * Decimal(100),
-                'metric_name': metric.replace('_bps', ''),
-                'version': row['version']
+                "snapshot_date": row["snapshot_date"],
+                "metric_value": self._bps_to_decimal(row[metric]) * Decimal(100),
+                "metric_name": metric.replace("_bps", ""),
+                "version": row["version"],
             }
             for row in filtered_rows
         ]
@@ -127,18 +147,22 @@ class BehaviourRepository(BaseRepository):
     def _map_snapshot_row(self, row: dict[str, Any]) -> dict[str, Any]:
         """Map database row to snapshot dictionary with proper typing."""
         result = {
-            'id': row['id'],
-            'snapshot_date': row['snapshot_date'],
-            'household_id': row['household_id'],
-            'version': row['version'],
-            'created_at': row['created_at']
+            "id": row["id"],
+            "snapshot_date": row["snapshot_date"],
+            "household_id": row["household_id"],
+            "version": row["version"],
+            "created_at": row["created_at"],
         }
 
         # Convert bps to decimal for all score fields (0-100 range)
         score_fields = [
-            'savings_discipline_score', 'cashflow_stability_score',
-            'salary_dependence_ratio', 'lifestyle_inflation_rate',
-            'subscription_burn_rate', 'resilience_index', 'wellness_score'
+            "savings_discipline_score",
+            "cashflow_stability_score",
+            "salary_dependence_ratio",
+            "lifestyle_inflation_rate",
+            "subscription_burn_rate",
+            "resilience_index",
+            "wellness_score",
         ]
 
         for field in score_fields:

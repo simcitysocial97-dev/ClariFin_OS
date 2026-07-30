@@ -127,7 +127,11 @@ class FinancialIntelligenceService:
             Liquidity forecast result from engine with model_version metadata
         """
         # Get cashflow forecast first (now uses true cashflow)
-        cashflow_result = self.get_cashflow_forecast(forecast_months=forecast_months, household_id=household_id, owner_id=owner_id)
+        cashflow_result = self.get_cashflow_forecast(
+            forecast_months=forecast_months,
+            household_id=household_id,
+            owner_id=owner_id,
+        )
         cashflow_forecast = cashflow_result.get("forecast", [])
 
         # Get current liquidity from accounts
@@ -198,7 +202,9 @@ class FinancialIntelligenceService:
             Combined outlook with cashflow, liquidity, credit forecasts and risk flags
         """
         # Get individual forecasts (thread household_id for proper scoping)
-        cashflow_result = self.get_cashflow_forecast(forecast_months, household_id=household_id, owner_id="self")
+        cashflow_result = self.get_cashflow_forecast(
+            forecast_months, household_id=household_id, owner_id="self"
+        )
         liquidity_result = self.get_liquidity_forecast(
             forecast_months,
             emergency_threshold_paise,
@@ -217,26 +223,32 @@ class FinancialIntelligenceService:
         risk_flags: list[dict[str, Any]] = []
 
         if shortfall_result.get("flag"):
-            risk_flags.append({
-                "type": "cash_shortfall",
-                "severity": shortfall_result.get("severity"),
-                "month": shortfall_result.get("expected_month"),
-                "reason": shortfall_result.get("reason"),
-            })
+            risk_flags.append(
+                {
+                    "type": "cash_shortfall",
+                    "severity": shortfall_result.get("severity"),
+                    "month": shortfall_result.get("expected_month"),
+                    "reason": shortfall_result.get("reason"),
+                }
+            )
 
         if liquidity_result.get("risk_level") == "high":
-            risk_flags.append({
-                "type": "liquidity_stress",
-                "severity": "high",
-                "months_until_stress": liquidity_result.get("months_until_stress"),
-            })
+            risk_flags.append(
+                {
+                    "type": "liquidity_stress",
+                    "severity": "high",
+                    "months_until_stress": liquidity_result.get("months_until_stress"),
+                }
+            )
 
         if credit_result.get("trend") == "worsening":
-            risk_flags.append({
-                "type": "credit_dependency",
-                "severity": "warning",
-                "trend": "worsening",
-            })
+            risk_flags.append(
+                {
+                    "type": "credit_dependency",
+                    "severity": "warning",
+                    "trend": "worsening",
+                }
+            )
 
         return {
             "cashflow": cashflow_result,
@@ -276,7 +288,9 @@ class FinancialIntelligenceService:
 
             event_type = event.get("event_type", "")
             if event_type in ("cash_advance", "credit_card_cash_advance"):
-                months[month]["cash_advance_paise"] += int(event.get("amount_paise", 0) or 0)
+                months[month]["cash_advance_paise"] += int(
+                    event.get("amount_paise", 0) or 0
+                )
 
             # Track revolving behavior
             lifecycle = event.get("lifecycle_state", "")
@@ -582,7 +596,9 @@ class FinancialIntelligenceService:
 
         # Get current surplus
         cashflow_result = self.get_cashflow_forecast(forecast_months=1)
-        monthly_surplus = cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0)
+        monthly_surplus = cashflow_result.get("forecast", [{}])[0].get(
+            "expected_surplus_paise", 0
+        )
 
         return simulate_debt_prepayment(
             debt_accounts=loans,
@@ -612,7 +628,9 @@ class FinancialIntelligenceService:
         """
         # Get current surplus for FOIR calculation
         cashflow_result = self.get_cashflow_forecast(forecast_months=1)
-        monthly_surplus = cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0)
+        monthly_surplus = cashflow_result.get("forecast", [{}])[0].get(
+            "expected_surplus_paise", 0
+        )
 
         return simulate_new_loan(
             principal_paise=principal_paise,
@@ -698,7 +716,9 @@ class FinancialIntelligenceService:
                             (linked_event_id,),
                         ).fetchone()
                     if row and row["date_iso"]:
-                        advance_date = datetime.fromisoformat(event.get("date_iso", "2025-01-01"))
+                        advance_date = datetime.fromisoformat(
+                            event.get("date_iso", "2025-01-01")
+                        )
                         settle_date = datetime.fromisoformat(row["date_iso"])
                         days = (settle_date - advance_date).days
                         if days > 0:
@@ -729,9 +749,12 @@ class FinancialIntelligenceService:
             Optimization plan with recommended_actions, allocation_plan, warnings, confidence
         """
         # Fetch surplus data (thread household_id for proper scoping)
-        cashflow_result = self.get_cashflow_forecast(forecast_months=1, household_id=household_id, owner_id="self")
+        cashflow_result = self.get_cashflow_forecast(
+            forecast_months=1, household_id=household_id, owner_id="self"
+        )
         monthly_surplus = (
-            cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0) or 0
+            cashflow_result.get("forecast", [{}])[0].get("expected_surplus_paise", 0)
+            or 0
         )
 
         # Fetch debt data (loans)
@@ -764,7 +787,9 @@ class FinancialIntelligenceService:
 
         # Fetch open cash advance liabilities
         event_repo = FinancialEventRepository(self.db_path)
-        cash_advance_events = event_repo.get_open_cash_advance_events(household_id=household_id, owner_id=None)
+        cash_advance_events = event_repo.get_open_cash_advance_events(
+            household_id=household_id, owner_id=None
+        )
 
         for event in cash_advance_events:
             # Determine holding period by checking for settlement link
@@ -782,7 +807,9 @@ class FinancialIntelligenceService:
         goals = self.get_household_goals(household_id=household_id, status=None)
 
         # Fetch liquidity forecast for emergency fund status (thread household_id)
-        liquidity_result = self.get_liquidity_forecast(forecast_months=3, household_id=household_id, owner_id="self")
+        liquidity_result = self.get_liquidity_forecast(
+            forecast_months=3, household_id=household_id, owner_id="self"
+        )
 
         # Fetch credit risk indicators (thread household_id)
         credit_result = self.get_credit_forecast(household_id=household_id)
@@ -794,7 +821,9 @@ class FinancialIntelligenceService:
             "goals": goals,
             "forecast": liquidity_result,
             "risk": {
-                "credit_revolver_ratio": credit_result.get("current_dependency_ratio", Decimal("0")),
+                "credit_revolver_ratio": credit_result.get(
+                    "current_dependency_ratio", Decimal("0")
+                ),
             },
         }
 
@@ -828,8 +857,12 @@ class FinancialIntelligenceService:
             IntelligenceReport with snapshot, health_score, priorities, risks, opportunities, confidence
         """
         # 1. Fetch behaviour data using wellness and debt health endpoints
-        wellness_response = self.behaviour_service.get_wellness_score(household_id=household_id)
-        debt_response = self.behaviour_service.get_debt_health(household_id=household_id)
+        wellness_response = self.behaviour_service.get_wellness_score(
+            household_id=household_id
+        )
+        debt_response = self.behaviour_service.get_debt_health(
+            household_id=household_id
+        )
 
         behaviour = {
             "wellness_score": wellness_response.score,
@@ -838,7 +871,9 @@ class FinancialIntelligenceService:
         }
 
         # 2. Fetch cashflow data (thread household_id for proper scoping)
-        cashflow_result = self.get_cashflow_forecast(forecast_months=3, household_id=household_id, owner_id="self")
+        cashflow_result = self.get_cashflow_forecast(
+            forecast_months=3, household_id=household_id, owner_id="self"
+        )
         cashflow = {
             "income_paise": cashflow_result.get("income_paise", 0),
             "expense_paise": cashflow_result.get("expense_paise", 0),
@@ -846,7 +881,9 @@ class FinancialIntelligenceService:
         }
 
         # 3. Fetch liquidity forecast (thread household_id for proper scoping)
-        liquidity = self.get_liquidity_forecast(forecast_months=3, household_id=household_id, owner_id="self")
+        liquidity = self.get_liquidity_forecast(
+            forecast_months=3, household_id=household_id, owner_id="self"
+        )
 
         # 4. Fetch debt data
         loans = self.loan_service.get_loans()

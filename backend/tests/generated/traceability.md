@@ -28,7 +28,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/normal_household.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/salary_only.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/family_household.json` | ✓ |
-| Property Test | `tests/engines/test_account_engine.py` | ✓ |
+| Property Test | `tests/unit/engines/account/test_account_engine.py` | ✓ |
 | Property Test | `tests/properties/behaviour/test_engine_properties.py` | ✓ |
 | Invariant | `tests/invariants/test_account.py` | ✓ |
 
@@ -60,6 +60,9 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/cash_advance.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/cc_statement_scenario.json` | ✓ |
 | Property Test | `tests/properties/credit_cards/test_engine_properties.py` | ✓ |
+| Property Test | `tests/properties/credit_card_engine/test_billing_properties.py` | ✓ |
+| Property Test | `tests/properties/credit_card_engine/test_emi_properties.py` | ✓ |
+| Property Test | `tests/properties/credit_card_engine/test_interest_properties.py` | ✓ |
 | Invariant | `tests/invariants/test_credit.py` | ✓ |
 
 ## Debt Management
@@ -122,6 +125,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Router | `src/routers/behaviour.py` | ✓ |
 | Router | `src/routers/behaviour_workspace.py` | ✓ |
 | Service | `src/services/behaviour_service.py` | ✓ |
+| Engine | `src/engines/behavior_engine.py` | ✓ |
 | Engine | `src/engines/behaviour_engine/account.py` | ✓ |
 | Engine | `src/engines/behaviour_engine/cashflow.py` | ✓ |
 | Engine | `src/engines/behaviour_engine/credit_dependency.py` | ✓ |
@@ -142,7 +146,8 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/high_debt_household.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/irregular_income.json` | ✓ |
 | Property Test | `tests/properties/behaviour/test_engine_properties.py` | ✓ |
-| Invariant | `tests/domain/invariants/behaviour.py` | ✓ |
+| Property Test | `tests/unit/engines/behaviour/test_core.py` | ✓ |
+| Invariant | `tests/invariants/behaviour.py` | ✓ |
 
 ## Forecasting
 
@@ -168,7 +173,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/salary_plus_loan.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/irregular_income.json` | ✓ |
 | Property Test | `tests/properties/forecasting/test_engine_properties.py` | ✓ |
-| Invariant | `tests/domain/invariants/forecast.py` | ✓ |
+| Invariant | `tests/invariants/forecast.py` | ✓ |
 
 ## Household Cashflow
 
@@ -210,7 +215,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Table | `transactions` | ✓ |
 | Golden Dataset | `tests/golden/datasets/irregular_income.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/normal_household.json` | ✓ |
-| Property Test | `tests/repositories/test_pattern_repository.py` | ✓ |
+| Property Test | `tests/unit/repositories/test_pattern_repository.py` | ✓ |
 | Invariant | `tests/invariants/test_transaction.py` | ✓ |
 
 ## Recommendations
@@ -233,8 +238,8 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/normal_household.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/high_debt_household.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/credit_card_revolver.json` | ✓ |
-| Property Test | `tests/engines/test_recommendation_engine.py` | ✓ |
-| Invariant | `tests/domain/invariants/behaviour.py` | ✓ |
+| Property Test | `tests/unit/engines/recommendation/test_recommendation_engine.py` | ✓ |
+| Invariant | `tests/invariants/behaviour.py` | ✓ |
 
 ## Reconciliation
 
@@ -254,7 +259,7 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Table | `reconciliation_audit_log` | ✓ |
 | Golden Dataset | `tests/golden/datasets/normal_household.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/salary_plus_loan.json` | ✓ |
-| Property Test | `tests/engines/test_reconciliation.py` | ✓ |
+| Property Test | `tests/unit/engines/reconciliation/test_reconciliation.py` | ✓ |
 | Property Test | `tests/invariants/test_reconciliation_determinism.py` | ✓ |
 | Invariant | `tests/invariants/test_transaction.py` | ✓ |
 
@@ -281,6 +286,5 @@ Generated automatically. Shows the complete dependency chain for each capability
 | Golden Dataset | `tests/golden/datasets/cash_advance.json` | ✓ |
 | Golden Dataset | `tests/golden/datasets/normal_household.json` | ✓ |
 | Property Test | `tests/properties/credit_cards/test_engine_properties.py` | ✓ |
-| Property Test | `tests/properties/transaction_intelligence/__init__.py` | ✓ |
 | Invariant | `tests/invariants/test_statement.py` | ✓ |
 | Invariant | `tests/invariants/test_transaction.py` | ✓ |

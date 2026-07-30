@@ -17,16 +17,25 @@ CashflowTrendDirection = Literal["up", "down", "flat"]
 
 class CashflowTrendDTO(BaseModel):
     """Cashflow trend information."""
-    direction: CashflowTrendDirection = Field(description="Trend direction (up/down/flat)")
-    percentage_change: float = Field(description="Percentage change from previous period")
-    period: str = Field(description="Time period for comparison (e.g., '1M', '3M', '1Y')")
+
+    direction: CashflowTrendDirection = Field(
+        description="Trend direction (up/down/flat)"
+    )
+    percentage_change: float = Field(
+        description="Percentage change from previous period"
+    )
+    period: str = Field(
+        description="Time period for comparison (e.g., '1M', '3M', '1Y')"
+    )
     volatility_score: float = Field(default=0.0, description="Volatility score (0-100)")
 
 
 # ===== Cashflow Monthly Types =====
 
+
 class CashflowMonthlyDTO(BaseModel):
     """Monthly cashflow summary."""
+
     month: str = Field(description="Month label (e.g., '2026-07')")
     income_paise: int = Field(description="Total income in paise")
     expenses_paise: int = Field(description="Total expenses in paise")
@@ -36,19 +45,25 @@ class CashflowMonthlyDTO(BaseModel):
 
 # ===== Cashflow Category Types =====
 
+
 class CashflowCategoryDTO(BaseModel):
     """Category breakdown for cashflow."""
+
     category_id: str = Field(description="Category identifier")
     category_name: str = Field(description="Category name for display")
     amount_paise: int = Field(description="Total amount in paise")
     percentage: float = Field(description="Percentage of total (0-100)")
-    transaction_count: int = Field(description="Number of transactions in this category")
+    transaction_count: int = Field(
+        description="Number of transactions in this category"
+    )
 
 
 # ===== Cashflow Transaction Types =====
 
+
 class CashflowTransactionDTO(BaseModel):
     """Transaction in cashflow view."""
+
     id: str = Field(description="Transaction identifier")
     date: str = Field(description="Transaction date (ISO format)")
     description: str = Field(description="Transaction description")
@@ -65,24 +80,34 @@ CashflowInsightSeverity = Literal["low", "medium", "high"]
 
 class CashflowInsightDTO(BaseModel):
     """Insight about cashflow patterns."""
+
     type: CashflowInsightType = Field(description="Insight type")
     severity: CashflowInsightSeverity = Field(description="Insight severity")
     message: str = Field(description="Human-readable insight message")
-    action_url: str | None = Field(default=None, description="URL for detailed view or action")
+    action_url: str | None = Field(
+        default=None, description="URL for detailed view or action"
+    )
 
 
 # ===== Cashflow Evidence Types =====
 
+
 class CashflowEvidenceItemDTO(BaseModel):
     """Evidence item for cashflow calculation."""
-    type: str = Field(description="Evidence type (transaction, categorization, adjustment)")
+
+    type: str = Field(
+        description="Evidence type (transaction, categorization, adjustment)"
+    )
     summary: str = Field(description="Human-readable summary")
     source: str = Field(description="Source reference")
-    confidence: float | None = Field(default=None, description="Confidence score (0-100)")
+    confidence: float | None = Field(
+        default=None, description="Confidence score (0-100)"
+    )
 
 
 class CashflowCalculationStepDTO(BaseModel):
     """Calculation step in the cashflow derivation chain."""
+
     name: str = Field(description="Step name")
     description: str = Field(description="Step description")
     inputs: dict[str, Any] = Field(default_factory=dict, description="Input values")
@@ -91,23 +116,22 @@ class CashflowCalculationStepDTO(BaseModel):
 
 class CashflowEvidenceChainDTO(BaseModel):
     """Evidence chain for cashflow calculation."""
+
     summary: str = Field(description="Overall summary of the calculation")
     evidence: list[CashflowEvidenceItemDTO] = Field(
-        default_factory=list,
-        description="List of evidence items"
+        default_factory=list, description="List of evidence items"
     )
     calculation_steps: list[CashflowCalculationStepDTO] = Field(
-        default_factory=list,
-        description="Calculation chain steps"
+        default_factory=list, description="Calculation chain steps"
     )
     source_references: list[str] = Field(
-        default_factory=list,
-        description="Source references for traceability"
+        default_factory=list, description="Source references for traceability"
     )
     confidence_score: float = Field(description="Overall confidence (0-100)")
 
 
 # ===== Main Cashflow DTO =====
+
 
 class CashflowSummaryDTO(BaseModel):
     """
@@ -118,21 +142,21 @@ class CashflowSummaryDTO(BaseModel):
     - total_expenses_paise: Total expenses in paise
     - net_cashflow_paise: Net cashflow in paise
     """
+
     total_income_paise: int = Field(description="Total income in paise")
     total_expenses_paise: int = Field(description="Total expenses in paise")
-    net_cashflow_paise: int = Field(description="Net cashflow in paise (income - expenses)")
+    net_cashflow_paise: int = Field(
+        description="Net cashflow in paise (income - expenses)"
+    )
     transaction_count: int = Field(description="Total number of transactions")
     trend: CashflowTrendDTO | None = Field(
-        default=None,
-        description="Cashflow trend information"
+        default=None, description="Cashflow trend information"
     )
     insights: list[CashflowInsightDTO] = Field(
-        default_factory=list,
-        description="List of insights about cashflow"
+        default_factory=list, description="List of insights about cashflow"
     )
     evidence_chain: CashflowEvidenceChainDTO | None = Field(
-        default=None,
-        description="Evidence chain for explainability"
+        default=None, description="Evidence chain for explainability"
     )
 
     class Config:
@@ -146,39 +170,40 @@ class CashflowSummaryDTO(BaseModel):
                     "direction": "up",
                     "percentage_change": 10.5,
                     "period": "1M",
-                    "volatility_score": 25.0
+                    "volatility_score": 25.0,
                 },
                 "insights": [],
-                "evidence_chain": None
+                "evidence_chain": None,
             }
         }
 
 
 # ===== Cashflow Response Types =====
 
+
 class CashflowMonthlyResponse(BaseModel):
     """Response for monthly breakdown endpoint."""
+
     months: list[CashflowMonthlyDTO] = Field(
-        default_factory=list,
-        description="Monthly cashflow summaries"
+        default_factory=list, description="Monthly cashflow summaries"
     )
     total_count: int = Field(description="Total number of months available")
 
 
 class CashflowCategoryResponse(BaseModel):
     """Response for category breakdown endpoint."""
+
     categories: list[CashflowCategoryDTO] = Field(
-        default_factory=list,
-        description="Category breakdowns"
+        default_factory=list, description="Category breakdowns"
     )
     total_count: int = Field(description="Total number of categories")
 
 
 class CashflowTransactionResponse(BaseModel):
     """Response for transaction list endpoint."""
+
     transactions: list[CashflowTransactionDTO] = Field(
-        default_factory=list,
-        description="List of transactions"
+        default_factory=list, description="List of transactions"
     )
     total: int = Field(description="Total number of transactions")
     limit: int = Field(description="Number of transactions per page")

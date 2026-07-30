@@ -146,7 +146,9 @@ class AccountService:
             source=source,
         )
 
-    def get_balance_history(self, account_id: str, limit: int = 90) -> list[dict[str, Any]]:
+    def get_balance_history(
+        self, account_id: str, limit: int = 90
+    ) -> list[dict[str, Any]]:
         """Get balance history for an account."""
         return self.balance_repo.get_balance_history(account_id, limit)
 
@@ -169,7 +171,9 @@ class AccountService:
         history = self.balance_repo.get_balance_history(account_id, limit=2)
         if len(history) < 2:
             return 0
-        return compute_balance_change(history[1]["balance_paise"], history[0]["balance_paise"])
+        return compute_balance_change(
+            history[1]["balance_paise"], history[0]["balance_paise"]
+        )
 
     def calculate_balance_growth(self, account_id: str) -> int:
         """Calculate balance growth percentage."""
@@ -257,7 +261,10 @@ class AccountService:
         if not history:
             return True  # No activity = dormant
 
-        last_activity = history[0]["date_iso"]
+        last_activity = history[0]["date_iso"] or history[0].get("timestamp")
+        if not last_activity:
+            return True  # No valid activity date = dormant
+
         today = date.today().isoformat()
         days = compute_days_since_activity(last_activity, today)
         return is_account_dormant(days, threshold_days)
@@ -271,7 +278,10 @@ class AccountService:
         if not history:
             return 0
 
-        last_activity = history[0]["date_iso"]
+        last_activity = history[0]["date_iso"] or history[0].get("timestamp")
+        if not last_activity:
+            return 0
+
         today = date.today().isoformat()
         return compute_days_since_activity(last_activity, today)
 
@@ -295,8 +305,10 @@ class AccountService:
         history = self.balance_repo.get_balance_history(account_id, limit=1)
         days_since = 0
         if history:
-            today = date.today().isoformat()
-            days_since = compute_days_since_activity(history[0]["date_iso"], today)
+            last_activity = history[0]["date_iso"] or history[0].get("timestamp")
+            if last_activity:
+                today = date.today().isoformat()
+                days_since = compute_days_since_activity(last_activity, today)
 
         # Without transaction integration, use placeholders
         cash_in = 0
@@ -374,7 +386,7 @@ class AccountService:
             raise ValueError(f"Linked account {linked_account_id} not found")
 
         return self.link_repo.link_accounts(
-            primary_account_id=primary_account_id,
+            account_id=primary_account_id,
             linked_account_id=linked_account_id,
             relationship_type=relationship_type,
         )

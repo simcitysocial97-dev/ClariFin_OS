@@ -1,22 +1,17 @@
 # Active Context
 
 ## Current Focus
-Testing infrastructure cleanup and consolidation (Milestones 1-5)
+Phase 3.1 — Capability Framework Hardening
 
 ## Recent Changes
-- **Phase 5: Directory Restructuring complete**
-  - Renamed: `properties` → `property`, `contracts` → `contract`, `capabilities` → `capability`
-  - Moved engine tests to `tests/unit/engines/<domain>/`
-  - Moved repositories/services to `tests/unit/`
-  - Moved orchestration/pipeline to `tests/integration/`
-  - Unified invariant definitions and tests under `tests/invariant/`
-  - Moved golden dataset Python loaders to `tests/golden/builders/`
-  - Added `client` fixture alias, fixed all broken imports and golden builder paths
-  - Added missing test files: contract routers, property tests, invariant stubs, golden datasets, domain builders, unit investment tests
-  - Updated `test_coverage_integrity.py` with path fallbacks for renamed directories
-  - **967 tests collected successfully** (882 passing; remaining failures are pre-existing service-level issues)
+- **Phase 3.1 Capability Framework Hardening (2026-07-29)**
+  - **Discovery Repair**: Replaced stub `src/verification/runtime/discovery.py` with delegation to real implementation. Enhanced `tests/runtime/discovery.py`'s `discover_dependencies()` to generate all 8 required edge types (capability → engines, routers, services, repositories, unit tests, property tests, contract tests, capability tests, golden datasets, invariant tests).
+  - **Self-Validator Fix**: Fixed `validate_dependency_chains()` to import from `runtime.discovery` instead of the stub module.
+  - **Determinism**: Replaced timestamp-based `generated_at` with content hashes in `coVF_discover.py`, `selective_engine.py`, and `generate_contract_tests.py`. Added `tests/meta/test_determinism.py`.
+  - **GitHub Actions**: Updated `backend.yml` with conditional job execution based on capability intelligence. Added determinism verification CI job.
+  - **Capability Regression Tests**: Added `tests/meta/test_capability_regression.py` verifying no cross-capability leakage. Added `tests/meta/test_dependency_graph.py` validating graph completeness.
+  - **Generated Artifacts**: `dependency-map.json` (197 edges, 11 capabilities, all edge types), `change-impact.json`, `selective-plan.json`.
 
 ## Next Immediate Steps
-- Update capability manifests in `memory-bank/capabilities/*.yaml` to reference new test paths
-- Run full suite and fix remaining failures
-- Quality stabilization: run ruff, mypy, pyright
+- Run full test suite to validate all changes
+- Produce final capability framework health summary report

@@ -43,11 +43,13 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
         WHERE account_id IS NULL OR account_id = ''
     """)
     for row in cur.fetchall():
-        violations.append({
-            "type": "NULL_ACCOUNT_ID",
-            "transaction_id": row["id"],
-            "message": f"Transaction {row['id']} has null or empty account_id"
-        })
+        violations.append(
+            {
+                "type": "NULL_ACCOUNT_ID",
+                "transaction_id": row["id"],
+                "message": f"Transaction {row['id']} has null or empty account_id",
+            }
+        )
 
     # Check 2: debit >= 0
     cur.execute("""
@@ -55,11 +57,13 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
         WHERE debit < 0
     """)
     for row in cur.fetchall():
-        violations.append({
-            "type": "NEGATIVE_DEBIT",
-            "transaction_id": row["id"],
-            "message": f"Transaction {row['id']} has negative debit: {row['debit']}"
-        })
+        violations.append(
+            {
+                "type": "NEGATIVE_DEBIT",
+                "transaction_id": row["id"],
+                "message": f"Transaction {row['id']} has negative debit: {row['debit']}",
+            }
+        )
 
     # Check 3: credit >= 0
     cur.execute("""
@@ -67,11 +71,13 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
         WHERE credit < 0
     """)
     for row in cur.fetchall():
-        violations.append({
-            "type": "NEGATIVE_CREDIT",
-            "transaction_id": row["id"],
-            "message": f"Transaction {row['id']} has negative credit: {row['credit']}"
-        })
+        violations.append(
+            {
+                "type": "NEGATIVE_CREDIT",
+                "transaction_id": row["id"],
+                "message": f"Transaction {row['id']} has negative credit: {row['credit']}",
+            }
+        )
 
     # Check 4: NOT (debit > 0 AND credit > 0)
     cur.execute("""
@@ -79,11 +85,13 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
         WHERE debit > 0 AND credit > 0
     """)
     for row in cur.fetchall():
-        violations.append({
-            "type": "DUAL_ENTRY",
-            "transaction_id": row["id"],
-            "message": f"Transaction {row['id']} has both debit ({row['debit']}) and credit ({row['credit']})"
-        })
+        violations.append(
+            {
+                "type": "DUAL_ENTRY",
+                "transaction_id": row["id"],
+                "message": f"Transaction {row['id']} has both debit ({row['debit']}) and credit ({row['credit']})",
+            }
+        )
 
     # Check 5: hash_signature NOT NULL
     cur.execute("""
@@ -91,11 +99,13 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
         WHERE hash_signature IS NULL OR hash_signature = ''
     """)
     for row in cur.fetchall():
-        violations.append({
-            "type": "NULL_HASH",
-            "transaction_id": row["id"],
-            "message": f"Transaction {row['id']} has null or empty hash_signature"
-        })
+        violations.append(
+            {
+                "type": "NULL_HASH",
+                "transaction_id": row["id"],
+                "message": f"Transaction {row['id']} has null or empty hash_signature",
+            }
+        )
 
     # Check 6: hash_signature uniqueness
     cur.execute("""
@@ -106,19 +116,21 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
         HAVING COUNT(*) > 1
     """)
     for row in cur.fetchall():
-        violations.append({
-            "type": "DUPLICATE_HASH",
-            "hash_signature": row["hash_signature"],
-            "transaction_ids": [int(x) for x in row["ids"].split(",")],
-            "message": f"Duplicate hash_signature found in transactions: {row['ids']}"
-        })
+        violations.append(
+            {
+                "type": "DUPLICATE_HASH",
+                "hash_signature": row["hash_signature"],
+                "transaction_ids": [int(x) for x in row["ids"].split(",")],
+                "message": f"Duplicate hash_signature found in transactions: {row['ids']}",
+            }
+        )
 
     conn.close()
 
     return {
         "status": "PASS" if len(violations) == 0 else "FAIL",
         "violation_count": len(violations),
-        "violations": violations
+        "violations": violations,
     }
 
 
@@ -158,19 +170,21 @@ def verify_hash_signatures(db_path: str) -> dict[str, Any]:
         stored_hash = row["hash_signature"].lower()
 
         if computed_hash != stored_hash:
-            tampered.append({
-                "transaction_id": row["id"],
-                "stored_hash": stored_hash,
-                "computed_hash": computed_hash,
-                "message": f"Transaction {row['id']} hash mismatch - possible tampering"
-            })
+            tampered.append(
+                {
+                    "transaction_id": row["id"],
+                    "stored_hash": stored_hash,
+                    "computed_hash": computed_hash,
+                    "message": f"Transaction {row['id']} hash mismatch - possible tampering",
+                }
+            )
 
     conn.close()
 
     return {
         "status": "PASS" if len(tampered) == 0 else "FAIL",
         "tampered_count": len(tampered),
-        "tampered_transactions": tampered
+        "tampered_transactions": tampered,
     }
 
 
@@ -188,10 +202,14 @@ def run_full_audit(db_path: str) -> dict[str, Any]:
     integrity = validate_ledger_integrity(db_path)
     hashes = verify_hash_signatures(db_path)
 
-    overall = "PASS" if (integrity["status"] == "PASS" and hashes["status"] == "PASS") else "FAIL"
+    overall = (
+        "PASS"
+        if (integrity["status"] == "PASS" and hashes["status"] == "PASS")
+        else "FAIL"
+    )
 
     return {
         "overall_status": overall,
         "ledger_integrity": integrity,
-        "hash_verification": hashes
+        "hash_verification": hashes,
     }

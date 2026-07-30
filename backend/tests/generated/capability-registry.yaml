@@ -19,6 +19,7 @@ capabilities:
   - src/engines/account_engine/history.py
   - src/engines/account_engine/lifecycle.py
   - src/engines/account_engine/metrics.py
+  - src/engines/balance_engine.py
   repositories:
   - src/repositories/account_repository.py
   - src/repositories/account_balance_repository.py
@@ -35,7 +36,7 @@ capabilities:
   - tests/unit/engines/account/test_account_engine.py
   - tests/properties/behaviour/test_engine_properties.py
   invariants:
-  - tests/invariant/test_account.py
+  - tests/invariants/test_account.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -82,6 +83,9 @@ capabilities:
   - tests/golden/datasets/cc_statement_scenario.json
   property_tests:
   - tests/properties/credit_cards/test_engine_properties.py
+  - tests/properties/credit_card_engine/test_billing_properties.py
+  - tests/properties/credit_card_engine/test_emi_properties.py
+  - tests/properties/credit_card_engine/test_interest_properties.py
   invariants:
   - tests/invariants/test_credit.py
   architecture_tests:
@@ -169,7 +173,7 @@ capabilities:
   - tests/golden/datasets/salary_plus_loan.json
   property_tests: []
   invariants:
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -196,6 +200,7 @@ capabilities:
   services:
   - src/services/behaviour_service.py
   engines:
+  - src/engines/behavior_engine.py
   - src/engines/behaviour_engine/account.py
   - src/engines/behaviour_engine/cashflow.py
   - src/engines/behaviour_engine/credit_dependency.py
@@ -208,6 +213,9 @@ capabilities:
   - src/engines/behaviour_engine/savings.py
   - src/engines/behaviour_engine/stress.py
   - src/engines/behaviour_engine/wellness.py
+  - src/engines/behaviour_engine/core.py
+  - src/engines/behaviour_engine/temporal.py
+  - src/engines/behaviour_engine/utils.py
   repositories:
   - src/repositories/behaviour_repository.py
   tables:
@@ -220,8 +228,9 @@ capabilities:
   - tests/golden/datasets/irregular_income.json
   property_tests:
   - tests/properties/behaviour/test_engine_properties.py
+  - tests/unit/engines/behaviour/test_core.py
   invariants:
-  - tests/domain/invariants/behaviour.py
+  - tests/invariants/behaviour.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -253,6 +262,8 @@ capabilities:
   - src/engines/financial_intelligence/intelligence.py
   - src/engines/financial_intelligence/optimization.py
   - src/engines/financial_intelligence/scenario.py
+  - src/engines/financial_intelligence/models.py
+  - src/engines/financial_intelligence/utils.py
   repositories:
   - src/repositories/financial_goal_repository.py
   tables:
@@ -267,7 +278,7 @@ capabilities:
   property_tests:
   - tests/properties/forecasting/test_engine_properties.py
   invariants:
-  - tests/domain/invariants/forecast.py
+  - tests/invariants/forecast.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -311,7 +322,7 @@ capabilities:
   property_tests:
   - tests/properties/cashflow/test_engine_properties.py
   invariants:
-  - tests/invariant/test_cashflow_invariants.py
+  - tests/invariants/test_cashflow_invariants.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -346,7 +357,7 @@ capabilities:
   property_tests:
   - tests/unit/repositories/test_pattern_repository.py
   invariants:
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -387,7 +398,7 @@ capabilities:
   property_tests:
   - tests/unit/engines/recommendation/test_recommendation_engine.py
   invariants:
-  - tests/domain/invariants/behaviour.py
+  - tests/invariants/behaviour.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -415,6 +426,7 @@ capabilities:
   - src/services/reconciliation_service.py
   engines:
   - src/engines/reconciliation_engine.py
+  - src/engines/ledger_audit_engine.py
   repositories:
   - src/repositories/reconciliation_repository.py
   - src/repositories/reconciliation_audit_repository.py
@@ -427,9 +439,9 @@ capabilities:
   - tests/golden/datasets/salary_plus_loan.json
   property_tests:
   - tests/unit/engines/reconciliation/test_reconciliation.py
-  - tests/invariant/test_reconciliation_determinism.py
+  - tests/invariants/test_reconciliation_determinism.py
   invariants:
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:
@@ -473,10 +485,9 @@ capabilities:
   - tests/golden/datasets/normal_household.json
   property_tests:
   - tests/properties/credit_cards/test_engine_properties.py
-  - tests/properties/transaction_intelligence/__init__.py
   invariants:
-  - tests/invariant/test_statement.py
-  - tests/invariant/test_transaction.py
+  - tests/invariants/test_statement.py
+  - tests/invariants/test_transaction.py
   architecture_tests:
   - tests/architecture
   contracts:

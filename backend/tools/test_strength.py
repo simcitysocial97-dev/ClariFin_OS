@@ -57,6 +57,7 @@ STRENGTH_CRITICAL = "Critical"
 @dataclass
 class CapabilityStrength:
     """Validation strength for a capability."""
+
     id: str
     name: str
     criticality: str
@@ -113,7 +114,7 @@ def analyze_capability_strength(cap: dict[str, Any]) -> CapabilityStrength:
     )
 
     # Count smoke tests (capability test files)
-    cap_test_path = f"tests/capabilities/{cap_id}"
+    cap_test_path = f"tests/capability/{cap_id}"
     if (BACKEND_DIR / cap_test_path).exists():
         for _f in (BACKEND_DIR / cap_test_path).glob("test_*.py"):
             strength.smoke_tests += 1
@@ -161,8 +162,8 @@ def analyze_capability_strength(cap: dict[str, Any]) -> CapabilityStrength:
     inv_path = f"tests/invariants/{cap_id}.py"
     if check_path_exists(inv_path):
         try:
-            with open(BACKEND_DIR / inv_path) as f:
-                content = f.read()
+            with open(BACKEND_DIR / inv_path) as fh:
+                content = fh.read()
                 strength.invariant_count = content.count("assert ")
         except Exception:
             pass
@@ -289,29 +290,31 @@ def generate_markdown_report(capabilities: list[CapabilityStrength]) -> str:
         )
 
     # Legend section
-    lines.extend([
-        "",
-        "## Scoring Legend",
-        "",
-        "| Score Range | Strength | Description |",
-        "|-------------|----------|-------------|",
-        "| 12+ | Critical | Well protected against regressions |",
-        "| 8-11 | Strong | Good coverage, minor gaps |",
-        "| 4-7 | Moderate | Some coverage, notable gaps |",
-        "| 0-3 | Weak | Minimal or no validation evidence |",
-        "",
-        "## Evidence Weights",
-        "",
-        "| Evidence Type | Weight | Purpose |",
-        "|---------------|--------|---------|",
-        "| Property tests | 5 | Catch edge cases and invariants |",
-        "| Golden tests | 5 | Regression protection |",
-        "| Contract tests | 4 | API correctness |",
-        "| Capability Smoke | 3 | Integration verification |",
-        "| Invariants | 3 | Domain rule enforcement |",
-        "| Performance | 2 | Performance regression detection |",
-        "| Architecture | 2 | Layer boundary compliance |",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Scoring Legend",
+            "",
+            "| Score Range | Strength | Description |",
+            "|-------------|----------|-------------|",
+            "| 12+ | Critical | Well protected against regressions |",
+            "| 8-11 | Strong | Good coverage, minor gaps |",
+            "| 4-7 | Moderate | Some coverage, notable gaps |",
+            "| 0-3 | Weak | Minimal or no validation evidence |",
+            "",
+            "## Evidence Weights",
+            "",
+            "| Evidence Type | Weight | Purpose |",
+            "|---------------|--------|---------|",
+            "| Property tests | 5 | Catch edge cases and invariants |",
+            "| Golden tests | 5 | Regression protection |",
+            "| Contract tests | 4 | API correctness |",
+            "| Capability Smoke | 3 | Integration verification |",
+            "| Invariants | 3 | Domain rule enforcement |",
+            "| Performance | 2 | Performance regression detection |",
+            "| Architecture | 2 | Layer boundary compliance |",
+        ]
+    )
 
     return "\n".join(lines)
 

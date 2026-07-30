@@ -9,13 +9,9 @@ Run: python -m pytest tests/test_migration_household.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from scripts.migration_006_household import run_migration
 
@@ -71,6 +67,7 @@ def db_with_existing_accounts():
 # Tests
 # ============================================================
 
+
 def test_household_columns_added(db_with_existing_accounts):
     """Verify that migration adds owner_id and household_id columns."""
     db_path = db_with_existing_accounts
@@ -101,8 +98,12 @@ def test_household_defaults_backfilled(db_with_existing_accounts):
     assert len(rows) == 3, "Should have 3 accounts"
 
     for row in rows:
-        assert row["owner_id"] == "self", f"Account {row['id']}: expected owner_id='self', got '{row['owner_id']}'"
-        assert row["household_id"] == "primary", f"Account {row['id']}: expected household_id='primary', got '{row['household_id']}'"
+        assert (
+            row["owner_id"] == "self"
+        ), f"Account {row['id']}: expected owner_id='self', got '{row['owner_id']}'"
+        assert (
+            row["household_id"] == "primary"
+        ), f"Account {row['id']}: expected household_id='primary', got '{row['household_id']}'"
 
     conn.close()
 
@@ -134,12 +135,10 @@ def test_new_accounts_get_defaults(db_with_existing_accounts):
     run_migration(db_path)
 
     conn = sqlite3.connect(db_path)
-    conn.execute(
-        """
+    conn.execute("""
         INSERT INTO accounts (name, bank, account_type, account_number_last4, balance_paise)
         VALUES ('New Account', 'Bank4', 'savings', '0000', 50000)
-        """
-    )
+        """)
     conn.commit()
 
     conn.row_factory = sqlite3.Row
@@ -147,7 +146,9 @@ def test_new_accounts_get_defaults(db_with_existing_accounts):
         "SELECT owner_id, household_id FROM accounts WHERE name = 'New Account'"
     ).fetchone()
     assert row["owner_id"] == "self", "New account should get default owner_id"
-    assert row["household_id"] == "primary", "New account should get default household_id"
+    assert (
+        row["household_id"] == "primary"
+    ), "New account should get default household_id"
 
     conn.close()
 

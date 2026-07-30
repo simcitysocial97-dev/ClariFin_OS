@@ -13,7 +13,9 @@ from src.services.cashflow_service import CashflowService
 logger = logging.getLogger(__name__)
 
 
-def _timed_log(endpoint: str, duration_ms: float, success: bool = True, error: str | None = None) -> None:
+def _timed_log(
+    endpoint: str, duration_ms: float, success: bool = True, error: str | None = None
+) -> None:
     """Emit structured timing log for cashflow workspace endpoints."""
     log_data = {
         "type": "cashflow_workspace_request",
@@ -23,7 +25,9 @@ def _timed_log(endpoint: str, duration_ms: float, success: bool = True, error: s
     }
     if error:
         log_data["error"] = error
-        logger.warning("[CASHFLOW-WS] %s | %.0fms | FAIL: %s", endpoint, duration_ms, error)
+        logger.warning(
+            "[CASHFLOW-WS] %s | %.0fms | FAIL: %s", endpoint, duration_ms, error
+        )
     else:
         logger.info("[CASHFLOW-WS] %s | %.0fms", endpoint, duration_ms)
 
@@ -84,17 +88,21 @@ class CashflowWorkspaceService:
         # Build insights
         insights = []
         if summary.net_cashflow_paise > 0:
-            insights.append({
-                "type": "positive",
-                "severity": "low",
-                "message": f"Positive cashflow of ₹{summary.net_cashflow_paise / 100:,.2f} this period",
-            })
+            insights.append(
+                {
+                    "type": "positive",
+                    "severity": "low",
+                    "message": f"Positive cashflow of ₹{summary.net_cashflow_paise / 100:,.2f} this period",
+                }
+            )
         elif summary.net_cashflow_paise < 0:
-            insights.append({
-                "type": "alert",
-                "severity": "high",
-                "message": f"Negative cashflow of ₹{abs(summary.net_cashflow_paise) / 100:,.2f} - review expenses",
-            })
+            insights.append(
+                {
+                    "type": "alert",
+                    "severity": "high",
+                    "message": f"Negative cashflow of ₹{abs(summary.net_cashflow_paise) / 100:,.2f} - review expenses",
+                }
+            )
 
         # Build monthly data
         monthly_data = [
@@ -138,12 +146,20 @@ class CashflowWorkspaceService:
             "total_expenses_paise": summary.total_expenses_paise,
             "net_cashflow_paise": summary.net_cashflow_paise,
             "transaction_count": summary.transaction_count,
-            "trend": {
-                "direction": summary.trend.direction if summary.trend else "flat",
-                "percentage_change": summary.trend.percentage_change if summary.trend else 0.0,
-                "period": summary.trend.period if summary.trend else "1M",
-                "volatility_score": summary.trend.volatility_score if summary.trend else 0.0,
-            } if summary.trend else None,
+            "trend": (
+                {
+                    "direction": summary.trend.direction if summary.trend else "flat",
+                    "percentage_change": (
+                        summary.trend.percentage_change if summary.trend else 0.0
+                    ),
+                    "period": summary.trend.period if summary.trend else "1M",
+                    "volatility_score": (
+                        summary.trend.volatility_score if summary.trend else 0.0
+                    ),
+                }
+                if summary.trend
+                else None
+            ),
             "monthly": monthly_data,
             "categories": category_data,
             "transactions": transaction_data,

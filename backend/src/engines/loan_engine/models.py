@@ -12,6 +12,7 @@ from pydantic import BaseModel, Field
 
 class InterestType(StrEnum):
     """Loan interest models supported."""
+
     FIXED = "fixed"
     FLOATING = "floating"
     HYBRID = "hybrid"
@@ -19,12 +20,14 @@ class InterestType(StrEnum):
 
 class PrepaymentMode(StrEnum):
     """Prepayment behavior modes."""
+
     REDUCE_TENURE = "reduce_tenure"
     REDUCE_EMI = "reduce_emi"
 
 
 class AmortizationRow(BaseModel):
     """Single row in amortization schedule."""
+
     month_number: int
     payment_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     emi_paise: int
@@ -36,6 +39,7 @@ class AmortizationRow(BaseModel):
 
 class PrepaymentResult(BaseModel):
     """Result of a prepayment simulation."""
+
     prepayment_paise: int
     mode: PrepaymentMode
     original_emi_paise: int
@@ -44,12 +48,14 @@ class PrepaymentResult(BaseModel):
     new_remaining_months: int
     months_saved: int
     interest_saved_paise: int
+    penalty_paise: int = 0
     loan_closed: bool = False
     new_schedule: list[AmortizationRow] | None = None
 
 
 class FloatingRateChange(BaseModel):
     """Floating rate change event."""
+
     change_month: int
     new_rate_bps: int
     mode: Literal["adjust_emi", "adjust_tenure"]
@@ -57,6 +63,7 @@ class FloatingRateChange(BaseModel):
 
 class ForeclosureResult(BaseModel):
     """Result of foreclosure calculation."""
+
     outstanding_paise: int
     accrued_interest_paise: int
     penalty_paise: int
@@ -66,6 +73,7 @@ class ForeclosureResult(BaseModel):
 
 class LoanMetrics(BaseModel):
     """Pure metrics for a loan."""
+
     outstanding_paise: int
     principal_paid_paise: int
     interest_paid_paise: int

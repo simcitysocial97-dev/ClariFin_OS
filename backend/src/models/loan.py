@@ -70,7 +70,13 @@ class AmortizationRow(BaseModel):
     balance_paise: int
     cumulative_interest_paise: int
 
-    @field_validator("emi_paise", "principal_paise", "interest_paise", "balance_paise", "cumulative_interest_paise")
+    @field_validator(
+        "emi_paise",
+        "principal_paise",
+        "interest_paise",
+        "balance_paise",
+        "cumulative_interest_paise",
+    )
     @classmethod
     def validate_non_negative(cls, v: int) -> int:
         """Ensure monetary fields are non-negative."""
@@ -105,11 +111,20 @@ class LoanCreateRequest(BaseModel):
 
     name: str
     lender: str
-    loan_type: str = Field(default="personal", description="Loan type: personal | home | vehicle | education | gold | other")
-    principal_paise: int = Field(gt=0, description="Principal amount in paise (must be > 0)")
-    rate_bps: int = Field(ge=0, le=5000, description="Annual interest rate in basis points (0-5000)")
+    loan_type: str = Field(
+        default="personal",
+        description="Loan type: personal | home | vehicle | education | gold | other",
+    )
+    principal_paise: int = Field(
+        gt=0, description="Principal amount in paise (must be > 0)"
+    )
+    rate_bps: int = Field(
+        ge=0, le=5000, description="Annual interest rate in basis points (0-5000)"
+    )
     tenure_months: int = Field(ge=1, le=360, description="Tenure in months (1-360)")
-    disbursed_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$", description="ISO 8601 date string")
+    disbursed_date: str = Field(
+        pattern=r"^\d{4}-\d{2}-\d{2}$", description="ISO 8601 date string"
+    )
     emi_paise: int | None = None
     outstanding_paise: int | None = None
 
@@ -118,7 +133,9 @@ class LoanCreateRequest(BaseModel):
     def validate_loan_type(cls, v: str) -> str:
         """Ensure loan type is valid."""
         if v.lower() not in VALID_LOAN_TYPES:
-            raise ValueError(f"loan_type must be one of: {', '.join(sorted(VALID_LOAN_TYPES))}")
+            raise ValueError(
+                f"loan_type must be one of: {', '.join(sorted(VALID_LOAN_TYPES))}"
+            )
         return v.lower()
 
 
@@ -183,18 +200,27 @@ class ScheduleResponse(BaseModel):
     schedule: list[ScheduleRow]
 
     @classmethod
-    def from_schedule_data(cls, loan_id: int, emi_paise: int, total_interest_paise: int, schedule: list[dict[str, Any]]) -> "ScheduleResponse":
+    def from_schedule_data(
+        cls,
+        loan_id: int,
+        emi_paise: int,
+        total_interest_paise: int,
+        schedule: list[dict[str, Any]],
+    ) -> "ScheduleResponse":
         """Create ScheduleResponse from raw schedule data."""
         return cls(
             loan_id=loan_id,
             emi_paise=emi_paise,
             total_interest_paise=total_interest_paise,
-            schedule=[ScheduleRow(
-                month=row.get("month_number", row.get("month", 0)),
-                date=row.get("date", row.get("payment_date", "")),
-                emi_paise=row["emi_paise"],
-                principal_paise=row["principal_paise"],
-                interest_paise=row["interest_paise"],
-                balance_paise=row["balance_paise"],
-            ) for row in schedule],
+            schedule=[
+                ScheduleRow(
+                    month=row.get("month_number", row.get("month", 0)),
+                    date=row.get("date", row.get("payment_date", "")),
+                    emi_paise=row["emi_paise"],
+                    principal_paise=row["principal_paise"],
+                    interest_paise=row["interest_paise"],
+                    balance_paise=row["balance_paise"],
+                )
+                for row in schedule
+            ],
         )

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-25T03:42:36.085392+00:00",
+  "generated_at": "2026-07-29T06:28:29.832501+00:00",
   "functions": [
     {
       "module": "src/engines/balance_engine.py",
@@ -18,7 +18,7 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -37,7 +37,7 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -57,7 +57,7 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -77,7 +77,7 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -109,7 +109,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -125,7 +125,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -140,7 +140,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -160,7 +160,7 @@
         "os.",
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -179,7 +179,7 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -199,8 +199,8 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "medium",
-      "risk": "low"
+      "criticality": "high",
+      "risk": "medium"
     },
     {
       "module": "src/engines/ledger_audit_engine.py",
@@ -219,8 +219,8 @@
         "sqlite3",
         "import:sqlite3"
       ],
-      "criticality": "medium",
-      "risk": "low"
+      "criticality": "high",
+      "risk": "medium"
     },
     {
       "module": "src/engines/ledger_audit_engine.py",
@@ -235,8 +235,8 @@
       "blockers": [
         "import:sqlite3"
       ],
-      "criticality": "medium",
-      "risk": "low"
+      "criticality": "high",
+      "risk": "medium"
     },
     {
       "module": "src/engines/reconciliation_engine.py",
@@ -249,6 +249,7 @@
         "Boolean",
         "Constant replacement",
         "Boundary conditions",
+        "Off-by-one",
         "Loop termination",
         "Sign inversion"
       ],
@@ -574,14 +575,45 @@
     },
     {
       "module": "src/engines/credit_card_engine/emi.py",
-      "function": "compute_emi_conversion",
+      "function": "compute_monthly_interest",
       "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
         "Comparison",
         "Boolean",
+        "Constant replacement"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/credit_card_engine/emi.py",
+      "function": "compute_emi_fixed",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
         "Constant replacement",
+        "Off-by-one",
+        "Loop termination"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/credit_card_engine/emi.py",
+      "function": "compute_emi_conversion",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Constant replacement",
+        "Boundary conditions",
         "Loop termination"
       ],
       "blockers": [],
@@ -1740,7 +1772,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1756,7 +1788,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1774,7 +1806,7 @@
         "Sign inversion"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1789,7 +1821,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1804,7 +1836,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1821,7 +1853,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1871,7 +1903,7 @@
         "Loop termination"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1885,7 +1917,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -1899,7 +1931,7 @@
         "Constant replacement"
       ],
       "blockers": [],
-      "criticality": "medium",
+      "criticality": "high",
       "risk": "low"
     },
     {
@@ -2497,7 +2529,7 @@
     {
       "module": "src/engines/loan_engine/amortization.py",
       "function": "generate_schedule",
-      "purity": "PURE",
+      "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -2507,7 +2539,9 @@
         "Off-by-one",
         "Loop termination"
       ],
-      "blockers": [],
+      "blockers": [
+        "open"
+      ],
       "criticality": "high",
       "risk": "medium"
     },
@@ -2561,6 +2595,23 @@
     },
     {
       "module": "src/engines/loan_engine/amortization.py",
+      "function": "total_principal_paise",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/loan_engine/amortization.py",
       "function": "validate_schedule_invariants",
       "purity": "PURE",
       "confidence": "HIGH",
@@ -2570,8 +2621,7 @@
         "Boolean",
         "Constant replacement",
         "Boundary conditions",
-        "Loop termination",
-        "Sign inversion"
+        "Loop termination"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2602,9 +2652,7 @@
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Loop termination"
+        "Comparison"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2619,8 +2667,7 @@
         "Arithmetic",
         "Comparison",
         "Boolean",
-        "Constant replacement",
-        "Loop termination"
+        "Constant replacement"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2629,7 +2676,7 @@
     {
       "module": "src/engines/loan_engine/prepayment.py",
       "function": "apply_prepayment_at_month",
-      "purity": "PURE",
+      "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -2637,10 +2684,11 @@
         "Boolean",
         "Constant replacement",
         "Boundary conditions",
-        "Off-by-one",
-        "Loop termination"
+        "Off-by-one"
       ],
-      "blockers": [],
+      "blockers": [
+        "open"
+      ],
       "criticality": "high",
       "risk": "medium"
     },
@@ -2703,7 +2751,6 @@
       "mutation_types": [
         "Arithmetic",
         "Comparison",
-        "Constant replacement",
         "Loop termination"
       ],
       "blockers": [],
@@ -2733,8 +2780,42 @@
       "mutation_types": [
         "Arithmetic",
         "Comparison",
+        "Boolean"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/loan_engine/emi.py",
+      "function": "compute_principal_from_emi",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
         "Boolean",
-        "Constant replacement"
+        "Constant replacement",
+        "Boundary conditions",
+        "Off-by-one",
+        "Loop termination",
+        "Sign inversion"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "medium"
+    },
+    {
+      "module": "src/engines/loan_engine/emi.py",
+      "function": "compute_tenure_from_emi",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Off-by-one"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2743,7 +2824,7 @@
     {
       "module": "src/engines/loan_engine/metrics.py",
       "function": "compute_loan_metrics",
-      "purity": "PURE",
+      "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -2753,7 +2834,9 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [],
+      "blockers": [
+        "open"
+      ],
       "criticality": "high",
       "risk": "medium"
     },
@@ -2795,8 +2878,7 @@
       "mutation_types": [
         "Arithmetic",
         "Comparison",
-        "Constant replacement",
-        "Loop termination"
+        "Constant replacement"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2809,8 +2891,7 @@
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
-        "Comparison",
-        "Loop termination"
+        "Comparison"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2868,9 +2949,8 @@
       "mutation_types": [
         "Arithmetic",
         "Comparison",
-        "Constant replacement",
-        "Boundary conditions",
-        "Loop termination"
+        "Boolean",
+        "Constant replacement"
       ],
       "blockers": [],
       "criticality": "high",
@@ -2879,7 +2959,7 @@
     {
       "module": "src/engines/loan_engine/floating_rate.py",
       "function": "apply_floating_rate_change",
-      "purity": "PURE",
+      "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -2890,7 +2970,9 @@
         "Off-by-one",
         "Loop termination"
       ],
-      "blockers": [],
+      "blockers": [
+        "open"
+      ],
       "criticality": "high",
       "risk": "medium"
     },

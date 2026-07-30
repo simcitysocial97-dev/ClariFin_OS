@@ -20,7 +20,9 @@ class LoanPayment(DomainModel):
     source_account_id: int | None = None
     created_at: str | None = None
 
-    @field_validator("amount_paise", "principal_paise", "interest_paise", "late_fee_paise")
+    @field_validator(
+        "amount_paise", "principal_paise", "interest_paise", "late_fee_paise"
+    )
     @classmethod
     def validate_non_negative(cls, v: int) -> int:
         """Ensure monetary fields are non-negative."""

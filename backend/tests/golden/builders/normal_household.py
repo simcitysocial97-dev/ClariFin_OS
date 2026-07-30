@@ -1,4 +1,5 @@
 """Loader for normal_household golden dataset."""
+
 from __future__ import annotations
 
 import json

@@ -36,17 +36,28 @@ class CreditCardRepository(BaseRepository):
     ) -> str:
         """Create a new credit card record. Returns the card ID."""
         with self._get_conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO credit_cards (
                     id, account_id, name, bank, card_last4,
                     credit_limit_paise, annual_fee_paise, interest_rate_bps,
                     billing_day, due_day_offset, notes
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                card_id, account_id, name, bank, card_last4,
-                credit_limit_paise, annual_fee_paise, interest_rate_bps,
-                billing_day, due_day_offset, notes,
-            ))
+            """,
+                (
+                    card_id,
+                    account_id,
+                    name,
+                    bank,
+                    card_last4,
+                    credit_limit_paise,
+                    annual_fee_paise,
+                    interest_rate_bps,
+                    billing_day,
+                    due_day_offset,
+                    notes,
+                ),
+            )
             conn.commit()
         return card_id
 
@@ -65,11 +76,14 @@ class CreditCardRepository(BaseRepository):
         """
         if account_id:
             with self._get_conn() as conn:
-                rows = conn.execute("""
+                rows = conn.execute(
+                    """
                     SELECT * FROM credit_cards
                     WHERE is_active = 1 AND account_id = ?
                     ORDER BY created_at DESC
-                """, (account_id,)).fetchall()
+                """,
+                    (account_id,),
+                ).fetchall()
         else:
             with self._get_conn() as conn:
                 rows = conn.execute("""
@@ -79,24 +93,29 @@ class CreditCardRepository(BaseRepository):
                 """).fetchall()
         return [dict(r) for r in rows]
 
-    def update_card(self, card_id: str, **kwargs: str | int | float | None) -> dict[str, Any] | None:
+    def update_card(
+        self, card_id: str, **kwargs: str | int | float | None
+    ) -> dict[str, Any] | None:
         """Update credit card fields. Only updates provided fields."""
         allowed = {
-            'name', 'credit_limit_paise', 'annual_fee_paise',
-            'interest_rate_bps', 'billing_day', 'due_day_offset', 'notes',
+            "name",
+            "credit_limit_paise",
+            "annual_fee_paise",
+            "interest_rate_bps",
+            "billing_day",
+            "due_day_offset",
+            "notes",
         }
         updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
         if not updates:
             return self.get_card(card_id)
 
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause = ", ".join(f"{k} = ?" for k in updates)
         set_clause += ", updated_at = datetime('now')"
         values = list(updates.values()) + [card_id]
 
         with self._get_conn() as conn:
-            conn.execute(
-                f"UPDATE credit_cards SET {set_clause} WHERE id = ?", values
-            )
+            conn.execute(f"UPDATE credit_cards SET {set_clause} WHERE id = ?", values)
             conn.commit()
         return self.get_card(card_id)
 
@@ -105,7 +124,7 @@ class CreditCardRepository(BaseRepository):
         with self._get_conn() as conn:
             conn.execute(
                 "UPDATE credit_cards SET is_active = 0, updated_at = datetime('now') WHERE id = ?",
-                (card_id,)
+                (card_id,),
             )
             conn.commit()
             changes_row = conn.execute("SELECT changes()").fetchone()

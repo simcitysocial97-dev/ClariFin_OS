@@ -16,7 +16,7 @@ def compute_wellness_score(
     resilience_index: Decimal,
     lifestyle_inflation: Decimal,
     credit_revolver_ratio: Decimal,
-    foir: Decimal
+    foir: Decimal,
 ) -> Decimal:
     """
     Compute composite financial wellness score (0-100).
@@ -50,39 +50,44 @@ def compute_wellness_score(
         - Debt cycle score is inverted (lower score = better health)
     """
     # Normalize each component
-    cashflow_component = cashflow_stability * Decimal('0.30')
+    cashflow_component = cashflow_stability * Decimal("0.30")
 
     # Debt health: lower debt cycle score = better health
-    debt_component = (Decimal('1') - (Decimal(str(debt_cycle_score)) / Decimal('100'))) * Decimal('0.20')
+    debt_component = (
+        Decimal("1") - (Decimal(str(debt_cycle_score)) / Decimal("100"))
+    ) * Decimal("0.20")
 
     # Savings behaviour: clamp negative values to 0
-    savings_component = max(Decimal('0'), savings_rate) * Decimal('0.15')
+    savings_component = max(Decimal("0"), savings_rate) * Decimal("0.15")
 
     # Resilience: already 0-1
-    resilience_component = resilience_index * Decimal('0.20')
+    resilience_component = resilience_index * Decimal("0.20")
 
     # Lifestyle control: negative inflation = perfect (1), positive inflation capped at 1
-    lifestyle_component = (Decimal('1') - min(max(lifestyle_inflation, Decimal('0')), Decimal('1'))) * Decimal('0.10')
+    lifestyle_component = (
+        Decimal("1") - min(max(lifestyle_inflation, Decimal("0")), Decimal("1"))
+    ) * Decimal("0.10")
 
     # Credit behaviour: combines revolver ratio and FOIR
     credit_component = (
-        Decimal('0.5') * (Decimal('1') - credit_revolver_ratio) +
-        Decimal('0.5') * (Decimal('1') - min(foir, Decimal('1')))
-    ) * Decimal('0.05')
+        Decimal("0.5") * (Decimal("1") - credit_revolver_ratio)
+        + Decimal("0.5") * (Decimal("1") - min(foir, Decimal("1")))
+    ) * Decimal("0.05")
 
     # Sum all components
     wellness_score = (
-        cashflow_component +
-        debt_component +
-        savings_component +
-        resilience_component +
-        lifestyle_component +
-        credit_component
+        cashflow_component
+        + debt_component
+        + savings_component
+        + resilience_component
+        + lifestyle_component
+        + credit_component
     )
 
     # Convert to 0-100 scale and clamp
-    wellness_score_100 = wellness_score * Decimal('100')
-    return max(Decimal('0'), min(wellness_score_100, Decimal('100')))
+    wellness_score_100 = wellness_score * Decimal("100")
+    return max(Decimal("0"), min(wellness_score_100, Decimal("100")))
+
 
 def classify_wellness_band(score: Decimal) -> str:
     """
@@ -101,14 +106,13 @@ def classify_wellness_band(score: Decimal) -> str:
     Returns:
         String classification band
     """
-    if score >= Decimal('90'):
+    if score >= Decimal("90"):
         return "Excellent"
-    elif score >= Decimal('75'):
+    elif score >= Decimal("75"):
         return "Healthy"
-    elif score >= Decimal('50'):
+    elif score >= Decimal("50"):
         return "Developing"
-    elif score >= Decimal('25'):
+    elif score >= Decimal("25"):
         return "Risk"
     else:
         return "Critical"
-

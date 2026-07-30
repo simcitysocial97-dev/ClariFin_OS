@@ -2,6 +2,7 @@
 
 Coordinates repository calls and business logic for transaction operations.
 """
+
 from collections import defaultdict
 from datetime import datetime
 from typing import Any
@@ -58,24 +59,35 @@ class TransactionService:
         # Filter out transfers if requested
         if exclude_transfers:
             transactions = [
-                t for t in transactions
+                t
+                for t in transactions
                 if t.get("category") != "Payments & Transfers"
                 and t.get("id") not in confirmed_transfer_ids
             ]
 
         # Compute metrics
         debit_txns = [t for t in transactions if t.get("type") == "debit"]
-        month_keys = sorted({t.get("month_key", "") for t in debit_txns if t.get("month_key")})
+        month_keys = sorted(
+            {t.get("month_key", "") for t in debit_txns if t.get("month_key")}
+        )
 
         total_spend = sum(t.get("amount", 0) for t in debit_txns)
 
         this_month = month_keys[-1] if month_keys else ""
         last_month = month_keys[-2] if len(month_keys) >= 2 else ""
 
-        this_month_spend = sum(t.get("amount", 0) for t in debit_txns if t.get("month_key") == this_month)
-        last_month_spend = sum(t.get("amount", 0) for t in debit_txns if t.get("month_key") == last_month)
+        this_month_spend = sum(
+            t.get("amount", 0) for t in debit_txns if t.get("month_key") == this_month
+        )
+        last_month_spend = sum(
+            t.get("amount", 0) for t in debit_txns if t.get("month_key") == last_month
+        )
 
-        month_change = percentage_change(this_month_spend, last_month_spend) if last_month_spend > 0 else "—"
+        month_change = (
+            percentage_change(this_month_spend, last_month_spend)
+            if last_month_spend > 0
+            else "—"
+        )
 
         # Monthly chart
         monthly: dict[str, Any] = defaultdict(float)
@@ -85,7 +97,10 @@ class TransactionService:
                 monthly[mk] += t.get("amount", 0)
 
         monthly_chart = [
-            {"month": datetime.strptime(m, "%Y-%m").strftime("%b %y"), "amount": round(monthly[m], 2)}
+            {
+                "month": datetime.strptime(m, "%Y-%m").strftime("%b %y"),
+                "amount": round(monthly[m], 2),
+            }
             for m in sorted(monthly.keys())[-12:]
         ]
 
@@ -95,7 +110,9 @@ class TransactionService:
             cat_totals[t.get("category", "Uncategorized")] += t.get("amount", 0)
 
         sorted_cats = sorted(cat_totals.items(), key=lambda x: x[1], reverse=True)
-        category_chart = [{"name": cat, "value": round(amt, 2)} for cat, amt in sorted_cats[:8]]
+        category_chart = [
+            {"name": cat, "value": round(amt, 2)} for cat, amt in sorted_cats[:8]
+        ]
 
         # Bank chart
         bank_totals: dict[str, Any] = defaultdict(float)
@@ -104,11 +121,15 @@ class TransactionService:
 
         bank_chart = [
             {"bank": bank, "amount": round(amt, 2)}
-            for bank, amt in sorted(bank_totals.items(), key=lambda x: x[1], reverse=True)
+            for bank, amt in sorted(
+                bank_totals.items(), key=lambda x: x[1], reverse=True
+            )
         ]
 
         # Recent transactions
-        recent = sorted(transactions, key=lambda t: t.get("parsed_date", ""), reverse=True)[:10]
+        recent = sorted(
+            transactions, key=lambda t: t.get("parsed_date", ""), reverse=True
+        )[:10]
         recent = compute_is_large(recent)
 
         # Behavioral insights
@@ -118,7 +139,11 @@ class TransactionService:
         if monthly:
             avg_monthly = sum(monthly.values()) / len(monthly)
             diff = this_month_spend - avg_monthly
-            above_below = f"+{format_inr(diff)} above avg" if diff > 0 else f"{format_inr(abs(diff))} below avg"
+            above_below = (
+                f"+{format_inr(diff)} above avg"
+                if diff > 0
+                else f"{format_inr(abs(diff))} below avg"
+            )
             above_is_bad = diff > 0
         else:
             above_below = "at average"
@@ -161,7 +186,9 @@ class TransactionService:
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
         if exclude_transfers:
-            transactions = [t for t in transactions if t.get("category") != "Payments & Transfers"]
+            transactions = [
+                t for t in transactions if t.get("category") != "Payments & Transfers"
+            ]
 
         # Category summary
         cat_data: dict[str, Any] = defaultdict(lambda: {"amount": 0.0, "count": 0})
@@ -179,9 +206,15 @@ class TransactionService:
                 "amount": round(data["amount"], 2),
                 "amount_display": format_inr(data["amount"]),
                 "count": data["count"],
-                "percentage": round((data["amount"] / total_debit) * 100, 1) if total_debit > 0 else 0,
+                "percentage": (
+                    round((data["amount"] / total_debit) * 100, 1)
+                    if total_debit > 0
+                    else 0
+                ),
             }
-            for cat, data in sorted(cat_data.items(), key=lambda x: x[1]["amount"], reverse=True)
+            for cat, data in sorted(
+                cat_data.items(), key=lambda x: x[1]["amount"], reverse=True
+            )
         ]
 
         # Monthly breakdown
@@ -193,7 +226,12 @@ class TransactionService:
                 if mk:
                     data[mk][cat] += t.get("amount", 0)
 
-        top_cats = [c for c, _ in sorted(cat_data.items(), key=lambda x: x[1]["amount"], reverse=True)[:6]]
+        top_cats = [
+            c
+            for c, _ in sorted(
+                cat_data.items(), key=lambda x: x[1]["amount"], reverse=True
+            )[:6]
+        ]
         sorted_months = sorted(data.keys())[-12:]
         monthly_breakdown = []
         for m in sorted_months:
@@ -206,8 +244,7 @@ class TransactionService:
         drill_transactions = []
         if drill_category:
             drill_transactions = [
-                t for t in transactions
-                if t.get("category") == drill_category
+                t for t in transactions if t.get("category") == drill_category
             ][:50]
 
         # Uncategorized patterns
@@ -242,7 +279,9 @@ class TransactionService:
         transactions = [enrich_transaction(dict(t)) for t in raw]
 
         if exclude_transfers:
-            transactions = [t for t in transactions if t.get("category") != "Payments & Transfers"]
+            transactions = [
+                t for t in transactions if t.get("category") != "Payments & Transfers"
+            ]
 
         debit_txns = [t for t in transactions if t.get("type") == "debit"]
 
@@ -255,7 +294,9 @@ class TransactionService:
 
         sorted_months = sorted(monthly.keys())
         monthly_amounts = [monthly[m] for m in sorted_months]
-        avg_monthly = sum(monthly_amounts) / len(monthly_amounts) if monthly_amounts else 0
+        avg_monthly = (
+            sum(monthly_amounts) / len(monthly_amounts) if monthly_amounts else 0
+        )
 
         # Highest month
         if monthly:
@@ -280,7 +321,11 @@ class TransactionService:
 
         # Spending trend
         spending_trend = [
-            {"month": datetime.strptime(m, "%Y-%m").strftime("%b %y"), "amount": round(monthly[m], 2), "average": round(avg_monthly, 2)}
+            {
+                "month": datetime.strptime(m, "%Y-%m").strftime("%b %y"),
+                "amount": round(monthly[m], 2),
+                "average": round(avg_monthly, 2),
+            }
             for m in sorted_months
         ]
 
@@ -292,7 +337,15 @@ class TransactionService:
                 day_totals[wd]["amount"] += t.get("amount", 0)
                 day_totals[wd]["count"] += 1
 
-        day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        day_order = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+        ]
         day_of_week = [
             {
                 "day": day[:3],
@@ -310,7 +363,9 @@ class TransactionService:
                 merchant_data[desc]["amount"] += t.get("amount", 0)
                 merchant_data[desc]["count"] += 1
 
-        sorted_m = sorted(merchant_data.items(), key=lambda x: x[1]["amount"], reverse=True)[:10]
+        sorted_m = sorted(
+            merchant_data.items(), key=lambda x: x[1]["amount"], reverse=True
+        )[:10]
         top_merchants = [
             {
                 "merchant": name,
@@ -333,22 +388,27 @@ class TransactionService:
                 if avg_amt > 0:
                     variance = max(abs(a - avg_amt) / avg_amt for a in amounts)
                     if variance < 0.2:
-                        recurring.append({
-                            "description": desc[:50],
-                            "frequency": len(amounts),
-                            "avg_display": format_inr(avg_amt),
-                            "annual_display": format_inr(avg_amt * 12),
-                        })
+                        recurring.append(
+                            {
+                                "description": desc[:50],
+                                "frequency": len(amounts),
+                                "avg_display": format_inr(avg_amt),
+                                "annual_display": format_inr(avg_amt * 12),
+                            }
+                        )
 
         recurring.sort(key=lambda x: x.get("frequency", 0), reverse=True)
 
         # Largest transactions
-        sorted_debits = sorted(debit_txns, key=lambda t: t.get("amount", 0), reverse=True)
+        sorted_debits = sorted(
+            debit_txns, key=lambda t: t.get("amount", 0), reverse=True
+        )
         largest_transactions = [
             {
                 "rank": i + 1,
                 "date_display": t.get("date_display", ""),
-                "description": t.get("description_display", "") or t.get("description", ""),
+                "description": t.get("description_display", "")
+                or t.get("description", ""),
                 "amount_display": format_inr(t.get("amount", 0)),
                 "bank": t.get("bank", ""),
             }

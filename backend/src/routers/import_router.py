@@ -1,4 +1,5 @@
 """Statement upload and import endpoints."""
+
 # Import invalidate_cache from behavior_engine
 import sys
 from pathlib import Path
@@ -26,6 +27,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 class ImportExecute(BaseModel):
     """Pydantic model for import execute request."""
+
     filename: str
     mapping: dict[str, Any]
     member: str = "Self"
@@ -108,11 +110,13 @@ async def upload_statement(
             total_due_paise = int(round(total_due * 100))
             debit_sum_paise = sum(
                 int(t.get("amount_paise") or 0)
-                for t in transactions if t.get("type") == "debit"
+                for t in transactions
+                if t.get("type") == "debit"
             )
             credit_sum_paise = sum(
                 int(t.get("amount_paise") or 0)
-                for t in transactions if t.get("type") == "credit"
+                for t in transactions
+                if t.get("type") == "credit"
             )
             net_paise = debit_sum_paise - credit_sum_paise
             diff_paise = abs(net_paise - total_due_paise)
@@ -128,7 +132,9 @@ async def upload_statement(
                 val_status = "mismatch"
                 log.append(f"❌ Validation: mismatch (₹{diff_rupees:.2f} off)")
 
-            stmt_repo.update_validation_status(statement_id, val_status, round(diff_rupees, 2))
+            stmt_repo.update_validation_status(
+                statement_id, val_status, round(diff_rupees, 2)
+            )
         else:
             stmt_repo.update_validation_status(statement_id, "no_metadata", 0.0)
             log.append("⚠️ Validation: total due not found")
@@ -142,7 +148,11 @@ async def upload_statement(
         try:
             orchestrator = StatementProcessingOrchestrator()
             pipeline_summary = orchestrator.process_after_upload(statement_id)
-            completed = [k for k, v in pipeline_summary.items() if v is not None and not k.endswith("_error")]
+            completed = [
+                k
+                for k, v in pipeline_summary.items()
+                if v is not None and not k.endswith("_error")
+            ]
             log.append(f"✅ Pipeline: {', '.join(completed)}")
 
         except Exception as pipeline_error:
@@ -153,12 +163,14 @@ async def upload_statement(
             "success": True,
             "bank": bank,
             "transaction_count": len(transactions),
-            "validation_status": val_status if total_due and total_due > 0 else "no_metadata",
+            "validation_status": (
+                val_status if total_due and total_due > 0 else "no_metadata"
+            ),
             "metadata": metadata,
             "log": log,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/import/detect")
@@ -190,7 +202,7 @@ async def import_detect(file: UploadFile = File(...)) -> dict[str, Any]:
             "skip_rows": detected.get("skip_rows", 0),
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/import/execute")
@@ -232,4 +244,4 @@ def import_execute(data: ImportExecute) -> dict[str, Any]:
             "errors": warnings,
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

@@ -91,6 +91,7 @@ class FinancialGoal(DomainModel):
 # Request/Response DTOs
 # ============================================================
 
+
 class FinancialGoalCreateRequest(BaseModel):
     """Financial goal creation request."""
 

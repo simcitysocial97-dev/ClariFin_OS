@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 import hashlib
 from collections import defaultdict
 from typing import Any
@@ -18,6 +19,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
     Returns '' for any value that cannot be normalized.
     """
     from datetime import datetime
+
     s = (date_str or "").strip()
     if not s:
         return ""
@@ -28,8 +30,14 @@ def _parse_date_to_ymd(date_str: str) -> str:
         except ValueError:
             continue
     formats = [
-        "%d/%m/%Y", "%d-%m-%Y", "%d/%m/%y", "%d-%m-%y",
-        "%d %b %Y", "%d %b %y", "%d-%b-%Y", "%d-%b-%y",
+        "%d/%m/%Y",
+        "%d-%m-%Y",
+        "%d/%m/%y",
+        "%d-%m-%y",
+        "%d %b %Y",
+        "%d %b %y",
+        "%d-%b-%Y",
+        "%d-%b-%y",
     ]
     for fmt in formats:
         try:
@@ -49,18 +57,18 @@ class TransactionRepository(BaseRepository):
         Maps the canonical `amount_paise` column into the `Money` value object.
         """
         with self._get_conn() as conn:
-            rows = conn.execute(
-                """
+            rows = conn.execute("""
                 SELECT
                     t.id, t.statement_id, t.date, t.description,
                     t.amount_paise, t.category, t.member, s.bank
                 FROM transactions t
                 LEFT JOIN statements s ON t.statement_id = s.id
                 ORDER BY t.date DESC, t.id DESC
-                """
-            ).fetchall()
+                """).fetchall()
         return [
-            Transaction.from_db_row({**dict(row), "date": _parse_date_to_ymd(row["date"])})
+            Transaction.from_db_row(
+                {**dict(row), "date": _parse_date_to_ymd(row["date"])}
+            )
             for row in rows
         ]
 
@@ -71,22 +79,24 @@ class TransactionRepository(BaseRepository):
         Mirrors get_all_transactions_with_bank but wraps rows in Transaction.
         """
         with self._get_conn() as conn:
-            rows = conn.execute(
-                """
+            rows = conn.execute("""
                 SELECT
                     t.id, t.statement_id, t.date, t.description,
                     t.amount_paise, t.category, t.member, s.bank
                 FROM transactions t
                 LEFT JOIN statements s ON t.statement_id = s.id
                 ORDER BY t.id ASC
-                """
-            ).fetchall()
+                """).fetchall()
         return [
-            Transaction.from_db_row({**dict(row), "date": _parse_date_to_ymd(row["date"])})
+            Transaction.from_db_row(
+                {**dict(row), "date": _parse_date_to_ymd(row["date"])}
+            )
             for row in rows
         ]
 
-    def get_all_transactions(self, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    def get_all_transactions(
+        self, filters: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         """
         Fetch transactions with optional filters.
         Supported filter keys: date_from, date_to, bank, category, min_amount, max_amount, type
@@ -121,7 +131,7 @@ class TransactionRepository(BaseRepository):
 
         sql = f"""
             SELECT
-                t.id, t.statement_id, t.date, t.description, t.amount_paise,
+                t.id, t.statement_id, t.date, t.date_iso, t.description, t.amount_paise,
                 t.type, t.category, t.subcategory, t.raw_description, t.created_at,
                 s.bank, s.file_name, s.statement_period_from, s.statement_period_to
             FROM transactions t
@@ -135,7 +145,9 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def get_all_transactions_with_bank(self, filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+    def get_all_transactions_with_bank(
+        self, filters: dict[str, Any] | None = None
+    ) -> list[dict[str, Any]]:
         """
         JOIN transactions with statements to include bank info.
         Returns list of dicts with all transaction + statement fields.
@@ -189,7 +201,9 @@ class TransactionRepository(BaseRepository):
             rows = [dict(row) for row in cur.fetchall()]
         return rows
 
-    def insert_transactions(self, statement_id: int, transactions: list[dict[str, Any]]) -> int:
+    def insert_transactions(
+        self, statement_id: int, transactions: list[dict[str, Any]]
+    ) -> int:
         """
         Bulk insert transactions. Deduplicates by hash_signature.
         Phase 2A.1: Uses hash_signature for deduplication.
@@ -204,7 +218,9 @@ class TransactionRepository(BaseRepository):
             inserted = 0
 
             # Get bank (account_id) for this statement
-            cur = conn.execute("SELECT bank FROM statements WHERE id = ?", (statement_id,))
+            cur = conn.execute(
+                "SELECT bank FROM statements WHERE id = ?", (statement_id,)
+            )
             row = cur.fetchone()
             account_id = row["bank"] if row else ""
 
@@ -214,12 +230,14 @@ class TransactionRepository(BaseRepository):
                 date = str(txn.get("date", "")).strip()
                 description = str(txn.get("description", "")).strip()
                 txn_type = str(txn.get("type", "")).strip()
-                category = str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
+                category = (
+                    str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
+                )
                 subcategory = str(txn.get("subcategory", "")).strip() or None
 
                 # Phase 2A: Compute debit/credit paise values
-                debit_paise = amount_paise if txn_type == 'debit' else 0
-                credit_paise = amount_paise if txn_type == 'credit' else 0
+                debit_paise = amount_paise if txn_type == "debit" else 0
+                credit_paise = amount_paise if txn_type == "credit" else 0
 
                 # Phase 2A.1: Compute date_iso
                 date_iso = _parse_date_to_ymd(date) if date else ""
@@ -451,7 +469,11 @@ class TransactionRepository(BaseRepository):
                 INSERT INTO statements (bank, file_name, source)
                 VALUES (?, ?, ?)
                 """,
-                (bank, file_name or f"{source}_import_{len(transactions)}_txns", source),
+                (
+                    bank,
+                    file_name or f"{source}_import_{len(transactions)}_txns",
+                    source,
+                ),
             )
             statement_id = cur.lastrowid or 0
 
@@ -468,20 +490,26 @@ class TransactionRepository(BaseRepository):
 
                 date = str(txn.get("date", "")).strip()
                 description = str(txn.get("description", "")).strip()
-                original_description = str(txn.get("original_description", description)).strip()
+                original_description = str(
+                    txn.get("original_description", description)
+                ).strip()
                 txn_type = str(txn.get("type", "")).strip()
-                category = str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
+                category = (
+                    str(txn.get("category", "Uncategorized")).strip() or "Uncategorized"
+                )
                 subcategory = str(txn.get("subcategory", "")).strip() or None
 
                 # Phase 2A: Compute debit/credit paise values
-                debit_paise = amount_paise if txn_type == 'debit' else 0
-                credit_paise = amount_paise if txn_type == 'credit' else 0
+                debit_paise = amount_paise if txn_type == "debit" else 0
+                credit_paise = amount_paise if txn_type == "credit" else 0
 
                 # Phase 2A.1: Compute date_iso
                 date_iso = _parse_date_to_ymd(date) if date else ""
 
                 # Phase 2A.1: Compute hash_signature
-                hash_input = f"{bank}|{date_iso}|{description}|{debit_paise}|{credit_paise}"
+                hash_input = (
+                    f"{bank}|{date_iso}|{description}|{debit_paise}|{credit_paise}"
+                )
                 hash_signature = hashlib.sha256(hash_input.encode()).hexdigest().lower()
 
                 if not date:

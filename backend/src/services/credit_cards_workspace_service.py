@@ -6,7 +6,9 @@ Returns aggregated credit cards data matching CreditCardsViewModel format.
 from typing import Any
 
 from src.repositories.credit_card_repository import CreditCardRepository
-from src.repositories.credit_card_statement_repository import CreditCardStatementRepository
+from src.repositories.credit_card_statement_repository import (
+    CreditCardStatementRepository,
+)
 from src.services.base import BaseService
 
 
@@ -45,25 +47,29 @@ class CreditCardsWorkspaceService(BaseService):
         # Build card summaries
         card_summaries = []
         for card in cards:
-            card_summaries.append({
-                "id": card.get("card_id", ""),
-                "name": card.get("name", ""),
-                "bank": card.get("bank", ""),
-                "card_number_last4": card.get("card_last4", ""),
-                "credit_limit_paise": card.get("credit_limit_paise", 0),
-                "current_balance_paise": card.get("current_balance_paise", 0),
-                "available_paise": card.get("available_paise", 0),
-                "min_due_paise": card.get("min_due_paise", 0),
-                "total_due_paise": card.get("total_due_paise", 0),
-                "due_date": card.get("due_date", ""),
-                "status": card.get("status", "active"),
-                "reward_points": card.get("reward_points", 0),
-            })
+            card_summaries.append(
+                {
+                    "id": card.get("card_id", ""),
+                    "name": card.get("name", ""),
+                    "bank": card.get("bank", ""),
+                    "card_number_last4": card.get("card_last4", ""),
+                    "credit_limit_paise": card.get("credit_limit_paise", 0),
+                    "current_balance_paise": card.get("current_balance_paise", 0),
+                    "available_paise": card.get("available_paise", 0),
+                    "min_due_paise": card.get("min_due_paise", 0),
+                    "total_due_paise": card.get("total_due_paise", 0),
+                    "due_date": card.get("due_date", ""),
+                    "status": card.get("status", "active"),
+                    "reward_points": card.get("reward_points", 0),
+                }
+            )
 
         # Get statements for utilization
         statements = []
         for card in cards:
-            card_statements = self.statement_repo.list_statements(card.get("card_id", ""))
+            card_statements = self.statement_repo.list_statements(
+                card.get("card_id", "")
+            )
             statements.extend(card_statements)
 
         # Build utilization data
@@ -72,49 +78,61 @@ class CreditCardsWorkspaceService(BaseService):
             balance = card.get("current_balance_paise", 0)
             limit = card.get("credit_limit_paise", 1)
             utilization_pct = int(balance / limit * 100) if limit > 0 else 0
-            utilization.append({
-                "card_id": card.get("card_id", ""),
-                "credit_limit_paise": limit,
-                "current_balance_paise": balance,
-                "utilization_percentage": utilization_pct,
-                "available_paise": limit - balance,
-            })
+            utilization.append(
+                {
+                    "card_id": card.get("card_id", ""),
+                    "credit_limit_paise": limit,
+                    "current_balance_paise": balance,
+                    "utilization_percentage": utilization_pct,
+                    "available_paise": limit - balance,
+                }
+            )
 
         # Build spending by category (placeholder)
         spending = []
         for card in cards:
-            spending.append({
-                "card_id": card.get("card_id", ""),
-                "category": "shopping",
-                "amount_paise": card.get("current_balance_paise", 0) // 3,
-                "percentage": 33,
-                "transaction_count": 10,
-            })
-            spending.append({
-                "card_id": card.get("card_id", ""),
-                "category": "dining",
-                "amount_paise": card.get("current_balance_paise", 0) // 3,
-                "percentage": 33,
-                "transaction_count": 8,
-            })
-            spending.append({
-                "card_id": card.get("card_id", ""),
-                "category": "travel",
-                "amount_paise": card.get("current_balance_paise", 0) // 3,
-                "percentage": 34,
-                "transaction_count": 5,
-            })
+            spending.append(
+                {
+                    "card_id": card.get("card_id", ""),
+                    "category": "shopping",
+                    "amount_paise": card.get("current_balance_paise", 0) // 3,
+                    "percentage": 33,
+                    "transaction_count": 10,
+                }
+            )
+            spending.append(
+                {
+                    "card_id": card.get("card_id", ""),
+                    "category": "dining",
+                    "amount_paise": card.get("current_balance_paise", 0) // 3,
+                    "percentage": 33,
+                    "transaction_count": 8,
+                }
+            )
+            spending.append(
+                {
+                    "card_id": card.get("card_id", ""),
+                    "category": "travel",
+                    "amount_paise": card.get("current_balance_paise", 0) // 3,
+                    "percentage": 34,
+                    "transaction_count": 5,
+                }
+            )
 
         # Generate insights
         insights = []
         if total_balance > 0:
-            high_util_cards = [u for u in utilization if u["utilization_percentage"] > 80]
+            high_util_cards = [
+                u for u in utilization if u["utilization_percentage"] > 80
+            ]
             if high_util_cards:
-                insights.append({
-                    "type": "warning",
-                    "severity": "high",
-                    "message": f"{len(high_util_cards)} card(s) have high utilization (>80%)",
-                })
+                insights.append(
+                    {
+                        "type": "warning",
+                        "severity": "high",
+                        "message": f"{len(high_util_cards)} card(s) have high utilization (>80%)",
+                    }
+                )
 
         return {
             "cards": card_summaries,

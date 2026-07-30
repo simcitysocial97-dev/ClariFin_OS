@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 from datetime import datetime, timedelta
 from typing import Any
 
@@ -121,7 +122,13 @@ class StatementRepository(BaseRepository):
                 INSERT INTO statements (bank, card_last4, statement_period_from, statement_period_to, file_name)
                 VALUES (?, ?, ?, ?, ?)
                 """,
-                (bank, card_last4 or None, period_from or None, period_to or None, file_name),
+                (
+                    bank,
+                    card_last4 or None,
+                    period_from or None,
+                    period_to or None,
+                    file_name,
+                ),
             )
             conn.commit()
         return int(cur.lastrowid or 0)
@@ -143,7 +150,9 @@ class StatementRepository(BaseRepository):
             count = cur.fetchone()[0]
         return int(count)
 
-    def update_statement_metadata(self, statement_id: int, metadata: dict[str, Any]) -> None:
+    def update_statement_metadata(
+        self, statement_id: int, metadata: dict[str, Any]
+    ) -> None:
         """Update statement with all extracted metadata. Normalizes date fields to ISO format."""
         # Normalize all date fields to YYYY-MM-DD format on write
         normalized = {
@@ -154,7 +163,8 @@ class StatementRepository(BaseRepository):
         }
 
         with self._get_conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE statements SET
                     total_amount_due = ?,
                     minimum_amount_due = ?,
@@ -166,29 +176,36 @@ class StatementRepository(BaseRepository):
                     bill_cycle_start = ?,
                     bill_cycle_end = ?
                 WHERE id = ?
-            """, (
-                metadata.get("total_amount_due"),
-                metadata.get("minimum_amount_due"),
-                normalized["payment_due_date"],
-                normalized["statement_date"],
-                metadata.get("card_last4"),
-                metadata.get("credit_limit"),
-                metadata.get("opening_balance"),
-                normalized["bill_cycle_start"],
-                normalized["bill_cycle_end"],
-                statement_id,
-            ))
+            """,
+                (
+                    metadata.get("total_amount_due"),
+                    metadata.get("minimum_amount_due"),
+                    normalized["payment_due_date"],
+                    normalized["statement_date"],
+                    metadata.get("card_last4"),
+                    metadata.get("credit_limit"),
+                    metadata.get("opening_balance"),
+                    normalized["bill_cycle_start"],
+                    normalized["bill_cycle_end"],
+                    statement_id,
+                ),
+            )
             conn.commit()
 
-    def update_validation_status(self, statement_id: int, status: str, difference: float) -> None:
+    def update_validation_status(
+        self, statement_id: int, status: str, difference: float
+    ) -> None:
         """Update validation status after comparing extracted sum vs total_due."""
         with self._get_conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE statements SET
                     validation_status = ?,
                     validation_difference = ?
                 WHERE id = ?
-            """, (status, difference, statement_id))
+            """,
+                (status, difference, statement_id),
+            )
             conn.commit()
 
     def get_statement_validation_summary(self) -> list[dict[str, Any]]:
@@ -214,20 +231,26 @@ class StatementRepository(BaseRepository):
     def delete_statement(self, statement_id: int) -> None:
         """Delete a statement and all its transactions."""
         with self._get_conn() as conn:
-            conn.execute("DELETE FROM transactions WHERE statement_id = ?", (statement_id,))
+            conn.execute(
+                "DELETE FROM transactions WHERE statement_id = ?", (statement_id,)
+            )
             conn.execute("DELETE FROM statements WHERE id = ?", (statement_id,))
             conn.commit()
 
     def get_statement_pdf_path(self, statement_id: int) -> str | None:
         """Get the file_name for a statement."""
         with self._get_conn() as conn:
-            row = conn.execute("SELECT file_name FROM statements WHERE id = ?", (statement_id,)).fetchone()
+            row = conn.execute(
+                "SELECT file_name FROM statements WHERE id = ?", (statement_id,)
+            ).fetchone()
         return row[0] if row else None
 
     def get_duplicate_check_by_filename(self, file_name: str) -> bool:
         """Returns True if file_name already exists in statements (any bank)."""
         with self._get_conn() as conn:
-            row = conn.execute("SELECT 1 FROM statements WHERE file_name = ?", (file_name,)).fetchone()
+            row = conn.execute(
+                "SELECT 1 FROM statements WHERE file_name = ?", (file_name,)
+            ).fetchone()
         return row is not None
 
     def get_banks(self) -> list[str]:
@@ -237,7 +260,9 @@ class StatementRepository(BaseRepository):
             banks = [row[0] for row in cur.fetchall()]
         return banks
 
-    def get_statement_for_card(self, bank: str, card_last4: str) -> dict[str, Any] | None:
+    def get_statement_for_card(
+        self, bank: str, card_last4: str
+    ) -> dict[str, Any] | None:
         """
         Get the latest statement for a specific credit card.
 
@@ -413,10 +438,9 @@ class StatementRepository(BaseRepository):
                     except ValueError:
                         continue
 
-                if start_dt and end_dt:
+                if start_dt and end_dt and start_dt <= payment_dt <= end_dt:
                     # Payment falls within bill cycle window
-                    if start_dt <= payment_dt <= end_dt:
-                        bill_cycle_matches.append(row_dict)
+                    bill_cycle_matches.append(row_dict)
 
         # Prefer due_date matches over bill_cycle matches
         if matching_statements:

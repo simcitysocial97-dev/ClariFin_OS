@@ -62,6 +62,16 @@ Generated automatically. Shows what capabilities/tests would be affected by modi
   - `normal_household`
   - `salary_only`
 
+## `src/engines/behavior_engine.py`
+
+**Capabilities:**
+  - Financial Health (`financial_health`)
+
+**Golden Tests:**
+  - `high_debt_household`
+  - `irregular_income`
+  - `normal_household`
+
 ## `src/engines/behaviour_engine/account.py`
 
 **Capabilities:**

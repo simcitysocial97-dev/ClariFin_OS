@@ -40,8 +40,12 @@ def compute_utilization(
     if credit_limit_paise == 0 or outstanding_paise == 0:
         return 0
 
-    utilization_decimal = Decimal(outstanding_paise) * Decimal(10000) / Decimal(credit_limit_paise)
-    utilization_bps = int(utilization_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    utilization_decimal = (
+        Decimal(outstanding_paise) * Decimal(10000) / Decimal(credit_limit_paise)
+    )
+    utilization_bps = int(
+        utilization_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+    )
 
     return min(utilization_bps, 10000)  # Cap at 100%
 

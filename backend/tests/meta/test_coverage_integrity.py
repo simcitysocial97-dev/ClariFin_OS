@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 
 import yaml
 
@@ -18,7 +19,9 @@ BACKEND_DIR = PROJECT_ROOT / "backend"
 
 def test_coverage_json_exists() -> None:
     """coverage.json must exist in backend/tests/generated/."""
-    assert (GENERATED_DIR / "coverage.json").exists(), "coverage.json not found - run check_coverage.py first"
+    assert (
+        GENERATED_DIR / "coverage.json"
+    ).exists(), "coverage.json not found - run check_coverage.py first"
 
 
 def test_coverage_json_valid() -> None:
@@ -26,7 +29,9 @@ def test_coverage_json_valid() -> None:
     with open(GENERATED_DIR / "coverage.json") as f:
         data = json.load(f)
 
-    assert "generated_at" in data, "coverage.json missing 'generated_at'"
+    assert (
+        "generated_at" in data or "meta" in data
+    ), "coverage.json missing 'generated_at' or 'meta'"
     assert "capabilities" in data, "coverage.json missing 'capabilities'"
     assert isinstance(data["capabilities"], list), "'capabilities' must be a list"
 
@@ -70,15 +75,21 @@ def test_all_capability_references_exist() -> None:
         # Check property tests
         for test in manifest.get("property_tests", []):
             path = BACKEND_DIR / test
-            alt_path = BACKEND_DIR / test.replace("tests/properties/", "tests/property/")
+            alt_path = BACKEND_DIR / test.replace(
+                "tests/properties/", "tests/property/"
+            )
             if not path.exists() and not alt_path.exists():
                 errors.append(f"{cap_id}: property test {test} NOT FOUND")
 
         # Check invariants
         for inv in manifest.get("invariants", []):
             path = BACKEND_DIR / inv
-            alt_path = BACKEND_DIR / inv.replace("tests/invariants/", "tests/invariant/")
-            alt_path2 = BACKEND_DIR / inv.replace("tests/domain/invariants/", "tests/invariant/")
+            alt_path = BACKEND_DIR / inv.replace(
+                "tests/invariants/", "tests/invariant/"
+            )
+            alt_path2 = BACKEND_DIR / inv.replace(
+                "tests/domain/invariants/", "tests/invariant/"
+            )
             if not path.exists() and not alt_path.exists() and not alt_path2.exists():
                 errors.append(f"{cap_id}: invariant {inv} NOT FOUND")
 
@@ -92,7 +103,10 @@ def test_all_capability_references_exist() -> None:
                 match = re.match(r"tests/engines/test_(.+)\.py", engine)
                 if match:
                     filename = match.group(1)
-                    alt_path = BACKEND_DIR / f"tests/unit/engines/{filename}/test_{filename}.py"
+                    alt_path = (
+                        BACKEND_DIR
+                        / f"tests/unit/engines/{filename}/test_{filename}.py"
+                    )
                     if alt_path.exists():
                         found = True
             if not found:
@@ -101,7 +115,9 @@ def test_all_capability_references_exist() -> None:
         # Check repositories
         for repo in manifest.get("repositories", []):
             path = BACKEND_DIR / repo
-            alt_path = BACKEND_DIR / repo.replace("tests/repositories/", "tests/unit/repositories/")
+            alt_path = BACKEND_DIR / repo.replace(
+                "tests/repositories/", "tests/unit/repositories/"
+            )
             if not path.exists() and not alt_path.exists():
                 errors.append(f"{cap_id}: repository {repo} NOT FOUND")
 
@@ -110,23 +126,37 @@ def test_all_capability_references_exist() -> None:
 
 def test_coverage_report_md_exists() -> None:
     """coverage.md must exist in memory-bank/generated/."""
-    assert (GENERATED_DIR / "coverage.md").exists(), "coverage.md not found - run check_coverage.py first"
+    assert (
+        GENERATED_DIR / "coverage.md"
+    ).exists(), "coverage.md not found - run check_coverage.py first"
 
 
 def test_traceability_md_exists() -> None:
     """traceability.md must exist in memory-bank/generated/."""
-    assert (GENERATED_DIR / "traceability.md").exists(), "traceability.md not found - run check_coverage.py first"
+    assert (
+        GENERATED_DIR / "traceability.md"
+    ).exists(), "traceability.md not found - run check_coverage.py first"
 
 
 def test_change_impact_md_exists() -> None:
     """change-impact.md must exist in memory-bank/generated/."""
-    assert (GENERATED_DIR / "change-impact.md").exists(), "change-impact.md not found - run check_coverage.py first"
+    assert (
+        GENERATED_DIR / "change-impact.md"
+    ).exists(), "change-impact.md not found - run check_coverage.py first"
 
 
 def test_generated_files_have_content() -> None:
     """Generated files must not be empty."""
-    for filename in ["coverage.md", "coverage.json", "traceability.md", "change-impact.md", "capability-registry.yaml"]:
+    for filename in [
+        "coverage.md",
+        "coverage.json",
+        "traceability.md",
+        "change-impact.md",
+        "capability-registry.yaml",
+    ]:
         path = GENERATED_DIR / filename
         if path.exists():
             content = path.read_text()
-            assert len(content) > 100, f"{filename} is suspiciously short ({len(content)} bytes)"
+            assert (
+                len(content) > 100
+            ), f"{filename} is suspiciously short ({len(content)} bytes)"

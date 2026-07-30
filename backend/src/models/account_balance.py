@@ -19,10 +19,10 @@ class BalanceSnapshotResponse(BaseModel):
     """Balance snapshot response model."""
 
     id: int
-    account_id: str
+    account_id: int
     balance_paise: int
-    date_iso: str
-    source: str
+    date_iso: str | None
+    source: str | None
 
     @classmethod
     def from_snapshot_dict(cls, snapshot: dict[str, Any]) -> "BalanceSnapshotResponse":
@@ -31,6 +31,6 @@ class BalanceSnapshotResponse(BaseModel):
             id=snapshot["id"],
             account_id=snapshot["account_id"],
             balance_paise=snapshot["balance_paise"],
-            date_iso=snapshot["date_iso"],
-            source=snapshot.get("source", "actual"),
+            date_iso=snapshot.get("date_iso"),
+            source=snapshot.get("source"),
         )

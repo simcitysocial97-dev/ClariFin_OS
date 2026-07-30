@@ -42,11 +42,15 @@ class ForecastService(BaseService):
 
         # Simple projection: assume 5% annual growth for assets, 0% for liabilities
         monthly_growth_rate = 0.05 / 12
-        projected_net_worth = int(current_net_worth * (1 + monthly_growth_rate) ** horizon_months)
+        projected_net_worth = int(
+            current_net_worth * (1 + monthly_growth_rate) ** horizon_months
+        )
 
         # Calculate growth
         projected_growth = projected_net_worth - current_net_worth
-        growth_percentage = (projected_growth / current_net_worth * 100) if current_net_worth > 0 else 0
+        growth_percentage = (
+            (projected_growth / current_net_worth * 100) if current_net_worth > 0 else 0
+        )
 
         return {
             "summary": {
@@ -64,9 +68,21 @@ class ForecastService(BaseService):
                 current_net_worth, total_liabilities, horizon_months, scenarios
             ),
             "confidence_intervals": [
-                {"level": 90, "lower_paise": int(current_net_worth * 0.9), "upper_paise": int(current_net_worth * 1.1)},
-                {"level": 95, "lower_paise": int(current_net_worth * 0.85), "upper_paise": int(current_net_worth * 1.15)},
-                {"level": 99, "lower_paise": int(current_net_worth * 0.8), "upper_paise": int(current_net_worth * 1.2)},
+                {
+                    "level": 90,
+                    "lower_paise": int(current_net_worth * 0.9),
+                    "upper_paise": int(current_net_worth * 1.1),
+                },
+                {
+                    "level": 95,
+                    "lower_paise": int(current_net_worth * 0.85),
+                    "upper_paise": int(current_net_worth * 1.15),
+                },
+                {
+                    "level": 99,
+                    "lower_paise": int(current_net_worth * 0.8),
+                    "upper_paise": int(current_net_worth * 1.2),
+                },
             ],
             "insights": self._generate_insights(current_net_worth, projected_net_worth),
             "evidence_chain": {
@@ -83,7 +99,10 @@ class ForecastService(BaseService):
                     {
                         "name": "Net Worth Calculation",
                         "description": "Assets minus liabilities",
-                        "inputs": {"assets": total_assets, "liabilities": total_liabilities},
+                        "inputs": {
+                            "assets": total_assets,
+                            "liabilities": total_liabilities,
+                        },
                         "outputs": {"net_worth": current_net_worth},
                     },
                 ],
@@ -121,16 +140,20 @@ class ForecastService(BaseService):
             # Calculate date
             future_date = date.today() + timedelta(days=30 * month)
 
-            projections.append({
-                "date": future_date.isoformat(),
-                "projected_paise": projected,
-                "lower_bound_paise": lower,
-                "upper_bound_paise": upper,
-            })
+            projections.append(
+                {
+                    "date": future_date.isoformat(),
+                    "projected_paise": projected,
+                    "lower_bound_paise": lower,
+                    "upper_bound_paise": upper,
+                }
+            )
 
         return projections
 
-    def _generate_cashflow_projections(self, horizon_months: int) -> list[dict[str, Any]]:
+    def _generate_cashflow_projections(
+        self, horizon_months: int
+    ) -> list[dict[str, Any]]:
         """Generate cashflow projections over time."""
         from datetime import date, timedelta
 
@@ -144,12 +167,14 @@ class ForecastService(BaseService):
             expenses = 6000000  # ₹60,000
             net = income - expenses
 
-            projections.append({
-                "month": month_label,
-                "income_paise": income,
-                "expenses_paise": expenses,
-                "net_paise": net,
-            })
+            projections.append(
+                {
+                    "month": month_label,
+                    "income_paise": income,
+                    "expenses_paise": expenses,
+                    "net_paise": net,
+                }
+            )
 
         return projections
 
@@ -179,40 +204,50 @@ class ForecastService(BaseService):
 
             projected = int(current_net_worth * (1 + growth_rate) ** horizon_months)
 
-            result.append({
-                "name": scenario.capitalize(),
-                "description": f"{scenario.capitalize()} growth scenario",
-                "probability_bps": probability,
-                "net_worth_projections": [
-                    {
-                        "date": f"202{horizon_months}-01-01",
-                        "projected_paise": projected,
-                        "lower_bound_paise": int(projected * 0.9),
-                        "upper_bound_paise": int(projected * 1.1),
-                    },
-                ],
-                "cashflow_projections": [],
-            })
+            result.append(
+                {
+                    "name": scenario.capitalize(),
+                    "description": f"{scenario.capitalize()} growth scenario",
+                    "probability_bps": probability,
+                    "net_worth_projections": [
+                        {
+                            "date": f"202{horizon_months}-01-01",
+                            "projected_paise": projected,
+                            "lower_bound_paise": int(projected * 0.9),
+                            "upper_bound_paise": int(projected * 1.1),
+                        },
+                    ],
+                    "cashflow_projections": [],
+                }
+            )
 
         return result
 
-    def _generate_insights(self, current_net_worth: int, projected_net_worth: int) -> list[dict[str, Any]]:
+    def _generate_insights(
+        self, current_net_worth: int, projected_net_worth: int
+    ) -> list[dict[str, Any]]:
         """Generate forecast insights."""
         insights = []
 
         if projected_net_worth > current_net_worth:
-            growth_pct = (projected_net_worth - current_net_worth) / current_net_worth * 100
-            insights.append({
-                "type": "positive",
-                "severity": "medium",
-                "message": f"Net worth projected to grow {growth_pct:.1f}% over the forecast period",
-            })
+            growth_pct = (
+                (projected_net_worth - current_net_worth) / current_net_worth * 100
+            )
+            insights.append(
+                {
+                    "type": "positive",
+                    "severity": "medium",
+                    "message": f"Net worth projected to grow {growth_pct:.1f}% over the forecast period",
+                }
+            )
 
         if current_net_worth < 0:
-            insights.append({
-                "type": "alert",
-                "severity": "high",
-                "message": "Current net worth is negative. Consider reducing liabilities.",
-            })
+            insights.append(
+                {
+                    "type": "alert",
+                    "severity": "high",
+                    "message": "Current net worth is negative. Consider reducing liabilities.",
+                }
+            )
 
         return insights

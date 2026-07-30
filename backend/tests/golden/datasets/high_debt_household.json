@@ -1,20 +1,176 @@
 {
-  "scenario": "high_debt_household",
+  "scenario": "high_debt_household_credit_dependency_edge_cases",
+  "description": "Golden tests for credit dependency edge cases including maxed-out cards, high utilization, multiple cards, and temporary limit increases.",
   "household": {"id": "primary"},
   "accounts": [{"id": "a1", "balance_paise": 500000}],
   "transactions": [
-    {"date_iso": "2025-01", "income_paise": 5000000, "expense_paise": 4500000, "surplus_paise": 500000}
-  ],
-  "loans": [
-    {"id": "l1", "name": "Home Loan", "outstanding_paise": 50000000, "interest_rate_bps": 850}
+    {
+      "date_iso": "2025-01",
+      "income_paise": 5000000,
+      "expense_paise": 4500000,
+      "surplus_paise": 500000
+    }
   ],
   "credit_cards": [
-    {"id": "c1", "name": "Card", "outstanding_paise": 20000000, "interest_rate_bps": 3600}
+    {
+      "id": "c1",
+      "name": "Maxed-Out Card",
+      "limit_paise": 10000000,
+      "outstanding_paise": 10000000,
+      "interest_rate_bps": 3600,
+      "temporary_limit_increase": false
+    },
+    {
+      "id": "c2",
+      "name": "High Utilization Card",
+      "limit_paise": 20000000,
+      "outstanding_paise": 18000000,
+      "interest_rate_bps": 3600,
+      "temporary_limit_increase": false
+    },
+    {
+      "id": "c3",
+      "name": "Multiple Card 1",
+      "limit_paise": 15000000,
+      "outstanding_paise": 5000000,
+      "interest_rate_bps": 3600,
+      "temporary_limit_increase": false
+    },
+    {
+      "id": "c4",
+      "name": "Multiple Card 2",
+      "limit_paise": 15000000,
+      "outstanding_paise": 10000000,
+      "interest_rate_bps": 3600,
+      "temporary_limit_increase": false
+    },
+    {
+      "id": "c5",
+      "name": "Temporary Limit Card",
+      "limit_paise": 30000000,
+      "outstanding_paise": 25000000,
+      "interest_rate_bps": 3600,
+      "temporary_limit_increase": true,
+      "original_limit_paise": 20000000
+    },
+    {
+      "id": "c6",
+      "name": "Zero Utilization Card",
+      "limit_paise": 10000000,
+      "outstanding_paise": 0,
+      "interest_rate_bps": 3600,
+      "temporary_limit_increase": false
+    }
   ],
+  "financial_events": [
+    {
+      "id": 1,
+      "event_type": "liability_increase",
+      "account_id": "c1",
+      "amount_paise": 10000000,
+      "liability_change_paise": 10000000,
+      "lifecycle_state": "open",
+      "date_iso": "2025-01-01",
+      "month_bucket": "2025-01",
+      "owner_id": "primary",
+      "household_id": "primary"
+    },
+    {
+      "id": 2,
+      "event_type": "liability_increase",
+      "account_id": "c2",
+      "amount_paise": 18000000,
+      "liability_change_paise": 18000000,
+      "lifecycle_state": "open",
+      "date_iso": "2025-01-02",
+      "month_bucket": "2025-01",
+      "owner_id": "primary",
+      "household_id": "primary"
+    },
+    {
+      "id": 3,
+      "event_type": "liability_increase",
+      "account_id": "c3",
+      "amount_paise": 5000000,
+      "liability_change_paise": 5000000,
+      "lifecycle_state": "open",
+      "date_iso": "2025-01-03",
+      "month_bucket": "2025-01",
+      "owner_id": "primary",
+      "household_id": "primary"
+    },
+    {
+      "id": 4,
+      "event_type": "liability_increase",
+      "account_id": "c4",
+      "amount_paise": 10000000,
+      "liability_change_paise": 10000000,
+      "lifecycle_state": "open",
+      "date_iso": "2025-01-04",
+      "month_bucket": "2025-01",
+      "owner_id": "primary",
+      "household_id": "primary"
+    },
+    {
+      "id": 5,
+      "event_type": "liability_increase",
+      "account_id": "c5",
+      "amount_paise": 25000000,
+      "liability_change_paise": 25000000,
+      "lifecycle_state": "open",
+      "date_iso": "2025-01-05",
+      "month_bucket": "2025-01",
+      "owner_id": "primary",
+      "household_id": "primary"
+    }
+  ],
+  "cashflow_results": {
+    "expense_paise": 4500000,
+    "credit_dependency_ratio": 0.8889
+  },
   "expected_output": {
-    "monthly_surplus_paise": 500000,
-    "total_debt_paise": 70000000,
-    "confidence_bps": 6000,
-    "risk_flags": ["high_debt"]
+    "credit_dependency": {
+      "maxed_out_cards": {
+        "count": 1,
+        "total_credit_funded_paise": 10000000,
+        "credit_dependency_ratio": 0.2222
+      },
+      "high_utilization_cards": {
+        "count": 1,
+        "total_credit_funded_paise": 18000000,
+        "credit_dependency_ratio": 0.4
+      },
+      "multiple_cards": {
+        "count": 2,
+        "total_credit_funded_paise": 15000000,
+        "credit_dependency_ratio": 0.3333
+      },
+      "temporary_limit_cards": {
+        "count": 1,
+        "total_credit_funded_paise": 25000000,
+        "credit_dependency_ratio": 0.5556
+      },
+      "zero_utilization_cards": {
+        "count": 1,
+        "total_credit_funded_paise": 0,
+        "credit_dependency_ratio": 0.0
+      },
+      "total_credit_dependency_ratio": 0.8889,
+      "validation": {
+        "credit_dependency_ratio_le_100": true,
+        "stress_score_ge_0": true
+      }
+    },
+    "financial_stress": {
+      "score": 0.75,
+      "flag": true,
+      "components": {
+        "credit_dependency": 0.8889,
+        "debt_rolling": 0.0,
+        "liquidity_extraction": 0.0,
+        "revolving": 0.8,
+        "cashflow_deficit": 0.0
+      }
+    }
   }
 }

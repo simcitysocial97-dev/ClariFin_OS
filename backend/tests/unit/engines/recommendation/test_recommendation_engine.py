@@ -7,13 +7,9 @@ All tests verify:
 - Recommendation structure (title, reason, metric, severity, suggested_action)
 """
 
-import sys
 from decimal import Decimal
-from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from engines.recommendation_engine import (
+from src.engines.recommendation_engine import (
     check_debt_dependency,
     check_foir,
     check_liquidity,
@@ -24,6 +20,7 @@ from engines.recommendation_engine import (
 # ============================================================
 # Tests: Debt Dependency Rule
 # ============================================================
+
 
 class TestDebtDependency:
     """Tests for check_debt_dependency rule."""
@@ -73,6 +70,7 @@ class TestDebtDependency:
 # Tests: FOIR Rule
 # ============================================================
 
+
 class TestFOIRRule:
     """Tests for check_foir rule."""
 
@@ -115,6 +113,7 @@ class TestFOIRRule:
 # ============================================================
 # Tests: Liquidity Rule
 # ============================================================
+
 
 class TestLiquidityRule:
     """Tests for check_liquidity rule."""
@@ -171,6 +170,7 @@ class TestLiquidityRule:
 # Tests: Subscription Growth Rule
 # ============================================================
 
+
 class TestSubscriptionGrowth:
     """Tests for detect_subscription_growth rule."""
 
@@ -209,7 +209,10 @@ class TestSubscriptionGrowth:
         previous = [{"merchant": "NETFLIX", "avg_amount_paise": 70000}]
         result = detect_subscription_growth(current, previous)
         assert result is not None
-        assert "increasing" in result.reason.lower() or "increased" in result.reason.lower()
+        assert (
+            "increasing" in result.reason.lower()
+            or "increased" in result.reason.lower()
+        )
 
     def test_recommendation_new_subscription(self):
         """New subscription not in previous period should trigger recommendation."""
@@ -238,6 +241,7 @@ class TestSubscriptionGrowth:
 # ============================================================
 # Tests: Compute All Recommendations
 # ============================================================
+
 
 class TestComputeRecommendations:
     """Tests for compute_recommendations function."""
@@ -312,6 +316,7 @@ class TestComputeRecommendations:
 # Tests: Determinism
 # ============================================================
 
+
 class TestDeterminism:
     """Tests for deterministic behavior."""
 
@@ -355,6 +360,10 @@ class TestDeterminism:
                 borrowed_lifestyle_ratio=Decimal("0.25"),
                 foir=Decimal("0.55"),
                 liquidity_months=1,
-                current_subscriptions=[{"merchant": "NETFLIX", "avg_amount_paise": 79000}],
+                current_subscriptions=[
+                    {"merchant": "NETFLIX", "avg_amount_paise": 79000}
+                ],
             )
-            assert len(recommendations) == 3  # debt + foir + liquidity (no subscription without prev)
+            assert (
+                len(recommendations) == 3
+            )  # debt + foir + liquidity (no subscription without prev)

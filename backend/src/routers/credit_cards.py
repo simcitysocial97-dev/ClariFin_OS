@@ -50,7 +50,10 @@ def _timed_log(
         log_data["error"] = error
         logger.warning(
             "[CARD] %s | card_id=%s | %.0fms | FAIL: %s",
-            endpoint, card_id, duration_ms, error,
+            endpoint,
+            card_id,
+            duration_ms,
+            error,
         )
     else:
         logger.info("[CARD] %s | card_id=%s | %.0fms", endpoint, card_id, duration_ms)
@@ -84,9 +87,11 @@ def get_card(card_id: str) -> dict[str, Any]:
         return result
     except ValueError as e:
         _timed_log(
-            "GET /credit-cards/{id}", card_id,
+            "GET /credit-cards/{id}",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -142,9 +147,11 @@ def update_card(card_id: str, request: CreditCardUpdateRequest) -> dict[str, Any
     updated = service.update_card(card_id, **update_data)
     if not updated:
         _timed_log(
-            "PUT /credit-cards/{id}", card_id,
+            "PUT /credit-cards/{id}",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="Not found",
+            success=False,
+            error="Not found",
         )
         raise NotFoundError(f"Credit card {card_id} not found")
     _timed_log("PUT /credit-cards/{id}", card_id, (time.monotonic() - start) * 1000)
@@ -159,9 +166,11 @@ def deactivate_card(card_id: str) -> dict[str, Any]:
     success = service.deactivate_card(card_id)
     if not success:
         _timed_log(
-            "DELETE /credit-cards/{id}", card_id,
+            "DELETE /credit-cards/{id}",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error="Not found",
+            success=False,
+            error="Not found",
         )
         raise NotFoundError(f"Credit card {card_id} not found")
     _timed_log("DELETE /credit-cards/{id}", card_id, (time.monotonic() - start) * 1000)
@@ -180,25 +189,35 @@ def list_statements(card_id: str, limit: int = 12) -> list[dict[str, Any]]:
     service = CreditCardService()
     statements = service.list_statements(card_id, limit)
     result = [StatementResponse.from_statement_dict(s).model_dump() for s in statements]
-    _timed_log("GET /credit-cards/{id}/statements", card_id, (time.monotonic() - start) * 1000)
+    _timed_log(
+        "GET /credit-cards/{id}/statements", card_id, (time.monotonic() - start) * 1000
+    )
     return result
 
 
 @router.post("/credit-cards/{card_id}/statements")
-def generate_statement(card_id: str, request: StatementGenerateRequest) -> dict[str, Any]:
+def generate_statement(
+    card_id: str, request: StatementGenerateRequest
+) -> dict[str, Any]:
     """Generate a new statement for a credit card."""
     start = time.monotonic()
     service = CreditCardService()
     try:
         statement = service.generate_statement(card_id, request.statement_date)
         result = StatementResponse.from_statement_dict(statement).model_dump()
-        _timed_log("POST /credit-cards/{id}/statements", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /credit-cards/{id}/statements",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result
     except ValueError as e:
         _timed_log(
-            "POST /credit-cards/{id}/statements", card_id,
+            "POST /credit-cards/{id}/statements",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -215,13 +234,19 @@ def get_outstanding(card_id: str) -> dict[str, int]:
     service = CreditCardService()
     try:
         outstanding = service.calculate_outstanding(card_id)
-        _timed_log("GET /credit-cards/{id}/outstanding", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /credit-cards/{id}/outstanding",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return {"outstanding_paise": outstanding}
     except ValueError as e:
         _timed_log(
-            "GET /credit-cards/{id}/outstanding", card_id,
+            "GET /credit-cards/{id}/outstanding",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -233,13 +258,19 @@ def get_utilization(card_id: str) -> dict[str, int]:
     service = CreditCardService()
     try:
         result = service.calculate_utilization(card_id)
-        _timed_log("GET /credit-cards/{id}/utilization", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /credit-cards/{id}/utilization",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result
     except ValueError as e:
         _timed_log(
-            "GET /credit-cards/{id}/utilization", card_id,
+            "GET /credit-cards/{id}/utilization",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -251,13 +282,17 @@ def get_metrics(card_id: str) -> dict[str, int]:
     service = CreditCardService()
     try:
         result = service.get_financial_metrics(card_id)
-        _timed_log("GET /credit-cards/{id}/metrics", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /credit-cards/{id}/metrics", card_id, (time.monotonic() - start) * 1000
+        )
         return result
     except ValueError as e:
         _timed_log(
-            "GET /credit-cards/{id}/metrics", card_id,
+            "GET /credit-cards/{id}/metrics",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -269,13 +304,19 @@ def get_next_statement_date(card_id: str) -> dict[str, str]:
     service = CreditCardService()
     try:
         next_date = service.get_next_statement_date(card_id)
-        _timed_log("GET /credit-cards/{id}/next-statement-date", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "GET /credit-cards/{id}/next-statement-date",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return {"next_statement_date": next_date}
     except ValueError as e:
         _timed_log(
-            "GET /credit-cards/{id}/next-statement-date", card_id,
+            "GET /credit-cards/{id}/next-statement-date",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -297,13 +338,19 @@ def record_payment(card_id: str, request: PaymentRecordRequest) -> dict[str, Any
             payment_date=request.payment_date,
         )
         result = StatementResponse.from_statement_dict(statement).model_dump()
-        _timed_log("POST /credit-cards/{id}/payments", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /credit-cards/{id}/payments",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return result
     except ValueError as e:
         _timed_log(
-            "POST /credit-cards/{id}/payments", card_id,
+            "POST /credit-cards/{id}/payments",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -338,13 +385,19 @@ def convert_to_emi(
             total_repayment_paise=result.total_repayment_paise,
             monthly_interest_paise=result.monthly_interest_paise,
         ).model_dump()
-        _timed_log("POST /credit-cards/{id}/emi-conversion", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /credit-cards/{id}/emi-conversion",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return response
     except ValueError as e:
         _timed_log(
-            "POST /credit-cards/{id}/emi-conversion", card_id,
+            "POST /credit-cards/{id}/emi-conversion",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e
 
@@ -377,12 +430,18 @@ def quote_foreclosure(
             accrued_interest_paise=result.accrued_interest_paise,
             penalty_paise=result.penalty_paise,
         ).model_dump()
-        _timed_log("POST /credit-cards/{id}/foreclosure", card_id, (time.monotonic() - start) * 1000)
+        _timed_log(
+            "POST /credit-cards/{id}/foreclosure",
+            card_id,
+            (time.monotonic() - start) * 1000,
+        )
         return response
     except ValueError as e:
         _timed_log(
-            "POST /credit-cards/{id}/foreclosure", card_id,
+            "POST /credit-cards/{id}/foreclosure",
+            card_id,
             (time.monotonic() - start) * 1000,
-            success=False, error=str(e),
+            success=False,
+            error=str(e),
         )
         raise NotFoundError(str(e)) from e

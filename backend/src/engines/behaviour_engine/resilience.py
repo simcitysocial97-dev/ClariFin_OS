@@ -64,14 +64,16 @@ def compute_resilience_index(
     from .cashflow import compute_income_stability
 
     # Liquidity component (capped at 12 months)
-    liquidity_months = compute_liquidity_months(liquid_assets_paise, essential_monthly_expenses_paise)
+    liquidity_months = compute_liquidity_months(
+        liquid_assets_paise, essential_monthly_expenses_paise
+    )
     liquidity_capped = min(liquidity_months, 12)
-    liquidity_score = Decimal(str(liquidity_capped)) / Decimal('12')
+    liquidity_score = Decimal(str(liquidity_capped)) / Decimal("12")
 
     # Income stability component
     income_stability = compute_income_stability(monthly_incomes_paise)
 
     # Composite: 60% liquidity, 40% income stability
-    resilience = Decimal('0.6') * liquidity_score + Decimal('0.4') * income_stability
+    resilience = Decimal("0.6") * liquidity_score + Decimal("0.4") * income_stability
 
     return resilience

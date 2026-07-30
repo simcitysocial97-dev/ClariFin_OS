@@ -1,10 +1,6 @@
 """Smoke tests for Credit Cards capability."""
+
 from __future__ import annotations
-
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "src"))
 
 from tests.golden.builders.credit_card_revolver import load_credit_card_revolver
 

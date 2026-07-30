@@ -6,7 +6,6 @@ Data Transfer Objects for statement-related API responses.
 All monetary fields use _paise suffix for explicit units.
 """
 
-
 from pydantic import BaseModel, Field
 
 
@@ -22,6 +21,7 @@ class StatementDTO(BaseModel):
     - extracted_net_paise: Net (debit - credit) in paise
     - validation_difference_paise: Validation difference in paise
     """
+
     id: int = Field(description="Statement ID")
     bank: str = Field(description="Bank name")
     file_name: str = Field(description="Original file name")
@@ -38,7 +38,9 @@ class StatementDTO(BaseModel):
     total_due_paise: int = Field(description="Total amount due in paise")
     min_due_paise: int = Field(description="Minimum amount due in paise")
     extracted_net_paise: int = Field(description="Net (debit - credit) in paise")
-    validation_difference_paise: int = Field(description="Validation difference in paise")
+    validation_difference_paise: int = Field(
+        description="Validation difference in paise"
+    )
 
     # Display fields
     total_debit_display: str = Field(description="Formatted total debit")
@@ -78,6 +80,6 @@ class StatementDTO(BaseModel):
                 "due_date": "15/07/2025",
                 "validation_status": "exact_match",
                 "badge_text": "✅ Exact Match",
-                "badge_color": "green"
+                "badge_color": "green",
             }
         }

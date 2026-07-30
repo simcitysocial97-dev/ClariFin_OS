@@ -19,7 +19,7 @@ from decimal import Decimal
 
 import pytest
 
-from engines.behaviour_engine import (
+from src.engines.behaviour_engine import (
     classify_financial_personality,
     compute_borrowed_lifestyle_ratio,
     compute_credit_dependency_ratio,
@@ -29,25 +29,25 @@ from engines.behaviour_engine import (
     compute_resilience_index,
     compute_true_savings_rate,
 )
-from engines.behaviour_engine.income import (
+from src.engines.behaviour_engine.income import (
     classify_income_source,
     compute_true_income_total,
     filter_true_income,
 )
-from engines.behaviour_engine.profile import (
+from src.engines.behaviour_engine.profile import (
     DEBT_DEPENDENT_MIN_BORROWED_RATIO,
 )
-from engines.behaviour_engine.wellness import (
+from src.engines.behaviour_engine.wellness import (
     classify_wellness_band,
     compute_wellness_score,
 )
-from engines.recommendation_engine import (
+from src.engines.recommendation_engine import (
     check_debt_dependency,
     check_foir,
     check_liquidity,
     compute_recommendations,
 )
-from engines.recommendation_engine.recommendations import (
+from src.engines.recommendation_engine.recommendations import (
     FOIR_THRESHOLD,
 )
 
@@ -70,19 +70,61 @@ def debt_dependent_transactions() -> list[dict]:
     - Negative savings rate (expenses > income)
     """
     # Monthly salary - TRUE INCOME
-    salary = {"id": 1, "date_iso": "2023-01-01", "description": "Salary credit", "amount_paise": 800000, "type": "credit", "category": "income"}
+    salary = {
+        "id": 1,
+        "date_iso": "2023-01-01",
+        "description": "Salary credit",
+        "amount_paise": 800000,
+        "type": "credit",
+        "category": "income",
+    }
 
     # Essential expenses (73% of total - to make credit-funded expenses exactly 27%)
     essential_expenses = [
-        {"id": 2, "date_iso": "2023-01-05", "description": "Rent payment", "amount_paise": 400000, "type": "debit", "category": "rent"},
-        {"id": 3, "date_iso": "2023-01-07", "description": "Groceries", "amount_paise": 300000, "type": "debit", "category": "groceries"},
-        {"id": 4, "date_iso": "2023-01-10", "description": "Utilities", "amount_paise": 100000, "type": "debit", "category": "utilities"},
+        {
+            "id": 2,
+            "date_iso": "2023-01-05",
+            "description": "Rent payment",
+            "amount_paise": 400000,
+            "type": "debit",
+            "category": "rent",
+        },
+        {
+            "id": 3,
+            "date_iso": "2023-01-07",
+            "description": "Groceries",
+            "amount_paise": 300000,
+            "type": "debit",
+            "category": "groceries",
+        },
+        {
+            "id": 4,
+            "date_iso": "2023-01-10",
+            "description": "Utilities",
+            "amount_paise": 100000,
+            "type": "debit",
+            "category": "utilities",
+        },
     ]
 
     # Credit-funded expenses (27% of total) - these are flagged as credit in description
     credit_funded_expenses = [
-        {"id": 5, "date_iso": "2023-01-15", "description": "Credit card Amazon", "amount_paise": 150000, "type": "debit", "category": "shopping"},
-        {"id": 6, "date_iso": "2023-01-20", "description": "Credit card Swiggy", "amount_paise": 150000, "type": "debit", "category": "dining"},
+        {
+            "id": 5,
+            "date_iso": "2023-01-15",
+            "description": "Credit card Amazon",
+            "amount_paise": 150000,
+            "type": "debit",
+            "category": "shopping",
+        },
+        {
+            "id": 6,
+            "date_iso": "2023-01-20",
+            "description": "Credit card Swiggy",
+            "amount_paise": 150000,
+            "type": "debit",
+            "category": "dining",
+        },
     ]
 
     return [salary] + essential_expenses + credit_funded_expenses
@@ -107,7 +149,7 @@ def credit_card_data() -> list[dict]:
             "id": 2,
             "name": "SBI Credit Card",
             "credit_limit_paise": 300000,  # ₹3L limit
-            "outstanding_paise": 80000,   # ₹80K outstanding (revolving)
+            "outstanding_paise": 80000,  # ₹80K outstanding (revolving)
         },
     ]
 
@@ -141,7 +183,7 @@ def account_data() -> list[dict]:
         {
             "id": 1,
             "account_type": "savings",
-            "balance_paise": 200000,   # ₹20K - low liquidity
+            "balance_paise": 200000,  # ₹20K - low liquidity
         },
     ]
 
@@ -166,13 +208,48 @@ class TestIntegrationIncomeExcludesBorrowing:
     def test_filter_true_income_removes_borrowing(self):
         """filter_true_income should remove loan/borrowing transactions."""
         mixed_transactions = [
-            {"id": 1, "description": "Salary credit", "amount_paise": 8000000, "type": "credit"},
-            {"id": 2, "description": "Business income", "amount_paise": 2000000, "type": "credit"},
-            {"id": 3, "description": "Investment dividend", "amount_paise": 1000000, "type": "credit"},
-            {"id": 4, "description": "Home loan disbursement", "amount_paise": 50000000, "type": "credit"},
-            {"id": 5, "description": "Credit card cash withdrawal", "amount_paise": 1000000, "type": "credit"},
-            {"id": 6, "description": "Transfer from other account", "amount_paise": 1000000, "type": "credit"},
-            {"id": 7, "description": "Refund from store", "amount_paise": 50000, "type": "credit"},
+            {
+                "id": 1,
+                "description": "Salary credit",
+                "amount_paise": 8000000,
+                "type": "credit",
+            },
+            {
+                "id": 2,
+                "description": "Business income",
+                "amount_paise": 2000000,
+                "type": "credit",
+            },
+            {
+                "id": 3,
+                "description": "Investment dividend",
+                "amount_paise": 1000000,
+                "type": "credit",
+            },
+            {
+                "id": 4,
+                "description": "Home loan disbursement",
+                "amount_paise": 50000000,
+                "type": "credit",
+            },
+            {
+                "id": 5,
+                "description": "Credit card cash withdrawal",
+                "amount_paise": 1000000,
+                "type": "credit",
+            },
+            {
+                "id": 6,
+                "description": "Transfer from other account",
+                "amount_paise": 1000000,
+                "type": "credit",
+            },
+            {
+                "id": 7,
+                "description": "Refund from store",
+                "amount_paise": 50000,
+                "type": "credit",
+            },
         ]
 
         true_income_txns = filter_true_income(mixed_transactions)
@@ -187,7 +264,10 @@ class TestIntegrationIncomeExcludesBorrowing:
 
     def test_classify_income_borrowing(self):
         """classify_income_source should identify borrowing correctly."""
-        borrowing_txn = {"description": "Home loan disbursement", "amount_paise": 50000000}
+        borrowing_txn = {
+            "description": "Home loan disbursement",
+            "amount_paise": 50000000,
+        }
         category, confidence = classify_income_source(borrowing_txn)
 
         assert category == "borrowing"
@@ -210,21 +290,29 @@ class TestIntegrationIncomeExcludesBorrowing:
 class TestIntegrationDebtDependency:
     """Verify debt dependency metrics are correctly computed."""
 
-    def test_credit_dependency_ratio_detects_borrowing(self, debt_dependent_transactions):
+    def test_credit_dependency_ratio_detects_borrowing(
+        self, debt_dependent_transactions
+    ):
         """Credit dependency ratio should be above 20% threshold for scenario."""
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
 
         # Credit-funded expenses: credit card transactions only
         credit_funded = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
+            t["amount_paise"]
+            for t in debt_dependent_transactions
             if t["type"] == "debit" and "credit" in t["description"].lower()
         )
 
         ratio = compute_credit_dependency_ratio(credit_funded, total_expenses)
 
         # Credit expenses: 300,000 / 1,100,000 = 27% (> 20% threshold)
-        assert ratio > DEBT_DEPENDENT_MIN_BORROWED_RATIO, \
-            f"Borrowed lifestyle ratio {ratio} should exceed {DEBT_DEPENDENT_MIN_BORROWED_RATIO}"
+        assert (
+            ratio > DEBT_DEPENDENT_MIN_BORROWED_RATIO
+        ), f"Borrowed lifestyle ratio {ratio} should exceed {DEBT_DEPENDENT_MIN_BORROWED_RATIO}"
 
     def test_foir_calculated_correctly(self, loan_data, credit_card_data):
         """FOIR should be calculated from EMI and minimum due."""
@@ -232,8 +320,7 @@ class TestIntegrationDebtDependency:
 
         # Minimum due is typically 5% of credit card outstanding
         credit_min_due = sum(
-            int(card.get("outstanding_paise", 0) * 0.05)
-            for card in credit_card_data
+            int(card.get("outstanding_paise", 0) * 0.05) for card in credit_card_data
         )
 
         monthly_income = 800000  # ₹80K monthly salary
@@ -267,7 +354,9 @@ class TestIntegrationDebtDependency:
         score = compute_debt_cycle_score(credit_advances, revolving_months, debt_trend)
 
         # Score should be elevated (not low)
-        assert score > 50, f"Debt cycle score {score} should be elevated with advances and revolving"
+        assert (
+            score > 50
+        ), f"Debt cycle score {score} should be elevated with advances and revolving"
 
 
 # ============================================================
@@ -282,8 +371,7 @@ class TestIntegrationFOIRCalculation:
         """FOIR should include loan EMI and credit card minimum due."""
         loan_emi = sum(loan.get("emi_paise", 0) for loan in loan_data)
         credit_min_due = sum(
-            int(card.get("outstanding_paise", 0) * 0.05)
-            for card in credit_card_data
+            int(card.get("outstanding_paise", 0) * 0.05) for card in credit_card_data
         )
 
         foir, band = compute_foir(loan_emi, credit_min_due, 800000)
@@ -293,7 +381,9 @@ class TestIntegrationFOIRCalculation:
         expected_ratio = Decimal(str(expected_total)) / Decimal("800000")
 
         # Allow for rounding differences
-        assert abs(foir - expected_ratio) < Decimal("0.001"), f"FOIR {foir} should be close to {expected_ratio}"
+        assert abs(foir - expected_ratio) < Decimal(
+            "0.001"
+        ), f"FOIR {foir} should be close to {expected_ratio}"
 
     def test_foir_above_threshold(self, loan_data):
         """FOIR above 50% should trigger HIGH severity recommendation."""
@@ -316,15 +406,26 @@ class TestIntegrationFinancialPersonality:
     def test_debt_dependent_profile_classification(self, debt_dependent_transactions):
         """Scenario should classify as DEBT_DEPENDENT."""
         # Calculate all required metrics for profile classification
-        total_income = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "credit")
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_income = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "credit"
+        )
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
 
         savings_rate = compute_true_savings_rate(total_income, total_expenses, 0)
         credit_funded = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
+            t["amount_paise"]
+            for t in debt_dependent_transactions
             if t["type"] == "debit" and "credit" in t["description"].lower()
         )
-        borrowed_lifestyle_ratio = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
+        borrowed_lifestyle_ratio = compute_borrowed_lifestyle_ratio(
+            credit_funded, total_expenses
+        )
 
         # Credit revolver ratio from credit card data - high revolving
         credit_revolver_ratio = Decimal("0.8")  # High revolving behavior
@@ -332,10 +433,14 @@ class TestIntegrationFinancialPersonality:
         # Discretionary spending ratio
         discretionary_categories = {"dining", "shopping", "entertainment", "travel"}
         discretionary_spending = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
-            if t["type"] == "debit" and t.get("category", "").lower() in discretionary_categories
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+            and t.get("category", "").lower() in discretionary_categories
         )
-        discretionary_ratio = Decimal(str(discretionary_spending)) / Decimal(str(total_expenses))
+        discretionary_ratio = Decimal(str(discretionary_spending)) / Decimal(
+            str(total_expenses)
+        )
 
         # Impulse ratio (simplified - assume low)
         impulse_ratio = Decimal("0.1")
@@ -353,9 +458,10 @@ class TestIntegrationFinancialPersonality:
             transaction_count=len(debt_dependent_transactions),
         )
 
-        assert profile == "DEBT_DEPENDENT", \
-            f"Expected DEBT_DEPENDENT, got {profile}. Explanation: {explanation}. " \
+        assert profile == "DEBT_DEPENDENT", (
+            f"Expected DEBT_DEPENDENT, got {profile}. Explanation: {explanation}. "
             f"borrowed_lifestyle_ratio={borrowed_lifestyle_ratio}"
+        )
 
     def test_debt_dependent_recurring_extraction(self):
         """DEBT_DEPENDENT via high revolver + low savings path."""
@@ -382,15 +488,23 @@ class TestIntegrationWellnessScore:
 
     def test_wellness_score_reduced_due_to_debt(self, debt_dependent_transactions):
         """Wellness score should be in Risk or Critical band for DEBT_DEPENDENT."""
-        total_income = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "credit")
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_income = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "credit"
+        )
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
 
         savings_rate = compute_true_savings_rate(total_income, total_expenses, 0)
         cashflow_stability = Decimal("0.5")  # Moderate
-        resilience_index = Decimal("0.3")   # Low liquidity
-        debt_cycle_score = 70               # Elevated
+        resilience_index = Decimal("0.3")  # Low liquidity
+        debt_cycle_score = 70  # Elevated
         credit_revolver_ratio = Decimal("0.8")  # High
-        foir = Decimal("0.35")              # Moderate (35%)
+        foir = Decimal("0.35")  # Moderate (35%)
         lifestyle_inflation = Decimal("0.25")  # Growing
 
         wellness = compute_wellness_score(
@@ -406,8 +520,11 @@ class TestIntegrationWellnessScore:
         band = classify_wellness_band(wellness)
 
         # Score should be in Risk or Critical band
-        assert band in ["Risk", "Critical", "Developing"], \
-            f"Wellness band should be Risk/Critical/Developing, got {band} with score {wellness}"
+        assert band in [
+            "Risk",
+            "Critical",
+            "Developing",
+        ], f"Wellness band should be Risk/Critical/Developing, got {band} with score {wellness}"
 
     def test_negative_savings_clamped_in_wellness(self):
         """Negative savings rate should be clamped to 0 in wellness calculation."""
@@ -436,16 +553,23 @@ class TestIntegrationRecommendations:
 
     def test_debt_dependency_recommendation(self, debt_dependent_transactions):
         """Debt dependency should generate HIGH severity recommendation."""
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
         credit_funded = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
+            t["amount_paise"]
+            for t in debt_dependent_transactions
             if t["type"] == "debit" and "credit" in t["description"].lower()
         )
         borrowed_ratio = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
 
         rec = check_debt_dependency(borrowed_ratio)
 
-        assert rec is not None, "Should generate recommendation for debt dependency >20%"
+        assert (
+            rec is not None
+        ), "Should generate recommendation for debt dependency >20%"
         assert rec.title == "Lifestyle Debt Alert"
         assert rec.severity == "HIGH"
         assert "borrowed money" in rec.reason
@@ -487,16 +611,22 @@ class TestIntegrationRecommendations:
         # Verify sorting by severity (CRITICAL first)
         severity_order = {"CRITICAL": 0, "HIGH": 1, "MEDIUM": 2, "LOW": 3}
         sorted_recs = sorted(
-            recommendations,
-            key=lambda r: severity_order.get(r.severity, 4)
+            recommendations, key=lambda r: severity_order.get(r.severity, 4)
         )
         assert recommendations == sorted_recs
 
-    def test_recommendations_contain_actionable_suggestions(self, debt_dependent_transactions):
+    def test_recommendations_contain_actionable_suggestions(
+        self, debt_dependent_transactions
+    ):
         """All recommendations should have actionable suggested actions."""
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
         credit_funded = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
+            t["amount_paise"]
+            for t in debt_dependent_transactions
             if t["type"] == "debit" and "credit" in t["description"].lower()
         )
         borrowed_ratio = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
@@ -516,28 +646,47 @@ class TestIntegrationRecommendations:
 class TestIntegrationMetricConsistency:
     """Verify metrics are consistent across engine functions."""
 
-    def test_credit_dependency_matches_borrowed_ratio(self, debt_dependent_transactions):
+    def test_credit_dependency_matches_borrowed_ratio(
+        self, debt_dependent_transactions
+    ):
         """Credit dependency ratio should equal borrowed lifestyle ratio."""
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
         credit_funded = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
+            t["amount_paise"]
+            for t in debt_dependent_transactions
             if t["type"] == "debit" and "credit" in t["description"].lower()
         )
 
         ratio1 = compute_credit_dependency_ratio(credit_funded, total_expenses)
         ratio2 = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
 
-        assert ratio1 == ratio2, "Credit dependency ratio should equal borrowed lifestyle ratio"
+        assert (
+            ratio1 == ratio2
+        ), "Credit dependency ratio should equal borrowed lifestyle ratio"
 
     def test_negative_savings_handled(self, debt_dependent_transactions):
         """Engine should handle savings rate correctly for scenario."""
-        total_income = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "credit")
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_income = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "credit"
+        )
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
 
         savings_rate = compute_true_savings_rate(total_income, total_expenses, 0)
 
         # Savings should be negative when expenses > income
-        assert savings_rate < Decimal("0"), f"Savings rate should be negative, got {savings_rate}"
+        assert savings_rate < Decimal(
+            "0"
+        ), f"Savings rate should be negative, got {savings_rate}"
 
 
 # ============================================================
@@ -548,21 +697,28 @@ class TestIntegrationMetricConsistency:
 class TestIntegrationCompletePipeline:
     """End-to-end integration tests for complete behaviour analysis."""
 
-    def test_complete_financial_analysis_pipeline(self, debt_dependent_transactions, credit_card_data, loan_data, account_data):
+    def test_complete_financial_analysis_pipeline(
+        self, debt_dependent_transactions, credit_card_data, loan_data, account_data
+    ):
         """Run complete pipeline and verify all outputs are consistent."""
         # Step 1: Income analysis
         true_income = compute_true_income_total(debt_dependent_transactions)
         assert true_income > 0
 
         # Step 2: Expense analysis
-        total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+        total_expenses = sum(
+            t["amount_paise"]
+            for t in debt_dependent_transactions
+            if t["type"] == "debit"
+        )
 
         # Step 3: Savings rate (will be negative)
         savings_rate = compute_true_savings_rate(true_income, total_expenses, 0)
 
         # Step 4: Credit dependency
         credit_funded = sum(
-            t["amount_paise"] for t in debt_dependent_transactions
+            t["amount_paise"]
+            for t in debt_dependent_transactions
             if t["type"] == "debit" and "credit" in t["description"].lower()
         )
         borrowed_ratio = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
@@ -570,14 +726,14 @@ class TestIntegrationCompletePipeline:
         # Step 5: FOIR
         loan_emi = sum(loan.get("emi_paise", 0) for loan in loan_data)
         credit_min_due = sum(
-            int(card.get("outstanding_paise", 0) * 0.05)
-            for card in credit_card_data
+            int(card.get("outstanding_paise", 0) * 0.05) for card in credit_card_data
         )
         foir, _ = compute_foir(loan_emi, credit_min_due, true_income)
 
         # Step 6: Resilience
         liquid_assets = sum(
-            acc["balance_paise"] for acc in account_data
+            acc["balance_paise"]
+            for acc in account_data
             if acc["account_type"] in {"savings", "current"}
         )
 
@@ -621,7 +777,11 @@ class TestIntegrationCompletePipeline:
         # Verify all outputs are consistent
         assert profile == "DEBT_DEPENDENT", f"Expected DEBT_DEPENDENT, got {profile}"
         assert len(recommendations) >= 1
-        assert wellness < Decimal("50") or classify_wellness_band(wellness) in ["Risk", "Critical", "Developing"]
+        assert wellness < Decimal("50") or classify_wellness_band(wellness) in [
+            "Risk",
+            "Critical",
+            "Developing",
+        ]
 
 
 # ============================================================
@@ -637,15 +797,26 @@ class TestIntegrationDeterminism:
         # Run the same analysis twice
         results = []
         for _ in range(2):
-            total_income = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "credit")
-            total_expenses = sum(t["amount_paise"] for t in debt_dependent_transactions if t["type"] == "debit")
+            total_income = sum(
+                t["amount_paise"]
+                for t in debt_dependent_transactions
+                if t["type"] == "credit"
+            )
+            total_expenses = sum(
+                t["amount_paise"]
+                for t in debt_dependent_transactions
+                if t["type"] == "debit"
+            )
 
             savings_rate = compute_true_savings_rate(total_income, total_expenses, 0)
             credit_funded = sum(
-                t["amount_paise"] for t in debt_dependent_transactions
+                t["amount_paise"]
+                for t in debt_dependent_transactions
                 if t["type"] == "debit" and "credit" in t["description"].lower()
             )
-            borrowed_ratio = compute_borrowed_lifestyle_ratio(credit_funded, total_expenses)
+            borrowed_ratio = compute_borrowed_lifestyle_ratio(
+                credit_funded, total_expenses
+            )
 
             profile, confidence, _ = classify_financial_personality(
                 savings_rate=savings_rate,

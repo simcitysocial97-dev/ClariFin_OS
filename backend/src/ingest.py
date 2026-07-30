@@ -28,6 +28,7 @@ Example output:
     Done: 1 imported, 1 skipped, 82 transactions total
 """
 
+import contextlib
 import sys
 from collections import Counter
 from pathlib import Path
@@ -43,7 +44,10 @@ from src.statement_extractor import StatementExtractor
 # Core Ingestion Logic
 # ============================================================
 
-def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = False) -> dict[str, Any]:
+
+def ingest_pdf(
+    pdf_path: str, db_path: str = "data/finance.db", debug: bool = False
+) -> dict[str, Any]:
     """
     Process a single PDF file through the full pipeline:
       1. Check for duplicate (skip if already imported)
@@ -143,7 +147,9 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
             if metadata.get("total_amount_due") is not None:
                 total_due = metadata["total_amount_due"]
                 if total_due < 0:
-                    print(f"  Total Amount Due: -₹{abs(total_due):,.2f} (credit balance)")
+                    print(
+                        f"  Total Amount Due: -₹{abs(total_due):,.2f} (credit balance)"
+                    )
                 else:
                     print(f"  Total Amount Due: ₹{total_due:,.2f}")
             if metadata.get("minimum_amount_due") is not None:
@@ -193,10 +199,7 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
                 if best_diff < 1.0:
                     status = "exact_match"
                     symbol = "✅"
-                elif best_diff < 100.0:
-                    status = "close_match"
-                    symbol = "⚠️"
-                elif best_diff < 500.0:
+                elif best_diff < 100.0 or best_diff < 500.0:
                     status = "close_match"
                     symbol = "⚠️"
                 else:
@@ -204,9 +207,9 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
                     # SBI Card statements with No-Cost EMI have Total Due < Total Outstanding
                     # because only the first EMI installment is billed, not the full purchase
                     is_emi = any(
-                        'emi' in txn.get("description", "").lower() or
-                        'fp emi' in txn.get("description", "").lower() or
-                        'amortization' in txn.get("description", "").lower()
+                        "emi" in txn.get("description", "").lower()
+                        or "fp emi" in txn.get("description", "").lower()
+                        or "amortization" in txn.get("description", "").lower()
                         for txn in transactions
                     )
                     if bank == "SBI Card" and is_emi and debit_sum > total_due:
@@ -230,9 +233,13 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
 
             elif total_due is not None and total_due < 0:
                 # Credit balance - bank owes customer
-                stmt_repo.update_validation_status(stmt_id, "credit_balance", abs(total_due))
+                stmt_repo.update_validation_status(
+                    stmt_id, "credit_balance", abs(total_due)
+                )
                 result["validation_status"] = "credit_balance"
-                print(f"  Validation: 💰 Credit balance (bank owes you ₹{abs(total_due):,.2f})")
+                print(
+                    f"  Validation: 💰 Credit balance (bank owes you ₹{abs(total_due):,.2f})"
+                )
             else:
                 stmt_repo.update_validation_status(stmt_id, "no_metadata", 0.0)
                 result["validation_status"] = "no_metadata"
@@ -242,23 +249,25 @@ def ingest_pdf(pdf_path: str, db_path: str = "data/finance.db", debug: bool = Fa
             print(f"  Metadata extraction error: {meta_err}")
             if debug:
                 import traceback
+
                 traceback.print_exc()
-            try:
+            with contextlib.suppress(Exception):
                 stmt_repo.update_validation_status(stmt_id, "error", 0.0)
-            except Exception:
-                pass
 
     except Exception as e:
         result["status"] = "error"
         result["error"] = str(e)
         if debug:
             import traceback
+
             traceback.print_exc()
 
     return result
 
 
-def ingest_directory(dir_path: str, db_path: str = "data/finance.db", debug: bool = False) -> list[dict[str, Any]]:
+def ingest_directory(
+    dir_path: str, db_path: str = "data/finance.db", debug: bool = False
+) -> list[dict[str, Any]]:
     """Process all .pdf files in a directory. Returns list of result dicts."""
     pdf_files = sorted(Path(dir_path).glob("*.pdf"))
     if not pdf_files:
@@ -275,6 +284,7 @@ def ingest_directory(dir_path: str, db_path: str = "data/finance.db", debug: boo
 # ============================================================
 # Output Formatting
 # ============================================================
+
 
 def _format_categories(categories: dict[str, Any], top_n: int = 6) -> str:
     """Format category counts as a compact string."""
@@ -314,7 +324,11 @@ def _print_result(result: dict[str, Any]) -> None:
     print(f"  Transactions: {txn_count} extracted, {inserted} inserted")
 
     if period_from or period_to:
-        period_str = f"{period_from} — {period_to}" if period_from and period_to else (period_from or period_to)
+        period_str = (
+            f"{period_from} — {period_to}"
+            if period_from and period_to
+            else (period_from or period_to)
+        )
         print(f"  Period: {period_str}")
 
     if categories:
@@ -341,6 +355,7 @@ def _print_summary(results: list[dict[str, Any]]) -> None:
 # ============================================================
 # CLI Entry Point
 # ============================================================
+
 
 def main() -> None:
     if len(sys.argv) < 2:

@@ -78,7 +78,9 @@ class FinancialEvent(DomainModel):
     # Categorization
     category: str = ""
     subcategory: str | None = None
-    sub_type: str | None = None  # For sub-classification (e.g., "cash_conversion", "emi")
+    sub_type: str | None = (
+        None  # For sub-classification (e.g., "cash_conversion", "emi")
+    )
     provider: str | None = None  # Source of the event (e.g., "CRED", "Cheq", "HDFC")
 
     # Confidence (deprecated float kept for backward compatibility)
@@ -99,7 +101,7 @@ class FinancialEvent(DomainModel):
     household_id: str = "primary"
     owner_id: str = "self"
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def _derive_month_bucket(self) -> "FinancialEvent":
         """Derive month_bucket from date_iso if not explicitly provided."""
         if not self.month_bucket and self.date_iso:

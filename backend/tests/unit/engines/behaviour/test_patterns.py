@@ -10,7 +10,7 @@ All monetary values are integers in paise (₹1.00 = 100 paise).
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from engines.behaviour_engine import (
+from src.engines.behaviour_engine import (
     compute_night_spend_ratio,
     compute_weekend_spend_ratio,
     detect_impulse_transactions,
@@ -18,7 +18,6 @@ from engines.behaviour_engine import (
     detect_subscription_patterns,
 )
 from tests.conftest import make_transaction
-
 
 # ============================================================
 # Tests: Weekend Spending
@@ -35,23 +34,27 @@ def test_weekend_purchases():
     ]
 
     ratio = compute_weekend_spend_ratio(transactions)
-    assert ratio == Decimal('0.6667')  # 2/3 rounded
+    assert ratio == Decimal("0.6667")  # 2/3 rounded
 
 
 def test_weekend_ratio_no_debits():
     """No debit transactions should return 0 ratio."""
     transactions = [
-        {"date_iso": datetime.now().strftime("%Y-%m-%d"), "amount_paise": 50000, "type": "credit"},
+        {
+            "date_iso": datetime.now().strftime("%Y-%m-%d"),
+            "amount_paise": 50000,
+            "type": "credit",
+        },
     ]
 
     ratio = compute_weekend_spend_ratio(transactions)
-    assert ratio == Decimal('0')
+    assert ratio == Decimal("0")
 
 
 def test_weekend_ratio_empty():
     """Empty transactions should return 0 ratio."""
     ratio = compute_weekend_spend_ratio([])
-    assert ratio == Decimal('0')
+    assert ratio == Decimal("0")
 
 
 # ============================================================
@@ -68,7 +71,7 @@ def test_night_spending_with_time():
     ]
 
     ratio = compute_night_spend_ratio(transactions)
-    assert ratio == Decimal('0.6667')  # 33333/50000 rounded
+    assert ratio == Decimal("0.6667")  # 33333/50000 rounded
 
 
 def test_night_spending_missing_time():
@@ -79,7 +82,7 @@ def test_night_spending_missing_time():
     ]
 
     ratio = compute_night_spend_ratio(transactions)
-    assert ratio == Decimal('0')
+    assert ratio == Decimal("0")
 
 
 def test_night_spending_boundary():
@@ -90,7 +93,7 @@ def test_night_spending_boundary():
     ]
 
     ratio = compute_night_spend_ratio(transactions)
-    assert ratio == Decimal('0.5')  # 1/2 at night
+    assert ratio == Decimal("0.5")  # 1/2 at night
 
 
 # ============================================================
@@ -100,14 +103,18 @@ def test_night_spending_boundary():
 
 def test_impulse_transactions_weekend():
     """Weekend impulse transactions should be detected."""
-    saturday = (datetime.now() + timedelta(
-        days=(5 - datetime.now().weekday()) % 7
-    )).strftime("%Y-%m-%d")
+    saturday = (
+        datetime.now() + timedelta(days=(5 - datetime.now().weekday()) % 7)
+    ).strftime("%Y-%m-%d")
 
     transactions = [
         make_transaction(saturday, "AMAZON", 60000, "shopping"),  # impulse
-        make_transaction("2025-01-15", "AMAZON", 60000, "shopping"),  # weekday - not impulse
-        make_transaction(saturday, "BIG BAZAAR", 10000, "groceries"),  # too small, wrong category
+        make_transaction(
+            "2025-01-15", "AMAZON", 60000, "shopping"
+        ),  # weekday - not impulse
+        make_transaction(
+            saturday, "BIG BAZAAR", 10000, "groceries"
+        ),  # too small, wrong category
     ]
 
     impulse = detect_impulse_transactions(transactions)
@@ -118,8 +125,12 @@ def test_impulse_transactions_weekend():
 def test_impulse_transactions_night_time():
     """Night time impulse transactions should be detected when time available."""
     transactions = [
-        make_transaction("2025-01-15", "SWIGGY", 60000, "food", "21:30"),  # night impulse
-        make_transaction("2025-01-15", "SWIGGY", 60000, "food", "12:00"),  # day - not impulse
+        make_transaction(
+            "2025-01-15", "SWIGGY", 60000, "food", "21:30"
+        ),  # night impulse
+        make_transaction(
+            "2025-01-15", "SWIGGY", 60000, "food", "12:00"
+        ),  # day - not impulse
     ]
 
     impulse = detect_impulse_transactions(transactions)
@@ -214,7 +225,9 @@ def test_subscription_amount_variation():
         date = (base_date + timedelta(days=30 * i)).strftime("%Y-%m-%d")
         transactions.append(make_transaction(date, "NETFLIX", amount, "entertainment"))
 
-    subscriptions = detect_subscription_patterns(transactions, amount_tolerance_bps=2000)
+    subscriptions = detect_subscription_patterns(
+        transactions, amount_tolerance_bps=2000
+    )
     assert len(subscriptions) == 1
 
 
@@ -243,7 +256,7 @@ def test_weekend_ratio_deterministic():
 
     for _ in range(5):
         ratio = compute_weekend_spend_ratio(transactions)
-        assert ratio == Decimal('0.6667')
+        assert ratio == Decimal("0.6667")
 
 
 def test_subscription_deterministic():

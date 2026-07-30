@@ -16,7 +16,7 @@ import json
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import yaml
 
@@ -24,14 +24,16 @@ import yaml
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 BACKEND_SRC = PROJECT_ROOT / "backend" / "src"
 BACKEND_TESTS = PROJECT_ROOT / "backend" / "tests"
-MEMORY_BANK = PROJECT_ROOT / "memory-bank"
-CAPABILITIES_DIR = MEMORY_BANK / "capabilities"
+# Capability registry location
+CAPABILITY_REGISTRY = BACKEND_TESTS / "generated" / "capability-registry.yaml"
+
 GENERATED_DIR = BACKEND_TESTS / "generated"
 
 
 @dataclass
 class CoverageStatus:
     """Status for a single coverage item."""
+
     exists: bool
     path: str | None = None
     message: str | None = None
@@ -40,6 +42,7 @@ class CoverageStatus:
 @dataclass
 class CapabilityCoverage:
     """Coverage information for a capability."""
+
     id: str
     name: str
     criticality: str
@@ -56,7 +59,9 @@ class CapabilityCoverage:
     golden_datasets: list[CoverageStatus] = field(default_factory=list)
     property_tests: list[CoverageStatus] = field(default_factory=list)
     invariants: list[CoverageStatus] = field(default_factory=list)
-    architecture_tests: CoverageStatus = field(default_factory=lambda: CoverageStatus(exists=False))
+    architecture_tests: CoverageStatus = field(
+        default_factory=lambda: CoverageStatus(exists=False)
+    )
 
     # Documentation coverage
     contracts: list[str] = field(default_factory=list)
@@ -70,21 +75,20 @@ class CapabilityCoverage:
 
 
 def load_capability_manifests() -> list[dict[str, Any]]:
-    """Load all capability manifests from memory-bank/capabilities/."""
-    manifests: list[dict[str, Any]] = []
-    if not CAPABILITIES_DIR.exists():
-        return manifests
+    """Load capabilities from generated capability registry."""
 
-    for yaml_file in sorted(CAPABILITIES_DIR.glob("*.yaml")):
-        with open(yaml_file) as f:
-            manifest: dict[str, Any] | None = yaml.safe_load(f)
-            if manifest:
-                manifests.append(manifest)
+    if not CAPABILITY_REGISTRY.exists():
+        return []
 
-    return manifests
+    with open(CAPABILITY_REGISTRY) as f:
+        registry = yaml.safe_load(f) or {}
+
+    return cast(list[dict[str, Any]], registry.get("capabilities", []))
 
 
-def check_path_exists(path_str: str, base_dir: Path = PROJECT_ROOT / "backend") -> CoverageStatus:
+def check_path_exists(
+    path_str: str, base_dir: Path = PROJECT_ROOT / "backend"
+) -> CoverageStatus:
     """Check if a path exists relative to base_dir.
 
     Paths in manifests are relative to backend/, e.g. src/routers/accounts.py
@@ -98,13 +102,21 @@ def check_path_exists(path_str: str, base_dir: Path = PROJECT_ROOT / "backend") 
     # For invariants, try tests/domain/invariants/ as alternative
     if "invariants/test_" in path_str:
         # Map tests/invariants/test_foo.py to tests/domain/invariants/foo.py
-        alt_path = path_str.replace("tests/invariants/test_", "tests/domain/invariants/")
+        alt_path = path_str.replace(
+            "tests/invariants/test_", "tests/domain/invariants/"
+        )
         alt_path = alt_path.replace("_", "")
         # Try to find the module file
         for ext in [".py", ""]:
-            check = base_dir / alt_path.replace(".py", ext + ".py") if ext else base_dir / alt_path
+            check = (
+                base_dir / alt_path.replace(".py", ext + ".py")
+                if ext
+                else base_dir / alt_path
+            )
             if check.exists():
-                return CoverageStatus(exists=True, path=path_str)  # Return original path but exists=True
+                return CoverageStatus(
+                    exists=True, path=path_str
+                )  # Return original path but exists=True
 
     return CoverageStatus(exists=False, path=path_str, message="Path not found")
 
@@ -157,7 +169,8 @@ def get_all_production_files() -> dict[str, set[str]]:
 
 
 def get_all_test_files() -> dict[str, set[str]]:
-    """Discover all test files by category."""
+    """Discover all test files by actual repository structure."""
+
     files: dict[str, set[str]] = {
         "smoke_tests": set(),
         "property_tests": set(),
@@ -165,47 +178,38 @@ def get_all_test_files() -> dict[str, set[str]]:
         "golden_datasets": set(),
     }
 
-    # Capability smoke tests
-    capabilities_dir = BACKEND_TESTS / "capabilities"
-    if capabilities_dir.exists():
-        for capability_dir in capabilities_dir.iterdir():
-            if capability_dir.is_dir():
-                for f in capability_dir.glob("test_*.py"):
-                    files["smoke_tests"].add(f"tests/capabilities/{capability_dir.name}/{f.name}")
+    # Capability tests
+    capability_dir = BACKEND_TESTS / "capability"
+
+    if capability_dir.exists():
+        for capability in capability_dir.iterdir():
+            if capability.is_dir():
+                for f in capability.glob("test_*.py"):
+                    files["smoke_tests"].add(
+                        f"tests/capability/{capability.name}/{f.name}"
+                    )
 
     # Property tests
-    properties_dir = BACKEND_TESTS / "properties"
-    if properties_dir.exists():
-        for f in properties_dir.glob("test_*.py"):
-            files["property_tests"].add(f"tests/properties/{f.name}")
-        for subdir in properties_dir.iterdir():
-            if subdir.is_dir():
-                for f in subdir.glob("*.py"):
-                    if f.name != "__init__.py" and f.name != "conftest.py":
-                        files["property_tests"].add(f"tests/properties/{subdir.name}/{f.name}")
+    property_dir = BACKEND_TESTS / "property"
 
-    # Invariant tests - check both tests/invariants/ and tests/domain/invariants/
-    invariants_dir = BACKEND_TESTS / "invariants"
-    if invariants_dir.exists():
-        for f in invariants_dir.glob("test_*.py"):
-            files["invariants"].add(f"tests/invariants/{f.name}")
-        for subdir in invariants_dir.iterdir():
-            if subdir.is_dir():
-                for f in subdir.glob("*.py"):
-                    if f.name != "__init__.py":
-                        files["invariants"].add(f"tests/invariants/{subdir.name}/{f.name}")
+    if property_dir.exists():
+        for f in property_dir.rglob("test_*.py"):
+            relative = f.relative_to(BACKEND_TESTS)
+            files["property_tests"].add(f"tests/{relative}")
 
-    # Check tests/domain/invariants/ for modules
-    domain_invariants_dir = BACKEND_TESTS / "domain" / "invariants"
-    if domain_invariants_dir.exists():
-        for f in domain_invariants_dir.glob("*.py"):
-            if f.name != "__init__.py":
-                files["invariants"].add(f"tests/domain/invariants/{f.name}")
+    # Invariant tests
+    invariant_dir = BACKEND_TESTS / "invariant"
+
+    if invariant_dir.exists():
+        for f in invariant_dir.rglob("test_*.py"):
+            relative = f.relative_to(BACKEND_TESTS)
+            files["invariants"].add(f"tests/{relative}")
 
     # Golden datasets
-    golden_datasets_dir = BACKEND_TESTS / "golden" / "datasets"
-    if golden_datasets_dir.exists():
-        for f in golden_datasets_dir.glob("*.json"):
+    golden_dir = BACKEND_TESTS / "golden" / "datasets"
+
+    if golden_dir.exists():
+        for f in golden_dir.glob("*.json"):
             files["golden_datasets"].add(f"tests/golden/datasets/{f.name}")
 
     return files
@@ -283,7 +287,9 @@ def scan_capabilities() -> list[CapabilityCoverage]:
         # Check architecture tests
         arch_tests = manifest.get("architecture_tests", [])
         if arch_tests:
-            cap.architecture_tests = CoverageStatus(exists=(BACKEND_TESTS / "architecture").exists())
+            cap.architecture_tests = CoverageStatus(
+                exists=(BACKEND_TESTS / "architecture").exists()
+            )
         else:
             cap.architecture_tests = CoverageStatus(exists=False)
 
@@ -291,16 +297,28 @@ def scan_capabilities() -> list[CapabilityCoverage]:
         cap.contracts = manifest.get("contracts", [])
 
         # Compute maturities
-        cap.structural_maturity = compute_maturity(cap.routers + cap.services + cap.engines + cap.repositories)
-        cap.validation_maturity = compute_maturity(cap.golden_datasets + cap.property_tests + cap.invariants)
+        cap.structural_maturity = compute_maturity(
+            cap.routers + cap.services + cap.engines + cap.repositories
+        )
+        cap.validation_maturity = compute_maturity(
+            cap.golden_datasets + cap.property_tests + cap.invariants
+        )
         cap.documentation_maturity = "✓" if cap.contracts else "✗"
 
         # Overall maturity - all three must be ✓
-        if cap.structural_maturity == "✓" and cap.validation_maturity == "✓" and cap.documentation_maturity == "✓":
+        if (
+            cap.structural_maturity == "✓"
+            and cap.validation_maturity == "✓"
+            and cap.documentation_maturity == "✓"
+        ):
             cap.overall_maturity = "✓"
         elif cap.structural_maturity == "NONE" and cap.validation_maturity == "NONE":
             cap.overall_maturity = "NONE"
-        elif "✗" in [cap.structural_maturity, cap.validation_maturity, cap.documentation_maturity]:
+        elif "✗" in [
+            cap.structural_maturity,
+            cap.validation_maturity,
+            cap.documentation_maturity,
+        ]:
             cap.overall_maturity = "✗"
         else:
             cap.overall_maturity = "PARTIAL"
@@ -310,18 +328,14 @@ def scan_capabilities() -> list[CapabilityCoverage]:
     return capabilities
 
 
-def generate_capability_registry(capabilities: list[CapabilityCoverage]) -> dict[str, Any]:
+def generate_capability_registry(
+    capabilities: list[CapabilityCoverage],
+) -> dict[str, Any]:
     """Generate capability-registry.yaml structure from manifests."""
-    registry: dict[str, Any] = {"capabilities": []}
-
-    for cap in capabilities:
-        # Load original manifest to get full structure
-        manifest_path = CAPABILITIES_DIR / f"{cap.id}.yaml"
-        with open(manifest_path) as f:
-            manifest = yaml.safe_load(f)
-        registry["capabilities"].append(manifest)
-
-    return registry
+    if not CAPABILITY_REGISTRY.exists():
+        return {"capabilities": []}
+    with open(CAPABILITY_REGISTRY) as f:
+        return yaml.safe_load(f) or {"capabilities": []}
 
 
 def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
@@ -347,30 +361,36 @@ def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
             f"| {cap.name} | {structural} | {validation} | {documentation} | {overall} | {cap.criticality} | {cap.risk} |"
         )
 
-    lines.extend([
-        "",
-        "## Maturity Legend",
-        "",
-        "| Symbol | Meaning |",
-        "|--------|---------|",
-        "| ✓ | Complete coverage |",
-        "| PARTIAL | Partial coverage |",
-        "| ✗ | Missing coverage |",
-        "| NONE | No coverage |",
-        "| UNKNOWN | Cannot be determined |",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Maturity Legend",
+            "",
+            "| Symbol | Meaning |",
+            "|--------|---------|",
+            "| ✓ | Complete coverage |",
+            "| PARTIAL | Partial coverage |",
+            "| ✗ | Missing coverage |",
+            "| NONE | No coverage |",
+            "| UNKNOWN | Cannot be determined |",
+        ]
+    )
 
     # Missing coverage section
-    lines.extend([
-        "",
-        "## Missing Coverage Details",
-        "",
-    ])
+    lines.extend(
+        [
+            "",
+            "## Missing Coverage Details",
+            "",
+        ]
+    )
 
     for cap in sorted(capabilities, key=lambda c: c.id):
         missing_items = []
 
-        for item in cap.routers + cap.services + cap.engines + cap.repositories + cap.tables:
+        for item in (
+            cap.routers + cap.services + cap.engines + cap.repositories + cap.tables
+        ):
             if not item.exists:
                 missing_items.append(f"  - {item.path}: NOT FOUND")
 
@@ -397,16 +417,18 @@ def generate_traceability_md(capabilities: list[CapabilityCoverage]) -> str:
     ]
 
     for cap in sorted(capabilities, key=lambda c: c.id):
-        lines.extend([
-            f"## {cap.name}",
-            "",
-            f"**Capability ID:** `{cap.id}`",
-            "",
-            "### Dependency Chain",
-            "",
-            "| Layer | Artifact | Status |",
-            "|-------|----------|--------|",
-        ])
+        lines.extend(
+            [
+                f"## {cap.name}",
+                "",
+                f"**Capability ID:** `{cap.id}`",
+                "",
+                "### Dependency Chain",
+                "",
+                "| Layer | Artifact | Status |",
+                "|-------|----------|--------|",
+            ]
+        )
 
         for router in cap.routers:
             status = "✓" if router.exists else "✗"
@@ -461,39 +483,61 @@ def generate_change_impact_md(capabilities: list[CapabilityCoverage]) -> str:
         for router in cap.routers:
             if router.path:
                 if router.path not in file_impacts:
-                    file_impacts[router.path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set()}
+                    file_impacts[router.path] = {
+                        "capabilities": set(),
+                        "property_tests": set(),
+                        "golden_tests": set(),
+                    }
                 file_impacts[router.path]["capabilities"].add(cap.id)
-                file_impacts[router.path]["property_tests"].add(f"tests/properties/{cap.id.replace('_', '')}")
+                file_impacts[router.path]["property_tests"].add(
+                    f"tests/properties/{cap.id.replace('_', '')}"
+                )
 
         for service in cap.services:
             if service.path:
                 if service.path not in file_impacts:
-                    file_impacts[service.path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set()}
+                    file_impacts[service.path] = {
+                        "capabilities": set(),
+                        "property_tests": set(),
+                        "golden_tests": set(),
+                    }
                 file_impacts[service.path]["capabilities"].add(cap.id)
 
         for engine in cap.engines:
             if engine.path:
                 if engine.path not in file_impacts:
-                    file_impacts[engine.path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set()}
+                    file_impacts[engine.path] = {
+                        "capabilities": set(),
+                        "property_tests": set(),
+                        "golden_tests": set(),
+                    }
                 file_impacts[engine.path]["capabilities"].add(cap.id)
                 for dataset in cap.golden_datasets:
                     if dataset.path:
-                        dataset_name = dataset.path.replace("tests/golden/datasets/", "").replace(".json", "")
+                        dataset_name = dataset.path.replace(
+                            "tests/golden/datasets/", ""
+                        ).replace(".json", "")
                         file_impacts[engine.path]["golden_tests"].add(dataset_name)
 
         for repo in cap.repositories:
             if repo.path:
                 if repo.path not in file_impacts:
-                    file_impacts[repo.path] = {"capabilities": set(), "property_tests": set(), "golden_tests": set()}
+                    file_impacts[repo.path] = {
+                        "capabilities": set(),
+                        "property_tests": set(),
+                        "golden_tests": set(),
+                    }
                 file_impacts[repo.path]["capabilities"].add(cap.id)
 
     # Sort by path
     for path in sorted(file_impacts.keys()):
         impacts = file_impacts[path]
-        lines.extend([
-            f"## `{path}`",
-            "",
-        ])
+        lines.extend(
+            [
+                f"## `{path}`",
+                "",
+            ]
+        )
 
         if impacts["capabilities"]:
             lines.append("**Capabilities:**")
@@ -605,7 +649,15 @@ def main() -> None:
         f.write(coverage_md)
     print("Generated: coverage.md")
 
-    # Generate coverage.json
+    # Generate coverage.json (enriched with raw pytest-cov data)
+    raw_path = GENERATED_DIR / "raw-coverage.json"
+    if not raw_path.exists():
+        raise FileNotFoundError(
+            "raw-coverage.json missing. Run pytest with --cov-report=json first."
+        )
+    with open(raw_path) as f:
+        raw_coverage = json.load(f)
+
     coverage_json = {
         "generated_at": str(os.popen("date -Iseconds").read().strip()),
         "capabilities": [
@@ -619,13 +671,22 @@ def main() -> None:
                 "documentation_maturity": cap.documentation_maturity,
                 "overall_maturity": cap.overall_maturity,
                 "missing": [
-                    item.path for item in cap.routers + cap.services + cap.engines +
-                    cap.repositories + cap.tables + cap.golden_datasets + cap.property_tests + cap.invariants
+                    item.path
+                    for item in cap.routers
+                    + cap.services
+                    + cap.engines
+                    + cap.repositories
+                    + cap.tables
+                    + cap.golden_datasets
+                    + cap.property_tests
+                    + cap.invariants
                     if not item.exists
                 ],
             }
             for cap in capabilities
         ],
+        "files": raw_coverage.get("files", {}),
+        "totals": raw_coverage.get("totals", {}),
     }
     with open(GENERATED_DIR / "coverage.json", "w") as f:
         json.dump(coverage_json, f, indent=2)

@@ -8,6 +8,7 @@ from src.services.financial_events_service import FinancialEventsService
 
 router = APIRouter(prefix="/api/financial-events", tags=["financial-events"])
 
+
 @router.post("/", response_model=int)
 def create_event(
     event_type: str,
@@ -52,7 +53,8 @@ def create_event(
             owner_id=owner_id,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 @router.get("/", response_model=list)
 def list_events(
@@ -71,7 +73,8 @@ def list_events(
             # Return all events (no month filter) using get_events_with_links
             return service.get_events_with_links("", household_id)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 @router.get("/{event_id}", response_model=dict)
 def get_event(event_id: int = Path(..., description="Event ID")) -> dict[str, Any]:
@@ -86,5 +89,7 @@ def get_event(event_id: int = Path(..., description="Event ID")) -> dict[str, An
         if not event:
             raise HTTPException(status_code=404, detail="Event not found")
         return event
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

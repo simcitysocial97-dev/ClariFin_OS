@@ -26,12 +26,12 @@ def compute_income_stability(monthly_incomes_paise: list[int]) -> Decimal:
         Returns Decimal('1') for empty/single month (assumed stable).
     """
     if len(monthly_incomes_paise) < 2:
-        return Decimal('1')
+        return Decimal("1")
 
     cv = _coefficient_of_variation(monthly_incomes_paise)
     # Stability = 1 - normalized CV (max CV considered is 1.0)
-    stability = Decimal('1') - min(Decimal('1'), cv)
-    return max(Decimal('0'), stability)
+    stability = Decimal("1") - min(Decimal("1"), cv)
+    return max(Decimal("0"), stability)
 
 
 def compute_expense_stability(monthly_expenses_paise: list[int]) -> Decimal:
@@ -52,12 +52,12 @@ def compute_expense_stability(monthly_expenses_paise: list[int]) -> Decimal:
         Returns Decimal('1') for empty/single month (assumed stable).
     """
     if len(monthly_expenses_paise) < 2:
-        return Decimal('1')
+        return Decimal("1")
 
     cv = _coefficient_of_variation(monthly_expenses_paise)
     # Stability = 1 - normalized CV (max CV considered is 1.0)
-    stability = Decimal('1') - min(Decimal('1'), cv)
-    return max(Decimal('0'), stability)
+    stability = Decimal("1") - min(Decimal("1"), cv)
+    return max(Decimal("0"), stability)
 
 
 def compute_cashflow_stability_index(

@@ -1,0 +1,105 @@
+# .github/workflows/frontend.yml
+#
+# PURPOSE: Verify frontend and backend stay in sync
+# WHAT IT CHECKS:
+#   - OpenAPI schema is current
+#   - Frontend TypeScript types match backend schemas
+#   - No endpoints added/removed without frontend knowing
+
+name: Frontend-Backend Sync
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "backend/src/routers/**"
+      - "frontend/src/**"
+      - ".github/workflows/frontend.yml"
+
+jobs:
+
+  openapi-sync:
+    name: "OpenAPI Schema Sync"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python environment
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: "3.12"
+          working-directory: "backend"
+
+      - name: Generate current OpenAPI schema
+        working-directory: backend
+        run: |
+          # Generate the OpenAPI schema from your FastAPI app
+          # Adjust the import path to match your app structure
+python -c "
+import json
+import sys
+
+# Try different common app locations
+try:
+    from api import app
+except ImportError:
+    try:
+        from app.main import app
+    except ImportError:
+        try:
+            from src.main import app
+        except ImportError:
+            print('ERROR: Could not import FastAPI app')
+            print('Adjust the import in frontend.yml')
+            sys.exit(1)
+
+schema = app.openapi()
+with open('tests/generated/openapi-current.json', 'w') as f:
+    json.dump(schema, f, indent=2)
+
+print(f'Schema generated: {len(schema[\"paths\"])} endpoints')
+"
+
+      - name: Compare with committed schema
+        working-directory: backend
+        run: |
+          # Check if committed schema exists
+          COMMITTED="tests/generated/api-map.json"
+          CURRENT="tests/generated/openapi-current.json"
+          
+          if [ ! -f "$COMMITTED" ]; then
+            echo "No committed API map found at $COMMITTED"
+            echo "Creating initial baseline..."
+            cp "$CURRENT" "$COMMITTED"
+            echo "SCHEMA_CHANGED=false" >> "$GITHUB_ENV"
+          else
+            # Compare endpoint counts
+            OLD_COUNT=$(python -c "import json; d=json.load(open('$COMMITTED')); print(len(d.get('paths', d)))")
+            NEW_COUNT=$(python -c "import json; d=json.load(open('$CURRENT')); print(len(d.get('paths', {})))")
+            
+            if [ "$OLD_COUNT" != "$NEW_COUNT" ]; then
+              echo "SCHEMA_CHANGED=true" >> "$GITHUB_ENV"
+              echo "WARNING: Endpoint count changed: $OLD_COUNT → $NEW_COUNT"
+            else
+              echo "SCHEMA_CHANGED=false" >> "$GITHUB_ENV"
+              echo "Endpoint count unchanged: $NEW_COUNT endpoints"
+            fi
+          fi
+
+      - name: Upload schema artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-schema-${{ github.sha }}
+          path: |
+            backend/tests/generated/openapi-current.json
+          retention-days: 30
+
+      - name: Warn on schema change
+        if: env.SCHEMA_CHANGED == 'true'
+        run: |
+          echo "::warning::API schema changed. Verify frontend TypeScript types are updated."

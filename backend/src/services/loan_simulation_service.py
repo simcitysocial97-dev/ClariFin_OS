@@ -102,7 +102,11 @@ class LoanSimulationService:
         # Calculate new total interest from regenerated schedule
         new_interest = 0
         if result.new_schedule:
-            new_interest = result.new_schedule[-1].cumulative_interest_paise if result.new_schedule else 0
+            new_interest = (
+                result.new_schedule[-1].cumulative_interest_paise
+                if result.new_schedule
+                else 0
+            )
 
         return {
             "original_interest_paise": original_interest,

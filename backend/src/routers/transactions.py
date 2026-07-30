@@ -1,4 +1,5 @@
 """Transaction listing and analytics endpoints."""
+
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
@@ -31,7 +32,7 @@ def get_transactions(
             offset=offset,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/overview")
@@ -47,7 +48,7 @@ def get_overview(
             member=member,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/categories")
@@ -65,7 +66,7 @@ def get_categories(
             drill_category=drill_category,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/analytics")
@@ -81,6 +82,4 @@ def get_analytics(
             member=member,
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
+        raise HTTPException(status_code=500, detail=str(e)) from e

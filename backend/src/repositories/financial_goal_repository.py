@@ -3,6 +3,7 @@
 LOC WATCH: No repository file > 200 LOC.
 If it grows beyond 200, split by sub-domain.
 """
+
 from typing import Any
 
 from src.repositories.base import BaseRepository
@@ -33,17 +34,27 @@ class FinancialGoalRepository(BaseRepository):
     ) -> str:
         """Create a new financial goal record. Returns the goal ID."""
         with self._get_conn() as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO financial_goals (
                     id, household_id, owner_id, goal_type, name,
                     target_amount_paise, current_amount_paise, target_date,
                     priority, status, created_at, updated_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
-            """, (
-                goal_id, household_id, owner_id, goal_type, name,
-                target_amount_paise, current_amount_paise, target_date,
-                priority, status,
-            ))
+            """,
+                (
+                    goal_id,
+                    household_id,
+                    owner_id,
+                    goal_type,
+                    name,
+                    target_amount_paise,
+                    current_amount_paise,
+                    target_date,
+                    priority,
+                    status,
+                ),
+            )
             conn.commit()
         return goal_id
 
@@ -71,7 +82,8 @@ class FinancialGoalRepository(BaseRepository):
         """
         with self._get_conn() as conn:
             if status:
-                rows = conn.execute("""
+                rows = conn.execute(
+                    """
                     SELECT * FROM financial_goals
                     WHERE household_id = ? AND status = ?
                     ORDER BY
@@ -82,9 +94,12 @@ class FinancialGoalRepository(BaseRepository):
                             WHEN 'low' THEN 4
                         END,
                         created_at DESC
-                """, (household_id, status)).fetchall()
+                """,
+                    (household_id, status),
+                ).fetchall()
             else:
-                rows = conn.execute("""
+                rows = conn.execute(
+                    """
                     SELECT * FROM financial_goals
                     WHERE household_id = ?
                     ORDER BY
@@ -95,7 +110,9 @@ class FinancialGoalRepository(BaseRepository):
                             WHEN 'low' THEN 4
                         END,
                         created_at DESC
-                """, (household_id,)).fetchall()
+                """,
+                    (household_id,),
+                ).fetchall()
         return [dict(r) for r in rows]
 
     def update_goal(
@@ -105,14 +122,18 @@ class FinancialGoalRepository(BaseRepository):
     ) -> dict[str, Any] | None:
         """Update goal fields. Only updates provided fields."""
         allowed = {
-            'name', 'target_amount_paise', 'current_amount_paise',
-            'target_date', 'priority', 'status',
+            "name",
+            "target_amount_paise",
+            "current_amount_paise",
+            "target_date",
+            "priority",
+            "status",
         }
         updates = {k: v for k, v in kwargs.items() if k in allowed and v is not None}
         if not updates:
             return self.get_goal(goal_id)
 
-        set_clause = ', '.join(f"{k} = ?" for k in updates)
+        set_clause = ", ".join(f"{k} = ?" for k in updates)
         set_clause += ", updated_at = datetime('now')"
         values = list(updates.values()) + [goal_id]
 
@@ -141,12 +162,15 @@ class FinancialGoalRepository(BaseRepository):
             Dict with counts for active, completed, on_track, at_risk
         """
         with self._get_conn() as conn:
-            rows = conn.execute("""
+            rows = conn.execute(
+                """
                 SELECT status, COUNT(*) as count
                 FROM financial_goals
                 WHERE household_id = ?
                 GROUP BY status
-            """, (household_id,)).fetchall()
+            """,
+                (household_id,),
+            ).fetchall()
 
         counts = {"active": 0, "completed": 0, "on_track": 0, "at_risk": 0}
         for row in rows:

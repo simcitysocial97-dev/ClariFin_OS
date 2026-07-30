@@ -1,0 +1,95 @@
+# .github/actions/setup-python-env/action.yml
+# Reusable action: sets up Python + installs all dependencies
+# Used by every workflow to avoid duplication
+
+name: "Setup Python Environment"
+description: "Installs Python, caches dependencies, installs project"
+
+inputs:
+  python-version:
+    description: "Python version to use"
+    required: false
+    default: "3.12"
+  
+  working-directory:
+    description: "Directory containing requirements files"
+    required: false
+    default: "backend"
+
+runs:
+  using: "composite"
+  steps:
+    # Step 3a: Install Python
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    # Step 3b: Cache pip packages
+    # Cache key includes requirements files so cache busts when deps change
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: |
+          pip-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles(
+            format('{0}/requirements*.txt', inputs.working-directory),
+            format('{0}/pyproject.toml', inputs.working-directory)
+          ) }}
+        restore-keys: |
+          pip-${{ runner.os }}-py${{ inputs.python-version }}-
+          pip-${{ runner.os }}-
+
+    # Step 3c: Install dependencies
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        # Configure pip for maximum resilience
+        python -m pip install --upgrade pip
+        pip config set global.timeout 300
+        pip config set global.retries 10
+        pip config set global.index-url https://pypi.org/simple/
+
+        # Install test dependencies
+        if [ -f requirements-test.txt ]; then
+          pip install --timeout 300 --retries 10 -r requirements-test.txt
+        fi
+
+        # Install main dependencies
+        if [ -f requirements.txt ]; then
+          pip install --timeout 300 --retries 10 -r requirements.txt
+        fi
+
+        # Install project itself if pyproject.toml exists
+        if [ -f pyproject.toml ]; then
+          pip install --timeout 300 --retries 10 -e ".[test]" 2>/dev/null || pip install --timeout 300 --retries 10 -e . 2>/dev/null || true
+        fi
+
+        # Always install these testing tools
+        pip install --timeout 300 --retries 10 \
+          pytest \
+          pytest-cov \
+          pytest-xdist \
+          pytest-timeout \
+          hypothesis \
+          mutmut \
+          ruff \
+          black \
+          mypy \
+          coverage
+
+    # Step 3d: Verify installation
+    - name: Verify environment
+      shell: bash
+      run: |
+        python --version
+        pytest --version
+        echo "Environment ready"
+
+    # Step 3e: Add src and tests to PYTHONPATH for runtime imports
+    - name: Configure PYTHONPATH
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        echo "PYTHONPATH=$$PYTHONPATH:src:tests" >> $GITHUB_ENV

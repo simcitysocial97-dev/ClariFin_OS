@@ -35,6 +35,7 @@ TENURE_INVALID = "TENURE_INVALID"
 # Custom Exception Classes
 # ============================================================
 
+
 class AppError(Exception):
     """
     Base application error.
@@ -49,7 +50,7 @@ class AppError(Exception):
         self,
         message: str,
         status_code: int = 500,
-        details: dict[str, Any] | None = None
+        details: dict[str, Any] | None = None,
     ) -> None:
         self.message = message
         self.status_code = status_code
@@ -96,10 +97,9 @@ class NotFoundError(AppError):
 # Error Response Formatting
 # ============================================================
 
+
 def format_error_response(
-    status_code: int,
-    message: str,
-    details: dict[str, Any] | None = None
+    status_code: int, message: str, details: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     """
     Format an error response.
@@ -129,6 +129,7 @@ def format_error_response(
 # Exception Handlers
 # ============================================================
 
+
 async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
     """
     Handle application errors.
@@ -140,14 +141,11 @@ async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
     Returns:
         JSON error response
     """
-    log_error(
-        f"Application error: {exc.message}",
-        details=exc.details
-    )
+    log_error(f"Application error: {exc.message}", details=exc.details)
 
     return JSONResponse(
         status_code=exc.status_code,
-        content=format_error_response(exc.status_code, exc.message, exc.details)
+        content=format_error_response(exc.status_code, exc.message, exc.details),
     )
 
 
@@ -162,14 +160,11 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
     Returns:
         JSON error response
     """
-    log_error(
-        f"HTTP error: {exc.detail}",
-        extra={"status_code": exc.status_code}
-    )
+    log_error(f"HTTP error: {exc.detail}", extra={"status_code": exc.status_code})
 
     return JSONResponse(
         status_code=exc.status_code,
-        content=format_error_response(exc.status_code, exc.detail)
+        content=format_error_response(exc.status_code, exc.detail),
     )
 
 
@@ -188,31 +183,29 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
     """
     # Log full traceback for debugging
     log_error(
-        f"Unexpected error: {str(exc)}",
-        error=exc,
-        extra={"path": request.url.path}
+        f"Unexpected error: {str(exc)}", error=exc, extra={"path": request.url.path}
     )
 
     # In development, you might want to include the traceback
     # In production, keep it generic
     details: dict[str, Any] = {}
     from src.config import settings
+
     if settings.log_level == "DEBUG":
         details["traceback"] = traceback.format_exc()
 
     return JSONResponse(
         status_code=500,
         content=format_error_response(
-            500,
-            "Internal server error",
-            details if details else None
-        )
+            500, "Internal server error", details if details else None
+        ),
     )
 
 
 # ============================================================
 # Error Handler Registration
 # ============================================================
+
 
 def register_error_handlers(app: FastAPI) -> None:
     """
@@ -228,8 +221,7 @@ def register_error_handlers(app: FastAPI) -> None:
 
 
 async def validation_error_handler(
-    request: Request,
-    exc: RequestValidationError
+    request: Request, exc: RequestValidationError
 ) -> JSONResponse:
     """
     Handle Pydantic validation errors.
@@ -243,22 +235,17 @@ async def validation_error_handler(
     """
     errors: list[dict[str, str]] = []
     for error in exc.errors():
-        errors.append({
-            "field": ".".join(str(loc) for loc in error["loc"]),
-            "message": error["msg"],
-            "type": error["type"]
-        })
+        errors.append(
+            {
+                "field": ".".join(str(loc) for loc in error["loc"]),
+                "message": error["msg"],
+                "type": error["type"],
+            }
+        )
 
-    log_error(
-        "Validation error",
-        extra={"errors": errors, "path": request.url.path}
-    )
+    log_error("Validation error", extra={"errors": errors, "path": request.url.path})
 
     return JSONResponse(
         status_code=422,
-        content=format_error_response(
-            422,
-            "Validation failed",
-            {"errors": errors}
-        )
+        content=format_error_response(422, "Validation failed", {"errors": errors}),
     )

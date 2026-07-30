@@ -9,13 +9,9 @@ Run: python -m pytest tests/test_household_repository.py -v
 
 import os
 import sqlite3
-import sys
 import tempfile
-from pathlib import Path
 
 import pytest
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from repositories.account_repository import AccountRepository
 
@@ -54,7 +50,16 @@ def multi_owner_db():
         ("Current B", "Bank2", "current", "5678", 200000, 1, "self", "primary"),
         # Primary household, spouse-owned
         ("Spouse Savings", "Bank1", "savings", "4321", 150000, 1, "spouse", "primary"),
-        ("Spouse Credit", "Bank3", "credit_card", "8765", -25000, 1, "spouse", "primary"),
+        (
+            "Spouse Credit",
+            "Bank3",
+            "credit_card",
+            "8765",
+            -25000,
+            1,
+            "spouse",
+            "primary",
+        ),
         # Secondary household (vacation home), self-owned
         ("Vacation Account", "Bank4", "savings", "9999", 50000, 1, "self", "vacation"),
         # Inactive account
@@ -87,6 +92,7 @@ def repo(multi_owner_db):
 # ============================================================
 # Tests
 # ============================================================
+
 
 def test_get_household_accounts_primary(repo):
     """Test getting all active accounts in the primary household."""

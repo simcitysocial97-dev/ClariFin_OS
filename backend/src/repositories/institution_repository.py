@@ -66,9 +66,7 @@ class InstitutionRepository(BaseRepository):
     def list(self) -> list[dict[str, Any]]:
         """Get all institutions as raw dicts."""
         with self._get_conn() as conn:
-            rows = conn.execute(
-                "SELECT * FROM institutions ORDER BY name"
-            ).fetchall()
+            rows = conn.execute("SELECT * FROM institutions ORDER BY name").fetchall()
         return [dict(r) for r in rows]
 
     def update(

@@ -36,14 +36,34 @@
       ],
       "capability": "unknown"
     },
-    "accounts_intelligence": {
+    "accounts": {
       "endpoints": [
         {
           "method": "GET",
           "path": "/api/v1/accounts",
           "request_schema": {},
           "response_schema": {
-            "$ref": "#/components/schemas/AccountsDTO"
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Response List Accounts Api V1 Accounts Get"
+          },
+          "status_codes": [
+            "200"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/accounts",
+          "request_schema": {
+            "$ref": "#/components/schemas/AccountCreateRequest"
+          },
+          "response_schema": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Response Create Account Api V1 Accounts Post"
           },
           "status_codes": [
             "200",
@@ -55,79 +75,9 @@
           "path": "/api/v1/accounts/{account_id}",
           "request_schema": {},
           "response_schema": {
-            "$ref": "#/components/schemas/AccountDetailDTO"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/accounts/{account_id}/balance-history",
-          "request_schema": {},
-          "response_schema": {
-            "$ref": "#/components/schemas/AccountsHistoryResponse"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/accounts/{account_id}/transactions",
-          "request_schema": {},
-          "response_schema": {
-            "$ref": "#/components/schemas/AccountsTransactionsResponse"
-          },
-          "status_codes": [
-            "200",
-            "422"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/accounts/summary",
-          "request_schema": {},
-          "response_schema": {
-            "$ref": "#/components/schemas/AccountsDTO"
-          },
-          "status_codes": [
-            "200"
-          ]
-        },
-        {
-          "method": "GET",
-          "path": "/api/v1/accounts/type-breakdown",
-          "request_schema": {},
-          "response_schema": {
-            "items": {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            "type": "array",
-            "title": "Response Get Accounts Type Breakdown Api V1 Accounts Type Breakdown Get"
-          },
-          "status_codes": [
-            "200"
-          ]
-        }
-      ],
-      "capability": "unknown"
-    },
-    "accounts": {
-      "endpoints": [
-        {
-          "method": "POST",
-          "path": "/api/v1/accounts",
-          "request_schema": {
-            "$ref": "#/components/schemas/AccountCreateRequest"
-          },
-          "response_schema": {
             "type": "object",
             "additionalProperties": true,
-            "title": "Response Create Account Api V1 Accounts Post"
+            "title": "Response Get Account Api V1 Accounts  Account Id  Get"
           },
           "status_codes": [
             "200",
@@ -174,6 +124,23 @@
             "type": "object",
             "additionalProperties": true,
             "title": "Response Insert Balance Snapshot Api V1 Accounts  Account Id  Balance History Post"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/accounts/{account_id}/balance-history",
+          "request_schema": {},
+          "response_schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            },
+            "title": "Response Get Balance History Api V1 Accounts  Account Id  Balance History Get"
           },
           "status_codes": [
             "200",
@@ -452,7 +419,7 @@
           ]
         }
       ],
-      "capability": "account_management"
+      "capability": "unknown"
     },
     "audit": {
       "endpoints": [
@@ -596,7 +563,7 @@
           ]
         }
       ],
-      "capability": "financial_health"
+      "capability": "unknown"
     },
     "behaviour_workspace": {
       "endpoints": [
@@ -896,7 +863,7 @@
           ]
         }
       ],
-      "capability": "credit_cards"
+      "capability": "unknown"
     },
     "cashflow": {
       "endpoints": [
@@ -947,7 +914,7 @@
           ]
         }
       ],
-      "capability": "household_cashflow"
+      "capability": "unknown"
     },
     "cashflow_workspace": {
       "endpoints": [
@@ -1407,7 +1374,7 @@
           ]
         }
       ],
-      "capability": "debt_management"
+      "capability": "unknown"
     },
     "loans_workspace": {
       "endpoints": [
@@ -1597,7 +1564,7 @@
           ]
         }
       ],
-      "capability": "reconciliation"
+      "capability": "unknown"
     },
     "reconciliation_workspace": {
       "endpoints": [
@@ -1680,8 +1647,8 @@
           ]
         }
       ],
-      "capability": "transaction_intelligence"
+      "capability": "unknown"
     }
   },
-  "generated_at": "1784727957.18391"
+  "generated_at": "ae0e7a00848455e9"
 }
