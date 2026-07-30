@@ -123,7 +123,9 @@ export default defineConfig({
   
   // Production server (avoids CSS corruption in dev mode)
   webServer: {
-    command: 'npm start',
+    command: process.env.CI
+      ? 'python -m http.server 3000 --directory dist'
+      : 'npm start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
