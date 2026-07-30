@@ -38,6 +38,11 @@ jobs:
         working-directory: ./backend
         run: pip install -r requirements.txt
 
+      # Build frontend for production
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
+
       # Run Playwright tests
       - name: Run Playwright Tests
         working-directory: ./frontend

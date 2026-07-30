@@ -504,23 +504,3 @@ capabilities:
   failure_impact: Hidden financial obligations go undetected. Users miss credit card
     payments, loan EMIs, and cash conversion cycles, leading to inaccurate cashflow
     and unexpected charges.
-- id: verification
-  name: Verification
-  description: 'Verification platform including runtime self-validation, intelligence
-    reports, dependency mapping, and coverage analysis.
-    '
-  criticality: medium
-  risk: low
-  routers: []
-  services: []
-  engines: []
-  repositories: []
-  tables: []
-  golden_datasets: []
-  property_tests: []
-  invariants: []
-  architecture_tests: []
-  contracts: []
-  dependencies: []
-  failure_impact: Verification gaps go undetected. Regression risks, broken contracts,
-    and missing test coverage increase deployment risk.

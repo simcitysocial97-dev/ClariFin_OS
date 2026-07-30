@@ -30,6 +30,9 @@ concurrency:
   group: backend-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  pull-requests: read
+
 jobs:
 
   # ── Detect what changed ───────────────────────────────────────────────────
