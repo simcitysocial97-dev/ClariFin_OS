@@ -10,10 +10,15 @@ def _to_date(value: Any) -> date:
         return date.today()
     for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%d/%m/%Y", "%d-%m-%Y"):
         try:
-            return date.fromisoformat(value) if "-" in value else __import__("datetime").datetime.strptime(value, fmt).date()
+            return (
+                date.fromisoformat(value)
+                if "-" in value
+                else __import__("datetime").datetime.strptime(value, fmt).date()
+            )
         except (ValueError, TypeError):
             continue
     return date.today()
+
 
 from src.models.base import DomainModel, Money
 

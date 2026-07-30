@@ -479,7 +479,6 @@ CREATE TABLE IF NOT EXISTS financial_goals (
 """
 
 
-
 _DDL_LOAN_AMORTIZATION_SCHEDULE = """
 CREATE TABLE IF NOT EXISTS loan_amortization_schedule (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -830,7 +829,9 @@ class FinanceDB:
                     try:
                         conn.execute(stmt)
                     except sqlite3.OperationalError as e:
-                        logger.warning("Index creation skipped (may already exist): %s", e)
+                        logger.warning(
+                            "Index creation skipped (may already exist): %s", e
+                        )
 
             # --- Create all triggers (each as individual execute to avoid semicolon splitting) ---
             try:
@@ -887,11 +888,16 @@ class FinanceDB:
             if "bank_name" in columns and "bank" not in columns:
                 conn.execute("ALTER TABLE accounts RENAME COLUMN bank_name TO bank")
                 logger.info("Migration: renamed accounts.bank_name -> bank")
-            if "account_number_masked" in columns and "account_number_last4" not in columns:
+            if (
+                "account_number_masked" in columns
+                and "account_number_last4" not in columns
+            ):
                 conn.execute(
                     "ALTER TABLE accounts RENAME COLUMN account_number_masked TO account_number_last4"
                 )
-                logger.info("Migration: renamed accounts.account_number_masked -> account_number_last4")
+                logger.info(
+                    "Migration: renamed accounts.account_number_masked -> account_number_last4"
+                )
         except sqlite3.OperationalError as e:
             logger.warning("Migration: column rename skipped: %s", e)
 
@@ -912,7 +918,9 @@ class FinanceDB:
                         (date_iso, txn_id),
                     )
             if rows:
-                logger.info("Migration: backfilled date_iso for %d transactions", len(rows))
+                logger.info(
+                    "Migration: backfilled date_iso for %d transactions", len(rows)
+                )
         except sqlite3.OperationalError:
             pass  # Table may be empty or column already migrated
 
@@ -944,15 +952,21 @@ class FinanceDB:
             cur = conn.execute("PRAGMA table_info(accounts)")
             account_columns = {row[1] for row in cur.fetchall()}
             if "owner_id" not in account_columns:
-                conn.execute("ALTER TABLE accounts ADD COLUMN owner_id TEXT DEFAULT 'self'")
+                conn.execute(
+                    "ALTER TABLE accounts ADD COLUMN owner_id TEXT DEFAULT 'self'"
+                )
                 logger.info("Migration: added accounts.owner_id")
             if "household_id" not in account_columns:
-                conn.execute("ALTER TABLE accounts ADD COLUMN household_id TEXT DEFAULT 'primary'")
+                conn.execute(
+                    "ALTER TABLE accounts ADD COLUMN household_id TEXT DEFAULT 'primary'"
+                )
                 logger.info("Migration: added accounts.household_id")
 
             # Backfill only rows where the new columns are still NULL
             conn.execute("UPDATE accounts SET owner_id = 'self' WHERE owner_id IS NULL")
-            conn.execute("UPDATE accounts SET household_id = 'primary' WHERE household_id IS NULL")
+            conn.execute(
+                "UPDATE accounts SET household_id = 'primary' WHERE household_id IS NULL"
+            )
         except sqlite3.OperationalError as e:
             logger.warning("Migration: household columns skipped: %s", e)
 
@@ -976,9 +990,7 @@ class FinanceDB:
             )
 
         # Verify all required tables exist
-        cur = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        )
+        cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
         existing_tables = {row[0] for row in cur.fetchall()}
 
         missing_tables = _REQUIRED_TABLES - existing_tables
@@ -989,9 +1001,7 @@ class FinanceDB:
             )
 
         # Verify all required indexes exist
-        cur = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='index'"
-        )
+        cur = conn.execute("SELECT name FROM sqlite_master WHERE type='index'")
         existing_indexes = {row[0] for row in cur.fetchall()}
 
         missing_indexes = _REQUIRED_INDEXES - existing_indexes
@@ -1002,9 +1012,7 @@ class FinanceDB:
             )
 
         # Verify all required triggers exist
-        cur = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='trigger'"
-        )
+        cur = conn.execute("SELECT name FROM sqlite_master WHERE type='trigger'")
         existing_triggers = {row[0] for row in cur.fetchall()}
 
         missing_triggers = _REQUIRED_TRIGGERS - existing_triggers

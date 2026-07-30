@@ -8,7 +8,7 @@ All monetary values in paise (integer).
 All rates in basis points (integer).
 """
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 
 
 def compute_monthly_interest(
@@ -18,7 +18,7 @@ def compute_monthly_interest(
     """Compute standard monthly interest component in paise."""
     if outstanding_paise <= 0 or annual_rate_bps <= 0:
         return 0
-    
+
     monthly_rate = Decimal(annual_rate_bps) / Decimal(10000) / Decimal(12)
     interest = Decimal(outstanding_paise) * monthly_rate
     return int(interest.quantize(Decimal("1"), rounding=ROUND_HALF_UP))

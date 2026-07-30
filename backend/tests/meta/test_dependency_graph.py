@@ -64,9 +64,9 @@ class TestDependencyGraph:
         }
 
         missing_types = required_types - edge_types
-        assert not missing_types, (
-            f"Missing edge types in dependency graph: {missing_types}"
-        )
+        assert (
+            not missing_types
+        ), f"Missing edge types in dependency graph: {missing_types}"
 
     def test_capability_edges_for_all_capabilities(self) -> None:
         """Every capability must have at least one edge."""
@@ -81,9 +81,7 @@ class TestDependencyGraph:
 
         all_caps = set(capabilities.keys())
         missing = all_caps - caps_with_edges
-        assert not missing, (
-            f"Capabilities without any edges: {missing}"
-        )
+        assert not missing, f"Capabilities without any edges: {missing}"
 
     def test_edge_sources_valid(self) -> None:
         """All capability-type edge sources must exist in capabilities."""
@@ -95,9 +93,9 @@ class TestDependencyGraph:
         for edge in edges:
             if edge.get("source_type") == "capability":
                 source = edge.get("source", "")
-                assert source in all_cap_ids, (
-                    f"Edge source '{source}' not found in capabilities"
-                )
+                assert (
+                    source in all_cap_ids
+                ), f"Edge source '{source}' not found in capabilities"
 
     def test_capability_dependency_edges_valid(self) -> None:
         """Capability-to-capability edges must reference valid capabilities."""
@@ -109,9 +107,9 @@ class TestDependencyGraph:
         for edge in edges:
             if edge.get("target_type") == "capability":
                 target = edge.get("target", "")
-                assert target in all_cap_ids, (
-                    f"Capability dependency target '{target}' not found in capabilities"
-                )
+                assert (
+                    target in all_cap_ids
+                ), f"Capability dependency target '{target}' not found in capabilities"
 
     def test_dependency_graph_has_sufficient_edges(self) -> None:
         """Dependency graph must have a reasonable number of edges."""
@@ -142,9 +140,9 @@ class TestDependencyGraph:
 
         for cap_id, cap_data in capabilities.items():
             for field in required_fields:
-                assert field in cap_data, (
-                    f"Capability '{cap_id}' missing field '{field}' in dependency graph"
-                )
+                assert (
+                    field in cap_data
+                ), f"Capability '{cap_id}' missing field '{field}' in dependency graph"
 
     def test_transitive_dependencies_work(self) -> None:
         """Transitive dependency resolution must work correctly."""
@@ -152,21 +150,19 @@ class TestDependencyGraph:
 
         transitive = get_transitive_dependencies("forecasting")
 
-        assert "household_cashflow" in transitive, (
-            "forecasting should transitively depend on household_cashflow"
-        )
-        assert "debt_management" in transitive, (
-            "forecasting should transitively depend on debt_management"
-        )
+        assert (
+            "household_cashflow" in transitive
+        ), "forecasting should transitively depend on household_cashflow"
+        assert (
+            "debt_management" in transitive
+        ), "forecasting should transitively depend on debt_management"
 
     def test_get_dependents_works(self) -> None:
         """get_dependents must return capabilities that depend on the given one."""
         from runtime.discovery import get_dependents
 
         dependents = get_dependents("household_cashflow")
-        assert len(dependents) > 0, (
-            "household_cashflow should have dependents"
-        )
-        assert "debt_management" in dependents, (
-            "debt_management should depend on household_cashflow"
-        )
+        assert len(dependents) > 0, "household_cashflow should have dependents"
+        assert (
+            "debt_management" in dependents
+        ), "debt_management should depend on household_cashflow"

@@ -6,9 +6,8 @@ calculations using property-based testing techniques.
 """
 
 from datetime import date
-from decimal import Decimal, ROUND_HALF_EVEN
+from decimal import ROUND_HALF_EVEN, Decimal
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -21,24 +20,34 @@ from src.engines.loan_engine.models import ForeclosureResult
 
 # Constants for testing
 MAX_INTEREST_RATE_BPS = 3600  # 36% annual
-MIN_INTEREST_RATE_BPS = 500   # 5% annual
-MAX_TENURE_MONTHS = 360       # 30 years
-MIN_TENURE_MONTHS = 1         # 1 month
+MIN_INTEREST_RATE_BPS = 500  # 5% annual
+MAX_TENURE_MONTHS = 360  # 30 years
+MIN_TENURE_MONTHS = 1  # 1 month
 MAX_PRINCIPAL_PAISE = 10_000_000_00  # ₹10 crore
-MIN_PRINCIPAL_PAISE = 100_000        # ₹1,000
+MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
+
 
 # Strategies for generating test data
 @st.composite
 def foreclosure_parameters(draw):
     """Generate valid foreclosure parameters for testing."""
-    principal = draw(st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE))
-    rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+    principal = draw(
+        st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE)
+    )
+    rate = draw(
+        st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    )
     tenure = draw(st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS))
     months_paid = draw(st.integers(min_value=0, max_value=tenure - 1))
     penalty = draw(st.integers(min_value=0, max_value=500))  # 0-5% penalty
-    start_date = draw(st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(lambda d: d.isoformat()))
+    start_date = draw(
+        st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(
+            lambda d: d.isoformat()
+        )
+    )
 
     return principal, rate, tenure, months_paid, penalty, start_date
+
 
 @st.composite
 def schedule_with_foreclosure(draw):
@@ -52,15 +61,25 @@ def schedule_with_foreclosure(draw):
 
     return schedule, rate, months_paid, penalty, start_date
 
+
 @st.composite
 def loan_parameters(draw):
     """Generate valid loan parameters for testing."""
-    principal = draw(st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE))
-    rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+    principal = draw(
+        st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE)
+    )
+    rate = draw(
+        st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    )
     tenure = draw(st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS))
-    start_date = draw(st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(lambda d: d.isoformat()))
+    start_date = draw(
+        st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(
+            lambda d: d.isoformat()
+        )
+    )
 
     return principal, rate, tenure, start_date
+
 
 @given(foreclosure_parameters())
 @settings(max_examples=30, deadline=None)
@@ -93,9 +112,7 @@ def test_compute_foreclosure_amount_invariants(foreclosure_params):
 
     # INVARIANT 3: Foreclosure amount equals sum of components
     expected_amount = (
-        result.outstanding_paise +
-        result.accrued_interest_paise +
-        result.penalty_paise
+        result.outstanding_paise + result.accrued_interest_paise + result.penalty_paise
     )
     assert result.foreclosure_amount_paise == expected_amount
 
@@ -104,12 +121,17 @@ def test_compute_foreclosure_amount_invariants(foreclosure_params):
 
     # INVARIANT 5: Penalty is calculated correctly with ROUND_HALF_EVEN
     from decimal import ROUND_HALF_EVEN, Decimal
-    expected_penalty = int((Decimal(penalty) * Decimal(outstanding_paise) / Decimal(10000))
-                          .quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+
+    expected_penalty = int(
+        (Decimal(penalty) * Decimal(outstanding_paise) / Decimal(10000)).quantize(
+            Decimal(1), rounding=ROUND_HALF_EVEN
+        )
+    )
     assert result.penalty_paise == expected_penalty
 
     # INVARIANT 6: Months saved equals remaining months
     assert result.remaining_months_saved == remaining_months
+
 
 @given(foreclosure_parameters())
 @settings(max_examples=20, deadline=None)
@@ -134,18 +156,26 @@ def test_compute_foreclosure_amount_math_accuracy(foreclosure_params):
 
     # Calculate expected accrued interest for remaining months
     # Interest from month (months_paid + 1) onwards
-    expected_accrued_interest = schedule[-1].cumulative_interest_paise - schedule[months_paid - 1].cumulative_interest_paise
+    expected_accrued_interest = (
+        schedule[-1].cumulative_interest_paise
+        - schedule[months_paid - 1].cumulative_interest_paise
+    )
 
     # Verify accrued interest (allow tolerance proportional to remaining months due to schedule regeneration rounding)
     # The regenerated schedule's total interest can differ from the original schedule's remaining
     # interest because integer paise rounding compounds differently on the two paths.
     # Tolerance: up to 10 paise per remaining month base + 10% of interest is acceptable.
     max_tolerance = max(10000, remaining_months * 10, expected_accrued_interest // 10)
-    assert abs(result.accrued_interest_paise - expected_accrued_interest) <= max_tolerance
+    assert (
+        abs(result.accrued_interest_paise - expected_accrued_interest) <= max_tolerance
+    )
 
     # Verify total foreclosure amount
-    expected_total = outstanding_paise + result.accrued_interest_paise + result.penalty_paise
+    expected_total = (
+        outstanding_paise + result.accrued_interest_paise + result.penalty_paise
+    )
     assert result.foreclosure_amount_paise == expected_total
+
 
 @given(foreclosure_parameters())
 @settings(max_examples=20, deadline=None)
@@ -185,11 +215,12 @@ def test_compute_prepayment_breakup_invariants(foreclosure_params):
 
     # INVARIANT 4: Total equals sum of components
     expected_total = (
-        result["principal_remaining_paise"] +
-        result["accrued_interest_paise"] +
-        result["penalty_paise"]
+        result["principal_remaining_paise"]
+        + result["accrued_interest_paise"]
+        + result["penalty_paise"]
     )
     assert result["total_foreclosure_paise"] == expected_total
+
 
 @given(foreclosure_parameters())
 @settings(max_examples=20, deadline=None)
@@ -223,13 +254,18 @@ def test_compute_prepayment_breakup_math_accuracy(foreclosure_params):
 
     # Verify penalty with ROUND_HALF_EVEN
     from decimal import ROUND_HALF_EVEN, Decimal
-    expected_penalty = int((Decimal(penalty) * Decimal(outstanding_paise) / Decimal(10000))
-                          .quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+
+    expected_penalty = int(
+        (Decimal(penalty) * Decimal(outstanding_paise) / Decimal(10000)).quantize(
+            Decimal(1), rounding=ROUND_HALF_EVEN
+        )
+    )
     assert result["penalty_paise"] == expected_penalty
 
     # Verify total
     expected_total = outstanding_paise + expected_accrued_interest + expected_penalty
     assert result["total_foreclosure_paise"] == expected_total
+
 
 @given(foreclosure_parameters())
 @settings(max_examples=10, deadline=None)
@@ -261,13 +297,12 @@ def test_foreclosure_edge_cases(foreclosure_params):
     # Test with all months paid (should return zero)
     if tenure > 0:
         schedule = generate_schedule(principal, rate, tenure, start_date)
-        result = compute_prepayment_breakup(
-            0, rate, tenure, principal, tenure, penalty
-        )
+        result = compute_prepayment_breakup(0, rate, tenure, principal, tenure, penalty)
         assert result["principal_remaining_paise"] == 0
         assert result["accrued_interest_paise"] == 0
         assert result["penalty_paise"] == 0
         assert result["total_foreclosure_paise"] == 0
+
 
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
@@ -281,7 +316,7 @@ def test_foreclosure_penalty_calculation(principal, rate, tenure, penalty):
     start_date = "2025-01-01"
 
     # Generate schedule
-    schedule = generate_schedule(principal, rate, tenure, start_date)
+    generate_schedule(principal, rate, tenure, start_date)
 
     # Test at month 0 (full principal)
     outstanding_paise = principal
@@ -292,8 +327,11 @@ def test_foreclosure_penalty_calculation(principal, rate, tenure, penalty):
     )
 
     # Calculate expected penalty with ROUND_HALF_EVEN
-    expected_penalty = int((Decimal(penalty) * Decimal(outstanding_paise) / Decimal(10000))
-                          .quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    expected_penalty = int(
+        (Decimal(penalty) * Decimal(outstanding_paise) / Decimal(10000)).quantize(
+            Decimal(1), rounding=ROUND_HALF_EVEN
+        )
+    )
     assert result.penalty_paise == expected_penalty
 
     # Test penalty breakup
@@ -301,6 +339,7 @@ def test_foreclosure_penalty_calculation(principal, rate, tenure, penalty):
         outstanding_paise, rate, 0, principal, tenure, penalty
     )
     assert breakup["penalty_paise"] == expected_penalty
+
 
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
@@ -341,11 +380,12 @@ def test_foreclosure_zero_interest(principal, rate, tenure, months_paid):
     assert breakup["penalty_paise"] == 0
     assert breakup["total_foreclosure_paise"] == outstanding_paise
 
+
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
-    st.integers(min_value=0, max_value=500),              # Penalty
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
+    st.integers(min_value=0, max_value=500),  # Penalty
 )
 @settings(max_examples=10, deadline=None)
 def test_foreclosure_consistency(principal, rate, tenure, penalty):
@@ -372,7 +412,16 @@ def test_foreclosure_consistency(principal, rate, tenure, penalty):
     )
 
     # Should be consistent
-    assert foreclosure_result.outstanding_paise == breakup_result["principal_remaining_paise"]
-    assert foreclosure_result.accrued_interest_paise == breakup_result["accrued_interest_paise"]
+    assert (
+        foreclosure_result.outstanding_paise
+        == breakup_result["principal_remaining_paise"]
+    )
+    assert (
+        foreclosure_result.accrued_interest_paise
+        == breakup_result["accrued_interest_paise"]
+    )
     assert foreclosure_result.penalty_paise == breakup_result["penalty_paise"]
-    assert foreclosure_result.foreclosure_amount_paise == breakup_result["total_foreclosure_paise"]
+    assert (
+        foreclosure_result.foreclosure_amount_paise
+        == breakup_result["total_foreclosure_paise"]
+    )

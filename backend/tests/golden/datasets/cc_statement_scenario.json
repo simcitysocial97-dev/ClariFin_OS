@@ -1,7 +1,10 @@
 {
   "scenario": "cc_statement_scenario",
   "household": {"id": "primary"},
-  "accounts": [{"id": "a1", "balance_paise": 3000000}],
+  "accounts": [
+    {"id": "a1", "balance_paise": 3000000},
+    {"id": "a2", "balance_paise": 5000000}
+  ],
   "transactions": [
     {"date_iso": "2025-01-15", "income_paise": 0, "expense_paise": 0},
     {"date_iso": "2025-01-20", "income_paise": 0, "expense_paise": 1000000},
@@ -11,9 +14,808 @@
     {"id": "c1", "name": "CRED", "outstanding_paise": 300000, "interest_rate_bps": 3600, "limit_paise": 10000000}
   ],
   "financial_events": [
-    {"event_type": "cash_advance", "amount_paise": 300000, "date_iso": "2025-01-10"},
-    {"event_type": "cash_advance_funding", "amount_paise": 285000, "date_iso": "2025-01-15"}
+    {
+      "id": 1,
+      "event_type": "cash_advance",
+      "amount_paise": 300000,
+      "liability_change_paise": 300000,
+      "date_iso": "2025-01-10",
+      "account_id": "c1",
+      "lifecycle_state": "open",
+      "outstanding_paise": 300000
+    },
+    {
+      "id": 2,
+      "event_type": "cash_advance_funding",
+      "amount_paise": 285000,
+      "asset_change_paise": 285000,
+      "date_iso": "2025-01-15",
+      "account_id": "a1",
+      "lifecycle_state": "open"
+    },
+    {
+      "id": 3,
+      "event_type": "liability_repayment",
+      "amount_paise": 150000,
+      "liability_change_paise": -150000,
+      "date_iso": "2025-01-20",
+      "account_id": "a1",
+      "lifecycle_state": "open",
+      "outstanding_paise": 0
+    }
   ],
+  "golden_tests": {
+    "settlement_rollover": {
+      "description": "Test event lineage for rolled-over settlements",
+      "input": {
+        "financial_events": [
+          {
+            "id": 101,
+            "event_type": "cash_advance",
+            "amount_paise": 300000,
+            "liability_change_paise": 300000,
+            "date_iso": "2025-01-10",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 300000
+          },
+          {
+            "id": 102,
+            "event_type": "liability_repayment",
+            "amount_paise": 150000,
+            "liability_change_paise": -150000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 103,
+            "event_type": "cash_advance",
+            "amount_paise": 150000,
+            "liability_change_paise": 150000,
+            "date_iso": "2025-01-22",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 150000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 102,
+            "linked_event_id": 101,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 103,
+            "linked_event_id": 101,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 101,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 150000
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "refund_rollover": {
+      "description": "Test event lineage for rolled-over refunds",
+      "input": {
+        "financial_events": [
+          {
+            "id": 201,
+            "event_type": "cash_advance",
+            "amount_paise": 200000,
+            "liability_change_paise": 200000,
+            "date_iso": "2025-01-05",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 200000
+          },
+          {
+            "id": 202,
+            "event_type": "liability_repayment",
+            "amount_paise": 200000,
+            "liability_change_paise": -200000,
+            "date_iso": "2025-01-15",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 203,
+            "event_type": "liability_increase",
+            "amount_paise": 100000,
+            "liability_change_paise": 100000,
+            "date_iso": "2025-01-18",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 100000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 202,
+            "linked_event_id": 201,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 203,
+            "linked_event_id": 201,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 201,
+            "lifecycle_state": "settled",
+            "outstanding_paise": 0
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "transfer_rollover": {
+      "description": "Test event lineage for rolled-over transfers",
+      "input": {
+        "financial_events": [
+          {
+            "id": 301,
+            "event_type": "cash_advance",
+            "amount_paise": 500000,
+            "liability_change_paise": 500000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 500000
+          },
+          {
+            "id": 302,
+            "event_type": "fund_transfer_out",
+            "amount_paise": 300000,
+            "asset_change_paise": -300000,
+            "date_iso": "2025-01-10",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "transfer_id": "t1"
+          },
+          {
+            "id": 303,
+            "event_type": "fund_transfer_in",
+            "amount_paise": 300000,
+            "asset_change_paise": 300000,
+            "date_iso": "2025-01-10",
+            "account_id": "a2",
+            "lifecycle_state": "open",
+            "transfer_id": "t1"
+          },
+          {
+            "id": 304,
+            "event_type": "liability_repayment",
+            "amount_paise": 300000,
+            "liability_change_paise": -300000,
+            "date_iso": "2025-01-15",
+            "account_id": "a2",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 305,
+            "event_type": "cash_advance",
+            "amount_paise": 200000,
+            "liability_change_paise": 200000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 200000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 304,
+            "linked_event_id": 301,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 305,
+            "linked_event_id": 301,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 301,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 200000
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "partial_rollover": {
+      "description": "Test event lineage for partially rolled-over events",
+      "input": {
+        "financial_events": [
+          {
+            "id": 401,
+            "event_type": "cash_advance",
+            "amount_paise": 400000,
+            "liability_change_paise": 400000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 400000
+          },
+          {
+            "id": 402,
+            "event_type": "liability_repayment",
+            "amount_paise": 100000,
+            "liability_change_paise": -100000,
+            "date_iso": "2025-01-15",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 403,
+            "event_type": "cash_advance",
+            "amount_paise": 300000,
+            "liability_change_paise": 300000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 300000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 402,
+            "linked_event_id": 401,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 403,
+            "linked_event_id": 401,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 401,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 300000
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "edge_cases": {
+      "description": "Test edge cases for rollover scenarios",
+      "subtests": {
+        "zero_rollover": {
+          "description": "Test zero rollover scenario",
+          "input": {
+            "financial_events": [
+              {
+                "id": 501,
+                "event_type": "cash_advance",
+                "amount_paise": 100000,
+                "liability_change_paise": 100000,
+                "date_iso": "2025-01-01",
+                "account_id": "c1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100000
+              },
+              {
+                "id": 502,
+                "event_type": "liability_repayment",
+                "amount_paise": 100000,
+                "liability_change_paise": -100000,
+                "date_iso": "2025-01-15",
+                "account_id": "a1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0
+              }
+            ]
+          },
+          "expected_output": {
+            "proposed_links": [
+              {
+                "event_id": 502,
+                "linked_event_id": 501,
+                "link_type": "settles"
+              }
+            ],
+            "lifecycle_updates": [
+              {
+                "event_id": 501,
+                "lifecycle_state": "settled",
+                "outstanding_paise": 0
+              }
+            ],
+            "superseded_events": []
+          }
+        },
+        "full_rollover": {
+          "description": "Test full rollover scenario",
+          "input": {
+            "financial_events": [
+              {
+                "id": 601,
+                "event_type": "cash_advance",
+                "amount_paise": 200000,
+                "liability_change_paise": 200000,
+                "date_iso": "2025-01-01",
+                "account_id": "c1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 200000
+              },
+              {
+                "id": 602,
+                "event_type": "liability_repayment",
+                "amount_paise": 200000,
+                "liability_change_paise": -200000,
+                "date_iso": "2025-01-15",
+                "account_id": "a1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0
+              },
+              {
+                "id": 603,
+                "event_type": "cash_advance",
+                "amount_paise": 200000,
+                "liability_change_paise": 200000,
+                "date_iso": "2025-01-16",
+                "account_id": "c1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 200000
+              }
+            ]
+          },
+          "expected_output": {
+            "proposed_links": [
+              {
+                "event_id": 602,
+                "linked_event_id": 601,
+                "link_type": "settles"
+              },
+              {
+                "event_id": 603,
+                "linked_event_id": 601,
+                "link_type": "rolls_over"
+              }
+            ],
+            "lifecycle_updates": [
+              {
+                "event_id": 601,
+                "lifecycle_state": "settled",
+                "outstanding_paise": 0
+              }
+            ],
+            "superseded_events": []
+          }
+        },
+        "fractional_paise": {
+          "description": "Test fractional paise rollover scenario",
+          "input": {
+            "financial_events": [
+              {
+                "id": 701,
+                "event_type": "cash_advance",
+                "amount_paise": 100500,
+                "liability_change_paise": 100500,
+                "date_iso": "2025-01-01",
+                "account_id": "c1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 100500
+              },
+              {
+                "id": 702,
+                "event_type": "liability_repayment",
+                "amount_paise": 50500,
+                "liability_change_paise": -50500,
+                "date_iso": "2025-01-15",
+                "account_id": "a1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 0
+              },
+              {
+                "id": 703,
+                "event_type": "cash_advance",
+                "amount_paise": 50000,
+                "liability_change_paise": 50000,
+                "date_iso": "2025-01-20",
+                "account_id": "c1",
+                "lifecycle_state": "open",
+                "outstanding_paise": 50000
+              }
+            ]
+          },
+          "expected_output": {
+            "proposed_links": [
+              {
+                "event_id": 702,
+                "linked_event_id": 701,
+                "link_type": "settles"
+              },
+              {
+                "event_id": 703,
+                "linked_event_id": 701,
+                "link_type": "rolls_over"
+              }
+            ],
+            "lifecycle_updates": [
+              {
+                "event_id": 701,
+                "lifecycle_state": "partially_settled",
+                "outstanding_paise": 50000
+              }
+            ],
+            "superseded_events": []
+          }
+        }
+      }
+    },
+    "settlement_rollover_enhanced": {
+      "description": "Test event lineage for rolled-over settlements with partial and full rollover",
+      "input": {
+        "financial_events": [
+          {
+            "id": 801,
+            "event_type": "cash_advance",
+            "amount_paise": 500000,
+            "liability_change_paise": 500000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 500000
+          },
+          {
+            "id": 802,
+            "event_type": "liability_repayment",
+            "amount_paise": 200000,
+            "liability_change_paise": -200000,
+            "date_iso": "2025-01-15",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 803,
+            "event_type": "cash_advance",
+            "amount_paise": 300000,
+            "liability_change_paise": 300000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 300000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 802,
+            "linked_event_id": 801,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 803,
+            "linked_event_id": 801,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 801,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 300000
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "refund_rollover_enhanced": {
+      "description": "Test event lineage for rolled-over refunds with partial and full rollover",
+      "input": {
+        "financial_events": [
+          {
+            "id": 901,
+            "event_type": "cash_advance",
+            "amount_paise": 400000,
+            "liability_change_paise": 400000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 400000
+          },
+          {
+            "id": 902,
+            "event_type": "liability_repayment",
+            "amount_paise": 400000,
+            "liability_change_paise": -400000,
+            "date_iso": "2025-01-15",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 903,
+            "event_type": "refund",
+            "amount_paise": 200000,
+            "liability_change_paise": -200000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 904,
+            "event_type": "cash_advance",
+            "amount_paise": 200000,
+            "liability_change_paise": 200000,
+            "date_iso": "2025-01-22",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 200000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 902,
+            "linked_event_id": 901,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 903,
+            "linked_event_id": 901,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 904,
+            "linked_event_id": 901,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 901,
+            "lifecycle_state": "settled",
+            "outstanding_paise": 0
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "transfer_rollover_enhanced": {
+      "description": "Test event lineage for rolled-over transfers with partial and full rollover",
+      "input": {
+        "financial_events": [
+          {
+            "id": 1001,
+            "event_type": "cash_advance",
+            "amount_paise": 600000,
+            "liability_change_paise": 600000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 600000
+          },
+          {
+            "id": 1002,
+            "event_type": "fund_transfer_out",
+            "amount_paise": 300000,
+            "asset_change_paise": -300000,
+            "date_iso": "2025-01-10",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "transfer_id": "t1"
+          },
+          {
+            "id": 1003,
+            "event_type": "fund_transfer_in",
+            "amount_paise": 300000,
+            "asset_change_paise": 300000,
+            "date_iso": "2025-01-10",
+            "account_id": "a2",
+            "lifecycle_state": "open",
+            "transfer_id": "t1"
+          },
+          {
+            "id": 1004,
+            "event_type": "liability_repayment",
+            "amount_paise": 300000,
+            "liability_change_paise": -300000,
+            "date_iso": "2025-01-15",
+            "account_id": "a2",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 1005,
+            "event_type": "cash_advance",
+            "amount_paise": 300000,
+            "liability_change_paise": 300000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 300000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 1004,
+            "linked_event_id": 1001,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 1005,
+            "linked_event_id": 1001,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 1001,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 300000
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "partial_rollover_enhanced": {
+      "description": "Test event lineage for partially rolled-over events with 50% rollover",
+      "input": {
+        "financial_events": [
+          {
+            "id": 1101,
+            "event_type": "cash_advance",
+            "amount_paise": 800000,
+            "liability_change_paise": 800000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 800000
+          },
+          {
+            "id": 1102,
+            "event_type": "liability_repayment",
+            "amount_paise": 400000,
+            "liability_change_paise": -400000,
+            "date_iso": "2025-01-15",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          },
+          {
+            "id": 1103,
+            "event_type": "cash_advance",
+            "amount_paise": 400000,
+            "liability_change_paise": 400000,
+            "date_iso": "2025-01-20",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 400000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [
+          {
+            "event_id": 1102,
+            "linked_event_id": 1101,
+            "link_type": "settles"
+          },
+          {
+            "event_id": 1103,
+            "linked_event_id": 1101,
+            "link_type": "rolls_over"
+          }
+        ],
+        "lifecycle_updates": [
+          {
+            "event_id": 1101,
+            "lifecycle_state": "partially_settled",
+            "outstanding_paise": 400000
+          }
+        ],
+        "superseded_events": []
+      }
+    },
+    "cycle_detection": {
+      "description": "Test cycle detection in event lineage",
+      "input": {
+        "financial_events": [
+          {
+            "id": 1201,
+            "event_type": "cash_advance",
+            "amount_paise": 300000,
+            "liability_change_paise": 300000,
+            "date_iso": "2025-01-01",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 300000
+          },
+          {
+            "id": 1202,
+            "event_type": "cash_advance",
+            "amount_paise": 300000,
+            "liability_change_paise": 300000,
+            "date_iso": "2025-01-02",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 300000
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [],
+        "lifecycle_updates": [],
+        "superseded_events": [],
+        "validation_errors": [
+          {
+            "error_type": "cycle_detected",
+            "event_ids": [1201, 1202]
+          }
+        ]
+      }
+    },
+    "temporal_ordering": {
+      "description": "Test temporal ordering validation (oldest → newest)",
+      "input": {
+        "financial_events": [
+          {
+            "id": 1301,
+            "event_type": "cash_advance",
+            "amount_paise": 200000,
+            "liability_change_paise": 200000,
+            "date_iso": "2025-01-10",
+            "account_id": "c1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 200000
+          },
+          {
+            "id": 1302,
+            "event_type": "liability_repayment",
+            "amount_paise": 100000,
+            "liability_change_paise": -100000,
+            "date_iso": "2025-01-05",
+            "account_id": "a1",
+            "lifecycle_state": "open",
+            "outstanding_paise": 0
+          }
+        ]
+      },
+      "expected_output": {
+        "proposed_links": [],
+        "lifecycle_updates": [],
+        "superseded_events": [],
+        "validation_errors": [
+          {
+            "error_type": "temporal_violation",
+            "event_ids": [1301, 1302]
+          }
+        ]
+      }
+    }
+  },
   "expected_output": {
     "credit_utilization_ratio": 0.03,
     "cash_advance_fee_paise": 15000,
@@ -21,3 +823,4 @@
     "risk_flags": ["cash_advance_activity"]
   }
 }
+

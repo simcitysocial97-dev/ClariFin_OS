@@ -6,10 +6,8 @@ calculations using property-based testing techniques.
 """
 
 from datetime import date
-from decimal import Decimal
 
-import pytest
-from hypothesis import given, settings, assume
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
@@ -20,27 +18,37 @@ from src.engines.loan_engine.metrics import (
     get_emi_component,
     get_interest_component,
 )
-from src.engines.loan_engine.models import AmortizationRow, LoanMetrics
+from src.engines.loan_engine.models import LoanMetrics
 from src.engines.loan_engine.prepayment import apply_prepayment_at_month
 
 # Constants for testing
 MAX_INTEREST_RATE_BPS = 3600  # 36% annual
-MIN_INTEREST_RATE_BPS = 500   # 5% annual
-MAX_TENURE_MONTHS = 360       # 30 years
-MIN_TENURE_MONTHS = 1         # 1 month
+MIN_INTEREST_RATE_BPS = 500  # 5% annual
+MAX_TENURE_MONTHS = 360  # 30 years
+MIN_TENURE_MONTHS = 1  # 1 month
 MAX_PRINCIPAL_PAISE = 10_000_000_00  # ₹10 crore
-MIN_PRINCIPAL_PAISE = 100_000        # ₹1,000
+MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
+
 
 # Strategies for generating test data
 @st.composite
 def loan_parameters(draw):
     """Generate valid loan parameters for testing."""
-    principal = draw(st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE))
-    rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+    principal = draw(
+        st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE)
+    )
+    rate = draw(
+        st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    )
     tenure = draw(st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS))
-    start_date = draw(st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(lambda d: d.isoformat()))
+    start_date = draw(
+        st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(
+            lambda d: d.isoformat()
+        )
+    )
 
     return principal, rate, tenure, start_date
+
 
 @st.composite
 def schedule_with_prepayment(draw):
@@ -55,6 +63,7 @@ def schedule_with_prepayment(draw):
     prepayment_amount = draw(st.integers(min_value=10_000, max_value=max_prepayment))
 
     return schedule, rate, prepayment_amount, prepayment_month, start_date
+
 
 @st.composite
 def two_schedules(draw):
@@ -74,6 +83,7 @@ def two_schedules(draw):
     )
 
     return original_schedule, new_schedule, prepayment_amount
+
 
 @given(loan_parameters())
 @settings(max_examples=30, deadline=None)
@@ -111,6 +121,7 @@ def test_compute_loan_metrics_invariants(loan_params):
     total_interest = metrics.interest_paid_paise + metrics.remaining_interest_paise
     assert total_interest == total_interest_paise(schedule)
 
+
 @given(loan_parameters())
 @settings(max_examples=20, deadline=None)
 def test_compute_loan_metrics_edge_cases(loan_params):
@@ -129,7 +140,10 @@ def test_compute_loan_metrics_edge_cases(loan_params):
         schedule = generate_schedule(principal, rate, 1, start_date)
         metrics = compute_loan_metrics(schedule, principal)
         assert metrics.remaining_tenure_months == 1
-        assert metrics.outstanding_paise == principal  # Full schedule: outstanding = original principal
+        assert (
+            metrics.outstanding_paise == principal
+        )  # Full schedule: outstanding = original principal
+
 
 @given(two_schedules())
 @settings(max_examples=20, deadline=None)
@@ -138,7 +152,9 @@ def test_calculate_interest_saved_invariants(schedule_params):
     original_schedule, new_schedule, prepayment_amount = schedule_params
 
     # Calculate interest saved
-    interest_saved = calculate_interest_saved(original_schedule, new_schedule, prepayment_amount)
+    interest_saved = calculate_interest_saved(
+        original_schedule, new_schedule, prepayment_amount
+    )
 
     # INVARIANT 1: Interest saved is non-negative
     assert interest_saved >= 0
@@ -151,6 +167,7 @@ def test_calculate_interest_saved_invariants(schedule_params):
     new_interest = sum(row.interest_paise for row in new_schedule)
     expected_saved = max(0, original_interest - new_interest - prepayment_amount)
     assert interest_saved == expected_saved
+
 
 @given(two_schedules())
 @settings(max_examples=20, deadline=None)
@@ -172,10 +189,11 @@ def test_calculate_tenure_saved_invariants(schedule_params):
     new_tenure = len(new_schedule)
     assert tenure_saved == original_tenure - new_tenure
 
+
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=20, deadline=None)
 def test_get_interest_component_invariants(principal, rate, tenure):
@@ -196,10 +214,11 @@ def test_get_interest_component_invariants(principal, rate, tenure):
         shorter_tenure_interest = get_interest_component(principal, rate, tenure - 1)
         assert interest >= shorter_tenure_interest
 
+
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=20, deadline=None)
 def test_get_emi_component_invariants(principal, rate, tenure):
@@ -225,6 +244,7 @@ def test_get_emi_component_invariants(principal, rate, tenure):
     if tenure > MIN_TENURE_MONTHS:
         longer_tenure_emi = get_emi_component(principal, rate, tenure + 1)
         assert emi >= longer_tenure_emi
+
 
 @given(loan_parameters())
 @settings(max_examples=20, deadline=None)
@@ -257,10 +277,11 @@ def test_loan_metrics_math_accuracy(loan_params):
         expected_ratio = total_interest / principal
         assert abs(metrics.effective_interest_ratio - expected_ratio) < 0.002
 
+
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
 )
 @settings(max_examples=10, deadline=None)
 def test_zero_interest_loan_metrics(principal, rate, tenure):
@@ -273,17 +294,22 @@ def test_zero_interest_loan_metrics(principal, rate, tenure):
     metrics = compute_loan_metrics(schedule, principal)
 
     # Verify metrics
-    assert metrics.outstanding_paise == principal  # Full schedule: outstanding = original principal
-    assert metrics.principal_paid_paise == 0  # Full schedule: no principal paid before start
+    assert (
+        metrics.outstanding_paise == principal
+    )  # Full schedule: outstanding = original principal
+    assert (
+        metrics.principal_paid_paise == 0
+    )  # Full schedule: no principal paid before start
     assert metrics.interest_paid_paise == 0
     assert metrics.remaining_interest_paise == 0
     assert metrics.remaining_tenure_months == tenure
     assert metrics.effective_interest_ratio == 0.0
 
+
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
 )
 @settings(max_examples=10, deadline=None)
 def test_full_tenure_loan_metrics(principal, rate, tenure):
@@ -295,17 +321,24 @@ def test_full_tenure_loan_metrics(principal, rate, tenure):
     metrics = compute_loan_metrics(schedule, principal)
 
     # Verify metrics
-    assert metrics.outstanding_paise == principal  # Full schedule: outstanding = original principal
-    assert metrics.principal_paid_paise == 0  # Full schedule: no principal paid before start
-    assert metrics.interest_paid_paise == 0  # Full schedule: no interest paid before start
+    assert (
+        metrics.outstanding_paise == principal
+    )  # Full schedule: outstanding = original principal
+    assert (
+        metrics.principal_paid_paise == 0
+    )  # Full schedule: no principal paid before start
+    assert (
+        metrics.interest_paid_paise == 0
+    )  # Full schedule: no interest paid before start
     assert metrics.remaining_interest_paise == total_interest_paise(schedule)
     assert metrics.remaining_tenure_months == tenure
 
+
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
-    st.integers(min_value=1, max_value=11),               # Months elapsed
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
+    st.integers(min_value=1, max_value=11),  # Months elapsed
 )
 @settings(max_examples=10, deadline=None)
 def test_partial_tenure_loan_metrics(principal, rate, tenure, months_elapsed):
@@ -321,7 +354,11 @@ def test_partial_tenure_loan_metrics(principal, rate, tenure, months_elapsed):
     metrics = compute_loan_metrics(partial_schedule, principal)
 
     # Verify metrics
-    expected_outstanding = partial_schedule[0].balance_paise + partial_schedule[0].principal_paise if partial_schedule else 0
+    expected_outstanding = (
+        partial_schedule[0].balance_paise + partial_schedule[0].principal_paise
+        if partial_schedule
+        else 0
+    )
     expected_principal_paid = principal - expected_outstanding
     expected_remaining_interest = total_interest_paise(partial_schedule)
     expected_remaining_tenure = len(partial_schedule)

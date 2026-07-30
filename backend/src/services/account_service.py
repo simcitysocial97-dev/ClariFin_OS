@@ -386,7 +386,7 @@ class AccountService:
             raise ValueError(f"Linked account {linked_account_id} not found")
 
         return self.link_repo.link_accounts(
-            primary_account_id=primary_account_id,
+            account_id=primary_account_id,
             linked_account_id=linked_account_id,
             relationship_type=relationship_type,
         )

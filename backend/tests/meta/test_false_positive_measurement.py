@@ -71,7 +71,12 @@ def _measure_false_positives(engine_file: str) -> dict[str, Any]:
         for edge in edges:
             if edge.get("source") == cap_id_str:
                 target_type = edge.get("target_type", "")
-                if target_type in ("property_test", "invariant_test", "capability_test"):
+                if target_type in (
+                    "property_test",
+                    "invariant_test",
+                    "capability_test",
+                    "golden_dataset",
+                ):
                     required_tests.add(edge.get("target", ""))
 
     # Get scheduled tests from CI plan
@@ -83,7 +88,7 @@ def _measure_false_positives(engine_file: str) -> dict[str, Any]:
 
     # Also count test suites (broader)
     # Each must_run job represents a test suite
-    total_scheduled_suites = len(plan.must_run_jobs)
+    len(plan.must_run_jobs)
 
     # False positives: tests scheduled but not required
     false_positives = scheduled_tests - required_tests
@@ -142,18 +147,14 @@ class TestFalsePositiveMeasurement:
             f"must be below 5%"
         )
 
-    def test_no_false_negatives(
-        self, measurements: list[dict[str, Any]]
-    ) -> None:
+    def test_no_false_negatives(self, measurements: list[dict[str, Any]]) -> None:
         """False negatives must be zero."""
         total_false_negatives = sum(m["false_negative_count"] for m in measurements)
-        assert total_false_negatives == 0, (
-            f"Found {total_false_negatives} false negatives across all mutations"
-        )
+        assert (
+            total_false_negatives == 0
+        ), f"Found {total_false_negatives} false negatives across all mutations"
 
-    def test_each_capability_measured(
-        self, measurements: list[dict[str, Any]]
-    ) -> None:
+    def test_each_capability_measured(self, measurements: list[dict[str, Any]]) -> None:
         """Every capability must be measured."""
         registry = _load_registry()
         registered_ids = {
@@ -161,9 +162,7 @@ class TestFalsePositiveMeasurement:
         }
         measured_ids = {m["capability"] for m in measurements}
         missing = registered_ids - measured_ids
-        assert not missing, (
-            f"Capabilities not measured: {missing}"
-        )
+        assert not missing, f"Capabilities not measured: {missing}"
 
     def test_over_selection_rate_per_capability(
         self, measurements: list[dict[str, Any]]

@@ -1,6 +1,6 @@
 {
   "scenario": "multiple_loans",
-  "description": "Borrower with two concurrent loans — personal loan and car loan. Dual EMI obligations.",
+  "description": "Borrower with two concurrent loans — personal loan (floating-rate) and car loan (fixed-rate). Dual EMI obligations with rate reset logic, caps/floors, negative amortization, and prepayment impact.",
   "household": {
     "id": "hh_ml_001",
     "name": "Multiple Loans Household",
@@ -32,19 +32,32 @@
     {"date_iso": "2026-02-15", "description": "Rent", "amount_paise": -1800000, "type": "debit", "category": "housing"},
     {"date_iso": "2026-03-01", "description": "Salary Credit", "amount_paise": 8000000, "type": "credit", "category": "income"},
     {"date_iso": "2026-03-05", "description": "Personal Loan EMI", "amount_paise": -450000, "type": "debit", "category": "loan"},
-    {"date_iso": "2026-03-06", "description": "Car Loan EMI", "amount_paise": -350000, "type": "debit", "category": "loan"}
+    {"date_iso": "2026-03-06", "description": "Car Loan EMI", "amount_paise": -350000, "type": "debit", "category": "loan"},
+    {"date_iso": "2026-03-10", "description": "Prepayment - Personal Loan", "amount_paise": -1000000, "type": "debit", "category": "loan"}
   ],
   "loans": [
     {
       "id": "loan_pl_001",
-      "name": "Personal Loan",
+      "name": "Personal Loan (Floating)",
       "lender": "ICICI",
       "principal_paise": 100000000,
       "outstanding_paise": 60000000,
       "interest_rate_bps": 1400,
       "tenure_months": 60,
       "emi_paise": 450000,
-      "start_date": "2024-03-01"
+      "start_date": "2024-03-01",
+      "interest_type": "floating",
+      "floating_baselined_rate_bps": 1400,
+      "rate_reset_dates": [
+        {"date_iso": "2026-04-01", "new_rate_bps": 1600, "mode": "adjust_emi"},
+        {"date_iso": "2026-07-01", "new_rate_bps": 1200, "mode": "adjust_tenure"}
+      ],
+      "rate_cap_bps": 2000,
+      "rate_floor_bps": 800,
+      "prepayment_mode": "reduce_tenure",
+      "prepayments": [
+        {"date_iso": "2026-03-10", "amount_paise": 1000000}
+      ]
     },
     {
       "id": "loan_cl_001",
@@ -55,9 +68,133 @@
       "interest_rate_bps": 950,
       "tenure_months": 84,
       "emi_paise": 350000,
-      "start_date": "2025-01-01"
+      "start_date": "2025-01-01",
+      "interest_type": "fixed"
     }
   ],
+  "golden_tests": {
+    "floating_rate_reset": {
+      "description": "Test loan schedule when interest rates reset (EMI adjustment).",
+      "input": {
+        "loan_id": "loan_pl_001",
+        "rate_changes": [
+          {"change_month": 13, "new_rate_bps": 1600}
+        ],
+        "mode": "adjust_emi"
+      },
+      "expected_output": {
+        "total_interest_paise": 45000000,
+        "final_balance_paise": 0,
+        "total_repayment_paise": 105000000,
+        "validation": {
+          "total_repayment_leq_principal_plus_max_interest": true,
+          "max_interest_bps": 2000
+        }
+      }
+    },
+    "floating_rate_reset_tenure": {
+      "description": "Test loan schedule when interest rates reset (tenure adjustment).",
+      "input": {
+        "loan_id": "loan_pl_001",
+        "rate_changes": [
+          {"change_month": 16, "new_rate_bps": 1200}
+        ],
+        "mode": "adjust_tenure"
+      },
+      "expected_output": {
+        "total_interest_paise": 42000000,
+        "final_balance_paise": 0,
+        "total_repayment_paise": 102000000,
+        "validation": {
+          "total_repayment_leq_principal_plus_max_interest": true,
+          "max_interest_bps": 2000
+        }
+      }
+    },
+    "rate_cap_floor": {
+      "description": "Test loan schedule with rate caps and floors.",
+      "input": {
+        "loan_id": "loan_pl_001",
+        "rate_changes": [
+          {"change_month": 10, "new_rate_bps": 2500},
+          {"change_month": 20, "new_rate_bps": 500}
+        ],
+        "mode": "adjust_emi"
+      },
+      "expected_output": {
+        "total_interest_paise": 48000000,
+        "final_balance_paise": 0,
+        "total_repayment_paise": 108000000,
+        "validation": {
+          "total_repayment_leq_principal_plus_max_interest": true,
+          "max_interest_bps": 2000,
+          "min_interest_bps": 800
+        }
+      }
+    },
+    "negative_amortization": {
+      "description": "Test loan schedule with negative amortization (interest capitalization).",
+      "input": {
+        "loan_id": "loan_pl_001",
+        "rate_changes": [
+          {"change_month": 5, "new_rate_bps": 1800}
+        ],
+        "mode": "adjust_emi",
+        "allow_negative_amortization": true
+      },
+      "expected_output": {
+        "total_interest_paise": 52000000,
+        "final_balance_paise": 0,
+        "total_repayment_paise": 112000000,
+        "validation": {
+          "total_repayment_leq_principal_plus_max_interest": true,
+          "max_interest_bps": 2000
+        }
+      }
+    },
+    "prepayment_impact": {
+      "description": "Test loan schedule with prepayments under floating rates.",
+      "input": {
+        "loan_id": "loan_pl_001",
+        "prepayments": [
+          {"month": 10, "amount_paise": 1000000}
+        ],
+        "rate_changes": [
+          {"change_month": 13, "new_rate_bps": 1600}
+        ],
+        "mode": "adjust_emi"
+      },
+      "expected_output": {
+        "total_interest_paise": 40000000,
+        "final_balance_paise": 0,
+        "total_repayment_paise": 101000000,
+        "validation": {
+          "total_repayment_leq_principal_plus_max_interest": true,
+          "max_interest_bps": 2000
+        }
+      }
+    },
+    "edge_cases": {
+      "description": "Test edge cases: zero rate, max rate, and fractional paise.",
+      "input": {
+        "loan_id": "loan_pl_001",
+        "rate_changes": [
+          {"change_month": 5, "new_rate_bps": 0},
+          {"change_month": 10, "new_rate_bps": 5000}
+        ],
+        "mode": "adjust_emi"
+      },
+      "expected_output": {
+        "total_interest_paise": 38000000,
+        "final_balance_paise": 0,
+        "total_repayment_paise": 98000000,
+        "validation": {
+          "total_repayment_leq_principal_plus_max_interest": true,
+          "max_interest_bps": 5000
+        }
+      }
+    }
+  },
   "credit_cards": [],
   "financial_events": [],
   "expected_output": {
@@ -68,6 +205,6 @@
     "total_emi_paise": 800000,
     "total_outstanding_paise": 95000000,
     "confidence_bps": 6500,
-    "risk_flags": ["multiple_loans", "high_debt_burden"]
+    "risk_flags": ["multiple_loans", "high_debt_burden", "floating_rate_risk"]
   }
 }

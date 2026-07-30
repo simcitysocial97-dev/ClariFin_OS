@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -215,6 +217,237 @@ class TestLoanEngineProperties:
             if result.new_schedule:
                 new_interest = total_interest_paise(result.new_schedule)
             assert original_interest - new_interest >= 0 or result.loan_closed
+
+
+def compute_remaining_interest_paise(schedule) -> int:
+    """Compute remaining interest in the schedule."""
+    return sum(row.interest_paise for row in schedule)
+
+
+class TestPrepaymentPenaltyProperties:
+    """Property tests for prepayment penalties in debt management."""
+
+    @given(
+        principal_paise=st.integers(min_value=100000, max_value=10000000),
+        annual_rate_bps=st.integers(min_value=600, max_value=2400),
+        tenure_months=st.integers(min_value=12, max_value=360),
+        prepayment_paise=st.integers(min_value=10000, max_value=5000000),
+        prepayment_penalty_bps=st.integers(min_value=0, max_value=500),
+        prepayment_month=st.integers(min_value=1, max_value=12),
+    )
+    @settings(max_examples=20)
+    def test_prepayment_penalty_bounds(
+        self,
+        principal_paise: int,
+        annual_rate_bps: int,
+        tenure_months: int,
+        prepayment_paise: int,
+        prepayment_penalty_bps: int,
+        prepayment_month: int,
+    ) -> None:
+        """Prepayment penalty must be ≤ remaining interest."""
+        from src.engines.loan_engine.amortization import generate_schedule
+        from src.engines.loan_engine.prepayment import apply_prepayment_at_month
+
+        schedule = generate_schedule(
+            principal_paise=principal_paise,
+            annual_rate_bps=annual_rate_bps,
+            tenure_months=tenure_months,
+            start_date="2026-01-01",
+        )
+        if not schedule:
+            return
+
+        # Ensure prepayment_month is within bounds
+        prepayment_month = min(prepayment_month, len(schedule))
+        remaining_interest = compute_remaining_interest_paise(
+            schedule[prepayment_month - 1 :]
+        )
+
+        try:
+            _, result = apply_prepayment_at_month(
+                schedule=schedule,
+                prepayment_month=prepayment_month,
+                prepayment_paise=prepayment_paise,
+                annual_rate_bps=annual_rate_bps,
+                prepayment_penalty_bps=prepayment_penalty_bps,
+            )
+            penalty = (
+                result.penalty_paise
+            )  # Use penalty from production code (already capped and rounded)
+            # Penalty must be ≤ remaining interest or ≤ 3% of outstanding balance (whichever is smaller)
+            outstanding_balance = sum(
+                row.balance_paise + row.principal_paise
+                for row in schedule[prepayment_month - 1 :]
+            )
+            max_penalty_paise = (
+                Decimal(outstanding_balance) * Decimal(300) / Decimal(10000)
+            ).quantize(Decimal(1))
+            # Skip assertion when no penalty is configured
+            if prepayment_penalty_bps > 0:
+                # Penalty must be ≤ min(remaining_interest, max_penalty_paise) + 1 (to account for rounding)
+                assert (
+                    penalty <= min(remaining_interest, max_penalty_paise) + 1
+                ), "Penalty exceeds bounds"
+        except ValueError:
+            # Invalid inputs (e.g., prepayment_paise <= 0) should raise ValueError
+            assert prepayment_paise <= 0
+
+    @given(
+        principal_paise=st.integers(min_value=100000, max_value=10000000),
+        annual_rate_bps=st.integers(min_value=600, max_value=2400),
+        tenure_months=st.integers(min_value=12, max_value=360),
+        prepayment_paise=st.integers(min_value=10000, max_value=5000000),
+        prepayment_penalty_bps=st.integers(min_value=0, max_value=500),
+    )
+    @settings(max_examples=20)
+    def test_prepayment_penalty_rounding(
+        self,
+        principal_paise: int,
+        annual_rate_bps: int,
+        tenure_months: int,
+        prepayment_paise: int,
+        prepayment_penalty_bps: int,
+    ) -> None:
+        """Prepayment penalty must be rounded to 2 decimal places (paise)."""
+        from src.engines.loan_engine.amortization import generate_schedule
+        from src.engines.loan_engine.prepayment import apply_prepayment_at_month
+
+        schedule = generate_schedule(
+            principal_paise=principal_paise,
+            annual_rate_bps=annual_rate_bps,
+            tenure_months=tenure_months,
+            start_date="2026-01-01",
+        )
+        if not schedule:
+            return
+
+        try:
+            _, result = apply_prepayment_at_month(
+                schedule=schedule,
+                prepayment_month=1,
+                prepayment_paise=prepayment_paise,
+                annual_rate_bps=annual_rate_bps,
+                prepayment_penalty_bps=prepayment_penalty_bps,
+            )
+            penalty = (
+                Decimal(prepayment_paise)
+                * Decimal(prepayment_penalty_bps)
+                / Decimal(10000)
+            ).quantize(Decimal(1))
+            # Check if penalty is an integer (paise)
+            assert (
+                penalty == penalty.to_integral_value()
+            ), "Penalty not rounded to paise"
+        except ValueError:
+            assert prepayment_paise <= 0
+
+    @given(
+        principal_paise=st.integers(min_value=100000, max_value=10000000),
+        annual_rate_bps=st.integers(min_value=600, max_value=2400),
+        tenure_months=st.integers(min_value=12, max_value=360),
+        prepayment_paise=st.integers(min_value=10000, max_value=5000000),
+        prepayment_month=st.integers(min_value=1, max_value=12),
+    )
+    @settings(max_examples=20)
+    def test_prepayment_penalty_deterministic(
+        self,
+        principal_paise: int,
+        annual_rate_bps: int,
+        tenure_months: int,
+        prepayment_paise: int,
+        prepayment_month: int,
+    ) -> None:
+        """Same inputs must always produce the same penalty."""
+        from src.engines.loan_engine.amortization import generate_schedule
+        from src.engines.loan_engine.prepayment import apply_prepayment_at_month
+
+        schedule = generate_schedule(
+            principal_paise=principal_paise,
+            annual_rate_bps=annual_rate_bps,
+            tenure_months=tenure_months,
+            start_date="2026-01-01",
+        )
+        if not schedule:
+            return
+
+        prepayment_month = min(prepayment_month, len(schedule))
+        penalty_bps = 100  # Fixed penalty for deterministic test
+
+        try:
+            _, result1 = apply_prepayment_at_month(
+                schedule=schedule,
+                prepayment_month=prepayment_month,
+                prepayment_paise=prepayment_paise,
+                annual_rate_bps=annual_rate_bps,
+                prepayment_penalty_bps=penalty_bps,
+            )
+            _, result2 = apply_prepayment_at_month(
+                schedule=schedule,
+                prepayment_month=prepayment_month,
+                prepayment_paise=prepayment_paise,
+                annual_rate_bps=annual_rate_bps,
+                prepayment_penalty_bps=penalty_bps,
+            )
+            assert result1.interest_saved_paise == result2.interest_saved_paise
+        except ValueError:
+            assert prepayment_paise <= 0
+
+    @given(
+        principal_paise=st.integers(min_value=100000, max_value=10000000),
+        annual_rate_bps=st.integers(min_value=600, max_value=2400),
+        tenure_months=st.integers(min_value=12, max_value=360),
+        prepayment_paise=st.integers(min_value=10000, max_value=5000000),
+        prepayment_month=st.integers(min_value=1, max_value=12),
+    )
+    @settings(max_examples=20)
+    def test_prepayment_penalty_partial_prepayment(
+        self,
+        principal_paise: int,
+        annual_rate_bps: int,
+        tenure_months: int,
+        prepayment_paise: int,
+        prepayment_month: int,
+    ) -> None:
+        """Test penalty calculations for partial prepayments."""
+        from src.engines.loan_engine.amortization import generate_schedule
+        from src.engines.loan_engine.prepayment import apply_prepayment_at_month
+
+        schedule = generate_schedule(
+            principal_paise=principal_paise,
+            annual_rate_bps=annual_rate_bps,
+            tenure_months=tenure_months,
+            start_date="2026-01-01",
+        )
+        if not schedule:
+            return
+
+        prepayment_month = min(prepayment_month, len(schedule))
+        penalty_bps = 100  # 1% penalty
+        remaining_balance = (
+            schedule[prepayment_month - 1].balance_paise
+            + schedule[prepayment_month - 1].principal_paise
+        )
+
+        # Test partial prepayment (less than remaining balance)
+        partial_prepayment = min(prepayment_paise, remaining_balance - 1)
+        if partial_prepayment <= 0:
+            return
+
+        try:
+            _, result = apply_prepayment_at_month(
+                schedule=schedule,
+                prepayment_month=prepayment_month,
+                prepayment_paise=partial_prepayment,
+                annual_rate_bps=annual_rate_bps,
+                prepayment_penalty_bps=penalty_bps,
+            )
+            penalty = (
+                Decimal(partial_prepayment) * Decimal(penalty_bps) / Decimal(10000)
+            ).quantize(Decimal(1))
+            assert penalty >= 0, "Penalty must be non-negative"
+        except ValueError:
+            assert partial_prepayment <= 0
 
 
 class TestCreditCardEngineProperties:

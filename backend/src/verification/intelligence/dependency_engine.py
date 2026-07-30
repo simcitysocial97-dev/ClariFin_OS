@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-BACKEND_DIR = PROJECT_ROOT / "backend"
+BACKEND_DIR = PROJECT_ROOT
 SRC_DIR = BACKEND_DIR / "src"
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 
@@ -78,6 +78,10 @@ class DependencyEngine:
         self._edges = []
         self._capabilities = {}
 
+        from src.verification.runtime.registries import load_capability_registry
+
+        self._capability_registry = load_capability_registry()
+
         self._discover_from_capability_registry()
         self._discover_from_source_imports()
         self._discover_from_router_routing()
@@ -86,10 +90,7 @@ class DependencyEngine:
         self._discover_from_repository_usage()
         self._discover_capability_test_mapping()
 
-        from src.verification.runtime.registries import load_capability_registry
-
-        registry = load_capability_registry()
-        for cap in registry.get("capabilities", []):
+        for cap in self._capability_registry.get("capabilities", []):
             cap_id = cap.get("id", "")
             self._capabilities[cap_id] = {
                 "name": cap.get("name", cap_id),
@@ -111,7 +112,14 @@ class DependencyEngine:
 
         # Deterministic hash of edges + capabilities instead of timestamp
         content_hash = hashlib.sha256(
-            str(sorted([(e.source, e.source_type, e.target, e.target_type) for e in self._edges])).encode()
+            str(
+                sorted(
+                    [
+                        (e.source, e.source_type, e.target, e.target_type)
+                        for e in self._edges
+                    ]
+                )
+            ).encode()
         ).hexdigest()[:12]
 
         return DependencyGraph(
@@ -409,7 +417,6 @@ class DependencyEngine:
         """Map capabilities to their test files (property, invariant, golden, contract)."""
         from src.verification.runtime.discovery import (
             discover_capability_tests,
-            discover_contract_tests,
             discover_golden_datasets,
             discover_invariant_tests,
             discover_property_tests,
@@ -431,48 +438,48 @@ class DependencyEngine:
                     )
                 )
 
-        for inv in discover_invariant_tests():
-            for cap_id, cap_data in cap_tests.items():
-                cap_test_paths = [str(p) for p in cap_data.get("test_files", [])]
-                if any(inv["path"] in p for p in cap_test_paths):
+        for cap_id, cap_data in cap_tests.items():
+            for test_file in cap_data.get("test_files", []):
+                self._edges.append(
+                    DependencyEdge(
+                        source=cap_id,
+                        source_type="capability",
+                        target=test_file,
+                        target_type="capability_test",
+                        confidence=1.0,
+                        evidence="discovery:capability_test",
+                    )
+                )
+
+        inv_paths = {inv["path"]: inv for inv in discover_invariant_tests()}
+        for cap in self._capability_registry.get("capabilities", []):
+            cap_id = cap.get("id", "")
+            for inv_path in cap.get("invariants", []):
+                if inv_path in inv_paths:
                     self._edges.append(
                         DependencyEdge(
                             source=cap_id,
                             source_type="capability",
-                            target=inv["path"],
+                            target=inv_path,
                             target_type="invariant_test",
-                            confidence=0.85,
+                            confidence=0.9,
                             evidence="discovery:invariant_test",
                         )
                     )
 
-        for ds in discover_golden_datasets():
-            for cap_id, cap_data in cap_tests.items():
-                cap_test_paths = [str(p) for p in cap_data.get("test_files", [])]
-                if any(ds["path"] in p for p in cap_test_paths):
+        gd_paths = {gd["path"]: gd for gd in discover_golden_datasets()}
+        for cap in self._capability_registry.get("capabilities", []):
+            cap_id = cap.get("id", "")
+            for gd_path in cap.get("golden_datasets", []):
+                if gd_path in gd_paths:
                     self._edges.append(
                         DependencyEdge(
                             source=cap_id,
                             source_type="capability",
-                            target=ds["path"],
+                            target=gd_path,
                             target_type="golden_dataset",
-                            confidence=0.85,
+                            confidence=0.9,
                             evidence="discovery:golden_dataset",
-                        )
-                    )
-
-        for ct in discover_contract_tests():
-            for cap_id, cap_data in cap_tests.items():
-                cap_test_paths = [str(p) for p in cap_data.get("test_files", [])]
-                if any(ct["path"] in p for p in cap_test_paths):
-                    self._edges.append(
-                        DependencyEdge(
-                            source=cap_id,
-                            source_type="capability",
-                            target=ct["path"],
-                            target_type="contract_test",
-                            confidence=0.85,
-                            evidence="discovery:contract_test",
                         )
                     )
 

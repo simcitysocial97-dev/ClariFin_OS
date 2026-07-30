@@ -8,10 +8,8 @@ interest calculations using property-based testing techniques.
 from datetime import date, timedelta
 from decimal import Decimal
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
-from hypothesis import assume
 
 from src.engines.credit_card_engine.interest import (
     bps_to_daily_rate,
@@ -24,13 +22,12 @@ from src.engines.credit_card_engine.interest import (
 MAX_INTEREST_RATE_BPS = 4800  # 48% annual (max for credit cards)
 MIN_INTEREST_RATE_BPS = 1200  # 12% annual (min for credit cards)
 MAX_BALANCE_PAISE = 10_000_000_00  # ₹10 lakh
-MIN_BALANCE_PAISE = 1_000         # ₹10
+MIN_BALANCE_PAISE = 1_000  # ₹10
 MAX_DAYS_IN_CYCLE = 31
 MIN_DAYS_IN_CYCLE = 28
 
-@given(
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
-)
+
+@given(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
 @settings(max_examples=20, deadline=None)
 def test_bps_to_daily_rate_invariants(rate_bps):
     """Property: bps_to_daily_rate must satisfy all invariants."""
@@ -48,9 +45,10 @@ def test_bps_to_daily_rate_invariants(rate_bps):
     expected_daily_rate = annual_rate / Decimal(365)
     assert daily_rate == expected_daily_rate
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=50, deadline=None)
 def test_compute_daily_interest_invariants(balance_paise, rate_bps):
@@ -79,9 +77,10 @@ def test_compute_daily_interest_invariants(balance_paise, rate_bps):
         lower_rate_interest = compute_daily_interest(balance_paise, rate_bps - 100)
         assert interest >= lower_rate_interest
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_daily_interest_math_accuracy(balance_paise, rate_bps):
@@ -102,24 +101,30 @@ def test_compute_daily_interest_math_accuracy(balance_paise, rate_bps):
     # Verify calculation
     assert interest == expected_interest
 
+
 @st.composite
 def daily_balances_strategy(draw):
     """Generate valid daily balances for testing."""
-    num_days = draw(st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE))
+    num_days = draw(
+        st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE)
+    )
     start_date = date(2025, 1, 1)
 
     # Generate daily balances with some variation
     balances = []
     for day in range(num_days):
         current_date = start_date + timedelta(days=day)
-        balance = draw(st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE))
+        balance = draw(
+            st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE)
+        )
         balances.append((current_date.isoformat(), balance))
 
     return balances
 
+
 @given(
     daily_balances_strategy(),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_monthly_interest_charge_invariants(daily_balances, rate_bps):
@@ -141,18 +146,23 @@ def test_compute_monthly_interest_charge_invariants(daily_balances, rate_bps):
     # INVARIANT 4: Interest increases with balance
     if daily_balances and rate_bps > 0:
         # Create a version with lower balances
-        lower_balances = [(date, max(0, balance - 1000)) for date, balance in daily_balances]
+        lower_balances = [
+            (date, max(0, balance - 1000)) for date, balance in daily_balances
+        ]
         lower_interest = compute_monthly_interest_charge(lower_balances, rate_bps)
         assert interest >= lower_interest
 
     # INVARIANT 5: Interest increases with rate
     if daily_balances and rate_bps > MIN_INTEREST_RATE_BPS:
-        lower_rate_interest = compute_monthly_interest_charge(daily_balances, rate_bps - 100)
+        lower_rate_interest = compute_monthly_interest_charge(
+            daily_balances, rate_bps - 100
+        )
         assert interest >= lower_rate_interest
+
 
 @given(
     daily_balances_strategy(),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=20, deadline=None)
 def test_compute_monthly_interest_charge_math_accuracy(daily_balances, rate_bps):
@@ -162,19 +172,22 @@ def test_compute_monthly_interest_charge_math_accuracy(daily_balances, rate_bps)
 
     # Calculate expected interest by summing daily interest
     expected_interest = 0
-    for date_iso, balance in daily_balances:
+    for _date_iso, balance in daily_balances:
         expected_interest += compute_daily_interest(balance, rate_bps)
 
     # Verify calculation
     assert interest == expected_interest
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE)
+    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
 @settings(max_examples=30, deadline=None)
-def test_compute_monthly_interest_simple_invariants(avg_balance, rate_bps, days_in_cycle):
+def test_compute_monthly_interest_simple_invariants(
+    avg_balance, rate_bps, days_in_cycle
+):
     """Property: compute_monthly_interest_simple must satisfy all invariants."""
     # Compute monthly interest
     interest = compute_monthly_interest_simple(avg_balance, rate_bps, days_in_cycle)
@@ -196,26 +209,35 @@ def test_compute_monthly_interest_simple_invariants(avg_balance, rate_bps, days_
 
     # INVARIANT 5: Interest increases with balance
     if avg_balance > 0 and rate_bps > 0 and days_in_cycle > 0:
-        lower_balance_interest = compute_monthly_interest_simple(avg_balance - 1, rate_bps, days_in_cycle)
+        lower_balance_interest = compute_monthly_interest_simple(
+            avg_balance - 1, rate_bps, days_in_cycle
+        )
         assert interest >= lower_balance_interest
 
     # INVARIANT 6: Interest increases with rate
     if avg_balance > 0 and rate_bps > MIN_INTEREST_RATE_BPS and days_in_cycle > 0:
-        lower_rate_interest = compute_monthly_interest_simple(avg_balance, rate_bps - 100, days_in_cycle)
+        lower_rate_interest = compute_monthly_interest_simple(
+            avg_balance, rate_bps - 100, days_in_cycle
+        )
         assert interest >= lower_rate_interest
 
     # INVARIANT 7: Interest increases with days
     if avg_balance > 0 and rate_bps > 0 and days_in_cycle > MIN_DAYS_IN_CYCLE:
-        fewer_days_interest = compute_monthly_interest_simple(avg_balance, rate_bps, days_in_cycle - 1)
+        fewer_days_interest = compute_monthly_interest_simple(
+            avg_balance, rate_bps, days_in_cycle - 1
+        )
         assert interest >= fewer_days_interest
+
 
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE)
+    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
 @settings(max_examples=20, deadline=None)
-def test_compute_monthly_interest_simple_math_accuracy(avg_balance, rate_bps, days_in_cycle):
+def test_compute_monthly_interest_simple_math_accuracy(
+    avg_balance, rate_bps, days_in_cycle
+):
     """Property: compute_monthly_interest_simple math must be accurate."""
     # Compute monthly interest
     interest = compute_monthly_interest_simple(avg_balance, rate_bps, days_in_cycle)
@@ -230,10 +252,11 @@ def test_compute_monthly_interest_simple_math_accuracy(avg_balance, rate_bps, da
     # Verify calculation
     assert interest == expected_interest
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE)
+    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
 @settings(max_examples=20, deadline=None)
 def test_interest_methods_consistency(avg_balance, rate_bps, days_in_cycle):
@@ -247,14 +270,17 @@ def test_interest_methods_consistency(avg_balance, rate_bps, days_in_cycle):
 
     # Compute interest using both methods
     detailed_interest = compute_monthly_interest_charge(daily_balances, rate_bps)
-    simple_interest = compute_monthly_interest_simple(avg_balance, rate_bps, days_in_cycle)
+    simple_interest = compute_monthly_interest_simple(
+        avg_balance, rate_bps, days_in_cycle
+    )
 
     # Should be equal for constant balance
     assert detailed_interest == simple_interest
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=20, deadline=None)
 def test_zero_interest_scenarios(balance, rate_bps):
@@ -270,9 +296,10 @@ def test_zero_interest_scenarios(balance, rate_bps):
     # Empty daily balances
     assert compute_monthly_interest_charge([], rate_bps) == 0
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=20, deadline=None)
 def test_rounding_consistency(balance, rate_bps):
@@ -286,9 +313,10 @@ def test_rounding_consistency(balance, rate_bps):
     # Should be exactly 30 times daily interest
     assert monthly_interest == daily_interest * 30
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=20, deadline=None)
 def test_interest_proportionality(balance, rate_bps):
@@ -300,19 +328,24 @@ def test_interest_proportionality(balance, rate_bps):
     if base_interest == 0:
         assert double_balance_interest in (0, 1, 2)
     else:
-        assert double_balance_interest in range(base_interest * 2 - 3, base_interest * 2 + 4)
+        assert double_balance_interest in range(
+            base_interest * 2 - 3, base_interest * 2 + 4
+        )
 
     # Double the rate - check within a safe integer drift range of [-3, +3]
     double_rate_interest = compute_daily_interest(balance, rate_bps * 2)
     if base_interest == 0:
         assert double_rate_interest in (0, 1, 2)
     else:
-        assert double_rate_interest in range(base_interest * 2 - 3, base_interest * 2 + 4)
+        assert double_rate_interest in range(
+            base_interest * 2 - 3, base_interest * 2 + 4
+        )
+
 
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE)
+    st.integers(min_value=MIN_DAYS_IN_CYCLE, max_value=MAX_DAYS_IN_CYCLE),
 )
 @settings(max_examples=10, deadline=None)
 def test_large_balance_scenarios(balance, rate_bps, days_in_cycle):
@@ -324,9 +357,10 @@ def test_large_balance_scenarios(balance, rate_bps, days_in_cycle):
     max_expected = balance * 5 // 100  # 5% of balance
     assert interest <= max_expected
 
+
 @given(
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=10, deadline=None)
 def test_edge_case_rates(balance, rate_bps):
@@ -340,6 +374,8 @@ def test_edge_case_rates(balance, rate_bps):
     assert max_rate_interest >= 0
 
     # Test rate in the middle
-    mid_rate_interest = compute_daily_interest(balance, (MIN_INTEREST_RATE_BPS + MAX_INTEREST_RATE_BPS) // 2)
+    mid_rate_interest = compute_daily_interest(
+        balance, (MIN_INTEREST_RATE_BPS + MAX_INTEREST_RATE_BPS) // 2
+    )
     assert mid_rate_interest >= 0
     assert mid_rate_interest <= max_rate_interest

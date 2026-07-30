@@ -88,10 +88,14 @@ def _apply_mutation(file_path: Path) -> str:
             )
             break
         # Mutate a simple assignment with a numeric literal
-        if "=" in stripped and any(c.isdigit() for c in stripped):
-            if not stripped.startswith("#") and not stripped.startswith("def"):
-                mutated_lines[i] = line + "  # MUTATED"
-                break
+        if (
+            "=" in stripped
+            and any(c.isdigit() for c in stripped)
+            and not stripped.startswith("#")
+            and not stripped.startswith("def")
+        ):
+            mutated_lines[i] = line + "  # MUTATED"
+            break
 
     mutated_content = "\n".join(mutated_lines)
     file_path.write_text(mutated_content)

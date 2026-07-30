@@ -6,9 +6,7 @@ calculations using property-based testing techniques.
 """
 
 from datetime import date
-from decimal import Decimal
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -21,22 +19,32 @@ from src.engines.loan_engine.models import AmortizationRow, FloatingRateChange
 
 # Constants for testing
 MAX_INTEREST_RATE_BPS = 3600  # 36% annual
-MIN_INTEREST_RATE_BPS = 500   # 5% annual
-MAX_TENURE_MONTHS = 360       # 30 years
-MIN_TENURE_MONTHS = 1         # 1 month
+MIN_INTEREST_RATE_BPS = 500  # 5% annual
+MAX_TENURE_MONTHS = 360  # 30 years
+MIN_TENURE_MONTHS = 1  # 1 month
 MAX_PRINCIPAL_PAISE = 10_000_000_00  # ₹10 crore
-MIN_PRINCIPAL_PAISE = 100_000        # ₹1,000
+MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
+
 
 # Strategies for generating test data
 @st.composite
 def loan_parameters(draw):
     """Generate valid loan parameters for testing."""
-    principal = draw(st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE))
-    rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+    principal = draw(
+        st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE)
+    )
+    rate = draw(
+        st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    )
     tenure = draw(st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS))
-    start_date = draw(st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(lambda d: d.isoformat()))
+    start_date = draw(
+        st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(
+            lambda d: d.isoformat()
+        )
+    )
 
     return principal, rate, tenure, start_date
+
 
 @st.composite
 def schedule_with_rate_change(draw):
@@ -46,10 +54,13 @@ def schedule_with_rate_change(draw):
 
     # Generate rate change at a random month
     change_month = draw(st.integers(min_value=1, max_value=tenure))
-    new_rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+    new_rate = draw(
+        st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    )
     mode = draw(st.sampled_from(["adjust_emi", "adjust_tenure"]))
 
     return schedule, initial_rate, change_month, new_rate, mode, start_date
+
 
 @st.composite
 def multiple_rate_changes(draw):
@@ -60,17 +71,22 @@ def multiple_rate_changes(draw):
     num_changes = draw(st.integers(min_value=1, max_value=5))
     rate_changes = []
 
-    for i in range(num_changes):
+    for _i in range(num_changes):
         change_month = draw(st.integers(min_value=1, max_value=tenure))
-        new_rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+        new_rate = draw(
+            st.integers(
+                min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS
+            )
+        )
         mode = draw(st.sampled_from(["adjust_emi", "adjust_tenure"]))
-        rate_changes.append(FloatingRateChange(
-            change_month=change_month,
-            new_rate_bps=new_rate,
-            mode=mode
-        ))
+        rate_changes.append(
+            FloatingRateChange(
+                change_month=change_month, new_rate_bps=new_rate, mode=mode
+            )
+        )
 
     return principal, initial_rate, tenure, rate_changes, start_date
+
 
 @given(schedule_with_rate_change())
 @settings(max_examples=30, deadline=None)
@@ -110,14 +126,23 @@ def test_apply_floating_rate_change_invariants(schedule_params):
         assert new_row.principal_paise == original_row.principal_paise
         assert new_row.interest_paise == original_row.interest_paise
         assert new_row.balance_paise == original_row.balance_paise
-        assert new_row.cumulative_interest_paise == original_row.cumulative_interest_paise
+        assert (
+            new_row.cumulative_interest_paise == original_row.cumulative_interest_paise
+        )
 
     # INVARIANT 6: Opening balance at change month is preserved exactly.
     # Closing balance may differ due to rounding in the regenerated schedule.
     if change_month <= len(schedule):
-        original_opening = schedule[change_month - 1].balance_paise + schedule[change_month - 1].principal_paise
-        new_opening = new_schedule[change_month - 1].balance_paise + new_schedule[change_month - 1].principal_paise
+        original_opening = (
+            schedule[change_month - 1].balance_paise
+            + schedule[change_month - 1].principal_paise
+        )
+        new_opening = (
+            new_schedule[change_month - 1].balance_paise
+            + new_schedule[change_month - 1].principal_paise
+        )
         assert original_opening == new_opening
+
 
 @given(schedule_with_rate_change())
 @settings(max_examples=20, deadline=None)
@@ -131,8 +156,8 @@ def test_apply_floating_rate_change_math_accuracy(schedule_params):
     )
 
     # Calculate interest before and after change
-    original_interest = total_interest_paise(schedule)
-    new_interest = total_interest_paise(new_schedule)
+    total_interest_paise(schedule)
+    total_interest_paise(new_schedule)
 
     # INVARIANT: Interest per month should be consistent with the new rate.
     # This comparison only applies for 'adjust_emi' mode where EMI changes but
@@ -141,14 +166,27 @@ def test_apply_floating_rate_change_math_accuracy(schedule_params):
     # A higher rate does not guarantee higher total interest if the loan
     # closes early due to the rate change, so we verify directionality only
     # for the overlapping months after the change point.
-    if mode == "adjust_emi" and new_rate > initial_rate and change_month < len(new_schedule):
+    if (
+        mode == "adjust_emi"
+        and new_rate > initial_rate
+        and change_month < len(new_schedule)
+    ):
         for i in range(change_month - 1, len(new_schedule)):
-            original_month_interest = schedule[i].interest_paise if i < len(schedule) else 0
+            original_month_interest = (
+                schedule[i].interest_paise if i < len(schedule) else 0
+            )
             assert new_schedule[i].interest_paise >= original_month_interest
-    elif mode == "adjust_emi" and new_rate < initial_rate and change_month < len(new_schedule):
+    elif (
+        mode == "adjust_emi"
+        and new_rate < initial_rate
+        and change_month < len(new_schedule)
+    ):
         for i in range(change_month - 1, len(new_schedule)):
-            original_month_interest = schedule[i].interest_paise if i < len(schedule) else 0
+            original_month_interest = (
+                schedule[i].interest_paise if i < len(schedule) else 0
+            )
             assert new_schedule[i].interest_paise <= original_month_interest
+
 
 @given(schedule_with_rate_change())
 @settings(max_examples=20, deadline=None)
@@ -186,6 +224,7 @@ def test_apply_floating_rate_change_modes(schedule_params):
     # INVARIANT: In adjust_tenure mode, the schedule structure changes when rate changes
     # We don't enforce exact EMI preservation due to rounding in regenerated schedules
 
+
 @given(multiple_rate_changes())
 @settings(max_examples=10, deadline=None)
 def test_simulate_floating_rate_schedule_invariants(rate_change_params):
@@ -222,6 +261,7 @@ def test_simulate_floating_rate_schedule_invariants(rate_change_params):
         assert row.balance_paise >= 0
         assert row.cumulative_interest_paise >= 0
 
+
 @given(multiple_rate_changes())
 @settings(max_examples=10, deadline=None)
 def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
@@ -238,26 +278,25 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
 
     # INVARIANT: Rate changes should be reflected in the schedule
     for change in sorted_changes:
-        if change.change_month < len(schedule):
-            # Check that subsequent rows reflect the new rate
-            # This is complex to verify directly, but we can check that
-            # the schedule changes after the rate change month
-            if change.change_month < len(schedule):
-                # The EMI should change after the rate change
-                if change.change_month > 1:
-                    before_emi = schedule[change.change_month - 2].emi_paise
-                    after_emi = schedule[change.change_month - 1].emi_paise
-                    if change.mode == "adjust_emi":
-                        assert after_emi != before_emi
+        if change.change_month < len(schedule) and change.change_month > 1:
+            before_emi = schedule[change.change_month - 2].emi_paise
+            after_emi = schedule[change.change_month - 1].emi_paise
+            if change.mode == "adjust_emi":
+                assert after_emi != before_emi
+
 
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
-    st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(lambda d: d.isoformat())
+    st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(
+        lambda d: d.isoformat()
+    ),
 )
 @settings(max_examples=10, deadline=None)
-def test_simulate_floating_rate_schedule_no_changes(principal, initial_rate, tenure, start_date):
+def test_simulate_floating_rate_schedule_no_changes(
+    principal, initial_rate, tenure, start_date
+):
     """Property: No rate changes produces standard schedule."""
     # Simulate with no rate changes
     schedule = simulate_floating_rate_schedule(
@@ -269,13 +308,16 @@ def test_simulate_floating_rate_schedule_no_changes(principal, initial_rate, ten
 
     assert len(schedule) == len(standard_schedule)
 
-    for new_row, standard_row in zip(schedule, standard_schedule):
+    for new_row, standard_row in zip(schedule, standard_schedule, strict=False):
         assert new_row.month_number == standard_row.month_number
         assert new_row.emi_paise == standard_row.emi_paise
         assert new_row.principal_paise == standard_row.principal_paise
         assert new_row.interest_paise == standard_row.interest_paise
         assert new_row.balance_paise == standard_row.balance_paise
-        assert new_row.cumulative_interest_paise == standard_row.cumulative_interest_paise
+        assert (
+            new_row.cumulative_interest_paise == standard_row.cumulative_interest_paise
+        )
+
 
 @given(schedule_with_rate_change())
 @settings(max_examples=10, deadline=None)
@@ -313,14 +355,19 @@ def test_apply_floating_rate_change_edge_cases(schedule_params):
     for i in range(change_month - 1):
         assert new_schedule[i] == schedule[i]
 
+
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=12, max_value=60),  # Tenure
-    st.dates(min_value=date(2020, 1, 1), max_value=date(2025, 12, 31)).map(lambda d: d.isoformat())
+    st.dates(min_value=date(2020, 1, 1), max_value=date(2025, 12, 31)).map(
+        lambda d: d.isoformat()
+    ),
 )
 @settings(max_examples=10, deadline=None)
-def test_floating_rate_change_math_consistency(principal, initial_rate, tenure, start_date):
+def test_floating_rate_change_math_consistency(
+    principal, initial_rate, tenure, start_date
+):
     """Property: Floating rate changes maintain mathematical consistency."""
     # Generate schedule
     schedule = generate_schedule(principal, initial_rate, tenure, start_date)
@@ -335,8 +382,14 @@ def test_floating_rate_change_math_consistency(principal, initial_rate, tenure, 
         )
 
         # Verify that opening balance is preserved at change point
-        original_opening = schedule[change_month - 1].balance_paise + schedule[change_month - 1].principal_paise
-        new_opening = new_schedule[change_month - 1].balance_paise + new_schedule[change_month - 1].principal_paise
+        original_opening = (
+            schedule[change_month - 1].balance_paise
+            + schedule[change_month - 1].principal_paise
+        )
+        new_opening = (
+            new_schedule[change_month - 1].balance_paise
+            + new_schedule[change_month - 1].principal_paise
+        )
         assert original_opening == new_opening
 
         # Verify that completed portion is unchanged
@@ -347,13 +400,19 @@ def test_floating_rate_change_math_consistency(principal, initial_rate, tenure, 
             assert new_row.principal_paise == original_row.principal_paise
             assert new_row.interest_paise == original_row.interest_paise
             assert new_row.balance_paise == original_row.balance_paise
-            assert new_row.cumulative_interest_paise == original_row.cumulative_interest_paise
+            assert (
+                new_row.cumulative_interest_paise
+                == original_row.cumulative_interest_paise
+            )
+
 
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=12, max_value=60),  # Tenure
-    st.dates(min_value=date(2020, 1, 1), max_value=date(2025, 12, 31)).map(lambda d: d.isoformat())
+    st.dates(min_value=date(2020, 1, 1), max_value=date(2025, 12, 31)).map(
+        lambda d: d.isoformat()
+    ),
 )
 @settings(max_examples=10, deadline=None)
 def test_floating_rate_change_zero_rate(principal, initial_rate, tenure, start_date):
@@ -374,7 +433,10 @@ def test_floating_rate_change_zero_rate(principal, initial_rate, tenure, start_d
 
         # EMI should be principal / remaining months (based on opening balance)
         remaining_months = len(new_schedule) - change_month + 1
-        remaining_balance = new_schedule[change_month - 1].balance_paise + new_schedule[change_month - 1].principal_paise
+        remaining_balance = (
+            new_schedule[change_month - 1].balance_paise
+            + new_schedule[change_month - 1].principal_paise
+        )
         expected_emi = remaining_balance // remaining_months
 
         for i in range(change_month - 1, len(new_schedule) - 1):

@@ -11,10 +11,12 @@ import json
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
+
+from src.verification.runtime.registries import CapabilityRegistry
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-BACKEND_DIR = PROJECT_ROOT / "backend"
+BACKEND_DIR = PROJECT_ROOT
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 
 
@@ -83,7 +85,7 @@ class CoverageEngine:
     """Generates architectural verification coverage."""
 
     def __init__(self) -> None:
-        self._capability_registry: dict[str, Any] = {}
+        self._capability_registry: CapabilityRegistry = cast(CapabilityRegistry, {})
         self._capabilities: list[CapabilityCoverage] = []
 
     def generate_all(self) -> ArchitecturalCoverage:

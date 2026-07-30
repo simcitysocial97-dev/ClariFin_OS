@@ -9,7 +9,6 @@ schedule generation using property-based testing techniques.
 from datetime import date
 from decimal import Decimal
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -24,22 +23,32 @@ from src.engines.loan_engine.models import AmortizationRow
 
 # Constants for testing
 MAX_INTEREST_RATE_BPS = 3600  # 36% annual
-MIN_INTEREST_RATE_BPS = 500   # 5% annual
-MAX_TENURE_MONTHS = 360       # 30 years
-MIN_TENURE_MONTHS = 1         # 1 month
+MIN_INTEREST_RATE_BPS = 500  # 5% annual
+MAX_TENURE_MONTHS = 360  # 30 years
+MIN_TENURE_MONTHS = 1  # 1 month
 MAX_PRINCIPAL_PAISE = 10_000_000_00  # ₹10 crore
-MIN_PRINCIPAL_PAISE = 100_000        # ₹1,000
+MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
+
 
 # Strategies for generating test data
 @st.composite
 def loan_parameters(draw):
     """Generate valid loan parameters for testing."""
-    principal = draw(st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE))
-    rate = draw(st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS))
+    principal = draw(
+        st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE)
+    )
+    rate = draw(
+        st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    )
     tenure = draw(st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS))
-    start_date = draw(st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(lambda d: d.isoformat()))
+    start_date = draw(
+        st.dates(min_value=date(2000, 1, 1), max_value=date(2030, 12, 31)).map(
+            lambda d: d.isoformat()
+        )
+    )
 
     return principal, rate, tenure, start_date
+
 
 @given(loan_parameters())
 @settings(max_examples=50, deadline=None)
@@ -85,6 +94,7 @@ def test_generate_schedule_invariants(loan_params):
         for i in range(1, len(schedule) - 1):
             assert schedule[i].emi_paise <= schedule[i - 1].emi_paise
 
+
 @given(loan_parameters())
 @settings(max_examples=30, deadline=None)
 def test_generate_schedule_fixed_invariants(loan_params):
@@ -111,6 +121,7 @@ def test_generate_schedule_fixed_invariants(loan_params):
     if schedule:
         assert schedule[-1].balance_paise == 0
 
+
 @given(loan_parameters())
 @settings(max_examples=30, deadline=None)
 def test_generate_schedule_floating_invariants(loan_params):
@@ -132,6 +143,7 @@ def test_generate_schedule_floating_invariants(loan_params):
 
     # INVARIANT 4: EMI may vary (floating rate)
 
+
 @given(loan_parameters())
 @settings(max_examples=30, deadline=None)
 def test_generate_schedule_math_accuracy(loan_params):
@@ -150,7 +162,7 @@ def test_generate_schedule_math_accuracy(loan_params):
     assert total_payments == principal + total_interest_paise(schedule)
 
     # INVARIANT 3: Each row's principal + interest equals EMI (except last may differ due to adjustment)
-    for row in schedule[:-1]:   # exclude last
+    for row in schedule[:-1]:  # exclude last
         assert row.principal_paise + row.interest_paise == row.emi_paise
     # Last row: sum should be EMI
     if schedule:
@@ -159,7 +171,7 @@ def test_generate_schedule_math_accuracy(loan_params):
 
     # INVARIANT 4: Balance decreases correctly (for non-last rows)
     for i in range(1, len(schedule)):
-        prev_balance = schedule[i-1].balance_paise
+        prev_balance = schedule[i - 1].balance_paise
         current_principal = schedule[i].principal_paise
         # For non-last rows, exact equality; last row should be zero
         if i < len(schedule) - 1:
@@ -167,6 +179,7 @@ def test_generate_schedule_math_accuracy(loan_params):
         else:
             # Last row: balance should be zero (already checked)
             assert schedule[i].balance_paise == 0
+
 
 @given(loan_parameters())
 @settings(max_examples=20, deadline=None)
@@ -187,6 +200,7 @@ def test_total_interest_paise_invariants(loan_params):
     expected_interest = sum(row.interest_paise for row in schedule)
     assert total_interest == expected_interest
 
+
 @given(loan_parameters())
 @settings(max_examples=20, deadline=None)
 def test_total_principal_paise_invariants(loan_params):
@@ -205,6 +219,7 @@ def test_total_principal_paise_invariants(loan_params):
     # INVARIANT 2: Total principal equals sum of all principal payments
     expected_principal = sum(row.principal_paise for row in schedule)
     assert total_principal == expected_principal
+
 
 @given(loan_parameters())
 @settings(max_examples=20, deadline=None)
@@ -232,10 +247,11 @@ def test_zero_interest_schedule(loan_params):
     # INVARIANT 5: Last row's balance is zero
     assert schedule[-1].balance_paise == 0
 
+
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=1, max_value=10)  # Short tenure
+    st.integers(min_value=1, max_value=10),  # Short tenure
 )
 @settings(max_examples=20, deadline=None)
 def test_short_tenure_schedule(principal, rate, tenure):
@@ -255,10 +271,11 @@ def test_short_tenure_schedule(principal, rate, tenure):
     emi = schedule[0].emi_paise
     assert emi >= principal // tenure
 
+
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=120, max_value=360)  # Long tenure
+    st.integers(min_value=120, max_value=360),  # Long tenure
 )
 @settings(max_examples=20, deadline=None)
 def test_long_tenure_schedule(principal, rate, tenure):
@@ -283,10 +300,11 @@ def test_long_tenure_schedule(principal, rate, tenure):
     interest_only_payment = int(principal * monthly_rate)
     assert emi >= interest_only_payment
 
+
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
 )
 @settings(max_examples=10, deadline=None)
 def test_schedule_consistency(principal, rate, tenure):
@@ -300,18 +318,21 @@ def test_schedule_consistency(principal, rate, tenure):
     # Should be identical
     assert len(default_schedule) == len(fixed_schedule)
 
-    for default_row, fixed_row in zip(default_schedule, fixed_schedule):
+    for default_row, fixed_row in zip(default_schedule, fixed_schedule, strict=False):
         assert default_row.month_number == fixed_row.month_number
         assert default_row.emi_paise == fixed_row.emi_paise
         assert default_row.principal_paise == fixed_row.principal_paise
         assert default_row.interest_paise == fixed_row.interest_paise
         assert default_row.balance_paise == fixed_row.balance_paise
-        assert default_row.cumulative_interest_paise == fixed_row.cumulative_interest_paise
+        assert (
+            default_row.cumulative_interest_paise == fixed_row.cumulative_interest_paise
+        )
+
 
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
 )
 @settings(max_examples=10, deadline=None)
 def test_cumulative_interest_accuracy(principal, rate, tenure):
@@ -327,10 +348,11 @@ def test_cumulative_interest_accuracy(principal, rate, tenure):
         cumulative_interest += row.interest_paise
         assert row.cumulative_interest_paise == cumulative_interest
 
+
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
 )
 @settings(max_examples=10, deadline=None)
 def test_date_progression(principal, rate, tenure):
@@ -342,17 +364,20 @@ def test_date_progression(principal, rate, tenure):
 
     # Verify date progression
     for i in range(1, len(schedule)):
-        prev_date = date.fromisoformat(schedule[i-1].payment_date)
+        prev_date = date.fromisoformat(schedule[i - 1].payment_date)
         current_date = date.fromisoformat(schedule[i].payment_date)
 
         # Should be approximately one month apart
-        month_diff = (current_date.year - prev_date.year) * 12 + (current_date.month - prev_date.month)
+        month_diff = (current_date.year - prev_date.year) * 12 + (
+            current_date.month - prev_date.month
+        )
         assert month_diff == 1
+
 
 @given(
     st.integers(min_value=100_000, max_value=1_000_000),  # Principal
-    st.integers(min_value=500, max_value=2000),           # Rate (5-20%)
-    st.integers(min_value=12, max_value=60),              # Tenure
+    st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
+    st.integers(min_value=12, max_value=60),  # Tenure
 )
 @settings(max_examples=10, deadline=None)
 def test_principal_interest_progression(principal, rate, tenure):
@@ -374,7 +399,7 @@ def test_principal_interest_progression(principal, rate, tenure):
             assert row.principal_paise >= 0
 
     # Interest should be strictly decreasing (or constant) across all rows
-    prev_interest = float('inf')
+    prev_interest = float("inf")
     for row in schedule:
         # Interest should be non-increasing
         assert row.interest_paise <= prev_interest

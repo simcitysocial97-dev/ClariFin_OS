@@ -8,20 +8,21 @@ behavior_engine.py file.
 import pytest
 
 from src.engines.behaviour_engine.core import (
-    _normalize_score,
     _coefficient_of_variation,
-    _moving_average,
-    _compute_loss_aversion_index,
-    _compute_impulsivity_score,
-    _compute_habit_stability_score,
     _compute_financial_stress_index,
+    _compute_habit_stability_score,
+    _compute_impulsivity_score,
+    _compute_loss_aversion_index,
     _compute_savings_discipline_score,
+    _moving_average,
+    _normalize_score,
     compute_behavior_profile,
     detect_india_risk_patterns,
     generate_behavioral_insights,
     generate_nudges,
     get_top_nudge,
 )
+
 
 class TestBehaviourEngineCore:
     """Test the behaviour engine core functions."""
@@ -48,7 +49,9 @@ class TestBehaviourEngineCore:
     def test_coefficient_of_variation(self) -> None:
         """Test _coefficient_of_variation with various inputs."""
         # Test basic case
-        assert _coefficient_of_variation([10, 20, 30]) == pytest.approx(0.408248, rel=1e-5)
+        assert _coefficient_of_variation([10, 20, 30]) == pytest.approx(
+            0.408248, rel=1e-5
+        )
 
         # Test single value
         assert _coefficient_of_variation([10]) == 0.0
@@ -138,7 +141,11 @@ class TestBehaviourEngineCore:
                 "impulsivity": {"index": 0.3, "spike_frequency": 0.2},
                 "habit_stability": {"index": 0.7, "variation_coefficient": 0.1},
                 "financial_stress": {"index": 0.4, "buffer_days": 5},
-                "savings_discipline": {"index": 0.6, "emi_ratio": 0.2, "buffer_days": 10},
+                "savings_discipline": {
+                    "index": 0.6,
+                    "emi_ratio": 0.2,
+                    "buffer_days": 10,
+                },
             },
             "financial_health_score": 65,
             "confidence": 0.8,

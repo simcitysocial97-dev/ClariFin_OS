@@ -116,13 +116,15 @@ def compute_principal_from_emi(
     denominator: Decimal = monthly_rate * factor
 
     principal_decimal: Decimal = numerator / denominator
-    base_principal = int(principal_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    base_principal = int(
+        principal_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+    )
 
-    # Extended localized search window (-500 to +500 paise) to securely capture 
+    # Extended localized search window (-500 to +500 paise) to securely capture
     # forward-pass integer quantization divergence across all boundary cases.
     best_principal = base_principal
-    min_diff = float('inf')
-    best_distance = float('inf')
+    min_diff = float("inf")
+    best_distance = float("inf")
 
     for candidate in range(base_principal - 500, base_principal + 501):
         if candidate <= 0:
@@ -130,7 +132,7 @@ def compute_principal_from_emi(
         test_emi = compute_emi_fixed(candidate, annual_rate_bps, tenure_months)
         diff = abs(test_emi - emi_paise)
         distance = abs(candidate - base_principal)
-        
+
         # Prefer smaller diff, then smaller distance from base_principal
         if diff < min_diff or (diff == min_diff and distance < best_distance):
             min_diff = diff
@@ -163,7 +165,7 @@ def compute_tenure_from_emi(
         return 999  # EMI doesn't cover interest — return max
 
     ratio = Decimal(emi_paise) / (Decimal(emi_paise) - interest_only)
-    
+
     # High-precision Decimal logarithm computation to eliminate float drift
     n = ratio.ln() / (one + monthly_rate).ln()
     tenure = int(n.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN))

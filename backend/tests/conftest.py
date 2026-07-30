@@ -71,45 +71,54 @@ def seed_test_database(finance_db):
 
     try:
         # 1. Seed Accounts (using integer ID as required by schema)
-        conn.execute("""
+        conn.execute(
+            """
             INSERT OR IGNORE INTO accounts
             (id, name, bank, account_type, balance_paise, account_number_last4)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (
-            1,
-            "Primary Checking",
-            "Test Bank",
-            "savings",
-            500000,
-            "1234",
-        ))
+        """,
+            (
+                1,
+                "Primary Checking",
+                "Test Bank",
+                "savings",
+                500000,
+                "1234",
+            ),
+        )
 
         # 2. Seed Statements (required as a foreign key prerequisite for transactions)
-        conn.execute("""
+        conn.execute(
+            """
             INSERT OR IGNORE INTO statements
             (id, bank, file_name)
             VALUES (?, ?, ?)
-        """, (
-            1,
-            "Test Bank",
-            "test.pdf",
-        ))
+        """,
+            (
+                1,
+                "Test Bank",
+                "test.pdf",
+            ),
+        )
 
         # 3. Seed Transactions
-        conn.execute("""
+        conn.execute(
+            """
             INSERT OR IGNORE INTO transactions
             (id, statement_id, date, date_iso, description, amount_paise, type, account_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            1,
-            1,
-            "01/01/2025",
-            "2025-01-01",
-            "Test Txn",
-            100000,
-            "debit",
-            1,
-        ))
+        """,
+            (
+                1,
+                1,
+                "01/01/2025",
+                "2025-01-01",
+                "Test Txn",
+                100000,
+                "debit",
+                1,
+            ),
+        )
 
         # 4. Seed Account Balance History
         cursor = conn.cursor()
@@ -117,20 +126,26 @@ def seed_test_database(finance_db):
         history_cols = [row[1] for row in cursor.fetchall()]
         print("DEBUG account_balance_history columns:", history_cols)
         if history_cols:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT OR IGNORE INTO account_balance_history (account_id, timestamp, balance_paise)
                 VALUES (?, ?, ?)
-            """, (1, '2025-01-01T00:00:00', 500000))
+            """,
+                (1, "2025-01-01T00:00:00", 500000),
+            )
 
         # 5. Seed Account Links
         cursor.execute("PRAGMA table_info(account_links);")
         link_cols = [row[1] for row in cursor.fetchall()]
         print("DEBUG account_links columns:", link_cols)
         if link_cols:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT OR IGNORE INTO account_links (account_id, linked_account_id)
                 VALUES (?, ?)
-            """, (1, 1))
+            """,
+                (1, 1),
+            )
 
         conn.commit()
     except Exception as e:
@@ -176,6 +191,7 @@ def temp_db() -> Generator[str, None, None]:
     fd, path = tempfile.mkstemp(suffix=".db")
     os.close(fd)
     from src.db import FinanceDB
+
     FinanceDB(db_path=path)
     yield path
     if os.path.exists(path):
@@ -242,7 +258,13 @@ def pytest_configure(config: pytest.Config) -> None:
     """Register custom enterprise test markers for strict suite categorization."""
     config.addinivalue_line("markers", "capability: mark test as capability smoke test")
     config.addinivalue_line("markers", "contract: mark test as contract schema test")
-    config.addinivalue_line("markers", "property: mark test as property-based hypothesis test")
-    config.addinivalue_line("markers", "invariant: mark test as financial domain invariant test")
-    config.addinivalue_line("markers", "golden: mark test as golden dataset baseline test")
+    config.addinivalue_line(
+        "markers", "property: mark test as property-based hypothesis test"
+    )
+    config.addinivalue_line(
+        "markers", "invariant: mark test as financial domain invariant test"
+    )
+    config.addinivalue_line(
+        "markers", "golden: mark test as golden dataset baseline test"
+    )
     config.addinivalue_line("markers", "meta: mark test as meta-verification test")

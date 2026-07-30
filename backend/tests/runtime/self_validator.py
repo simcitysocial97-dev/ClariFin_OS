@@ -32,6 +32,7 @@ BACKEND_DIR = PROJECT_ROOT / "backend"
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 TESTS_DIR = BACKEND_DIR / "tests"
 
+
 def validate_registry_integrity() -> dict[str, Any]:
     """Validate that all registries are loadable and internally consistent."""
     from runtime.registries import (
@@ -93,6 +94,7 @@ def validate_registry_integrity() -> dict[str, Any]:
 
     return results
 
+
 def validate_discovery_correctness() -> dict[str, Any]:
     """Validate that discovered components actually exist on disk."""
     results: dict[str, Any] = {"valid": True, "errors": []}
@@ -141,6 +143,7 @@ def validate_discovery_correctness() -> dict[str, Any]:
 
     return results
 
+
 def validate_missing_metadata() -> dict[str, Any]:
     """Detect capabilities missing verification metadata."""
     from runtime.discovery import discover_capabilities
@@ -174,6 +177,7 @@ def validate_missing_metadata() -> dict[str, Any]:
 
     return results
 
+
 def validate_pipeline_consistency() -> dict[str, Any]:
     """Validate that all pipeline stages have runners."""
     from runtime.orchestrator import FULL_PIPELINE, STAGE_RUNNERS
@@ -188,6 +192,7 @@ def validate_pipeline_consistency() -> dict[str, Any]:
         results["valid"] = False
 
     return results
+
 
 def validate_no_duplicate_registrations() -> dict[str, Any]:
     """Detect duplicate registrations across all test directories."""
@@ -222,6 +227,7 @@ def validate_no_duplicate_registrations() -> dict[str, Any]:
         results["valid"] = False
 
     return results
+
 
 def validate_builder_registry() -> dict[str, Any]:
     """Validate builder discovery and registry."""
@@ -260,6 +266,7 @@ def validate_builder_registry() -> dict[str, Any]:
 
     return results
 
+
 def validate_fixture_registry() -> dict[str, Any]:
     """Validate fixture discovery."""
 
@@ -283,6 +290,7 @@ def validate_fixture_registry() -> dict[str, Any]:
 
     return results
 
+
 def validate_dependency_graph_integrity() -> dict[str, Any]:
     """Validate that the dependency graph is internally consistent."""
     from runtime.discovery import discover_dependencies
@@ -294,26 +302,41 @@ def validate_dependency_graph_integrity() -> dict[str, Any]:
     capabilities = dep_map.get("capabilities", {})
 
     if not edges and not capabilities:
-        results["errors"].append(
-            "Dependency graph is empty - stubs return no data"
-        )
+        results["errors"].append("Dependency graph is empty - stubs return no data")
         results["edge_count"] = 0
         results["capability_count"] = 0
         return results
 
     # Check that all edge references are valid
     all_cap_ids = set(capabilities.keys())
+    # Known system modules that are not capabilities but can appear in dependency graph
+    system_modules = {
+        "verification",
+        "verification.intelligence",
+        "verification.runtime",
+    }
     for edge in edges:
         source = edge.get("source", "")
         target = edge.get("target", "")
         source_type = edge.get("source_type", "")
         target_type = edge.get("target_type", "")
 
-        if source_type == "capability" and source not in all_cap_ids:
+        # Check source
+        if (
+            source_type == "capability"
+            and source not in all_cap_ids
+            and source not in system_modules
+            and not any(source.startswith(mod + ".") for mod in system_modules)
+        ):
             results["errors"].append(
                 f"Edge source '{source}' not found in capabilities"
             )
-        if target_type == "capability" and target not in all_cap_ids:
+        if (
+            target_type == "capability"
+            and target not in all_cap_ids
+            and target not in system_modules
+            and not any(target.startswith(mod + ".") for mod in system_modules)
+        ):
             results["errors"].append(
                 f"Edge target '{target}' not found in capabilities"
             )
@@ -325,6 +348,7 @@ def validate_dependency_graph_integrity() -> dict[str, Any]:
     results["capability_count"] = len(capabilities)
 
     return results
+
 
 def validate_change_impact_correctness() -> dict[str, Any]:
     """Validate that change impact analysis produces correct results."""
@@ -357,6 +381,7 @@ def validate_change_impact_correctness() -> dict[str, Any]:
 
     return results
 
+
 def validate_risk_metadata_consistency() -> dict[str, Any]:
     """Validate that risk metadata is consistent across components."""
     from src.verification.intelligence.risk_engine import RiskEngine
@@ -381,6 +406,7 @@ def validate_risk_metadata_consistency() -> dict[str, Any]:
     results["entry_count"] = len(risk_map.entries) if "risk_map" in dir() else 0
 
     return results
+
 
 def validate_architectural_coverage_completeness() -> dict[str, Any]:
     """Validate that architectural coverage covers all capabilities."""
@@ -410,6 +436,7 @@ def validate_architectural_coverage_completeness() -> dict[str, Any]:
 
     return results
 
+
 def validate_evidence_integrity() -> dict[str, Any]:
     """Validate that verification evidence is consistent."""
     from src.verification.intelligence.evidence_engine import EvidenceEngine
@@ -438,6 +465,7 @@ def validate_evidence_integrity() -> dict[str, Any]:
         results["valid"] = False
 
     return results
+
 
 def validate_dependency_chains() -> dict[str, Any]:
     """Check for broken dependency chains in the capability registry."""
@@ -469,6 +497,7 @@ def validate_dependency_chains() -> dict[str, Any]:
 
     return results
 
+
 def run_all_validations() -> dict[str, Any]:
     """Run all self-validation checks and return combined report."""
     return {
@@ -487,6 +516,7 @@ def run_all_validations() -> dict[str, Any]:
         "evidence_integrity": validate_evidence_integrity(),
         "dependency_chains": validate_dependency_chains(),
     }
+
 
 def overall_health(report: dict[str, Any]) -> bool:
     """Determine if the verification runtime is healthy."""

@@ -33,6 +33,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 # Production Code Discovery
 # =============================================================================
 
+
 def discover_engines() -> list[dict[str, Any]]:
     """Discover all engine modules in src/engines/."""
     engines: list[dict[str, Any]] = []
@@ -52,6 +53,7 @@ def discover_engines() -> list[dict[str, Any]]:
             }
         )
     return sorted(engines, key=lambda e: e["path"])
+
 
 def discover_services() -> list[dict[str, Any]]:
     """Discover all service modules in src/services/."""
@@ -73,6 +75,7 @@ def discover_services() -> list[dict[str, Any]]:
         )
     return sorted(services, key=lambda s: s["path"])
 
+
 def discover_repositories() -> list[dict[str, Any]]:
     """Discover all repository modules in src/repositories/."""
     repos: list[dict[str, Any]] = []
@@ -92,6 +95,7 @@ def discover_repositories() -> list[dict[str, Any]]:
             }
         )
     return sorted(repos, key=lambda r: r["path"])
+
 
 def discover_routers() -> list[dict[str, Any]]:
     """Discover all router modules in src/routers/."""
@@ -113,9 +117,11 @@ def discover_routers() -> list[dict[str, Any]]:
         )
     return sorted(routers, key=lambda r: r["path"])
 
+
 # =============================================================================
 # Test Infrastructure Discovery
 # =============================================================================
+
 
 def discover_builders() -> list[dict[str, Any]]:
     """Discover all builder modules in tests/domain/builders/ and tests/golden/builders/."""
@@ -139,6 +145,7 @@ def discover_builders() -> list[dict[str, Any]]:
             )
     return sorted(builders, key=lambda b: b["path"])
 
+
 def discover_fixtures() -> list[dict[str, Any]]:
     """Discover all conftest.py files and their fixtures."""
     fixtures: list[dict[str, Any]] = []
@@ -152,12 +159,14 @@ def discover_fixtures() -> list[dict[str, Any]]:
         )
     return sorted(fixtures, key=lambda f: f["path"])
 
+
 def _get_fixture_scope(conftest_path: Path) -> str:
     """Determine fixture scope from conftest location."""
     parts = conftest_path.relative_to(TESTS_DIR).parts
     if len(parts) == 1:
         return "global"
     return "/".join(parts[:-1])
+
 
 def discover_golden_datasets() -> list[dict[str, Any]]:
     """Discover all golden dataset JSON files."""
@@ -175,6 +184,7 @@ def discover_golden_datasets() -> list[dict[str, Any]]:
             }
         )
     return sorted(datasets, key=lambda d: d["name"])
+
 
 def discover_property_tests() -> list[dict[str, Any]]:
     """Discover all property test files."""
@@ -194,6 +204,7 @@ def discover_property_tests() -> list[dict[str, Any]]:
         )
     return sorted(tests, key=lambda t: t["path"])
 
+
 def discover_invariant_tests() -> list[dict[str, Any]]:
     """Discover all invariant test files."""
     tests: list[dict[str, Any]] = []
@@ -210,6 +221,7 @@ def discover_invariant_tests() -> list[dict[str, Any]]:
             }
         )
     return sorted(tests, key=lambda t: t["path"])
+
 
 def discover_invariant_modules() -> list[dict[str, Any]]:
     """Discover all invariant assertion modules (non-test files)."""
@@ -232,6 +244,7 @@ def discover_invariant_modules() -> list[dict[str, Any]]:
         )
     return sorted(modules, key=lambda m: m["name"])
 
+
 def discover_contract_tests() -> list[dict[str, Any]]:
     """Discover all generated contract test files."""
     tests: list[dict[str, Any]] = []
@@ -248,6 +261,7 @@ def discover_contract_tests() -> list[dict[str, Any]]:
             }
         )
     return sorted(tests, key=lambda t: t["path"])
+
 
 def discover_capability_tests() -> list[dict[str, Any]]:
     """Discover all capability test directories."""
@@ -269,9 +283,11 @@ def discover_capability_tests() -> list[dict[str, Any]]:
         )
     return caps
 
+
 # =============================================================================
 # Capability Registry Integration
 # =============================================================================
+
 
 def discover_capabilities() -> list[dict[str, Any]]:
     """Discover capabilities from capability-registry.yaml."""
@@ -279,6 +295,7 @@ def discover_capabilities() -> list[dict[str, Any]]:
 
     registry = load_capability_registry()
     return registry.get("capabilities", [])
+
 
 def get_capability_test_paths(capability_id: str) -> dict[str, list[str]]:
     """Get all test paths for a capability from the registry."""
@@ -294,9 +311,11 @@ def get_capability_test_paths(capability_id: str) -> dict[str, list[str]]:
         "contracts": cap.get("contracts", []),
     }
 
+
 # =============================================================================
 # Helper Functions
 # =============================================================================
+
 
 def _infer_capability_from_path(path: Path) -> str | None:
     """Infer capability ID from a test file path."""
@@ -304,6 +323,7 @@ def _infer_capability_from_path(path: Path) -> str | None:
     if parts:
         return parts[0]
     return None
+
 
 def _extract_assert_functions(py_file: Path) -> list[str]:
     """Extract function names starting with assert_ from a Python file."""
@@ -317,9 +337,11 @@ def _extract_assert_functions(py_file: Path) -> list[str]:
         pass
     return functions
 
+
 # =============================================================================
 # Full System Discovery
 # =============================================================================
+
 
 def discover_all() -> dict[str, Any]:
     """Run all discovery mechanisms and return a complete system map.
@@ -341,6 +363,7 @@ def discover_all() -> dict[str, Any]:
         "contract_tests": discover_contract_tests(),
         "capability_tests": discover_capability_tests(),
     }
+
 
 def get_verification_map() -> dict[str, Any]:
     """Get a capability-centric verification map.
@@ -388,9 +411,11 @@ def get_verification_map() -> dict[str, Any]:
 
     return verification_map
 
+
 # =============================================================================
 # Dependency Intelligence (Workstream 1)
 # =============================================================================
+
 
 def discover_dependencies() -> dict[str, Any]:
     """Discover component dependencies using the intelligence layer.
@@ -608,6 +633,7 @@ def discover_dependencies() -> dict[str, Any]:
 
     return {"edges": edges, "capabilities": capabilities, "generated_at": None}
 
+
 def get_capability_dependencies(capability_id: str) -> list[dict[str, Any]]:
     """Get all dependencies for a specific capability."""
     dep_map = discover_dependencies()
@@ -616,6 +642,7 @@ def get_capability_dependencies(capability_id: str) -> list[dict[str, Any]]:
         for e in dep_map.get("edges", [])
         if e.get("source") == capability_id or e.get("target") == capability_id
     ]
+
 
 def get_transitive_dependencies(
     capability_id: str, dep_map: dict[str, Any] | None = None
@@ -639,6 +666,7 @@ def get_transitive_dependencies(
 
     visited.discard(capability_id)
     return visited
+
 
 def get_dependents(
     capability_id: str, dep_map: dict[str, Any] | None = None

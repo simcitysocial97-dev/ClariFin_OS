@@ -34,7 +34,11 @@ def compute_loan_metrics(
     remaining_tenure = len(schedule)
     total_payments_remaining = sum(row.emi_paise for row in schedule)
 
-    effective_ratio = total_interest / original_principal_paise if original_principal_paise > 0 else 0.0
+    effective_ratio = (
+        total_interest / original_principal_paise
+        if original_principal_paise > 0
+        else 0.0
+    )
 
     return LoanMetrics(
         outstanding_paise=outstanding,
@@ -72,6 +76,7 @@ def get_interest_component(
     tenure_months: int,
 ) -> int:
     from .amortization import generate_schedule
+
     schedule = generate_schedule(
         principal_paise=principal_paise,
         annual_rate_bps=annual_rate_bps,
@@ -87,4 +92,5 @@ def get_emi_component(
     tenure_months: int,
 ) -> int:
     from .emi import compute_emi_fixed
+
     return compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)

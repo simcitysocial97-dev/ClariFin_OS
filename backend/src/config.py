@@ -30,7 +30,11 @@ class Settings:
         if hasattr(self, "_database_path_override") and self._database_path_override:
             return Path(self._database_path_override)
 
-        db_path = os.getenv("FINANCE_DB_PATH") or os.getenv("DATABASE_PATH") or "data/finance.db"
+        db_path = (
+            os.getenv("FINANCE_DB_PATH")
+            or os.getenv("DATABASE_PATH")
+            or "data/finance.db"
+        )
         return Path(db_path)
 
     @property

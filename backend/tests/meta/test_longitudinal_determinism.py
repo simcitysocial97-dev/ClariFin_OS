@@ -8,11 +8,7 @@ Part I of Phase 3.2 - Capability Validation & Real-World Verification.
 from __future__ import annotations
 
 import hashlib
-import json
 from pathlib import Path
-from typing import Any
-
-import pytest
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 BACKEND_DIR = PROJECT_ROOT / "backend"
@@ -60,9 +56,9 @@ class TestLongitudinalDeterminism:
 
         # Compare dependency-map.json specifically
         if "dependency-map.json" in hashes_1 and "dependency-map.json" in hashes_2:
-            assert hashes_1["dependency-map.json"] == hashes_2["dependency-map.json"], (
-                "dependency-map.json differs between runs"
-            )
+            assert (
+                hashes_1["dependency-map.json"] == hashes_2["dependency-map.json"]
+            ), "dependency-map.json differs between runs"
 
     def test_all_json_artifacts_deterministic(self) -> None:
         """All JSON artifacts must be identical across multiple runs."""
@@ -84,9 +80,9 @@ class TestLongitudinalDeterminism:
 
         for filename in json_files:
             if filename in hashes_1 and filename in hashes_2:
-                assert hashes_1[filename] == hashes_2[filename], (
-                    f"{filename} differs between runs"
-                )
+                assert (
+                    hashes_1[filename] == hashes_2[filename]
+                ), f"{filename} differs between runs"
 
     def test_no_timestamp_only_diffs(self) -> None:
         """Generated artifacts must not contain timestamp-only diffs."""
@@ -99,9 +95,9 @@ class TestLongitudinalDeterminism:
             if filename in hashes_2 and hashes_1[filename] != hashes_2[filename]:
                 mismatches.append(filename)
 
-        assert not mismatches, (
-            f"Files differ between runs (non-deterministic): {mismatches}"
-        )
+        assert (
+            not mismatches
+        ), f"Files differ between runs (non-deterministic): {mismatches}"
 
     def test_dependency_engine_deterministic(self) -> None:
         """DependencyEngine.discover() must produce identical output across runs."""
@@ -129,6 +125,9 @@ class TestLongitudinalDeterminism:
         d1 = impact1.to_dict()
         d2 = impact2.to_dict()
 
+        d1.pop("generated_at", None)
+        d2.pop("generated_at", None)
+
         assert d1 == d2, "ImpactEngine output differs between runs"
 
     def test_selective_engine_deterministic(self) -> None:
@@ -145,21 +144,3 @@ class TestLongitudinalDeterminism:
         d2 = plan2.to_dict()
 
         assert d1 == d2, "SelectiveEngine output differs between runs"
-
-</parameter>
-<task_progress>
-- [x] Part A: Capability Truth Audit (CAPABILITY_AUDIT.md + test_capability_audit.py)
-- [x] Part B: Mutation Verification (test_mutation_verification.py + mutation_verification.py)
-- [x] Part C: False Positive Measurement (test_false_positive_measurement.py)
-- [x] Part D: False Negative Measurement (test_false_negative_measurement.py)
-- [x] Part E: Capability Isolation Stress Test (test_capability_isolation.py)
-- [x] Part F: Graph Integrity (test_graph_integrity.py)
-- [x] Part G: Capability Coverage (CAPABILITY_COVERAGE.md + test_capability_coverage.py)
-- [ ] Part H: GitHub Actions Validation (test_github_actions_validation.py + ci_replay.py)
-- [x] Part I: Longitudinal Determinism (test_longitudinal_determinism.py)
-- [ ] Part J: Final Capability Confidence Report (CAPABILITY_FRAMEWORK_VALIDATION.md + generate_validation_report.py)
-- [ ] CI Integration (update backend.yml)
-- [ ] Validation: ruff, mypy, pytest on all new files
-- [ ] Memory bank update (activeContext.md, architecture.md)
-</task_progress>
-</write_to_file>

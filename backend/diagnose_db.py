@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 print("--- SEARCHING FOR DIRECT DATABASE PATH INITIALIZATIONS ---")
@@ -13,5 +12,5 @@ for path_str in search_paths:
             for line_num, line in enumerate(content.splitlines(), 1):
                 if any(kw in line for kw in keywords):
                     print(f"{file_path}:{line_num} -> {line.strip()}")
-        except Exception as e:
+        except Exception:
             pass

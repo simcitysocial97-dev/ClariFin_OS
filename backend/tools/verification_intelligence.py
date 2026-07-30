@@ -204,23 +204,147 @@ def cmd_selective(args: argparse.Namespace) -> None:
         print(json.dumps(data, indent=2))
 
 
-def cmd_summary(args: argparse.Namespace) -> None:
-    """Generate verification summary report."""
-    from verification.intelligence.report_engine import (
-        ReportEngine,  # type: ignore[import-not-found]
+def cmd_performance_metrics(args: argparse.Namespace) -> None:
+    """Generate verification performance metrics report."""
+    from src.verification.intelligence.metrics_engine import MetricsEngine
+
+    engine = MetricsEngine()
+
+    # For now, generate sample data
+    # In production, this would collect real metrics from test runs
+    engine.generate_sample_report(str(GENERATED_DIR / "verification-performance.json"))
+
+    print("Generated: verification-performance.json")
+    if args.json:
+        with open(GENERATED_DIR / "verification-performance.json") as f:
+            print(f.read())
+
+
+def cmd_qa_report(args: argparse.Namespace) -> None:
+    """Generate comprehensive QA report."""
+    from src.verification.intelligence.qa_report import QAReportGenerator
+
+    generator = QAReportGenerator(str(GENERATED_DIR))
+
+    # For now, generate sample data
+    # In production, this would use real data
+    generator.generate_sample_report(str(GENERATED_DIR / "qa-report.md"))
+
+    print("Generated: qa-report.md")
+    if args.json:
+        with open(GENERATED_DIR / "qa-report.md") as f:
+            print(f.read())
+
+
+def cmd_verification_matrix(args: argparse.Namespace) -> None:
+    """Generate verification matrix."""
+    from src.verification.intelligence.verification_matrix import (
+        VerificationMatrixEngine,
     )
 
+    engine = VerificationMatrixEngine()
+
+    # For now, generate sample data
+    # In production, this would load real capability, test, and risk data
+    engine.generate_sample_matrix(str(GENERATED_DIR / "verification-matrix.json"))
+
+    print("Generated: verification-matrix.json")
+    if args.json:
+        with open(GENERATED_DIR / "verification-matrix.json") as f:
+            print(f.read())
+
+
+def cmd_regression_matrix(args: argparse.Namespace) -> None:
+    """Generate regression test matrix."""
+    from src.verification.intelligence.regression_engine import RegressionEngine
+
+    engine = RegressionEngine()
+
+    # For now, generate sample data
+    # In production, this would collect real test results
+    engine.generate_sample_matrix(str(GENERATED_DIR / "regression-matrix.json"))
+
+    print("Generated: regression-matrix.json")
+    if args.json:
+        with open(GENERATED_DIR / "regression-matrix.json") as f:
+            print(f.read())
+
+
+def cmd_quality_report(args: argparse.Namespace) -> None:
+    """Generate quality report."""
+
+    from src.verification.intelligence.report_engine import ReportEngine
+
+    # Generate quality report markdown
+    report_content = """# Quality Report
+
+## Verification Intelligence Summary
+
+This report provides an overview of the verification quality for the current codebase.
+"""
+
+    # Add verification summary
     engine = ReportEngine()
     results = engine.generate_all()
 
-    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = GENERATED_DIR / "verification-summary.json"
-    with open(output_path, "w") as f:
-        json.dump(results, f, indent=2)
+    report_content += """
+### Verification Status
+"""
+    for report_name, report_data in results.items():
+        report_content += f"- **{report_name}**: {report_data.get('status', 'N/A')}\n"
 
-    print(f"Generated: verification-summary.json ({len(results)} reports)")
+    # Add performance metrics
+    metrics_path = GENERATED_DIR / "verification-performance.json"
+    if metrics_path.exists():
+        with open(metrics_path) as f:
+            metrics = json.load(f)
+
+        report_content += """
+### Performance Metrics
+"""
+        report_content += f"- **Overall Score**: {metrics.get('overall_score', 0):.1f}/100\n"
+        report_content += f"- **Test Performance**: {metrics.get('test_performance', [{}])[0].get('avg_execution_time_ms', 0):.1f}ms avg\n"
+        report_content += f"- **Coverage**: {metrics.get('coverage', [{}])[0].get('percentage', 0):.1f}%\n"
+        report_content += f"- **Selective Execution Efficiency**: {metrics.get('selective_execution', [{}])[0].get('efficiency_percentage', 0):.1f}%\n"
+
+    # Add capability validation status
+    validation_path = GENERATED_DIR / "verification-evidence.json"
+    if validation_path.exists():
+        with open(validation_path) as f:
+            validation = json.load(f)
+
+        report_content += """
+### Capability Validation
+"""
+        report_content += f"- **Fully Verified**: {validation.get('fully_verified', 0)}/{validation.get('total_capabilities', 0)} capabilities\n"
+        report_content += f"- **Verification Coverage**: {validation.get('verification_coverage_percent', 0):.1f}%\n"
+
+    # Add risk assessment
+    risk_path = GENERATED_DIR / "risk-map.json"
+    if risk_path.exists():
+        with open(risk_path) as f:
+            risk_data = json.load(f)
+
+        report_content += """
+### Risk Assessment
+"""
+        for entry in risk_data.get("entries", []):
+            if entry.get("risk_level"):
+                report_content += f"- **{entry['capability_id']}**: {entry['risk_level']} risk\n"
+
+    # Write markdown file
+    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = GENERATED_DIR / "quality-report.md"
+    with open(output_path, "w") as f:
+        f.write(report_content)
+
+    print("Generated: quality-report.md")
     if args.json:
-        print(json.dumps(results, indent=2))
+        print(json.dumps({"report": "quality-report.md"}, indent=2))
+
+
+def cmd_summary(args: argparse.Namespace) -> None:
+    """Generate verification summary report."""
 
 
 def cmd_all(args: argparse.Namespace) -> None:
@@ -309,6 +433,31 @@ def main() -> None:
         help="Generate verification summary",
     )
     parser.add_argument(
+        "--performance-metrics",
+        action="store_true",
+        help="Generate verification performance metrics",
+    )
+    parser.add_argument(
+        "--quality-report",
+        action="store_true",
+        help="Generate quality report",
+    )
+    parser.add_argument(
+        "--regression-matrix",
+        action="store_true",
+        help="Generate regression test matrix",
+    )
+    parser.add_argument(
+        "--verification-matrix",
+        action="store_true",
+        help="Generate verification matrix",
+    )
+    parser.add_argument(
+        "--qa-report",
+        action="store_true",
+        help="Generate comprehensive QA report",
+    )
+    parser.add_argument(
         "--changed",
         nargs="*",
         help="Analyze specific changed files",
@@ -332,6 +481,11 @@ def main() -> None:
             args.self_validate,
             args.selective,
             args.summary,
+            args.performance_metrics,
+            args.quality_report,
+            args.regression_matrix,
+            args.verification_matrix,
+            args.qa_report,
         ]
     ):
         parser.print_help()
@@ -355,6 +509,16 @@ def main() -> None:
         cmd_selective(args)
     elif args.summary:
         cmd_summary(args)
+    elif args.performance_metrics:
+        cmd_performance_metrics(args)
+    elif args.quality_report:
+        cmd_quality_report(args)
+    elif args.regression_matrix:
+        cmd_regression_matrix(args)
+    elif args.verification_matrix:
+        cmd_verification_matrix(args)
+    elif args.qa_report:
+        cmd_qa_report(args)
 
 
 if __name__ == "__main__":

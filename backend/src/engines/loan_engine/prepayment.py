@@ -13,7 +13,9 @@ from .emi import compute_emi_fixed
 from .models import AmortizationRow, PrepaymentMode, PrepaymentResult
 
 
-def _compute_tenure_from_emi(principal_paise: int, annual_rate_bps: int, emi_paise: int) -> int:
+def _compute_tenure_from_emi(
+    principal_paise: int, annual_rate_bps: int, emi_paise: int
+) -> int:
     """Compute months needed to pay off principal with fixed EMI."""
     if annual_rate_bps == 0:
         return math.ceil(principal_paise / emi_paise) if emi_paise > 0 else 999
@@ -28,10 +30,14 @@ def _compute_tenure_from_emi(principal_paise: int, annual_rate_bps: int, emi_pai
     numerator = emi / (emi - principal * monthly_rate)
     denominator = Decimal(1) + monthly_rate
     months = numerator.ln() / denominator.ln()
-    return max(1, min(999, int(months.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN))))
+    return max(
+        1, min(999, int(months.quantize(Decimal("1"), rounding=ROUND_HALF_EVEN)))
+    )
 
 
-def compute_remaining_months(principal_paise: int, annual_rate_bps: int, emi_paise: int) -> int:
+def compute_remaining_months(
+    principal_paise: int, annual_rate_bps: int, emi_paise: int
+) -> int:
     return _compute_tenure_from_emi(principal_paise, annual_rate_bps, emi_paise)
 
 
@@ -81,9 +87,28 @@ def apply_prepayment_at_month(
     if prepayment_paise <= 0:
         raise ValueError("Prepayment must be positive")
 
-    # Penalty with ROUND_HALF_EVEN
-    penalty = int((Decimal(prepayment_paise) * Decimal(prepayment_penalty_bps) / Decimal(10000))
-                  .quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    # Penalty with ROUND_HALF_EVEN (capped at min(remaining_interest, 3% of outstanding balance))
+    outstanding_balance = (
+        schedule[prepayment_month - 1].balance_paise
+        + schedule[prepayment_month - 1].principal_paise
+    )
+    remaining_interest = sum(
+        row.interest_paise for row in schedule[prepayment_month - 1 :]
+    )
+    max_penalty_paise = int(
+        (Decimal(outstanding_balance) * Decimal(300) / Decimal(10000)).quantize(
+            Decimal(1), rounding=ROUND_HALF_EVEN
+        )
+    )
+    raw_penalty = (
+        Decimal(prepayment_paise) * Decimal(prepayment_penalty_bps) / Decimal(10000)
+    )
+    # Cap raw penalty at min(remaining_interest, max_penalty_paise) BEFORE rounding
+    capped_penalty = min(
+        Decimal(remaining_interest), Decimal(max_penalty_paise), raw_penalty
+    )
+    penalty = int(capped_penalty.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+
     effective_prepayment = prepayment_paise - penalty
 
     # State at prepayment month
@@ -92,7 +117,9 @@ def apply_prepayment_at_month(
     # We need the outstanding balance BEFORE this month's payment.
     # That is balance + principal_paid of this row.
     opening_balance = prepayment_row.balance_paise + prepayment_row.principal_paise
-    remaining_balance = opening_balance  # This is the balance before the prepayment month's payment
+    remaining_balance = (
+        opening_balance  # This is the balance before the prepayment month's payment
+    )
     # Actually, the prepayment happens at the beginning of the month, before the regular EMI.
     # So we need the balance at the start of the month.
     # Since our schedule stores closing balance, we need the previous month's closing balance.
@@ -131,13 +158,16 @@ def apply_prepayment_at_month(
             new_remaining_months=0,
             months_saved=original_remaining_months,
             interest_saved_paise=interest_saved - penalty,
+            penalty_paise=penalty,
             loan_closed=True,
             new_schedule=new_schedule,
         )
 
     # Determine mode literal
     mode_literal: Literal["reduce_tenure", "reduce_emi"] = (
-        "reduce_tenure" if mode in ("reduce_tenure", PrepaymentMode.REDUCE_TENURE) else "reduce_emi"
+        "reduce_tenure"
+        if mode in ("reduce_tenure", PrepaymentMode.REDUCE_TENURE)
+        else "reduce_emi"
     )
 
     # Regenerate tail
@@ -173,6 +203,7 @@ def apply_prepayment_at_month(
         new_remaining_months=len(tail),
         months_saved=original_remaining_months - len(tail),
         interest_saved_paise=interest_saved - penalty,
+        penalty_paise=penalty,
         loan_closed=False,
         new_schedule=new_schedule,
     )
@@ -197,8 +228,13 @@ def apply_multiple_prepayments(
         if month < 1 or month > len(current_schedule):
             continue
         new_schedule, result = apply_prepayment_at_month(
-            current_schedule, month, amount, annual_rate_bps,
-            prepayment_penalty_bps, mode, start_date
+            current_schedule,
+            month,
+            amount,
+            annual_rate_bps,
+            prepayment_penalty_bps,
+            mode,
+            start_date,
         )
         current_schedule = new_schedule
         results.append(result)
@@ -239,7 +275,9 @@ def regenerate_schedule(
     if mode == "reduce_tenure":
         if original_emi is None:
             raise ValueError("original_emi is required for reduce_tenure mode")
-        new_tenure = _compute_tenure_from_emi(new_principal_paise, annual_rate_bps, original_emi)
+        new_tenure = _compute_tenure_from_emi(
+            new_principal_paise, annual_rate_bps, original_emi
+        )
         new_emi = original_emi
     else:  # reduce_emi
         if original_tenure is None:

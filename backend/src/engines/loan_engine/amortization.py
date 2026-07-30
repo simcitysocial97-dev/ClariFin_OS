@@ -57,7 +57,7 @@ def generate_schedule(
     INVARIANT 4: All dates are ISO 8601 strings
     INVARIANT 6: Banker's rounding
     """
-    from .emi import compute_emi_fixed, compute_principal_component
+    from .emi import compute_emi_fixed
 
     if emi_paise is None:
         emi_paise = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
@@ -247,7 +247,7 @@ def validate_schedule(
     # 4. EMI consistency (same EMI for all rows except last)
     if len(schedule) > 1:
         first_emi = schedule[0].emi_paise
-        for row in schedule[:-1]:   # exclude last row
+        for row in schedule[:-1]:  # exclude last row
             if row.emi_paise != first_emi:
                 errors.append(
                     f"EMI inconsistency at month {row.month_number}: "

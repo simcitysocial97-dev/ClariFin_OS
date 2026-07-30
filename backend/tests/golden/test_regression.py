@@ -35,8 +35,8 @@ class TestGoldenDatasets:
     def test_high_debt_household_regression(self):
         data = _load_golden_dataset("high_debt_household")
         result = data["expected_output"]
-        assert result["confidence_bps"] < 7000
-        assert "high_debt" in result.get("risk_flags", [])
+        assert result["financial_stress"]["score"] > 0.7
+        assert result["financial_stress"]["flag"] is True
 
     def test_irregular_income_regression(self):
         data = _load_golden_dataset("irregular_income")

@@ -326,7 +326,7 @@ class HybridExtractor:
                 if attempt["use_cols"] and col_seps:
                     kwargs["columns"] = [",".join(str(x) for x in col_seps)]
 
-                tables = camelot.read_pdf(self.pdf_path, **kwargs)
+                tables = camelot.read_pdf(self.pdf_path, **kwargs)  # type: ignore[attr-defined]
                 self._log(
                     f"Page {page_num}: {attempt['flavor']} (cols={attempt['use_cols']}) found {len(tables)} tables"
                 )

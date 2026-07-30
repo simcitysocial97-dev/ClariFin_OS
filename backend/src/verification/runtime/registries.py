@@ -11,14 +11,41 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict, cast
 
 # Generated artifacts directory: backend/tests/generated/
 BACKEND_DIR = Path(__file__).parent.parent.parent.parent  # project root / backend
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 
 
-def load_capability_registry() -> dict[str, Any]:
+class CapabilityRegistry(TypedDict):
+    capabilities: list[dict[str, Any]]
+
+
+class ContractRegistry(TypedDict):
+    routers: dict[str, Any]
+    generated_at: str | None
+
+
+class ApiMap(TypedDict):
+    endpoints: list[dict[str, Any]]
+    generated_at: str | None
+
+
+class MutationRegistry(TypedDict):
+    generated_at: str | None
+    entries: list[dict[str, Any]]
+
+
+class ValidationManifest(TypedDict, total=False):
+    pass
+
+
+class RiskRules(TypedDict):
+    rules: list[dict[str, Any]]
+
+
+def load_capability_registry() -> CapabilityRegistry:
     """Load capability-registry.yaml.
 
     Returns dict with 'capabilities' list.
@@ -26,17 +53,17 @@ def load_capability_registry() -> dict[str, Any]:
     routers, services, engines, repositories, tables, golden_datasets,
     property_tests, invariants, architecture_tests, contracts, dependencies, failure_impact.
     """
-    import yaml
+    import yaml  # type: ignore[import-untyped]
 
     path = GENERATED_DIR / "capability-registry.yaml"
     if not path.exists():
         return {"capabilities": []}
     with open(path) as f:
         data = yaml.safe_load(f) or {"capabilities": []}
-    return data
+    return cast(CapabilityRegistry, data)
 
 
-def load_contract_registry() -> dict[str, Any]:
+def load_contract_registry() -> ContractRegistry:
     """Load contract-registry.json.
 
     Returns dict with 'routers' and 'generated_at'.
@@ -46,10 +73,10 @@ def load_contract_registry() -> dict[str, Any]:
     if not path.exists():
         return {"routers": {}, "generated_at": None}
     with open(path) as f:
-        return json.load(f)
+        return cast(ContractRegistry, json.load(f))
 
 
-def load_api_map() -> dict[str, Any]:
+def load_api_map() -> ApiMap:
     """Load api-map.json with full endpoint metadata.
 
     Returns dict with 'endpoints' list and 'generated_at'.
@@ -59,10 +86,10 @@ def load_api_map() -> dict[str, Any]:
     if not path.exists():
         return {"endpoints": [], "generated_at": None}
     with open(path) as f:
-        return json.load(f)
+        return cast(ApiMap, json.load(f))
 
 
-def load_mutation_registry() -> dict[str, Any]:
+def load_mutation_registry() -> MutationRegistry:
     """Load mutation-registry.json.
 
     Returns dict with 'generated_at' and 'entries' list.
@@ -72,10 +99,10 @@ def load_mutation_registry() -> dict[str, Any]:
     if not path.exists():
         return {"generated_at": None, "entries": []}
     with open(path) as f:
-        return json.load(f)
+        return cast(MutationRegistry, json.load(f))
 
 
-def load_validation_manifest() -> dict[str, Any] | None:
+def load_validation_manifest() -> ValidationManifest | None:
     """Load validation-manifest.json from last run.
 
     Returns dict or None if not present.
@@ -84,10 +111,10 @@ def load_validation_manifest() -> dict[str, Any] | None:
     if not path.exists():
         return None
     with open(path) as f:
-        return json.load(f)
+        return cast(ValidationManifest, json.load(f))
 
 
-def load_risk_rules() -> dict[str, Any]:
+def load_risk_rules() -> RiskRules:
     """Load risk-rules.yaml.
 
     Returns dict with 'rules' list.
@@ -99,7 +126,7 @@ def load_risk_rules() -> dict[str, Any]:
     if not path.exists():
         return {"rules": []}
     with open(path) as f:
-        return yaml.safe_load(f) or {"rules": []}
+        return cast(RiskRules, yaml.safe_load(f) or {"rules": []})
 
 
 def get_all_capability_ids() -> list[str]:

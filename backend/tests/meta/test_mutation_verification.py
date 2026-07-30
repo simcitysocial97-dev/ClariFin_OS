@@ -62,9 +62,7 @@ class TestMutationVerification:
         }
         target_ids = {pair[0] for pair in mutation_targets}
         missing = registered_ids - target_ids
-        assert not missing, (
-            f"Capabilities without mutation targets: {missing}"
-        )
+        assert not missing, f"Capabilities without mutation targets: {missing}"
 
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_pairs())
     def test_mutation_affects_correct_capability(
@@ -84,21 +82,19 @@ class TestMutationVerification:
         )
 
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_pairs())
-    def test_mutation_produces_ci_plan(
-        self, cap_id: str, engine_file: str
-    ) -> None:
+    def test_mutation_produces_ci_plan(self, cap_id: str, engine_file: str) -> None:
         """Mutating an engine file must produce a valid CI plan."""
         from src.verification.intelligence.selective_engine import SelectiveEngine
 
         engine = SelectiveEngine()
         plan = engine.plan([engine_file])
 
-        assert plan.strategy in ("fast", "full", "selective"), (
-            f"Invalid strategy for {engine_file}: {plan.strategy}"
-        )
-        assert len(plan.must_run_jobs) > 0, (
-            f"No must-run jobs for {engine_file}"
-        )
+        assert plan.strategy in (
+            "fast",
+            "full",
+            "selective",
+        ), f"Invalid strategy for {engine_file}: {plan.strategy}"
+        assert len(plan.must_run_jobs) > 0, f"No must-run jobs for {engine_file}"
 
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_pairs())
     def test_mutation_dependency_graph_consistent(
@@ -116,18 +112,17 @@ class TestMutationVerification:
         impact = engine.analyze([engine_file])
 
         for affected_cap in impact.affected_capabilities:
-            assert affected_cap.id in all_cap_ids, (
-                f"Affected capability {affected_cap.id} not in dependency graph"
-            )
+            assert (
+                affected_cap.id in all_cap_ids
+            ), f"Affected capability {affected_cap.id} not in dependency graph"
 
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_pairs())
-    def test_mutation_no_false_negatives(
-        self, cap_id: str, engine_file: str
-    ) -> None:
+    def test_mutation_no_false_negatives(self, cap_id: str, engine_file: str) -> None:
         """Mutation must not produce false negatives (missing required tests)."""
+        from runtime.discovery import discover_dependencies
+
         from src.verification.intelligence.impact_engine import ImpactEngine
         from src.verification.intelligence.selective_engine import SelectiveEngine
-        from runtime.discovery import discover_dependencies
 
         # Analyze impact
         impact_engine = ImpactEngine()
@@ -148,7 +143,12 @@ class TestMutationVerification:
             for edge in edges:
                 if edge.get("source") == cap_id_str:
                     target_type = edge.get("target_type", "")
-                    if target_type in ("property_test", "invariant_test", "capability_test"):
+                    if target_type in (
+                        "property_test",
+                        "invariant_test",
+                        "capability_test",
+                        "golden_dataset",
+                    ):
                         required_tests.add(edge.get("target", ""))
 
         # Get scheduled tests from CI plan
@@ -166,14 +166,14 @@ class TestMutationVerification:
         )
 
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_pairs())
-    def test_mutation_file_restored(
-        self, cap_id: str, engine_file: str
-    ) -> None:
+    def test_mutation_file_restored(self, cap_id: str, engine_file: str) -> None:
         """After mutation verification, the file must be restored."""
-        from backend.tools.mutation_verification import verify_mutation
+        from tools.mutation_verification import verify_mutation
 
         registry = _load_registry()
-        cap = next((c for c in registry.get("capabilities", []) if c.get("id") == cap_id), {})
+        cap = next(
+            (c for c in registry.get("capabilities", []) if c.get("id") == cap_id), {}
+        )
 
         # Get original content
         file_path = BACKEND_DIR / engine_file
@@ -184,6 +184,6 @@ class TestMutationVerification:
 
         # Verify file is restored
         restored_content = file_path.read_text()
-        assert restored_content == original_content, (
-            f"File {engine_file} was not properly restored after mutation"
-        )
+        assert (
+            restored_content == original_content
+        ), f"File {engine_file} was not properly restored after mutation"

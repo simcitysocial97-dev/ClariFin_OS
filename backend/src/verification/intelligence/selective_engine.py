@@ -15,8 +15,9 @@ from pathlib import Path
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-BACKEND_DIR = PROJECT_ROOT / "backend"
+BACKEND_DIR = PROJECT_ROOT
 GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
+
 
 @dataclass
 class CIJob:
@@ -38,6 +39,7 @@ class CIJob:
             "targets": self.targets,
             "estimated_runtime_seconds": self.estimated_runtime_seconds,
         }
+
 
 @dataclass
 class SelectivePlan:
@@ -65,6 +67,7 @@ class SelectivePlan:
             "must_run_jobs": [j.to_dict() for j in self.must_run_jobs],
             "generated_at": self.generated_at,
         }
+
 
 class SelectiveEngine:
     """Intelligence-driven CI job selection engine."""
@@ -152,20 +155,22 @@ class SelectiveEngine:
             impact_result = impact_engine.analyze(changed_files)
             impact = impact_result.to_dict()
 
+        affected_cap_ids = [c["id"] for c in impact.get("affected_capabilities", [])]
+
         plan = SelectivePlan(
             changed_files=changed_files,
             strategy=impact.get("strategy", "full"),
             overall_risk=impact.get("overall_risk", "LOW"),
-            affected_capabilities=[
-                c["id"] for c in impact.get("affected_capabilities", [])
-            ],
+            affected_capabilities=affected_cap_ids,
             affected_engines=[e["id"] for e in impact.get("affected_engines", [])],
             generated_at=hashlib.sha256(
-                (str(changed_files) + str(impact.get("affected_capabilities", []))).encode()
+                (str(changed_files) + str(affected_cap_ids)).encode()
             ).hexdigest()[:16],
         )
 
         risk = plan.overall_risk
+
+        test_targets = self._resolve_test_targets(affected_cap_ids)
 
         for job_id, job_def in self.JOB_DEFINITIONS.items():
             must_run = risk in job_def["must_run_for"]
@@ -175,12 +180,18 @@ class SelectiveEngine:
                 else f"Risk level {risk} below threshold for {job_def['name']}"
             )
 
+            targets = job_def["targets"]
+            if job_id in test_targets:
+                targets = test_targets[job_id]
+            elif any("tests/" in t for t in targets):
+                targets = []
+
             job = CIJob(
                 job_id=job_id,
                 name=job_def["name"],
                 must_run=must_run,
                 reason=reason,
-                targets=job_def["targets"],
+                targets=targets,
                 estimated_runtime_seconds=job_def["estimated_runtime"],
             )
 
@@ -191,6 +202,52 @@ class SelectiveEngine:
                 plan.skipped_jobs.append(job)
 
         return plan
+
+    def _resolve_test_targets(
+        self, affected_cap_ids: list[str]
+    ) -> dict[str, list[str]]:
+        """Resolve specific test targets from the dependency graph for affected capabilities."""
+        if not affected_cap_ids:
+            return {}
+
+        try:
+            from runtime.discovery import (
+                discover_dependencies,  # type: ignore[import-not-found]
+            )
+
+            dep_map = discover_dependencies()
+        except Exception:
+            return {}
+
+        edges = dep_map.get("edges", [])
+        test_targets: dict[str, list[str]] = {
+            "unit": [],
+            "property": [],
+            "contract": [],
+            "capability": [],
+            "invariant": [],
+            "golden": [],
+        }
+
+        type_to_job = {
+            "property_test": "property",
+            "capability_test": "capability",
+            "invariant_test": "invariant",
+            "golden_dataset": "golden",
+            "contract": "contract",
+        }
+
+        for edge in edges:
+            source = edge.get("source", "")
+            target_type = edge.get("target_type", "")
+            target = edge.get("target", "")
+
+            if source in affected_cap_ids and target_type in type_to_job:
+                job_id = type_to_job[target_type]
+                if target and target not in test_targets[job_id]:
+                    test_targets[job_id].append(target)
+
+        return {k: v for k, v in test_targets.items() if v}
 
     def generate_github_actions_matrix(self, plan: SelectivePlan) -> dict[str, Any]:
         """Generate GitHub Actions matrix configuration."""
@@ -216,6 +273,7 @@ class SelectiveEngine:
             ),
         }
 
+
 def generate_selective_plan(
     changed_files: list[str],
     impact: dict[str, Any] | None = None,
@@ -223,6 +281,7 @@ def generate_selective_plan(
     """Convenience function to generate a selective plan."""
     engine = SelectiveEngine()
     return engine.plan(changed_files, impact)
+
 
 def get_ci_job_status(job_id: str, risk_level: str) -> bool:
     """Check if a CI job must run for a given risk level."""

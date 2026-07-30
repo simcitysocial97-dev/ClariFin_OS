@@ -14,8 +14,9 @@ from typing import Any, Literal
 
 # Named constant for rollover detection window
 DEFAULT_ROLLOVER_LOOKBACK_DAYS: int = 90
+DEFAULT_REVOCATION_LOOKBACK_DAYS: int = 7  # Smart default: 7 days to revoke a transfer
 
-LinkType = Literal["settles", "funds", "rolls_over"]
+LinkType = Literal["settles", "funds", "rolls_over", "revokes"]
 
 
 @dataclass(frozen=True)
@@ -68,9 +69,27 @@ def _is_repayment_event(event: dict[str, Any]) -> bool:
     return event_type in ("liability_repayment", "emi_payment")
 
 
+def _is_transfer_event(event: dict[str, Any]) -> bool:
+    """Check if event type represents a fund transfer."""
+    event_type = event.get("event_type", "")
+    return event_type in ("fund_transfer_out", "fund_transfer_in", "transfer")
+
+
+def _is_revocable_event(event: dict[str, Any]) -> bool:
+    """Check if event type can be revoked (transfers only)."""
+    event_type = event.get("event_type", "")
+    lifecycle_state = event.get("lifecycle_state", "")
+    return event_type in (
+        "fund_transfer_out",
+        "fund_transfer_in",
+        "transfer",
+    ) and lifecycle_state in ("open", "partially_settled")
+
+
 def walk_lineage(
     events: list[dict[str, Any]],
     lookback_days: int = DEFAULT_ROLLOVER_LOOKBACK_DAYS,
+    revocation_lookback_days: int = DEFAULT_REVOCATION_LOOKBACK_DAYS,
 ) -> LineageProposal:
     """
     Walk through events and detect lineage relationships.
@@ -110,8 +129,12 @@ def walk_lineage(
         event.get("event_type", "")
         event_id = event.get("id", 0)
         account_id = event.get("account_id", "")
-        event.get("date_iso", "")
+        event_date_iso = event.get("date_iso", "")
         lifecycle_state = event.get("lifecycle_state", "open")
+
+        # Process revocation events first
+        if event.get("event_type") == "transfer_revocation":
+            continue  # Handled by detect_revocations
 
         # Only process open/partially_settled repayments looking for advances to settle
         if lifecycle_state not in ("open", "partially_settled"):
@@ -129,6 +152,8 @@ def walk_lineage(
             and e.get("lifecycle_state") in ("open", "partially_settled")
             and e.get("id") != event_id
             and int(e.get("id", 0)) < int(event_id)  # Advance must be earlier
+            and e.get("date_iso", "")
+            <= event_date_iso  # Advance date <= repayment date
         ]
 
         if not open_advances:
@@ -170,6 +195,131 @@ def walk_lineage(
                 "outstanding_paise": new_outstanding,
             }
         )
+
+    # Detect and apply revocations
+    revocation_proposal = detect_revocations(events, revocation_lookback_days)
+    proposed_links.extend(revocation_proposal.proposed_links)
+    lifecycle_updates.extend(revocation_proposal.lifecycle_updates)
+    superseded_events.extend(revocation_proposal.superseded_events)
+
+    return LineageProposal(
+        proposed_links=proposed_links,
+        lifecycle_updates=lifecycle_updates,
+        superseded_events=superseded_events,
+    )
+
+
+def detect_revocations(
+    events: list[dict[str, Any]],
+    lookback_days: int = DEFAULT_REVOCATION_LOOKBACK_DAYS,
+) -> LineageProposal:
+    """
+    Detect and apply revocations for fund transfers.
+
+    Revocation rules (smart defaults):
+    1. Only open/partially_settled transfers can be revoked
+    2. Revocation must occur within 7 days of transfer (DEFAULT_REVOCATION_LOOKBACK_DAYS)
+    3. Revocation applies to both sides of the transfer (in/out)
+    4. Revoked transfers are marked as "revoked" lifecycle state
+    5. All downstream events linked to the transfer are superseded
+
+    PURE FUNCTION: No DB access.
+    """
+    proposed_links: list[dict[str, Any]] = []
+    lifecycle_updates: list[dict[str, Any]] = []
+    superseded_events: list[int] = []
+
+    # Group events by transfer_id for efficient lookup
+    events_by_transfer: dict[str, list[dict[str, Any]]] = {}
+    for event in events:
+        transfer_id = event.get("transfer_id", "")
+        if transfer_id and _is_transfer_event(event):
+            if transfer_id not in events_by_transfer:
+                events_by_transfer[transfer_id] = []
+            events_by_transfer[transfer_id].append(event)
+
+    # Auto-revoke failed transfers (smart default)
+    auto_revoked_transfers = set()
+    for transfer_id, transfer_events in events_by_transfer.items():
+        for event in transfer_events:
+            if event.get("lifecycle_state") == "failed":
+                auto_revoked_transfers.add(transfer_id)
+                break
+
+    # Track processed revocations to avoid duplicates
+    processed_revocations: set[tuple[int, int]] = set()
+
+    for event in events:
+        event_type = event.get("event_type", "")
+        event_id = event.get("id", 0)
+        transfer_id = event.get("transfer_id", "")
+        date_iso = event.get("date_iso", "")
+        lifecycle_state = event.get("lifecycle_state", "")
+
+        # Only process revocation events
+        if event_type != "transfer_revocation" or lifecycle_state != "open":
+            continue
+
+        # Find the transfer this revocation applies to
+        transfer_events = events_by_transfer.get(transfer_id, [])
+        if not transfer_events:
+            continue
+
+        # Skip if this transfer was already auto-revoked
+        if transfer_id in auto_revoked_transfers:
+            continue
+
+        # Find the original transfer event (earliest date)
+        transfer_events.sort(key=lambda e: e.get("date_iso", ""))
+        original_transfer = transfer_events[0]
+        original_transfer_id = original_transfer.get("id", 0)
+
+        # Check if this revocation is within the allowed window
+        days_diff = _date_difference_days(
+            original_transfer.get("date_iso", ""), date_iso
+        )
+        if days_diff < 0 or days_diff > lookback_days:
+            continue  # Outside revocation window
+
+        # Check for duplicate revocation
+        revocation_key = (event_id, original_transfer_id)
+        if revocation_key in processed_revocations:
+            continue
+        processed_revocations.add(revocation_key)
+
+        # Apply revocation to all events in this transfer
+        for transfer_event in transfer_events:
+            transfer_event_id = transfer_event.get("id", 0)
+            proposed_links.append(
+                {
+                    "event_id": event_id,
+                    "linked_event_id": transfer_event_id,
+                    "link_type": "revokes",
+                }
+            )
+            lifecycle_updates.append(
+                {
+                    "event_id": transfer_event_id,
+                    "lifecycle_state": "revoked",
+                    "outstanding_paise": 0,
+                }
+            )
+            superseded_events.append(transfer_event_id)
+
+    # Apply auto-revocations for failed transfers
+    for transfer_id in auto_revoked_transfers:
+        transfer_events = events_by_transfer.get(transfer_id, [])
+        for transfer_event in transfer_events:
+            transfer_event_id = transfer_event.get("id", 0)
+            lifecycle_updates.append(
+                {
+                    "event_id": transfer_event_id,
+                    "lifecycle_state": "revoked",
+                    "outstanding_paise": 0,
+                    "auto_revoked": True,
+                }
+            )
+            superseded_events.append(transfer_event_id)
 
     return LineageProposal(
         proposed_links=proposed_links,

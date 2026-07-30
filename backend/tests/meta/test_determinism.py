@@ -112,12 +112,12 @@ def test_generated_artifacts_no_timestamp_only_diff() -> None:
             data = json.load(f)
         generated_at = data.get("generated_at", "")
         # Content hash should be 16 hex chars, not an ISO timestamp
-        assert len(generated_at) == 16, (
-            f"api-map.json generated_at is not a content hash: {generated_at}"
-        )
-        assert all(c in "0123456789abcdef" for c in generated_at), (
-            f"api-map.json generated_at contains non-hex chars: {generated_at}"
-        )
+        assert (
+            len(generated_at) == 16
+        ), f"api-map.json generated_at is not a content hash: {generated_at}"
+        assert all(
+            c in "0123456789abcdef" for c in generated_at
+        ), f"api-map.json generated_at contains non-hex chars: {generated_at}"
 
     # Check contract-registry.json
     contract_path = GENERATED_DIR / "contract-registry.json"
@@ -126,12 +126,12 @@ def test_generated_artifacts_no_timestamp_only_diff() -> None:
             data = json.load(f)
         generated_at = data.get("generated_at", "")
         if generated_at:
-            assert len(generated_at) == 16, (
-                f"contract-registry.json generated_at is not a content hash: {generated_at}"
-            )
-            assert all(c in "0123456789abcdef" for c in generated_at), (
-                f"contract-registry.json generated_at contains non-hex chars: {generated_at}"
-            )
+            assert (
+                len(generated_at) == 16
+            ), f"contract-registry.json generated_at is not a content hash: {generated_at}"
+            assert all(
+                c in "0123456789abcdef" for c in generated_at
+            ), f"contract-registry.json generated_at contains non-hex chars: {generated_at}"
 
     # Check selective-plan.json
     selective_path = GENERATED_DIR / "selective-plan.json"
@@ -140,12 +140,12 @@ def test_generated_artifacts_no_timestamp_only_diff() -> None:
             data = json.load(f)
         generated_at = data.get("generated_at", "")
         if generated_at:
-            assert len(generated_at) == 16, (
-                f"selective-plan.json generated_at is not a content hash: {generated_at}"
-            )
-            assert all(c in "0123456789abcdef" for c in generated_at), (
-                f"selective-plan.json generated_at contains non-hex chars: {generated_at}"
-            )
+            assert (
+                len(generated_at) == 16
+            ), f"selective-plan.json generated_at is not a content hash: {generated_at}"
+            assert all(
+                c in "0123456789abcdef" for c in generated_at
+            ), f"selective-plan.json generated_at contains non-hex chars: {generated_at}"
 
 
 def test_contract_generator_no_timestamp_in_output() -> None:
@@ -156,9 +156,7 @@ def test_contract_generator_no_timestamp_in_output() -> None:
 
     import re
 
-    timestamp_pattern = re.compile(
-        r"# Generated: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"
-    )
+    timestamp_pattern = re.compile(r"# Generated: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}")
 
     for py_file in contract_dir.glob("test_*.py"):
         content = py_file.read_text()

@@ -4,21 +4,22 @@
 
 # Auto-generated contract test - DO NOT EDIT MANUALLY
 # Source: GET /api/v1/forecast
-# Generated: 2026-07-28T09:26:06.096186
+# Generated: 8282d520af01
 # To regenerate: python tools/generate_contract_tests.py --routers forecast
 
 import pytest
-from tests.contract.schema_validators import validate_response_schema
+
 
 @pytest.mark.contract
 def test_get__api_v1_forecast_contract(client):
     """Contract: GET /api/v1/forecast matches OpenAPI schema"""
-    
+
     response = client.get("/api/v1/forecast")
-    
 
     # Validate status code strictly against permitted spec responses and controlled errors
-    assert response.status_code in [200, 422, 400, 404], \
-        f"Expected one of [200, 422, 400, 404], got {response.status_code} (Response: {response.text})"
-
-    
+    assert response.status_code in [
+        200,
+        422,
+        400,
+        404,
+    ], f"Expected one of [200, 422, 400, 404], got {response.status_code} (Response: {response.text})"

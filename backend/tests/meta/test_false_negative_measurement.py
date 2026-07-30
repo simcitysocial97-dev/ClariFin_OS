@@ -22,6 +22,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 
 def _load_registry() -> dict[str, Any]:
     from runtime.registries import load_capability_registry
+
     return load_capability_registry()
 
 
@@ -43,7 +44,7 @@ def _run_selective_verification(engine_file: str) -> tuple[int, set[str]]:
     from src.verification.intelligence.selective_engine import SelectiveEngine
 
     impact_engine = ImpactEngine()
-    impact = impact_engine.analyze([engine_file])
+    impact_engine.analyze([engine_file])
 
     selective_engine = SelectiveEngine()
     plan = selective_engine.plan([engine_file])
@@ -90,7 +91,12 @@ def _measure_false_negatives(engine_file: str) -> dict[str, Any]:
         for edge in edges:
             if edge.get("source") == cap_id_str:
                 target_type = edge.get("target_type", "")
-                if target_type in ("property_test", "invariant_test", "capability_test"):
+                if target_type in (
+                    "property_test",
+                    "invariant_test",
+                    "capability_test",
+                    "golden_dataset",
+                ):
                     required_tests.add(edge.get("target", ""))
 
     missing_required = required_tests - selective_set
@@ -128,7 +134,9 @@ class TestFalseNegativeMeasurement:
         total_false_negatives = sum(m["false_negative_count"] for m in measurements)
 
         if total_false_negatives > 0:
-            failing = [m["capability"] for m in measurements if m["false_negative_count"] > 0]
+            failing = [
+                m["capability"] for m in measurements if m["false_negative_count"] > 0
+            ]
             pytest.fail(
                 f"Found {total_false_negatives} false negatives in "
                 f"capabilities: {failing}. "
@@ -138,12 +146,16 @@ class TestFalseNegativeMeasurement:
     def test_each_capability_measured(self, measurements: list[dict[str, Any]]) -> None:
         """Every capability must be measured."""
         registry = _load_registry()
-        registered_ids = {c.get("id") for c in registry.get("capabilities", []) if c.get("id")}
+        registered_ids = {
+            c.get("id") for c in registry.get("capabilities", []) if c.get("id")
+        }
         measured_ids = {m["capability"] for m in measurements}
         missing = registered_ids - measured_ids
         assert not missing, f"Capabilities not measured: {missing}"
 
-    def test_selective_runs_subset_of_full(self, measurements: list[dict[str, Any]]) -> None:
+    def test_selective_runs_subset_of_full(
+        self, measurements: list[dict[str, Any]]
+    ) -> None:
         """Selective verification should run fewer tests than full."""
         for m in measurements:
             assert m["selective_test_count"] <= m["full_test_count"], (
@@ -154,29 +166,38 @@ class TestFalseNegativeMeasurement:
     def test_selective_runs_non_empty(self, measurements: list[dict[str, Any]]) -> None:
         """Selective verification should run at least one test."""
         for m in measurements:
-            assert m["selective_test_count"] > 0, (
-                f"Selective verification ran 0 tests for {m['capability']}"
-            )
+            assert (
+                m["selective_test_count"] > 0
+            ), f"Selective verification ran 0 tests for {m['capability']}"
 
-    def test_dependency_graph_complete(self, measurements: list[dict[str, Any]]) -> None:
+    def test_dependency_graph_complete(
+        self, measurements: list[dict[str, Any]]
+    ) -> None:
         """The dependency graph must contain all required tests."""
         from runtime.discovery import discover_dependencies
 
         dep_map = discover_dependencies()
         edges = dep_map.get("edges", [])
 
-        test_edge_types = {"property_test", "invariant_test", "capability_test", "golden_dataset"}
+        test_edge_types = {
+            "property_test",
+            "invariant_test",
+            "capability_test",
+            "golden_dataset",
+        }
         test_edges = [e for e in edges if e.get("target_type") in test_edge_types]
 
         capabilities = dep_map.get("capabilities", {})
         for cap_id in capabilities:
             cap_test_edges = [e for e in test_edges if e.get("source") == cap_id]
-            assert len(cap_test_edges) > 0, (
-                f"Capability {cap_id} has no test edges in dependency graph"
-            )
+            assert (
+                len(cap_test_edges) > 0
+            ), f"Capability {cap_id} has no test edges in dependency graph"
 
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_engine_pairs())
-    def test_selective_includes_capability_tests(self, cap_id: str, engine_file: str) -> None:
+    def test_selective_includes_capability_tests(
+        self, cap_id: str, engine_file: str
+    ) -> None:
         """Selective verification must include capability-specific tests."""
         _selective_exit, selective_tests = _run_selective_verification(engine_file)
 

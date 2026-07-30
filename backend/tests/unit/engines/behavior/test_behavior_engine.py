@@ -7,13 +7,14 @@ and exercises its key utility functions.
 import pytest
 
 from src.engines.behavior_engine import (
-    _normalize_score,
     _coefficient_of_variation,
     _moving_average,
-    invalidate_behavior_cache,
+    _normalize_score,
     get_cached_behavior_profile,
+    invalidate_behavior_cache,
     set_cached_behavior_profile,
 )
+
 
 class TestBehaviorEngineCore:
     """Test the core behavior engine functions."""
@@ -40,7 +41,9 @@ class TestBehaviorEngineCore:
     def test_coefficient_of_variation(self) -> None:
         """Test _coefficient_of_variation with various inputs."""
         # Test basic case
-        assert _coefficient_of_variation([10, 20, 30]) == pytest.approx(0.408248, rel=1e-5)
+        assert _coefficient_of_variation([10, 20, 30]) == pytest.approx(
+            0.408248, rel=1e-5
+        )
 
         # Test single value
         assert _coefficient_of_variation([10]) == 0.0

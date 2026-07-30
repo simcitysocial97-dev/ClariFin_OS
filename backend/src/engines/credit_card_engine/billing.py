@@ -8,6 +8,7 @@ All rates in basis points (integer).
 
 Reuses _add_months from loan_engine for month-end-safe date arithmetic.
 """
+
 import calendar
 from datetime import date, timedelta
 from decimal import ROUND_HALF_EVEN, Decimal
@@ -96,17 +97,21 @@ def compute_next_statement_date(
 
 def _next_billing_day_after(start_date: date, billing_day: int) -> date:
     """Find the next occurrence of billing_day on or after start_date."""
+    # Move to the billing day of the current month first
     _, last_day_current = calendar.monthrange(start_date.year, start_date.month)
-    try:
-        candidate = date(start_date.year, start_date.month, min(billing_day, last_day_current))
-    except ValueError:
-        # Fallback safety (though min() with monthrange prevents ValueError)
-        if start_date.month == 12:
-            candidate = date(start_date.year + 1, 1, min(billing_day, 31))
-        else:
-            _, last_day_next = calendar.monthrange(start_date.year, start_date.month + 1)
-            candidate = date(start_date.year, start_date.month + 1, min(billing_day, last_day_next))
-    return candidate
+    target_day = min(billing_day, last_day_current)
+    candidate = date(start_date.year, start_date.month, target_day)
+
+    # If this candidate is already strictly after start_date, it's our next day
+    if candidate > start_date:
+        return candidate
+
+    # Otherwise, advance by one month using month-end safe arithmetic
+    next_month_ref = _add_months(date(start_date.year, start_date.month, 1), 1)
+    _, last_day_next = calendar.monthrange(next_month_ref.year, next_month_ref.month)
+    return date(
+        next_month_ref.year, next_month_ref.month, min(billing_day, last_day_next)
+    )
 
 
 def compute_statement_dates(

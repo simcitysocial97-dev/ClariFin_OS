@@ -48,6 +48,7 @@ class PrepaymentResult(BaseModel):
     new_remaining_months: int
     months_saved: int
     interest_saved_paise: int
+    penalty_paise: int = 0
     loan_closed: bool = False
     new_schedule: list[AmortizationRow] | None = None
 

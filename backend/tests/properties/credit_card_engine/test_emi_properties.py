@@ -15,16 +15,17 @@ from src.engines.credit_card_engine.emi import compute_emi_conversion
 
 # Constants for testing
 MAX_INTEREST_RATE_BPS = 3600  # 36% annual
-MIN_INTEREST_RATE_BPS = 500   # 5% annual
-MAX_TENURE_MONTHS = 24        # 24 months (2 years)
-MIN_TENURE_MONTHS = 3         # 3 months
+MIN_INTEREST_RATE_BPS = 500  # 5% annual
+MAX_TENURE_MONTHS = 24  # 24 months (2 years)
+MIN_TENURE_MONTHS = 3  # 3 months
 MAX_AMOUNT_PAISE = 10_000_000_00  # ₹10 lakh
-MIN_AMOUNT_PAISE = 10_000         # ₹100
+MIN_AMOUNT_PAISE = 10_000  # ₹100
+
 
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=50, deadline=None)
 def test_compute_emi_conversion_invariants(amount, rate, tenure):
@@ -63,10 +64,11 @@ def test_compute_emi_conversion_invariants(amount, rate, tenure):
         assert result["total_interest_paise"] == 0
         assert result["monthly_interest_paise"] == 0
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_emi_conversion_math_accuracy(amount, rate, tenure):
@@ -79,7 +81,6 @@ def test_compute_emi_conversion_math_accuracy(amount, rate, tenure):
         expected_emi = 0
         expected_total_repayment = 0
         expected_total_interest = 0
-        expected_monthly_interest = 0
     else:
         # Calculate expected EMI using loan engine formula
         monthly_rate = Decimal(rate) / Decimal(10000) / Decimal(12)
@@ -98,18 +99,21 @@ def test_compute_emi_conversion_math_accuracy(amount, rate, tenure):
         expected_total_interest = expected_total_repayment - amount
 
         # Calculate expected monthly interest
-        expected_monthly_interest = int(Decimal(amount) * monthly_rate)
+        int(Decimal(amount) * monthly_rate)
 
     # Verify calculations
     assert abs(result["emi_paise"] - expected_emi) <= 1
     assert abs(result["total_repayment_paise"] - expected_total_repayment) <= tenure
-    assert abs(result["total_interest_paise"] - max(0, expected_total_interest)) <= tenure
+    assert (
+        abs(result["total_interest_paise"] - max(0, expected_total_interest)) <= tenure
+    )
     assert abs(result["emi_paise"] - expected_emi) <= 1
+
 
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=30, deadline=None)
 def test_emi_proportionality(amount, rate, tenure):
@@ -137,9 +141,10 @@ def test_emi_proportionality(amount, rate, tenure):
         # Should be higher but not necessarily double
         assert double_rate_emi > base_emi
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=30, deadline=None)
 def test_emi_tenure_effects(amount, rate):
@@ -157,9 +162,10 @@ def test_emi_tenure_effects(amount, rate):
     # Longer tenure should have higher total interest
     assert long_result["total_interest_paise"] >= short_result["total_interest_paise"]
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=20, deadline=None)
 def test_zero_interest_emi(amount, tenure):
@@ -173,9 +179,10 @@ def test_zero_interest_emi(amount, tenure):
     assert result["total_interest_paise"] == 0
     assert result["monthly_interest_paise"] == 0
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=20, deadline=None)
 def test_short_tenure_emi(amount, rate):
@@ -190,9 +197,10 @@ def test_short_tenure_emi(amount, rate):
     if amount > 0:
         assert result["emi_paise"] >= 1
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=20, deadline=None)
 def test_long_tenure_emi(amount, rate):
@@ -209,10 +217,11 @@ def test_long_tenure_emi(amount, rate):
         interest_only_payment = int(Decimal(amount) * monthly_rate)
         assert result["emi_paise"] >= interest_only_payment
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=10, deadline=None)
 def test_emi_consistency(amount, rate, tenure):
@@ -230,9 +239,10 @@ def test_emi_consistency(amount, rate, tenure):
     # Total interest should equal total repayment - principal
     assert result["total_interest_paise"] == result["total_repayment_paise"] - amount
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
-    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS)
+    st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
 @settings(max_examples=10, deadline=None)
 def test_emi_edge_cases(amount, rate):
@@ -256,9 +266,10 @@ def test_emi_edge_cases(amount, rate):
     with pytest.raises(ValueError):
         compute_emi_conversion(amount, -1, MIN_TENURE_MONTHS)
 
+
 @given(
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=10, deadline=None)
 def test_emi_rounding_consistency(amount, tenure):
@@ -271,11 +282,11 @@ def test_emi_rounding_consistency(amount, tenure):
 
     # Test with very small interest rate (1 bps)
     small_rate_result = compute_emi_conversion(amount, 1, tenure)
-    
+
     # Monotonicity invariant: interest cannot decrease EMI
     assert small_rate_result["emi_paise"] >= result["emi_paise"] - 1
-    
-    # Mathematical upper bound: 1 bps over short/long tenure on any principal 
+
+    # Mathematical upper bound: 1 bps over short/long tenure on any principal
     # cannot add more than 0.1% (10 basis points) of the principal to the total EMI.
     max_reasonable_emi = result["emi_paise"] + max(1, int(result["emi_paise"] * 0.001))
     assert small_rate_result["emi_paise"] <= max_reasonable_emi

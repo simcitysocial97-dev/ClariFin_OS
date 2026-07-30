@@ -283,7 +283,7 @@ class StatementExtractor:
         # Try lattice first
         lattice_usable = False
         try:
-            tables = camelot.read_pdf(
+            tables = camelot.read_pdf(  # type: ignore[attr-defined]
                 self.pdf_path,
                 pages=page_str,
                 flavor="lattice",
@@ -315,7 +315,7 @@ class StatementExtractor:
         # Only run stream if lattice didn't yield a usable table
         if not lattice_usable:
             try:
-                tables = camelot.read_pdf(
+                tables = camelot.read_pdf(  # type: ignore[attr-defined]
                     self.pdf_path,
                     pages=page_str,
                     flavor="stream",
@@ -1127,7 +1127,7 @@ class StatementExtractor:
 
             for flavor in (strategy, "stream" if strategy == "lattice" else "lattice"):
                 try:
-                    tables = camelot.read_pdf(
+                    tables = camelot.read_pdf(  # type: ignore[attr-defined]
                         self.pdf_path,
                         pages=page_str,
                         flavor=flavor,
@@ -1194,7 +1194,7 @@ class StatementExtractor:
 
             for flavor in (strategy, "stream" if strategy == "lattice" else "lattice"):
                 try:
-                    tables = camelot.read_pdf(
+                    tables = camelot.read_pdf(  # type: ignore[attr-defined]
                         self.pdf_path,
                         pages=page_str,
                         flavor=flavor,

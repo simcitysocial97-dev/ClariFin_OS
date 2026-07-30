@@ -6,8 +6,8 @@ calculations using property-based testing techniques.
 """
 
 from decimal import Decimal
-import pytest
-from hypothesis import given, settings, assume
+
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.emi import (
@@ -20,17 +20,17 @@ from src.engines.loan_engine.utils import bps_to_monthly_rate
 
 # Constants for testing
 MAX_INTEREST_RATE_BPS = 3600  # 36% annual
-MIN_INTEREST_RATE_BPS = 500   # 5% annual
-MAX_TENURE_MONTHS = 360       # 30 years
-MIN_TENURE_MONTHS = 1         # 1 month
+MIN_INTEREST_RATE_BPS = 500  # 5% annual
+MAX_TENURE_MONTHS = 360  # 30 years
+MIN_TENURE_MONTHS = 1  # 1 month
 MAX_PRINCIPAL_PAISE = 10_000_000_00  # ₹10 crore
-MIN_PRINCIPAL_PAISE = 100_000        # ₹1,000
+MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
 
 
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=50, deadline=None)
 def test_compute_emi_fixed_invariants(principal, rate, tenure):
@@ -51,7 +51,7 @@ def test_compute_emi_fixed_invariants(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_emi_fixed_math_accuracy(principal, rate, tenure):
@@ -72,13 +72,15 @@ def test_compute_emi_fixed_math_accuracy(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_principal_from_emi_invariants(principal, rate, tenure):
     """Property: compute_principal_from_emi must satisfy all invariants."""
     assume(principal >= 1_000_000)
-    assume(tenure >= 12)  # Exclude short tenures where integer quantization drift exceeds tolerance
+    assume(
+        tenure >= 12
+    )  # Exclude short tenures where integer quantization drift exceeds tolerance
 
     emi = compute_emi_fixed(principal, rate, tenure)
     computed_principal = compute_principal_from_emi(emi, rate, tenure)
@@ -93,7 +95,7 @@ def test_compute_principal_from_emi_invariants(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_principal_from_emi_math_accuracy(principal, rate, tenure):
@@ -115,7 +117,7 @@ def test_compute_principal_from_emi_math_accuracy(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=10_000, max_value=500_000)
+    st.integers(min_value=10_000, max_value=500_000),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_tenure_from_emi_invariants(principal, rate, emi):
@@ -123,7 +125,7 @@ def test_compute_tenure_from_emi_invariants(principal, rate, emi):
     monthly_rate = bps_to_monthly_rate(rate)
     interest_only = principal * monthly_rate
     assume(emi > interest_only)
-    
+
     tenure = compute_tenure_from_emi(principal, rate, emi)
     assert 1 <= tenure <= 999
 
@@ -131,7 +133,7 @@ def test_compute_tenure_from_emi_invariants(principal, rate, emi):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=12, max_value=60)
+    st.integers(min_value=12, max_value=60),
 )
 @settings(max_examples=30, deadline=None)
 def test_compute_tenure_from_emi_consistency(principal, rate, tenure):
@@ -144,7 +146,7 @@ def test_compute_tenure_from_emi_consistency(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=20, deadline=None)
 def test_compute_emi_floating_invariants(principal, rate, tenure):
@@ -158,7 +160,7 @@ def test_compute_emi_floating_invariants(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=0, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS)
+    st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
 @settings(max_examples=20, deadline=None)
 def test_zero_interest_emi(principal, rate, tenure):
@@ -178,7 +180,7 @@ def test_zero_interest_emi(principal, rate, tenure):
 @given(
     st.integers(min_value=MIN_PRINCIPAL_PAISE, max_value=MAX_PRINCIPAL_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
-    st.integers(min_value=120, max_value=360)
+    st.integers(min_value=120, max_value=360),
 )
 @settings(max_examples=20, deadline=None)
 def test_long_tenure_emi(principal, rate, tenure):

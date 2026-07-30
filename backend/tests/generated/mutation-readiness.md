@@ -1,6 +1,6 @@
 # Mutation Readiness Report
 
-Generated: 2026-07-28T00:20:59.333201+00:00
+Generated: 2026-07-29T06:28:29.835798+00:00
 
 ## Engine Readiness Status
 
@@ -15,7 +15,7 @@ Generated: 2026-07-28T00:20:59.333201+00:00
 | `src/engines/transaction_intelligence/loan_emi_detector.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/credit_card_engine/utilization.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/credit_card_engine/interest.py` | 4 | 0 | Ready | HIGH |
-| `src/engines/credit_card_engine/emi.py` | 1 | 0 | Ready | HIGH |
+| `src/engines/credit_card_engine/emi.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/credit_card_engine/metrics.py` | 1 | 0 | Ready | HIGH |
 | `src/engines/credit_card_engine/foreclosure.py` | 1 | 0 | Ready | HIGH |
 | `src/engines/credit_card_engine/billing.py` | 4 | 0 | Ready | HIGH |
@@ -36,9 +36,9 @@ Generated: 2026-07-28T00:20:59.333201+00:00
 | `src/engines/behaviour_engine/core.py` | 0 | 0 | Partial | UNKNOWN |
 | `src/engines/behaviour_engine/income.py` | 5 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/cashflow.py` | 3 | 0 | Ready | HIGH |
-| `src/engines/behaviour_engine/temporal.py` | 6 | 0 | Ready | MEDIUM |
+| `src/engines/behaviour_engine/temporal.py` | 6 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/lifestyle.py` | 2 | 0 | Ready | HIGH |
-| `src/engines/behaviour_engine/utils.py` | 3 | 0 | Ready | MEDIUM |
+| `src/engines/behaviour_engine/utils.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/resilience.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/patterns.py` | 5 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/debt.py` | 4 | 0 | Ready | HIGH |
@@ -49,13 +49,13 @@ Generated: 2026-07-28T00:20:59.333201+00:00
 | `src/engines/behaviour_engine/savings.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/stress.py` | 5 | 1 | Partial | MEDIUM |
 | `src/engines/loan_engine/models.py` | 0 | 0 | Partial | UNKNOWN |
-| `src/engines/loan_engine/amortization.py` | 7 | 0 | Ready | HIGH |
-| `src/engines/loan_engine/prepayment.py` | 5 | 0 | Ready | HIGH |
+| `src/engines/loan_engine/amortization.py` | 6 | 1 | Partial | MEDIUM |
+| `src/engines/loan_engine/prepayment.py` | 4 | 1 | Partial | MEDIUM |
 | `src/engines/loan_engine/emi.py` | 6 | 0 | Ready | HIGH |
-| `src/engines/loan_engine/metrics.py` | 5 | 0 | Ready | HIGH |
+| `src/engines/loan_engine/metrics.py` | 4 | 1 | Partial | MEDIUM |
 | `src/engines/loan_engine/utils.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/foreclosure.py` | 2 | 0 | Ready | HIGH |
-| `src/engines/loan_engine/floating_rate.py` | 2 | 0 | Ready | HIGH |
+| `src/engines/loan_engine/floating_rate.py` | 1 | 1 | Partial | MEDIUM |
 | `src/engines/balance_engine.py` | 0 | 4 | Blocked | LOW |
 | `src/engines/behavior_engine.py` | 0 | 5 | Blocked | LOW |
 | `src/engines/ledger_audit_engine.py` | 0 | 3 | Blocked | LOW |

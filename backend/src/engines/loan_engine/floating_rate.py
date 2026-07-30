@@ -27,15 +27,12 @@ def apply_floating_rate_change(
     current_emi = change_row.emi_paise
 
     # Determine mode for regeneration
-    regen_mode: Literal["reduce_tenure", "reduce_emi"] = (
-        "reduce_emi" if mode == "adjust_emi" else "reduce_tenure"
-    )
 
     # For adjust_emi: keep tenure, change EMI -> reduce_emi mode
     # For adjust_tenure: keep EMI, change tenure -> reduce_tenure mode
     if mode == "adjust_emi":
         tail = regenerate_schedule(
-            schedule[change_month - 1:],
+            schedule[change_month - 1 :],
             opening_balance,
             new_rate_bps,
             "reduce_emi",
@@ -45,7 +42,7 @@ def apply_floating_rate_change(
         )
     else:  # adjust_tenure
         tail = regenerate_schedule(
-            schedule[change_month - 1:],
+            schedule[change_month - 1 :],
             opening_balance,
             new_rate_bps,
             "reduce_tenure",
@@ -54,7 +51,7 @@ def apply_floating_rate_change(
             original_tenure=None,
         )
 
-    prefix = schedule[:change_month - 1] if change_month > 1 else []
+    prefix = schedule[: change_month - 1] if change_month > 1 else []
     return prefix + tail
 
 
@@ -75,15 +72,22 @@ def simulate_floating_rate_schedule(
         start_date=start_date or "2025-01-01",
     )
 
-    def get_change_month(change):
+    def get_change_month(
+        change: tuple[int, int] | tuple[int, int, str] | FloatingRateChange,
+    ) -> int:
         return change[0] if isinstance(change, tuple) else change.change_month
 
-    def get_new_rate(change):
+    def get_new_rate(
+        change: tuple[int, int] | tuple[int, int, str] | FloatingRateChange,
+    ) -> int:
         return change[1] if isinstance(change, tuple) else change.new_rate_bps
 
-    def get_mode(change):
+    def get_mode(
+        change: tuple[int, int] | tuple[int, int, str] | FloatingRateChange,
+    ) -> Literal["adjust_emi", "adjust_tenure"]:
         if isinstance(change, tuple):
-            return change[2] if len(change) > 2 else "adjust_emi"
+            mode = change[2] if len(change) > 2 else "adjust_emi"
+            return "adjust_emi" if mode not in ("adjust_emi", "adjust_tenure") else mode  # type: ignore[return-value]
         return change.mode
 
     sorted_changes = sorted(rate_changes, key=get_change_month)

@@ -80,7 +80,7 @@ class CamelotExtractor:
 
         # Try lattice first (grid-based PDFs like HDFC)
         try:
-            tables = camelot.read_pdf(
+            tables = camelot.read_pdf(  # type: ignore[attr-defined]
                 self.pdf_path,
                 pages=page_str,
                 flavor="lattice",
@@ -101,7 +101,7 @@ class CamelotExtractor:
 
         # Fallback to stream (gridless PDFs like IDFC)
         try:
-            tables = camelot.read_pdf(
+            tables = camelot.read_pdf(  # type: ignore[attr-defined]
                 self.pdf_path,
                 pages=page_str,
                 flavor="stream",

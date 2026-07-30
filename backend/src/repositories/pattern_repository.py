@@ -160,7 +160,6 @@ class PatternRepository(BaseRepository):
             "first_observed": row["first_observed"],
             "last_observed": row["last_observed"],
             "transaction_count": row["transaction_count"],
-            
             "total_amount": Decimal(row["total_amount_paise"]) / Decimal(100),
             "created_at": row["created_at"],
         }

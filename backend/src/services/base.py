@@ -21,8 +21,6 @@ class BaseService:
             db_path = (
                 getattr(settings, "_database_path_override", None)
                 or os.getenv("FINANCE_DB_PATH")
-                or str(
-                    Path(__file__).resolve().parent.parent / "data" / "finance.db"
-                )
+                or str(Path(__file__).resolve().parent.parent / "data" / "finance.db")
             )
         self.db_path = str(db_path)

@@ -16,5 +16,199 @@
     "income_volatility": "high",
     "confidence_bps": 4000,
     "risk_flags": ["irregular_income", "deficit_risk"]
-  }
+  },
+  "golden_tests": [
+    {
+      "name": "windfall_scenario_bonus",
+      "description": "Test goal planning with unexpected windfall (bonus)",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 50000000,
+          "expense_paise": 8000000,
+          "surplus_paise": 42000000,
+          "mutation_type": "windfall"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "high",
+          "vacation": "high",
+          "emergency_fund": "high",
+          "debt_repayment": "high"
+        },
+        "confidence_bps": 9000,
+        "risk_flags": []
+      }
+    },
+    {
+      "name": "windfall_scenario_gift",
+      "description": "Test goal planning with unexpected windfall (gift)",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 20000000,
+          "expense_paise": 8000000,
+          "surplus_paise": 12000000,
+          "mutation_type": "windfall"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "medium",
+          "vacation": "high",
+          "emergency_fund": "high",
+          "debt_repayment": "medium"
+        },
+        "confidence_bps": 8500,
+        "risk_flags": []
+      }
+    },
+    {
+      "name": "market_crash_scenario",
+      "description": "Test goal planning with sudden market downturn",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 2000000,
+          "expense_paise": 8000000,
+          "surplus_paise": -6000000,
+          "mutation_type": "market_crash",
+          "investment_loss_paise": 1500000
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "low",
+          "vacation": "low",
+          "emergency_fund": "medium",
+          "debt_repayment": "low"
+        },
+        "confidence_bps": 3000,
+        "risk_flags": ["market_crash", "deficit_risk"]
+      }
+    },
+    {
+      "name": "job_loss_scenario",
+      "description": "Test goal planning with sudden income loss",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 0,
+          "expense_paise": 8000000,
+          "surplus_paise": -8000000,
+          "mutation_type": "job_loss"
+        },
+        {
+          "date_iso": "2025-05",
+          "income_paise": 0,
+          "expense_paise": 8000000,
+          "surplus_paise": -8000000,
+          "mutation_type": "job_loss"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "low",
+          "vacation": "low",
+          "emergency_fund": "low",
+          "debt_repayment": "low"
+        },
+        "confidence_bps": 1000,
+        "risk_flags": ["job_loss", "deficit_risk", "high_volatility"]
+      }
+    },
+    {
+      "name": "medical_emergency_scenario",
+      "description": "Test goal planning with unexpected medical expense",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 2000000,
+          "expense_paise": 20000000,
+          "surplus_paise": -18000000,
+          "mutation_type": "medical_emergency"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "low",
+          "vacation": "low",
+          "emergency_fund": "low",
+          "debt_repayment": "low"
+        },
+        "confidence_bps": 1500,
+        "risk_flags": ["medical_emergency", "deficit_risk", "high_volatility"]
+      }
+    },
+    {
+      "name": "zero_income_edge_case",
+      "description": "Test goal planning with zero income",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 0,
+          "expense_paise": 8000000,
+          "surplus_paise": -8000000,
+          "mutation_type": "boundary_condition"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "low",
+          "vacation": "low",
+          "emergency_fund": "low",
+          "debt_repayment": "low"
+        },
+        "confidence_bps": 500,
+        "risk_flags": ["zero_income", "deficit_risk", "high_volatility"]
+      }
+    },
+    {
+      "name": "max_expense_edge_case",
+      "description": "Test goal planning with maximum expenses",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 2000000,
+          "expense_paise": 99999999,
+          "surplus_paise": -97999999,
+          "mutation_type": "boundary_condition"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "low",
+          "vacation": "low",
+          "emergency_fund": "low",
+          "debt_repayment": "low"
+        },
+        "confidence_bps": 100,
+        "risk_flags": ["max_expense", "deficit_risk", "high_volatility"]
+      }
+    },
+    {
+      "name": "fractional_paise_edge_case",
+      "description": "Test goal planning with fractional paise values",
+      "mutations": [
+        {
+          "date_iso": "2025-04",
+          "income_paise": 1234567,
+          "expense_paise": 789012,
+          "surplus_paise": 445545,
+          "mutation_type": "boundary_condition"
+        }
+      ],
+      "expected_output": {
+        "goal_achievability": {
+          "education": "low",
+          "vacation": "medium",
+          "emergency_fund": "medium",
+          "debt_repayment": "low"
+        },
+        "confidence_bps": 5000,
+        "risk_flags": []
+      }
+    }
+  ]
 }

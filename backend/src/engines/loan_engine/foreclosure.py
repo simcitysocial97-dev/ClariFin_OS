@@ -35,8 +35,13 @@ def compute_foreclosure_amount(
     remaining_interest = total_interest_paise(schedule)
 
     # Penalty with ROUND_HALF_EVEN
-    penalty = int((Decimal(prepayment_penalty_bps) * Decimal(outstanding_paise) / Decimal(10000))
-                  .quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    penalty = int(
+        (
+            Decimal(prepayment_penalty_bps)
+            * Decimal(outstanding_paise)
+            / Decimal(10000)
+        ).quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+    )
 
     total = outstanding_paise + remaining_interest + penalty
 
@@ -73,8 +78,13 @@ def compute_prepayment_breakup(
         start_date="2025-01-01",
     )
     accrued_interest = total_interest_paise(schedule)
-    penalty = int((Decimal(prepayment_penalty_bps) * Decimal(outstanding_paise) / Decimal(10000))
-                  .quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
+    penalty = int(
+        (
+            Decimal(prepayment_penalty_bps)
+            * Decimal(outstanding_paise)
+            / Decimal(10000)
+        ).quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+    )
 
     return {
         "principal_remaining_paise": outstanding_paise,

@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
+
 from src.engines.reconciliation_engine import (
     _calculate_confidence,
+    _check_match,
     _date_difference_days,
     _simple_description_similarity,
-    _check_match,
 )
 
 # --- Strategies ---
+
 
 @st.composite
 def date_pair(draw):
@@ -20,13 +22,18 @@ def date_pair(draw):
     days_diff = draw(st.integers(min_value=0, max_value=30))
     return base_date, f"2023-01-{days_diff + 1:02d}"
 
+
 @st.composite
 def transaction_pair(draw):
     """Generate a pair of transactions for reconciliation testing."""
     amount = draw(st.integers(min_value=1, max_value=1000000))
     date_a, date_b = draw(date_pair())
     account_a = draw(st.text(min_size=1, max_size=10, alphabet="abc123"))
-    account_b = draw(st.text(min_size=1, max_size=10, alphabet="abc123").filter(lambda x: x != account_a))
+    account_b = draw(
+        st.text(min_size=1, max_size=10, alphabet="abc123").filter(
+            lambda x: x != account_a
+        )
+    )
 
     # Ensure different accounts
     if account_a == account_b:
@@ -48,6 +55,7 @@ def transaction_pair(draw):
         "account_id": account_b,
     }
 
+
 @st.composite
 def matching_transaction_pair(draw):
     """Generate a pair of transactions that should match."""
@@ -58,6 +66,7 @@ def matching_transaction_pair(draw):
     txn_b["date_iso"] = date_b
     return txn_a, txn_b
 
+
 @st.composite
 def non_matching_transaction_pair(draw):
     """Generate a pair of transactions that should not match."""
@@ -66,7 +75,9 @@ def non_matching_transaction_pair(draw):
     txn_b["credit"] = txn_a["debit"] + draw(st.integers(min_value=1, max_value=1000))
     return txn_a, txn_b
 
+
 # --- Tests for Utility Functions ---
+
 
 @settings(max_examples=50)
 @given(date_pair())
@@ -78,6 +89,7 @@ def test_date_difference_days(date_pair):
     assert diff >= 0
     assert diff <= 30  # Based on our date_pair strategy
 
+
 @settings(max_examples=50)
 @given(st.text(), st.text())
 def test_description_similarity_bounds(desc_a, desc_b):
@@ -85,13 +97,16 @@ def test_description_similarity_bounds(desc_a, desc_b):
     similarity = _simple_description_similarity(desc_a, desc_b)
     assert 0.0 <= similarity <= 1.0
 
+
 @settings(max_examples=50)
 @given(
     st.integers(min_value=0, max_value=30),  # date_diff_days
     st.booleans(),  # amount_exact
     st.floats(min_value=0.0, max_value=1.0),  # description_similarity
 )
-def test_confidence_calculation_bounds(date_diff_days, amount_exact, description_similarity):
+def test_confidence_calculation_bounds(
+    date_diff_days, amount_exact, description_similarity
+):
     """Confidence must be in [0, 1] and deterministic."""
     confidence = _calculate_confidence(
         date_diff_days=date_diff_days,
@@ -101,7 +116,9 @@ def test_confidence_calculation_bounds(date_diff_days, amount_exact, description
     assert 0.0 <= confidence <= 1.0
     assert isinstance(confidence, float)
 
+
 # --- Tests for Matching Logic ---
+
 
 @settings(max_examples=50)
 @given(matching_transaction_pair())
@@ -113,6 +130,7 @@ def test_matching_transactions_have_confidence(txn_pair):
     assert match["match_confidence"] > 0.0
     assert match["match_confidence"] <= 1.0
 
+
 @settings(max_examples=50)
 @given(non_matching_transaction_pair())
 def test_non_matching_transactions_no_match(txn_pair):
@@ -120,6 +138,7 @@ def test_non_matching_transactions_no_match(txn_pair):
     txn_a, txn_b = txn_pair
     match = _check_match(txn_a, txn_b)
     assert match is None
+
 
 @settings(max_examples=50)
 @given(matching_transaction_pair())
@@ -142,6 +161,7 @@ def test_exact_date_matches_have_higher_confidence(txn_pair):
     # Exact match should have higher confidence
     assert exact_match["match_confidence"] >= window_match["match_confidence"]
 
+
 @settings(max_examples=50)
 @given(matching_transaction_pair())
 def test_same_account_no_match(txn_pair):
@@ -150,6 +170,7 @@ def test_same_account_no_match(txn_pair):
     txn_b["account_id"] = txn_a["account_id"]  # Same account
     match = _check_match(txn_a, txn_b)
     assert match is None
+
 
 @settings(max_examples=50)
 @given(matching_transaction_pair())
@@ -170,7 +191,9 @@ def test_deterministic_key_consistency(txn_pair):
     assert match_reversed is not None
     assert match_reversed["deterministic_key"] == match1["deterministic_key"]
 
+
 # --- Tests for Confidence Calculation ---
+
 
 @settings(max_examples=50)
 @given(st.integers(min_value=0, max_value=30))
@@ -190,6 +213,7 @@ def test_confidence_date_factors(date_diff_days):
         # Should be 0.4 (amount only) since date_diff_days > 1
         assert confidence == 0.4
 
+
 @settings(max_examples=50)
 @given(st.floats(min_value=0.0, max_value=1.0))
 def test_confidence_description_factors(description_similarity):
@@ -201,9 +225,12 @@ def test_confidence_description_factors(description_similarity):
     )
 
     if description_similarity > 0.7:
-        assert confidence == 1.0  # 0.4 (date) + 0.4 (amount) + 0.2 (description) = 1.0 (capped)
+        assert (
+            confidence == 1.0
+        )  # 0.4 (date) + 0.4 (amount) + 0.2 (description) = 1.0 (capped)
     else:
         assert confidence == 0.8  # 0.4 (date) + 0.4 (amount)
+
 
 def test_confidence_capping():
     """Confidence should be capped at 1.0."""

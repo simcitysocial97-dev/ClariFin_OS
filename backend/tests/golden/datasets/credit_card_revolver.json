@@ -1,6 +1,6 @@
 {
   "scenario": "credit_card_revolver",
-  "description": "Revolving credit card debt. User carries balance month-to-month, pays only minimum due.",
+  "description": "Revolving credit card debt with foreclosure edge cases. Includes partial payments, late fees, interest capitalization, and prepayment penalties.",
   "household": {
     "id": "hh_cc_001",
     "name": "Credit Card Revolver",
@@ -25,8 +25,9 @@
     {"date_iso": "2026-01-10", "description": "Online Shopping", "amount_paise": -450000, "type": "debit", "category": "shopping"},
     {"date_iso": "2026-01-15", "description": "Groceries", "amount_paise": -350000, "type": "debit", "category": "food"},
     {"date_iso": "2026-02-01", "description": "Salary Credit", "amount_paise": 6000000, "type": "credit", "category": "income"},
-    {"date_iso": "2026-02-05", "description": "Credit Card Payment", "amount_paise": -300000, "type": "debit", "category": "credit_card"},
-    {"date_iso": "2026-02-10", "description": "Dining", "amount_paise": -120000, "type": "debit", "category": "food"},
+    {"date_iso": "2026-02-05", "description": "Credit Card Payment (Partial)", "amount_paise": -150000, "type": "debit", "category": "credit_card"},
+    {"date_iso": "2026-02-10", "description": "Late Fee Applied", "amount_paise": -5000, "type": "debit", "category": "fees"},
+    {"date_iso": "2026-02-15", "description": "Interest Capitalized", "amount_paise": -20000, "type": "debit", "category": "interest"},
     {"date_iso": "2026-03-01", "description": "Salary Credit", "amount_paise": 6000000, "type": "credit", "category": "income"},
     {"date_iso": "2026-03-05", "description": "Credit Card Payment", "amount_paise": -280000, "type": "debit", "category": "credit_card"}
   ],
@@ -41,12 +42,17 @@
       "statement_date": "2026-01-05",
       "due_date": "2026-01-25",
       "min_due_paise": 90000,
-      "total_amount_due_paise": 1800000
+      "total_amount_due_paise": 1800000,
+      "interest_rate_bps": 3600,
+      "late_fee_paise": 5000,
+      "prepayment_penalty_bps": 200
     }
   ],
   "financial_events": [
     {"event_type": "credit_card_payment", "amount_paise": -250000, "date_iso": "2026-01-05", "account_id": "acct_cc_001"},
-    {"event_type": "credit_card_payment", "amount_paise": -300000, "date_iso": "2026-02-05", "account_id": "acct_cc_001"}
+    {"event_type": "credit_card_payment", "amount_paise": -150000, "date_iso": "2026-02-05", "account_id": "acct_cc_001"},
+    {"event_type": "late_fee_applied", "amount_paise": -5000, "date_iso": "2026-02-10", "account_id": "acct_cc_001"},
+    {"event_type": "interest_capitalized", "amount_paise": -20000, "date_iso": "2026-02-15", "account_id": "acct_cc_001"}
   ],
   "expected_output": {
     "monthly_income_paise": 6000000,
@@ -56,5 +62,149 @@
     "has_revolving_debt": true,
     "confidence_bps": 6500,
     "risk_flags": ["high_credit_utilization", "revolving_debt"]
+  },
+  "golden_tests": {
+    "foreclosure_edge_cases": [
+      {
+        "name": "Partial Payment Before Foreclosure",
+        "description": "Test foreclosure calculation after partial payment.",
+        "input": {
+          "outstanding_paise": 1650000,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 0
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 1720000,
+          "outstanding_paise": 1650000,
+          "accrued_interest_paise": 70000,
+          "penalty_paise": 0
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": false,
+          "deterministic": true
+        }
+      },
+      {
+        "name": "Late Fee Applied",
+        "description": "Test foreclosure calculation with late fees.",
+        "input": {
+          "outstanding_paise": 1655000,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 0
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 1725000,
+          "outstanding_paise": 1655000,
+          "accrued_interest_paise": 70000,
+          "penalty_paise": 0
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": false,
+          "deterministic": true
+        }
+      },
+      {
+        "name": "Interest Capitalization",
+        "description": "Test foreclosure calculation with capitalized interest.",
+        "input": {
+          "outstanding_paise": 1675000,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 0
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 1745000,
+          "outstanding_paise": 1675000,
+          "accrued_interest_paise": 70000,
+          "penalty_paise": 0
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": false,
+          "deterministic": true
+        }
+      },
+      {
+        "name": "Prepayment Penalty",
+        "description": "Test foreclosure calculation with prepayment penalty.",
+        "input": {
+          "outstanding_paise": 1800000,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 200
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 1872000,
+          "outstanding_paise": 1800000,
+          "accrued_interest_paise": 72000,
+          "penalty_paise": 36000
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": false,
+          "deterministic": true
+        }
+      },
+      {
+        "name": "Zero Balance",
+        "description": "Test foreclosure calculation with zero outstanding balance.",
+        "input": {
+          "outstanding_paise": 0,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 200
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 0,
+          "outstanding_paise": 0,
+          "accrued_interest_paise": 0,
+          "penalty_paise": 0
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": true,
+          "deterministic": true
+        }
+      },
+      {
+        "name": "Maxed Out Card",
+        "description": "Test foreclosure calculation for maxed-out credit card.",
+        "input": {
+          "outstanding_paise": 3000000,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 200
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 3120000,
+          "outstanding_paise": 3000000,
+          "accrued_interest_paise": 120000,
+          "penalty_paise": 60000
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": false,
+          "deterministic": true
+        }
+      },
+      {
+        "name": "Fractional Paise",
+        "description": "Test foreclosure calculation with fractional paise (rounded).",
+        "input": {
+          "outstanding_paise": 1800001,
+          "annual_rate_bps": 3600,
+          "remaining_months": 12,
+          "penalty_bps": 200
+        },
+        "expected_output": {
+          "foreclosure_amount_paise": 1872001,
+          "outstanding_paise": 1800001,
+          "accrued_interest_paise": 72000,
+          "penalty_paise": 36000
+        },
+        "validation": {
+          "foreclosure_amount_le_outstanding": false,
+          "deterministic": true
+        }
+      }
+    ]
   }
 }

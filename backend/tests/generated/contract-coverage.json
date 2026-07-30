@@ -19,21 +19,11 @@
     "snapshots": 0,
     "coverage": "0%"
   },
-  "accounts_intelligence": {
-    "endpoints": 6,
+  "accounts": {
+    "endpoints": 25,
     "contract_published": false,
     "capabilities": [
       "unknown"
-    ],
-    "tested": 0,
-    "snapshots": 0,
-    "coverage": "0%"
-  },
-  "accounts": {
-    "endpoints": 22,
-    "contract_published": false,
-    "capabilities": [
-      "account_management"
     ],
     "tested": 0,
     "snapshots": 0,
@@ -63,7 +53,7 @@
     "endpoints": 7,
     "contract_published": false,
     "capabilities": [
-      "financial_health"
+      "unknown"
     ],
     "tested": 0,
     "snapshots": 0,
@@ -103,7 +93,7 @@
     "endpoints": 13,
     "contract_published": false,
     "capabilities": [
-      "credit_cards"
+      "unknown"
     ],
     "tested": 0,
     "snapshots": 0,
@@ -113,7 +103,7 @@
     "endpoints": 4,
     "contract_published": false,
     "capabilities": [
-      "household_cashflow"
+      "unknown"
     ],
     "tested": 0,
     "snapshots": 0,
@@ -203,7 +193,7 @@
     "endpoints": 13,
     "contract_published": false,
     "capabilities": [
-      "debt_management"
+      "unknown"
     ],
     "tested": 0,
     "snapshots": 0,
@@ -253,7 +243,7 @@
     "endpoints": 7,
     "contract_published": false,
     "capabilities": [
-      "reconciliation"
+      "unknown"
     ],
     "tested": 0,
     "snapshots": 0,
@@ -273,7 +263,7 @@
     "endpoints": 4,
     "contract_published": false,
     "capabilities": [
-      "transaction_intelligence"
+      "unknown"
     ],
     "tested": 0,
     "snapshots": 0,

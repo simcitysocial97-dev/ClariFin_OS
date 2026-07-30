@@ -9,7 +9,7 @@ real data instead of empty stubs.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 
 def _delegate(func_name: str) -> Any:
@@ -37,7 +37,9 @@ def _delegate(func_name: str) -> Any:
             discover_property_tests as _real_pt,
         )
     except ImportError:
-        return [] if "dependencies" not in func_name else {"capabilities": {}, "edges": []}
+        return (
+            [] if "dependencies" not in func_name else {"capabilities": {}, "edges": []}
+        )
 
     mapping = {
         "discover_capabilities": _real,
@@ -50,32 +52,41 @@ def _delegate(func_name: str) -> Any:
     }
     func = mapping.get(func_name)
     if func is None:
-        return [] if "dependencies" not in func_name else {"capabilities": {}, "edges": []}
+        return (
+            [] if "dependencies" not in func_name else {"capabilities": {}, "edges": []}
+        )
     return func()
+
 
 def discover_capabilities() -> list[dict[str, Any]]:
     """Discover all capabilities in the project."""
-    return _delegate("discover_capabilities")
+    return cast(list[dict[str, Any]], _delegate("discover_capabilities"))
+
 
 def discover_capability_tests() -> list[dict[str, Any]]:
     """Discover capability test files."""
-    return _delegate("discover_capability_tests")
+    return cast(list[dict[str, Any]], _delegate("discover_capability_tests"))
+
 
 def discover_contract_tests() -> list[dict[str, Any]]:
     """Discover contract test files."""
-    return _delegate("discover_contract_tests")
+    return cast(list[dict[str, Any]], _delegate("discover_contract_tests"))
+
 
 def discover_golden_datasets() -> list[dict[str, Any]]:
     """Discover golden dataset files."""
-    return _delegate("discover_golden_datasets")
+    return cast(list[dict[str, Any]], _delegate("discover_golden_datasets"))
+
 
 def discover_invariant_tests() -> list[dict[str, Any]]:
     """Discover invariant test files."""
-    return _delegate("discover_invariant_tests")
+    return cast(list[dict[str, Any]], _delegate("discover_invariant_tests"))
+
 
 def discover_property_tests() -> list[dict[str, Any]]:
     """Discover property test files."""
-    return _delegate("discover_property_tests")
+    return cast(list[dict[str, Any]], _delegate("discover_property_tests"))
+
 
 def discover_dependencies() -> dict[str, Any]:
     """Discover dependency graph for capabilities.
@@ -93,4 +104,4 @@ def discover_dependencies() -> dict[str, Any]:
     - capability → golden datasets
     - capability → invariant tests
     """
-    return _delegate("discover_dependencies")
+    return cast(dict[str, Any], _delegate("discover_dependencies"))
