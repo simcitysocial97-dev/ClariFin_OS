@@ -21,6 +21,10 @@ TESTS_DIR = BACKEND_DIR / "tests"
 GENERATED_DIR = TESTS_DIR / "generated"
 AUDIT_OUTPUT = PROJECT_ROOT / "CAPABILITY_AUDIT.md"
 
+# Capabilities that are meta-capabilities (infrastructure/verification)
+# and don't have business logic engines, routers, etc.
+META_CAPABILITIES = {"verification"}
+
 # Component categories to audit per capability
 COMPONENT_CATEGORIES = [
     "routers",
@@ -327,6 +331,8 @@ class TestCapabilityAudit:
     ) -> None:
         """Every capability must declare at least one engine."""
         for result in audit_results:
+            if result["id"] in META_CAPABILITIES:
+                continue
             engines = result["components"].get("engines", [])
             assert (
                 len(engines) > 0
@@ -337,6 +343,8 @@ class TestCapabilityAudit:
     ) -> None:
         """Every capability must declare at least one router."""
         for result in audit_results:
+            if result["id"] in META_CAPABILITIES:
+                continue
             routers = result["components"].get("routers", [])
             assert (
                 len(routers) > 0
@@ -347,6 +355,8 @@ class TestCapabilityAudit:
     ) -> None:
         """Every capability must declare at least one repository."""
         for result in audit_results:
+            if result["id"] in META_CAPABILITIES:
+                continue
             repos = result["components"].get("repositories", [])
             assert (
                 len(repos) > 0
@@ -357,6 +367,8 @@ class TestCapabilityAudit:
     ) -> None:
         """Every capability must declare at least one golden dataset."""
         for result in audit_results:
+            if result["id"] in META_CAPABILITIES:
+                continue
             datasets = result["components"].get("golden_datasets", [])
             assert (
                 len(datasets) > 0
@@ -386,6 +398,8 @@ class TestCapabilityAudit:
     ) -> None:
         """Every capability must declare at least one invariant."""
         for result in audit_results:
+            if result["id"] in META_CAPABILITIES:
+                continue
             invs = result["components"].get("invariants", [])
             assert (
                 len(invs) > 0
@@ -396,6 +410,8 @@ class TestCapabilityAudit:
     ) -> None:
         """Every capability must declare at least one contract."""
         for result in audit_results:
+            if result["id"] in META_CAPABILITIES:
+                continue
             contracts = result["components"].get("contracts", [])
             assert (
                 len(contracts) > 0
