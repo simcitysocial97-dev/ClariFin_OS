@@ -1,3 +1,13 @@
+# SUPERSEDED WORKFLOW — DO NOT ENABLE
+# This workflow has been superseded by:
+#   quality.yml    (linting, unit tests)
+#   backend.yml    (full backend suite)
+#   frontend-build.yml (frontend build)
+#   playwright.yml     (E2E tests)
+# Triggers are set to workflow_dispatch only.
+# Kept for historical reference.
+# Safe to delete after 2025-12-31.
+
 name: CI
 
 # SUPERSEDED by quality.yml and backend.yml (Phase 0 CI infrastructure)

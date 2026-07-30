@@ -1,0 +1,42 @@
+# ClariFin OS — Verification Runtime Configuration
+# This file is the single source of truth for verification settings.
+# Populated incrementally through Programs 2-10.
+# Do not edit manually — use verification CLI commands.
+
+version: "1.0"
+
+# Program 1: Infrastructure foundation
+infrastructure:
+  python_version: "3.12"
+  node_version: "20"
+  cache_strategy: "dependency-hash"
+
+# Program 2: Repository Intelligence (placeholder)
+intelligence:
+  enabled: false
+  # Will be implemented in Program 2
+
+# Program 3: Verification CLI (placeholder)
+cli:
+  enabled: false
+  # Will be implemented in Program 3
+
+# Program 4: Evidence Platform (placeholder)
+evidence:
+  enabled: false
+  # Will be implemented in Program 4
+
+# Program 5: Backend Verification (current thresholds)
+backend:
+  coverage_threshold: 40
+  mutation_threshold: 60
+  paths:
+    source: "backend/src"
+    tests: "backend/tests"
+
+# Program 6: Frontend Verification (placeholder)
+frontend:
+  enabled: true
+  paths:
+    source: "frontend/src"
+    tests: "frontend/tests"

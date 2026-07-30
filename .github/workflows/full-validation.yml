@@ -1,3 +1,10 @@
+# SUPERSEDED WORKFLOW — DO NOT ENABLE
+# This workflow has been superseded by:
+#   backend.yml (full backend suite)
+#   frontend-build.yml (frontend build)
+# Triggers are set to workflow_dispatch only.
+# Safe to delete after 2025-12-31.
+
 name: Full Stack Validation
 
 # SUPERSEDED by backend.yml (Phase 0 CI infrastructure)

@@ -547,3 +547,14 @@ jobs:
           name: quality-report-${{ github.sha }}
           path: backend/tests/generated/quality-report.md
           retention-days: 30
+
+      # Job Summary
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        shell: bash

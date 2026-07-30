@@ -1,0 +1,39 @@
+name: "Generate Job Summary"
+description: "Creates standardized GitHub Job Summary"
+inputs:
+  title:
+    description: "Summary title"
+    required: true
+  status:
+    description: "Job status (success/failure/cancelled)"
+    required: true
+  details:
+    description: "Additional markdown details"
+    required: false
+    default: ""
+  artifacts:
+    description: "Comma-separated artifact names to link"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate Job Summary
+      shell: bash
+      run: |
+        cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+        # ${{ inputs.title }}
+
+        **Status:** ${{ inputs.status }}
+
+        **Workflow:** ${{ github.workflow }}
+        **Run:** #${{ github.run_number }} (${{ github.run_id }})
+        **Commit:** ${{ github.sha }}
+        **Branch:** ${{ github.ref_name }}
+
+        ${{ inputs.details }}
+
+        ---
+        *Generated at $(date -u +"%Y-%m-%d %H:%M:%S UTC")*
+        EOF
