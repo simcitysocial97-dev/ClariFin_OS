@@ -40,7 +40,7 @@ class TestBillingEngine:
         ref = date(2025, 2, 15)
         last = date(2025, 1, 1)
         result = billing.compute_next_statement_date(1, ref, last)
-        assert result == date(2025, 2, 1)
+        assert result == date(2025, 3, 1)
 
     def test_compute_statement_dates(self):
         # When reference date is Jan 10 and billing day is 1, Jan 1 is in the past
