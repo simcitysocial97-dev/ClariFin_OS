@@ -302,7 +302,9 @@ This report provides an overview of the verification quality for the current cod
         report_content += """
 ### Performance Metrics
 """
-        report_content += f"- **Overall Score**: {metrics.get('overall_score', 0):.1f}/100\n"
+        report_content += (
+            f"- **Overall Score**: {metrics.get('overall_score', 0):.1f}/100\n"
+        )
         report_content += f"- **Test Performance**: {metrics.get('test_performance', [{}])[0].get('avg_execution_time_ms', 0):.1f}ms avg\n"
         report_content += f"- **Coverage**: {metrics.get('coverage', [{}])[0].get('percentage', 0):.1f}%\n"
         report_content += f"- **Selective Execution Efficiency**: {metrics.get('selective_execution', [{}])[0].get('efficiency_percentage', 0):.1f}%\n"
@@ -330,7 +332,9 @@ This report provides an overview of the verification quality for the current cod
 """
         for entry in risk_data.get("entries", []):
             if entry.get("risk_level"):
-                report_content += f"- **{entry['capability_id']}**: {entry['risk_level']} risk\n"
+                report_content += (
+                    f"- **{entry['capability_id']}**: {entry['risk_level']} risk\n"
+                )
 
     # Write markdown file
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)

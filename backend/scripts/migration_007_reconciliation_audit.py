@@ -51,7 +51,9 @@ def run_migration(db_path: str | None = None) -> None:
         ).fetchone()[0]
 
         if null_rows > 0:
-            print(f"⚠ Found {null_rows} rows where match_confidence IS NULL — left for manual review")
+            print(
+                f"⚠ Found {null_rows} rows where match_confidence IS NULL — left for manual review"
+            )
 
         conn.execute("""
             UPDATE reconciliations

@@ -79,9 +79,7 @@ def _apply_mutation(file_path: Path) -> str:
     for i, line in enumerate(lines):
         stripped = line.strip()
         # Mutate a return statement with a numeric literal
-        if stripped.startswith("return ") and any(
-            c.isdigit() for c in stripped
-        ):
+        if stripped.startswith("return ") and any(c.isdigit() for c in stripped):
             # Replace the return value with a different number
             mutated_lines[i] = line.replace(
                 stripped, stripped.replace("return ", "return 0  # MUTATED")
@@ -142,7 +140,9 @@ def _get_all_tests() -> list[str]:
     return test_files
 
 
-def _get_required_tests_for_capability(cap_id: str, dep_map: dict[str, Any]) -> set[str]:
+def _get_required_tests_for_capability(
+    cap_id: str, dep_map: dict[str, Any]
+) -> set[str]:
     """Get all test files required for a capability from the dependency graph."""
     edges = dep_map.get("edges", [])
     required: set[str] = set()
@@ -337,16 +337,18 @@ def generate_report(results: list[MutationResult]) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Mutation Verification Tool")
     parser.add_argument("--all", action="store_true", help="Verify all capabilities")
-    parser.add_argument(
-        "--capability", type=str, help="Verify a specific capability"
-    )
+    parser.add_argument("--capability", type=str, help="Verify a specific capability")
     parser.add_argument("--report", action="store_true", help="Generate report")
     args = parser.parse_args()
 
     if args.capability:
         registry = _load_registry()
         cap = next(
-            (c for c in registry.get("capabilities", []) if c.get("id") == args.capability),
+            (
+                c
+                for c in registry.get("capabilities", [])
+                if c.get("id") == args.capability
+            ),
             None,
         )
         if not cap:

@@ -18,10 +18,12 @@ from jinja2 import Template
 def get_openapi_schema() -> dict[str, Any]:
     """Extract OpenAPI schema from FastAPI app"""
     import sys
+
     sys.path.insert(0, str(Path(__file__).parent.parent))
 
     try:
         from src.api import app
+
         return app.openapi()
     except Exception:
         frontend_schema = (
@@ -29,8 +31,10 @@ def get_openapi_schema() -> dict[str, Any]:
         )
         if frontend_schema.exists():
             import json
+
             return cast(dict[str, Any], json.loads(frontend_schema.read_text()))
         raise
+
 
 def _example_value_for_schema(schema: dict[str, Any], param_name: str = "") -> Any:
     """Generate a realistic example value from a JSON Schema fragment."""
@@ -63,6 +67,7 @@ def _example_value_for_schema(schema: dict[str, Any], param_name: str = "") -> A
         return {}
     return "example"
 
+
 def _example_value(param: dict[str, Any]) -> Any:
     """Generate an example value from an OpenAPI parameter."""
     param_name = param.get("name", "")
@@ -75,6 +80,7 @@ def _example_value(param: dict[str, Any]) -> Any:
         return "Account_A"
     return _example_value_for_schema(schema, param_name)
 
+
 def substitute_path_params(path: str, parameters: list[dict[str, Any]]) -> str:
     """Replace {param} placeholders with valid seeded example values."""
     result = path
@@ -83,6 +89,7 @@ def substitute_path_params(path: str, parameters: list[dict[str, Any]]) -> str:
         val = _example_value(param)
         result = result.replace("{" + name + "}", str(val))
     return result
+
 
 def substitute_query_params(
     method: str, path: str, parameters: list[dict[str, Any]]
@@ -103,6 +110,7 @@ def substitute_query_params(
         return path, "&".join(query_parts)
     return path, None
 
+
 def _generate_request_body_example(request_body_spec: dict[str, Any]) -> Any:
     """Extract or generate a clean sample payload dictionary from requestBody specification."""
     content = request_body_spec.get("content", {})
@@ -120,6 +128,7 @@ def _generate_request_body_example(request_body_spec: dict[str, Any]) -> Any:
         return example_obj
 
     return {}
+
 
 def generate_test_for_endpoint(
     path: str, method: str, operation: dict[str, Any], router_name: str
@@ -201,13 +210,13 @@ def test_{{ test_name }}_contract(client):
             timestamp=hashlib.sha256(
                 f"{method}:{path}:{router_name}".encode()
             ).hexdigest()[:12],
-
             request_body_spec=request_body_spec,
             request_body_example=request_body_example,
             response_schema=response_schema,
             valid_statuses=valid_statuses,
         ),
     )
+
 
 def generate_for_router(
     router_name: str, schema: dict[str, Any], output_dir: Path
@@ -223,7 +232,11 @@ def generate_for_router(
     tests.append("")
 
     for path, methods in schema["paths"].items():
-        if f"/{router_name}" in path or path.startswith(f"/api/{router_name}") or path.startswith(f"/api/v1/{router_name}"):
+        if (
+            f"/{router_name}" in path
+            or path.startswith(f"/api/{router_name}")
+            or path.startswith(f"/api/v1/{router_name}")
+        ):
             for method, operation in methods.items():
                 if method in ["get", "post", "put", "delete", "patch"]:
                     test_code = generate_test_for_endpoint(
@@ -233,6 +246,7 @@ def generate_for_router(
 
     output_file.write_text("\n".join(tests))
     print(f"✅ Generated: {output_file}")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate contract tests from OpenAPI")
@@ -273,6 +287,7 @@ def main() -> None:
         generate_for_router(router, schema, output_dir)
 
     print(f"\n✅ Generated {len(routers)} contract test files under {output_dir}")
+
 
 if __name__ == "__main__":
     main()

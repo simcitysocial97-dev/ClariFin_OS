@@ -25,6 +25,7 @@ GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 @dataclass
 class ValidationMetrics:
     """Aggregated validation metrics."""
+
     total_capabilities: int = 0
     fully_covered_capabilities: int = 0
     partially_covered_capabilities: int = 0
@@ -200,8 +201,7 @@ def generate_report(metrics: ValidationMetrics) -> str:
         "| Validation | Status |",
         "|-----------|--------|",
         (
-            "| Part A: Capability Truth Audit | "
-            "✓ PASS |"
+            "| Part A: Capability Truth Audit | " "✓ PASS |"
             if metrics.fully_covered_capabilities > 0
             else "| Part A: Capability Truth Audit | ✗ FAIL |"
         ),
@@ -286,7 +286,11 @@ def main() -> None:
 
     report = generate_report(metrics)
 
-    output_path = Path(args.output) if args.output else PROJECT_ROOT / "CAPABILITY_FRAMEWORK_VALIDATION.md"
+    output_path = (
+        Path(args.output)
+        if args.output
+        else PROJECT_ROOT / "CAPABILITY_FRAMEWORK_VALIDATION.md"
+    )
     output_path.write_text(report)
 
     print(f"\nReport written to: {output_path}")

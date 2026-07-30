@@ -20,13 +20,19 @@ CAPABILITY_MAP = {
     "account_management": {
         "unit": ["unit/engines/account", "unit/engines/account_engine"],
         "property": ["properties/behaviour"],
-        "contract": ["contract/generated/test_accounts.py", "contract/generated/test_analytics.py"],
+        "contract": [
+            "contract/generated/test_accounts.py",
+            "contract/generated/test_analytics.py",
+        ],
         "capability": ["capability/account_management"],
     },
     "credit_cards": {
         "unit": ["unit/engines/credit_card"],
         "property": ["properties/credit_card_engine", "properties/credit_cards"],
-        "contract": ["contract/generated/test_cards.py", "contract/generated/test_credit_cards.py"],
+        "contract": [
+            "contract/generated/test_cards.py",
+            "contract/generated/test_credit_cards.py",
+        ],
         "capability": ["capability/credit_cards"],
     },
     "debt_management": {
@@ -50,7 +56,10 @@ CAPABILITY_MAP = {
     "forecasting": {
         "unit": ["unit/engines/financial_intelligence"],
         "property": ["properties/forecasting"],
-        "contract": ["contract/generated/test_forecast.py", "contract/generated/test_financial_events.py"],
+        "contract": [
+            "contract/generated/test_forecast.py",
+            "contract/generated/test_financial_events.py",
+        ],
         "capability": ["capability/forecasting"],
     },
     "household_cashflow": {
@@ -62,19 +71,28 @@ CAPABILITY_MAP = {
     "pattern_analysis": {
         "unit": ["unit/engines/insight"],
         "property": ["unit/repositories"],
-        "contract": ["contract/generated/test_transactions.py", "contract/generated/test_categories.py"],
+        "contract": [
+            "contract/generated/test_transactions.py",
+            "contract/generated/test_categories.py",
+        ],
         "capability": ["capability/pattern_analysis"],
     },
     "recommendations": {
         "unit": ["unit/engines/recommendation"],
         "property": [],
-        "contract": ["contract/generated/test_recommendations.py", "contract/generated/test_optimization.py"],
+        "contract": [
+            "contract/generated/test_recommendations.py",
+            "contract/generated/test_optimization.py",
+        ],
         "capability": ["capability/recommendations"],
     },
     "reconciliation": {
         "unit": ["unit/engines/reconciliation"],
         "property": ["properties/reconciliation"],
-        "contract": ["contract/generated/test_reconciliation.py", "contract/generated/test_reconciliations.py"],
+        "contract": [
+            "contract/generated/test_reconciliation.py",
+            "contract/generated/test_reconciliations.py",
+        ],
         "capability": ["capability/reconciliation"],
     },
     "transaction_intelligence": {
@@ -144,7 +162,10 @@ def main() -> None:
         # Isolation: uniform 100 (verified in ENGINE_IMPLEMENTATION_REPORT.md)
 
         # Health
-        if coverage == 100 and (unit_tests + property_tests + contract_tests + capability_tests) > 0:
+        if (
+            coverage == 100
+            and (unit_tests + property_tests + contract_tests + capability_tests) > 0
+        ):
             health = "green"
         elif coverage >= 50:
             health = "yellow"
