@@ -57,7 +57,8 @@ class RepositoryIndex:
 
     def _find_node_by_path(self, path: str) -> dict[str, Any] | None:
         """Find a node by matching its path property."""
-        predicate = lambda n: n.path == path
+        def predicate(n):
+            return n.path == path
         matching = self._ensure_service().find_nodes(predicate)
         if not matching:
             return None
@@ -91,7 +92,7 @@ class RepositoryIndex:
         if cap_node_obj is None:
             return None
         cap_node = cap_node_obj.to_dict()
-        cap_id = cap_node["properties"].get("id", capability_id)
+        cap_node["properties"].get("id", capability_id)
 
         # Engines (implementers)
         engine_edges = [
@@ -185,7 +186,7 @@ class RepositoryIndex:
         # Frontend routes that consume this capability's endpoints
         route_edges: list[dict] = []
         for ep in endpoints:
-            ep_id = ep["id"]
+            ep["id"]
             consumers = self.find_frontend_consumers_of_endpoint(
                 ep["properties"].get("path", "")
             )
@@ -220,7 +221,8 @@ class RepositoryIndex:
 
         if node is None:
             # Try partial match
-            predicate = lambda n: router_name in n["path"] and n["type"] == "module"
+            def predicate(n):
+                return router_name in n["path"] and n["type"] == "module"
             matching = self._ensure_service().find_nodes(predicate)
             for m in matching:
                 node = m.to_dict()
@@ -294,7 +296,8 @@ class RepositoryIndex:
         results: list[dict[str, Any]] = []
 
         # Find all endpoint nodes matching this path
-        predicate = lambda n: n.type == "endpoint" and n.properties.get("path") == endpoint_path
+        def predicate(n):
+            return n.type == "endpoint" and n.properties.get("path") == endpoint_path
         matching_endpoints = self._ensure_service().find_nodes(predicate)
 
         for ep_obj in matching_endpoints:
@@ -385,7 +388,8 @@ class RepositoryIndex:
         if ownership not in OWNERSHIP_CLASSES:
             raise ValueError(f"Invalid ownership: {ownership}. Must be one of {OWNERSHIP_CLASSES}")
 
-        predicate = lambda n: n.ownership == ownership
+        def predicate(n):
+            return n.ownership == ownership
         nodes = self._ensure_service().find_nodes(predicate)
         return [n.to_dict() for n in nodes]
 
@@ -405,7 +409,7 @@ class RepositoryIndex:
     def capabilities_without_verification_evidence(self) -> list[dict[str, Any]]:
         """Find capabilities that have no verification evidence attached."""
         verified_cap_ids: set[str] = set()
-        all_edges = [e.to_dict() for e in self._ensure_service().find_edges("any")[0] + self._ensure_service().find_edges("any")[1]]  # rough approximation
+        [e.to_dict() for e in self._ensure_service().find_edges("any")[0] + self._ensure_service().find_edges("any")[1]]  # rough approximation
         # Better: use direct graph access through service
         service = self._ensure_service()
         # Get all edges

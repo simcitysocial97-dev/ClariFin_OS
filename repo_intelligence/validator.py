@@ -142,7 +142,7 @@ class Validator:
                 verified_ep_ids.add(edge["target"])
         for node in nodes:
             if node["type"] == "endpoint" and node["id"] not in verified_ep_ids:
-                cap_id = node.get("properties", {}).get("capability", "unknown")
+                node.get("properties", {}).get("capability", "unknown")
                 findings.append(ValidationFinding(
                     severity="WARNING",
                     code="VERIFICATION_GAP",

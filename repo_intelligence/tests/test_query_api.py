@@ -125,7 +125,8 @@ class TestRepositoryIndexQueries:
         service = build_graph_service(graph)
 
         # Find node by path for router lookup
-        pred = lambda n: n.path == "/routers/acct.py"
+        def pred(n):
+            return n.path == "/routers/acct.py"
         matching = service.find_nodes(pred)
         assert len(matching) == 1
         router_node = matching[0]

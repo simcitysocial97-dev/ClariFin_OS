@@ -120,13 +120,15 @@ class TestRepositoryGraphService:
         service = build_graph_service(graph)
 
         # Find capabilities by ownership
-        pred = lambda n: n.type == "capability" and n.ownership == "capability"
+        def pred(n):
+            return n.type == "capability" and n.ownership == "capability"
         results = service.find_nodes(pred)
         assert len(results) == 1
         assert results[0].name == "prod_cap"
 
         # Find all modules
-        pred2 = lambda n: n.type == "module"
+        def pred2(n):
+            return n.type == "module"
         mods = service.find_nodes(pred2)
         assert len(mods) == 1
 

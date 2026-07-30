@@ -17,6 +17,7 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+from typing import Any
 from repo_intelligence.scanner.base import BaseScanner, ScanResult
 
 
@@ -200,7 +201,7 @@ class BackendScanner(BaseScanner):
                     if target_rel is None:
                         continue
 
-                    target_type = self._infer_module_type(target_rel)
+                    self._infer_module_type(target_rel)
                     target_id = f"module:{target_rel}"
 
                     # Determine relationship type based on what's being imported

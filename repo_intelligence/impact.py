@@ -17,6 +17,7 @@ from collections import deque
 from typing import Any, Dict, List, Set
 
 from repo_intelligence.graph_service import RepositoryGraphService
+from repo_intelligence.schema import GraphNode
 
 
 class ImpactAnalyzer:

@@ -114,7 +114,6 @@ class RepositoryBuilder:
     def _classify_ownership(self, node: GraphNode) -> str:
         """Classify a single node into an ownership category."""
         node_type = node.type
-        source = node.source
         path = node.path
         properties = node.properties
 
