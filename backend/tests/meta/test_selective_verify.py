@@ -22,7 +22,7 @@ def test_plan_generation() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/selective_verify.py",
+            "tools/development/selective_verify.py",
             "--plan",
             "backend/src/engines/cashflow_engine.py",
         ],
@@ -50,7 +50,7 @@ def test_duplicate_removal() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from selective_verify import build_selective_plan
 
 # Create a report with duplicates
@@ -91,7 +91,7 @@ def test_invalid_paths_ignored_safely() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/selective_verify.py",
+            "tools/development/selective_verify.py",
             "--plan",
             "nonexistent_file.py",
         ],
@@ -110,7 +110,7 @@ def test_dry_run_output() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/selective_verify.py",
+            "tools/development/selective_verify.py",
             "--plan",
             "backend/src/engines/cashflow_engine.py",
         ],
@@ -146,7 +146,7 @@ def test_json_summary_flag() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/selective_verify.py",
+            "tools/development/selective_verify.py",
             "--plan",
             "--json",
             "backend/src/engines/cashflow_engine.py",
@@ -173,7 +173,7 @@ def test_json_summary_flag() -> None:
 def test_empty_changes_handled() -> None:
     """SVF must handle no changes gracefully."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/selective_verify.py", "--plan"],
+        [sys.executable, "tools/development/selective_verify.py", "--plan"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -192,7 +192,7 @@ def test_verification_matrix_generated() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/selective_verify.py",
+            "tools/development/selective_verify.py",
             "--plan",
             "backend/src/engines/cashflow_engine.py",
         ],

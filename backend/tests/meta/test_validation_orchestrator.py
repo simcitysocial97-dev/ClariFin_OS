@@ -19,7 +19,7 @@ def test_orchestrator_cli_parsing() -> None:
     """VOF must parse CLI arguments correctly."""
     # Test --plan
     result = subprocess.run(
-        [sys.executable, "backend/tools/validation_orchestrator.py", "--plan"],
+        [sys.executable, "tools/development/validation_orchestrator.py", "--plan"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -32,7 +32,7 @@ def test_manifest_schema() -> None:
     """validation-manifest.json must have required schema fields."""
     # Run --plan to generate manifest
     subprocess.run(
-        [sys.executable, "backend/tools/validation_orchestrator.py", "--plan"],
+        [sys.executable, "tools/development/validation_orchestrator.py", "--plan"],
         cwd=PROJECT_ROOT,
         capture_output=True,
     )
@@ -66,7 +66,7 @@ def test_decision_logic_routers() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import determine_strategy
 
 strategy, reason, risk = determine_strategy(['backend/src/routers/accounts.py'])
@@ -90,7 +90,7 @@ def test_decision_logic_engines() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import determine_strategy
 
 strategy, reason, risk = determine_strategy(['backend/src/engines/cashflow_engine.py'])
@@ -114,7 +114,7 @@ def test_decision_logic_models() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import determine_strategy
 
 strategy, reason, risk = determine_strategy(['backend/src/models/account.py'])
@@ -138,7 +138,7 @@ def test_decision_logic_docs() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import determine_strategy
 
 strategy, reason, risk = determine_strategy(['docs/README.md', 'README.md'])
@@ -162,7 +162,7 @@ def test_decision_logic_empty() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import determine_strategy
 
 strategy, reason, risk = determine_strategy([])
@@ -188,7 +188,7 @@ def test_history_rotation() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import save_history, load_history
 
 # Create 250 entries
@@ -216,7 +216,7 @@ def test_fallback_to_full() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import ValidationGraph
 
 graph = ValidationGraph()
@@ -245,7 +245,7 @@ def test_validation_graph_stages() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import ValidationGraph
 
 graph = ValidationGraph()
@@ -274,7 +274,7 @@ def test_risk_rules_loaded() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import load_risk_rules
 
 rules = load_risk_rules()
@@ -294,7 +294,7 @@ print("PASS")
 def test_explain_mode() -> None:
     """--explain must output decision tree."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/validation_orchestrator.py", "--explain"],
+        [sys.executable, "tools/development/validation_orchestrator.py", "--explain"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -309,7 +309,7 @@ def test_json_output() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/validation_orchestrator.py",
+            "tools/development/validation_orchestrator.py",
             "--plan",
             "--json",
         ],
@@ -328,7 +328,7 @@ def test_metrics_generation() -> None:
     """--plan should generate validation-metrics.json."""
     # Metrics are generated on execution, verify the file path exists after run
     subprocess.run(
-        [sys.executable, "backend/tools/validation_orchestrator.py", "--plan"],
+        [sys.executable, "tools/development/validation_orchestrator.py", "--plan"],
         cwd=PROJECT_ROOT,
         capture_output=True,
     )
