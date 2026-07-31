@@ -36,11 +36,6 @@ omit =
     # These modules require integration/contract tests and will have separate coverage targets.
     */routers/*
 
-    # Temporary exclusions — remove when tests are added in Phase 2
-    # TODO Phase 2: src/engines/financial_intelligence/*
-    # TODO Phase 2: src/engines/financial_events/*
-    # TODO Phase 2: src/services/transaction_intelligence_service.py
-
     # Tooling — not application code
     fix_lint.py
     */site-packages/*
