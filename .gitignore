@@ -84,3 +84,20 @@ runtime/generated/timeline/
 runtime/generated/graph/
 runtime/generated/command/
 runtime/generated/intelligence/
+
+# Root-level stale directories
+src/
+
+# Python build artifacts
+*.egg-info/
+
+# Verification pipeline generated files
+verification_plan.json
+evidence_summary.json
+evidence_summary.md
+evidence-download/
+target/
+
+# Coverage data
+.coverage
+.venv

@@ -1,2 +1,0 @@
-[console_scripts]
-verify = runtime.foundation.verification.cli.cli:cli
