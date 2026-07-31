@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Any
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
-
 # Directories under src/ that map to a module type
 _MODULE_TYPE_MAP: dict[str, str] = {
     "engines": "engine",
@@ -257,7 +256,7 @@ class BackendScanner(BaseScanner):
         parts = rel_path.split("/")
         if len(parts) > 1 and parts[0] == "src":
             # parts[1] is the top-level directory under src/
-                return _MODULE_TYPE_MAP.get(parts[1], "unknown")
+            return _MODULE_TYPE_MAP.get(parts[1], "unknown")
         return "unknown"
 
     def _extract_functions(self, py_file: Path) -> list[str]:
@@ -266,9 +265,7 @@ class BackendScanner(BaseScanner):
         if tree is None:
             return []
         return [
-            node.name
-            for node in ast.walk(tree)
-            if isinstance(node, ast.FunctionDef)
+            node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
         ]
 
     def _extract_classes(self, py_file: Path) -> list[str]:
@@ -276,11 +273,7 @@ class BackendScanner(BaseScanner):
         tree = self.safe_parse_ast(py_file)
         if tree is None:
             return []
-        return [
-            node.name
-            for node in ast.walk(tree)
-            if isinstance(node, ast.ClassDef)
-        ]
+        return [node.name for node in ast.walk(tree) if isinstance(node, ast.ClassDef)]
 
     def _find_router_name(self, tree: ast.Module) -> str | None:
         """Find the APIRouter variable name from source."""
@@ -293,10 +286,7 @@ class BackendScanner(BaseScanner):
                         func = node.value.func
                         if isinstance(func, ast.Name) and func.id == "APIRouter":
                             return target.id
-                        if (
-                            isinstance(func, ast.Attribute)
-                            and func.attr == "APIRouter"
-                        ):
+                        if isinstance(func, ast.Attribute) and func.attr == "APIRouter":
                             return target.id
         return None
 
@@ -313,8 +303,7 @@ class BackendScanner(BaseScanner):
                         if isinstance(func, ast.Name) and func.id == "APIRouter":
                             is_router = True
                         elif (
-                            isinstance(func, ast.Attribute)
-                            and func.attr == "APIRouter"
+                            isinstance(func, ast.Attribute) and func.attr == "APIRouter"
                         ):
                             is_router = True
 

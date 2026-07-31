@@ -5,7 +5,7 @@ Cashflow Engine - Pure calculation library
 Deterministic monthly cashflow analysis combining transaction aggregates
 with financial events (credit conversions, EMI payments, etc.).
 
-All monetary values are integers in paise (₹1.00 = 100 paise).
+All monetary values are integers in paise (₹1.00 = 100 paise).  # MUTATED
 All functions are pure - no database access.
 
 Sign Conventions:

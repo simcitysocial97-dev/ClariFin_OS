@@ -178,7 +178,9 @@ def build_verification_evidence(
     )
 
 
-def write_verification_summary(evidence: VerificationEvidence, output_path: Path) -> None:
+def write_verification_summary(
+    evidence: VerificationEvidence, output_path: Path
+) -> None:
     """Write verification summary JSON to file."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29T06:28:29.832501+00:00",
+  "generated_at": "2026-07-31T06:03:36.229208+00:00",
   "functions": [
     {
       "module": "src/engines/balance_engine.py",
@@ -730,6 +730,25 @@
     {
       "module": "src/engines/financial_events/lineage_walker.py",
       "function": "walk_lineage",
+      "purity": "IMPURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination"
+      ],
+      "blockers": [
+        "open"
+      ],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/financial_events/lineage_walker.py",
+      "function": "detect_revocations",
       "purity": "IMPURE",
       "confidence": "HIGH",
       "mutation_types": [
@@ -2684,7 +2703,8 @@
         "Boolean",
         "Constant replacement",
         "Boundary conditions",
-        "Off-by-one"
+        "Off-by-one",
+        "Loop termination"
       ],
       "blockers": [
         "open"

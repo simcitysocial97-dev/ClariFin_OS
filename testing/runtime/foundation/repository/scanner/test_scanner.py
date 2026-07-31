@@ -118,9 +118,7 @@ class TestScanner(BaseScanner):
 
     def _scan_capability_test_mapping(self, result: ScanResult) -> None:
         """Map capabilities to their test files using the registry."""
-        registry = self.safe_read_yaml(
-            self.generated_dir / "capability-registry.yaml"
-        )
+        registry = self.safe_read_yaml(self.generated_dir / "capability-registry.yaml")
         if registry is None:
             return
 

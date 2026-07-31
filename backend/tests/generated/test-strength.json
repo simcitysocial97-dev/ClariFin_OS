@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-29T06:28:43.031250+00:00",
+  "generated_at": "2026-07-31T06:03:51.768666+00:00",
   "capabilities": [
     {
       "id": "account_management",
@@ -11,15 +11,14 @@
         "property_tests": 2,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -33,15 +32,14 @@
         "property_tests": 4,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -55,15 +53,14 @@
         "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -73,20 +70,18 @@
       "criticality": "medium",
       "structural_maturity": "\u2713",
       "evidence": {
-        "smoke_tests": 1,
-        "property_tests": 0,
+        "smoke_tests": 2,
+        "property_tests": 2,
         "golden_tests": 2,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 13,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No property tests",
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -100,15 +95,14 @@
         "property_tests": 2,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -122,15 +116,14 @@
         "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -144,15 +137,14 @@
         "property_tests": 1,
         "golden_tests": 4,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -166,15 +158,14 @@
         "property_tests": 1,
         "golden_tests": 2,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -188,15 +179,14 @@
         "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 1,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -210,15 +200,14 @@
         "property_tests": 2,
         "golden_tests": 2,
         "contract_tests": 0,
-        "performance_tests": 0,
-        "invariants": 1,
+        "performance_tests": 1,
+        "invariants": 2,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
-        "No contract tests",
-        "No performance baseline"
+        "No contract tests"
       ],
       "invariant_count": 0
     },
@@ -232,15 +221,38 @@
         "property_tests": 1,
         "golden_tests": 3,
         "contract_tests": 0,
-        "performance_tests": 0,
+        "performance_tests": 1,
         "invariants": 2,
         "architecture_tests": 2
       },
-      "weighted_score": 18,
+      "weighted_score": 20,
       "strength": "Critical",
       "gaps": [
+        "No contract tests"
+      ],
+      "invariant_count": 0
+    },
+    {
+      "id": "verification",
+      "name": "Verification",
+      "criticality": "high",
+      "structural_maturity": "\u2713",
+      "evidence": {
+        "smoke_tests": 3,
+        "property_tests": 0,
+        "golden_tests": 0,
+        "contract_tests": 0,
+        "performance_tests": 1,
+        "invariants": 0,
+        "architecture_tests": 2
+      },
+      "weighted_score": 7,
+      "strength": "Moderate",
+      "gaps": [
+        "No property tests",
+        "No golden tests",
         "No contract tests",
-        "No performance baseline"
+        "No invariant tests"
       ],
       "invariant_count": 0
     }

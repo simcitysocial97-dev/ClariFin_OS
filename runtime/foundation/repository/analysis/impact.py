@@ -53,8 +53,10 @@ class ImpactAnalyzer:
 
     def _find_node_by_path(self, path: str) -> GraphNode | None:
         """Find a node by matching its path property using the service."""
+
         def predicate(n: GraphNode) -> bool:
             return n.path == path
+
         matching = self._service.find_nodes(predicate)
         if matching:
             return matching[0]
@@ -78,7 +80,9 @@ class ImpactAnalyzer:
 
         # BFS traversal tracking cumulative reasons
         visited: Set[str] = {start_node_id}
-        queue: deque = deque([(start_node_id, "", 0)])  # (node_id, incoming_reason, depth)
+        queue: deque = deque(
+            [(start_node_id, "", 0)]
+        )  # (node_id, incoming_reason, depth)
 
         # Accumulate findings per entity type
         results: Dict[str, List[Dict[str, Any]]] = {
@@ -106,56 +110,104 @@ class ImpactAnalyzer:
 
             # Record the node if it matches a tracked entity type
             if current_type == "capability":
-                reason = f"{incoming_reason} → {current_name}" if incoming_reason else current_name
-                results["capabilities"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": reason,
-                })
+                reason = (
+                    f"{incoming_reason} → {current_name}"
+                    if incoming_reason
+                    else current_name
+                )
+                results["capabilities"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": reason,
+                    }
+                )
             elif current_type == "endpoint":
-                reason = f"{incoming_reason} → {current_name}" if incoming_reason else current_name
-                results["endpoints"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": reason,
-                })
+                reason = (
+                    f"{incoming_reason} → {current_name}"
+                    if incoming_reason
+                    else current_name
+                )
+                results["endpoints"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": reason,
+                    }
+                )
             elif current_type in ("component", "hook"):
-                reason = f"{incoming_reason} → {current_name}" if incoming_reason else current_name
-                results["frontend_consumers"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": reason,
-                })
+                reason = (
+                    f"{incoming_reason} → {current_name}"
+                    if incoming_reason
+                    else current_name
+                )
+                results["frontend_consumers"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": reason,
+                    }
+                )
             elif current_type == "workflow":
-                results["workflows"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": f"{incoming_reason} → {current_name}" if incoming_reason else current_name,
-                })
+                results["workflows"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": (
+                            f"{incoming_reason} → {current_name}"
+                            if incoming_reason
+                            else current_name
+                        ),
+                    }
+                )
             elif current_type == "test_suite":
-                results["tests"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": f"{incoming_reason} → {current_name}" if incoming_reason else current_name,
-                })
+                results["tests"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": (
+                            f"{incoming_reason} → {current_name}"
+                            if incoming_reason
+                            else current_name
+                        ),
+                    }
+                )
             elif current_type == "documentation":
-                results["documentation"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": f"{incoming_reason} → {current_name}" if incoming_reason else current_name,
-                })
+                results["documentation"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": (
+                            f"{incoming_reason} → {current_name}"
+                            if incoming_reason
+                            else current_name
+                        ),
+                    }
+                )
             elif current_type == "generated_artifact":
-                results["generated_artifacts"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": f"{incoming_reason} → {current_name}" if incoming_reason else current_name,
-                })
+                results["generated_artifacts"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": (
+                            f"{incoming_reason} → {current_name}"
+                            if incoming_reason
+                            else current_name
+                        ),
+                    }
+                )
             elif current_type == "migration":
-                results["migrations"].append({
-                    "id": current_node_obj.id,
-                    "name": current_name,
-                    "why": f"{incoming_reason} → {current_name}" if incoming_reason else current_name,
-                })
+                results["migrations"].append(
+                    {
+                        "id": current_node_obj.id,
+                        "name": current_name,
+                        "why": (
+                            f"{incoming_reason} → {current_name}"
+                            if incoming_reason
+                            else current_name
+                        ),
+                    }
+                )
 
             # Enqueue outgoing neighbors with updated reasoning
             out_edges = self._service.find_edges(node_id)[0]  # outgoing edges only
@@ -167,7 +219,11 @@ class ImpactAnalyzer:
                     target_node_obj = self._service.get_node(target_id)
                     target_type = target_node_obj.type if target_node_obj else "unknown"
                     edge_desc = self._path_description(rel, target_type)
-                    new_reason = f"{incoming_reason} {edge_desc} →" if incoming_reason else edge_desc
+                    new_reason = (
+                        f"{incoming_reason} {edge_desc} →"
+                        if incoming_reason
+                        else edge_desc
+                    )
                     queue.append((target_id, new_reason, depth + 1))
 
         # Count verification targets for metadata
@@ -177,7 +233,9 @@ class ImpactAnalyzer:
         all_incoming = []
         for node in self._service.get_nodes():
             all_incoming.extend(self._service.find_edges(node.id)[1])
-        verification_target_count = sum(1 for e in all_outgoing + all_incoming if e.relationship == "verifies")
+        verification_target_count = sum(
+            1 for e in all_outgoing + all_incoming if e.relationship == "verifies"
+        )
         results["verification_targets"] = {
             "count": verification_target_count,
             "reason": "Total verification relationships in the graph",
@@ -196,7 +254,10 @@ class ImpactAnalyzer:
             "documentation": [],
             "generated_artifacts": [],
             "migrations": [],
-            "verification_targets": {"count": 0, "reason": "No matching start node found"},
+            "verification_targets": {
+                "count": 0,
+                "reason": "No matching start node found",
+            },
         }
 
 
@@ -207,7 +268,9 @@ def compute_impact(path: str, max_depth: int = 8) -> Dict[str, Any]:
     Loads the default index and runs impact analysis on the given path.
     """
     from pathlib import Path
-    from runtime.foundation.repository.graph.graph_service import load_graph_service as load_service
+    from runtime.foundation.repository.graph.graph_service import (
+        load_graph_service as load_service,
+    )
 
     index_path = Path(__file__).parent / "index.json"
     service = load_service(index_path)

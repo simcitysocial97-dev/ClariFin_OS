@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
@@ -62,7 +61,9 @@ def collect_all_evidence(workspace_root: Path) -> EvidenceCollectionResult:
     )
 
 
-def extract_coverage_evidence(artifacts: List[Dict[str, Any]]) -> Optional[CoverageEvidence]:
+def extract_coverage_evidence(
+    artifacts: List[Dict[str, Any]],
+) -> Optional[CoverageEvidence]:
     """Extract CoverageEvidence from collected artifacts."""
     for artifact in artifacts:
         if artifact.get("artifact_type") == "coverage":
@@ -78,7 +79,9 @@ def extract_coverage_evidence(artifacts: List[Dict[str, Any]]) -> Optional[Cover
     return None
 
 
-def extract_mutation_evidence(artifacts: List[Dict[str, Any]]) -> Optional[MutationEvidence]:
+def extract_mutation_evidence(
+    artifacts: List[Dict[str, Any]],
+) -> Optional[MutationEvidence]:
     """Extract MutationEvidence from collected artifacts."""
     for artifact in artifacts:
         if artifact.get("artifact_type") == "mutation":

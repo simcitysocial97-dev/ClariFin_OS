@@ -1,6 +1,6 @@
 # Mutation Validation Gaps Report
 
-Generated: 2026-07-29T06:28:29.837778+00:00
+Generated: 2026-07-31T06:03:36.241813+00:00
 
 ## Summary
 
@@ -268,12 +268,13 @@ Generated: 2026-07-29T06:28:29.837778+00:00
 ### `src/engines/financial_events/lineage_walker.py`
 
 ✗ No pure functions - blocked for mutation testing
-✗ No property tests
+✓ Property tests available
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
-✗ Impure functions (blockers): 2
+✗ Impure functions (blockers): 3
   - `walk_lineage`: blocked by ['open']
+  - `detect_revocations`: blocked by ['open']
   - `detect_rollover_scenarios`: blocked by ['open']
 
 ### `src/engines/financial_intelligence/forecasting.py`

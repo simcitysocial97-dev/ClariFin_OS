@@ -54,8 +54,12 @@ def main() -> None:
         },
         "coverage": {
             "ownership_coverage_percent": metrics.get("ownership_coverage_percent", 0),
-            "verification_coverage_percent": metrics.get("verification_coverage_percent", 0),
-            "documentation_coverage_percent": metrics.get("documentation_coverage_percent", 0),
+            "verification_coverage_percent": metrics.get(
+                "verification_coverage_percent", 0
+            ),
+            "documentation_coverage_percent": metrics.get(
+                "documentation_coverage_percent", 0
+            ),
         },
         "structural_insights": {
             "largest_capability": metrics.get("largest_capability"),

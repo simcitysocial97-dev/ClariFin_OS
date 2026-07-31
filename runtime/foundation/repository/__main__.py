@@ -104,10 +104,23 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.generate or not any(
-        [args.query, args.orphan_modules, args.untested, args.undocumented,
-         args.no_verification_evidence, args.no_documentation_evidence,
-         args.unknown_ownership, args.owner, args.tests_for, args.stats,
-         args.impact, args.trace, args.health, args.why, args.search]
+        [
+            args.query,
+            args.orphan_modules,
+            args.untested,
+            args.undocumented,
+            args.no_verification_evidence,
+            args.no_documentation_evidence,
+            args.unknown_ownership,
+            args.owner,
+            args.tests_for,
+            args.stats,
+            args.impact,
+            args.trace,
+            args.health,
+            args.why,
+            args.search,
+        ]
     ):
         # Generate index
         indexer = RepositoryIndexer()
@@ -201,6 +214,7 @@ def main() -> int:
     if args.impact:
         idx = RepositoryIndex()
         from runtime.foundation.repository.impact import compute_impact
+
         result = compute_impact(args.impact, max_depth=8)
         print(json.dumps(result, indent=2, default=str))
 

@@ -45,7 +45,7 @@ class RepositoryIndexer:
         It delegates to RepositoryBuilder.to_index_dict().
         """
         # We need to access the builder's gaps; they are set after build()
-        if not hasattr(self._builder, 'graph') or self._builder.graph is None:
+        if not hasattr(self._builder, "graph") or self._builder.graph is None:
             self._builder.build()
         return self._builder.to_index_dict(include_gaps=True)
 

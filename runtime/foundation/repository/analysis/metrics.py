@@ -53,7 +53,9 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
     # Ownership coverage
     ownership_unknown = sum(1 for n in nodes if n.ownership == "unknown")
     ownership_known = total_nodes - ownership_unknown
-    ownership_coverage = (ownership_known / total_nodes * 100) if total_nodes > 0 else 0.0
+    ownership_coverage = (
+        (ownership_known / total_nodes * 100) if total_nodes > 0 else 0.0
+    )
 
     # Verification evidence coverage: endpoints verified by capabilities
     endpoint_count = node_counts.get("endpoint", 0)
@@ -61,7 +63,9 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
     for e in all_edges:
         if e.relationship == "verifies" and e.source.startswith("capability:"):
             verified_endpoints.add(e.target)
-    verification_coverage = (len(verified_endpoints) / endpoint_count * 100) if endpoint_count > 0 else 0.0
+    verification_coverage = (
+        (len(verified_endpoints) / endpoint_count * 100) if endpoint_count > 0 else 0.0
+    )
 
     # Documentation evidence coverage: capabilities with docs
     documented_cap_ids: Set[str] = set()
@@ -70,7 +74,9 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
             cap_id = e.source.split(":", 1)[-1] if ":" in e.source else e.source
             documented_cap_ids.add(f"capability:{cap_id}")
     cap_count = node_counts.get("capability", 0)
-    documentation_coverage = (len(documented_cap_ids) / cap_count * 100) if cap_count > 0 else 0.0
+    documentation_coverage = (
+        (len(documented_cap_ids) / cap_count * 100) if cap_count > 0 else 0.0
+    )
 
     # Orphan module percentage
     implemented_modules: Set[str] = set()
@@ -83,7 +89,9 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
 
     # Graph density
     unique_nodes = {n.id for n in nodes}
-    possible_edges = len(unique_nodes) * (len(unique_nodes) - 1) if len(unique_nodes) > 1 else 1
+    possible_edges = (
+        len(unique_nodes) * (len(unique_nodes) - 1) if len(unique_nodes) > 1 else 1
+    )
     graph_density = total_edges / possible_edges if possible_edges > 0 else 0.0
 
     # Largest capability by number of outgoing edges
@@ -153,7 +161,11 @@ def calculate_metrics(service: RepositoryGraphService) -> Dict[str, Any]:
         if len(chain) > len(longest_chain):
             longest_chain = chain
 
-    top_dependency_chains = [{"chain": longest_chain, "length": len(longest_chain)}] if longest_chain else []
+    top_dependency_chains = (
+        [{"chain": longest_chain, "length": len(longest_chain)}]
+        if longest_chain
+        else []
+    )
 
     generated_at = "unknown"
     schema_version = "2.2"
