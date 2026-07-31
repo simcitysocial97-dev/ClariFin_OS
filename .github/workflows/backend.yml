@@ -1,30 +1,28 @@
 # .github/workflows/backend.yml
 #
-# PURPOSE: Full backend test suite for pull requests
-# TARGET:  Complete in under 15 minutes
-# RUNS:    On PR to main/develop only
+# RETIRED: Superseded by backend-verify.yml (selective verification pipeline)
+# This workflow ran the full backend test suite unconditionally.
+# Replaced by backend-verify.yml which uses the canonical verification runtime.
+# Triggers have been disabled to prevent duplicate runs.
 #
-# What it runs:
-#   - All unit tests
-#   - Property tests
-#   - Contract tests
-#   - Capability tests
-#   - Integration tests
-#   - Invariant tests
-#   - Migration tests
-#   - Phase 3.2 capability validation tests
+# Purpose (historical): Full backend test suite for pull requests
+# Target (historical):  Complete in under 15 minutes
+# Runs (historical):    On PR to main/develop only
 
 name: Backend Full Suite
 
 on:
-  pull_request:
-    branches:
-      - main
-      - develop
-    paths:
-      # Only run when backend files change
-      - "backend/**"
-      - ".github/workflows/backend.yml"
+  workflow_dispatch:    # Manual only — use backend-verify.yml for CI
+
+# RETIRED: push and pull_request triggers removed
+# on:
+#   pull_request:
+#     branches:
+#       - main
+#       - develop
+#     paths:
+#       - "backend/**"
+#       - ".github/workflows/backend.yml"
 
 concurrency:
   group: backend-${{ github.ref }}
