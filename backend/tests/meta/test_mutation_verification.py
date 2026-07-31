@@ -19,7 +19,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 
 
 def _load_registry() -> dict[str, Any]:
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 
@@ -101,7 +101,7 @@ class TestMutationVerification:
         self, cap_id: str, engine_file: str
     ) -> None:
         """Mutating an engine file must produce consistent dependency graph."""
-        from runtime.discovery import discover_dependencies
+        from verification_runtime.discovery import discover_dependencies
 
         dep_map = discover_dependencies()
         all_cap_ids = set(dep_map.get("capabilities", {}).keys())
@@ -119,7 +119,7 @@ class TestMutationVerification:
     @pytest.mark.parametrize("cap_id,engine_file", _get_capability_pairs())
     def test_mutation_no_false_negatives(self, cap_id: str, engine_file: str) -> None:
         """Mutation must not produce false negatives (missing required tests)."""
-        from runtime.discovery import discover_dependencies
+        from verification_runtime.discovery import discover_dependencies
 
         from src.verification.intelligence.impact_engine import ImpactEngine
         from src.verification.intelligence.selective_engine import SelectiveEngine

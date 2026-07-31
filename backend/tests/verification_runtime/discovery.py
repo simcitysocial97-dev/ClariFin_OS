@@ -21,7 +21,7 @@ import ast
 from pathlib import Path
 from typing import Any
 
-from runtime.registries import get_capability_by_id
+from verification_runtime.registries import get_capability_by_id
 
 # Project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
@@ -291,7 +291,7 @@ def discover_capability_tests() -> list[dict[str, Any]]:
 
 def discover_capabilities() -> list[dict[str, Any]]:
     """Discover capabilities from capability-registry.yaml."""
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     registry = load_capability_registry()
     return registry.get("capabilities", [])
@@ -460,7 +460,7 @@ def discover_dependencies() -> dict[str, Any]:
         pass
 
     # Fallback: derive all edge types from capability registry + filesystem
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     registry = load_capability_registry()
     edges: list[dict[str, Any]] = []

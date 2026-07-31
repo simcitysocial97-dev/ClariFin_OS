@@ -125,7 +125,7 @@ def _generate_ci_plan(changed_file: str) -> dict[str, Any]:
 
 def _get_dependency_graph() -> dict[str, Any]:
     """Get the current dependency graph."""
-    from runtime.discovery import discover_dependencies
+    from verification_runtime.discovery import discover_dependencies
 
     return discover_dependencies()
 

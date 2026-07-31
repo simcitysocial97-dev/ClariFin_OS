@@ -1,6 +1,6 @@
 """Runtime discovery — delegates to the canonical implementation.
 
-The authoritative discovery logic lives in ``tests/runtime/discovery.py``
+The authoritative discovery logic lives in ``backend/tests/verification_runtime/discovery.py``
 (importable as ``runtime.discovery`` when running from ``backend/``).
 This module provides the same API surface from the ``src.verification.runtime``
 package so that code importing ``src.verification.runtime.discovery`` gets
@@ -13,27 +13,27 @@ from typing import Any, cast
 
 
 def _delegate(func_name: str) -> Any:
-    """Import and call the real implementation from runtime.discovery."""
+    """Import and call the real implementation from verification_runtime.discovery."""
     try:
-        from runtime.discovery import (  # type: ignore[import-not-found]
+        from verification_runtime.discovery import (  # type: ignore[import-not-found]
             discover_capabilities as _real,
         )
-        from runtime.discovery import (
+        from verification_runtime.discovery import (
             discover_capability_tests as _real_ct,
         )
-        from runtime.discovery import (
+        from verification_runtime.discovery import (
             discover_contract_tests as _real_ctr,
         )
-        from runtime.discovery import (
+        from verification_runtime.discovery import (
             discover_dependencies as _real_dep,
         )
-        from runtime.discovery import (
+        from verification_runtime.discovery import (
             discover_golden_datasets as _real_gd,
         )
-        from runtime.discovery import (
+        from verification_runtime.discovery import (
             discover_invariant_tests as _real_inv,
         )
-        from runtime.discovery import (
+        from verification_runtime.discovery import (
             discover_property_tests as _real_pt,
         )
     except ImportError:

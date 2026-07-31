@@ -20,7 +20,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 
 
 def _load_registry() -> dict[str, Any]:
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 
@@ -47,7 +47,7 @@ def _measure_false_positives(engine_file: str) -> dict[str, Any]:
     - false_negative_count: required tests not scheduled
     - over_selection_rate: false_positives / total_scheduled
     """
-    from runtime.discovery import discover_dependencies
+    from verification_runtime.discovery import discover_dependencies
 
     from src.verification.intelligence.impact_engine import ImpactEngine
     from src.verification.intelligence.selective_engine import SelectiveEngine

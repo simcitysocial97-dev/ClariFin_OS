@@ -15,7 +15,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from runtime.discovery import (
+from verification_runtime.discovery import (
     discover_builders,
     discover_capabilities,
     discover_capability_tests,
@@ -35,7 +35,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 
 def validate_registry_integrity() -> dict[str, Any]:
     """Validate that all registries are loadable and internally consistent."""
-    from runtime.registries import (
+    from verification_runtime.registries import (
         load_api_map,
         load_capability_registry,
         load_contract_registry,
@@ -146,8 +146,8 @@ def validate_discovery_correctness() -> dict[str, Any]:
 
 def validate_missing_metadata() -> dict[str, Any]:
     """Detect capabilities missing verification metadata."""
-    from runtime.discovery import discover_capabilities
-    from runtime.registries import get_capability_by_id
+    from verification_runtime.discovery import discover_capabilities
+    from verification_runtime.registries import get_capability_by_id
 
     results: dict[str, Any] = {"valid": True, "missing": []}
 
@@ -180,7 +180,7 @@ def validate_missing_metadata() -> dict[str, Any]:
 
 def validate_pipeline_consistency() -> dict[str, Any]:
     """Validate that all pipeline stages have runners."""
-    from runtime.orchestrator import FULL_PIPELINE, STAGE_RUNNERS
+    from verification_runtime.orchestrator import FULL_PIPELINE, STAGE_RUNNERS
 
     results: dict[str, Any] = {"valid": True, "missing_runners": []}
 
@@ -208,7 +208,7 @@ def validate_no_duplicate_registrations() -> dict[str, Any]:
         )
 
     # Check for duplicate property test paths
-    from runtime.discovery import discover_property_tests
+    from verification_runtime.discovery import discover_property_tests
 
     prop_paths = [t["path"] for t in discover_property_tests()]
     dup_paths = [p for p in set(prop_paths) if prop_paths.count(p) > 1]
@@ -216,7 +216,7 @@ def validate_no_duplicate_registrations() -> dict[str, Any]:
         results["duplicates"].append(f"Duplicate property test paths: {dup_paths}")
 
     # Check for duplicate invariant test paths
-    from runtime.discovery import discover_invariant_tests
+    from verification_runtime.discovery import discover_invariant_tests
 
     inv_paths = [t["path"] for t in discover_invariant_tests()]
     dup_inv = [p for p in set(inv_paths) if inv_paths.count(p) > 1]
@@ -293,7 +293,7 @@ def validate_fixture_registry() -> dict[str, Any]:
 
 def validate_dependency_graph_integrity() -> dict[str, Any]:
     """Validate that the dependency graph is internally consistent."""
-    from runtime.discovery import discover_dependencies
+    from verification_runtime.discovery import discover_dependencies
 
     results: dict[str, Any] = {"valid": True, "errors": []}
 
@@ -469,7 +469,7 @@ def validate_evidence_integrity() -> dict[str, Any]:
 
 def validate_dependency_chains() -> dict[str, Any]:
     """Check for broken dependency chains in the capability registry."""
-    from runtime.discovery import discover_dependencies
+    from verification_runtime.discovery import discover_dependencies
 
     results: dict[str, Any] = {"valid": True, "errors": []}
 

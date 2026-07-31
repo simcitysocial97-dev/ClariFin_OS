@@ -42,7 +42,7 @@ COMPONENT_CATEGORIES = [
 
 def _load_registry() -> dict[str, Any]:
     """Load the capability registry."""
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 
@@ -103,7 +103,7 @@ def _audit_capability(cap: dict[str, Any]) -> dict[str, Any]:
 
 def _detect_stale_mappings(cap_id: str) -> list[str]:
     """Detect files that exist on disk but are not registered for this capability."""
-    from runtime.discovery import (
+    from verification_runtime.discovery import (
         discover_engines,
         discover_repositories,
         discover_routers,

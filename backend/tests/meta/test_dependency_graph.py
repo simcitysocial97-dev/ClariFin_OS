@@ -5,7 +5,7 @@ Verifies that the dependency graph is internally consistent and complete.
 
 from __future__ import annotations
 
-from runtime.discovery import discover_dependencies
+from verification_runtime.discovery import discover_dependencies
 
 
 class TestDependencyGraph:
@@ -146,7 +146,7 @@ class TestDependencyGraph:
 
     def test_transitive_dependencies_work(self) -> None:
         """Transitive dependency resolution must work correctly."""
-        from runtime.discovery import get_transitive_dependencies
+        from verification_runtime.discovery import get_transitive_dependencies
 
         transitive = get_transitive_dependencies("forecasting")
 
@@ -159,7 +159,7 @@ class TestDependencyGraph:
 
     def test_get_dependents_works(self) -> None:
         """get_dependents must return capabilities that depend on the given one."""
-        from runtime.discovery import get_dependents
+        from verification_runtime.discovery import get_dependents
 
         dependents = get_dependents("household_cashflow")
         assert len(dependents) > 0, "household_cashflow should have dependents"
