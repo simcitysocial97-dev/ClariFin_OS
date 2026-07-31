@@ -30,7 +30,7 @@ jobs:
       - name: Run property tests with nightly profile
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --property > ci-property-targets.txt
+          python -m tests.runtime.ci_targets --property > ci-property-targets.txt
           xargs pytest < ci-property-targets.txt -v --tb=short --hypothesis-profile=nightly
 
       - name: Upload property test results

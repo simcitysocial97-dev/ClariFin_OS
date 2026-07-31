@@ -98,7 +98,7 @@ jobs:
         id: intelligence
         working-directory: backend
         run: |
-          python -m verification_intelligence --selective --json > intelligence-plan.json
+          python -m tools.development.verification_intelligence --selective --json > intelligence-plan.json
           STRATEGY=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(d.get('strategy','full'))")
           CAPS=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('affected_capabilities',[])))")
           MUST_RUN=$(python -c "import json; d=json.load(open('intelligence-plan.json')); print(','.join(d.get('must_run_jobs',[])))")
@@ -142,7 +142,7 @@ jobs:
       - name: Derive property targets from runtime
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --property > ci-property-targets.txt
+          python -m tests.runtime.ci_targets --property > ci-property-targets.txt
           cat ci-property-targets.txt
 
       - name: Run property tests
@@ -189,7 +189,7 @@ jobs:
       - name: Derive contract targets from runtime
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --contract > ci-contract-targets.txt
+          python -m tests.runtime.ci_targets --contract > ci-contract-targets.txt
           cat ci-contract-targets.txt
 
       - name: Run contract tests
@@ -236,7 +236,7 @@ jobs:
       - name: Derive capability targets from runtime
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --capability > ci-capability-targets.txt
+          python -m tests.runtime.ci_targets --capability > ci-capability-targets.txt
           cat ci-capability-targets.txt
 
       - name: Run capability tests
@@ -301,7 +301,7 @@ jobs:
       - name: Derive invariant targets from runtime
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --invariant > ci-invariant-targets.txt
+          python -m tests.runtime.ci_targets --invariant > ci-invariant-targets.txt
           cat ci-invariant-targets.txt
 
       - name: Run invariant tests
@@ -411,7 +411,7 @@ jobs:
       - name: Derive all test targets from runtime
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --all > ci-all-targets.txt
+          python -m tests.runtime.ci_targets --all > ci-all-targets.txt
           cat ci-all-targets.txt
 
       - name: Run all tests with unified coverage
@@ -468,9 +468,9 @@ jobs:
         working-directory: backend
         run: |
           # Run generators twice and check for diffs
-          python -m verification_intelligence --dependency-map 2>/dev/null || true
+          python -m tools.development.verification_intelligence --dependency-map 2>/dev/null || true
           cp tests/generated/dependency-map.json /tmp/dep_map_1.json
-          python -m verification_intelligence --dependency-map 2>/dev/null || true
+          python -m tools.development.verification_intelligence --dependency-map 2>/dev/null || true
           diff /tmp/dep_map_1.json tests/generated/dependency-map.json && echo "Dependency map is deterministic" || echo "WARNING: Dependency map differs"
 
   intelligence-reports:
@@ -492,7 +492,7 @@ jobs:
       - name: Generate all intelligence reports
         working-directory: backend
         run: |
-          python -m verification_intelligence --all
+          python -m tools.development.verification_intelligence --all
 
       - name: Upload intelligence reports
         uses: actions/upload-artifact@v4
@@ -537,7 +537,7 @@ jobs:
       - name: Generate quality report
         working-directory: backend
         run: |
-          python -m verification_intelligence --quality-report || {
+          python -m tools.development.verification_intelligence --quality-report || {
             echo "::warning::Quality report generation failed. Generating fallback report."
             echo "# Quality Report (Fallback)" > tests/generated/quality-report.md
             echo "Failed to generate automated report." >> tests/generated/quality-report.md

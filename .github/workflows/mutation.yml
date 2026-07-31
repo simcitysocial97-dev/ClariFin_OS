@@ -58,7 +58,7 @@ jobs:
         id: discover
         working-directory: backend
         run: |
-          python -m runtime.ci_targets --mutation --json > mutation-targets.json
+          python -m tests.runtime.ci_targets --mutation --json > mutation-targets.json
           ENGINES=$(python -c "import json; data=json.load(open('mutation-targets.json')); print(json.dumps([p.split('/')[-1].replace('.py','') for p in data['mutation']]))")
           echo "engines=$ENGINES" >> "$GITHUB_OUTPUT"
           echo "Discovered engines: $ENGINES"
