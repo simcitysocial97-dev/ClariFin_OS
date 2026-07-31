@@ -12,8 +12,11 @@ def main():
 
     summary = EvidenceAggregator.from_artifact_directory(evidence_dir)
 
-    summary.save(Path("evidence_summary.json"))
-    summary.save_markdown(Path("evidence_summary.md"))
+    output_dir = Path("runtime/generated/evidence")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    summary.save(output_dir / "summary.json")
+    summary.save_markdown(output_dir / "summary.md")
 
     print("Evidence summary generated")
     print(f"Overall status: {summary.overall_status}")

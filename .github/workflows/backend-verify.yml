@@ -85,7 +85,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: verification-plan
-          path: verification_plan.json
+          path: runtime/generated/verification/plan.json
           retention-days: 5
 
   unit-tests:
@@ -121,7 +121,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          python3 -c "import json; p=json.load(open('verification_plan.json')); print('Unit paths:', p['unit_tests']['paths'])"
+          python3 -c "import json; p=json.load(open('runtime/generated/verification/plan.json')); print('Unit paths:', p['unit_tests']['paths'])"
           cd backend
           python3 -m pytest -x \
             --junit-xml=tests/generated/junit.xml \
@@ -343,7 +343,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        engine: ${{ fromJSON(needs.plan.outputs.affected_engines) }}
+        engine: ${{ fromJSON(needs.plan.outputs.affected_engines || '[]') }}
 
     steps:
       - name: Checkout code
@@ -430,8 +430,8 @@ jobs:
         with:
           name: evidence-summary-${{ github.run_id }}
           path: |
-            evidence_summary.json
-            evidence_summary.md
+            runtime/generated/evidence/summary.json
+            runtime/generated/evidence/summary.md
           retention-days: 5
 
       - name: Post PR comment
@@ -440,7 +440,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const summary = fs.readFileSync('evidence_summary.md', 'utf8');
+            const summary = fs.readFileSync('runtime/generated/evidence/summary.md', 'utf8');
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
