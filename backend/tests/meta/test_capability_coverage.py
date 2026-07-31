@@ -39,7 +39,7 @@ COVERAGE_CATEGORIES = [
 
 def _load_registry() -> dict[str, Any]:
     """Load the capability registry."""
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 

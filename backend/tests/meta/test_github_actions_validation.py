@@ -27,7 +27,7 @@ def _load_workflow() -> dict[str, Any]:
 
 
 def _load_registry() -> dict[str, Any]:
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 

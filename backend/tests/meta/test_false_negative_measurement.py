@@ -21,7 +21,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 
 
 def _load_registry() -> dict[str, Any]:
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 
@@ -76,7 +76,7 @@ def _measure_false_negatives(engine_file: str) -> dict[str, Any]:
     selective_set = selective_tests
     false_negatives = full_set - selective_set
 
-    from runtime.discovery import discover_dependencies
+    from verification_runtime.discovery import discover_dependencies
 
     from src.verification.intelligence.impact_engine import ImpactEngine
 
@@ -174,7 +174,7 @@ class TestFalseNegativeMeasurement:
         self, measurements: list[dict[str, Any]]
     ) -> None:
         """The dependency graph must contain all required tests."""
-        from runtime.discovery import discover_dependencies
+        from verification_runtime.discovery import discover_dependencies
 
         dep_map = discover_dependencies()
         edges = dep_map.get("edges", [])

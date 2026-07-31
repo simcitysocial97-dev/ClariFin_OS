@@ -33,7 +33,7 @@ TESTS_DIR = BACKEND_DIR / "tests"
 
 def _load_registry() -> dict[str, Any]:
     """Load the capability registry."""
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     return load_capability_registry()
 
@@ -267,7 +267,7 @@ class TestGraphIntegrity:
 
     @pytest.fixture(scope="class")
     def dep_map(self) -> dict[str, Any]:
-        from runtime.discovery import discover_dependencies
+        from verification_runtime.discovery import discover_dependencies
 
         return discover_dependencies()
 
@@ -493,7 +493,7 @@ class TestGraphIntegrity:
 
     def test_graph_is_deterministic(self) -> None:
         """The dependency graph must be identical across multiple runs."""
-        from runtime.discovery import discover_dependencies
+        from verification_runtime.discovery import discover_dependencies
 
         dep_map_1 = discover_dependencies()
         dep_map_2 = discover_dependencies()

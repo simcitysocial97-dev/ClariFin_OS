@@ -25,7 +25,7 @@ GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 
 def test_registry_integrity() -> None:
     """All registries must load without errors."""
-    from runtime.registries import (
+    from verification_runtime.registries import (
         load_api_map,
         load_capability_registry,
         load_contract_registry,
@@ -48,7 +48,7 @@ def test_registry_integrity() -> None:
 
 def test_no_duplicate_capability_ids() -> None:
     """Capability registry must have unique IDs."""
-    from runtime.registries import load_capability_registry
+    from verification_runtime.registries import load_capability_registry
 
     cap_reg = load_capability_registry()
     cap_ids = [c.get("id") for c in cap_reg.get("capabilities", []) if c.get("id")]
@@ -57,7 +57,7 @@ def test_no_duplicate_capability_ids() -> None:
 
 def test_discovery_discovers_existing_files() -> None:
     """All discovered components must exist on disk."""
-    from runtime.discovery import (
+    from verification_runtime.discovery import (
         discover_builders,
         discover_contract_tests,
         discover_golden_datasets,
@@ -99,8 +99,8 @@ def test_discovery_discovers_existing_files() -> None:
 
 def test_capabilities_have_required_metadata() -> None:
     """Every registered capability must have required metadata fields."""
-    from runtime.discovery import discover_capabilities
-    from runtime.registries import get_capability_by_id
+    from verification_runtime.discovery import discover_capabilities
+    from verification_runtime.registries import get_capability_by_id
 
     required = ["property_tests", "invariants", "golden_datasets", "contracts"]
     for cap in discover_capabilities():
@@ -115,7 +115,7 @@ def test_capabilities_have_required_metadata() -> None:
 
 def test_pipeline_stages_have_runners() -> None:
     """Every pipeline stage must have a runner function."""
-    from runtime.orchestrator import FULL_PIPELINE, STAGE_RUNNERS
+    from verification_runtime.orchestrator import FULL_PIPELINE, STAGE_RUNNERS
 
     for stage_id in FULL_PIPELINE:
         assert stage_id in STAGE_RUNNERS, f"Stage '{stage_id}' missing runner"
@@ -123,7 +123,7 @@ def test_pipeline_stages_have_runners() -> None:
 
 def test_no_duplicate_registrations() -> None:
     """No duplicate test paths or capability IDs."""
-    from runtime.discovery import (
+    from verification_runtime.discovery import (
         discover_capability_tests,
         discover_invariant_tests,
         discover_property_tests,
@@ -143,7 +143,7 @@ def test_builder_modules_are_valid_python() -> None:
     """All builder modules must be syntactically valid and contain builders or loaders."""
     import ast
 
-    from runtime.discovery import discover_builders
+    from verification_runtime.discovery import discover_builders
 
     for builder in discover_builders():
         full_path = BACKEND_DIR / builder["path"]
@@ -165,7 +165,7 @@ def test_fixture_files_are_valid_python() -> None:
     """All conftest.py files must be syntactically valid."""
     import ast
 
-    from runtime.discovery import discover_fixtures
+    from verification_runtime.discovery import discover_fixtures
 
     for fixture in discover_fixtures():
         full_path = BACKEND_DIR / fixture["path"]
@@ -174,7 +174,7 @@ def test_fixture_files_are_valid_python() -> None:
 
 def test_verification_map_complete() -> None:
     """Verification map must cover all registered capabilities."""
-    from runtime.discovery import get_verification_map
+    from verification_runtime.discovery import get_verification_map
 
     vmap = get_verification_map()
     assert len(vmap) > 0, "Verification map is empty"
@@ -195,7 +195,7 @@ def test_verification_map_complete() -> None:
 
 def test_self_validator_runs_clean() -> None:
     """Self-validator must report all checks as valid or have acceptable gaps."""
-    from runtime.self_validator import run_all_validations
+    from verification_runtime.self_validator import run_all_validations
 
     report = run_all_validations()
     # Allow known Phase 1 backlog gaps:
