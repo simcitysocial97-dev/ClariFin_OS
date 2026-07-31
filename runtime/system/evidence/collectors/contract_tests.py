@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, List
+from typing import List
 
 from .base import EvidenceCollector, EvidenceArtifact
 

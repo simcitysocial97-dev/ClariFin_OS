@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, List
+from typing import List
 
 from .base import EvidenceCollector, EvidenceArtifact
 
@@ -22,7 +21,9 @@ class MutationCollector(EvidenceCollector):
     def collect(self) -> List[EvidenceArtifact]:
         artifacts = []
 
-        mutation_dir = self.workspace_root / "backend" / "tests" / "generated" / "mutation"
+        mutation_dir = (
+            self.workspace_root / "backend" / "tests" / "generated" / "mutation"
+        )
         if not mutation_dir.exists():
             return artifacts
 
