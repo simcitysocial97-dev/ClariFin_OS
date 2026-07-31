@@ -8,10 +8,11 @@ Given a file path, determine which scopes are affected and WHY.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
 
-from runtime.foundation.verification.models.model import VerificationCategory, VerificationScope
+from runtime.foundation.verification.models.model import (
+    VerificationCategory,
+    VerificationScope,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -66,12 +67,18 @@ class ScopeResolver:
         VerificationCategory.CONTRACT: [VerificationScope.CONTRACTS],
         VerificationCategory.PROPERTY: [VerificationScope.PROPERTY],
         VerificationCategory.INVARIANT: [VerificationScope.CONTRACTS],
-        VerificationCategory.CAPABILITY: [VerificationScope.BACKEND, VerificationScope.FRONTEND],
+        VerificationCategory.CAPABILITY: [
+            VerificationScope.BACKEND,
+            VerificationScope.FRONTEND,
+        ],
         VerificationCategory.MUTATION: [VerificationScope.MUTATION],
         VerificationCategory.INTEGRATION: [VerificationScope.INTEGRATION],
         VerificationCategory.MIGRATION: [VerificationScope.MIGRATION],
         VerificationCategory.ARCHITECTURAL: [VerificationScope.REPOSITORY],
-        VerificationCategory.PERFORMANCE: [VerificationScope.INTEGRATION, VerificationScope.REPOSITORY],
+        VerificationCategory.PERFORMANCE: [
+            VerificationScope.INTEGRATION,
+            VerificationScope.REPOSITORY,
+        ],
         VerificationCategory.SECURITY: [VerificationScope.REPOSITORY],
     }
 
@@ -87,16 +94,20 @@ class ScopeResolver:
         if norm_path.startswith("backend/src/"):
             scopes.add(VerificationScope.BACKEND)
             scopes.add(VerificationScope.CONTRACTS)
-            reasons.append(ScopeReason(
-                scope=VerificationScope.BACKEND,
-                reason="Backend source file",
-                category=VerificationCategory.CAPABILITY,
-            ))
-            reasons.append(ScopeReason(
-                scope=VerificationScope.CONTRACTS,
-                reason="Backend code requires contract verification",
-                category=VerificationCategory.CONTRACT,
-            ))
+            reasons.append(
+                ScopeReason(
+                    scope=VerificationScope.BACKEND,
+                    reason="Backend source file",
+                    category=VerificationCategory.CAPABILITY,
+                )
+            )
+            reasons.append(
+                ScopeReason(
+                    scope=VerificationScope.CONTRACTS,
+                    reason="Backend code requires contract verification",
+                    category=VerificationCategory.CONTRACT,
+                )
+            )
 
             # Extract module
             parts = norm_path.split("/")
@@ -107,83 +118,103 @@ class ScopeResolver:
                 # Check for specific capabilities
                 if "loan_engine" in norm_path:
                     scopes.add(VerificationScope.PROPERTY)
-                    reasons.append(ScopeReason(
-                        scope=VerificationScope.PROPERTY,
-                        reason="Loan engine requires property-based testing",
-                        category=VerificationCategory.PROPERTY,
-                        module=module,
-                        capability="loan-engine",
-                    ))
+                    reasons.append(
+                        ScopeReason(
+                            scope=VerificationScope.PROPERTY,
+                            reason="Loan engine requires property-based testing",
+                            category=VerificationCategory.PROPERTY,
+                            module=module,
+                            capability="loan-engine",
+                        )
+                    )
                     capabilities.add("loan-engine")
 
                 if "reconciliation" in norm_path:
                     scopes.add(VerificationScope.PROPERTY)
-                    reasons.append(ScopeReason(
-                        scope=VerificationScope.PROPERTY,
-                        reason="Reconciliation engine requires property-based testing",
-                        category=VerificationCategory.PROPERTY,
-                        module=module,
-                        capability="reconciliation",
-                    ))
+                    reasons.append(
+                        ScopeReason(
+                            scope=VerificationScope.PROPERTY,
+                            reason="Reconciliation engine requires property-based testing",
+                            category=VerificationCategory.PROPERTY,
+                            module=module,
+                            capability="reconciliation",
+                        )
+                    )
                     capabilities.add("reconciliation")
 
                 if "ledger" in norm_path or "accounting" in norm_path:
-                    reasons.append(ScopeReason(
-                        scope=VerificationScope.CONTRACTS,
-                        reason="Ledger/accounting code requires invariant verification",
-                        category=VerificationCategory.INVARIANT,
-                        module=module,
-                        capability="ledger" if "ledger" in norm_path else "accounting",
-                    ))
-                    capabilities.add("ledger" if "ledger" in norm_path else "accounting")
+                    reasons.append(
+                        ScopeReason(
+                            scope=VerificationScope.CONTRACTS,
+                            reason="Ledger/accounting code requires invariant verification",
+                            category=VerificationCategory.INVARIANT,
+                            module=module,
+                            capability=(
+                                "ledger" if "ledger" in norm_path else "accounting"
+                            ),
+                        )
+                    )
+                    capabilities.add(
+                        "ledger" if "ledger" in norm_path else "accounting"
+                    )
 
                 if "api" in norm_path or "routes" in norm_path:
                     scopes.add(VerificationScope.INTEGRATION)
-                    reasons.append(ScopeReason(
-                        scope=VerificationScope.INTEGRATION,
-                        reason="API routes require integration testing",
-                        category=VerificationCategory.INTEGRATION,
-                        module=module,
-                        capability="api",
-                    ))
+                    reasons.append(
+                        ScopeReason(
+                            scope=VerificationScope.INTEGRATION,
+                            reason="API routes require integration testing",
+                            category=VerificationCategory.INTEGRATION,
+                            module=module,
+                            capability="api",
+                        )
+                    )
                     capabilities.add("api")
 
                 if "migrations" in norm_path or "alembic" in norm_path:
                     scopes.add(VerificationScope.MIGRATION)
-                    reasons.append(ScopeReason(
-                        scope=VerificationScope.MIGRATION,
-                        reason="Database migration changes require migration verification",
-                        category=VerificationCategory.MIGRATION,
-                        module=module,
-                        capability="migrations",
-                    ))
+                    reasons.append(
+                        ScopeReason(
+                            scope=VerificationScope.MIGRATION,
+                            reason="Database migration changes require migration verification",
+                            category=VerificationCategory.MIGRATION,
+                            module=module,
+                            capability="migrations",
+                        )
+                    )
                     capabilities.add("migrations")
 
                 if "risk" in norm_path or "compliance" in norm_path:
                     scopes.add(VerificationScope.INTEGRATION)
-                    reasons.append(ScopeReason(
-                        scope=VerificationScope.INTEGRATION,
-                        reason="Risk/compliance modules require integration verification",
-                        category=VerificationCategory.INTEGRATION,
-                        module=module,
-                        capability="risk" if "risk" in norm_path else "compliance",
-                    ))
+                    reasons.append(
+                        ScopeReason(
+                            scope=VerificationScope.INTEGRATION,
+                            reason="Risk/compliance modules require integration verification",
+                            category=VerificationCategory.INTEGRATION,
+                            module=module,
+                            capability="risk" if "risk" in norm_path else "compliance",
+                        )
+                    )
                     capabilities.add("risk" if "risk" in norm_path else "compliance")
 
         # Frontend source files
         elif norm_path.startswith("frontend/src/"):
             scopes.add(VerificationScope.FRONTEND)
             scopes.add(VerificationScope.CONTRACTS)
-            reasons.append(ScopeReason(
-                scope=VerificationScope.FRONTEND,
-                reason="Frontend source file",
-                category=VerificationCategory.CAPABILITY,
-            ))
-            reasons.append(ScopeReason(
-                scope=VerificationScope.CONTRACTS,
-                reason="Frontend changes may affect API contracts",
-                category=VerificationCategory.CONTRACT_FRONTEND,
-            ))
+            reasons.append(
+                ScopeReason(
+                    scope=VerificationScope.FRONTEND,
+                    reason="Frontend source file",
+                    category=VerificationCategory.CAPABILITY,
+                )
+            )
+            reasons.append(
+                ScopeReason(
+                    scope=VerificationScope.CONTRACTS,
+                    reason="Frontend changes may affect API contracts",
+                    category=VerificationCategory.CONTRACT_FRONTEND,
+                )
+            )
 
             parts = norm_path.split("/")
             if len(parts) >= 3:
@@ -195,74 +226,104 @@ class ScopeResolver:
         elif norm_path.startswith("backend/tests/"):
             if "property" in norm_path:
                 scopes.add(VerificationScope.PROPERTY)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.PROPERTY,
-                    reason="Property test file",
-                    category=VerificationCategory.PROPERTY,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.PROPERTY,
+                        reason="Property test file",
+                        category=VerificationCategory.PROPERTY,
+                    )
+                )
             elif "contract" in norm_path:
                 scopes.add(VerificationScope.CONTRACTS)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.CONTRACTS,
-                    reason="Contract test file",
-                    category=VerificationCategory.CONTRACT,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.CONTRACTS,
+                        reason="Contract test file",
+                        category=VerificationCategory.CONTRACT,
+                    )
+                )
             elif "invariant" in norm_path:
                 scopes.add(VerificationScope.CONTRACTS)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.CONTRACTS,
-                    reason="Invariant test file",
-                    category=VerificationCategory.INVARIANT,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.CONTRACTS,
+                        reason="Invariant test file",
+                        category=VerificationCategory.INVARIANT,
+                    )
+                )
             elif "mutation" in norm_path:
                 scopes.add(VerificationScope.MUTATION)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.MUTATION,
-                    reason="Mutation test file",
-                    category=VerificationCategory.MUTATION,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.MUTATION,
+                        reason="Mutation test file",
+                        category=VerificationCategory.MUTATION,
+                    )
+                )
             elif "integration" in norm_path or "e2e" in norm_path:
                 scopes.add(VerificationScope.INTEGRATION)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.INTEGRATION,
-                    reason="Integration test file",
-                    category=VerificationCategory.INTEGRATION,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.INTEGRATION,
+                        reason="Integration test file",
+                        category=VerificationCategory.INTEGRATION,
+                    )
+                )
             else:
                 scopes.add(VerificationScope.BACKEND)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.BACKEND,
-                    reason="Backend test file",
-                    category=VerificationCategory.CAPABILITY,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.BACKEND,
+                        reason="Backend test file",
+                        category=VerificationCategory.CAPABILITY,
+                    )
+                )
 
         elif norm_path.startswith("frontend/tests/"):
             scopes.add(VerificationScope.FRONTEND)
             scopes.add(VerificationScope.CONTRACTS)
-            reasons.append(ScopeReason(
-                scope=VerificationScope.FRONTEND,
-                reason="Frontend test file",
-                category=VerificationCategory.CAPABILITY,
-            ))
+            reasons.append(
+                ScopeReason(
+                    scope=VerificationScope.FRONTEND,
+                    reason="Frontend test file",
+                    category=VerificationCategory.CAPABILITY,
+                )
+            )
 
         # Config files affect full repo
         elif any(norm_path.endswith(ext) for ext in (".yaml", ".yml", ".toml", ".ini")):
-            if any(norm_path.endswith(f) for f in ("pyproject.toml", "package.json", "tsconfig.json", "requirements.txt", "setup.py", "setup.cfg")):
+            if any(
+                norm_path.endswith(f)
+                for f in (
+                    "pyproject.toml",
+                    "package.json",
+                    "tsconfig.json",
+                    "requirements.txt",
+                    "setup.py",
+                    "setup.cfg",
+                )
+            ):
                 scopes.add(VerificationScope.REPOSITORY)
-                reasons.append(ScopeReason(
-                    scope=VerificationScope.REPOSITORY,
-                    reason="Root configuration file affects entire repository",
-                    category=VerificationCategory.ARCHITECTURAL,
-                ))
+                reasons.append(
+                    ScopeReason(
+                        scope=VerificationScope.REPOSITORY,
+                        reason="Root configuration file affects entire repository",
+                        category=VerificationCategory.ARCHITECTURAL,
+                    )
+                )
 
         # Scripts and workflows
-        elif norm_path.startswith(".github/workflows/") or norm_path.startswith(".github/scripts/"):
+        elif norm_path.startswith(".github/workflows/") or norm_path.startswith(
+            ".github/scripts/"
+        ):
             scopes.add(VerificationScope.REPOSITORY)
-            reasons.append(ScopeReason(
-                scope=VerificationScope.REPOSITORY,
-                reason="CI/CD workflow or script affects entire verification pipeline",
-                category=VerificationCategory.ARCHITECTURAL,
-            ))
+            reasons.append(
+                ScopeReason(
+                    scope=VerificationScope.REPOSITORY,
+                    reason="CI/CD workflow or script affects entire verification pipeline",
+                    category=VerificationCategory.ARCHITECTURAL,
+                )
+            )
 
         return ScopeResolution(
             file_path=file_path,
@@ -326,17 +387,33 @@ class ScopeResolver:
 
         return "\n".join(lines)
 
-    def get_scope_dependencies(self, scope: VerificationScope) -> list[VerificationScope]:
+    def get_scope_dependencies(
+        self, scope: VerificationScope
+    ) -> list[VerificationScope]:
         """Get scopes that must run before the given scope."""
         hierarchy = {
             VerificationScope.QUICK: [],
             VerificationScope.BACKEND: [VerificationScope.QUICK],
             VerificationScope.FRONTEND: [VerificationScope.QUICK],
             VerificationScope.CONTRACTS: [VerificationScope.QUICK],
-            VerificationScope.PROPERTY: [VerificationScope.QUICK, VerificationScope.BACKEND, VerificationScope.CONTRACTS],
-            VerificationScope.MUTATION: [VerificationScope.QUICK, VerificationScope.BACKEND],
-            VerificationScope.INTEGRATION: [VerificationScope.QUICK, VerificationScope.BACKEND, VerificationScope.CONTRACTS],
-            VerificationScope.MIGRATION: [VerificationScope.QUICK, VerificationScope.BACKEND],
+            VerificationScope.PROPERTY: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+                VerificationScope.CONTRACTS,
+            ],
+            VerificationScope.MUTATION: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+            ],
+            VerificationScope.INTEGRATION: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+                VerificationScope.CONTRACTS,
+            ],
+            VerificationScope.MIGRATION: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+            ],
             VerificationScope.REPOSITORY: [
                 VerificationScope.QUICK,
                 VerificationScope.BACKEND,

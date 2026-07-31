@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional
 
 
 def get_git_info(workspace_root: Path) -> tuple[str, str]:
@@ -135,10 +133,10 @@ def main() -> int:
         print(f"Verification summary written to {output_path}")
 
     # Print summary
-    print(f"\nVerification Summary:")
-    print(f"  Commit: {commit_sha[:8]}")
-    print(f"  Branch: {branch}")
-    print(f"  Status: {evidence.status}")
+    print("\nVerification Summary:")
+    print("  Commit: {}".format(commit_sha[:8]))
+    print("  Branch: {}".format(branch))
+    print("  Status: {}".format(evidence.status))
     if evidence.coverage:
         print(f"  Coverage: {evidence.coverage.percentage:.1f}%")
     if evidence.mutation:

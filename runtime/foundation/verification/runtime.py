@@ -7,9 +7,9 @@ verification planning capabilities.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from runtime.foundation.verification.models import (
     VerificationPlan,
@@ -18,7 +18,6 @@ from runtime.foundation.verification.models import (
 from runtime.foundation.verification.planner import (
     VerificationPlanner,
     PlanningContext,
-    plan_verification,
 )
 from runtime.foundation.verification.registry import (
     VerificationRegistry,
@@ -33,7 +32,6 @@ from runtime.foundation.verification.models import (
 from runtime.foundation.verification.validation import (
     ValidationFinding,
     validate_all,
-    print_findings,
 )
 
 
@@ -155,12 +153,17 @@ class VerificationRuntime:
 
         return self.planner.plan(context)
 
-    def plan_from_files(self, file_paths: list[str], scope: VerificationScope | None = None) -> VerificationPlan:
+    def plan_from_files(
+        self, file_paths: list[str], scope: VerificationScope | None = None
+    ) -> VerificationPlan:
         """Generate a plan from a list of changed files."""
         # Resolve scopes and capabilities from files
         affected_scopes = self.scope_resolver.get_affected_scopes(file_paths)
-        affected_capabilities = self.scope_resolver.get_affected_capabilities(file_paths)
-        affected_modules = self.scope_resolver.get_affected_modules(file_paths)
+        affected_capabilities = self.scope_resolver.get_affected_capabilities(
+            file_paths
+        )
+        # Note: get_affected_modules is called but result not used; kept for potential future use
+        _ = self.scope_resolver.get_affected_modules(file_paths)
 
         # Determine scope
         if scope is None:
@@ -182,7 +185,10 @@ class VerificationRuntime:
                     VerificationScope.REPOSITORY,
                     VerificationScope.FULL,
                 ]
-                max_idx = max(scope_hierarchy.index(s) if s in scope_hierarchy else 0 for s in affected_scopes)
+                max_idx = max(
+                    scope_hierarchy.index(s) if s in scope_hierarchy else 0
+                    for s in affected_scopes
+                )
                 scope = scope_hierarchy[max_idx]
 
         return self.plan(
@@ -191,7 +197,9 @@ class VerificationRuntime:
             scope=scope,
         )
 
-    def plan_for_capability(self, capability_id: str, scope: VerificationScope | None = None) -> VerificationPlan:
+    def plan_for_capability(
+        self, capability_id: str, scope: VerificationScope | None = None
+    ) -> VerificationPlan:
         """Generate a plan for a specific capability."""
         cap = self.registry.get_capability(capability_id)
         if not cap:

@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, List
+from typing import List
 
 from .base import EvidenceCollector, EvidenceArtifact
 
@@ -23,7 +22,9 @@ class CoverageCollector(EvidenceCollector):
         artifacts = []
 
         # Primary coverage.json from backend
-        coverage_json = self.workspace_root / "backend" / "tests" / "generated" / "coverage.json"
+        coverage_json = (
+            self.workspace_root / "backend" / "tests" / "generated" / "coverage.json"
+        )
         if coverage_json.exists():
             data = self._read_json(coverage_json)
             if data:
@@ -46,7 +47,9 @@ class CoverageCollector(EvidenceCollector):
                 )
 
         # Check for coverage.xml (cobertura format)
-        coverage_xml = self.workspace_root / "backend" / "tests" / "generated" / "coverage.xml"
+        coverage_xml = (
+            self.workspace_root / "backend" / "tests" / "generated" / "coverage.xml"
+        )
         if coverage_xml.exists():
             artifacts.append(
                 self._artifact(
@@ -57,7 +60,9 @@ class CoverageCollector(EvidenceCollector):
             )
 
         # Frontend coverage if exists
-        frontend_coverage = self.workspace_root / "frontend" / "coverage" / "coverage-summary.json"
+        frontend_coverage = (
+            self.workspace_root / "frontend" / "coverage" / "coverage-summary.json"
+        )
         if frontend_coverage.exists():
             data = self._read_json(frontend_coverage)
             if data and "total" in data:

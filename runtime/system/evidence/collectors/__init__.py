@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -13,7 +13,9 @@ from typing import Any, Dict, List
 class EvidenceArtifact:
     """A single piece of evidence collected from the workspace."""
 
-    artifact_type: str  # e.g., "coverage", "mutation", "property-tests", "contract-tests"
+    artifact_type: (
+        str  # e.g., "coverage", "mutation", "property-tests", "contract-tests"
+    )
     name: str
     path: str
     metadata: Dict[str, Any]
@@ -74,7 +76,9 @@ class CoverageCollector(EvidenceCollector):
                             name="backend-coverage",
                             path=str(coverage_json.relative_to(self.workspace_root)),
                             metadata={
-                                "percentage": data.get("total_coverage", data.get("coverage", 0)),
+                                "percentage": data.get(
+                                    "total_coverage", data.get("coverage", 0)
+                                ),
                                 "covered_lines": data.get("covered_lines", 0),
                                 "total_lines": data.get("total_lines", 0),
                                 "gaps": data.get("gaps", []),
@@ -116,7 +120,9 @@ class MutationCollector(EvidenceCollector):
     def collect(self) -> List[EvidenceArtifact]:
         artifacts = []
 
-        mutation_dir = self.workspace_root / "backend" / "tests" / "generated" / "mutation"
+        mutation_dir = (
+            self.workspace_root / "backend" / "tests" / "generated" / "mutation"
+        )
         if mutation_dir.exists():
             # mutation-summary.json
             summary = mutation_dir / "mutation-summary.json"
@@ -142,9 +148,7 @@ class MutationCollector(EvidenceCollector):
                     )
 
             # mutation-report.md for survivors
-            report = mutation_dir / "mutation-report.md"
-            if report.exists():
-                content = report.read_text()
+            if (mutation_dir / "mutation-report.md").exists():
                 # Could parse for more details
                 pass
 
@@ -199,7 +203,9 @@ class ContractTestCollector(EvidenceCollector):
                         EvidenceArtifact(
                             artifact_type=self.artifact_type,
                             name="contract-registry",
-                            path=str(contract_registry.relative_to(self.workspace_root)),
+                            path=str(
+                                contract_registry.relative_to(self.workspace_root)
+                            ),
                             metadata=data,
                         )
                     )
@@ -212,7 +218,9 @@ class ContractTestCollector(EvidenceCollector):
                         EvidenceArtifact(
                             artifact_type=self.artifact_type,
                             name="contract-coverage",
-                            path=str(contract_coverage.relative_to(self.workspace_root)),
+                            path=str(
+                                contract_coverage.relative_to(self.workspace_root)
+                            ),
                             metadata=data,
                         )
                     )

@@ -14,25 +14,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
-from typing import Any
 
 from runtime.foundation.verification.models import (
     VerificationCategory,
     VerificationPlan,
     VerificationScope,
-    VerificationSeverity,
     VerificationStep,
     VerificationTarget,
     VerificationDependency,
     VerificationStatus,
 )
 from runtime.foundation.verification.registry import (
-    VerificationCapability,
     VerificationRegistry,
     VerificationRequirement,
-    VerificationScript,
-    VerificationWorkflow,
     get_registry,
 )
 from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
@@ -91,7 +85,9 @@ class VerificationPlanner:
         self._registry.load()
 
         # Resolve scope
-        scope = context.force_scope or context.requested_scope or VerificationScope.QUICK
+        scope = (
+            context.force_scope or context.requested_scope or VerificationScope.QUICK
+        )
 
         # Determine impacted scopes from changed files
         impacted_scopes = self._resolve_scopes_from_files(context.changed_files)
@@ -108,7 +104,9 @@ class VerificationPlanner:
         )
 
         # Determine impacted modules
-        impacted_modules = self._resolve_modules(context.changed_files, impacted_capabilities)
+        impacted_modules = self._resolve_modules(
+            context.changed_files, impacted_capabilities
+        )
 
         # Get requirements for impacted capabilities/scopes
         requirements = self._collect_requirements(impacted_capabilities, all_scopes)
@@ -130,7 +128,9 @@ class VerificationPlanner:
         )
 
         # Build execution steps (ordered)
-        steps = self._build_steps(targets_with_deps, required_workflows, required_scripts)
+        steps = self._build_steps(
+            targets_with_deps, required_workflows, required_scripts
+        )
 
         # Estimate duration
         estimated_duration = sum(s.estimated_duration_seconds for s in steps)
@@ -161,7 +161,9 @@ class VerificationPlanner:
 
         return plan
 
-    def _resolve_scopes_from_files(self, changed_files: list[str]) -> list[VerificationScope]:
+    def _resolve_scopes_from_files(
+        self, changed_files: list[str]
+    ) -> list[VerificationScope]:
         """Determine which scopes are impacted by changed files."""
         scopes = set()
 
@@ -212,7 +214,17 @@ class VerificationPlanner:
                 scopes.add(VerificationScope.INTEGRATION)
 
             # Config changes affect full repo
-            elif norm_path.endswith((".yaml", ".yml", ".toml", ".ini", "pyproject.toml", "package.json", "tsconfig.json")):
+            elif norm_path.endswith(
+                (
+                    ".yaml",
+                    ".yml",
+                    ".toml",
+                    ".ini",
+                    "pyproject.toml",
+                    "package.json",
+                    "tsconfig.json",
+                )
+            ):
                 scopes.add(VerificationScope.REPOSITORY)
 
         return list(scopes)
@@ -225,13 +237,38 @@ class VerificationPlanner:
         """Merge requested scope with impacted scopes."""
         scope_hierarchy = {
             VerificationScope.QUICK: [VerificationScope.QUICK],
-            VerificationScope.BACKEND: [VerificationScope.QUICK, VerificationScope.BACKEND],
-            VerificationScope.FRONTEND: [VerificationScope.QUICK, VerificationScope.FRONTEND],
-            VerificationScope.CONTRACTS: [VerificationScope.QUICK, VerificationScope.CONTRACTS],
-            VerificationScope.PROPERTY: [VerificationScope.QUICK, VerificationScope.BACKEND, VerificationScope.PROPERTY],
-            VerificationScope.MUTATION: [VerificationScope.QUICK, VerificationScope.BACKEND, VerificationScope.MUTATION],
-            VerificationScope.INTEGRATION: [VerificationScope.QUICK, VerificationScope.BACKEND, VerificationScope.INTEGRATION],
-            VerificationScope.MIGRATION: [VerificationScope.QUICK, VerificationScope.BACKEND, VerificationScope.MIGRATION],
+            VerificationScope.BACKEND: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+            ],
+            VerificationScope.FRONTEND: [
+                VerificationScope.QUICK,
+                VerificationScope.FRONTEND,
+            ],
+            VerificationScope.CONTRACTS: [
+                VerificationScope.QUICK,
+                VerificationScope.CONTRACTS,
+            ],
+            VerificationScope.PROPERTY: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+                VerificationScope.PROPERTY,
+            ],
+            VerificationScope.MUTATION: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+                VerificationScope.MUTATION,
+            ],
+            VerificationScope.INTEGRATION: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+                VerificationScope.INTEGRATION,
+            ],
+            VerificationScope.MIGRATION: [
+                VerificationScope.QUICK,
+                VerificationScope.BACKEND,
+                VerificationScope.MIGRATION,
+            ],
             VerificationScope.REPOSITORY: [
                 VerificationScope.QUICK,
                 VerificationScope.BACKEND,
@@ -286,7 +323,9 @@ class VerificationPlanner:
 
         return list(capabilities)
 
-    def _resolve_modules(self, changed_files: list[str], capabilities: list[str]) -> list[str]:
+    def _resolve_modules(
+        self, changed_files: list[str], capabilities: list[str]
+    ) -> list[str]:
         """Determine impacted modules."""
         modules = set()
 
@@ -361,7 +400,9 @@ class VerificationPlanner:
 
         return targets
 
-    def _resolve_dependencies(self, targets: list[VerificationTarget]) -> list[VerificationTarget]:
+    def _resolve_dependencies(
+        self, targets: list[VerificationTarget]
+    ) -> list[VerificationTarget]:
         """Resolve dependencies between targets."""
         # Build dependency graph
         target_map = {t.id: t for t in targets}
@@ -382,18 +423,27 @@ class VerificationPlanner:
                 VerificationCategory.ARCHITECTURAL,
             ]
 
-            target_idx = category_order.index(target.category) if target.category in category_order else 999
+            target_idx = (
+                category_order.index(target.category)
+                if target.category in category_order
+                else 999
+            )
 
             for other in targets:
                 if other.id == target.id:
                     continue
-                other_idx = category_order.index(other.category) if other.category in category_order else 999
+                other_idx = (
+                    category_order.index(other.category)
+                    if other.category in category_order
+                    else 999
+                )
 
                 # Dependencies flow from lower to higher in hierarchy
                 if other_idx < target_idx:
                     # Check if same capability or module
-                    if (target.capability and target.capability == other.capability) or \
-                       (target.module and target.module == other.module):
+                    if (
+                        target.capability and target.capability == other.capability
+                    ) or (target.module and target.module == other.module):
                         dep = VerificationDependency(
                             target_id=other.id,
                             dependency_type="requires",
@@ -415,22 +465,24 @@ class VerificationPlanner:
                     seen_dep_ids.add(dep.target_id)
                     unique_deps.append(dep)
 
-            updated_targets.append(VerificationTarget(
-                id=target.id,
-                name=target.name,
-                category=target.category,
-                scope=target.scope,
-                module=target.module,
-                capability=target.capability,
-                file_path=target.file_path,
-                function_name=target.function_name,
-                class_name=target.class_name,
-                requirements=target.requirements,
-                dependencies=unique_deps,
-                evidence=target.evidence,
-                metadata=target.metadata,
-                reason=target.reason,
-            ))
+            updated_targets.append(
+                VerificationTarget(
+                    id=target.id,
+                    name=target.name,
+                    category=target.category,
+                    scope=target.scope,
+                    module=target.module,
+                    capability=target.capability,
+                    file_path=target.file_path,
+                    function_name=target.function_name,
+                    class_name=target.class_name,
+                    requirements=target.requirements,
+                    dependencies=unique_deps,
+                    evidence=target.evidence,
+                    metadata=target.metadata,
+                    reason=target.reason,
+                )
+            )
 
         return updated_targets
 
@@ -490,7 +542,9 @@ class VerificationPlanner:
             workflow = None
             for wf_id in workflows:
                 wf = self._registry.get_workflow(wf_id)
-                if wf and (target.scope in wf.scopes or target.capability in wf.capabilities):
+                if wf and (
+                    target.scope in wf.scopes or target.capability in wf.capabilities
+                ):
                     workflow = wf
                     break
 
@@ -498,7 +552,9 @@ class VerificationPlanner:
             script = None
             for script_id in scripts:
                 scr = self._registry.get_script(script_id)
-                if scr and (target.scope == scr.scope or target.capability in scr.capabilities):
+                if scr and (
+                    target.scope == scr.scope or target.capability in scr.capabilities
+                ):
                     script = scr
                     break
 
@@ -531,8 +587,10 @@ class VerificationPlanner:
                 command=command,
                 workflow=workflow.id if workflow else None,
                 script=script.id if script else None,
-                estimated_duration_seconds=workflow.estimated_duration_seconds if workflow else (
-                    script.estimated_duration_seconds if script else 0
+                estimated_duration_seconds=(
+                    workflow.estimated_duration_seconds
+                    if workflow
+                    else (script.estimated_duration_seconds if script else 0)
                 ),
                 required_evidence=required_evidence,
                 dependencies=dep_step_ids,
@@ -542,7 +600,9 @@ class VerificationPlanner:
 
         return steps
 
-    def _topological_sort(self, targets: list[VerificationTarget]) -> list[VerificationTarget]:
+    def _topological_sort(
+        self, targets: list[VerificationTarget]
+    ) -> list[VerificationTarget]:
         """Topological sort of targets by dependencies."""
         target_map = {t.id: t for t in targets}
         visited = set()

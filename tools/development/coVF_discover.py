@@ -15,14 +15,12 @@ import sys
 from pathlib import Path
 from typing import Any, cast
 
-# Add src to path for FastAPI app import
 BACKEND_DIR = Path(__file__).parent.parent  # backend/
 PROJECT_ROOT = BACKEND_DIR.parent  # project root
 GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 
-# Import the FastAPI app - run from backend directory with . in path
 sys.path.insert(0, str(BACKEND_DIR))
-from src.api import app
+from src.api import app  # noqa: E402
 
 
 def discover_endpoints() -> list[dict[str, Any]]:

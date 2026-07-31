@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, List
+from typing import List
 
 from .base import EvidenceCollector, EvidenceArtifact
 
@@ -44,7 +43,9 @@ class PropertyTestCollector(EvidenceCollector):
                 )
 
         # Golden regression results
-        golden_dir = self.workspace_root / "backend" / "tests" / "golden" / "regressions"
+        golden_dir = (
+            self.workspace_root / "backend" / "tests" / "golden" / "regressions"
+        )
         if golden_dir.exists():
             for reg_file in golden_dir.glob("*.json"):
                 data = self._read_json(reg_file)

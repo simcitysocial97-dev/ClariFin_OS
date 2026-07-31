@@ -3,22 +3,23 @@
 from __future__ import annotations
 
 import json
-import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 
 @dataclass
 class IngestConfig:
     """Configuration for evidence ingestion."""
 
-    artifact_dirs: List[str] = field(default_factory=lambda: [
-        "backend/tests/generated",
-        "frontend/coverage",
-        "runtime/generated",
-    ])
+    artifact_dirs: List[str] = field(
+        default_factory=lambda: [
+            "backend/tests/generated",
+            "frontend/coverage",
+            "runtime/generated",
+        ]
+    )
     output_dir: str = "runtime/generated/evidence"
     commit_sha: str = ""
     branch: str = ""
@@ -56,9 +57,13 @@ class EvidenceIngestionPipeline:
                 try:
                     data = json.loads(artifact.read_text())
                     if "backend" in str(artifact):
-                        coverage_data["backend"] = self._normalize_coverage(data, "backend")
+                        coverage_data["backend"] = self._normalize_coverage(
+                            data, "backend"
+                        )
                     elif "frontend" in str(artifact):
-                        coverage_data["frontend"] = self._normalize_coverage(data, "frontend")
+                        coverage_data["frontend"] = self._normalize_coverage(
+                            data, "frontend"
+                        )
                 except Exception:
                     pass
 
@@ -83,7 +88,12 @@ class EvidenceIngestionPipeline:
             }
         elif "total_coverage" in data:  # Already normalized
             return {"source": source, **data}
-        return {"source": source, "total_coverage": 0, "lines_covered": 0, "lines_total": 0}
+        return {
+            "source": source,
+            "total_coverage": 0,
+            "lines_covered": 0,
+            "lines_total": 0,
+        }
 
     def _combine_coverage(self, backend: Dict, frontend: Dict) -> Dict:
         """Combine backend and frontend coverage."""
@@ -113,14 +123,16 @@ class EvidenceIngestionPipeline:
                 try:
                     data = json.loads(artifact.read_text())
                     if "mutation_score" in data:
-                        mutation_data.update({
-                            "score": data.get("mutation_score", 0),
-                            "killed": data.get("killed", 0),
-                            "survived": data.get("survived", 0),
-                            "timeout": data.get("timeout", 0),
-                            "error": data.get("error", 0),
-                            "skipped": data.get("skipped", 0),
-                        })
+                        mutation_data.update(
+                            {
+                                "score": data.get("mutation_score", 0),
+                                "killed": data.get("killed", 0),
+                                "survived": data.get("survived", 0),
+                                "timeout": data.get("timeout", 0),
+                                "error": data.get("error", 0),
+                                "skipped": data.get("skipped", 0),
+                            }
+                        )
                 except Exception:
                     pass
 

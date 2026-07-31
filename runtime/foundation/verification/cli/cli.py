@@ -8,26 +8,26 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import click
 
-# Ensure repository root is in sys.path for runtime imports
+# Ensure repository root is in sys.path for imports
 REPO_ROOT = Path(__file__).resolve().parents[3]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from runtime.foundation.verification.models import (
+from runtime.foundation.verification.models import (  # noqa: E402
     VerificationPlan,
     VerificationScope,
-    VerificationStatus,
 )
-from runtime.foundation.verification.planner import plan_verification, PlanningContext
-from runtime.foundation.verification.registry import VerificationRegistry
-from runtime.foundation.verification.models.scope import (
-    ScopeResolver,
+from runtime.foundation.verification.planner import plan_verification  # noqa: E402
+from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
+from runtime.foundation.verification.models.scope import (  # noqa: E402
+    SCOPE_EXPLANATIONS,
+    explain_frontend_api_change,
+    explain_loan_engine,
     get_scope_resolver,
 )
 
@@ -45,9 +45,16 @@ def cli():
 
 @cli.command()
 @click.option("--file", "-f", "files", multiple=True, help="Changed file paths")
-@click.option("--capability", "-c", "capabilities", multiple=True, help="Changed capabilities")
+@click.option(
+    "--capability", "-c", "capabilities", multiple=True, help="Changed capabilities"
+)
 @click.option("--endpoint", "-e", "endpoints", multiple=True, help="Changed endpoints")
-@click.option("--scope", "-s", type=click.Choice([s.value for s in VerificationScope]), help="Requested scope")
+@click.option(
+    "--scope",
+    "-s",
+    type=click.Choice([s.value for s in VerificationScope]),
+    help="Requested scope",
+)
 @click.option("--output", "-o", type=click.Path(), help="Output JSON file")
 @click.option("--table", is_flag=True, help="Show human-readable table")
 def plan(
@@ -136,10 +143,12 @@ def resolve(file_paths: tuple[str, ...]):
     all_capabilities = resolver.get_affected_capabilities(list(file_paths))
     all_modules = resolver.get_affected_modules(list(file_paths))
 
-    click.echo(f"\nSummary:")
-    click.echo(f"  Affected scopes: {', '.join(s.value for s in all_scopes)}")
-    click.echo(f"  Affected capabilities: {', '.join(all_capabilities) or 'none'}")
-    click.echo(f"  Affected modules: {', '.join(all_modules) or 'none'}")
+    click.echo("\nSummary:")
+    click.echo("  Affected scopes: {0}".format(", ".join(s.value for s in all_scopes)))
+    click.echo(
+        "  Affected capabilities: {0}".format(", ".join(all_capabilities) or "none")
+    )
+    click.echo("  Affected modules: {0}".format(", ".join(all_modules) or "none"))
 
 
 @cli.command()
@@ -169,7 +178,9 @@ def examples():
 
 
 @cli.command()
-@click.option("--config", "-c", type=click.Path(exists=True), help="Path to verification.yaml")
+@click.option(
+    "--config", "-c", type=click.Path(exists=True), help="Path to verification.yaml"
+)
 def registry(config: str | None):
     """Show verification registry summary."""
     registry = VerificationRegistry(Path(config) if config else None)
@@ -313,20 +324,28 @@ def print_plan_table(plan: VerificationPlan) -> None:
     if plan.targets:
         click.echo("Targets:")
         click.echo("-" * 100)
-        click.echo(f"{'ID':<12} {'Name':<40} {'Category':<15} {'Scope':<12} {'Capability':<15} {'Module'}")
+        click.echo(
+            f"{'ID':<12} {'Name':<40} {'Category':<15} {'Scope':<12} {'Capability':<15} {'Module'}"
+        )
         click.echo("-" * 100)
         for t in plan.targets:
-            click.echo(f"{t.id:<12} {t.name[:38]:<40} {t.category.value:<15} {t.scope.value:<12} {t.capability or '-':<15} {t.module or '-'}")
+            click.echo(
+                f"{t.id:<12} {t.name[:38]:<40} {t.category.value:<15} {t.scope.value:<12} {t.capability or '-':<15} {t.module or '-'}"
+            )
 
     if plan.steps:
         click.echo("\nSteps:")
         click.echo("-" * 120)
-        click.echo(f"{'ID':<12} {'Order':<6} {'Target':<40} {'Command/Workflow':<40} {'Deps':<15}")
+        click.echo(
+            f"{'ID':<12} {'Order':<6} {'Target':<40} {'Command/Workflow':<40} {'Deps':<15}"
+        )
         click.echo("-" * 120)
         for s in plan.steps:
             cmd = s.command or s.workflow or s.script or "-"
             deps = ", ".join(s.dependencies) if s.dependencies else "-"
-            click.echo(f"{s.id:<12} {s.order:<6} {s.target.name[:38]:<40} {cmd[:38]:<40} {deps[:13]:<15}")
+            click.echo(
+                f"{s.id:<12} {s.order:<6} {s.target.name[:38]:<40} {cmd[:38]:<40} {deps[:13]:<15}"
+            )
 
     if plan.required_workflows:
         click.echo(f"\nRequired Workflows: {', '.join(plan.required_workflows)}")
