@@ -141,7 +141,7 @@ def test_contract_stage_registered() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import ValidationGraph
 
 graph = ValidationGraph()
@@ -169,7 +169,7 @@ def test_full_pipeline_includes_contract() -> None:
             "-c",
             """
 import sys
-sys.path.insert(0, 'backend/tools')
+sys.path.insert(0, 'tools/development')
 from validation_orchestrator import ValidationGraph
 
 graph = ValidationGraph()

@@ -8,9 +8,9 @@ tests, and CI jobs.
 Part B of Phase 3.2 — Capability Validation & Real-World Verification.
 
 Usage:
-    python backend/tools/mutation_verification.py --all
-    python backend/tools/mutation_verification.py --capability debt_management
-    python backend/tools/mutation_verification.py --report
+    python tools/development/mutation_verification.py --all
+    python tools/development/mutation_verification.py --capability debt_management
+    python tools/development/mutation_verification.py --report
 """
 
 from __future__ import annotations
@@ -125,7 +125,7 @@ def _generate_ci_plan(changed_file: str) -> dict[str, Any]:
 
 def _get_dependency_graph() -> dict[str, Any]:
     """Get the current dependency graph."""
-    from runtime.discovery import discover_dependencies
+    from verification_runtime.discovery import discover_dependencies
 
     return discover_dependencies()
 

@@ -182,7 +182,7 @@ class CoverageStage(ValidationStage):
         return ["fast"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("python backend/tools/check_coverage.py")
+        manifest.commands_executed.append("python tools/development/check_coverage.py")
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -216,7 +216,7 @@ class ChangeIntelligenceStage(ValidationStage):
         return ["coverage"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("python backend/tools/change_intelligence.py")
+        manifest.commands_executed.append("python tools/development/change_intelligence.py")
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()
@@ -479,8 +479,8 @@ class MutationReadinessStage(ValidationStage):
         return ["coverage", "change_intelligence"]
 
     def plan(self, manifest: ValidationManifest) -> None:
-        manifest.commands_executed.append("python backend/tools/mutation_discovery.py")
-        manifest.commands_executed.append("python backend/tools/test_strength.py")
+        manifest.commands_executed.append("python tools/development/mutation_discovery.py")
+        manifest.commands_executed.append("python tools/development/test_strength.py")
 
     def execute(self) -> tuple[int, ValidationMetrics]:
         metrics = ValidationMetrics()

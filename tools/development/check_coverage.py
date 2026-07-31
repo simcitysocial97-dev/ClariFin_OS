@@ -20,7 +20,7 @@ from typing import Any, cast
 
 import yaml
 
-# Project root from this file's location (backend/tools → backend → project_root)
+# Project root from this file's location (tools/development → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 BACKEND_SRC = PROJECT_ROOT / "backend" / "src"
 BACKEND_TESTS = PROJECT_ROOT / "backend" / "tests"
@@ -343,7 +343,7 @@ def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
     lines = [
         "# Coverage Report",
         "",
-        "Generated automatically by `backend/tools/check_coverage.py`. Do not edit manually.",
+        "Generated automatically by `tools/development/check_coverage.py`. Do not edit manually.",
         "",
         "## Capability Coverage Matrix",
         "",

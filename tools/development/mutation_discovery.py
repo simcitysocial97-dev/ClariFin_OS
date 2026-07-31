@@ -22,7 +22,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal, cast
 
-# Project root from this file's location (backend/tools → backend → project_root)
+# Project root from this file's location (tools/development → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 BACKEND_DIR = PROJECT_ROOT / "backend"
 GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
