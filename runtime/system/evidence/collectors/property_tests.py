@@ -62,3 +62,6 @@ class PropertyTestCollector(EvidenceCollector):
                     )
 
         return artifacts
+
+    def collect_artifacts(self) -> List[EvidenceArtifact]:
+        return self.collect()

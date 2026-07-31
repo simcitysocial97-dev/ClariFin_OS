@@ -7,22 +7,41 @@ CLI for verification planning only. No execution.
 from __future__ import annotations
 
 import json
+import shutil
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
 import click
 
+
+def _find_repo_root() -> Path:
+    """Find the repository root by looking for backend/pyproject.toml or runtime/."""
+    candidates = [
+        Path(__file__).resolve().parents[4],
+        Path.cwd(),
+    ]
+    for candidate in candidates:
+        if (candidate / "backend" / "pyproject.toml").exists() or (
+            candidate / "runtime"
+        ).exists():
+            return candidate
+    return Path.cwd()
+
+
 # Ensure repository root is in sys.path for imports
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = _find_repo_root()
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from runtime.foundation.verification.models import (  # noqa: E402
-    VerificationPlan,
     VerificationScope,
 )
 from runtime.foundation.verification.planner import plan_verification  # noqa: E402
+from runtime.foundation.verification.planner.plan_models import (  # noqa: E402
+    VerificationPlan,
+)
 from runtime.foundation.verification.registry import VerificationRegistry  # noqa: E402
 from runtime.foundation.verification.models.scope import (  # noqa: E402
     SCOPE_EXPLANATIONS,
@@ -352,6 +371,278 @@ def print_plan_table(plan: VerificationPlan) -> None:
     if plan.required_scripts:
         click.echo(f"Required Scripts: {', '.join(plan.required_scripts)}")
 
+
+# ── Backend Verification Commands ──────────────────────────────────────────
+
+
+@cli.command(name="backend")
+@click.option("--deep", is_flag=True, help="Run full verification by triggering CI")
+@click.option("--affected", is_flag=True, help="Run only for changed files since last commit")
+@click.option("--plan", is_flag=True, help="Show verification plan without running tests")
+def backend_cli_cmd(
+    deep: bool,
+    affected: bool,
+    plan: bool,
+):
+    """Backend verification for Program 5.
+
+    verify backend           Selective verification based on git diff
+    verify backend --deep    Full verification (triggers CI)
+    verify backend --affected Only tests for changed files
+    verify backend --plan    Show plan without running
+    """
+    repo_root = _find_repo_root()
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+    from runtime.foundation.verification.planner.plan_models import (
+        VerificationPlan as SelectivePlan,
+    )
+
+    if plan:
+        changed_files = _get_changed_files(repo_root)
+        verification_plan = SelectivePlan.from_changed_files(
+            changed_files, triggered_by="local"
+        )
+        click.echo(f"Verification Plan: {verification_plan.plan_id}")
+        click.echo(f"Changed files: {len(verification_plan.changed_files)}")
+        click.echo(f"Blast radius: {verification_plan.impact.blast_radius}")
+        click.echo(f"Affected engines: {', '.join(verification_plan.impact.engines) or 'none'}")
+        click.echo(f"Affected services: {', '.join(verification_plan.impact.services) or 'none'}")
+        click.echo(f"Affected routers: {', '.join(verification_plan.impact.routers) or 'none'}")
+        click.echo()
+        click.echo("What will run:")
+        click.echo(f"  Unit tests: {'YES' if verification_plan.unit_tests.run else 'no'}")
+        if verification_plan.unit_tests.run:
+            for p in verification_plan.unit_tests.paths:
+                click.echo(f"    - {p}")
+        click.echo(f"  Property tests: {'YES' if verification_plan.property_tests.run else 'no'}")
+        if verification_plan.property_tests.run:
+            for p in verification_plan.property_tests.paths:
+                click.echo(f"    - {p}")
+        click.echo(f"  Contract tests: {'YES' if verification_plan.contract_tests.run else 'no'}")
+        click.echo(f"  Mutation: {'YES' if verification_plan.mutation.run else 'no'}")
+        if verification_plan.mutation.run:
+            for t in verification_plan.mutation.targets:
+                click.echo(f"    - {t}")
+        click.echo(f"  Integration tests: {'YES' if verification_plan.integration_tests.run else 'no'}")
+        click.echo(f"  Golden tests: {'YES' if verification_plan.golden_tests.run else 'no'}")
+        return
+
+    if deep:
+        _trigger_ci_workflow(repo_root, mode="full")
+        return
+
+    if affected:
+        changed_files = _get_changed_files(repo_root)
+        verification_plan = SelectivePlan.from_changed_files(
+            changed_files, triggered_by="local"
+        )
+        click.echo("Verification Plan (affected only):")
+        click.echo(verification_plan.to_json())
+        return
+
+    # Local selective run: fast checks only
+    click.echo("Running local backend verification (fast checks)...")
+    failures = []
+
+    # Ruff
+    click.echo("\n--- Ruff ---")
+    result = subprocess.run(
+        ["python3", "-m", "ruff", "check", "backend/src/"],
+        capture_output=True,
+        text=True,
+    )
+    click.echo(result.stdout or result.stderr)
+    if result.returncode != 0:
+        failures.append("ruff")
+
+    # Black check
+    click.echo("\n--- Black (check mode) ---")
+    result = subprocess.run(
+        ["python3", "-m", "black", "--check", "backend/src/"],
+        capture_output=True,
+        text=True,
+    )
+    click.echo(result.stdout or result.stderr)
+    if result.returncode != 0:
+        failures.append("black")
+
+    # Unit tests for affected paths
+    verification_plan = SelectivePlan.from_changed_files(
+        _get_changed_files(repo_root), triggered_by="local"
+    )
+    if verification_plan.unit_tests.run:
+        click.echo("\n--- Unit Tests (affected paths only) ---")
+        paths = verification_plan.unit_tests.paths
+        for p in paths:
+            result = subprocess.run(
+                ["python3", "-m", "pytest", "-x", "--tb=short", p],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root / "backend"),
+            )
+        click.echo(result.stdout or result.stderr)
+        if result.returncode != 0:
+            failures.append(f"pytest:{p}")
+
+    click.echo("\n--- Summary ---")
+    click.echo(f"Plan: {verification_plan.plan_id}")
+    click.echo(f"Engines affected: {len(verification_plan.impact.engines)}")
+    click.echo(f"Mutations to run: {verification_plan.mutation.run}")
+    click.echo("Done. For full verification, push to CI or use --deep.")
+
+    if failures:
+        click.echo(f"\nFAILED: {', '.join(failures)}", err=True)
+        sys.exit(1)
+
+
+@cli.command(name="evidence")
+def evidence_cli():
+    """Download and display latest verification evidence from GitHub Actions."""
+    repo_root = _find_repo_root()
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+    gh_check = subprocess.run(
+        ["which", "gh"],
+        capture_output=True,
+        text=True,
+    )
+    if gh_check.returncode != 0:
+        click.echo("Error: 'gh' CLI is not installed or not in PATH.")
+        click.echo("Install it from: https://cli.github.com/")
+        click.echo("Then authenticate: gh auth login")
+        sys.exit(1)
+
+    auth_check = subprocess.run(
+        ["gh", "auth", "status"],
+        capture_output=True,
+        text=True,
+    )
+    if auth_check.returncode != 0:
+        click.echo("Error: 'gh' CLI is not authenticated.")
+        click.echo("Run: gh auth login")
+        sys.exit(1)
+
+    click.echo("Downloading latest evidence artifacts...")
+
+    dl_dir = repo_root / "evidence-download"
+    if dl_dir.exists():
+        shutil.rmtree(dl_dir)
+
+    dl_result = subprocess.run(
+        ["gh", "run", "download", "--name", "evidence-summary", "--dir", "evidence-download/"],
+        capture_output=True,
+        text=True,
+        cwd=str(repo_root),
+    )
+    if dl_result.returncode != 0:
+        run_list = subprocess.run(
+            ["gh", "run", "list", "--limit", "1", "--json", "databaseId"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+        )
+        if run_list.returncode == 0:
+            runs = json.loads(run_list.stdout)
+            if runs:
+                run_id = runs[0]["databaseId"]
+                subprocess.run(
+                    ["gh", "run", "download", str(run_id), "--dir", "evidence-download/"],
+                    cwd=str(repo_root),
+                )
+
+    summary_path = repo_root / "evidence-download" / "evidence_summary.json"
+    if not summary_path.exists():
+        found = list(repo_root.glob("evidence-download/**/evidence_summary.json"))
+        if found:
+            summary_path = found[0]
+
+    if not summary_path.exists():
+        click.echo("No evidence_summary.json found in downloaded artifacts.")
+        click.echo("Make sure the backend-verify.yml workflow has run at least once.")
+        sys.exit(1)
+
+    with open(summary_path) as f:
+        summary = json.load(f)
+
+    click.echo(f"\nSummary ID: {summary.get('summary_id', 'N/A')}")
+    click.echo(f"Commit: {summary.get('commit', 'N/A')[:12]}")
+    click.echo(f"Branch: {summary.get('branch', 'N/A')}")
+    click.echo(f"Overall Status: {summary.get('overall_status', 'N/A')}")
+    click.echo()
+
+    backend = summary.get("backend", {})
+    ut = backend.get("unit_tests", {})
+    click.echo(f"Unit Tests: {ut.get('status', 'N/A')} (passed={ut.get('passed', 0)}, failed={ut.get('failed', 0)})")
+
+    cov = backend.get("coverage", {})
+    click.echo(f"Coverage: {cov.get('overall_pct', 0):.1f}% overall, {cov.get('engines_pct', 0):.1f}% engines")
+
+    mut = backend.get("mutation", {})
+    for engine, data in mut.items():
+        score = data.get("score_pct", 0.0) if isinstance(data, dict) else 0.0
+        status = data.get("status", "unknown") if isinstance(data, dict) else "unknown"
+        click.echo(f"Mutation {engine}: {score}% ({status})")
+
+    attention = summary.get("attention_needed", [])
+    if attention:
+        click.echo("\nAttention needed:")
+        for item in attention:
+            click.echo(f"  - {item.get('type', 'unknown')}: {item.get('details', item.get('action', ''))}")
+    else:
+        click.echo("\nNo issues found.")
+
+
+def _get_changed_files(repo_root: Path) -> list[str]:
+    result = subprocess.run(
+        ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
+        capture_output=True,
+        text=True,
+        cwd=str(repo_root),
+    )
+    if result.returncode != 0:
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+        )
+    if result.returncode != 0:
+        return []
+    return [f.strip() for f in result.stdout.splitlines() if f.strip()]
+
+
+def _trigger_ci_workflow(repo_root: Path, mode: str) -> None:
+    result = subprocess.run(
+        ["gh", "workflow", "run", "backend-verify.yml", "--field", f"mode={mode}"],
+        capture_output=True,
+        text=True,
+        cwd=str(repo_root),
+    )
+    if result.returncode != 0:
+        click.echo(f"Error triggering workflow: {result.stderr}")
+        click.echo("Make sure 'gh' CLI is installed and authenticated.")
+        sys.exit(1)
+    click.echo(f"Workflow triggered with mode={mode}")
+    click.echo("Check the run at: https://github.com/" + _get_repo_url())
+
+
+def _get_repo_url() -> str:
+    result = subprocess.run(
+        ["git", "remote", "get-url", "origin"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode == 0:
+        url = result.stdout.strip()
+        if url.endswith(".git"):
+            url = url[:-4]
+        if url.startswith("git@"):
+            url = url.replace(":", "/", 1).replace("git@", "https://")
+        return url
+    return "github.com/unknown/repo"
 
 if __name__ == "__main__":
     cli()

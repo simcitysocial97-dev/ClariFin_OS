@@ -317,9 +317,11 @@ class VerificationPlanner:
 
         # From changed endpoints (via graph service if available)
         if self._graph_service and changed_endpoints:
-            for endpoint in changed_endpoints:
-                # Would query graph service for capability owning endpoint
-                pass
+            # TODO Program 7: implement graph-based capability resolution
+            # For now, skip endpoint-based capability resolution.
+            # This means verification plans rely on path-based selection only.
+            for _endpoint in changed_endpoints:
+                ...
 
         return list(capabilities)
 

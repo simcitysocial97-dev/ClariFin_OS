@@ -1,0 +1,7 @@
+pyproject.toml
+src/clarinfin_verification.egg-info/PKG-INFO
+src/clarinfin_verification.egg-info/SOURCES.txt
+src/clarinfin_verification.egg-info/dependency_links.txt
+src/clarinfin_verification.egg-info/entry_points.txt
+src/clarinfin_verification.egg-info/requires.txt
+src/clarinfin_verification.egg-info/top_level.txt

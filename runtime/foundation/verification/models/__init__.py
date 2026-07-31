@@ -31,7 +31,6 @@ __all__ = [
     "VerificationEvidence",
     "VerificationResult",
     "VerificationPlan",
-    "VerificationSummary",
     "ScopeReason",
     "ScopeResolution",
     "ScopeResolver",

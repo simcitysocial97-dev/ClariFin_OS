@@ -1,0 +1,55 @@
+{
+  "summary_id": "run-20260731-123148",
+  "generated_at": "2026-07-31T12:31:48.718917+00:00",
+  "commit": "3b3eb7a621719ca3b6f3014cac3cef0fdc479e81",
+  "branch": "fix/program-1-4-audit-resolutions",
+  "verification_plan": "selective",
+  "overall_status": "attention_needed",
+  "backend": {
+    "unit_tests": {
+      "status": "unknown",
+      "passed": 0,
+      "failed": 0,
+      "duration_seconds": 0.0
+    },
+    "property_tests": {
+      "status": "unknown",
+      "passed": 0,
+      "counterexamples_found": 0
+    },
+    "contract_tests": {
+      "status": "not_run",
+      "endpoints_tested": 0,
+      "failures_found": 0
+    },
+    "coverage": {
+      "overall_pct": 0.0,
+      "engines_pct": 0.0,
+      "delta_from_last": "0.0",
+      "collected": false
+    },
+    "mutation": {
+      "overall": {
+        "score_pct": 0.0,
+        "killed": 0,
+        "survived": 0,
+        "status": "below_target"
+      }
+    }
+  },
+  "attention_needed": [
+    {
+      "type": "mutation_below_target",
+      "engine": "overall",
+      "score": 0.0,
+      "target": 60.0,
+      "surviving_mutants": 0,
+      "action": "Review surviving mutants for overall in mutation evidence artifact"
+    }
+  ],
+  "ai_context": {
+    "ready": true,
+    "context_file": "runtime/generated/evidence/ai_context.json",
+    "note": "Program 8 will consume this for automated remediation planning"
+  }
+}

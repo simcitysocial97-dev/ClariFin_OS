@@ -43,7 +43,7 @@ def collect_all_evidence(workspace_root: Path) -> EvidenceCollectionResult:
 
     for collector_cls in COLLECTORS:
         collector = collector_cls(workspace_root)
-        collected = collector.collect()
+        collected = collector.collect_artifacts()
 
         artifact_dicts = [asdict(a) for a in collected]
         artifacts.extend(artifact_dicts)

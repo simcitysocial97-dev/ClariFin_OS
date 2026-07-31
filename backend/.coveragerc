@@ -17,8 +17,6 @@ omit =
     */health.py
 
     # Extraction pipeline — requires PDF files, binary I/O
-    # Excluded from unit coverage measurement.
-    # These modules require integration/contract tests and will have separate coverage targets.
     */statement_extractor.py
     */csv_importer.py
     */ingest.py
@@ -32,12 +30,15 @@ omit =
     */structural/*
 
     # Routers — HTTP layer
-    # Excluded from unit coverage measurement.
-    # These modules require integration/contract tests and will have separate coverage targets.
     */routers/*
 
-    # Tooling — not application code
+    # Tooling & Scripts — not application core code
     fix_lint.py
+    diagnose_db.py
+    tools/*
+    scripts/*
+
+    # Environment and Cache directories
     */site-packages/*
     */.venv/*
     */venv/*

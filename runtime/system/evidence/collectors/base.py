@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Optional
 
 
 @dataclass(frozen=True)
@@ -25,7 +25,12 @@ class EvidenceArtifact:
 
 
 class EvidenceCollector(ABC):
-    """Abstract base class for evidence collectors."""
+    """Abstract base class for evidence collectors.
+
+    Subclasses implement two methods:
+    - collect_artifacts(): Returns List[EvidenceArtifact] (primary interface)
+    - collect(): Returns collector-specific evidence object (optional, for direct use)
+    """
 
     def __init__(self, workspace_root: Path):
         self.workspace_root = workspace_root
@@ -43,7 +48,7 @@ class EvidenceCollector(ABC):
         pass
 
     @abstractmethod
-    def collect(self) -> List[EvidenceArtifact]:
+    def collect_artifacts(self) -> List[EvidenceArtifact]:
         """Collect evidence artifacts from the workspace.
 
         Returns:
@@ -51,29 +56,40 @@ class EvidenceCollector(ABC):
         """
         pass
 
+    def collect(self, artifact_path: Optional[Path] = None) -> Any:
+        """Collect evidence from a specific artifact path.
+
+        Default implementation delegates to collect_artifacts().
+        Subclasses that produce typed evidence objects override this.
+        """
+        return self.collect_artifacts()
+
     def _read_json(self, path: Path) -> Any:
         """Safely read a JSON file."""
         try:
             with open(path, "r") as f:
                 return json.load(f)
-        except (json.JSONDecodeError, IOError):
+        except (json.JSONDecodeError, OSError):
             return None
 
     def _read_text(self, path: Path) -> str:
         """Safely read a text file."""
         try:
             return path.read_text()
-        except IOError:
+        except OSError:
             return ""
 
     def _artifact(
         self,
         name: str,
         path: Path,
-        metadata: Dict[str, Any] | None = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> EvidenceArtifact:
         """Create an EvidenceArtifact from a file path."""
-        rel_path = path.relative_to(self.workspace_root)
+        try:
+            rel_path = path.relative_to(self.workspace_root)
+        except ValueError:
+            rel_path = path
         return EvidenceArtifact(
             artifact_type=self.artifact_type,
             name=name,
