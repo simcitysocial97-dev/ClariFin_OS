@@ -17,17 +17,13 @@ import re
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
 # Pattern: migration_002_loan_engine.py
-_MIGRATION_RE = re.compile(
-    r"migration_(\d+)_(.+)\.py"
-)
+_MIGRATION_RE = re.compile(r"migration_(\d+)_(.+)\.py")
 # Pattern: CREATE TABLE tablename
 _CREATE_TABLE_RE = re.compile(
     r"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(\w+)", re.IGNORECASE
 )
 # Pattern: ALTER TABLE tablename
-_ALTER_TABLE_RE = re.compile(
-    r"ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(\w+)", re.IGNORECASE
-)
+_ALTER_TABLE_RE = re.compile(r"ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(\w+)", re.IGNORECASE)
 
 
 class MigrationScanner(BaseScanner):

@@ -34,72 +34,78 @@ from typing import Any
 # Node Type Constants
 # ===========================================================================
 
-NODE_TYPES: frozenset[str] = frozenset({
-    "capability",
-    "module",
-    "package",
-    "api",
-    "endpoint",
-    "frontend_route",
-    "component",
-    "hook",
-    "database_table",
-    "migration",
-    "test_suite",
-    "documentation",
-    "workflow",
-    "script",
-    "generated_artifact",
-    "package_json",
-    "requirements",
-    # Placeholder node types for future runtimes (Phase 3)
-    "financial_object",
-    "runtime",
-    "workspace",
-    "timeline",
-    "context",
-    "command",
-    "evidence",
-    "investigation",
-    "decision",
-    "simulation",
-    "recommendation",
-})
+NODE_TYPES: frozenset[str] = frozenset(
+    {
+        "capability",
+        "module",
+        "package",
+        "api",
+        "endpoint",
+        "frontend_route",
+        "component",
+        "hook",
+        "database_table",
+        "migration",
+        "test_suite",
+        "documentation",
+        "workflow",
+        "script",
+        "generated_artifact",
+        "package_json",
+        "requirements",
+        # Placeholder node types for future runtimes (Phase 3)
+        "financial_object",
+        "runtime",
+        "workspace",
+        "timeline",
+        "context",
+        "command",
+        "evidence",
+        "investigation",
+        "decision",
+        "simulation",
+        "recommendation",
+    }
+)
 
 # ===========================================================================
 # Relationship Type Constants
 # ===========================================================================
 
-RELATIONSHIP_TYPES: frozenset[str] = frozenset({
-    "implements",
-    "imports",
-    "depends_on",
-    "tests",
-    "documents",
-    "calls",
-    "owns",
-    "generates",
-    "consumes",
-    "belongs_to",
-    "contains",
-    "extends",
-    "invokes",
-    "verifies",
-})
+RELATIONSHIP_TYPES: frozenset[str] = frozenset(
+    {
+        "implements",
+        "imports",
+        "depends_on",
+        "tests",
+        "documents",
+        "calls",
+        "owns",
+        "generates",
+        "consumes",
+        "belongs_to",
+        "contains",
+        "extends",
+        "invokes",
+        "verifies",
+    }
+)
 
 # ===========================================================================
 # Semantic Ownership Model (Phase 2.1)
 # ===========================================================================
 
-OWNERSHIP_CLASSES: frozenset[str] = frozenset({
-    "capability",
-    "shared_infrastructure",
-    "generated",
-    "framework",
-    "utility",
-    "external",
-    "unknown",
-})
+OWNERSHIP_CLASSES: frozenset[str] = frozenset(
+    {
+        "capability",
+        "shared_infrastructure",
+        "generated",
+        "framework",
+        "utility",
+        "external",
+        "unknown",
+    }
+)
 
 # Canonical metadata source classifications (Phase 2.1)
 # Each domain maps to its canonical source, projection, derived data, cache, or duplicate.
@@ -241,9 +247,9 @@ class GraphEdge:
             "target": self.target,
             "relationship": self.relationship,
             "confidence": self.confidence,
-        "evidence": self.evidence,
-        "ownership": self.ownership,
-    }
+            "evidence": self.evidence,
+            "ownership": self.ownership,
+        }
 
 
 @dataclass

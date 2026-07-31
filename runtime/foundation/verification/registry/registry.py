@@ -75,18 +75,20 @@ class VerificationCapability:
 class VerificationRegistry:
     """
     Verification Registry - deterministic registry for verification artifacts.
-    
+
     Loads verification.yaml and registers:
     - Verification categories
     - Verification commands/workflows
     - Verification scripts
     - Verification capabilities
-    
+
     Supports lookup by: capability, module, workflow, script, verification type.
     """
 
     def __init__(self, config_path: Path | None = None):
-        self._config_path = config_path or Path(__file__).parent.parent / "verification.yaml"
+        self._config_path = (
+            config_path or Path(__file__).parent.parent / "verification.yaml"
+        )
         self._config: dict[str, Any] = {}
         self._workflows: dict[str, VerificationWorkflow] = {}
         self._scripts: dict[str, VerificationScript] = {}
@@ -103,7 +105,9 @@ class VerificationRegistry:
             return
 
         if not self._config_path.exists():
-            raise FileNotFoundError(f"Verification config not found: {self._config_path}")
+            raise FileNotFoundError(
+                f"Verification config not found: {self._config_path}"
+            )
 
         with open(self._config_path) as f:
             self._config = yaml.safe_load(f) or {}
@@ -194,7 +198,11 @@ class VerificationRegistry:
                 scope=VerificationScope.BACKEND,
                 command=".github/scripts/run_backend_verification.sh",
                 estimated_duration_seconds=300,
-                scopes=[VerificationScope.BACKEND, VerificationScope.CONTRACTS, VerificationScope.PROPERTY],
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.PROPERTY,
+                ],
             ),
             "frontend": VerificationWorkflow(
                 id="frontend",
@@ -292,14 +300,23 @@ class VerificationRegistry:
                     id=wf.id,
                     name=wf_config.get("name", wf.name),
                     description=wf_config.get("description", wf.description),
-                    category=VerificationCategory(wf_config.get("category", wf.category.value)),
+                    category=VerificationCategory(
+                        wf_config.get("category", wf.category.value)
+                    ),
                     scope=VerificationScope(wf_config.get("scope", wf.scope.value)),
                     command=wf_config.get("command", wf.command),
                     script=wf_config.get("script", wf.script),
-                    estimated_duration_seconds=wf_config.get("estimated_duration_seconds", wf.estimated_duration_seconds),
-                    required_evidence=wf_config.get("required_evidence", wf.required_evidence),
+                    estimated_duration_seconds=wf_config.get(
+                        "estimated_duration_seconds", wf.estimated_duration_seconds
+                    ),
+                    required_evidence=wf_config.get(
+                        "required_evidence", wf.required_evidence
+                    ),
                     capabilities=wf_config.get("capabilities", wf.capabilities),
-                    scopes=[VerificationScope(s) for s in wf_config.get("scopes", [s.value for s in wf.scopes])],
+                    scopes=[
+                        VerificationScope(s)
+                        for s in wf_config.get("scopes", [s.value for s in wf.scopes])
+                    ],
                     dependencies=wf_config.get("dependencies", wf.dependencies),
                     metadata=wf_config.get("metadata", wf.metadata),
                 )
@@ -310,11 +327,15 @@ class VerificationRegistry:
                     id=wf_id,
                     name=wf_config.get("name", wf_id),
                     description=wf_config.get("description", ""),
-                    category=VerificationCategory(wf_config.get("category", "capability")),
+                    category=VerificationCategory(
+                        wf_config.get("category", "capability")
+                    ),
                     scope=VerificationScope(wf_config.get("scope", "quick")),
                     command=wf_config.get("command"),
                     script=wf_config.get("script"),
-                    estimated_duration_seconds=wf_config.get("estimated_duration_seconds", 0),
+                    estimated_duration_seconds=wf_config.get(
+                        "estimated_duration_seconds", 0
+                    ),
                     required_evidence=wf_config.get("required_evidence", []),
                     capabilities=wf_config.get("capabilities", []),
                     scopes=[VerificationScope(s) for s in wf_config.get("scopes", [])],
@@ -422,11 +443,19 @@ class VerificationRegistry:
                     name=script_config.get("name", script.name),
                     path=script_config.get("path", script.path),
                     description=script_config.get("description", script.description),
-                    category=VerificationCategory(script_config.get("category", script.category.value)),
-                    scope=VerificationScope(script_config.get("scope", script.scope.value)),
+                    category=VerificationCategory(
+                        script_config.get("category", script.category.value)
+                    ),
+                    scope=VerificationScope(
+                        script_config.get("scope", script.scope.value)
+                    ),
                     capabilities=script_config.get("capabilities", script.capabilities),
-                    estimated_duration_seconds=script_config.get("estimated_duration_seconds", script.estimated_duration_seconds),
-                    required_evidence=script_config.get("required_evidence", script.required_evidence),
+                    estimated_duration_seconds=script_config.get(
+                        "estimated_duration_seconds", script.estimated_duration_seconds
+                    ),
+                    required_evidence=script_config.get(
+                        "required_evidence", script.required_evidence
+                    ),
                     metadata=script_config.get("metadata", script.metadata),
                 )
                 self._scripts[script_id] = merged
@@ -436,10 +465,14 @@ class VerificationRegistry:
                     name=script_config.get("name", script_id),
                     path=script_config.get("path", ""),
                     description=script_config.get("description", ""),
-                    category=VerificationCategory(script_config.get("category", "capability")),
+                    category=VerificationCategory(
+                        script_config.get("category", "capability")
+                    ),
                     scope=VerificationScope(script_config.get("scope", "quick")),
                     capabilities=script_config.get("capabilities", []),
-                    estimated_duration_seconds=script_config.get("estimated_duration_seconds", 0),
+                    estimated_duration_seconds=script_config.get(
+                        "estimated_duration_seconds", 0
+                    ),
                     required_evidence=script_config.get("required_evidence", []),
                     metadata=script_config.get("metadata", {}),
                 )
@@ -454,7 +487,13 @@ class VerificationRegistry:
                 name="Loan Engine",
                 description="Core loan calculation engine",
                 category=VerificationCategory.CAPABILITY,
-                scopes=[VerificationScope.BACKEND, VerificationScope.PROPERTY, VerificationScope.CONTRACTS, VerificationScope.INTEGRATION, VerificationScope.REPOSITORY],
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
                 requirements=[
                     VerificationRequirement(
                         id="loan-engine-property",
@@ -476,7 +515,11 @@ class VerificationRegistry:
                     ),
                 ],
                 workflows=["property", "contracts", "backend"],
-                scripts=["run_property_tests", "run_contract_tests", "run_backend_verification"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
                 modules=["backend/src/loan_engine"],
             ),
             "reconciliation": VerificationCapability(
@@ -484,7 +527,13 @@ class VerificationRegistry:
                 name="Reconciliation Engine",
                 description="Financial reconciliation engine",
                 category=VerificationCategory.CAPABILITY,
-                scopes=[VerificationScope.BACKEND, VerificationScope.PROPERTY, VerificationScope.CONTRACTS, VerificationScope.INTEGRATION, VerificationScope.REPOSITORY],
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.PROPERTY,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
                 requirements=[
                     VerificationRequirement(
                         id="reconciliation-property",
@@ -506,7 +555,11 @@ class VerificationRegistry:
                     ),
                 ],
                 workflows=["property", "contracts", "backend"],
-                scripts=["run_property_tests", "run_contract_tests", "run_backend_verification"],
+                scripts=[
+                    "run_property_tests",
+                    "run_contract_tests",
+                    "run_backend_verification",
+                ],
                 modules=["backend/src/reconciliation"],
             ),
             "ledger": VerificationCapability(
@@ -514,7 +567,12 @@ class VerificationRegistry:
                 name="Ledger Service",
                 description="General ledger and accounting",
                 category=VerificationCategory.CAPABILITY,
-                scopes=[VerificationScope.BACKEND, VerificationScope.CONTRACTS, VerificationScope.INTEGRATION, VerificationScope.REPOSITORY],
+                scopes=[
+                    VerificationScope.BACKEND,
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.INTEGRATION,
+                    VerificationScope.REPOSITORY,
+                ],
                 requirements=[
                     VerificationRequirement(
                         id="ledger-invariant",
@@ -536,7 +594,11 @@ class VerificationRegistry:
                     ),
                 ],
                 workflows=["contracts", "backend", "integration"],
-                scripts=["run_contract_tests", "run_backend_verification", "run_integration_tests"],
+                scripts=[
+                    "run_contract_tests",
+                    "run_backend_verification",
+                    "run_integration_tests",
+                ],
                 modules=["backend/src/ledger"],
             ),
             "api-contracts": VerificationCapability(
@@ -544,7 +606,12 @@ class VerificationRegistry:
                 name="API Contracts",
                 description="OpenAPI contract verification",
                 category=VerificationCategory.CONTRACT,
-                scopes=[VerificationScope.CONTRACTS, VerificationScope.FRONTEND, VerificationScope.BACKEND, VerificationScope.REPOSITORY],
+                scopes=[
+                    VerificationScope.CONTRACTS,
+                    VerificationScope.FRONTEND,
+                    VerificationScope.BACKEND,
+                    VerificationScope.REPOSITORY,
+                ],
                 requirements=[
                     VerificationRequirement(
                         id="api-contract-frontend",
@@ -566,7 +633,11 @@ class VerificationRegistry:
                     ),
                 ],
                 workflows=["contracts", "frontend", "backend"],
-                scripts=["run_contract_tests", "run_frontend_verification", "run_backend_verification"],
+                scripts=[
+                    "run_contract_tests",
+                    "run_frontend_verification",
+                    "run_backend_verification",
+                ],
                 modules=["backend/src", "frontend/src"],
             ),
             "migrations": VerificationCapability(
@@ -574,7 +645,11 @@ class VerificationRegistry:
                 name="Database Migrations",
                 description="Database migration verification",
                 category=VerificationCategory.MIGRATION,
-                scopes=[VerificationScope.MIGRATION, VerificationScope.BACKEND, VerificationScope.REPOSITORY],
+                scopes=[
+                    VerificationScope.MIGRATION,
+                    VerificationScope.BACKEND,
+                    VerificationScope.REPOSITORY,
+                ],
                 requirements=[
                     VerificationRequirement(
                         id="migration-up-down",
@@ -602,8 +677,13 @@ class VerificationRegistry:
                     id=cap.id,
                     name=cap_config.get("name", cap.name),
                     description=cap_config.get("description", cap.description),
-                    category=VerificationCategory(cap_config.get("category", cap.category.value)),
-                    scopes=[VerificationScope(s) for s in cap_config.get("scopes", [s.value for s in cap.scopes])],
+                    category=VerificationCategory(
+                        cap_config.get("category", cap.category.value)
+                    ),
+                    scopes=[
+                        VerificationScope(s)
+                        for s in cap_config.get("scopes", [s.value for s in cap.scopes])
+                    ],
                     requirements=cap.requirements,
                     workflows=cap_config.get("workflows", cap.workflows),
                     scripts=cap_config.get("scripts", cap.scripts),
@@ -616,8 +696,13 @@ class VerificationRegistry:
                     id=cap_id,
                     name=cap_config.get("name", cap_id),
                     description=cap_config.get("description", ""),
-                    category=VerificationCategory(cap_config.get("category", "capability")),
-                    scopes=[VerificationScope(s) for s in cap_config.get("scopes", ["quick"])],
+                    category=VerificationCategory(
+                        cap_config.get("category", "capability")
+                    ),
+                    scopes=[
+                        VerificationScope(s)
+                        for s in cap_config.get("scopes", ["quick"])
+                    ],
                     requirements=[],
                     workflows=cap_config.get("workflows", []),
                     scripts=cap_config.get("scripts", []),
@@ -632,17 +717,25 @@ class VerificationRegistry:
         self.load()
         return self._workflows.get(workflow_id)
 
-    def get_workflows_by_scope(self, scope: VerificationScope) -> list[VerificationWorkflow]:
+    def get_workflows_by_scope(
+        self, scope: VerificationScope
+    ) -> list[VerificationWorkflow]:
         """Get all workflows for a scope."""
         self.load()
         return [wf for wf in self._workflows.values() if scope in wf.scopes]
 
-    def get_workflows_by_capability(self, capability_id: str) -> list[VerificationWorkflow]:
+    def get_workflows_by_capability(
+        self, capability_id: str
+    ) -> list[VerificationWorkflow]:
         """Get all workflows for a capability."""
         self.load()
-        return [wf for wf in self._workflows.values() if capability_id in wf.capabilities]
+        return [
+            wf for wf in self._workflows.values() if capability_id in wf.capabilities
+        ]
 
-    def get_workflows_by_category(self, category: VerificationCategory) -> list[VerificationWorkflow]:
+    def get_workflows_by_category(
+        self, category: VerificationCategory
+    ) -> list[VerificationWorkflow]:
         """Get all workflows for a category."""
         self.load()
         return [wf for wf in self._workflows.values() if wf.category == category]
@@ -652,7 +745,9 @@ class VerificationRegistry:
         self.load()
         return self._scripts.get(script_id)
 
-    def get_scripts_by_scope(self, scope: VerificationScope) -> list[VerificationScript]:
+    def get_scripts_by_scope(
+        self, scope: VerificationScope
+    ) -> list[VerificationScript]:
         """Get all scripts for a scope."""
         self.load()
         return [s for s in self._scripts.values() if s.scope == scope]
@@ -662,7 +757,9 @@ class VerificationRegistry:
         self.load()
         return [s for s in self._scripts.values() if capability_id in s.capabilities]
 
-    def get_scripts_by_category(self, category: VerificationCategory) -> list[VerificationScript]:
+    def get_scripts_by_category(
+        self, category: VerificationCategory
+    ) -> list[VerificationScript]:
         """Get all scripts for a category."""
         self.load()
         return [s for s in self._scripts.values() if s.category == category]
@@ -672,12 +769,16 @@ class VerificationRegistry:
         self.load()
         return self._capabilities.get(capability_id)
 
-    def get_capabilities_by_scope(self, scope: VerificationScope) -> list[VerificationCapability]:
+    def get_capabilities_by_scope(
+        self, scope: VerificationScope
+    ) -> list[VerificationCapability]:
         """Get all capabilities for a scope."""
         self.load()
         return [c for c in self._capabilities.values() if scope in c.scopes]
 
-    def get_capabilities_by_category(self, category: VerificationCategory) -> list[VerificationCapability]:
+    def get_capabilities_by_category(
+        self, category: VerificationCategory
+    ) -> list[VerificationCapability]:
         """Get all capabilities for a category."""
         self.load()
         return [c for c in self._capabilities.values() if c.category == category]
@@ -692,7 +793,9 @@ class VerificationRegistry:
         self.load()
         return self._requirements.get(requirement_id)
 
-    def get_requirements_by_capability(self, capability_id: str) -> list[VerificationRequirement]:
+    def get_requirements_by_capability(
+        self, capability_id: str
+    ) -> list[VerificationRequirement]:
         """Get all requirements for a capability."""
         self.load()
         cap = self._capabilities.get(capability_id)
@@ -700,7 +803,9 @@ class VerificationRegistry:
             return cap.requirements
         return []
 
-    def get_requirements_by_scope(self, scope: VerificationScope) -> list[VerificationRequirement]:
+    def get_requirements_by_scope(
+        self, scope: VerificationScope
+    ) -> list[VerificationRequirement]:
         """Get all requirements for a scope."""
         self.load()
         result = []
@@ -710,7 +815,9 @@ class VerificationRegistry:
                     result.append(req)
         return result
 
-    def get_requirements_by_category(self, category: VerificationCategory) -> list[VerificationRequirement]:
+    def get_requirements_by_category(
+        self, category: VerificationCategory
+    ) -> list[VerificationRequirement]:
         """Get all requirements for a category."""
         self.load()
         result = []
@@ -771,22 +878,30 @@ class VerificationRegistry:
         # Check workflows reference valid scripts
         for wf in self._workflows.values():
             if wf.script and wf.script not in self._scripts:
-                issues.append(f"Workflow '{wf.id}' references unknown script '{wf.script}'")
+                issues.append(
+                    f"Workflow '{wf.id}' references unknown script '{wf.script}'"
+                )
 
         # Check capabilities reference valid workflows/scripts
         for cap in self._capabilities.values():
             for wf_id in cap.workflows:
                 if wf_id not in self._workflows:
-                    issues.append(f"Capability '{cap.id}' references unknown workflow '{wf_id}'")
+                    issues.append(
+                        f"Capability '{cap.id}' references unknown workflow '{wf_id}'"
+                    )
             for script_id in cap.scripts:
                 if script_id not in self._scripts:
-                    issues.append(f"Capability '{cap.id}' references unknown script '{script_id}'")
+                    issues.append(
+                        f"Capability '{cap.id}' references unknown script '{script_id}'"
+                    )
 
         # Check scopes referenced by workflows exist
         for wf in self._workflows.values():
             for scope in wf.scopes:
                 if scope not in self._scopes:
-                    issues.append(f"Workflow '{wf.id}' references unknown scope '{scope.value}'")
+                    issues.append(
+                        f"Workflow '{wf.id}' references unknown scope '{scope.value}'"
+                    )
 
         return issues
 

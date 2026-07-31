@@ -21,7 +21,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from runtime.foundation.repository.graph.schema import GraphNode, RepositoryGraph, OWNERSHIP_CLASSES
+from runtime.foundation.repository.graph.schema import (
+    GraphNode,
+    RepositoryGraph,
+    OWNERSHIP_CLASSES,
+)
 from runtime.foundation.repository.scanner import (
     BackendScanner,
     DocsScanner,
@@ -184,7 +188,16 @@ class RepositoryBuilder:
         if node_type == "package":
             if "/common/" in path or "/utils/" in path or "/shared/" in path:
                 return "shared_infrastructure"
-            if any(seg in path for seg in ("/routers/", "/services/", "/engines/", "/repositories/", "/models/")):
+            if any(
+                seg in path
+                for seg in (
+                    "/routers/",
+                    "/services/",
+                    "/engines/",
+                    "/repositories/",
+                    "/models/",
+                )
+            ):
                 return "capability"
             if "/verification/" in path or "/orchestration/" in path:
                 return "shared_infrastructure"
@@ -211,22 +224,18 @@ class RepositoryBuilder:
         # Find modules referenced by capabilities but not on disk
         missing_modules: list[str] = []
         for edge in self.graph.edges:
-            if (
-                edge.relationship == "implements"
-                and edge.source.startswith("capability:")
+            if edge.relationship == "implements" and edge.source.startswith(
+                "capability:"
             ):
                 target_id = edge.target
                 if target_id not in all_node_ids:
-                    missing_modules.append(
-                        f"{edge.source} -> {target_id}"
-                    )
+                    missing_modules.append(f"{edge.source} -> {target_id}")
 
         # Find orphan modules (not referenced by any capability via implements)
         implemented_modules: set[str] = set()
         for edge in self.graph.edges:
-            if (
-                edge.relationship == "implements"
-                and edge.source.startswith("capability:")
+            if edge.relationship == "implements" and edge.source.startswith(
+                "capability:"
             ):
                 implemented_modules.add(edge.target)
 
@@ -247,7 +256,9 @@ class RepositoryBuilder:
         # Find endpoints with no verification evidence
         verified_endpoints: set[str] = set()
         for edge in self.graph.edges:
-            if edge.relationship == "verifies" and edge.source.startswith("capability:"):
+            if edge.relationship == "verifies" and edge.source.startswith(
+                "capability:"
+            ):
                 verified_endpoints.add(edge.target)
 
         no_verification_evidence: list[dict[str, Any]] = []
@@ -309,9 +320,13 @@ class RepositoryBuilder:
         return {
             "missing_modules": sorted(set(missing_modules)),
             "orphan_modules": sorted(orphan_modules, key=lambda x: x["path"]),
-            "no_verification_evidence": sorted(no_verification_evidence, key=lambda x: x["name"]),
+            "no_verification_evidence": sorted(
+                no_verification_evidence, key=lambda x: x["name"]
+            ),
             "no_documentation_evidence": no_documentation_evidence,
-            "unknown_ownership_modules": sorted(unknown_ownership_modules, key=lambda x: x["path"]),
+            "unknown_ownership_modules": sorted(
+                unknown_ownership_modules, key=lambda x: x["path"]
+            ),
             "missing_dependencies": sorted(set(missing_dependencies)),
         }
 
@@ -336,10 +351,14 @@ class RepositoryBuilder:
         summary.orphan_module_count = len(self.gaps.get("orphan_modules", []))
 
         # Untested endpoint count
-        summary.untested_endpoint_count = len(self.gaps.get("no_verification_evidence", []))
+        summary.untested_endpoint_count = len(
+            self.gaps.get("no_verification_evidence", [])
+        )
 
         # Undocumented capability count
-        summary.undocumented_cap_count = len(self.gaps.get("no_documentation_evidence", []))
+        summary.undocumented_cap_count = len(
+            self.gaps.get("no_documentation_evidence", [])
+        )
 
         # Structural checks
         node_ids: set[str] = set()
@@ -409,7 +428,9 @@ class RepositoryBuilder:
                 "validation_summary": {
                     "total_nodes": len(self.graph.nodes),
                     "total_edges": len(self.graph.edges),
-                    "unknown_ownership_nodes": sum(1 for n in self.graph.nodes if n.ownership == "unknown"),
+                    "unknown_ownership_nodes": sum(
+                        1 for n in self.graph.nodes if n.ownership == "unknown"
+                    ),
                     "has_errors": False,  # Will be filled after validate() call
                 },
             },
@@ -498,9 +519,15 @@ class RepositoryBuilder:
             "gaps": {
                 "missing_modules": len(self.gaps.get("missing_modules", [])),
                 "orphan_modules": len(self.gaps.get("orphan_modules", [])),
-                "no_verification_evidence": len(self.gaps.get("no_verification_evidence", [])),
-                "no_documentation_evidence": len(self.gaps.get("no_documentation_evidence", [])),
-                "unknown_ownership_modules": len(self.gaps.get("unknown_ownership_modules", [])),
+                "no_verification_evidence": len(
+                    self.gaps.get("no_verification_evidence", [])
+                ),
+                "no_documentation_evidence": len(
+                    self.gaps.get("no_documentation_evidence", [])
+                ),
+                "unknown_ownership_modules": len(
+                    self.gaps.get("unknown_ownership_modules", [])
+                ),
                 "missing_dependencies": len(self.gaps.get("missing_dependencies", [])),
             },
         }

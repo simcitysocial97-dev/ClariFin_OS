@@ -120,7 +120,9 @@ class ApiScanner(BaseScanner):
                 method_upper = method.upper()
                 ep_id = f"endpoint:{method_upper} {path}"
                 # Only add if not already present from api-map
-                existing = result.get_node(ep_id) if hasattr(result, "get_node") else None
+                existing = (
+                    result.get_node(ep_id) if hasattr(result, "get_node") else None
+                )
                 if existing is None:
                     result.add_node(
                         node_type="endpoint",
@@ -162,13 +164,9 @@ class ApiScanner(BaseScanner):
                 # Update existing endpoint node with contract info
                 for node in result.nodes:
                     if node.id == ep_id:
-                        node.properties["request_schema"] = ep.get(
-                            "request_schema", {}
-                        )
+                        node.properties["request_schema"] = ep.get("request_schema", {})
                         node.properties["response_schema"] = ep.get(
                             "response_schema", {}
                         )
-                        node.properties["status_codes"] = ep.get(
-                            "status_codes", []
-                        )
+                        node.properties["status_codes"] = ep.get("status_codes", [])
                         break

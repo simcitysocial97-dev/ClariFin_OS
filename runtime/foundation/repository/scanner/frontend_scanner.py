@@ -19,15 +19,17 @@ import re
 from runtime.foundation.repository.scanner.base import BaseScanner, ScanResult
 
 # Directories to skip when walking the frontend tree
-_SKIP_DIRS: frozenset[str] = frozenset({
-    "node_modules",
-    ".next",
-    "dist",
-    "test-results",
-    ".git",
-    "__tests__",
-    "tests",
-})
+_SKIP_DIRS: frozenset[str] = frozenset(
+    {
+        "node_modules",
+        ".next",
+        "dist",
+        "test-results",
+        ".git",
+        "__tests__",
+        "tests",
+    }
+)
 
 # File extensions to scan
 _TS_EXTENSIONS: frozenset[str] = frozenset({".ts", ".tsx"})
@@ -36,30 +38,20 @@ _TS_EXTENSIONS: frozenset[str] = frozenset({".ts", ".tsx"})
 _EXPORT_FUNCTION_RE = re.compile(
     r"export\s+(?:async\s+)?function\s+(\w+)", re.MULTILINE
 )
-_EXPORT_CONST_RE = re.compile(
-    r"export\s+const\s+(\w+)\s*[:=]", re.MULTILINE
-)
+_EXPORT_CONST_RE = re.compile(r"export\s+const\s+(\w+)\s*[:=]", re.MULTILINE)
 _EXPORT_DEFAULT_RE = re.compile(
     r"export\s+default\s+(?:async\s+)?function\s*(\w+)?", re.MULTILINE
 )
-_EXPORT_CLASS_RE = re.compile(
-    r"export\s+class\s+(\w+)", re.MULTILINE
-)
-_EXPORT_INTERFACE_RE = re.compile(
-    r"export\s+interface\s+(\w+)", re.MULTILINE
-)
-_EXPORT_TYPE_RE = re.compile(
-    r"export\s+type\s+(\w+)", re.MULTILINE
-)
+_EXPORT_CLASS_RE = re.compile(r"export\s+class\s+(\w+)", re.MULTILINE)
+_EXPORT_INTERFACE_RE = re.compile(r"export\s+interface\s+(\w+)", re.MULTILINE)
+_EXPORT_TYPE_RE = re.compile(r"export\s+type\s+(\w+)", re.MULTILINE)
 _IMPORT_RE = re.compile(
     r"import\s+(?:type\s+)?(?:\{[^}]+\}|\*\s+as\s+\w+|\w+)\s+from\s+['\"]([^'\"]+)['\"]",
     re.MULTILINE,
 )
 _HOOK_RE = re.compile(r"function\s+(use\w+)", re.MULTILINE)
 # API client: find function name and URL from template literal fetch calls
-_API_FUNCTION_RE = re.compile(
-    r"export\s+(?:async\s+)?function\s+(\w+)", re.MULTILINE
-)
+_API_FUNCTION_RE = re.compile(r"export\s+(?:async\s+)?function\s+(\w+)", re.MULTILINE)
 _ARROW_EXPORT_RE = re.compile(
     r"export\s+const\s+(\w+)\s*=\s*(?:async\s*)?\([^)]*\)\s*=>", re.MULTILINE
 )
@@ -75,13 +67,9 @@ _IMPORT_RE = re.compile(
 )
 _HOOK_RE = re.compile(r"function\s+(use\w+)", re.MULTILINE)
 # Match fetch calls with template literals: fetch(`${API_BASE}/api/...`)
-_FETCH_TEMPLATE_RE = re.compile(
-    r"fetch\s*\(\s*`\$\{API_BASE\}([^`]+)`", re.MULTILINE
-)
+_FETCH_TEMPLATE_RE = re.compile(r"fetch\s*\(\s*`\$\{API_BASE\}([^`]+)`", re.MULTILINE)
 # Match fetch calls with string literals: fetch('/api/...')
-_FETCH_STRING_RE = re.compile(
-    r"fetch\s*\(\s*['\"](/api/[^'\"\\)]+)['\"]", re.MULTILINE
-)
+_FETCH_STRING_RE = re.compile(r"fetch\s*\(\s*['\"](/api/[^'\"\\)]+)['\"]", re.MULTILINE)
 # Match function declarations that start with fetch
 _FETCH_FUNCTION_RE = re.compile(
     r"export\s+(?:async\s+)?function\s+(fetch\w+)", re.MULTILINE
@@ -145,9 +133,7 @@ class FrontendScanner(BaseScanner):
                 source="filesystem:frontend/app",
                 properties={
                     "route": route_path,
-                    "is_dynamic": any(
-                        part.startswith("[") for part in route_parts
-                    ),
+                    "is_dynamic": any(part.startswith("[") for part in route_parts),
                     "dynamic_params": [
                         part[1:-1]
                         for part in route_parts
@@ -242,21 +228,11 @@ class FrontendScanner(BaseScanner):
                 module_name = ts_file.stem
 
                 # Extract exports
-                functions = list(
-                    set(_EXPORT_FUNCTION_RE.findall(content))
-                )
-                consts = list(
-                    set(_ARROW_EXPORT_RE.findall(content))
-                )
-                interfaces = list(
-                    set(_EXPORT_INTERFACE_RE.findall(content))
-                )
-                types = list(
-                    set(_EXPORT_TYPE_RE.findall(content))
-                )
-                classes = list(
-                    set(_EXPORT_CLASS_RE.findall(content))
-                )
+                functions = list(set(_EXPORT_FUNCTION_RE.findall(content)))
+                consts = list(set(_ARROW_EXPORT_RE.findall(content)))
+                interfaces = list(set(_EXPORT_INTERFACE_RE.findall(content)))
+                types = list(set(_EXPORT_TYPE_RE.findall(content)))
+                classes = list(set(_EXPORT_CLASS_RE.findall(content)))
 
                 result.add_node(
                     node_type="module",
@@ -288,9 +264,7 @@ class FrontendScanner(BaseScanner):
         rel = self.rel_path(client_file, self.frontend_dir)
 
         # Find all exported functions that start with fetch
-        api_functions = list(
-            set(_FETCH_FUNCTION_RE.findall(content))
-        )
+        api_functions = list(set(_FETCH_FUNCTION_RE.findall(content)))
         # Also find arrow function exports
         api_functions.extend(_ARROW_EXPORT_RE.findall(content))
 

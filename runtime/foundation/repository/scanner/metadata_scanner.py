@@ -39,9 +39,7 @@ class MetadataScanner(BaseScanner):
 
     def _scan_capability_registry(self, result: ScanResult) -> None:
         """Load capability-registry.yaml and create capability nodes + edges."""
-        registry = self.safe_read_yaml(
-            self.generated_dir / "capability-registry.yaml"
-        )
+        registry = self.safe_read_yaml(self.generated_dir / "capability-registry.yaml")
         if registry is None:
             return
 

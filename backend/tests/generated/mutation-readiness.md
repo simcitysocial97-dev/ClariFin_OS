@@ -1,6 +1,6 @@
 # Mutation Readiness Report
 
-Generated: 2026-07-29T06:28:29.835798+00:00
+Generated: 2026-07-31T06:03:36.235968+00:00
 
 ## Engine Readiness Status
 
@@ -60,7 +60,7 @@ Generated: 2026-07-29T06:28:29.835798+00:00
 | `src/engines/behavior_engine.py` | 0 | 5 | Blocked | LOW |
 | `src/engines/ledger_audit_engine.py` | 0 | 3 | Blocked | LOW |
 | `src/engines/reconciliation_engine.py` | 0 | 2 | Blocked | LOW |
-| `src/engines/financial_events/lineage_walker.py` | 0 | 2 | Blocked | LOW |
+| `src/engines/financial_events/lineage_walker.py` | 0 | 3 | Blocked | LOW |
 | `src/engines/account_engine/history.py` | 0 | 2 | Blocked | LOW |
 
 ## Readiness Legend

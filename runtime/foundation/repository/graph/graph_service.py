@@ -33,10 +33,18 @@ class GraphServiceCache:
     """Simple deterministic in-memory caches for RepositoryGraphService."""
 
     node_cache: Dict[str, GraphNode] = field(default_factory=dict)
-    edge_cache: Dict[str, list[GraphEdge]] = field(default_factory=lambda: defaultdict(list))
-    successor_cache: Dict[Tuple[str, str | None], List[str]] = field(default_factory=dict)
-    predecessor_cache: Dict[Tuple[str, str | None], List[str]] = field(default_factory=dict)
-    neighbor_cache: Dict[str, Set[str]] = field(default_factory=dict)  # Empty dict, populated lazily
+    edge_cache: Dict[str, list[GraphEdge]] = field(
+        default_factory=lambda: defaultdict(list)
+    )
+    successor_cache: Dict[Tuple[str, str | None], List[str]] = field(
+        default_factory=dict
+    )
+    predecessor_cache: Dict[Tuple[str, str | None], List[str]] = field(
+        default_factory=dict
+    )
+    neighbor_cache: Dict[str, Set[str]] = field(
+        default_factory=dict
+    )  # Empty dict, populated lazily
     gaps: Dict[str, Any] = field(default_factory=dict)  # Store gap metadata
 
     def clear(self) -> None:
@@ -56,7 +64,9 @@ class RepositoryGraphService:
     enabling lazy loading, caching, and schema evolution.
     """
 
-    def __init__(self, graph: RepositoryGraph | None = None, index_path: Path | None = None):
+    def __init__(
+        self, graph: RepositoryGraph | None = None, index_path: Path | None = None
+    ):
         """Construct from an existing RepositoryGraph or load from index path.
 
         Args:
@@ -214,7 +224,7 @@ class RepositoryGraphService:
         for edge in self._graph.edges:
             self._cache.edge_cache[edge.source].append(edge)
             # Pre-populate neighbor sets for O(1) lookups
-            if hasattr(self._cache.neighbor_cache, 'update'):
+            if hasattr(self._cache.neighbor_cache, "update"):
                 pass  # placeholder
 
         for edge in self._graph.edges:
@@ -281,7 +291,11 @@ class RepositoryGraphService:
         source, target, rel = parts
         # type ignore: _graph is guaranteed non-None by _ensure_loaded() when using index_path
         for edge in self._graph.edges:  # type: ignore
-            if edge.source == source and edge.target == target and edge.relationship == rel:
+            if (
+                edge.source == source
+                and edge.target == target
+                and edge.relationship == rel
+            ):
                 return edge
         return None
 
@@ -329,7 +343,9 @@ class RepositoryGraphService:
 
         result: set[str] = set()
         for edge in self._graph.edges:
-            if edge.target == node_id and (edge_type is None or edge.relationship == edge_type):
+            if edge.target == node_id and (
+                edge_type is None or edge.relationship == edge_type
+            ):
                 result.add(edge.source)
 
         sorted_result = sorted(result)
@@ -422,14 +438,8 @@ class RepositoryGraphService:
         """
         self._ensure_loaded()
 
-        outgoing = [
-            e for e in self._graph.edges
-            if e.source == node_id
-        ]
-        incoming = [
-            e for e in self._graph.edges
-            if e.target == node_id
-        ]
+        outgoing = [e for e in self._graph.edges if e.source == node_id]
+        incoming = [e for e in self._graph.edges if e.target == node_id]
 
         # Sort for determinism: by relationship, then by counterpart
         outgoing.sort(key=lambda e: (e.relationship, e.target))
@@ -480,7 +490,9 @@ class RepositoryGraphService:
             "edge_relationships": dict(sorted(edge_counts.items())),
             "ownership_distribution": dict(sorted(ownership_counts.items())),
             "unique_node_ids": len(self._cache.node_cache),
-            "unique_edge_pairs": len({(e.source, e.target, e.relationship) for e in self._graph.edges}),
+            "unique_edge_pairs": len(
+                {(e.source, e.target, e.relationship) for e in self._graph.edges}
+            ),
         }
 
     def validate(self) -> dict[str, Any]:
@@ -537,7 +549,9 @@ class RepositoryGraphService:
         for e in self._graph.edges:
             for attr in ("source", "target", "relationship"):
                 if getattr(e, attr) is None or getattr(e, attr) == "":
-                    warnings.append(f"Edge missing field '{attr}' from {e.source}->{e.target}")
+                    warnings.append(
+                        f"Edge missing field '{attr}' from {e.source}->{e.target}"
+                    )
 
         valid = len(errors) == 0
         return {
