@@ -12,12 +12,9 @@ name: Full Stack Validation
 on:
   workflow_dispatch:    # Manual only
 
-# on:
-#   push:
-#     branches: [main]
-#   pull_request:
-#     branches: [main]
-  workflow_dispatch:
+concurrency:
+  group: full-validation-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   backend:

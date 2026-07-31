@@ -18,6 +18,10 @@ on:
       - "frontend/src/**"
       - ".github/workflows/frontend.yml"
 
+concurrency:
+  group: frontend-sync-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   openapi-sync:
@@ -39,28 +43,28 @@ jobs:
         working-directory: backend
         run: |
           cat > /tmp/gen_schema.py << 'PYEOF'
-import json
-import sys
+          import json
+          import sys
 
-try:
-    from api import app
-except ImportError:
-    try:
-        from app.main import app
-    except ImportError:
-        try:
-            from src.main import app
-        except ImportError:
-            print('ERROR: Could not import FastAPI app')
-            print('Adjust the import in frontend.yml')
-            sys.exit(1)
+          try:
+              from api import app
+          except ImportError:
+              try:
+                  from app.main import app
+              except ImportError:
+                  try:
+                      from src.main import app
+                  except ImportError:
+                      print('ERROR: Could not import FastAPI app')
+                      print('Adjust the import in frontend.yml')
+                      sys.exit(1)
 
-schema = app.openapi()
-with open('tests/generated/openapi-current.json', 'w') as f:
-    json.dump(schema, f, indent=2)
+          schema = app.openapi()
+          with open('tests/generated/openapi-current.json', 'w') as f:
+              json.dump(schema, f, indent=2)
 
-print(f'Schema generated: {len(schema["paths"])} endpoints')
-PYEOF
+          print(f'Schema generated: {len(schema["paths"])} endpoints')
+          PYEOF
           python /tmp/gen_schema.py
 
       - name: Compare with committed schema

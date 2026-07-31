@@ -7,6 +7,10 @@ on:
     branches: [main, master, develop]
   workflow_dispatch:
 
+concurrency:
+  group: playwright-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   test:
     timeout-minutes: 60

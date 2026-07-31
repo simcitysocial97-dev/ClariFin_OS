@@ -31,6 +31,9 @@ on:
 
 # No concurrency cancellation here
 # We want mutation runs to complete fully
+concurrency:
+  group: mutation-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
 

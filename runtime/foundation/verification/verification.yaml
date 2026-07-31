@@ -1,0 +1,208 @@
+# ClariFin OS — Verification Runtime Configuration
+# This file is the single source of truth for verification settings.
+# Populated incrementally through Programs 2-10.
+# Do not edit manually — use verification CLI commands.
+
+version: "1.0"
+
+# Program 1: Infrastructure foundation
+infrastructure:
+  python_version: "3.12"
+  node_version: "20"
+  cache_strategy: "dependency-hash"
+
+# Program 2: Repository Intelligence (placeholder)
+intelligence:
+  enabled: false
+  # Will be implemented in Program 2
+
+# Program 3: Verification CLI (placeholder)
+cli:
+  enabled: false
+  # Will be implemented in Program 3
+
+# Program 4: Evidence Platform (placeholder)
+evidence:
+  enabled: false
+  # Will be implemented in Program 4
+
+# Program 5: Backend Verification (current thresholds)
+backend:
+  coverage_threshold: 40
+  mutation_threshold: 60
+  paths:
+    source: "backend/src"
+    tests: "backend/tests"
+
+# Program 6: Frontend Verification (placeholder)
+frontend:
+  enabled: true
+  paths:
+    source: "frontend/src"
+    tests: "frontend/tests"
+
+# Verification workflows
+workflows:
+  quick:
+    name: "Quick Verification"
+    description: "Fast local checks (lint, typecheck, unit tests)"
+    category: "capability"
+    scope: "quick"
+    command: ".github/scripts/run_fast_checks.sh"
+    estimated_duration_seconds: 60
+    scopes: ["quick"]
+
+  backend:
+    name: "Backend Verification"
+    description: "Full backend verification suite"
+    category: "capability"
+    scope: "backend"
+    command: ".github/scripts/run_contract_tests.sh"
+    estimated_duration_seconds: 300
+    scopes: ["backend", "contracts", "property"]
+
+  frontend:
+    name: "Frontend Verification"
+    description: "Full frontend verification suite"
+    category: "contract_frontend"
+    scope: "frontend"
+    command: ".github/scripts/run_fast_checks.sh"
+    estimated_duration_seconds: 180
+    scopes: ["frontend", "contracts"]
+
+  contracts:
+    name: "Contract Verification"
+    description: "Contract tests for all capabilities"
+    category: "contract"
+    scope: "contracts"
+    command: ".github/scripts/run_contract_tests.sh"
+    estimated_duration_seconds: 180
+    scopes: ["contracts"]
+
+  property:
+    name: "Property Testing"
+    description: "Property-based testing for loan engine"
+    category: "property"
+    scope: "property"
+    command: ".github/scripts/run_fast_checks.sh"
+    estimated_duration_seconds: 300
+    scopes: ["property"]
+    capabilities: ["loan-engine", "reconciliation"]
+
+  mutation:
+    name: "Mutation Testing"
+    description: "Mutation testing for critical modules"
+    category: "mutation"
+    scope: "mutation"
+    command: ".github/scripts/run_mutation_selective.sh"
+    estimated_duration_seconds: 600
+    scopes: ["mutation"]
+
+  integration:
+    name: "Integration Tests"
+    description: "End-to-end integration tests"
+    category: "integration"
+    scope: "integration"
+    command: ""
+    estimated_duration_seconds: 600
+    scopes: ["integration"]
+
+  migration:
+    name: "Migration Verification"
+    description: "Database migration verification"
+    category: "migration"
+    scope: "migration"
+    command: ""
+    estimated_duration_seconds: 120
+    scopes: ["migration"]
+
+  repository:
+    name: "Repository Verification"
+    description: "Full repository verification"
+    category: "architectural"
+    scope: "repository"
+    command: ""
+    estimated_duration_seconds: 1800
+    scopes: ["repository"]
+
+  full:
+    name: "Full Verification"
+    description: "Complete verification suite"
+    category: "architectural"
+    scope: "full"
+    command: ""
+    estimated_duration_seconds: 3600
+    scopes: ["quick", "backend", "frontend", "contracts", "property", "mutation", "integration", "migration", "repository", "full"]
+
+# Verification scripts
+scripts:
+  run_fast_checks:
+    name: "Fast Checks"
+    path: ".github/scripts/run_fast_checks.sh"
+    description: "Fast lint, typecheck, and unit tests"
+    category: "capability"
+    scope: "quick"
+    estimated_duration_seconds: 60
+
+  run_contract_tests:
+    name: "Contract Tests"
+    path: ".github/scripts/run_contract_tests.sh"
+    description: "Contract tests for all capabilities"
+    category: "contract"
+    scope: "contracts"
+    estimated_duration_seconds: 180
+
+  run_mutation_selective:
+    name: "Selective Mutation Testing"
+    path: ".github/scripts/run_mutation_selective.sh"
+    description: "Mutation testing for critical modules"
+    category: "mutation"
+    scope: "mutation"
+    estimated_duration_seconds: 600
+
+# Capabilities
+capabilities:
+  loan-engine:
+    name: "Loan Engine"
+    description: "Core loan calculation engine"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_fast_checks"]
+    modules: ["backend/src/loan_engine"]
+
+  reconciliation:
+    name: "Reconciliation Engine"
+    description: "Financial reconciliation engine"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_fast_checks"]
+    modules: ["backend/src/reconciliation"]
+
+  ledger:
+    name: "Ledger Service"
+    description: "General ledger and accounting"
+    category: "capability"
+    scopes: ["backend", "contracts", "integration", "repository"]
+    workflows: ["contracts", "backend", "integration"]
+    scripts: ["run_contract_tests", "run_fast_checks"]
+    modules: ["backend/src/ledger"]
+
+  api-contracts:
+    name: "API Contracts"
+    description: "OpenAPI contract verification"
+    category: "contract"
+    scopes: ["contracts", "frontend", "backend", "repository"]
+    workflows: ["contracts", "frontend", "backend"]
+    scripts: ["run_contract_tests", "run_fast_checks"]
+    modules: ["backend/src", "frontend/src"]
+
+  migrations:
+    name: "Database Migrations"
+    description: "Database migration verification"
+    category: "migration"
+    scopes: ["migration", "backend", "repository"]
+    workflows: ["migration"]
+    scripts: []
+    modules: ["backend/src/migrations"]

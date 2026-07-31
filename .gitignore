@@ -74,3 +74,13 @@ Misc
 .temp/
 temp/
 tmp/
+
+# Generated artifacts
+runtime/generated/*/cache/
+runtime/generated/verification/
+runtime/generated/evidence/
+runtime/generated/financial/
+runtime/generated/timeline/
+runtime/generated/graph/
+runtime/generated/command/
+runtime/generated/intelligence/

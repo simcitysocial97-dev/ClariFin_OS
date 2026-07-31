@@ -1,0 +1,40 @@
+from runtime.foundation.verification.models.model import (
+    VerificationScope,
+    VerificationCategory,
+    VerificationStatus,
+    VerificationSeverity,
+    VerificationDependency,
+    VerificationRequirement,
+    VerificationTarget,
+    VerificationStep,
+    VerificationEvidence,
+    VerificationResult,
+    VerificationPlan,
+)
+from runtime.foundation.verification.models.scope import (
+    ScopeReason,
+    ScopeResolution,
+    ScopeResolver,
+    get_scope_resolver,
+    reset_scope_resolver,
+)
+
+__all__ = [
+    "VerificationScope",
+    "VerificationCategory",
+    "VerificationStatus",
+    "VerificationSeverity",
+    "VerificationDependency",
+    "VerificationRequirement",
+    "VerificationTarget",
+    "VerificationStep",
+    "VerificationEvidence",
+    "VerificationResult",
+    "VerificationPlan",
+    "VerificationSummary",
+    "ScopeReason",
+    "ScopeResolution",
+    "ScopeResolver",
+    "get_scope_resolver",
+    "reset_scope_resolver",
+]
