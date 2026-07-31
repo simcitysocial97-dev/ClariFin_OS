@@ -17,6 +17,10 @@ on:
         required: false
         default: "all"
 
+concurrency:
+  group: golden-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
 
   golden-regression:
