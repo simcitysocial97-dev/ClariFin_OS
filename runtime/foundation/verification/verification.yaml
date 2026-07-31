@@ -11,20 +11,17 @@ infrastructure:
   node_version: "20"
   cache_strategy: "dependency-hash"
 
-# Program 2: Repository Intelligence (placeholder)
+# Program 2: Repository Intelligence (implemented)
 intelligence:
-  enabled: false
-  # Will be implemented in Program 2
+  enabled: true
 
-# Program 3: Verification CLI (placeholder)
+# Program 3: Verification CLI (implemented)
 cli:
-  enabled: false
-  # Will be implemented in Program 3
+  enabled: true
 
-# Program 4: Evidence Platform (placeholder)
+# Program 4: Evidence Platform (implemented)
 evidence:
-  enabled: false
-  # Will be implemented in Program 4
+  enabled: true
 
 # Program 5: Backend Verification (current thresholds)
 backend:

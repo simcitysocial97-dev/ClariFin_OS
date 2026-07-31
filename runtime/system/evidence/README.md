@@ -1,13 +1,7 @@
 # Evidence Runtime
 
-**Status:** Planned — Not yet implemented.
+**Status:** Implemented — Production ready.
 
-**Scheduled for:** Program 4 (see docs/architecture/)
-
-**Purpose:** Evidence storage, ingestion, and retrieval for financial claims verification.
+**Purpose:** Evidence storage, ingestion, and retrieval for verification evidence collection.
 
 **Dependencies:** runtime/foundation/repository, runtime/foundation/verification
-
-Do not import from this runtime.
-Do not write tests for this runtime.
-Do not document APIs that do not exist.
