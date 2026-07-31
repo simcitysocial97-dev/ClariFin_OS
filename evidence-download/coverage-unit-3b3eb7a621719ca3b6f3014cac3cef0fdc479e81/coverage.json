@@ -1,0 +1,1297 @@
+{
+  "generated_at": "2026-07-27T23:12:13+05:30",
+  "capabilities": [
+    {
+      "id": "account_management",
+      "name": "Account Management",
+      "criticality": "high",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "credit_cards",
+      "name": "Credit Cards",
+      "criticality": "high",
+      "risk": "medium",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "debt_management",
+      "name": "Debt Management",
+      "criticality": "high",
+      "risk": "medium",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "financial_events",
+      "name": "Financial Events",
+      "criticality": "medium",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "financial_health",
+      "name": "Financial Health",
+      "criticality": "high",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "forecasting",
+      "name": "Forecasting",
+      "criticality": "medium",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "household_cashflow",
+      "name": "Household Cashflow",
+      "criticality": "high",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "pattern_analysis",
+      "name": "Pattern Analysis",
+      "criticality": "medium",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "recommendations",
+      "name": "Recommendations",
+      "criticality": "medium",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "reconciliation",
+      "name": "Reconciliation",
+      "criticality": "high",
+      "risk": "medium",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    },
+    {
+      "id": "transaction_intelligence",
+      "name": "Transaction Intelligence",
+      "criticality": "high",
+      "risk": "low",
+      "structural_maturity": "\u2713",
+      "validation_maturity": "\u2713",
+      "documentation_maturity": "\u2713",
+      "overall_maturity": "\u2713",
+      "missing": []
+    }
+  ],
+  "files": {
+    "backend/src/engines/credit_card_engine/__init__.py": {
+      "executed_lines": [
+        13,
+        19,
+        20,
+        21,
+        25,
+        26,
+        27,
+        32
+      ],
+      "summary": {
+        "covered_lines": 8,
+        "num_statements": 8,
+        "percent_covered": 100.0,
+        "percent_covered_display": "100",
+        "missing_lines": 0,
+        "excluded_lines": 0,
+        "percent_statements_covered": 100.0,
+        "percent_statements_covered_display": "100"
+      },
+      "missing_lines": [],
+      "excluded_lines": [],
+      "functions": {
+        "": {
+          "executed_lines": [
+            13,
+            19,
+            20,
+            21,
+            25,
+            26,
+            27,
+            32
+          ],
+          "summary": {
+            "covered_lines": 8,
+            "num_statements": 8,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            13,
+            19,
+            20,
+            21,
+            25,
+            26,
+            27,
+            32
+          ],
+          "summary": {
+            "covered_lines": 8,
+            "num_statements": 8,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/billing.py": {
+      "executed_lines": [
+        12,
+        13,
+        15,
+        18,
+        31,
+        33,
+        36,
+        57,
+        60,
+        62,
+        65,
+        66,
+        80,
+        81,
+        83,
+        86,
+        104,
+        109,
+        110,
+        116,
+        136,
+        138,
+        140,
+        143,
+        144,
+        147,
+        150,
+        152
+      ],
+      "summary": {
+        "covered_lines": 28,
+        "num_statements": 39,
+        "percent_covered": 71.7948717948718,
+        "percent_covered_display": "72",
+        "missing_lines": 11,
+        "excluded_lines": 0,
+        "percent_statements_covered": 71.7948717948718,
+        "percent_statements_covered_display": "72"
+      },
+      "missing_lines": [
+        32,
+        58,
+        67,
+        70,
+        71,
+        73,
+        74,
+        75,
+        137,
+        139,
+        141
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "compute_due_date": {
+          "executed_lines": [
+            31,
+            33
+          ],
+          "summary": {
+            "covered_lines": 2,
+            "num_statements": 3,
+            "percent_covered": 66.66666666666667,
+            "percent_covered_display": "67",
+            "missing_lines": 1,
+            "excluded_lines": 0,
+            "percent_statements_covered": 66.66666666666667,
+            "percent_statements_covered_display": "67"
+          },
+          "missing_lines": [
+            32
+          ],
+          "excluded_lines": [],
+          "start_line": 18
+        },
+        "compute_next_statement_date": {
+          "executed_lines": [
+            57,
+            60,
+            62,
+            65,
+            66,
+            80,
+            81,
+            83
+          ],
+          "summary": {
+            "covered_lines": 8,
+            "num_statements": 15,
+            "percent_covered": 53.333333333333336,
+            "percent_covered_display": "53",
+            "missing_lines": 7,
+            "excluded_lines": 0,
+            "percent_statements_covered": 53.333333333333336,
+            "percent_statements_covered_display": "53"
+          },
+          "missing_lines": [
+            58,
+            67,
+            70,
+            71,
+            73,
+            74,
+            75
+          ],
+          "excluded_lines": [],
+          "start_line": 36
+        },
+        "compute_statement_dates": {
+          "executed_lines": [
+            104,
+            109,
+            110
+          ],
+          "summary": {
+            "covered_lines": 3,
+            "num_statements": 3,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 86
+        },
+        "compute_minimum_due": {
+          "executed_lines": [
+            136,
+            138,
+            140,
+            143,
+            144,
+            147,
+            150,
+            152
+          ],
+          "summary": {
+            "covered_lines": 8,
+            "num_statements": 11,
+            "percent_covered": 72.72727272727273,
+            "percent_covered_display": "73",
+            "missing_lines": 3,
+            "excluded_lines": 0,
+            "percent_statements_covered": 72.72727272727273,
+            "percent_statements_covered_display": "73"
+          },
+          "missing_lines": [
+            137,
+            139,
+            141
+          ],
+          "excluded_lines": [],
+          "start_line": 116
+        },
+        "": {
+          "executed_lines": [
+            12,
+            13,
+            15,
+            18,
+            36,
+            86,
+            116
+          ],
+          "summary": {
+            "covered_lines": 7,
+            "num_statements": 7,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            12,
+            13,
+            15,
+            18,
+            31,
+            33,
+            36,
+            57,
+            60,
+            62,
+            65,
+            66,
+            80,
+            81,
+            83,
+            86,
+            104,
+            109,
+            110,
+            116,
+            136,
+            138,
+            140,
+            143,
+            144,
+            147,
+            150,
+            152
+          ],
+          "summary": {
+            "covered_lines": 28,
+            "num_statements": 39,
+            "percent_covered": 71.7948717948718,
+            "percent_covered_display": "72",
+            "missing_lines": 11,
+            "excluded_lines": 0,
+            "percent_statements_covered": 71.7948717948718,
+            "percent_statements_covered_display": "72"
+          },
+          "missing_lines": [
+            32,
+            58,
+            67,
+            70,
+            71,
+            73,
+            74,
+            75,
+            137,
+            139,
+            141
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/emi.py": {
+      "executed_lines": [
+        11,
+        14,
+        40,
+        41,
+        42,
+        44,
+        48,
+        55,
+        56,
+        59,
+        64
+      ],
+      "summary": {
+        "covered_lines": 11,
+        "num_statements": 13,
+        "percent_covered": 84.61538461538461,
+        "percent_covered_display": "85",
+        "missing_lines": 2,
+        "excluded_lines": 0,
+        "percent_statements_covered": 84.61538461538461,
+        "percent_statements_covered_display": "85"
+      },
+      "missing_lines": [
+        43,
+        45
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "compute_emi_conversion": {
+          "executed_lines": [
+            40,
+            41,
+            42,
+            44,
+            48,
+            55,
+            56,
+            59,
+            64
+          ],
+          "summary": {
+            "covered_lines": 9,
+            "num_statements": 11,
+            "percent_covered": 81.81818181818181,
+            "percent_covered_display": "82",
+            "missing_lines": 2,
+            "excluded_lines": 0,
+            "percent_statements_covered": 81.81818181818181,
+            "percent_statements_covered_display": "82"
+          },
+          "missing_lines": [
+            43,
+            45
+          ],
+          "excluded_lines": [],
+          "start_line": 14
+        },
+        "": {
+          "executed_lines": [
+            11,
+            14
+          ],
+          "summary": {
+            "covered_lines": 2,
+            "num_statements": 2,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            11,
+            14,
+            40,
+            41,
+            42,
+            44,
+            48,
+            55,
+            56,
+            59,
+            64
+          ],
+          "summary": {
+            "covered_lines": 11,
+            "num_statements": 13,
+            "percent_covered": 84.61538461538461,
+            "percent_covered_display": "85",
+            "missing_lines": 2,
+            "excluded_lines": 0,
+            "percent_statements_covered": 84.61538461538461,
+            "percent_statements_covered_display": "85"
+          },
+          "missing_lines": [
+            43,
+            45
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/foreclosure.py": {
+      "executed_lines": [
+        11,
+        14
+      ],
+      "summary": {
+        "covered_lines": 2,
+        "num_statements": 14,
+        "percent_covered": 14.285714285714286,
+        "percent_covered_display": "14",
+        "missing_lines": 12,
+        "excluded_lines": 0,
+        "percent_statements_covered": 14.285714285714286,
+        "percent_statements_covered_display": "14"
+      },
+      "missing_lines": [
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        50,
+        51,
+        59,
+        67
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "compute_card_foreclosure": {
+          "executed_lines": [],
+          "summary": {
+            "covered_lines": 0,
+            "num_statements": 12,
+            "percent_covered": 0.0,
+            "percent_covered_display": "0",
+            "missing_lines": 12,
+            "excluded_lines": 0,
+            "percent_statements_covered": 0.0,
+            "percent_statements_covered_display": "0"
+          },
+          "missing_lines": [
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            50,
+            51,
+            59,
+            67
+          ],
+          "excluded_lines": [],
+          "start_line": 14
+        },
+        "": {
+          "executed_lines": [
+            11,
+            14
+          ],
+          "summary": {
+            "covered_lines": 2,
+            "num_statements": 2,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            11,
+            14
+          ],
+          "summary": {
+            "covered_lines": 2,
+            "num_statements": 14,
+            "percent_covered": 14.285714285714286,
+            "percent_covered_display": "14",
+            "missing_lines": 12,
+            "excluded_lines": 0,
+            "percent_statements_covered": 14.285714285714286,
+            "percent_statements_covered_display": "14"
+          },
+          "missing_lines": [
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            50,
+            51,
+            59,
+            67
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/interest.py": {
+      "executed_lines": [
+        17,
+        20,
+        35,
+        38,
+        57,
+        59,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        72,
+        75,
+        96,
+        97,
+        98,
+        101,
+        102,
+        103,
+        105,
+        107,
+        110,
+        131,
+        133,
+        135,
+        138,
+        139,
+        142,
+        143
+      ],
+      "summary": {
+        "covered_lines": 30,
+        "num_statements": 37,
+        "percent_covered": 81.08108108108108,
+        "percent_covered_display": "81",
+        "missing_lines": 7,
+        "excluded_lines": 0,
+        "percent_statements_covered": 81.08108108108108,
+        "percent_statements_covered_display": "81"
+      },
+      "missing_lines": [
+        58,
+        60,
+        99,
+        104,
+        132,
+        134,
+        136
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "bps_to_daily_rate": {
+          "executed_lines": [
+            35
+          ],
+          "summary": {
+            "covered_lines": 1,
+            "num_statements": 1,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 20
+        },
+        "compute_daily_interest": {
+          "executed_lines": [
+            57,
+            59,
+            62,
+            63,
+            65,
+            66,
+            67,
+            68,
+            72
+          ],
+          "summary": {
+            "covered_lines": 9,
+            "num_statements": 11,
+            "percent_covered": 81.81818181818181,
+            "percent_covered_display": "82",
+            "missing_lines": 2,
+            "excluded_lines": 0,
+            "percent_statements_covered": 81.81818181818181,
+            "percent_statements_covered_display": "82"
+          },
+          "missing_lines": [
+            58,
+            60
+          ],
+          "excluded_lines": [],
+          "start_line": 38
+        },
+        "compute_monthly_interest_charge": {
+          "executed_lines": [
+            96,
+            97,
+            98,
+            101,
+            102,
+            103,
+            105,
+            107
+          ],
+          "summary": {
+            "covered_lines": 8,
+            "num_statements": 10,
+            "percent_covered": 80.0,
+            "percent_covered_display": "80",
+            "missing_lines": 2,
+            "excluded_lines": 0,
+            "percent_statements_covered": 80.0,
+            "percent_statements_covered_display": "80"
+          },
+          "missing_lines": [
+            99,
+            104
+          ],
+          "excluded_lines": [],
+          "start_line": 75
+        },
+        "compute_monthly_interest_simple": {
+          "executed_lines": [
+            131,
+            133,
+            135,
+            138,
+            139,
+            142,
+            143
+          ],
+          "summary": {
+            "covered_lines": 7,
+            "num_statements": 10,
+            "percent_covered": 70.0,
+            "percent_covered_display": "70",
+            "missing_lines": 3,
+            "excluded_lines": 0,
+            "percent_statements_covered": 70.0,
+            "percent_statements_covered_display": "70"
+          },
+          "missing_lines": [
+            132,
+            134,
+            136
+          ],
+          "excluded_lines": [],
+          "start_line": 110
+        },
+        "": {
+          "executed_lines": [
+            17,
+            20,
+            38,
+            75,
+            110
+          ],
+          "summary": {
+            "covered_lines": 5,
+            "num_statements": 5,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            17,
+            20,
+            35,
+            38,
+            57,
+            59,
+            62,
+            63,
+            65,
+            66,
+            67,
+            68,
+            72,
+            75,
+            96,
+            97,
+            98,
+            101,
+            102,
+            103,
+            105,
+            107,
+            110,
+            131,
+            133,
+            135,
+            138,
+            139,
+            142,
+            143
+          ],
+          "summary": {
+            "covered_lines": 30,
+            "num_statements": 37,
+            "percent_covered": 81.08108108108108,
+            "percent_covered_display": "81",
+            "missing_lines": 7,
+            "excluded_lines": 0,
+            "percent_statements_covered": 81.08108108108108,
+            "percent_statements_covered_display": "81"
+          },
+          "missing_lines": [
+            58,
+            60,
+            99,
+            104,
+            132,
+            134,
+            136
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/metrics.py": {
+      "executed_lines": [
+        13
+      ],
+      "summary": {
+        "covered_lines": 1,
+        "num_statements": 17,
+        "percent_covered": 5.882352941176471,
+        "percent_covered_display": "6",
+        "missing_lines": 16,
+        "excluded_lines": 0,
+        "percent_statements_covered": 5.882352941176471,
+        "percent_statements_covered_display": "6"
+      },
+      "missing_lines": [
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        48,
+        49,
+        51,
+        54,
+        57,
+        59,
+        62,
+        64
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "compute_financial_metrics": {
+          "executed_lines": [],
+          "summary": {
+            "covered_lines": 0,
+            "num_statements": 16,
+            "percent_covered": 0.0,
+            "percent_covered_display": "0",
+            "missing_lines": 16,
+            "excluded_lines": 0,
+            "percent_statements_covered": 0.0,
+            "percent_statements_covered_display": "0"
+          },
+          "missing_lines": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            48,
+            49,
+            51,
+            54,
+            57,
+            59,
+            62,
+            64
+          ],
+          "excluded_lines": [],
+          "start_line": 13
+        },
+        "": {
+          "executed_lines": [
+            13
+          ],
+          "summary": {
+            "covered_lines": 1,
+            "num_statements": 1,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            13
+          ],
+          "summary": {
+            "covered_lines": 1,
+            "num_statements": 17,
+            "percent_covered": 5.882352941176471,
+            "percent_covered_display": "6",
+            "missing_lines": 16,
+            "excluded_lines": 0,
+            "percent_statements_covered": 5.882352941176471,
+            "percent_statements_covered_display": "6"
+          },
+          "missing_lines": [
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            48,
+            49,
+            51,
+            54,
+            57,
+            59,
+            62,
+            64
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/outstanding.py": {
+      "executed_lines": [
+        13
+      ],
+      "summary": {
+        "covered_lines": 1,
+        "num_statements": 11,
+        "percent_covered": 9.090909090909092,
+        "percent_covered_display": "9",
+        "missing_lines": 10,
+        "excluded_lines": 0,
+        "percent_statements_covered": 9.090909090909092,
+        "percent_statements_covered_display": "9"
+      },
+      "missing_lines": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        43,
+        48
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "compute_outstanding": {
+          "executed_lines": [],
+          "summary": {
+            "covered_lines": 0,
+            "num_statements": 10,
+            "percent_covered": 0.0,
+            "percent_covered_display": "0",
+            "missing_lines": 10,
+            "excluded_lines": 0,
+            "percent_statements_covered": 0.0,
+            "percent_statements_covered_display": "0"
+          },
+          "missing_lines": [
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            43,
+            48
+          ],
+          "excluded_lines": [],
+          "start_line": 13
+        },
+        "": {
+          "executed_lines": [
+            13
+          ],
+          "summary": {
+            "covered_lines": 1,
+            "num_statements": 1,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            13
+          ],
+          "summary": {
+            "covered_lines": 1,
+            "num_statements": 11,
+            "percent_covered": 9.090909090909092,
+            "percent_covered_display": "9",
+            "missing_lines": 10,
+            "excluded_lines": 0,
+            "percent_statements_covered": 9.090909090909092,
+            "percent_statements_covered_display": "9"
+          },
+          "missing_lines": [
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            43,
+            48
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    },
+    "backend/src/engines/credit_card_engine/utilization.py": {
+      "executed_lines": [
+        12,
+        15,
+        53
+      ],
+      "summary": {
+        "covered_lines": 3,
+        "num_statements": 17,
+        "percent_covered": 17.647058823529413,
+        "percent_covered_display": "18",
+        "missing_lines": 14,
+        "excluded_lines": 0,
+        "percent_statements_covered": 17.647058823529413,
+        "percent_statements_covered_display": "18"
+      },
+      "missing_lines": [
+        35,
+        36,
+        37,
+        38,
+        40,
+        41,
+        43,
+        46,
+        50,
+        72,
+        73,
+        74,
+        75,
+        77
+      ],
+      "excluded_lines": [],
+      "functions": {
+        "compute_utilization": {
+          "executed_lines": [],
+          "summary": {
+            "covered_lines": 0,
+            "num_statements": 9,
+            "percent_covered": 0.0,
+            "percent_covered_display": "0",
+            "missing_lines": 9,
+            "excluded_lines": 0,
+            "percent_statements_covered": 0.0,
+            "percent_statements_covered_display": "0"
+          },
+          "missing_lines": [
+            35,
+            36,
+            37,
+            38,
+            40,
+            41,
+            43,
+            46,
+            50
+          ],
+          "excluded_lines": [],
+          "start_line": 15
+        },
+        "compute_available_credit": {
+          "executed_lines": [],
+          "summary": {
+            "covered_lines": 0,
+            "num_statements": 5,
+            "percent_covered": 0.0,
+            "percent_covered_display": "0",
+            "missing_lines": 5,
+            "excluded_lines": 0,
+            "percent_statements_covered": 0.0,
+            "percent_statements_covered_display": "0"
+          },
+          "missing_lines": [
+            72,
+            73,
+            74,
+            75,
+            77
+          ],
+          "excluded_lines": [],
+          "start_line": 53
+        },
+        "": {
+          "executed_lines": [
+            12,
+            15,
+            53
+          ],
+          "summary": {
+            "covered_lines": 3,
+            "num_statements": 3,
+            "percent_covered": 100.0,
+            "percent_covered_display": "100",
+            "missing_lines": 0,
+            "excluded_lines": 0,
+            "percent_statements_covered": 100.0,
+            "percent_statements_covered_display": "100"
+          },
+          "missing_lines": [],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      },
+      "classes": {
+        "": {
+          "executed_lines": [
+            12,
+            15,
+            53
+          ],
+          "summary": {
+            "covered_lines": 3,
+            "num_statements": 17,
+            "percent_covered": 17.647058823529413,
+            "percent_covered_display": "18",
+            "missing_lines": 14,
+            "excluded_lines": 0,
+            "percent_statements_covered": 17.647058823529413,
+            "percent_statements_covered_display": "18"
+          },
+          "missing_lines": [
+            35,
+            36,
+            37,
+            38,
+            40,
+            41,
+            43,
+            46,
+            50,
+            72,
+            73,
+            74,
+            75,
+            77
+          ],
+          "excluded_lines": [],
+          "start_line": 1
+        }
+      }
+    }
+  },
+  "totals": {
+    "covered_lines": 84,
+    "num_statements": 156,
+    "percent_covered": 53.84615384615385,
+    "percent_covered_display": "54",
+    "missing_lines": 72,
+    "excluded_lines": 0,
+    "percent_statements_covered": 53.84615384615385,
+    "percent_statements_covered_display": "54"
+  }
+}

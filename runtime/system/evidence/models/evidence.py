@@ -48,6 +48,42 @@ class MutationEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class TestResultEvidence:
+    """Test result evidence from JUnit XML."""
+
+    passed: int = 0
+    failed: int = 0
+    errors: int = 0
+    skipped: int = 0
+    failed_test_names: List[str] = field(default_factory=list)
+    duration_seconds: float = 0.0
+    source: str = "backend"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
+
+
+@dataclass(frozen=True, slots=True)
+class ContractEvidence:
+    """Contract test evidence from Schemathesis."""
+
+    endpoints_tested: int = 0
+    failures: List[Dict[str, Any]] = field(default_factory=list)
+    schema_violations: int = 0
+    status: str = "not_run"
+    source: str = "backend"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=2)
+
+
+@dataclass(frozen=True, slots=True)
 class VerificationEvidence:
     """Complete verification evidence for a commit/branch."""
 

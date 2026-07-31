@@ -5,6 +5,8 @@ from __future__ import annotations
 from .evidence import (
     CoverageEvidence,
     MutationEvidence,
+    TestResultEvidence,
+    ContractEvidence,
     VerificationEvidence,
     EvidenceCollectionResult,
 )
@@ -12,6 +14,8 @@ from .evidence import (
 __all__ = [
     "CoverageEvidence",
     "MutationEvidence",
+    "TestResultEvidence",
+    "ContractEvidence",
     "VerificationEvidence",
     "EvidenceCollectionResult",
 ]

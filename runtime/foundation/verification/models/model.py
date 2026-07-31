@@ -140,7 +140,7 @@ class VerificationEvidence:
     step_id: str
     target_id: str
     type: str
-    content: dict[str, any]
+    content: dict[str, Any]
     timestamp: datetime = field(default_factory=datetime.utcnow)
     status: VerificationStatus = VerificationStatus.UNKNOWN
     metadata: dict[str, Any] = field(default_factory=dict)
