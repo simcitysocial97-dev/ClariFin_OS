@@ -504,3 +504,38 @@ capabilities:
   failure_impact: Hidden financial obligations go undetected. Users miss credit card
     payments, loan EMIs, and cash conversion cycles, leading to inaccurate cashflow
     and unexpected charges.
+
+- id: verification
+  name: Verification
+  description: 'Validate verification infrastructure including performance metrics, regression detection, and verification matrices for the verification runtime.'
+  criticality: high
+  risk: high
+  routers: []
+  services: []
+  engines:
+  - src/verification/intelligence/verification_matrix.py
+  - src/verification/intelligence/regression_engine.py
+  - src/verification/intelligence/metrics_engine.py
+  - src/verification/intelligence/evidence_engine.py
+  - src/verification/intelligence/risk_engine.py
+  - src/verification/intelligence/dependency_engine.py
+  - src/verification/intelligence/coverage_engine.py
+  - src/verification/intelligence/selective_engine.py
+  - src/verification/intelligence/impact_engine.py
+  - src/verification/intelligence/qa_report.py
+  - src/verification/intelligence/report_engine.py
+  - src/verification/intelligence/self_validation.py
+  repositories: []
+  tables: []
+  golden_datasets: []
+  property_tests: []
+  invariants: []
+  architecture_tests:
+  - tests/architecture
+  contracts: []
+  dependencies: []
+  failure_impact: Verification infrastructure becomes unreliable. Performance regressions go undetected, verification matrices become stale, and confidence in automated verification decreases.
+  capability_tests:
+  - tests/capability/verification/test_performance_metrics.py
+  - tests/capability/verification/test_regression_matrix.py
+  - tests/capability/verification/test_verification_matrix.py

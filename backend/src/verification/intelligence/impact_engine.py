@@ -115,6 +115,7 @@ class ImpactEngine:
 
     RISK_PATTERNS: dict[str, tuple[str, str]] = {
         "/engines/": ("CRITICAL", "HIGH"),
+        "/verification/intelligence/": ("HIGH", "HIGH"),
         "/services/": ("HIGH", "MEDIUM"),
         "/routers/": ("MEDIUM", "HIGH"),
         "/repositories/": ("HIGH", "HIGH"),

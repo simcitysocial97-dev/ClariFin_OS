@@ -64,6 +64,14 @@ def compute_prepayment_breakup(
 ) -> dict[str, int]:
     remaining_months = original_tenure_months - months_elapsed
     if remaining_months <= 0 or outstanding_paise <= 0:
+        # If tenure is exceeded (months_elapsed >= original_tenure_months), loan is fully paid
+        if months_elapsed >= original_tenure_months:
+            return {
+                "principal_remaining_paise": 0,
+                "accrued_interest_paise": 0,
+                "penalty_paise": 0,
+                "total_foreclosure_paise": 0,
+            }
         return {
             "principal_remaining_paise": max(0, outstanding_paise),
             "accrued_interest_paise": 0,
