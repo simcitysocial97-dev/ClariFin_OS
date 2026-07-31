@@ -2,6 +2,7 @@
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 sys.path.insert(0, ".")
 
@@ -41,7 +42,10 @@ def main():
 
     plan = VerificationPlan.from_changed_files(files, triggered_by="push")
 
-    with open("verification_plan.json", "w") as f:
+    output_dir = Path("runtime/generated/verification")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    plan_path = output_dir / "plan.json"
+    with open(plan_path, "w") as f:
         f.write(plan.to_json())
 
     outputs = plan.to_github_outputs()
@@ -53,6 +57,7 @@ def main():
 
     print("Verification plan generated successfully")
     print(f"Plan ID: {plan.plan_id}")
+    print(f"Plan written to: {plan_path}")
     print(f"Changed files: {len(plan.changed_files)}")
     print(f"Engines affected: {', '.join(plan.impact.engines) or 'none'}")
     print(f"Unit tests: {'YES' if plan.unit_tests.run else 'no'}")
