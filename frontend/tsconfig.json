@@ -40,7 +40,9 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@clarifin/runtime/foundation/*": ["../runtime/foundation/*/src"],
+      "@clarifin/runtime/system/*": ["../runtime/system/*/src"]
     }
   },
   "include": [
