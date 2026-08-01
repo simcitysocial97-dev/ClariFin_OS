@@ -152,13 +152,14 @@ class VerificationPlan:
             elif ctype == "router":
                 router = classification.router_name or "unknown"
                 routers.add(router)
+                unit_paths.add("tests/unit/")
                 contract_paths.add("tests/contract/")
                 integration_paths.add("tests/integration/")
                 max_blast_rank = max(max_blast_rank, blast_rank["medium"])
 
             elif ctype == "model":
                 has_model_change = True
-                max_blast_rank = max(max_blast_rank, blast_rank["high"])
+                max_blast_rank = max(max_blast_rank, blast_rank["full"])
 
             elif ctype == "test":
                 has_test_change = True
@@ -170,7 +171,7 @@ class VerificationPlan:
                 max_blast_rank = max(max_blast_rank, blast_rank["full"])
 
         if has_model_change:
-            max_blast_rank = max(max_blast_rank, blast_rank["high"])
+            max_blast_rank = max(max_blast_rank, blast_rank["full"])
             unit_paths.add("tests/unit/")
             property_paths.add("tests/properties/")
             contract_paths.add("tests/contract/")

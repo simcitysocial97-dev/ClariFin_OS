@@ -92,9 +92,6 @@ src/
 *.egg-info/
 
 # Verification pipeline generated files
-verification_plan.json
-evidence_summary.json
-evidence_summary.md
 evidence-download/
 target/
 

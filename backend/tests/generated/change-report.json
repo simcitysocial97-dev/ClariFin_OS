@@ -1,29 +1,44 @@
 {
-  "generated_at": "2026-07-31T06:00:12.493543+00:00",
-  "git_sha": "a096114c1c1559646364724151e310921e4ab9a3",
+  "generated_at": "2026-07-31T23:17:21.964774+00:00",
+  "git_sha": "2d73bf08afd202dd499f0c558ab2e8d4c6e057f2",
   "changes": [
     {
-      "file": "some_random_file.py",
-      "risk": "LOW",
-      "confidence": "LOW",
+      "file": "backend/src/engines/cashflow_engine.py",
+      "risk": "CRITICAL",
+      "confidence": "HIGH",
       "capabilities": [
-        "UNKNOWN"
+        "household_cashflow"
       ],
       "affected": {
         "services": [],
         "engines": [],
         "repositories": [],
-        "property_tests": [],
-        "golden_tests": [],
-        "invariants": [],
-        "capability_tests": []
+        "property_tests": [
+          "tests/properties/cashflow"
+        ],
+        "golden_tests": [
+          "family_household",
+          "normal_household",
+          "salary_only",
+          "salary_plus_loan"
+        ],
+        "invariants": [
+          "tests/invariants/test_cashflow_invariants.py"
+        ],
+        "capability_tests": [
+          "tests/capability/household_cashflow"
+        ]
       },
-      "recommended_commands": []
+      "recommended_commands": [
+        "pytest tests/capability/household_cashflow -q",
+        "pytest tests/properties/cashflow -q",
+        "pytest tests/golden -k 'family_household,normal_household,salary_only' -q"
+      ]
     }
   ],
   "overall": {
-    "risk": "LOW",
-    "score": 1
+    "risk": "CRITICAL",
+    "score": 8
   },
   "mutation_readiness": {
     "account_management": "Critical",
@@ -37,9 +52,13 @@
     "recommendations": "Critical",
     "reconciliation": "Critical",
     "transaction_intelligence": "Critical",
-    "verification": "Moderate"
+    "verification": "Weak"
   },
-  "affected_mutation_candidates": {},
+  "affected_mutation_candidates": {
+    "backend/src/engines/cashflow_engine.py": [
+      "src/engines/cashflow_engine.py:compute_monthly_cashflow"
+    ]
+  },
   "test_strength": {
     "account_management": "Critical",
     "credit_cards": "Critical",
@@ -52,6 +71,6 @@
     "recommendations": "Critical",
     "reconciliation": "Critical",
     "transaction_intelligence": "Critical",
-    "verification": "Moderate"
+    "verification": "Weak"
   }
 }

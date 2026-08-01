@@ -18,6 +18,9 @@ from src.engines.behavior_engine import (
     _normalize_score,
     compute_behavior_profile,
     detect_india_risk_patterns,
+    get_cached_behavior_profile,
+    invalidate_behavior_cache,
+    set_cached_behavior_profile,
 )
 from src.engines.insight_generator import (
     generate_behavioral_insights,
@@ -48,4 +51,7 @@ __all__ = [
     # Nudge engine
     "generate_nudges",
     "get_top_nudge",
+    "get_cached_behavior_profile",
+    "set_cached_behavior_profile",
+    "invalidate_behavior_cache",
 ]

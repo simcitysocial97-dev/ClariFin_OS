@@ -1,9 +1,8 @@
 {
-  "timestamp": "2026-07-31T06:02:31.482895+00:00",
+  "timestamp": "2026-07-31T23:19:23.801621+00:00",
   "changed_files": [
-    "backend/src/engines/cashflow_engine.py",
-    "backend/src/engines/loan_engine/foreclosure.py",
-    "backend/src/verification/intelligence/impact_engine.py",
+    ".gitignore",
+    ".kilo/plans/1785509532640-repository-convergence-audit.md",
     "backend/tests/generated/capability-registry.yaml",
     "backend/tests/generated/change-report.json",
     "backend/tests/generated/change-report.md",
@@ -18,6 +17,10 @@
     "backend/tests/generated/test-strength.md",
     "backend/tests/generated/validation-manifest.json",
     "backend/tests/generated/verification-matrix.md",
+    "backend/tests/meta/test_mutation_registry.py",
+    "runtime/foundation/verification/cli/cli.py",
+    "runtime/system/evidence/aggregator.py",
+    "runtime/system/evidence/collectors/mutation.py",
     "servers"
   ],
   "strategy": "full",
@@ -39,10 +42,10 @@
   "estimated_runtime": 0.0,
   "commands_executed": [
     "ruff check --fix src/",
-    "python backend/tools/check_coverage.py",
-    "python backend/tools/change_intelligence.py",
-    "python backend/tools/mutation_discovery.py",
-    "python backend/tools/test_strength.py",
+    "python tools/development/check_coverage.py",
+    "python tools/development/change_intelligence.py",
+    "python tools/development/mutation_discovery.py",
+    "python tools/development/test_strength.py",
     "pytest tests/architecture -q --tb=short --maxfail=3",
     "pytest tests/capabilities -q --tb=short --maxfail=3",
     "pytest tests/properties -q --tb=short --maxfail=3",

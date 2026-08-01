@@ -1,23 +1,16 @@
 # Verification Matrix
 
-Generated: 2026-07-31 05:57:03 UTC
+Generated: 2026-07-31 18:17:45 UTC
 
 ## Changed Files
 
-- `backend/src/engines/cashflow_engine.py`
+- `some_random_file.py`
 
 ## Executed
 
 | Suite | Status |
 |-------|--------|
 | Architecture | ✓ |
-| household_cashflow (capability) | ✓ |
-| cashflow (property) | ✓ |
-| family_household (golden) | ✓ |
-| normal_household (golden) | ✓ |
-| salary_only (golden) | ✓ |
-| salary_plus_loan (golden) | ✓ |
-| tests/invariants/test_cashflow_invariants.py (invariant) | ✓ |
 
 ## Skipped
 
@@ -27,6 +20,7 @@ Generated: 2026-07-31 05:57:03 UTC
 | financial_events | ✓ |
 | financial_health | ✓ |
 | forecasting | ✓ |
+| household_cashflow | ✓ |
 | pattern_analysis | ✓ |
 | recommendations | ✓ |
 | reconciliation | ✓ |
@@ -35,4 +29,4 @@ Generated: 2026-07-31 05:57:03 UTC
 
 ## Result: PLANNED
 
-## Runtime Saved: ~81%
+## Runtime Saved: ~97%

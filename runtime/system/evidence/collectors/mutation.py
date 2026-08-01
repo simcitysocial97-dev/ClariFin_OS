@@ -95,9 +95,11 @@ class MutationCollector(EvidenceCollector):
             if survivors_file.exists():
                 surviving_diffs = self._parse_survivors(survivors_file)
 
+            engine_total = killed + survived
             per_engine[engine_name] = {
                 "killed": killed,
                 "survived": survived,
+                "score_pct": round((killed / engine_total) * 100, 1) if engine_total > 0 else 0.0,
                 "surviving_diffs": surviving_diffs,
             }
 

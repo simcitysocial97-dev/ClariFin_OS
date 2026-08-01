@@ -532,7 +532,7 @@ def evidence_cli():
         shutil.rmtree(dl_dir)
 
     dl_result = subprocess.run(
-        ["gh", "run", "download", "--name", "evidence-summary", "--dir", "evidence-download/"],
+        ["gh", "run", "download", "--name", "evidence-summary*", "--dir", "evidence-download/"],
         capture_output=True,
         text=True,
         cwd=str(repo_root),
@@ -553,14 +553,14 @@ def evidence_cli():
                     cwd=str(repo_root),
                 )
 
-    summary_path = repo_root / "evidence-download" / "evidence_summary.json"
+    summary_path = repo_root / "evidence-download" / "summary.json"
     if not summary_path.exists():
-        found = list(repo_root.glob("evidence-download/**/evidence_summary.json"))
+        found = list(repo_root.glob("evidence-download/**/summary.json"))
         if found:
             summary_path = found[0]
 
     if not summary_path.exists():
-        click.echo("No evidence_summary.json found in downloaded artifacts.")
+        click.echo("No summary.json found in downloaded artifacts.")
         click.echo("Make sure the backend-verify.yml workflow has run at least once.")
         sys.exit(1)
 
@@ -615,6 +615,20 @@ def _get_changed_files(repo_root: Path) -> list[str]:
 
 
 def _trigger_ci_workflow(repo_root: Path, mode: str) -> None:
+    if not shutil.which("gh"):
+        click.echo("Error: 'gh' CLI is not installed or not in PATH.")
+        click.echo("Install it from: https://cli.github.com/")
+        click.echo("Then authenticate: gh auth login")
+        sys.exit(1)
+    auth_check = subprocess.run(
+        ["gh", "auth", "status"],
+        capture_output=True,
+        text=True,
+    )
+    if auth_check.returncode != 0:
+        click.echo("Error: 'gh' CLI is not authenticated.")
+        click.echo("Run: gh auth login")
+        sys.exit(1)
     result = subprocess.run(
         ["gh", "workflow", "run", "backend-verify.yml", "--field", f"mode={mode}"],
         capture_output=True,
