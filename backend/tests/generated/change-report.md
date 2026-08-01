@@ -1,24 +1,48 @@
 # Change Impact Report
 
-Generated: 2026-07-31T06:00:12.493256+00:00
+Generated: 2026-07-31T23:17:21.964447+00:00
 
 ## Summary
 
 | File | Risk | Capabilities | Confidence |
 |------|------|--------------|------------|
-| `some_random_file.py` | LOW | UNKNOWN | LOW |
+| `backend/src/engines/cashflow_engine.py` | CRITICAL | household_cashflow | HIGH |
 
 ## Detailed Analysis
 
-### Changed: `some_random_file.py`
+### Changed: `backend/src/engines/cashflow_engine.py`
 
-**Risk:** LOW
+**Risk:** CRITICAL
 
-**Confidence:** LOW
+**Confidence:** HIGH
 
+**Affected Capabilities:**
+
+- `household_cashflow`
+
+**Affected Tests:**
+
+  - Capability Smoke Tests:
+    - `tests/capability/household_cashflow`
+  - Property Tests:
+    - `tests/properties/cashflow`
+  - Golden Datasets:
+    - `family_household`
+    - `normal_household`
+    - `salary_only`
+    - `salary_plus_loan`
+  - Invariants:
+    - `tests/invariants/test_cashflow_invariants.py`
+
+**Recommended Verification:**
+```bash
+pytest tests/capability/household_cashflow -q
+pytest tests/properties/cashflow -q
+pytest tests/golden -k 'family_household,normal_household,salary_only' -q
+```
 
 ## Overall Assessment
 
-**Risk Level:** LOW
+**Risk Level:** CRITICAL
 
-**Risk Score:** 1
+**Risk Score:** 8

@@ -22,20 +22,22 @@ class Settings:
     Missing required values will raise clear errors on startup.
     """
 
+    _database_path_override: str | None = None
+
     # Database Configuration
     @property
     def database_path(self) -> Path:
-        """Path to SQLite database file."""
+        """Path to SQLite database file.
+
+        Delegates to core/db/config.py for canonical path resolution.
+        """
         # Allow instance-level or environment-level override
         if hasattr(self, "_database_path_override") and self._database_path_override:
             return Path(self._database_path_override)
 
-        db_path = (
-            os.getenv("FINANCE_DB_PATH")
-            or os.getenv("DATABASE_PATH")
-            or "data/finance.db"
-        )
-        return Path(db_path)
+        from src.core.db.config import get_db_path
+
+        return Path(get_db_path())
 
     @property
     def upload_dir(self) -> Path:

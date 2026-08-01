@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from src.repositories.bank_repository import BankRepository
+from src.services.bank_service import BankService
 
 router = APIRouter(prefix="/api", tags=["banks"])
 
@@ -15,5 +15,5 @@ async def get_banks() -> list[str]:
     Returns:
         List of unique bank names
     """
-    repo = BankRepository()
-    return repo.get_all()
+    service = BankService()
+    return service.get_banks()

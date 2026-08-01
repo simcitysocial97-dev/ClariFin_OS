@@ -6,12 +6,12 @@ Adds new columns and tables as per PRD.
 import sqlite3
 from pathlib import Path
 
-DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
+DEFAULT_DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
 
 
 def migrate() -> None:
     """Run loan engine migration."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DEFAULT_DB_PATH)
     conn.execute("PRAGMA foreign_keys=ON")
 
     # Extend loans table

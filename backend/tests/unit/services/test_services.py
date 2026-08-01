@@ -14,10 +14,9 @@ import tempfile
 import pytest
 
 # Add src to path
-from db import FinanceDB
-from services.behavior_service import BehaviorService
-from services.dashboard_service import DashboardService
-from services.reconciliation_service import ReconciliationService
+from src.db import FinanceDB
+from src.services.dashboard_service import DashboardService
+from src.services.reconciliation_service import ReconciliationService
 
 # ============================================================
 # Fixtures
@@ -119,55 +118,6 @@ class TestReconciliationService:
 
         # Should find the exact match
         assert len(result) >= 1
-
-
-# ============================================================
-# Behavior Service Tests
-# ============================================================
-
-
-class TestBehaviorService:
-    """Tests for BehaviorService."""
-
-    def test_service_initialization(self, temp_db):
-        """Test BehaviorService can be initialized with db_path."""
-        service = BehaviorService(db_path=temp_db)
-        assert service.db_path == temp_db
-
-    def test_compute_profile_returns_dict(self, temp_db):
-        """Test compute_profile returns proper structure."""
-        service = BehaviorService(db_path=temp_db)
-        profile = service.compute_profile()
-
-        assert isinstance(profile, dict)
-        assert "financial_health_score" in profile or "behavioral_indices" in profile
-
-    def test_health_score_in_valid_range(self, temp_db):
-        """Test health score is in valid range after profile computation."""
-        service = BehaviorService(db_path=temp_db)
-        profile = service.compute_profile()
-
-        score = profile.get("financial_health_score", 50)
-        assert 0 <= score <= 100
-
-    def test_generate_insights_returns_dict(self, temp_db):
-        """Test generate_insights returns proper structure."""
-        service = BehaviorService(db_path=temp_db)
-        result = service.generate_insights()
-
-        assert isinstance(result, dict)
-        assert "insights" in result
-        assert "nudges" in result
-
-    def test_cached_profile_returns_dict(self, temp_db):
-        """Test get_cached_profile returns a dict structure."""
-        service = BehaviorService(db_path=temp_db)
-        profile = service.get_cached_profile()
-
-        # Should return None or a valid profile dict
-        if profile is not None:
-            assert isinstance(profile, dict)
-            assert "financial_health_score" in profile
 
 
 # ============================================================

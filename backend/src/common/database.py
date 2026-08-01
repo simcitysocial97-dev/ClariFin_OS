@@ -1,26 +1,27 @@
 """
 Database access utilities.
 
-Legacy module — kept for runtime compatibility.
-New code should instantiate repositories directly via their __init__.
+.. deprecated::
+    This module is a legacy compatibility shim. All new code should use
+    ``src.core.db`` directly:
 
-The only remaining use of FinanceDB is for schema/migration management
-in db.py itself.
+    - ``src.core.db.get_db_path`` — canonical path resolution
+    - ``src.core.db.get_connection`` — canonical connection factory
+    - ``src.core.db.schema.create_all`` — schema initialization
+
+    ``get_db()`` is deprecated with zero production consumers.
 """
 
-from pathlib import Path
+from __future__ import annotations
 
-from src.db import FinanceDB
+from typing import TYPE_CHECKING
 
-# Global database path constant (kept for backward compatibility)
-DB_PATH = str(Path(__file__).parent.parent / "data" / "finance.db")
+if TYPE_CHECKING:
+    from src.db import FinanceDB
 
 
 def get_db() -> FinanceDB:
-    """
-    DEPRECATED: Returns a FinanceDB instance.
+    """DEPRECATED: Use repository classes for data access."""
+    from src.db import FinanceDB
 
-    FinanceDB now only handles schema management and migrations.
-    Domain queries should use repository classes directly.
-    """
     return FinanceDB()

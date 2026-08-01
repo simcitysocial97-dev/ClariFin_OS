@@ -30,6 +30,9 @@ class EvidenceSummary:
     def to_json(self) -> str:
         return json.dumps(asdict(self), indent=2)
 
+    def to_markdown(self) -> str:
+        return self._format_markdown()
+
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(self.to_json())
@@ -56,7 +59,7 @@ class EvidenceSummary:
         pt = backend.get("property_tests", {})
         ct = backend.get("contract_tests", {})
 
-        lines.append("| Suite | Status | Details |")
+        lines.append("| Check | Status | Details |")
         lines.append("|-------|--------|---------|")
 
         ut_status = ut.get("status", "unknown")
@@ -115,7 +118,7 @@ class EvidenceSummary:
             lines.append("")
 
         lines.append("---")
-        lines.append("Full evidence: `evidence_summary.json` (downloaded as CI artifact)")
+        lines.append("Full evidence: `summary.json` (downloaded as CI artifact)")
         lines.append("")
 
         return "\n".join(lines)
@@ -193,12 +196,27 @@ class EvidenceAggregator:
 
         attention = self._build_attention(backend, mutation_evidence)
 
+        evidence_collected = (
+            coverage_collected
+            or (mutation_evidence.killed + mutation_evidence.survived > 0)
+            or (test_evidence.passed + test_evidence.failed + test_evidence.error + test_evidence.skipped > 0)
+            or (contract_evidence.status != "not_run")
+            or (property_evidence.passed + property_evidence.failed + property_evidence.error + property_evidence.skipped > 0)
+        )
+
+        if not evidence_collected:
+            overall_status = "not_run"
+        elif attention:
+            overall_status = "attention_needed"
+        else:
+            overall_status = "pass"
+
         summary = EvidenceSummary(
             summary_id=f"run-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
             generated_at=datetime.now(timezone.utc).isoformat(),
             commit=self._get_git_ref("HEAD"),
             branch=self._get_branch(),
-            overall_status="attention_needed" if attention else "pass",
+            overall_status=overall_status,
             backend=backend,
             attention_needed=attention,
             ai_context={

@@ -8,7 +8,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, cast
 
-from src.common import DB_PATH
+from src.core.db.config import get_db_path
 from src.engines.financial_intelligence import (
     ScenarioComparison,
     calculate_goal_health,
@@ -63,7 +63,7 @@ class FinancialIntelligenceService:
             loan_service: LoanService instance (optional)
             credit_card_service: CreditCardService instance (optional)
         """
-        self.db_path = db_path or DB_PATH
+        self.db_path = db_path or get_db_path()
         self.cashflow_service = cashflow_service or CashflowService(db_path)
         self.cashflow_repo = CashflowRepository(db_path)
         self.events_service = events_service or FinancialEventsService(db_path)

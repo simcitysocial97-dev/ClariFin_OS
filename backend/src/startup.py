@@ -9,6 +9,7 @@ Fails early with clear diagnostics if critical dependencies are missing.
 import sys
 
 from src.config import settings, validate_startup
+from src.core.db.connection import get_connection
 from src.logger import log_error, log_info
 
 
@@ -54,9 +55,7 @@ def run_startup_validation() -> bool:
     # Check database connectivity (if exists)
     if settings.database_path.exists():
         try:
-            import sqlite3
-
-            conn = sqlite3.connect(str(settings.database_path))
+            conn = get_connection(str(settings.database_path))
             conn.execute("SELECT 1 FROM transactions LIMIT 1")
             conn.close()
             log_info("Database connectivity verified")

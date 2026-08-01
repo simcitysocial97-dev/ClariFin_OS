@@ -16,8 +16,8 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 
 # Scripts are at tools/development
-MUTATION_DISCOVERY_SCRIPT = PROJECT_ROOT / "backend" / "tools" / "mutation_discovery.py"
-TEST_STRENGTH_SCRIPT = PROJECT_ROOT / "backend" / "tools" / "test_strength.py"
+MUTATION_DISCOVERY_SCRIPT = PROJECT_ROOT / "tools" / "development" / "mutation_discovery.py"
+TEST_STRENGTH_SCRIPT = PROJECT_ROOT / "tools" / "development" / "test_strength.py"
 
 
 def test_registry_exists() -> None:

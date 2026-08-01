@@ -1,17 +1,22 @@
 # Active Context
 
 ## Current Focus
-Phase 3.1 — Capability Framework Hardening
+Program 5.3 — Backend Stabilization & Validation (Full 7-Stage Audit Complete)
 
 ## Recent Changes
-- **Phase 3.1 Capability Framework Hardening (2026-07-29)**
-  - **Discovery Repair**: Replaced stub `src/verification/runtime/discovery.py` with delegation to real implementation. Enhanced `tests/runtime/discovery.py`'s `discover_dependencies()` to generate all 8 required edge types (capability → engines, routers, services, repositories, unit tests, property tests, contract tests, capability tests, golden datasets, invariant tests).
-  - **Self-Validator Fix**: Fixed `validate_dependency_chains()` to import from `runtime.discovery` instead of the stub module.
-  - **Determinism**: Replaced timestamp-based `generated_at` with content hashes in `coVF_discover.py`, `selective_engine.py`, and `generate_contract_tests.py`. Added `tests/meta/test_determinism.py`.
-  - **GitHub Actions**: Updated `backend.yml` with conditional job execution based on capability intelligence. Added determinism verification CI job.
-  - **Capability Regression Tests**: Added `tests/meta/test_capability_regression.py` verifying no cross-capability leakage. Added `tests/meta/test_dependency_graph.py` validating graph completeness.
-  - **Generated Artifacts**: `dependency-map.json` (197 edges, 11 capabilities, all edge types), `change-impact.json`, `selective-plan.json`.
+- **Program 5.3 Full Audit (2026-08-01)**
+  - Produced comprehensive READ-ONLY audit at `docs/reports/audits/PROGRAM_5.3_BACKEND_STABILIZATION_AUDIT.md` (910 lines, 7 stages)
+  - **Stage 1 (Ownership Maps):** 9 subsystems mapped — Database, Configuration, Repositories, Services, Routers, DTOs, Mappers, Models, Runtime — with owner/reader/writer/creator/should-own for each
+  - **Stage 2 (Database Audit):** 29 tables, PRAGMA statements (WAL/foreign_keys), 3 sqlite3.connect entry points, commit/rollback at 5 sites, paise convention verified, 17 FKs (only 1 CASCADE), 15 indexes, 12 UNIQUE constraints, 7 migration scripts
+  - **Stage 3 (Endpoint Verification):** 115 endpoints, 26 registered routers, 5 service-layer bypasses, 3 routers using src/models instead of DTOs
+  - **Stage 4 (Frontend Contract):** 110/115 endpoints untyped, OpenAPI default-only, contract risks documented, 10/13 DTO modules orphaned
+  - **Stage 5 (Database Integrity):** FK type mismatches, nullable FK columns, no multi-statement transactions in BaseRepository
+  - **Stage 6 (Modular DB Design):** Proposed 11-module `src/db/` package (config.py, connection.py, session.py, transactions.py, bootstrap.py, schema.py, migration.py, health.py, verify.py, compatibility.py, _legacy.py) with dependency graph
+  - **Stage 7 (Execution Plan):** 6 phases, 20 tasks, each with reason/risk/files/dependencies/rollback/complexity; module classification taxonomy applied (ACTIVE/INCOMPLETE/DORMANT/LEGACY COMPATIBILITY/SUPERSEDED/EXPERIMENTAL)
+  - **Verdict:** ❌ NOT READY FOR FREEZE — Phases 1–3 required for architectural stability
 
 ## Next Immediate Steps
-- Run full test suite to validate all changes
-- Produce final capability framework health summary report
+- Phase 1: Dead code removal (SUPERSEDED modules: behavior_service.py, accounts_service.py, api_common.py)
+- Phase 2: Register financial_intelligence.py router (INCOMPLETE decision point)
+- Phase 3: Legacy engine consolidation (behavior_engine.py → behaviour_engine/ package)
+

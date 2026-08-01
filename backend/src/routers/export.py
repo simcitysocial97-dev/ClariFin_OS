@@ -1,12 +1,8 @@
 """Export endpoints."""
 
-import io
-
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import StreamingResponse
 
-from src.common import clean_description, format_date_display
-from src.repositories import TransactionRepository
+from src.services.export_service import ExportService
 
 router = APIRouter(prefix="/api", tags=["export"])
 
@@ -18,52 +14,20 @@ def export_csv(
     category: str | None = "All",
     type: str | None = "All",
     member: str | None = "All",
-) -> StreamingResponse:
-    """Export transactions to CSV."""
+) -> str:
+    """Export transactions to CSV.
+
+    Returns:
+        Path to the generated CSV file
+    """
     try:
-        repo = TransactionRepository()
-        filters = {}
-        if search:
-            filters["search"] = search
-        if bank and bank != "All":
-            filters["bank"] = bank
-        if category and category != "All":
-            filters["category"] = category
-        if type and type != "All":
-            filters["type"] = type
-        if member and member != "All":
-            filters["member"] = member
-
-        raw = repo.get_all_transactions_with_bank(filters)
-
-        output = io.StringIO()
-        output.write("Date,Bank,Description,Amount,Type,Category\n")
-
-        for txn in raw:
-            date = format_date_display(txn.get("date", ""))
-            bank_name = txn.get("bank", "")
-            desc = (
-                (clean_description(txn.get("description", "")))
-                .replace(",", ";")
-                .replace('"', '""')
-            )
-            # Use amount_paise and convert to rupees for display
-            amount_paise = txn.get("amount_paise", 0) or 0
-            amount = amount_paise / 100.0 if amount_paise else 0
-            txn_type = txn.get("type", "")
-            cat = txn.get("category", "")
-
-            output.write(
-                f'"{date}","{bank_name}","{desc}",{amount},"{txn_type}","{cat}"\n'
-            )
-
-        csv_data = output.getvalue()
-        output.close()
-
-        return StreamingResponse(
-            io.StringIO(csv_data),
-            media_type="text/csv",
-            headers={"Content-Disposition": "attachment; filename=transactions.csv"},
+        service = ExportService()
+        return service.export_csv(
+            search=search,
+            bank=bank,
+            category=category,
+            type=type,
+            member=member,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e

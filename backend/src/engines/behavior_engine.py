@@ -12,10 +12,9 @@ No ML models. No randomness. Overlay-only on immutable ledger.
 """
 
 import math
-import sqlite3
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any
+from typing import Any, Dict, List
 
 # ============================================================
 # Caching Layer
@@ -31,7 +30,7 @@ def invalidate_behavior_cache() -> None:
     _behavior_cache.clear()
 
 
-def get_cached_behavior_profile(db_path: str) -> dict[str, Any] | None:
+def get_cached_behavior_profile(_: str) -> dict[str, Any] | None:
     """
     Get behavior profile from cache if available.
 
@@ -41,7 +40,7 @@ def get_cached_behavior_profile(db_path: str) -> dict[str, Any] | None:
     return _behavior_cache.get(cache_key)
 
 
-def set_cached_behavior_profile(db_path: str, profile: dict[str, Any]) -> None:
+def set_cached_behavior_profile(_: str, profile: dict[str, Any]) -> None:
     """Cache a behavior profile."""
     cache_key = "global_behavior_profile"
     _behavior_cache[cache_key] = profile
@@ -113,169 +112,104 @@ def _moving_average(values: list[float], window: int = 7) -> list[float]:
 # ============================================================
 
 
-def _get_daily_spending_sql(db_path: str, cutoff_date: str) -> dict[str, float]:
+def _get_daily_spending_data(transactions: List[Dict[str, Any]], cutoff_date: str) -> dict[str, float]:
     """
-    Get daily spending totals using SQL aggregation.
-    Much faster than Python loops for large datasets.
+    Get daily spending totals from pre-aggregated transaction data.
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    cur = conn.execute(
-        """
-        SELECT
-            date_iso,
-            SUM(amount_paise) as daily_total_paise
-        FROM transactions
-        WHERE type = 'debit' AND date_iso >= ?
-        GROUP BY date_iso
-        ORDER BY date_iso ASC
-    """,
-        (cutoff_date,),
-    )
-
-    rows = cur.fetchall()
-    conn.close()
-
-    return {row["date_iso"]: (row["daily_total_paise"] or 0) for row in rows}
+    daily_spend: Dict[str, float] = defaultdict(float)
+    for txn in transactions:
+        if txn.get("type") == "debit" and txn.get("date_iso", "") >= cutoff_date:
+            date_iso = txn.get("date_iso", "")
+            daily_spend[date_iso] += txn.get("amount_paise", 0) or 0
+    return dict(daily_spend)
 
 
-def _get_monthly_category_spending_sql(
-    db_path: str, cutoff_date: str
+def _get_monthly_category_spending_data(
+    transactions: List[Dict[str, Any]], cutoff_date: str
 ) -> dict[str, dict[str, float]]:
     """
-    Get monthly category spending using SQL aggregation.
+    Get monthly category spending from pre-aggregated transaction data.
     Returns: {month: {category: total}}
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    cur = conn.execute(
-        """
-        SELECT
-            substr(date_iso, 1, 7) as month,
-            category,
-            SUM(amount_paise) as category_total_paise
-        FROM transactions
-        WHERE type = 'debit' AND date_iso >= ?
-        GROUP BY month, category
-        ORDER BY month ASC
-    """,
-        (cutoff_date,),
-    )
-
-    rows = cur.fetchall()
-    conn.close()
-
     result: defaultdict[str, defaultdict[str, float]] = defaultdict(
         lambda: defaultdict(float)
     )
-    for row in rows:
-        month = row["month"]
-        category = row["category"] or "Uncategorized"
-        result[month][category] = row["category_total_paise"] or 0
-
+    for txn in transactions:
+        if txn.get("type") == "debit" and txn.get("date_iso", "") >= cutoff_date:
+            date_iso = txn.get("date_iso", "")
+            month = date_iso[:7] if date_iso else ""
+            category = txn.get("category", "Uncategorized")
+            result[month][category] += txn.get("amount_paise", 0) or 0
     return dict(result)
 
 
-def _get_monthly_income_expenses_sql(
-    db_path: str, cutoff_date: str
+def _get_monthly_income_expenses_data(
+    transactions: List[Dict[str, Any]], cutoff_date: str
 ) -> dict[str, dict[str, int]]:
     """
-    Get monthly income vs expenses using SQL aggregation.
+    Get monthly income vs expenses from pre-aggregated transaction data.
     Returns: {month: {"income_paise": total, "expenses_paise": total}}
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    cur = conn.execute(
-        """
-        SELECT
-            substr(date_iso, 1, 7) as month,
-            type,
-            SUM(amount_paise) as total_paise
-        FROM transactions
-        WHERE date_iso >= ?
-        GROUP BY month, type
-        ORDER BY month ASC
-    """,
-        (cutoff_date,),
-    )
-
-    rows = cur.fetchall()
-    conn.close()
-
     result: defaultdict[str, dict[str, int]] = defaultdict(
         lambda: {"income_paise": 0, "expenses_paise": 0}
     )
-    for row in rows:
-        month = row["month"]
-        txn_type = row["type"]
-        total = row["total_paise"] or 0
-        if txn_type == "credit":
-            result[month]["income_paise"] = total
-        else:
-            result[month]["expenses_paise"] = total
-
+    for txn in transactions:
+        if txn.get("date_iso", "") >= cutoff_date:
+            date_iso = txn.get("date_iso", "")
+            month = date_iso[:7] if date_iso else ""
+            txn_type = txn.get("type", "")
+            amount = txn.get("amount_paise", 0) or 0
+            if txn_type == "credit":
+                result[month]["income_paise"] += amount
+            else:
+                result[month]["expenses_paise"] += amount
     return dict(result)
 
 
-def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> dict[str, Any]:
+def _get_transaction_stats_data(transactions: List[Dict[str, Any]], cutoff_date: str) -> dict[str, Any]:
     """
-    Get transaction statistics using SQL aggregation.
+    Get transaction statistics from pre-aggregated transaction data.
     Returns counts and totals for various metrics.
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    # Get basic stats
-    cur = conn.execute(
-        """
-        SELECT
-            COUNT(*) as total_count,
-            SUM(CASE WHEN type = 'debit' THEN 1 ELSE 0 END) as debit_count,
-            SUM(CASE WHEN type = 'credit' THEN 1 ELSE 0 END) as credit_count,
-            SUM(CASE WHEN type = 'debit' AND amount_paise < 50000 THEN 1 ELSE 0 END) as micro_txn_count,
-            SUM(CASE WHEN type = 'debit' THEN amount_paise ELSE 0 END) as total_debit_paise,
-            SUM(CASE WHEN type = 'credit' THEN amount_paise ELSE 0 END) as total_credit_paise
-        FROM transactions
-        WHERE date_iso >= ?
-    """,
-        (cutoff_date,),
-    )
-
-    row = cur.fetchone()
     stats = {
-        "total_count": row["total_count"] or 0,
-        "debit_count": row["debit_count"] or 0,
-        "credit_count": row["credit_count"] or 0,
-        "micro_txn_count": row["micro_txn_count"] or 0,
-        "total_debit_paise": (row["total_debit_paise"] or 0),
-        "total_credit_paise": (row["total_credit_paise"] or 0),
+        "total_count": 0,
+        "debit_count": 0,
+        "credit_count": 0,
+        "micro_txn_count": 0,
+        "total_debit_paise": 0,
+        "total_credit_paise": 0,
+        "weekend_spend_paise": 0,
+        "weekday_spend_paise": 0,
     }
 
-    # Get weekend vs weekday spending
-    cur = conn.execute(
-        """
-        SELECT
-            CASE WHEN CAST(substr(date_iso, 9, 2) AS INTEGER) % 7 >= 5 THEN 'weekend' ELSE 'weekday' END as day_type,
-            SUM(amount_paise) as total_paise
-        FROM transactions
-        WHERE type = 'debit' AND date_iso >= ?
-        GROUP BY day_type
-    """,
-        (cutoff_date,),
-    )
-
     weekend_stats = {"weekend": 0, "weekday": 0}
-    for row in cur.fetchall():
-        day_type = row["day_type"]
-        weekend_stats[day_type] = row["total_paise"] or 0
+
+    for txn in transactions:
+        if txn.get("date_iso", "") >= cutoff_date:
+            stats["total_count"] += 1
+            txn_type = txn.get("type", "")
+            amount_paise = txn.get("amount_paise", 0) or 0
+
+            if txn_type == "debit":
+                stats["debit_count"] += 1
+                stats["total_debit_paise"] += amount_paise
+                if amount_paise < 50000:
+                    stats["micro_txn_count"] += 1
+
+                date_iso = txn.get("date_iso", "")
+                if date_iso:
+                    try:
+                        dt = datetime.strptime(date_iso, "%Y-%m-%d")
+                        day_type = "weekend" if dt.weekday() >= 5 else "weekday"
+                        weekend_stats[day_type] += amount_paise
+                    except (ValueError, TypeError):
+                        pass
+            elif txn_type == "credit":
+                stats["credit_count"] += 1
+                stats["total_credit_paise"] += amount_paise
 
     stats["weekend_spend_paise"] = weekend_stats["weekend"]
     stats["weekday_spend_paise"] = weekend_stats["weekday"]
-
-    conn.close()
     return stats
 
 
@@ -284,52 +218,19 @@ def _get_transaction_stats_sql(db_path: str, cutoff_date: str) -> dict[str, Any]
 # ============================================================
 
 
-def _get_transactions_90_days(db_path: str) -> list[dict[str, Any]]:
-    """Get transactions from last 90 days (or most recent 500 if no recent data)."""
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    # Get date 90 days ago
+def _get_transactions_90_days(transactions: List[Dict[str, Any]]) -> list[dict[str, Any]]:
+    """Filter transactions from last 90 days from pre-aggregated data."""
     cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
-
-    cur = conn.execute(
-        """
-        SELECT
-            t.id, t.date, t.date_iso, t.description, t.amount_paise,
-            t.type, t.category, t.debit, t.credit, t.account_id
-        FROM transactions t
-        WHERE t.date_iso >= ?
-        ORDER BY t.date_iso ASC
-    """,
-        (cutoff,),
-    )
-
-    rows = [dict(row) for row in cur.fetchall()]
-    conn.close()
-    return rows
+    return [txn for txn in transactions if txn.get("date_iso", "") >= cutoff]
 
 
-def _get_recent_transactions(db_path: str, limit: int = 500) -> list[dict[str, Any]]:
-    """Get most recent N transactions for performance."""
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-
-    cur = conn.execute(
-        """
-        SELECT
-            t.id, t.date, t.date_iso, t.description, t.amount_paise,
-            t.type, t.category, t.debit, t.credit, t.account_id
-        FROM transactions t
-        ORDER BY t.date_iso DESC
-        LIMIT ?
-    """,
-        (limit,),
-    )
-
-    rows = [dict(row) for row in cur.fetchall()]
-    conn.close()
+def _get_recent_transactions(transactions: List[Dict[str, Any]], limit: int = 500) -> list[dict[str, Any]]:
+    """Get most recent N transactions from pre-aggregated data."""
+    # Sort in descending order and take the most recent N transactions
+    sorted_txns = sorted(transactions, key=lambda r: r.get("date_iso", ""), reverse=True)
+    recent_txns = sorted_txns[:limit]
     # Return in ascending order for time-series calculations
-    return sorted(rows, key=lambda r: r.get("date_iso", ""))
+    return sorted(recent_txns, key=lambda r: r.get("date_iso", ""))
 
 
 # ============================================================
@@ -988,9 +889,9 @@ def detect_india_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
 # ============================================================
 
 
-def compute_behavior_profile(db_path: str) -> dict[str, Any]:
+def compute_behavior_profile(transactions: List[Dict[str, Any]]) -> dict[str, Any]:
     """
-    Compute comprehensive behavioral profile.
+    Compute comprehensive behavioral profile from pre-aggregated transaction data.
 
     Returns:
         {
@@ -1001,9 +902,9 @@ def compute_behavior_profile(db_path: str) -> dict[str, Any]:
             "financial_health_score": float (0–100)
         }
     """
-    # Get transactions - use recent 500 for performance
-    transactions_90d = _get_transactions_90_days(db_path)
-    recent_transactions = _get_recent_transactions(db_path, 500)
+    # Filter transactions for 90-day window and get recent 500
+    transactions_90d = _get_transactions_90_days(transactions)
+    recent_transactions = _get_recent_transactions(transactions, 500)
 
     # Use 90-day window if available, otherwise use most recent 500
     txn_set = transactions_90d if len(transactions_90d) >= 30 else recent_transactions

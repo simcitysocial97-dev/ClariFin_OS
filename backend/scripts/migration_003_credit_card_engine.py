@@ -9,12 +9,12 @@ Run: cd backend && ./venv/bin/python3 scripts/migration_003_credit_card_engine.p
 import sqlite3
 from pathlib import Path
 
-DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
+DEFAULT_DB_PATH = str(Path(__file__).parent.parent / "src" / "data" / "finance.db")
 
 
 def run_migration(db_path: str | None = None) -> None:
     """Create credit card engine tables if they don't exist."""
-    path = db_path or DB_PATH
+    path = db_path or DEFAULT_DB_PATH
     conn = sqlite3.connect(path)
     cursor = conn.cursor()
 

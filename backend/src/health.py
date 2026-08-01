@@ -9,12 +9,12 @@ Endpoints:
   - /ready — confirms database connectivity and essential services
 """
 
-import sqlite3
 from typing import Any
 
 from fastapi import APIRouter, FastAPI, HTTPException
 
 from src.config import settings
+from src.core.db.connection import get_connection
 from src.logger import log_error, log_info
 
 router = APIRouter()
@@ -58,7 +58,7 @@ def readiness_check() -> dict[str, Any]:
     try:
         db_path = settings.database_path
         if db_path.exists():
-            conn = sqlite3.connect(str(db_path))
+            conn = get_connection(str(db_path))
             conn.execute("SELECT 1 FROM transactions LIMIT 1")
             conn.close()
             checks["database"] = True

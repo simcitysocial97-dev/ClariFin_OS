@@ -4,7 +4,7 @@ from datetime import datetime
 
 from src.common import enrich_transaction
 from src.core.dtos.dashboard_dto import DashboardSummaryDTO
-from src.engines.behavior_engine import (
+from src.engines.behaviour_engine.core import (
     compute_behavior_profile,
     get_cached_behavior_profile,
     set_cached_behavior_profile,
@@ -33,7 +33,10 @@ class DashboardService(BaseService):
         if cached is not None:
             profile = cached
         else:
-            profile = compute_behavior_profile(self.db_path)
+            # Get transactions for behavior analysis
+            raw_transactions = self.txn_repo.get_all_transactions_with_bank({})
+            transactions = [dict(t) for t in raw_transactions]
+            profile = compute_behavior_profile(transactions)
             set_cached_behavior_profile(self.db_path, profile)
 
         # Get transactions
