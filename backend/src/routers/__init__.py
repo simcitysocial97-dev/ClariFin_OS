@@ -2,7 +2,6 @@
 
 from . import (
     accounts,
-    accounts_router,
     audit,
     banks,
     behaviour,
@@ -33,7 +32,6 @@ from . import (
 
 __all__ = [
     "accounts",
-    "accounts_router",
     "audit",
     "banks",
     "behaviour",

@@ -1,7 +1,10 @@
 """Net worth business orchestration service."""
 
-from typing import Any
-
+from src.core.dtos.net_worth_dto import (
+    NetWorthBreakdownItemDTO,
+    NetWorthCompositionDTO,
+    NetWorthDTO,
+)
 from src.repositories import NetWorthRepository
 from src.services.base import BaseService
 
@@ -13,7 +16,7 @@ class NetWorthService(BaseService):
         super().__init__(db_path)
         self.repo = NetWorthRepository(self.db_path)
 
-    def calculate(self) -> dict[str, Any]:
+    def calculate(self) -> NetWorthDTO:
         """
         Compute net worth from all financial data.
 
@@ -22,13 +25,7 @@ class NetWorthService(BaseService):
         Liabilities = loan outstanding + card outstanding (latest statement)
 
         Returns:
-            {
-                net_worth_paise: int,
-                assets: {total_paise, accounts_paise, investments_paise, account_count, investment_count},
-                liabilities: {total_paise, loans_paise, cards_paise, loan_count, card_count},
-                is_partial: bool,
-                partial_reason: str | None
-            }
+            NetWorthDTO with complete breakdown
         """
         data = self.repo.get_networth_data()
         accounts = data["accounts"]
@@ -63,26 +60,64 @@ class NetWorthService(BaseService):
         total_liabilities_paise = loan_outstanding_paise + card_outstanding_paise
         net_worth_paise = total_assets_paise - total_liabilities_paise
 
-        return {
-            "net_worth_paise": net_worth_paise,
-            "assets": {
-                "total_paise": total_assets_paise,
-                "accounts_paise": account_balance_paise,
-                "investments_paise": investment_value_paise,
-                "account_count": len(accounts),
-                "investment_count": len(investments),
-            },
-            "liabilities": {
-                "total_paise": total_liabilities_paise,
-                "loans_paise": loan_outstanding_paise,
-                "cards_paise": card_outstanding_paise,
-                "loan_count": len(loans),
-                "card_count": len(seen_cards),
-            },
-            "is_partial": len(accounts) == 0 and len(investments) == 0,
-            "partial_reason": (
-                "Add accounts and investments for complete net worth"
-                if len(accounts) == 0
-                else None
+        # Build composition DTOs
+        asset_breakdown = [
+            NetWorthBreakdownItemDTO(
+                id=str(a["id"]),
+                name=a["name"],
+                type="account",
+                balance_paise=a["balance_paise"],
+                percentage=(
+                    (a["balance_paise"] / total_assets_paise * 100)
+                    if total_assets_paise > 0
+                    else 0
+                ),
+                contribution_paise=a["balance_paise"],
+            )
+            for a in accounts
+        ] + [
+            NetWorthBreakdownItemDTO(
+                id=str(inv["id"]),
+                name=inv["name"],
+                type="investment",
+                balance_paise=inv["current_value_paise"],
+                percentage=(
+                    (inv["current_value_paise"] / total_assets_paise * 100)
+                    if total_assets_paise > 0
+                    else 0
+                ),
+                contribution_paise=inv["current_value_paise"],
+            )
+            for inv in investments
+        ]
+
+        liability_breakdown = [
+            NetWorthBreakdownItemDTO(
+                id=str(loan["id"]),
+                name=loan["name"],
+                type="loan",
+                balance_paise=-loan["outstanding_paise"],
+                percentage=(
+                    (loan["outstanding_paise"] / total_liabilities_paise * 100)
+                    if total_liabilities_paise > 0
+                    else 0
+                ),
+                contribution_paise=-loan["outstanding_paise"],
+            )
+            for loan in loans
+        ]
+
+        return NetWorthDTO(
+            total_net_worth_paise=net_worth_paise,
+            total_assets_paise=total_assets_paise,
+            total_liabilities_paise=total_liabilities_paise,
+            composition=NetWorthCompositionDTO(
+                total_assets_paise=total_assets_paise,
+                total_liabilities_paise=total_liabilities_paise,
+                asset_breakdown=asset_breakdown,
+                liability_breakdown=liability_breakdown,
             ),
-        }
+            trend=None,
+            insights=[],
+            evidence_chain=None,
+        )

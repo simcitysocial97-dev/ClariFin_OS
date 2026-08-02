@@ -27,7 +27,6 @@ Usage:
     matches = find_potential_matches(db_path)
 """
 
-import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -279,8 +278,9 @@ def find_potential_matches(
             - deterministic_key: str
             - explanation: str (human-readable)
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
 
     # Get all transactions with debit/credit and account info
     # Ordered deterministically: amount ASC, date_iso ASC, id ASC
@@ -332,8 +332,9 @@ def find_matches_for_transaction(
     Returns:
         List of potential matches
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
 
     # Get the target transaction
     cur = conn.execute(

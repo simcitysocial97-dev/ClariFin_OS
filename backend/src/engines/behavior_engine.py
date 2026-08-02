@@ -1,3 +1,5 @@
+# PARKED: Legacy engine fully replaced by src/engines/behaviour_engine/ package.
+# Maintained solely for historical reference; do not import.
 """
 Behavior Engine
 ===============
@@ -14,7 +16,7 @@ No ML models. No randomness. Overlay-only on immutable ledger.
 import math
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Any
 
 # ============================================================
 # Caching Layer
@@ -112,11 +114,13 @@ def _moving_average(values: list[float], window: int = 7) -> list[float]:
 # ============================================================
 
 
-def _get_daily_spending_data(transactions: List[Dict[str, Any]], cutoff_date: str) -> dict[str, float]:
+def _get_daily_spending_data(
+    transactions: list[dict[str, Any]], cutoff_date: str
+) -> dict[str, float]:
     """
     Get daily spending totals from pre-aggregated transaction data.
     """
-    daily_spend: Dict[str, float] = defaultdict(float)
+    daily_spend: dict[str, float] = defaultdict(float)
     for txn in transactions:
         if txn.get("type") == "debit" and txn.get("date_iso", "") >= cutoff_date:
             date_iso = txn.get("date_iso", "")
@@ -125,7 +129,7 @@ def _get_daily_spending_data(transactions: List[Dict[str, Any]], cutoff_date: st
 
 
 def _get_monthly_category_spending_data(
-    transactions: List[Dict[str, Any]], cutoff_date: str
+    transactions: list[dict[str, Any]], cutoff_date: str
 ) -> dict[str, dict[str, float]]:
     """
     Get monthly category spending from pre-aggregated transaction data.
@@ -144,7 +148,7 @@ def _get_monthly_category_spending_data(
 
 
 def _get_monthly_income_expenses_data(
-    transactions: List[Dict[str, Any]], cutoff_date: str
+    transactions: list[dict[str, Any]], cutoff_date: str
 ) -> dict[str, dict[str, int]]:
     """
     Get monthly income vs expenses from pre-aggregated transaction data.
@@ -166,7 +170,9 @@ def _get_monthly_income_expenses_data(
     return dict(result)
 
 
-def _get_transaction_stats_data(transactions: List[Dict[str, Any]], cutoff_date: str) -> dict[str, Any]:
+def _get_transaction_stats_data(
+    transactions: list[dict[str, Any]], cutoff_date: str
+) -> dict[str, Any]:
     """
     Get transaction statistics from pre-aggregated transaction data.
     Returns counts and totals for various metrics.
@@ -218,16 +224,22 @@ def _get_transaction_stats_data(transactions: List[Dict[str, Any]], cutoff_date:
 # ============================================================
 
 
-def _get_transactions_90_days(transactions: List[Dict[str, Any]]) -> list[dict[str, Any]]:
+def _get_transactions_90_days(
+    transactions: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
     """Filter transactions from last 90 days from pre-aggregated data."""
     cutoff = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     return [txn for txn in transactions if txn.get("date_iso", "") >= cutoff]
 
 
-def _get_recent_transactions(transactions: List[Dict[str, Any]], limit: int = 500) -> list[dict[str, Any]]:
+def _get_recent_transactions(
+    transactions: list[dict[str, Any]], limit: int = 500
+) -> list[dict[str, Any]]:
     """Get most recent N transactions from pre-aggregated data."""
     # Sort in descending order and take the most recent N transactions
-    sorted_txns = sorted(transactions, key=lambda r: r.get("date_iso", ""), reverse=True)
+    sorted_txns = sorted(
+        transactions, key=lambda r: r.get("date_iso", ""), reverse=True
+    )
     recent_txns = sorted_txns[:limit]
     # Return in ascending order for time-series calculations
     return sorted(recent_txns, key=lambda r: r.get("date_iso", ""))
@@ -889,7 +901,7 @@ def detect_india_risk_patterns(transactions: list[dict[str, Any]]) -> dict[str, 
 # ============================================================
 
 
-def compute_behavior_profile(transactions: List[Dict[str, Any]]) -> dict[str, Any]:
+def compute_behavior_profile(transactions: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Compute comprehensive behavioral profile from pre-aggregated transaction data.
 

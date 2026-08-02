@@ -43,7 +43,6 @@ from src.core.db.schema import (
 logger = logging.getLogger(__name__)
 
 
-
 # Backward-compatible re-export of money parsing utility
 from src.common.calculations import _parse_amount_paise as _parse_amount_paise
 

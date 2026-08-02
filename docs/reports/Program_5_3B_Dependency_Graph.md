@@ -45,11 +45,13 @@ graph TD
 ### Credit Cards
 ```mermaid
 graph TD
-    A[cards_statements.py] -->|uses| B[StatementRepository]
-    B -->|uses| C[BaseRepository]
-    C -->|uses| D[core/db/connection.py]
+    A[cards_statements.py] -->|uses| B[StatementService]
+    A -->|bypasses| C[StatementRepository]
+    B -->|uses| C
+    C -->|uses| D[BaseRepository]
+    D -->|uses| E[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router bypasses `Service` layer and directly uses `StatementRepository`.
+- ❌ **Non-Compliant**: Router directly uses `StatementRepository` alongside `StatementService`.
 
 ---
 
@@ -57,12 +59,11 @@ graph TD
 ```mermaid
 graph TD
     A[reconciliation.py] -->|uses| B[ReconciliationService]
-    A -->|uses| C[ReconciliationRepository]
-    B -->|uses| C
+    B -->|uses| C[ReconciliationRepository]
     C -->|uses| D[BaseRepository]
     D -->|uses| E[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router directly imports `ReconciliationRepository` alongside `ReconciliationService`.
+- ✅ **Compliant**: Router → Service → Repository → `core/db`.
 
 ---
 
@@ -83,58 +84,62 @@ graph TD
 ### Investments
 ```mermaid
 graph TD
-    A[investments.py] -->|uses| B[InvestmentRepository]
-    B -->|uses| C[BaseRepository]
-    C -->|uses| D[core/db/connection.py]
+    A[investments.py] -->|uses| B[InvestmentService]
+    B -->|uses| C[InvestmentRepository]
+    C -->|uses| D[BaseRepository]
+    D -->|uses| E[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router bypasses `Service` layer and directly uses `InvestmentRepository`.
+- ✅ **Compliant**: Router → Service → Repository → `core/db`.
 
 ---
 
 ### Members
 ```mermaid
 graph TD
-    A[members.py] -->|uses| B[MemberRepository]
-    B -->|uses| C[BaseRepository]
-    C -->|uses| D[core/db/connection.py]
+    A[members.py] -->|uses| B[MemberService]
+    B -->|uses| C[MemberRepository]
+    C -->|uses| D[BaseRepository]
+    D -->|uses| E[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router bypasses `Service` layer and directly uses `MemberRepository`.
+- ✅ **Compliant**: Router → Service → Repository → `core/db`.
 
 ---
 
 ### Export
 ```mermaid
 graph TD
-    A[export.py] -->|uses| B[TransactionRepository]
-    B -->|uses| C[BaseRepository]
-    C -->|uses| D[core/db/connection.py]
+    A[export.py] -->|uses| B[ExportService]
+    B -->|uses| C[TransactionRepository]
+    C -->|uses| D[BaseRepository]
+    D -->|uses| E[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router bypasses `Service` layer and directly uses `TransactionRepository`.
+- ✅ **Compliant**: Router → Service → Repository → `core/db`.
 
 ---
 
 ### Banks
 ```mermaid
 graph TD
-    A[banks.py] -->|uses| B[BankRepository]
-    B -->|uses| C[BaseRepository]
-    C -->|uses| D[core/db/connection.py]
+    A[banks.py] -->|uses| B[BankService]
+    B -->|uses| C[BankRepository]
+    C -->|uses| D[BaseRepository]
+    D -->|uses| E[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router bypasses `Service` layer and directly uses `BankRepository`.
+- ✅ **Compliant**: Router → Service → Repository → `core/db`.
 
 ---
 
 ### Import
 ```mermaid
 graph TD
-    A[import_router.py] -->|uses| B[StatementRepository]
-    A -->|uses| C[TransactionRepository]
-    A -->|uses| D[behavior_engine]
-    B -->|uses| E[BaseRepository]
-    C -->|uses| E
+    A[import_router.py] -->|uses| B[ImportService]
+    B -->|uses| C[StatementRepository]
+    B -->|uses| D[TransactionRepository]
+    C -->|uses| E[BaseRepository]
+    D -->|uses| E
     E -->|uses| F[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Router bypasses `Service` layer and directly uses `StatementRepository`, `TransactionRepository`, and `behavior_engine`.
+- ✅ **Compliant**: Router → Service → Repository → `core/db`.
 
 ---
 
@@ -143,51 +148,49 @@ graph TD
 ### Behavior Engine
 ```mermaid
 graph TD
-    A[behavior_engine.py] -->|uses| B[sqlite3.connect]
+    A[behavior_engine.py] -->|uses| B[No Database Access]
 ```
-- ❌ **Non-Compliant**: Engine directly accesses the database.
+- ✅ **Compliant**: Engine does not access the database.
 
 ---
 
 ### Reconciliation Engine
 ```mermaid
 graph TD
-    A[reconciliation_engine.py] -->|uses| B[sqlite3.connect]
+    A[reconciliation_engine.py] -->|uses| B[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Engine directly accesses the database.
+- ✅ **Compliant**: Engine uses `core.db.connection.get_connection()`.
 
 ---
 
 ### Ledger Audit Engine
 ```mermaid
 graph TD
-    A[ledger_audit_engine.py] -->|uses| B[sqlite3.connect]
+    A[ledger_audit_engine.py] -->|uses| B[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Engine directly accesses the database.
+- ✅ **Compliant**: Engine uses `core.db.connection.get_connection()`.
 
 ---
 
 ### Balance Engine
 ```mermaid
 graph TD
-    A[balance_engine.py] -->|uses| B[sqlite3.connect]
+    A[balance_engine.py] -->|uses| B[core/db/connection.py]
 ```
-- ❌ **Non-Compliant**: Engine directly accesses the database.
+- ✅ **Compliant**: Engine uses `core.db.connection.get_connection()`.
 
 ---
 
 ## 3. Summary of Violations
 
-| Feature          | Violation Type                          | Details                                                                                     |
-|------------------|-----------------------------------------|---------------------------------------------------------------------------------------------|
-| Credit Cards     | Router → Repository Bypass              | `cards_statements.py` directly uses `StatementRepository`.                                 |
-| Reconciliation   | Router → Repository + Service           | `reconciliation.py` directly imports `ReconciliationRepository`.                           |
-| Investments      | Router → Repository Bypass              | `investments.py` directly uses `InvestmentRepository`.                                     |
-| Members          | Router → Repository Bypass              | `members.py` directly uses `MemberRepository`.                                             |
-| Export           | Router → Repository Bypass              | `export.py` directly uses `TransactionRepository`.                                         |
-| Banks            | Router → Repository Bypass              | `banks.py` directly uses `BankRepository`.                                                 |
-| Import           | Router → Repository + Engine Bypass     | `import_router.py` directly uses `StatementRepository`, `TransactionRepository`, and `behavior_engine`. |
-| Behavior Engine  | Engine → Database Access                | Direct `sqlite3.connect()` calls.                                                          |
-| Reconciliation Engine | Engine → Database Access            | Direct `sqlite3.connect()` calls.                                                          |
-| Ledger Audit Engine | Engine → Database Access             | Direct `sqlite3.connect()` calls.                                                          |
-| Balance Engine   | Engine → Database Access                | Direct `sqlite3.connect()` calls.                                                          |
+| Feature          | Violation Type                          | Details                                                                                     | Status      |
+|------------------|-----------------------------------------|---------------------------------------------------------------------------------------------|-------------|
+| Credit Cards     | Router → Repository Bypass              | `cards_statements.py` directly uses `StatementRepository`.                                 | ❌ Pending  |
+| **All Engines**  | **Engine → Database Access**            | **All engines now use `core.db.connection.get_connection()`.**                             | ✅ Complete |
+
+---
+
+## 4. Recommendations
+1. **Refactor `cards_statements.py`**: Replace direct `StatementRepository` usage with `StatementService`.
+2. **Update Tests/Scripts**: Replace direct `sqlite3.connect()` calls with `core.db.connection.get_connection()`.
+3. **Implement DTOs/Mappers**: Restore the DTO and mapper pipeline for frontend contract stability.
