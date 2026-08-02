@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from src.core.dtos.investments_dto import InvestmentsDTO
 from src.services.investment_service import InvestmentService
 
 router = APIRouter(prefix="/api", tags=["investments"])
@@ -33,8 +34,8 @@ class InvestmentUpdate(BaseModel):
     notes: str | None = None
 
 
-@router.get("/investments")
-def get_investments() -> dict[str, Any]:
+@router.get("/investments", response_model=InvestmentsDTO)
+def get_investments() -> InvestmentsDTO:
     """Get all investments with calculated returns."""
     service = InvestmentService()
     return service.get_portfolio()
@@ -51,7 +52,6 @@ def create_investment(investment: InvestmentCreate) -> dict[str, Any]:
         current_value_paise=investment.current_value_paise,
         units=investment.units,
         buy_price_paise=investment.buy_price_paise,
-        current_price_paise=investment.current_price_paise,
         notes=investment.notes,
     )
 
@@ -61,8 +61,10 @@ def update_investment(
     investment_id: str, investment: InvestmentUpdate
 ) -> dict[str, Any]:
     """Update an investment."""
+    from fastapi import HTTPException
+
     service = InvestmentService()
-    return service.update_investment(
+    result = service.update_investment(
         investment_id,
         units=investment.units,
         current_price_paise=investment.current_price_paise,
@@ -70,6 +72,9 @@ def update_investment(
         as_of_date=investment.as_of_date,
         notes=investment.notes,
     )
+    if result is None:
+        raise HTTPException(status_code=404, detail="Investment not found")
+    return result
 
 
 @router.delete("/investments/{investment_id}")

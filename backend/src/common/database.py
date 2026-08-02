@@ -16,8 +16,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from src.core.db.config import get_db_path
+
 if TYPE_CHECKING:
     from src.db import FinanceDB
+
+
+DB_PATH = get_db_path()
 
 
 def get_db() -> FinanceDB:

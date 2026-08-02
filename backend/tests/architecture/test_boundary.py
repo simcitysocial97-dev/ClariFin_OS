@@ -19,7 +19,7 @@ from errors import (
     ValidationError,
     format_error_response,
 )
-from validator import (
+from src.extraction.validator import (
     validate_category,
     validate_date,
     validate_iso_date,

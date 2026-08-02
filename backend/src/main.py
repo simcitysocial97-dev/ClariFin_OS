@@ -7,9 +7,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.column_mapper import ColumnMapper
-from src.table_extractor import TableExtractor
-from src.transaction_parser import TransactionParser
+from src.extraction.column_mapper import ColumnMapper
+from src.extraction.table_extractor import TableExtractor
+from src.extraction.transaction_parser import TransactionParser
 
 
 def extract_transactions(

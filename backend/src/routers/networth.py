@@ -1,16 +1,15 @@
 """Net worth endpoint."""
 
-from typing import Any
-
 from fastapi import APIRouter
 
+from src.core.dtos.net_worth_dto import NetWorthDTO
 from src.services import NetWorthService
 
 router = APIRouter(prefix="/api", tags=["networth"])
 
 
-@router.get("/networth")
-def get_networth() -> dict[str, Any]:
+@router.get("/networth", response_model=NetWorthDTO)
+def get_networth() -> NetWorthDTO:
     """
     Compute net worth from all financial data.
 

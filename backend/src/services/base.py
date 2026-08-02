@@ -3,6 +3,7 @@ Base service class for business orchestration.
 """
 
 from src.core.db.config import get_db_path
+from src.repositories.base import BaseRepository
 
 
 class BaseService:
@@ -13,5 +14,10 @@ class BaseService:
     They should NOT contain SQL queries.
     """
 
-    def __init__(self, db_path: str | None = None):
+    def __init__(
+        self,
+        db_path: str | None = None,
+        repository: BaseRepository | None = None,
+    ):
         self.db_path = get_db_path(db_path)
+        self.repository = repository

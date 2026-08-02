@@ -5,10 +5,10 @@ Returns aggregated forecast data matching ForecastViewModel format.
 
 import logging
 import time
-from typing import Any
 
 from fastapi import APIRouter, Query
 
+from src.core.dtos.forecast_dto import ForecastDTO
 from src.services.forecast_service import ForecastService
 
 logger = logging.getLogger(__name__)
@@ -34,11 +34,11 @@ def _timed_log(
         logger.info("[FORECAST] %s | %.0fms", endpoint, duration_ms)
 
 
-@router.get("/forecast")
+@router.get("/forecast", response_model=ForecastDTO)
 def get_forecast(
     horizon: int = Query(default=12, ge=1, le=60),
     scenarios: str | None = Query(default=None),
-) -> dict[str, Any]:
+) -> ForecastDTO:
     """
     Get forecast summary for the Forecast Intelligence Workspace.
 

@@ -9,7 +9,6 @@ Phase 2C: Essential audit guarantees without expanding system complexity.
 """
 
 import hashlib
-import sqlite3
 from typing import Any
 
 
@@ -33,8 +32,9 @@ def validate_ledger_integrity(db_path: str) -> dict[str, Any]:
     """
     violations = []
 
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
     cur = conn.cursor()
 
     # Check 1: account_id NOT NULL
@@ -153,8 +153,9 @@ def verify_hash_signatures(db_path: str) -> dict[str, Any]:
     """
     tampered = []
 
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
     cur = conn.cursor()
 
     cur.execute("""

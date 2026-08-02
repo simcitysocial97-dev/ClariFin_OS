@@ -38,9 +38,23 @@ class AccountDetailDTO(BaseModel):
     closed_date: str | None = Field(
         default=None, description="Account closing date (ISO)"
     )
+    notes: str | None = Field(default=None, description="Account notes")
 
 
 # ===== Balance History Types =====
+
+
+class BalanceSnapshotDTO(BaseModel):
+    """Balance snapshot response DTO."""
+
+    id: str = Field(description="Snapshot identifier")
+    account_id: str = Field(description="Account identifier")
+    balance_paise: int = Field(description="Balance in paise")
+    date_iso: str | None = Field(default=None, description="Snapshot date (ISO format)")
+    source: str | None = Field(default=None, description="Source of the snapshot")
+    created_at: str | None = Field(
+        default=None, description="Creation timestamp (ISO format)"
+    )
 
 
 class BalanceHistoryDTO(BaseModel):
@@ -173,6 +187,50 @@ class AccountsDTO(BaseModel):
                 "evidence_chain": None,
             }
         }
+
+
+class InstitutionDTO(BaseModel):
+    """Institution data transfer object."""
+
+    id: str = Field(description="Institution identifier")
+    name: str = Field(description="Institution name")
+    institution_type: str = Field(description="Institution type")
+    interest_rate_bps: int | None = Field(
+        default=None, description="Interest rate in basis points"
+    )
+    supported_features_json: str | None = Field(
+        default=None, description="Supported features as JSON"
+    )
+    created_at: str | None = Field(
+        default=None, description="Creation timestamp (ISO format)"
+    )
+    updated_at: str | None = Field(
+        default=None, description="Update timestamp (ISO format)"
+    )
+
+
+class AccountLinkDTO(BaseModel):
+    """Account link data transfer object."""
+
+    id: str = Field(description="Link identifier")
+    primary_account_id: str = Field(description="Primary account identifier")
+    linked_account_id: str = Field(description="Linked account identifier")
+    relationship_type: str = Field(description="Relationship type")
+    created_at: str | None = Field(
+        default=None, description="Creation timestamp (ISO format)"
+    )
+
+
+class AccountAnalyticsDTO(BaseModel):
+    """Account analytics data transfer object."""
+
+    average_balance_paise: int = Field(description="Average balance in paise")
+    balance_change_paise: int = Field(description="Balance change in paise")
+    balance_growth_bps: int = Field(description="Balance growth in basis points")
+    trend: str = Field(description="Balance trend (increasing/decreasing/stable)")
+    velocity_paise_per_day: float = Field(
+        description="Balance velocity in paise per day"
+    )
 
 
 # ===== Accounts Response Types =====
