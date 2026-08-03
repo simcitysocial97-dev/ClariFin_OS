@@ -1,7 +1,8 @@
 # Active Context
 
 ## Current Focus
-Program 6.0 — Repository Architecture Convergence Audit (Final) — COMPLETE
+Program 6.0 — Repository Architecture Convergence Audit (Complete)
+Program C — Financial OS Shell Architecture (Complete)
 
 ## Recent Changes
 - **Program 6.0 Audit (2026-08-02)**
@@ -27,16 +28,26 @@ Program 6.0 — Repository Architecture Convergence Audit (Final) — COMPLETE
   - Section 19 (Action Queue): P0=0, P1=6, P2=11, P3=3, P4=7, P5=0
   - Section 20 (Blueprint): Final ASCII architecture schematic
 
-## Next Immediate Steps
-- Address P1 items: register financial_intelligence.py + accounts_router.py, migrate routers from models→DTOs, route standalone engines through repositories
-- Address P2 items: consolidate duplicate concepts (behavior/behaviour, account/accounts, db.py vs core/db)
-- Address P3 items: remove get_db() export, complete behaviour_engine migration
-- Address P4 items: populate or remove empty core/{models,repositories,services}, clean extraction/ fragmentation
+- **Financial OS Shell Architecture Spec (2026-03-08)**
+  - Created `docs/FINANCIAL_OS_SHELL_ARCHITECTURE.md` — permanent specification (12 parts, ~1700 lines)
+  - Part 1: Shell regions (Global Header, Command HUD, Left Nav Rail, Workspace Host, Right Context Panel, Bottom Intelligence Shelf, Overlay Layer, Modal Layer) with ownership, runtime deps, lifecycle, resize, responsive rules
+  - Parts 2-11: Workspace Host lifecycle, Context Runtime interface, Intelligence tiers (Passive/Investigative/Executive), Graph Runtime (investigative-only), Command Runtime, Renderer Architecture (7 modes), Design System, Runtime Event Bus (25+ events), Future Runtime Roadmap (6 runtimes), 12 Anti-Patterns
+  - Part 12: 10-milestone implementation plan with validation checklists and exit criteria
+  - Aligned with existing `financial-os.css` tokens, AppShell layout, and existing runtime patterns
+  - No frozen platform APIs modified
 
-</parameter>
-<task_progress>
+## Next Immediate Steps
+- Implement milestones sequentially per Part 12 (no frozen API modifications)
+- Milestone 1: Shell skeleton with all 8 regions, region contracts frozen
+- Milestone 2: Workspace Host lifecycle, LRU caching (max 5), state persistence/restoration
+- Track progress via verify-fast.sh validation gates at each milestone
+
+</task_progress>
+
 - [x] Phase A: Full discovery complete (backend, frontend, runtime, servers, tests, docs)
 - [x] Phase B: Compile ARCHITECTURE_CONVERGENCE_AUDIT.md with all 20 sections
 - [x] Phase C: Validate output file (70K, 936 lines, git untracked new file)
+- [x] Write `docs/FINANCIAL_OS_SHELL_ARCHITECTURE.md` (12 parts, permanent specification)
+- [x] Update memory-bank/activeContext.md with changes summary
+- [ ] Git commit
 </task_progress>
-</write_to_file>
