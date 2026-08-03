@@ -8,6 +8,7 @@ import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
 import { AppShell } from '@/components/os-shell';
+import { RuntimeProvider } from '@/lib/runtime';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -48,10 +49,12 @@ export default function RootLayout({
           >
             <QueryProvider>
               <MemberProvider>
-                <ErrorBoundary>
-                  <AppShell>{children}</AppShell>
-                </ErrorBoundary>
-                <Toaster />
+                <RuntimeProvider>
+                  <ErrorBoundary>
+                    <AppShell>{children}</AppShell>
+                  </ErrorBoundary>
+                  <Toaster />
+                </RuntimeProvider>
               </MemberProvider>
             </QueryProvider>
           </ThemeProvider>
