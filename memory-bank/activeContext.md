@@ -32,15 +32,19 @@ Program C — Financial OS Shell Architecture (Complete)
   - Created `docs/FINANCIAL_OS_SHELL_ARCHITECTURE.md` — permanent specification (12 parts, ~1700 lines)
   - Part 1: Shell regions (Global Header, Command HUD, Left Nav Rail, Workspace Host, Right Context Panel, Bottom Intelligence Shelf, Overlay Layer, Modal Layer) with ownership, runtime deps, lifecycle, resize, responsive rules
   - Parts 2-11: Workspace Host lifecycle, Context Runtime interface, Intelligence tiers (Passive/Investigative/Executive), Graph Runtime (investigative-only), Command Runtime, Renderer Architecture (7 modes), Design System, Runtime Event Bus (25+ events), Future Runtime Roadmap (6 runtimes), 12 Anti-Patterns
-  - Part 12: 10-milestone implementation plan with validation checklists and exit criteria
+  - Parts 13-19 (Execution Rules, Never Skip, Startup/End-of-Run Validation, State Machine, Milestone Template, Rollback Support) — AI Operating Manual for autonomous execution
+  - Milestones updated to 4-section format (State/Objective/Implementation/Validation/Freeze Decision) per template in Part 18
+  - Created `docs/EXECUTION_STATE.md` — single mutable source of truth for AI progress (Current Milestone, Completed, Current Task, Validation Status, Known Tech Debt, Deferred, Next Action, Rollback file records)
+  - Architecture doc is immutable; execution state lives only in EXECUTION_STATE.md
   - Aligned with existing `financial-os.css` tokens, AppShell layout, and existing runtime patterns
   - No frozen platform APIs modified
 
 ## Next Immediate Steps
-- Implement milestones sequentially per Part 12 (no frozen API modifications)
-- Milestone 1: Shell skeleton with all 8 regions, region contracts frozen
-- Milestone 2: Workspace Host lifecycle, LRU caching (max 5), state persistence/restoration
-- Track progress via verify-fast.sh validation gates at each milestone
+- Begin Milestone 1: Shell Skeleton and Region Contracts per EXECUTION_STATE.md
+- Read FINANCIAL_OS_SHELL_ARCHITECTURE.md and EXECUTION_STATE.md on every session start
+- Follow Part 14 (Never Skip) checklist before writing any code
+- Track progress exclusively in docs/EXECUTION_STATE.md (not in architecture doc)
+- Milestone state machine: NOT_STARTED → IN_PROGRESS → VALIDATED → COMPLETE → FROZEN
 
 </task_progress>
 

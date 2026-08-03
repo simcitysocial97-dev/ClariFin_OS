@@ -22,6 +22,13 @@
 10. [Future Runtime Roadmap](#10-future-runtime-roadmap)
 11. [Anti-Patterns](#11-anti-patterns)
 12. [Implementation Sequencing](#12-implementation-sequencing)
+13. [Execution Rules (AI Operating Manual)](#13-execution-rules)
+14. [Never Skip](#14-never-skip)
+15. [Startup Validation](#15-startup-validation)
+16. [End-of-Run Validation](#16-end-of-run-validation)
+17. [Milestone State Machine](#17-milestone-state-machine)
+18. [Milestone Template](#18-milestone-template)
+19. [Rollback Support](#19-rollback-support)
 
 ---
 
@@ -2248,7 +2255,7 @@ Any code review or architecture review must check for these anti-patterns. If de
 
 ### 12.1 Overview
 
-Implementation is structured as **milestones**, not weeks. Each milestone has clear objectives, deliverables, validation checklists, and exit criteria. No milestone modifies frozen platform APIs.
+Implementation is structured as **milestones**, not weeks. Each milestone is a state machine (see [Part 17](#17-milestone-state-machine)) with a 4-section format (see [Part 18](#18-milestone-template)): **Objective**, **Implementation**, **Validation**, **Freeze Decision**. Every execution cycle follows the fixed algorithm in [Part 14](#14-never-skip). Progress state lives exclusively in `docs/EXECUTION_STATE.md` — this architecture document never records current progress. No milestone modifies frozen platform APIs.
 
 ### 12.2 Milestone Progression
 
@@ -2274,23 +2281,27 @@ Milestone 9: Runtime Event Bus
 Milestone 10: Future Runtime Completion
 ```
 
+Each milestone progresses through the state machine in [Part 17](#17-milestone-state-machine): `NOT_STARTED → IN_PROGRESS → VALIDATED → COMPLETE → FROZEN`. Milestones may also enter `BLOCKED` if a dependency prevents progress.
+
 ---
 
 ### Milestone 1: Shell Skeleton and Region Contracts
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Establish the permanent shell composition with all 8 regions
 - Define region interfaces and ownership boundaries
 - Implement resize and responsive behavior
 
-**Deliverables:**
+**Implementation:**
 - Shell composition with all 8 regions (Global Header, Command HUD, Left Nav Rail, Workspace Host, Right Context Panel, Bottom Intelligence Shelf, Overlay Layer, Modal Layer)
 - Region interface contracts (TypeScript interfaces)
 - Resize behavior for all regions
 - Responsive rules for all breakpoints
 - Status Bar
 
-**Validation Checklist:**
+**Validation:**
 - [ ] All 8 shell regions are present and mounted
 - [ ] No shell region contains business logic
 - [ ] No shell region makes direct API calls
@@ -2301,7 +2312,8 @@ Milestone 10: Future Runtime Completion
 - [ ] `mypy .` passes (backend)
 - [ ] `npx tsc --noEmit` passes (frontend)
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Shell skeleton is stable and all regions are present
 - Region contracts are frozen
 - No business logic in shell regions
@@ -2310,13 +2322,15 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 2: Workspace Host and Lifecycle
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement the Workspace Host with full lifecycle management
 - Implement workspace caching (LRU, max 5)
 - Implement workspace switching with cross-fade transitions
 - Implement state snapshot and restoration
 
-**Deliverables:**
+**Implementation:**
 - Workspace Host component
 - Workspace lifecycle state machine (Registered → Activated → Mounted → Cached → Restored → Deactivated → Destroyed)
 - LRU cache implementation (max 5 cached workspaces)
@@ -2324,7 +2338,7 @@ Milestone 10: Future Runtime Completion
 - Cross-fade transition (150ms)
 - Cold-mount loading state (skeleton)
 
-**Validation Checklist:**
+**Validation:**
 - [ ] Workspace switches are instant when cached
 - [ ] Cold-mount shows skeleton (not spinner)
 - [ ] State snapshot preserves scroll, filters, selection, sort
@@ -2334,7 +2348,8 @@ Milestone 10: Future Runtime Completion
 - [ ] All state managed by WorkspaceRuntime
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Workspace Host is stable
 - Lifecycle is fully implemented
 - Caching and restoration work correctly
@@ -2343,19 +2358,21 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 3: Renderer Registry and Base Renderers
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement the Renderer Registry
 - Implement base renderers for all 7 modes (Card, Table, Timeline, Graph Node, Inspector, Mini Widget, Chart)
 - Ensure single ViewModel → multiple renderers with no duplicated logic
 
-**Deliverables:**
+**Implementation:**
 - Renderer Registry implementation
 - 7 renderer mode interfaces
 - Base renderers for Transaction (as reference implementation)
 - Renderer selection logic (workspace default, user preference, context density)
 - Density level support (Compact, Comfortable, Spacious)
 
-**Validation Checklist:**
+**Validation:**
 - [ ] Renderer Registry can register and retrieve renderers
 - [ ] Transaction ViewModel renders in all 7 modes
 - [ ] No business logic in any renderer
@@ -2364,7 +2381,8 @@ Milestone 10: Future Runtime Completion
 - [ ] Renderer selection logic is correct
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Renderer Registry is stable
 - All 7 renderer modes are implemented
 - Transaction serves as the reference renderer pattern
@@ -2373,26 +2391,29 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 4: Context Runtime (Interface Only)
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Define the Context Runtime interface
 - Define the Context Object composition
 - Define context consumers and their contracts
 - No implementation — interface specification only
 
-**Deliverables:**
+**Implementation:**
 - ContextObject interface
 - ContextRuntime interface
 - Context composition rules documented
 - Context consumer contracts documented
 
-**Validation Checklist:**
+**Validation:**
 - [ ] ContextObject interface is complete
 - [ ] All source runtimes are referenced
 - [ ] No implementation code exists
 - [ ] Interface is reviewed and approved
 - [ ] No frozen APIs are modified
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Context Runtime interface is frozen
 - Ready for implementation in a future milestone
 
@@ -2400,14 +2421,16 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 5: Command Runtime
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement the Command Runtime
 - Implement command registration, execution, and routing
 - Implement keyboard shortcuts
 - Implement command palette overlay
 - Implement recent commands and pinned workflows
 
-**Deliverables:**
+**Implementation:**
 - CommandRuntime implementation
 - Command registration system
 - Command routing (navigation, workspace action, intelligence, graph, workflow, quick action)
@@ -2416,7 +2439,7 @@ Milestone 10: Future Runtime Completion
 - Recent commands (last 10, session-scoped)
 - Pinned workflows (persistent)
 
-**Validation Checklist:**
+**Validation:**
 - [ ] Commands can be registered and executed
 - [ ] Keyboard shortcuts work globally
 - [ ] Command palette opens with `Cmd+K`
@@ -2426,7 +2449,8 @@ Milestone 10: Future Runtime Completion
 - [ ] No business logic in Command Runtime (routing only)
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Command Runtime is stable
 - All command sources are functional
 - Command palette is operational
@@ -2435,12 +2459,14 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 6: Intelligence Layer (Passive)
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement Passive Intelligence tier
 - Surface passive insights in Bottom Intelligence Shelf and Right Context Panel
 - Implement insight ranking and deduplication
 
-**Deliverables:**
+**Implementation:**
 - Passive insight generation (from Capability data)
 - Bottom Intelligence Shelf content (passive insights)
 - Right Context Panel default content (passive insights when no selection)
@@ -2448,7 +2474,7 @@ Milestone 10: Future Runtime Completion
 - Insight deduplication
 - Insight dismissal (session-scoped suppression)
 
-**Validation Checklist:**
+**Validation:**
 - [ ] Passive insights appear in Intelligence Shelf
 - [ ] Maximum 5 passive insights visible
 - [ ] Insights are ranked correctly
@@ -2457,7 +2483,8 @@ Milestone 10: Future Runtime Completion
 - [ ] Passive insights never block interaction
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Passive Intelligence is stable
 - Anti-overload rules are enforced
 - Intelligence Shelf is operational
@@ -2466,13 +2493,15 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 7: Graph Runtime Integration
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement Graph Runtime as an investigative overlay
 - Implement graph invocation from selection, command, and insight
 - Implement evidence visualization
 - Implement relationship exploration
 
-**Deliverables:**
+**Implementation:**
 - Graph Runtime implementation
 - Graph overlay (full workspace area)
 - Graph context panel mode (1-hop, limited to 20 nodes)
@@ -2480,7 +2509,7 @@ Milestone 10: Future Runtime Completion
 - Relationship types (all 8 types from Part 5)
 - Graph synchronization with SelectionRuntime and TimelineRuntime
 
-**Validation Checklist:**
+**Validation:**
 - [ ] Graph opens as overlay (never replaces workspace)
 - [ ] Graph is scoped to Context Object
 - [ ] Node selection updates SelectionRuntime
@@ -2489,7 +2518,8 @@ Milestone 10: Future Runtime Completion
 - [ ] Graph never becomes navigation surface
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Graph Runtime is stable
 - Investigative-only constraint is enforced
 - Evidence visualization is operational
@@ -2498,13 +2528,15 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 8: Intelligence Layer (Investigative and Executive)
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement Investigative Intelligence tier
 - Implement Executive Intelligence tier
 - Implement insight drill-down actions
 - Implement executive modal confirmations
 
-**Deliverables:**
+**Implementation:**
 - Investigative insight generation (on-demand, user-initiated)
 - Drill-down actions (navigate to workspace with pre-selected entity)
 - Executive insight generation (threshold breach, anomaly detection)
@@ -2512,7 +2544,7 @@ Milestone 10: Future Runtime Completion
 - Executive toast (warning severity, informational)
 - Audit trail for executive decisions
 
-**Validation Checklist:**
+**Validation:**
 - [ ] Investigative insights are user-initiated only
 - [ ] Drill-down actions navigate correctly
 - [ ] Maximum 1 executive insight active at a time
@@ -2522,7 +2554,8 @@ Milestone 10: Future Runtime Completion
 - [ ] Anti-overload rules are enforced
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - All three intelligence tiers are operational
 - Anti-overload rules are fully enforced
 - Audit trail is complete
@@ -2531,20 +2564,22 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 9: Runtime Event Bus
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement the Runtime Event Bus
 - Implement all event types from Part 9
 - Ensure event ownership is correct (one publisher per event)
 - Implement error isolation and debouncing
 
-**Deliverables:**
+**Implementation:**
 - RuntimeEventBus implementation
 - All event type definitions
 - Event publisher/subscriber wiring for all runtimes
 - Error isolation (subscriber errors don't block other subscribers)
 - Debouncing for high-frequency events
 
-**Validation Checklist:**
+**Validation:**
 - [ ] All events from Part 9 are defined
 - [ ] Each event has exactly one publisher
 - [ ] Subscribers receive events synchronously
@@ -2553,7 +2588,8 @@ Milestone 10: Future Runtime Completion
 - [ ] No circular dependencies between runtimes
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - Event Bus is stable
 - All runtimes are wired
 - Event ownership is correct
@@ -2562,19 +2598,21 @@ Milestone 10: Future Runtime Completion
 
 ### Milestone 10: Future Runtime Completion
 
-**Objectives:**
+**State:** NOT_STARTED
+
+**Objective:**
 - Implement Context Runtime (from Milestone 4 interface)
 - Implement Notification Runtime
 - Implement Simulation Runtime
 - Complete Scenario Runtime (if not already implemented)
 
-**Deliverables:**
+**Implementation:**
 - ContextRuntime implementation (compose all source runtimes)
 - NotificationRuntime implementation (toasts, badges, notification center)
 - SimulationRuntime implementation (forecasts, scenarios, what-if)
 - Scenario Runtime (scenario commit, revert, compare)
 
-**Validation Checklist:**
+**Validation:**
 - [ ] ContextRuntime composes all source runtimes
 - [ ] Context Object is read-only
 - [ ] NotificationRuntime shows max 3 toasts
@@ -2586,7 +2624,8 @@ Milestone 10: Future Runtime Completion
 - [ ] `mypy .` passes
 - [ ] `npx tsc --noEmit` passes
 
-**Exit Criteria:**
+**Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status.
 - All future runtimes are implemented
 - Runtime dependency graph is correct
 - All runtimes communicate via Event Bus
@@ -2601,6 +2640,326 @@ Milestone 10: Future Runtime Completion
 3. **Parallelizable within milestones.** Tasks within a milestone can be parallelized.
 4. **Validation gates are mandatory.** No milestone is complete until all validation checklist items pass.
 5. **Exit criteria are binding.** A milestone cannot be declared complete until all exit criteria are met.
+
+---
+
+## 13. Execution Rules (AI Operating Manual)
+
+This section defines the **fixed algorithm** every AI agent must follow when working with this architecture. It is embedded in the architecture document so that any future AI can bootstrap from these two files alone:
+
+1. `docs/FINANCIAL_OS_SHELL_ARCHITECTURE.md` — the immutable constitution
+2. `docs/EXECUTION_STATE.md` — the mutable progress ledger
+
+### Startup Sequence (Before Any Code Is Written)
+
+1. **Read** `docs/FINANCIAL_OS_SHELL_ARCHITECTURE.md` in full.
+2. **Read** `docs/EXECUTION_STATE.md`.
+3. **Determine** the current milestone and its state.
+4. **Validate** the previous milestone (run all checks — see [Part 15](#15-startup-validation) and [Part 16](#16-end-of-run-validation)).
+5. **If validation fails:** log the failure in `EXECUTION_STATE.md` under "Blocked Tasks," then stop.
+6. **If validation passes:** begin implementing the next unfinished capability within the current milestone.
+7. **After each capability:** run validation.
+8. **When all checklist items pass:** update milestone state to `VALIDATED`.
+9. **When exit criteria are met:** update milestone state to `COMPLETE`.
+10. **Update** `EXECUTION_STATE.md` with new state, modified files, and next immediate action.
+11. **Stop only at a milestone boundary.** Never stop mid-capability.
+
+### Execution Constraints
+
+- **No architecture modifications.** The architecture document must not change. If the AI discovers a gap, it logs it as "Deferred Items" in `EXECUTION_STATE.md`.
+- **No frozen API modifications.** No milestone may modify frozen platform APIs (Section 12.3).
+- **State drives progress, not time.** Milestones advance by state, not by elapsed time.
+- **One milestone at a time.** Never start a new milestone until the current one is `COMPLETE`.
+
+---
+
+## 14. Never Skip
+
+This section is a literal checklist. **Every execution cycle must satisfy every item before writing any code.** If any item cannot be satisfied, the AI must stop and log the blocker.
+
+### Before Writing Any Code
+
+- [ ] Read `FINANCIAL_OS_SHELL_ARCHITECTURE.md`
+- [ ] Read `EXECUTION_STATE.md`
+- [ ] Determine current milestone and its state
+- [ ] Validate previous milestone (`ruff`, `mypy`, `tsc`, tests, anti-pattern checks)
+- [ ] Confirm current milestone is `IN_PROGRESS` (flip it from `NOT_STARTED` if needed)
+- [ ] Identify the first incomplete capability / checklist item
+
+### After Writing Any Code
+
+- [ ] Run compile checks (`tsc --noEmit`, `ruff check`, `mypy`)
+- [ ] Run relevant tests
+- [ ] Verify anti-pattern compliance (Section 11.2)
+- [ ] Verify no frozen API modifications
+- [ ] Verify no architecture document modifications
+- [ ] Update `EXECUTION_STATE.md` (state, files, next action)
+- [ ] Stop only at a milestone boundary
+
+### On Session Start (Every New Session)
+
+- [ ] Read both files
+- [ ] Reconstruct project state from `EXECUTION_STATE.md`
+- [ ] Validate the milestone boundary you stopped at
+- [ ] Resume from the exact next capability
+
+---
+
+## 15. Startup Validation
+
+Every execution cycle must begin by running the following validation checks **before** writing any code. Failures must be logged in `EXECUTION_STATE.md` under "Blocked Tasks."
+
+### 15.1 TypeScript Validation
+
+```bash
+cd frontend && npx tsc --noEmit
+```
+
+**Pass condition:** Zero errors, zero warnings.
+
+### 15.2 Backend Validation
+
+```bash
+cd backend && ./venv/bin/python3 -m ruff check .
+cd backend && ./venv/bin/python3 -m mypy .
+```
+
+**Pass condition:** Zero errors from both tools.
+
+### 15.3 Frozen Architecture Violation Check
+
+Scan the working tree for any file that:
+
+| Violation | Detection |
+|-----------|-----------|
+| Capability bypass (direct API call) | `rg --type py "fetch\(|axios\.|requests\.get\(" frontend/components/ frontend/app/` |
+| DTO in UI (no Mapper) | `rg --type py "dto\.|DTO" frontend/components/ frontend/app/` excluding `lib/mappers/` and `lib/capabilities/` |
+| `as any` / `@ts-ignore` / `@ts-nocheck` | `rg "as any|@ts-ignore|@ts-nocheck" frontend/ --type tsx --type ts` |
+| FinanceDB import outside repositories | `rg "FinanceDB|get_db\(" frontend/ --type tsx --type ts` excluding `repositories/` |
+| Page-level business logic | Manual review of `app/*/page.tsx` for calculation logic |
+
+**Pass condition:** Zero violations.
+
+### 15.4 Runtime Violation Check
+
+Scan for:
+
+| Violation | Detection |
+|-----------|-----------|
+| Multiple runtime ownership | `rg "useState|useReducer" frontend/components/ --type tsx` for domain state in components |
+| Local duplicated state | `rg "selectedIds|activeWorkspace|timelinePeriod" frontend/components/ --type tsx` excluding runtime files |
+| Graph-first navigation | Verify `GraphRuntime` is only invoked from overlays |
+
+**Pass condition:** Zero violations.
+
+### 15.5 Anti-Pattern Violation Check
+
+Cross-reference with [Section 11.2](#112-forbidden-patterns). Every AI run must verify:
+
+- [ ] No page-level business logic
+- [ ] No DTO transformations in UI
+- [ ] No local duplicated state
+- [ ] No multiple runtime ownership
+- [ ] No graph-first navigation
+- [ ] No dashboard card sprawl
+- [ ] No capability bypassing
+- [ ] No direct API calls
+- [ ] No renderer duplication
+- [ ] No loose float monetary values
+- [ ] No `as any`, `@ts-ignore`, `@ts-nocheck`
+- [ ] No FinanceDB import outside repositories
+
+**Pass condition:** All anti-pattern checks pass.
+
+---
+
+## 16. End-of-Run Validation
+
+Every execution cycle must end with the following steps **before** the AI stops.
+
+### 16.1 Compile Checks
+
+- [ ] `cd frontend && npx tsc --noEmit` — zero errors
+- [ ] `cd backend && ./venv/bin/python3 -m ruff check .` — zero errors
+- [ ] `cd backend && ./venv/bin/python3 -m mypy .` — zero errors
+
+### 16.2 Test Validation
+
+- [ ] Run relevant test suite for the milestone
+- [ ] All tests pass
+- [ ] No test regressions introduced
+
+### 16.3 Milestone Checklist
+
+- [ ] Every checklist item in the current milestone passes
+- [ ] Every exit criterion is satisfied
+
+### 16.4 Architecture Compliance
+
+- [ ] No frozen platform APIs modified (Section 12.3)
+- [ ] No anti-patterns introduced (Section 11.2)
+- [ ] No architecture document modifications
+- [ ] All new code references the Context Object, not individual runtimes (post-Milestone 4)
+
+### 16.5 Execution State Update
+
+- [ ] Update milestone state in `EXECUTION_STATE.md`
+- [ ] Log all Modified / Created / Deleted files
+- [ ] Set "Next Immediate Action" to the next capability
+- [ ] Log any "Blocked Tasks" or "Known Technical Debt"
+- [ ] Commit with conventional commit message referencing the milestone
+
+**The AI must not stop until all five steps pass.**
+
+---
+
+## 17. Milestone State Machine
+
+Each milestone progresses through a deterministic state machine. The state is stored in `EXECUTION_STATE.md`.
+
+### State Diagram
+
+```
+NOT_STARTED
+     ↓
+IN_PROGRESS
+     ↓ (all checklist items pass + startup/end-of-run validation)
+VALIDATED
+     ↓ (all exit criteria satisfied + freeze decision made)
+COMPLETE
+     ↓ (architecture review confirms stability)
+FROZEN
+```
+
+### States
+
+| State | Description | Transition In | Transition Out |
+|-------|-------------|---------------|----------------|
+| **`NOT_STARTED`** | Milestone not yet begun. Prerequisites not verified. | — | `IN_PROGRESS` |
+| **`IN_PROGRESS`** | Implementation underway. Some checklist items incomplete. | `NOT_STARTED` | `VALIDATED`, `BLOCKED` |
+| **`BLOCKED`** | Implementation blocked by a dependency, error, or violation. | any | `IN_PROGRESS` |
+| **`VALIDATED`** | All checklist items pass. Compile and validation checks pass. | `IN_PROGRESS` | `COMPLETE`, `BLOCKED` |
+| **`COMPLETE`** | All exit criteria satisfied. Freeze decision recorded. | `VALIDATED` | `FROZEN` |
+| **`FROZEN`** | Milestone is permanently locked. No further modifications. | `COMPLETE` | — |
+
+### State Transition Rules
+
+1. **`NOT_STARTED → IN_PROGRESS`:** AI reads both files, validates previous milestone, and begins first capability.
+2. **`IN_PROGRESS → VALIDATED`:** Every checklist item passes, startup validation + end-of-run validation pass.
+3. **`IN_PROGRESS → BLOCKED`:** A blocker is discovered (dependency missing, violation found, error encountered).
+4. **`VALIDATED → COMPLETE`:** All exit criteria are verified as met, freeze decision is recorded.
+5. **`VALIDATED → BLOCKED`:** A blocker is discovered during final validation.
+6. **`COMPLETE → FROZEN`:** Architecture review team confirms milestone is stable and should not change.
+7. **`BLOCKED → IN_PROGRESS`:** Blocker is resolved.
+
+### State Machine Interface
+
+```typescript
+type MilestoneState =
+  | 'NOT_STARTED'
+  | 'IN_PROGRESS'
+  | 'BLOCKED'
+  | 'VALIDATED'
+  | 'COMPLETE'
+  | 'FROZEN';
+
+interface MilestoneStateRecord {
+  milestoneId: string;
+  state: MilestoneState;
+  stateChangedAt: number; // epoch ms
+  stateChangedBy: string; // AI session identifier
+  blockerReason?: string; // present when state is BLOCKED
+}
+```
+
+---
+
+## 18. Milestone Template
+
+Every milestone in Section 12 follows this 4-section template. The template is the contract; each milestone fills it.
+
+### Template Structure
+
+```
+### Milestone N: <Title>
+
+**State:** NOT_STARTED
+
+**Objective:**
+<One sentence describing what this milestone achieves.>
+
+**Implementation:**
+<List of deliverables — code files, interfaces, wiring. Not a task list; a specification of what exists when this milestone is done.>
+
+**Validation:**
+<Checklist of checks that must pass. Each check is a line with a checkbox.>
+
+**Freeze Decision:**
+- **Can this milestone be modified later?** YES or NO
+- **Reason:** <One sentence explaining why.>
+```
+
+### Milestone Format Rules
+
+1. **State is always first.** It is the single source of truth for progress (lives in `EXECUTION_STATE.md`, not here).
+2. **Objective is one sentence.** It defines the milestone's purpose without prescribing implementation steps.
+3. **Implementation lists deliverables, not tasks.** It describes the end state, not the process.
+4. **Validation is a checklist.** Each item must be objectively verifiable.
+5. **Freeze Decision is binary (YES/NO) with a reason.** This prevents unnecessary rewrites.
+
+### Milestone Format Mapping (Legacy → Current)
+
+| Legacy Header (Section 12) | Current Header (Template) |
+|---------------------------|--------------------------|
+| **State:** NOT_STARTED
+
+**Objective:** | **Objective:** |
+| **Implementation:** | **Implementation:** |
+| **Validation:** | **Validation:** |
+| **Freeze Decision:**
+- **Can this milestone be modified later?** See EXECUTION_STATE.md for current freeze status. | **Freeze Decision:** |
+
+Each milestone in Section 12 has been updated to use the **State** + 4-section format. The "Exit Criteria" content has been moved into "Freeze Decision" with the YES/NO/Reason structure.
+
+---
+
+## 19. Rollback Support
+
+Each milestone records its modified files for deterministic rollback. This data lives in `EXECUTION_STATE.md` (not in this architecture document). This section defines the **format** only.
+
+### Rollback Metadata Format
+
+```yaml
+# Per-milestone in EXECUTION_STATE.md
+milestone: 1
+state: NOT_STARTED
+files:
+  modified:
+    - path: frontend/app/layout.tsx
+      reason: "Added shell region composition"
+  created:
+    - path: frontend/components/os-shell/app-shell.tsx
+      reason: "Shell Host component"
+  deleted:
+    - path: frontend/components/dashboard/old-dashboard.tsx
+      reason: "Replaced by workspace pattern"
+```
+
+### Rollback Procedure
+
+When a milestone needs to be rolled back:
+
+1. **Read** `EXECUTION_STATE.md` for the milestone's file lists.
+2. **For created files:** `git rm <path>` (restore to pre-milestone state).
+3. **For modified files:** `git checkout <commit-before-milestone> -- <path>`.
+4. **For deleted files:** `git checkout <commit-before-milestone> -- <path>`.
+5. **Validate** that the rollback is clean (`tsc`, `ruff`, `mypy`).
+6. **Update** `EXECUTION_STATE.md` to mark the milestone as `BLOCKED` with reason "Rollback initiated."
+
+### Rollback Invariant
+
+- **Each milestone's file changes are fully reversible.** No milestone should delete files that are used by other code without creating replacement files in the same milestone.
+- **Rollback scope is per-milestone.** Rolling back Milestone N does not affect Milestones 1–N-1.
 
 ---
 
