@@ -15,6 +15,7 @@ export const CashflowResponseSchema = z.object({
   total_income_paise: z.number().int(),
   total_expense_paise: z.number().int(),
   total_net_paise: z.number().int(),
+  transaction_count: z.number().int(),
 })
 
 export type CashflowMonth = z.infer<typeof CashflowMonthSchema>

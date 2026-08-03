@@ -49,7 +49,8 @@ function ComponentBar({ label, value, invert = false }: { label: string; value: 
 export function BehaviorScoreCard() {
   const { data, isLoading, isError, refetch } = useBehaviorScore();
 
-  const isEmpty = !data || data.financial_health_score === undefined;
+  const healthScore = data?.financial_health_score ?? data?.score ?? 0;
+  const isEmpty = !data;
 
   return (
     <div className="w-full">
@@ -83,14 +84,14 @@ export function BehaviorScoreCard() {
                   />
                   {/* Progress ring */}
                   <circle
-                    className={cn("transition-all", getRingColor(data.financial_health_score))}
+                    className={cn("transition-all", getRingColor(healthScore))}
                     cx="50"
                     cy="50"
                     r="45"
                     strokeWidth="8"
                     fill="none"
                     strokeLinecap="round"
-                    strokeDasharray={`${(data.financial_health_score / 100) * 283} 283`}
+                    strokeDasharray={`${(healthScore / 100) * 283} 283`}
                     transform="rotate(-90 50 50)"
                   />
                   {/* Score text */}
@@ -99,9 +100,9 @@ export function BehaviorScoreCard() {
                     y="50"
                     dominantBaseline="middle"
                     textAnchor="middle"
-                    className={cn("text-3xl font-bold", getScoreColor(data.financial_health_score))}
+                    className={cn("text-3xl font-bold", getScoreColor(healthScore))}
                   >
-                    {Math.round(data.financial_health_score)}
+                    {Math.round(healthScore)}
                   </text>
                 </svg>
               </div>
@@ -109,29 +110,29 @@ export function BehaviorScoreCard() {
 
             {/* Component scores */}
             <div className="space-y-2">
-              <ComponentBar label="Savings Discipline" value={data.components.savings_discipline} />
-              <ComponentBar label="Habit Stability" value={data.components.habit_stability} />
-              <ComponentBar label="Impulsivity" value={data.components.impulsivity} invert />
+              <ComponentBar label="Savings Discipline" value={data.components.savings_discipline ?? 0.5} />
+              <ComponentBar label="Habit Stability" value={data.components.habit_stability ?? 0.5} />
+              <ComponentBar label="Impulsivity" value={data.components.impulsivity ?? 0.5} invert />
             </div>
 
             {/* Risk flags */}
             <div className="flex flex-wrap gap-1.5">
-              {data.risk_flags.india_specific.loan_app_pattern_flag && (
+              {data.risk_flags?.loan_app_pattern_flag && (
                 <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
                   Loan App Activity
                 </Badge>
               )}
-              {data.risk_flags.high_impulsivity && (
+              {data.risk_flags?.high_impulsivity && (
                 <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
                   High Impulsivity
                 </Badge>
               )}
-              {data.risk_flags.high_stress && (
+              {data.risk_flags?.high_stress && (
                 <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
                   Financial Stress
                 </Badge>
               )}
-              {data.risk_flags.low_savings && (
+              {data.risk_flags?.low_savings && (
                 <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300">
                   Low Savings
                 </Badge>
@@ -140,7 +141,7 @@ export function BehaviorScoreCard() {
 
             {/* Summary */}
             <p className="text-xs text-muted-foreground text-center mt-2">
-              {data.summary}
+              {data.summary ?? 'Continue tracking your financial transactions for better insights.'}
             </p>
           </div>
         )}

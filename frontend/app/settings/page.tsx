@@ -1,16 +1,10 @@
 /**
- * Settings Workspace Page - Stage 8E-C2 Production Visual System Migration
- *
- * Configuration Surface - Main analysis surface for settings.
- * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
- *
- * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
- * Updated: Using semantic CSS variables for colors.
+ * Settings Workspace Page - Configuration surface with runtime registration.
  */
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store/use-app-store';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -20,60 +14,45 @@ import { Download, Upload, Trash2, Moon, Sun, CreditCard } from 'lucide-react';
 import { Surface } from '@/components/primitives/surface/surface';
 import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
 import { Stack } from '@/components/primitives/layout/stack';
-import { commandCenterRuntime } from '@/lib/command-center';
+import { useWorkspaceRegistration } from '@/lib/runtime';
 
 export default function SettingsPage() {
+  useWorkspaceRegistration({
+    name: 'settings',
+    label: 'Settings',
+    icon: 'settings',
+    deepLink: '/settings',
+    defaultSurface: 'CONFIGURATION',
+    supportedCommands: ['export', 'import', 'clear'],
+    supportedFilters: [],
+    supportedSelections: [],
+  });
+
   const { theme, setTheme } = useTheme();
   const { cards, transactions, clearAllData } = useAppStore();
   const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   const exportData = () => {
-    const data = {
-      cards,
-      transactions,
-      exportedAt: new Date().toISOString(),
-    };
-
+    const data = { cards, transactions, exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `fintrack_backup_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = url; a.download = `fintrack_backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
-    toast({
-      title: 'Export successful',
-      description: 'Your data has been exported.',
-    });
+    toast({ title: 'Export successful', description: 'Your data has been exported.' });
   };
 
   const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (_e) => {
-      try {
-        // Handle import logic here
-        toast({
-          title: 'Import successful',
-          description: 'Your data has been imported.',
-        });
-      } catch {
-        toast({
-          title: 'Import failed',
-          description: 'Invalid file format.',
-          variant: 'destructive',
-        });
-      }
+      try { toast({ title: 'Import successful', description: 'Your data has been imported.' }); }
+      catch { toast({ title: 'Import failed', description: 'Invalid file format.', variant: 'destructive' }); }
     };
     reader.readAsText(file);
   };
@@ -81,56 +60,11 @@ export default function SettingsPage() {
   const handleClearData = () => {
     if (confirm('Are you sure? This will delete all your data permanently.')) {
       clearAllData();
-      toast({
-        title: 'Data cleared',
-        description: 'All your data has been removed.',
-      });
+      toast({ title: 'Data cleared', description: 'All your data has been removed.' });
     }
   };
 
-  // Build view model for shared runtime
-  const viewModels = useMemo(() => ({
-    settings: {
-      cards,
-      transactions,
-    },
-  }), [cards, transactions]);
-
-  // Register workspace with CommandCenterRuntime on mount
-  useEffect(() => {
-    // Build graph for shared runtime
-    commandCenterRuntime.build(viewModels);
-
-    // Register workspace actions
-    const workspaceRegistration = {
-      name: 'settings' as const,
-      label: 'Settings',
-      icon: 'settings',
-      deepLink: '/settings',
-      viewModelKey: 'settings',
-      description: 'Application settings',
-      defaultSurface: 'CONFIGURATION' as const,
-      graphAdapter: undefined,
-      supportedCommands: ['export', 'import', 'clear'],
-      supportedFilters: [],
-      supportedSelections: [],
-      inspectorSections: ['context'],
-      keyboardShortcuts: {
-        'e': 'export',
-        'i': 'import',
-      },
-    };
-
-    commandCenterRuntime.registerWorkspace(workspaceRegistration);
-
-    return () => {
-      commandCenterRuntime.unregisterWorkspace('settings');
-    };
-  }, [viewModels]);
-
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <Surface variant="default" density="none" className="flex flex-col h-full">
@@ -138,7 +72,6 @@ export default function SettingsPage() {
         <PanelHeader title="Settings" />
         <PanelBody scrollable>
           <Stack gap={6} className="p-4">
-            {/* Appearance */}
             <Surface variant="raised" density="none" className="p-4">
               <Stack gap={4}>
                 <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -146,89 +79,40 @@ export default function SettingsPage() {
                   Appearance
                 </h2>
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Dark Mode</p>
-                    <p className="text-sm text-[var(--text-tertiary)]">
-                      Toggle between light and dark theme
-                    </p>
-                  </div>
-                  <Switch
-                    checked={theme === 'dark'}
-                    onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-                  />
+                  <div><p className="font-medium">Dark Mode</p><p className="text-sm text-[var(--text-tertiary)]">Toggle between light and dark theme</p></div>
+                  <Switch checked={theme === 'dark'} onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')} />
                 </div>
               </Stack>
             </Surface>
-
-            {/* Data Management */}
             <Surface variant="raised" density="none" className="p-4">
               <Stack gap={4}>
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <CreditCard className="h-5 w-5" />
-                  Data Management
-                </h2>
+                <h2 className="text-lg font-semibold flex items-center gap-2"><CreditCard className="h-5 w-5" />Data Management</h2>
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Export Data</p>
-                    <p className="text-sm text-[var(--text-tertiary)]">
-                      Download all your transactions and cards as JSON
-                    </p>
-                  </div>
-                  <Button variant="outline" onClick={exportData}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Export
-                  </Button>
+                  <div><p className="font-medium">Export Data</p><p className="text-sm text-[var(--text-tertiary)]">Download all your transactions and cards as JSON</p></div>
+                  <Button variant="outline" onClick={exportData}><Download className="mr-2 h-4 w-4" />Export</Button>
                 </div>
-
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Import Data</p>
-                    <p className="text-sm text-[var(--text-tertiary)]">
-                      Restore from a previous backup
-                    </p>
-                  </div>
+                  <div><p className="font-medium">Import Data</p><p className="text-sm text-[var(--text-tertiary)]">Restore from a previous backup</p></div>
                   <div className="relative">
-                    <input
-                      type="file"
-                      accept=".json"
-                      onChange={importData}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
-                    <Button variant="outline">
-                      <Upload className="mr-2 h-4 w-4" />
-                      Import
-                    </Button>
+                    <input type="file" accept=".json" onChange={importData} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                    <Button variant="outline"><Upload className="mr-2 h-4 w-4" />Import</Button>
                   </div>
                 </div>
-
                 <div className="flex items-center justify-between border-t pt-4">
                   <div>
                     <p className="font-medium text-[var(--color-negative-600)]">Clear All Data</p>
-                    <p className="text-sm text-[var(--text-tertiary)]">
-                      Delete all transactions and cards permanently
-                    </p>
+                    <p className="text-sm text-[var(--text-tertiary)]">Delete all transactions and cards permanently</p>
                   </div>
-                  <Button variant="destructive" onClick={handleClearData}>
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Clear All
-                  </Button>
+                  <Button variant="destructive" onClick={handleClearData}><Trash2 className="mr-2 h-4 w-4" />Clear All</Button>
                 </div>
               </Stack>
             </Surface>
-
-            {/* About */}
             <Surface variant="raised" density="none" className="p-4">
               <Stack gap={4}>
                 <h2 className="text-lg font-semibold">About</h2>
                 <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-full bg-[var(--surface-raised)] flex items-center justify-center text-3xl">
-                    💳
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">FinTrack</p>
-                    <p className="text-sm text-[var(--text-tertiary)]">Bank Statement Parser Dashboard</p>
-                    <p className="text-xs text-[var(--text-tertiary)] mt-1">Version 1.0.0</p>
-                  </div>
+                  <div className="h-16 w-16 rounded-full bg-[var(--surface-raised)] flex items-center justify-center text-3xl">💳</div>
+                  <div><p className="font-bold text-lg">FinTrack</p><p className="text-sm text-[var(--text-tertiary)]">Bank Statement Parser Dashboard</p><p className="text-xs text-[var(--text-tertiary)] mt-1">Version 1.0.0</p></div>
                 </div>
               </Stack>
             </Surface>

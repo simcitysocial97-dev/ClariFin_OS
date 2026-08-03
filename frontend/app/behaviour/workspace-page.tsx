@@ -1,159 +1,66 @@
 /**
- * Behaviour Workspace Page - Stage 8E-C2 Production Visual System Migration
- *
- * Timeline Surface - Main analysis surface for behaviour.
- * Shell provides: Header, Toolbar, Breadcrumbs, Selection Summary, Evidence Drawer.
- *
- * Migrated: Wrapped in Surface/Panel primitives, removed legacy padding.
+ * Behaviour Workspace Page - Stage 4 Behaviour Intelligence Workspace
  */
 
 'use client';
 
-import { useEffect, useMemo } from 'react';
 import { useBehaviourCapability } from '@/lib/capabilities/use-behaviour-capability';
+import { useWorkspaceRegistration } from '@/lib/runtime';
 import { BehaviourScore } from '@/components/behaviour/behaviour-score';
 import { SpendingPatterns } from '@/components/behaviour/spending-patterns';
+import { WellnessRadar } from '@/components/behaviour/wellness-radar';
 import { SavingsRate } from '@/components/behaviour/savings-rate';
 import { DebtHealth } from '@/components/behaviour/debt-health';
-import { WellnessRadar } from '@/components/behaviour/wellness-radar';
 import { InsightsPanel } from '@/components/behaviour/behaviour-insights-panel';
-import { CrossNavigation } from '@/components/behaviour/cross-navigation';
+import { EvidenceDrawer } from '@/components/behaviour/behaviour-evidence-drawer';
 import { BehaviourPageSkeleton } from '@/components/behaviour/loading-skeleton';
 import { BehaviourErrorState } from '@/components/behaviour/error-state';
 import { BehaviourEmptyState } from '@/components/behaviour/empty-state';
-import { Surface } from '@/components/primitives/surface/surface';
-import { Panel, PanelHeader, PanelBody } from '@/components/primitives/panel/panel';
-import { Stack } from '@/components/primitives/layout/stack';
-import { Grid } from '@/components/primitives/layout/grid';
-import { commandCenterRuntime } from '@/lib/command-center';
 
-/**
- * Behaviour Workspace Page
- * Timeline Surface - Composed with Surface/Panel primitives
- * Shell provides: Header, Toolbar, Filter Panel, Selection Summary, Evidence Drawer
- */
 export default function BehaviourPage() {
+  useWorkspaceRegistration({
+    name: 'behaviour',
+    label: 'Behaviour',
+    icon: 'brain',
+    deepLink: '/behaviour',
+    defaultSurface: 'GRAPH',
+    supportedCommands: ['period', 'export', 'refresh'],
+    supportedFilters: ['period'],
+    supportedSelections: [],
+  });
+
   const {
-    behaviour,
-    loading,
-    error,
+    behaviour, loading, error, period, setPeriod, clearFilters, refresh,
   } = useBehaviourCapability();
 
-  // Build view model for shared runtime
-  const viewModels = useMemo(() => ({
-    behaviour: { behaviour },
-  }), [behaviour]);
-
-  // Register workspace with CommandCenterRuntime on mount
-  useEffect(() => {
-    // Build graph for shared runtime
-    commandCenterRuntime.build(viewModels);
-
-    // Register workspace actions
-    const workspaceRegistration = {
-      name: 'behaviour' as const,
-      label: 'Behaviour',
-      icon: 'brain',
-      deepLink: '/behaviour',
-      viewModelKey: 'behaviour',
-      description: 'Financial behavior analysis',
-      defaultSurface: 'TIMELINE' as const,
-      graphAdapter: 'behaviour',
-      supportedCommands: ['period', 'refresh', 'evidence'],
-      supportedFilters: ['period'],
-      supportedSelections: ['pattern'],
-      inspectorSections: ['context', 'evidence', 'insights', 'patterns'],
-      keyboardShortcuts: {
-        'p': 'period',
-        'r': 'refresh',
-        'e': 'evidence',
-      },
-    };
-
-    commandCenterRuntime.registerWorkspace(workspaceRegistration);
-
-    return () => {
-      commandCenterRuntime.unregisterWorkspace('behaviour');
-    };
-  }, [viewModels]);
-
-  // Show loading skeleton
-  if (loading) {
-    return (
-      <Surface variant="default" density="none" className="flex flex-col h-full">
-        <Panel fill>
-          <PanelHeader title="Behaviour" />
-          <PanelBody loading>
-            <div className="p-4">
-              <BehaviourPageSkeleton />
-            </div>
-          </PanelBody>
-        </Panel>
-      </Surface>
-    );
-  }
-
-  // Show error state
-  if (error) {
-    return (
-      <Surface variant="default" density="none" className="flex flex-col h-full">
-        <Panel fill>
-          <PanelHeader title="Behaviour" />
-          <PanelBody error={error.message}>
-            <div className="p-4">
-              <BehaviourErrorState message={error.message} onRetry={() => {}} />
-            </div>
-          </PanelBody>
-        </Panel>
-      </Surface>
-    );
-  }
-
-  // Show empty state
-  if (!behaviour) {
-    return (
-      <Surface variant="default" density="none" className="flex flex-col h-full">
-        <Panel fill>
-          <PanelHeader title="Behaviour" />
-          <PanelBody empty emptyMessage="No behaviour data available">
-            <div className="p-4">
-              <BehaviourEmptyState onAction={() => {}} />
-            </div>
-          </PanelBody>
-        </Panel>
-      </Surface>
-    );
-  }
+  if (loading) return <BehaviourPageSkeleton />;
+  if (error) return <BehaviourErrorState message={error.message} onRetry={refresh} />;
+  if (!behaviour) return <BehaviourEmptyState onAction={clearFilters} />;
 
   return (
-    <Surface variant="default" density="none" className="flex flex-col h-full">
-      <Panel fill>
-        <PanelHeader title="Behaviour" />
-        <PanelBody scrollable>
-          <Stack gap={4} className="p-4">
-            {/* Score Card */}
-            <BehaviourScore score={behaviour.wellness_score} loading={loading} error={error} />
-
-            {/* Charts Row */}
-            <Grid gap={4} className="grid-cols-1 lg:grid-cols-2">
-              <SpendingPatterns patterns={behaviour.spending_patterns} loading={loading} error={error} />
-              <WellnessRadar wellnessRadar={behaviour.wellness_radar} loading={loading} error={error} />
-            </Grid>
-
-            {/* Additional Metrics */}
-            <Grid gap={4} className="grid-cols-1 lg:grid-cols-2">
-              <SavingsRate savingsRate={behaviour.savings_rate} loading={loading} error={error} />
-              <DebtHealth debtHealth={behaviour.debt_health} loading={loading} error={error} />
-            </Grid>
-
-            {/* Insights Panel */}
-            <InsightsPanel behaviour={behaviour} loading={loading} error={error} />
-
-            {/* Cross Navigation */}
-            <CrossNavigation crossReferences={behaviour.navigation?.cross_references} />
-          </Stack>
-        </PanelBody>
-      </Panel>
-    </Surface>
+    <div className="min-h-screen bg-gray-50 p-4 space-y-4">
+      <div className="flex items-center gap-2">
+        <label className="text-sm">Period:</label>
+        <select value={period} onChange={e => setPeriod(e.target.value)} className="text-sm border rounded px-2 py-1">
+          <option value="">All Time</option>
+          <option value="1m">1 Month</option>
+          <option value="3m">3 Months</option>
+          <option value="6m">6 Months</option>
+          <option value="1y">1 Year</option>
+        </select>
+        <button onClick={refresh} className="text-sm px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">Refresh</button>
+      </div>
+      <BehaviourScore score={behaviour.wellness_score} loading={loading} error={error} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <SpendingPatterns patterns={behaviour.spending_patterns} loading={loading} error={error} />
+        <WellnessRadar wellnessRadar={behaviour.wellness_radar} loading={loading} error={error} />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <SavingsRate savingsRate={behaviour.savings_rate} loading={loading} error={error} />
+        <DebtHealth debtHealth={behaviour.debt_health} loading={loading} error={error} />
+      </div>
+      <InsightsPanel behaviour={behaviour} loading={loading} error={error} />
+      <EvidenceDrawer behaviour={behaviour} isOpen={false} onClose={() => {}} />
+    </div>
   );
 }

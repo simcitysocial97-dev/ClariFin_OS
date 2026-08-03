@@ -1,20 +1,5 @@
 /**
- * Command Center Page - Stage 8E-B Command Center
- *
- * Main entry point for the Command Center workspace.
- * Three-layer analytical surface: Graph, Decision Feed, Metrics Strip.
- *
- * Architecture:
- *   Top Command Bar (global)
- *   ┌──────────────────────────────────────────────────────────┬───────────────┐
- *   │                                                          │               │
- *   │                 Financial Graph                          │ Decision Feed │
- *   │                                                          │               │
- *   ├──────────────────────────────────────────────────────────┴───────────────┤
- *   │ Metrics Strip                                                           │
- *   └──────────────────────────────────────────────────────────────────────────┘
- *   Right Inspector (global)
- *   Bottom Timeline (global)
+ * Command Center Page - reads workspace, selection, timeline, navigation state from runtime.
  */
 
 'use client';
@@ -30,10 +15,10 @@ import { useInvestments } from '@/lib/hooks/use-investments';
 import { useCashflow } from '@/lib/hooks/use-cashflow';
 import { useBehaviorScore } from '@/lib/hooks/use-behavior-score';
 import { useReconciliations } from '@/lib/hooks/use-reconciliation';
+import { useNavigation } from '@/lib/runtime';
 
-// ===== Page Component =====
 export default function CommandCenterPage() {
-  // Load all workspace data
+  const { pushPath } = useNavigation();
   const { data: dashboardData } = useDashboardMetrics();
   const { data: accountsData } = useManagedAccounts();
   const { data: loansData } = useLoans();
@@ -41,11 +26,11 @@ export default function CommandCenterPage() {
   const { data: investmentsData } = useInvestments();
   const { data: cashflowData } = useCashflow();
   const { data: behaviourData } = useBehaviorScore();
-  const { data: forecastData } = useCashflow(); // Use cashflow as forecast placeholder
   const { data: reconciliationData } = useReconciliations();
 
-  // Build graph when data is available
   useEffect(() => {
+    pushPath('/command-center', 'command-center');
+
     const viewModels: Record<string, unknown> = {
       transactions: { transactions: dashboardData?.recent_transactions ?? [] },
       accounts: accountsData,
@@ -54,25 +39,14 @@ export default function CommandCenterPage() {
       investments: investmentsData,
       cashflow: cashflowData,
       behaviour: behaviourData,
-      forecast: forecastData,
+      forecast: cashflowData,
       reconciliation: reconciliationData,
     };
 
-    // Only build if we have at least some data
     if (Object.values(viewModels).some(v => v !== undefined)) {
       commandCenterRuntime.build(viewModels);
     }
-  }, [
-    dashboardData,
-    accountsData,
-    loansData,
-    cardsData,
-    investmentsData,
-    cashflowData,
-    behaviourData,
-    forecastData,
-    reconciliationData,
-  ]);
+  }, [pushPath, dashboardData, accountsData, loansData, cardsData, investmentsData, cashflowData, behaviourData, reconciliationData]);
 
   return (
     <CommandCenterLayout
@@ -84,7 +58,7 @@ export default function CommandCenterPage() {
         investments: investmentsData,
         cashflow: cashflowData,
         behaviour: behaviourData,
-        forecast: forecastData,
+        forecast: cashflowData,
         reconciliation: reconciliationData,
       }}
     />

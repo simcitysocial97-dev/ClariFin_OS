@@ -289,8 +289,8 @@ export default function DashboardPage() {
                   <Surface variant="raised" density="none" className="p-4">
                     <Stack gap={3}>
                       <h2 className="text-lg font-semibold">Recent Transactions</h2>
-                      <RecentTransactions 
-                        transactions={data.recent_transactions.slice(0, 10)} 
+                      <RecentTransactions
+                        transactions={data.recent_transactions?.slice(0, 10) ?? []}
                         isLoading={loading}
                         isError={!!error}
                         onRetry={refetch}
