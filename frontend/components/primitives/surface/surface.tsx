@@ -30,6 +30,7 @@ export const surfaceVariants = cva(
         default: 'p-3',
         comfortable: 'p-4',
         compact: 'p-2',
+        spacious: 'p-6',
         terminal: 'p-1.5',
         none: 'p-0',
       },

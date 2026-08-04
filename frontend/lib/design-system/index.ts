@@ -30,6 +30,10 @@ export {
 // Motion
 export { financialMotion, motionClasses, keyframes } from './motion';
 
+// Density
+export { densityConfig, densityClasses, DEFAULT_DENSITY, getDensityConfig, getDensityClass } from './density';
+export type { DensityLevel, DensityConfig } from './density';
+
 // Financial Semantics
 export {
   nodeGrammar,

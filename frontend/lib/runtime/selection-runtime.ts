@@ -3,6 +3,7 @@
  */
 
 import type { SelectionEntity, SelectionState } from './runtime-types';
+import { runtimeEventBus, SELECTION_CHANGED, SELECTION_CLEARED } from '../event-bus';
 
 const DEFAULT_SELECTION: SelectionState = {
   active: null,
@@ -34,6 +35,17 @@ export function selectEntity(entity: SelectionEntity) {
     active: entity,
     history: [..._state.history.slice(-19), entity],
   };
+  runtimeEventBus.publish({
+    type: SELECTION_CHANGED,
+    timestamp: Date.now(),
+    source: 'selection-runtime',
+    payload: {
+      activeEntityId: entity.id,
+      activeEntityType: entity.type,
+      selectedIds: Array.from(_state.multi),
+      selectionRange: null,
+    },
+  });
   notify();
 }
 
@@ -48,7 +60,14 @@ export function toggleMulti(id: string, selected: boolean) {
 }
 
 export function clearSelection() {
+  const prevActive = _state.active;
   _state = { ..._state, active: null };
+  runtimeEventBus.publish({
+    type: SELECTION_CLEARED,
+    timestamp: Date.now(),
+    source: 'selection-runtime',
+    payload: { previousEntityId: prevActive ? String(prevActive.id) : null },
+  });
   notify();
 }
 

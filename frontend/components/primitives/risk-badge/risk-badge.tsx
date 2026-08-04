@@ -33,7 +33,7 @@ export function RiskBadge({
         title={`Risk: ${risk}`}
       />
       {showLabel && (
-        <span className="text-xs text-gray-600 capitalize">{risk}</span>
+        <span className="fin-caption text-[var(--text-secondary)] capitalize">{risk}</span>
       )}
     </div>
   );

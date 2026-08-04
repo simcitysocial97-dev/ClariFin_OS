@@ -30,7 +30,7 @@ describe('Navigation Performance', () => {
   });
 
   it('checks navigation shortcut under 50ms', () => {
-    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowLeft' });
+    const event = { altKey: true, key: 'ArrowLeft' } as unknown as KeyboardEvent;
     const start = performance.now();
     for (let i = 0; i < 1000; i++) {
       isNavigationShortcut(event);

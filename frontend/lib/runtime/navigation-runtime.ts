@@ -3,6 +3,7 @@
  */
 
 import type { NavigationState, NavigationEntry, WorkspaceName } from './runtime-types';
+import { runtimeEventBus, NAVIGATION_COMPLETED, NAVIGATION_BACK } from '../event-bus';
 
 const MAX_HISTORY = 50;
 const DEFAULT_NAV: NavigationState = {
@@ -32,14 +33,29 @@ export function pushPath(path: string, workspace?: WorkspaceName) {
     _state.history.shift();
     _state.currentIndex--;
   }
+  const entry = _state.history[_state.currentIndex];
+  runtimeEventBus.publish({
+    type: NAVIGATION_COMPLETED,
+    timestamp: Date.now(),
+    source: 'navigation-runtime',
+    payload: { route: entry.path, workspaceId: entry.workspace ?? 'dashboard' },
+  });
   notify();
 }
 
 export function goBack(): NavigationEntry | null {
   if (_state.currentIndex > 0) {
+    const fromEntry = _state.history[_state.currentIndex];
     _state = { ..._state, currentIndex: _state.currentIndex - 1 };
+    const toEntry = _state.history[_state.currentIndex];
+    runtimeEventBus.publish({
+      type: NAVIGATION_BACK,
+      timestamp: Date.now(),
+      source: 'navigation-runtime',
+      payload: { fromRoute: fromEntry.path, toRoute: toEntry.path },
+    });
     notify();
-    return _state.history[_state.currentIndex];
+    return toEntry;
   }
   return null;
 }

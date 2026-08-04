@@ -1,27 +1,26 @@
 /**
- * Entity Card - Stage 8C Financial OS Visual System
+ * Entity Card - Stage 8E Financial OS Visual Language
  *
  * Displays financial entity information.
+ * Built on Surface primitive for unified visual language.
  */
 
 'use client';
 
 import { formatINR } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
+import { Surface } from '@/components/primitives/surface/surface';
 
-// ===== Props =====
 interface EntityCardProps {
   id: string;
   label: string;
   valuePaise?: number;
   subtitle?: string;
   status?: string;
-  confidence?: number;
   onClick?: () => void;
   className?: string;
 }
 
-// ===== Entity Card Component =====
 export function EntityCard({
   label,
   valuePaise,
@@ -31,27 +30,29 @@ export function EntityCard({
   className,
 }: EntityCardProps) {
   return (
-    <div
-      className={cn(
-        'p-3 border rounded-md hover:bg-gray-50 cursor-pointer transition-colors',
-        className
-      )}
+    <Surface
+      variant={onClick ? 'interactive' : 'raised'}
+      density="default"
+      radius="md"
+      className={cn('cursor-pointer', className)}
       onClick={onClick}
     >
       <div className="flex items-start justify-between">
-        <div>
-          <p className="text-sm font-medium">{label}</p>
+        <div className="min-w-0 flex-1">
+          <p className="fin-label text-[var(--text-primary)] truncate">{label}</p>
           {subtitle && (
-            <p className="text-xs text-gray-500 mt-1">{subtitle}</p>
+            <p className="fin-caption text-[var(--text-tertiary)] mt-1 truncate">{subtitle}</p>
           )}
         </div>
         {valuePaise !== undefined && (
-          <p className="text-sm font-mono font-medium">{formatINR(valuePaise)}</p>
+          <p className="fin-amount text-[var(--text-primary)] font-medium ml-2 shrink-0">
+            {formatINR(valuePaise)}
+          </p>
         )}
       </div>
       {status && (
-        <p className="text-xs text-gray-400 mt-2">{status}</p>
+        <p className="fin-caption text-[var(--text-tertiary)] mt-2 truncate">{status}</p>
       )}
-    </div>
+    </Surface>
   );
 }

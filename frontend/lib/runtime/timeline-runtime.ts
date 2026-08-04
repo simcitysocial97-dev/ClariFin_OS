@@ -3,11 +3,15 @@
  */
 
 import type { TimelinePosition, TimeGranularity } from './runtime-types';
+import { runtimeEventBus, TIMELINE_CHANGED, TIMELINE_GRANULARITY_CHANGED } from '../event-bus';
 
 const DEFAULT_TIMELINE: TimelinePosition = {
   date: null,
   granularity: 'month',
   comparisonPeriod: null,
+  isComparing: false,
+  forecastMode: false,
+  playbackPosition: null,
 };
 
 let _state: TimelinePosition = DEFAULT_TIMELINE;
@@ -30,11 +34,27 @@ export function setTimelineState(updater: (prev: TimelinePosition) => TimelinePo
 
 export function setPosition(date: string | null) {
   _state = { ..._state, date };
+  runtimeEventBus.publish({
+    type: TIMELINE_CHANGED,
+    timestamp: Date.now(),
+    source: 'timeline-runtime',
+    payload: {
+      activePeriod: { start: date ?? '', end: date ?? '', label: date ?? '' },
+      granularity: _state.granularity,
+      comparisonPeriod: _state.comparisonPeriod,
+    },
+  });
   notify();
 }
 
 export function setGranularity(granularity: TimeGranularity) {
   _state = { ..._state, granularity };
+  runtimeEventBus.publish({
+    type: TIMELINE_GRANULARITY_CHANGED,
+    timestamp: Date.now(),
+    source: 'timeline-runtime',
+    payload: { granularity: granularity as 'day' | 'week' | 'month' | 'quarter' | 'year' },
+  });
   notify();
 }
 
@@ -43,6 +63,24 @@ export function setComparisonPeriod(from?: string, to?: string) {
     ..._state,
     comparisonPeriod: from || to ? { from, to } : null,
   };
+  notify();
+}
+
+export function setForecastMode(enabled: boolean) {
+  _state = { ..._state, forecastMode: enabled };
+  notify();
+}
+
+export function setPlaybackPosition(position: number | null) {
+  _state = { ..._state, playbackPosition: position };
+  notify();
+}
+
+export function toggleComparison() {
+  _state = { ..._state, isComparing: !_state.isComparing };
+  if (!_state.isComparing) {
+    _state = { ..._state, comparisonPeriod: null };
+  }
   notify();
 }
 
@@ -83,6 +121,9 @@ export function useTimelineRuntime() {
     setPosition,
     setGranularity,
     setComparisonPeriod,
+    setForecastMode,
+    setPlaybackPosition,
+    toggleComparison,
   };
 }
 
@@ -94,6 +135,9 @@ export const timelineRuntime = {
   setPosition,
   setGranularity,
   setComparisonPeriod,
+  setForecastMode,
+  setPlaybackPosition,
+  toggleComparison,
   subscribe,
   reset,
 };
