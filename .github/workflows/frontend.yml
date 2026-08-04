@@ -39,6 +39,18 @@ jobs:
           python-version: "3.12"
           working-directory: "backend"
 
+      # Program 7A: Generate cross-layer map once for shared use
+      - name: Generate cross-layer map
+        run: |
+          python3 tools/generators/build_cross_layer_map.py
+
+      - name: Upload cross-layer map
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-layer-map
+          path: runtime/generated/cross-layer-map.json
+          retention-days: 5
+
       - name: Generate current OpenAPI schema
         working-directory: backend
         run: |
@@ -111,6 +123,49 @@ jobs:
         if: always()
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        shell: bash
+
+  schema-verification:
+    name: "Schema & Mock Synchronization"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run DTO ↔ Zod schema audit
+        working-directory: frontend
+        run: npx tsx scripts/audit-schemas.ts
+
+      - name: Run MSW mock ↔ Zod schema sync verification
+        working-directory: frontend
+        run: npx tsx scripts/verify-mock-sync.ts
+
+      - name: Run capability contract tests
+        working-directory: frontend
+        run: npx vitest run lib/capabilities/__tests__/contract.test.ts
+
+      # Job Summary
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## Schema & Mock Synchronization — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

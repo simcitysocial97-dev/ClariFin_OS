@@ -74,6 +74,19 @@ jobs:
           echo "$CHANGED" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
+      # Program 7A: Generate cross-layer map once, share across all jobs
+      - name: Generate cross-layer map
+        id: cross-layer
+        run: |
+          python3 tools/generators/build_cross_layer_map.py
+
+      - name: Upload cross-layer map
+        uses: actions/upload-artifact@v4
+        with:
+          name: cross-layer-map
+          path: runtime/generated/cross-layer-map.json
+          retention-days: 5
+
       - name: Generate verification plan
         id: plan
         run: |

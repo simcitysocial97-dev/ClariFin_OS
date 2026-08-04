@@ -1,0 +1,2962 @@
+{
+  "backend/src/engines/account_engine.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/account_engine/balance.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine/balance.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/account/__init__.py",
+      "backend/tests/unit/engines/account/test_account_engine.py",
+      "backend/tests/contract/generated/test_accounts.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/account_engine/cashflow.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine/cashflow.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/account/__init__.py",
+      "backend/tests/unit/engines/account/test_account_engine.py",
+      "backend/tests/contract/generated/test_accounts.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/account_engine/dormant.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine/dormant.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/account/__init__.py",
+      "backend/tests/unit/engines/account/test_account_engine.py",
+      "backend/tests/contract/generated/test_accounts.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/account_engine/history.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine/history.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/account/__init__.py",
+      "backend/tests/unit/engines/account/test_account_engine.py",
+      "backend/tests/contract/generated/test_accounts.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/account_engine/lifecycle.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine/lifecycle.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/account/__init__.py",
+      "backend/tests/unit/engines/account/test_account_engine.py",
+      "backend/tests/contract/generated/test_accounts.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/account_engine/metrics.py": {
+    "capabilities": [
+      "useAccountsCapability"
+    ],
+    "components": [
+      "AccountsSummary",
+      "BalanceTrend",
+      "TypeBreakdown",
+      "TransactionList",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "EmptyState",
+      "Surface",
+      "Panel",
+      "PanelHeader",
+      "PanelBody",
+      "Stack",
+      "Grid",
+      "LoadingSpinner"
+    ],
+    "endpoints": [
+      "GET /api/v1/accounts",
+      "POST /api/v1/accounts",
+      "GET /api/v1/accounts/{account_id}",
+      "PUT /api/v1/accounts/{account_id}",
+      "DELETE /api/v1/accounts/{account_id}",
+      "POST /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history",
+      "GET /api/v1/accounts/{account_id}/balance-history/latest",
+      "GET /api/v1/accounts/{account_id}/analytics",
+      "GET /api/v1/accounts/{account_id}/metrics",
+      "GET /api/v1/accounts/{account_id}/status",
+      "GET /api/v1/accounts/{account_id}/dormancy",
+      "GET /api/v1/institutions",
+      "POST /api/v1/institutions",
+      "GET /api/v1/institutions/{institution_id}",
+      "PUT /api/v1/institutions/{institution_id}",
+      "POST /api/v1/accounts/{account_id}/links",
+      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
+      "GET /api/v1/accounts/{account_id}/links",
+      "GET /api/accounts/manage",
+      "POST /api/accounts/manage",
+      "PUT /api/accounts/manage/{account_id}",
+      "DELETE /api/accounts/manage/{account_id}",
+      "GET /api/accounts/{account_id}/balance",
+      "GET /api/accounts/{account_id}/running-balance"
+    ],
+    "engine": "backend/src/engines/account_engine/metrics.py",
+    "graphRenderers": [],
+    "mappers": [
+      "accountsMapper"
+    ],
+    "pages": [
+      "app/accounts/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/accounts.py",
+      "backend/src/routers/managed_accounts.py"
+    ],
+    "services": [
+      "AccountService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/account/__init__.py",
+      "backend/tests/unit/engines/account/test_account_engine.py",
+      "backend/tests/contract/generated/test_accounts.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "AccountsViewModel"
+    ],
+    "workspace": [
+      "AccountsWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/account.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/account.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/cashflow.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/cashflow.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/core.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/core.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/behaviour_engine/credit_dependency.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/credit_dependency.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/debt.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/debt.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/income.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/income.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py"
+    ],
+    "services": [
+      "BehaviourService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/lifestyle.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/lifestyle.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py"
+    ],
+    "services": [
+      "BehaviourService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/patterns.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/patterns.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/profile.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/profile.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/resilience.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/resilience.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/savings.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/savings.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/stress.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/stress.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/temporal.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/temporal.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/utils.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /api/dashboard/summary",
+      "POST /api/import/execute"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/utils.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/dashboard.py",
+      "backend/src/routers/import_router.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "DashboardService",
+      "ImportService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/behaviour_engine/wellness.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report"
+    ],
+    "engine": "backend/src/engines/behaviour_engine/wellness.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py"
+    ],
+    "services": [
+      "BehaviourService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/behaviour/__init__.py",
+      "backend/tests/unit/engines/behaviour/test_core.py",
+      "backend/tests/unit/engines/behaviour/test_integration.py",
+      "backend/tests/unit/engines/behaviour/test_metrics.py",
+      "backend/tests/unit/engines/behaviour/test_patterns.py",
+      "backend/tests/contract/generated/test_behaviour.py",
+      "backend/tests/contract/generated/test_v1.py",
+      "backend/tests/properties/behaviour/__init__.py",
+      "backend/tests/properties/behaviour/test_engine_properties.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/billing.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/billing.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/emi.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/emi.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/foreclosure.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/foreclosure.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/interest.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/interest.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/metrics.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/metrics.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/outstanding.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/outstanding.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/credit_card_engine/utilization.py": {
+    "capabilities": [
+      "useCreditCardsCapability"
+    ],
+    "components": [
+      "CreditCardsSummary",
+      "UtilizationChart",
+      "SpendingByCategory",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "CreditCardsToolbar",
+      "CrossNavigation",
+      "CreditCardsPageSkeleton",
+      "CreditCardsErrorState",
+      "CreditCardsEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/credit-cards",
+      "GET /api/v1/credit-cards/{card_id}",
+      "POST /api/v1/credit-cards",
+      "PUT /api/v1/credit-cards/{card_id}",
+      "DELETE /api/v1/credit-cards/{card_id}",
+      "GET /api/v1/credit-cards/{card_id}/statements",
+      "POST /api/v1/credit-cards/{card_id}/statements",
+      "GET /api/v1/credit-cards/{card_id}/outstanding",
+      "GET /api/v1/credit-cards/{card_id}/utilization",
+      "GET /api/v1/credit-cards/{card_id}/metrics",
+      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
+      "POST /api/v1/credit-cards/{card_id}/payments",
+      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
+      "POST /api/v1/credit-cards/{card_id}/foreclosure"
+    ],
+    "engine": "backend/src/engines/credit_card_engine/utilization.py",
+    "graphRenderers": [],
+    "mappers": [
+      "creditCardsMapper"
+    ],
+    "pages": [
+      "app/cards/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/credit_cards.py"
+    ],
+    "services": [
+      "CreditCardService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/credit_card/__init__.py",
+      "backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "backend/tests/contract/generated/test_credit_cards.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "CreditCardsViewModel"
+    ],
+    "workspace": [
+      "CardsWorkspace"
+    ]
+  },
+  "backend/src/engines/financial_events.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "POST /api/financial-events/",
+      "GET /api/financial-events/",
+      "GET /api/financial-events/{event_id}"
+    ],
+    "engine": "backend/src/engines/financial_events.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_events.py"
+    ],
+    "services": [
+      "FinancialEventsService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_events/lineage_walker.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "POST /api/financial-events/",
+      "GET /api/financial-events/",
+      "GET /api/financial-events/{event_id}"
+    ],
+    "engine": "backend/src/engines/financial_events/lineage_walker.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_events.py"
+    ],
+    "services": [
+      "FinancialEventsService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/forecasting.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/forecasting.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/goal_planner.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/goal_planner.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/intelligence.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/intelligence.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/models.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/models.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/optimization.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/optimization.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/scenario.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/scenario.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/financial_intelligence/utils.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/financial_intelligence/utils.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "FinancialIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/loan_engine/__init__.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/__init__.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/amortization.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/amortization.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/emi.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/emi.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/floating_rate.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/floating_rate.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/foreclosure.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/foreclosure.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/metrics.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/metrics.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/models.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/models.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanSimulationService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/prepayment.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/prepayment.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/loan_engine/utils.py": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "components": [
+      "LoansSummary",
+      "AmortizationSchedule",
+      "PaymentProgress",
+      "InterestAnalysis",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "LoansToolbar",
+      "CrossNavigation",
+      "LoansPageSkeleton",
+      "LoansErrorState",
+      "LoansEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/loans",
+      "GET /api/loans/{loan_id}",
+      "POST /api/loans",
+      "PUT /api/loans/{loan_id}",
+      "DELETE /api/loans/{loan_id}",
+      "GET /api/loans/{loan_id}/schedule",
+      "POST /api/loans/{loan_id}/prepayment-simulation",
+      "POST /api/loans/{loan_id}/foreclosure-simulation",
+      "POST /api/loans/{loan_id}/rate-change-simulation",
+      "POST /api/loans/{loan_id}/payments",
+      "GET /api/loans/analysis/priority",
+      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "POST /api/loans/analysis/surplus-allocation"
+    ],
+    "engine": "backend/src/engines/loan_engine/utils.py",
+    "graphRenderers": [],
+    "mappers": [
+      "loansMapper"
+    ],
+    "pages": [
+      "app/loans/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/loans.py"
+    ],
+    "services": [
+      "LoanAnalysisService",
+      "LoanService",
+      "LoanSimulationService",
+      "TransactionIntelligenceService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/loan/__init__.py",
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/unit/engines/loan/test_loan_engine.py",
+      "backend/tests/contract/generated/test_loans.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "LoansViewModel"
+    ],
+    "workspace": [
+      "LoansWorkspace"
+    ]
+  },
+  "backend/src/engines/recommendation_engine.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/recommendation_engine.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "RecommendationService"
+    ],
+    "tests": [],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/recommendation_engine/recommendations.py": {
+    "capabilities": [
+      "useBehaviourCapability"
+    ],
+    "components": [
+      "BehaviourScore",
+      "SpendingPatterns",
+      "WellnessRadar",
+      "SavingsRate",
+      "DebtHealth",
+      "InsightsPanel",
+      "EvidenceDrawer",
+      "BehaviourPageSkeleton",
+      "BehaviourErrorState",
+      "BehaviourEmptyState"
+    ],
+    "endpoints": [
+      "GET /api/v1/behaviour/profile",
+      "GET /api/v1/behaviour/wellness-score",
+      "GET /api/v1/behaviour/debt-health",
+      "GET /api/v1/behaviour/cashflow-health",
+      "GET /api/v1/behaviour/patterns",
+      "GET /api/v1/behaviour/recommendations",
+      "GET /api/v1/behaviour/monthly-report",
+      "GET /financial-intelligence/cashflow-forecast",
+      "GET /financial-intelligence/liquidity-forecast",
+      "GET /financial-intelligence/credit-forecast",
+      "GET /financial-intelligence/outlook",
+      "GET /financial-intelligence/report",
+      "GET /financial-intelligence/priorities",
+      "GET /financial-intelligence/recommendations",
+      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    ],
+    "engine": "backend/src/engines/recommendation_engine/recommendations.py",
+    "graphRenderers": [],
+    "mappers": [
+      "behaviourMapper"
+    ],
+    "pages": [
+      "app/behaviour/page.tsx"
+    ],
+    "routers": [
+      "backend/src/routers/behaviour.py",
+      "backend/src/routers/financial_intelligence.py"
+    ],
+    "services": [
+      "BehaviourService",
+      "RecommendationService"
+    ],
+    "tests": [
+      "backend/tests/unit/engines/recommendation/__init__.py",
+      "backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+      "backend/tests/contract/generated/test_v1.py"
+    ],
+    "viewModels": [
+      "BehaviourViewModel"
+    ],
+    "workspace": [
+      "BehaviourWorkspace"
+    ]
+  },
+  "backend/src/engines/transaction_intelligence.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [],
+    "engine": "backend/src/engines/transaction_intelligence.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [],
+    "services": [
+      "TransactionIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/transaction_intelligence/cash_conversion_detector.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [],
+    "engine": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [],
+    "services": [
+      "TransactionIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/transaction_intelligence/cc_payment_detector.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [],
+    "engine": "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [],
+    "services": [
+      "TransactionIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/transaction_intelligence/detector_result.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [],
+    "engine": "backend/src/engines/transaction_intelligence/detector_result.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [],
+    "services": [
+      "TransactionIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  },
+  "backend/src/engines/transaction_intelligence/loan_emi_detector.py": {
+    "capabilities": [],
+    "components": [],
+    "endpoints": [],
+    "engine": "backend/src/engines/transaction_intelligence/loan_emi_detector.py",
+    "graphRenderers": [],
+    "mappers": [],
+    "pages": [],
+    "routers": [],
+    "services": [
+      "TransactionIntelligenceService"
+    ],
+    "tests": [],
+    "viewModels": [],
+    "workspace": []
+  }
+}
