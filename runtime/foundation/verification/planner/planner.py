@@ -1,5 +1,5 @@
 """
-Verification Planner — Phase 4
+Verification Planner — Phase 4 + Program 7A Cross-Layer Intelligence
 
 Produces deterministic verification plans from:
 - Changed files
@@ -8,12 +8,17 @@ Produces deterministic verification plans from:
 - Requested scope
 
 No execution logic. Pure planning.
+
+Program 7A adds CrossLayerImpactPlanner for cross-layer dependency intelligence.
 """
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
+from pathlib import Path
+from typing import Any
 
 from runtime.foundation.verification.models import (
     VerificationCategory,
@@ -650,3 +655,259 @@ def plan_verification(
         requested_scope=scope,
     )
     return planner.plan(context)
+
+
+# ============================================================================
+# Program 7A: Cross-Layer Impact Planning
+# ============================================================================
+
+
+@dataclass
+class ImpactReport:
+    """Structured impact report for changed files."""
+
+    changed_files: list[str] = field(default_factory=list)
+    affected_engines: list[str] = field(default_factory=list)
+    affected_services: list[str] = field(default_factory=list)
+    affected_routers: list[str] = field(default_factory=list)
+    affected_endpoints: list[str] = field(default_factory=list)
+    affected_capabilities: list[str] = field(default_factory=list)
+    affected_mappers: list[str] = field(default_factory=list)
+    affected_view_models: list[str] = field(default_factory=list)
+    affected_pages: list[str] = field(default_factory=list)
+    affected_workspaces: list[str] = field(default_factory=list)
+    affected_components: list[str] = field(default_factory=list)
+    affected_graph_renderers: list[str] = field(default_factory=list)
+    affected_tests: list[str] = field(default_factory=list)
+    affected_runtimes: list[str] = field(default_factory=list)
+    affected_ui: list[str] = field(default_factory=list)
+    dependency_chains: list[dict[str, Any]] = field(default_factory=list)
+    verification_plan: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to dict."""
+        return {
+            "changed_files": self.changed_files,
+            "affected_engines": self.affected_engines,
+            "affected_services": self.affected_services,
+            "affected_routers": self.affected_routers,
+            "affected_endpoints": self.affected_endpoints,
+            "affected_capabilities": self.affected_capabilities,
+            "affected_mappers": self.affected_mappers,
+            "affected_view_models": self.affected_view_models,
+            "affected_pages": self.affected_pages,
+            "affected_workspaces": self.affected_workspaces,
+            "affected_components": self.affected_components,
+            "affected_graph_renderers": self.affected_graph_renderers,
+            "affected_tests": self.affected_tests,
+            "affected_runtimes": self.affected_runtimes,
+            "affected_ui": self.affected_ui,
+            "dependency_chains": self.dependency_chains,
+            "verification_plan": self.verification_plan,
+        }
+
+
+class CrossLayerImpactPlanner:
+    """
+    Program 7A: Cross-layer dependency intelligence.
+
+    Uses runtime/generated/cross-layer-map.json to determine blast radius
+    for changed files across the entire stack without re-reading the repo.
+    """
+
+    DEFAULT_MAP_PATH = Path("runtime/generated/cross-layer-map.json")
+
+    def __init__(self, map_path: Path | None = None):
+        self.map_path = map_path or self.DEFAULT_MAP_PATH
+        self._map: dict[str, dict[str, Any]] = {}
+        self._load_map()
+
+    def _load_map(self) -> None:
+        """Load the cross-layer map from disk."""
+        if not self.map_path.exists():
+            raise FileNotFoundError(
+                f"Cross-layer map not found at {self.map_path}. "
+                "Run `python3 tools/generators/build_cross_layer_map.py` first."
+            )
+        with open(self.map_path, encoding="utf-8") as f:
+            self._map = json.load(f)
+
+    def analyze_cross_layer_impact(
+        self, changed_files: list[str]
+    ) -> ImpactReport:
+        """Analyze impact of changed files across all layers."""
+        report = ImpactReport(changed_files=list(changed_files))
+
+        for file_path in changed_files:
+            norm = file_path.replace("\\", "/")
+            chain = self._find_chain(norm)
+            if chain:
+                self._add_chain_to_report(report, chain, file_path)
+
+        # Build structured verification plan
+        report.verification_plan = self._build_minimal_plan(report)
+
+        return report
+
+    def _find_chain(self, file_path: str) -> dict[str, Any] | None:
+        """Find the cross-layer chain for a changed file."""
+        # Direct engine file match
+        if file_path in self._map:
+            return self._map[file_path]
+
+        # Service file match - find engines that map to this service
+        # changed file is a service module
+        service_name = self._service_name_from_path(file_path)
+        if service_name:
+            for chain in self._map.values():
+                if service_name in chain.get("services", []):
+                    return chain
+
+        # Router file match
+        if file_path.startswith("backend/src/routers/"):
+            for chain in self._map.values():
+                if file_path in chain.get("routers", []):
+                    return chain
+
+        # Frontend capability match
+        for chain in self._map.values():
+            caps = chain.get("capabilities", [])
+            for cap in caps:
+                # Check if changed file is the capability file
+                cap_file = f"frontend/lib/capabilities/{cap.lower()}.ts"
+                if file_path == cap_file:
+                    return chain
+
+        # Frontend workspace/page match
+        for chain in self._map.values():
+            pages = chain.get("pages", [])
+            for page in pages:
+                if file_path.endswith(page) or page in file_path:
+                    return chain
+
+        # Component match
+        for chain in self._map.values():
+            for comp in chain.get("components", []):
+                if comp.lower() in file_path.lower():
+                    return chain
+
+        return None
+
+    def _service_name_from_path(self, file_path: str) -> str | None:
+        """Extract service class name from a service file path."""
+        if not file_path.startswith("backend/src/services/"):
+            return None
+        parts = file_path.split("/")
+        filename = parts[-1].replace(".py", "")
+        # Convert kebab-case/snake_case to PascalCase
+        words = filename.split("_")
+        return "".join(w.capitalize() for w in words)
+
+    def _add_chain_to_report(
+        self, report: ImpactReport, chain: dict[str, Any], source_file: str
+    ) -> None:
+        """Add a chain's data to the impact report."""
+        engine = chain.get("engine", "")
+        if engine and engine not in report.affected_engines:
+            report.affected_engines.append(engine)
+
+        for s in chain.get("services", []):
+            if s not in report.affected_services:
+                report.affected_services.append(s)
+
+        for r in chain.get("routers", []):
+            if r not in report.affected_routers:
+                report.affected_routers.append(r)
+
+        for e in chain.get("endpoints", []):
+            if e not in report.affected_endpoints:
+                report.affected_endpoints.append(e)
+
+        for c in chain.get("capabilities", []):
+            if c not in report.affected_capabilities:
+                report.affected_capabilities.append(c)
+
+        for m in chain.get("mappers", []):
+            if m not in report.affected_mappers:
+                report.affected_mappers.append(m)
+
+        for v in chain.get("viewModels", []):
+            if v not in report.affected_view_models:
+                report.affected_view_models.append(v)
+
+        for p in chain.get("pages", []):
+            if p not in report.affected_pages:
+                report.affected_pages.append(p)
+            if p not in report.affected_ui:
+                report.affected_ui.append(p)
+
+        for w in chain.get("workspace", []):
+            if w not in report.affected_workspaces:
+                report.affected_workspaces.append(w)
+            if w not in report.affected_ui:
+                report.affected_ui.append(w)
+
+        for c in chain.get("components", []):
+            if c not in report.affected_components:
+                report.affected_components.append(c)
+            if c not in report.affected_ui:
+                report.affected_ui.append(c)
+
+        for g in chain.get("graphRenderers", []):
+            if g not in report.affected_graph_renderers:
+                report.affected_graph_renderers.append(g)
+
+        # Add dependency chain
+        dep_chain = {
+            "source": source_file,
+            "engine": engine,
+            "services": chain.get("services", []),
+            "routers": chain.get("routers", []),
+            "endpoints": chain.get("endpoints", []),
+            "capabilities": chain.get("capabilities", []),
+            "mappers": chain.get("mappers", []),
+            "view_models": chain.get("viewModels", []),
+            "workspaces": chain.get("workspace", []),
+            "components": chain.get("components", []),
+            "tests": chain.get("tests", []),
+        }
+        report.dependency_chains.append(dep_chain)
+
+        # Tests
+        for t in chain.get("tests", []):
+            if t not in report.affected_tests:
+                report.affected_tests.append(t)
+
+    def _build_minimal_plan(self, report: ImpactReport) -> dict[str, Any]:
+        """Build a minimal verification plan from the impact report."""
+        # Determine which verification types are needed
+        run_unit = bool(report.affected_engines or report.affected_services)
+        run_contract = bool(report.affected_endpoints or report.affected_routers)
+        run_property = any("loan" in e.lower() for e in report.affected_engines)
+        run_frontend = bool(
+            report.affected_capabilities
+            or report.affected_pages
+            or report.affected_components
+        )
+        run_integration = bool(report.affected_routers)
+
+        return {
+            "run_unit": run_unit,
+            "run_contract": run_contract,
+            "run_property": run_property,
+            "run_frontend": run_frontend,
+            "run_integration": run_integration,
+            "unit_paths": report.affected_tests,
+            "contract_paths": [
+                t for t in report.affected_tests if "contract" in t
+            ],
+            "capabilities": report.affected_capabilities,
+            "engines": report.affected_engines,
+            "services": report.affected_services,
+            "impact_summary": (
+                f"{len(report.affected_engines)} engines, "
+                f"{len(report.affected_services)} services, "
+                f"{len(report.affected_capabilities)} capabilities, "
+                f"{len(report.affected_tests)} tests"
+            ),
+        }

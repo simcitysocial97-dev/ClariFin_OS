@@ -14,6 +14,59 @@ from .collectors.mutation import MutationCollector, MutationEvidence
 from .collectors.test_results import TestResultCollector, TestResultEvidence
 from .collectors.contract import ContractCollector, ContractEvidence
 
+# Program 7A: Cross-layer dependency chain enrichment
+CROSS_LAYER_MAP_PATH = Path("runtime/generated/cross-layer-map.json")
+
+
+def _load_cross_layer_map() -> dict[str, Any]:
+    """Load the cross-layer map for dependency chain enrichment."""
+    try:
+        if CROSS_LAYER_MAP_PATH.exists():
+            with open(CROSS_LAYER_MAP_PATH, encoding="utf-8") as f:
+                return json.load(f)
+    except Exception:
+        pass
+    return {}
+
+
+def _find_dependency_chain(
+    test_name: str, cross_map: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Find the dependency chain for a failing test.
+
+    Matches test names against cross-layer map entries by related keywords.
+    Returns the chain info or None.
+    """
+    if not cross_map:
+        return None
+
+    test_lower = test_name.lower()
+
+    for engine_file, chain in cross_map.items():
+        # Check if test name matches engine name
+        engine_parts = engine_file.split("/")
+        for part in engine_parts:
+            if part.endswith("_engine"):
+                engine_name = part.replace("_engine", "").lower()
+                if engine_name in test_lower:
+                    return {
+                        "engine": engine_file,
+                        "chain": chain,
+                        "engine_name": engine_name,
+                    }
+
+        # Check if test name matches capability name
+        for cap in chain.get("capabilities", []):
+            cap_lower = cap.lower().replace("use", "").replace("capability", "")
+            if cap_lower in test_lower:
+                return {
+                    "engine": engine_file,
+                    "chain": chain,
+                    "engine_name": engine_parts[-1].replace(".py", ""),
+                }
+
+    return None
+
 
 @dataclass
 class EvidenceSummary:
@@ -335,6 +388,9 @@ class EvidenceAggregator:
     ) -> list[dict]:
         attention: list[dict] = []
 
+        # Program 7A: Cross-layer dependency chain enrichment
+        cross_map = _load_cross_layer_map()
+
         mut = backend.get("mutation", {})
         for engine, data in mut.items():
             if engine == "overall":
@@ -353,21 +409,25 @@ class EvidenceAggregator:
 
         ut = backend.get("unit_tests", {})
         if ut.get("failed", 0) > 0:
+            chain = self._find_chain_for_failure("unit_tests", cross_map)
             attention.append(
                 {
                     "type": "unit_test_failures",
                     "count": ut["failed"],
                     "action": "Fix failing unit tests before merging",
+                    **chain,
                 }
             )
 
         pt = backend.get("property_tests", {})
         if pt.get("status") == "fail":
+            chain = self._find_chain_for_failure("property_tests", cross_map)
             attention.append(
                 {
                     "type": "property_test_failures",
                     "counterexamples": pt.get("counterexamples_found", 0),
                     "action": "Address property test counterexamples before merging",
+                    **chain,
                 }
             )
 
@@ -383,15 +443,78 @@ class EvidenceAggregator:
 
         contract = backend.get("contract_tests", {})
         if contract.get("status") == "fail":
+            chain = self._find_chain_for_failure("contract_tests", cross_map)
             attention.append(
                 {
                     "type": "contract_test_failures",
                     "failures": contract.get("failures_found", 0),
                     "action": "Fix API contract violations before merging",
+                    **chain,
                 }
             )
 
         return attention
+
+    def _find_chain_for_failure(
+        self, failure_type: str, cross_map: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Find dependency chain info for a failing test type.
+
+        Returns dict with dependency_chain, likely_origin, likely_consumer, suggested_layer keys.
+        """
+        if not cross_map:
+            return {}
+
+        # Try to find the most relevant engine chain
+        for engine_file, chain in cross_map.items():
+            services = chain.get("services", [])
+            capabilities = chain.get("capabilities", [])
+            endpoints = chain.get("endpoints", [])
+
+            # Determine likely origin and consumer based on failure type
+            likely_origin = engine_file
+            likely_consumer = None
+            if capabilities:
+                likely_consumer = capabilities[0]
+
+            if failure_type == "contract_tests" and endpoints:
+                likely_origin = endpoints[0]
+                likely_consumer = capabilities[0] if capabilities else "API schema"
+            elif failure_type == "unit_tests" and services:
+                likely_consumer = services[0]
+
+            # Build dependency chain string
+            dep_chain = [engine_file]
+            if services:
+                dep_chain.extend(services[:1])
+            if endpoints:
+                dep_chain.append(endpoints[0])
+            if capabilities:
+                dep_chain.append(capabilities[0])
+            if chain.get("mappers"):
+                dep_chain.append(chain["mappers"][0])
+            if chain.get("viewModels"):
+                dep_chain.append(chain["viewModels"][0])
+            if chain.get("workspace"):
+                dep_chain.append(chain["workspace"][0])
+            if chain.get("components"):
+                dep_chain.append(chain["components"][0])
+
+            # Suggested layer: the lowest-level layer that should be fixed first
+            # For DTO changes, this is usually the schema layer
+            suggested_layer = None
+            if capabilities:
+                cap_name = capabilities[0].lower().replace("use", "").replace("capability", "").strip()
+                suggested_layer = f"frontend/lib/schemas/{cap_name}s.ts"
+
+            return {
+                "dependency_chain": dep_chain,
+                "likely_origin": likely_origin,
+                "likely_consumer": likely_consumer,
+                "suggested_layer": suggested_layer,
+            }
+
+        return {}
 
     def _get_git_ref(self, ref: str) -> str:
         import subprocess

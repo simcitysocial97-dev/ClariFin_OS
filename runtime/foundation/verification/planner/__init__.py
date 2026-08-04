@@ -2,6 +2,8 @@ from runtime.foundation.verification.planner.planner import (
     VerificationPlanner,
     PlanningContext,
     plan_verification,
+    CrossLayerImpactPlanner,
+    ImpactReport,
 )
 from runtime.foundation.verification.planner.plan_models import (
     TestSuiteDecision,
@@ -26,6 +28,8 @@ __all__ = [
     "VerificationPlanner",
     "PlanningContext",
     "plan_verification",
+    "CrossLayerImpactPlanner",
+    "ImpactReport",
     "TestSuiteDecision",
     "MutationDecision",
     "VerificationImpact",

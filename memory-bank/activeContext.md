@@ -1,10 +1,23 @@
 # Active Context
 
 ## Current Focus
+Program 7A — Cross-Layer Intelligence Foundation (Complete)
 Program 6.0 — Repository Architecture Convergence Audit (Complete)
 Program C — Financial OS Shell Architecture (Complete)
 
 ## Recent Changes
+- **Program 7A: Cross-Layer Intelligence Foundation (2026-08-04)**
+  - Created `tools/generators/build_cross_layer_map.py` for deterministic dependency graph generation
+  - Generated `runtime/generated/cross-layer-map.json` with 57 engine entries (57 files)
+  - Added `CrossLayerImpactPlanner` and `ImpactReport` to `runtime/foundation/verification/planner/planner.py`
+  - Enriched evidence aggregation in `runtime/system/evidence/aggregator.py` with dependency chains
+  - Updated `__init__.py` exports for planner (CrossLayerImpactPlanner, ImpactReport)
+  - Updated `.github/workflows/backend-verify.yml` and `.github/workflows/frontend.yml` with cross-layer map generation
+  - Created `docs/CROSS_LAYER_INTELLIGENCE.md` with full documentation
+  - No business logic, frontend, backend, DTO, or runtime redesign changes
+  - All validation passes: ruff clean, JSON valid, planner works, aggregator imports
+  - Verified minimal blast radius - loan engine change only affects loan workspace, not dashboard/cashflow/forecast
+
 - **Program 6.0 Audit (2026-08-02)**
   - Produced READ-ONLY audit at `docs/ARCHITECTURE_CONVERGENCE_AUDIT.md` (936 lines, 70 KB)
   - Section 1 (Repository Tree): Backend (27 dirs), Frontend (13 app pages + 30+ component dirs), runtime/, servers/, docs/, memory-bank/
