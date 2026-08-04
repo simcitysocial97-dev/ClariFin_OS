@@ -1,7 +1,7 @@
 /**
- * Workspace Module - Stage 7.5 Runtime Consolidation
+ * Workspace Module - Stage 8B Navigation Experience
  *
- * Central export for workspace context and registry.
+ * Central export for workspace context, registry, and lifecycle management.
  */
 
 export {
@@ -20,3 +20,25 @@ export {
 } from './workspace-registry';
 
 export { WorkspaceProvider } from './workspace-provider';
+
+// Workspace Lifecycle
+export {
+  WorkspaceLifecycleManager,
+  workspaceLifecycleManager,
+  useWorkspaceLifecycle,
+  type MountState,
+  type WorkspaceMountRecord,
+  type TransitionState,
+} from './workspace-lifecycle';
+
+export {
+  captureSnapshot,
+  getSnapshot,
+  removeSnapshot,
+  clearAllSnapshots,
+  getAllSnapshotKeys,
+  type WorkspaceStateSnapshot,
+} from './workspace-snapshot';
+
+export { LRUCache, type LRUEntry } from './lru-cache';
+

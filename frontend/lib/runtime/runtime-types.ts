@@ -68,12 +68,15 @@ export interface SelectionState {
 }
 
 // ===== Timeline =====
-export type TimeGranularity = 'month' | 'quarter' | 'year';
+export type TimeGranularity = 'day' | 'week' | 'month' | 'quarter' | 'year';
 
 export interface TimelinePosition {
   date: string | null;
   granularity: TimeGranularity;
   comparisonPeriod: { from?: string; to?: string } | null;
+  isComparing: boolean;
+  forecastMode: boolean;
+  playbackPosition: number | null; // 0–100 percentage for historical playback
 }
 
 // ===== Navigation =====

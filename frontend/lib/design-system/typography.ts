@@ -76,6 +76,30 @@ export const financialTypography = {
     lineHeight: lineHeight.normal,
   },
 
+  // H1 - Workspace title (Global Header)
+  h1: {
+    fontFamily: fontFamily.display,
+    fontSize: '1.5rem', // 24px
+    fontWeight: '700',
+    lineHeight: lineHeight.snug,
+  },
+
+  // H2 - Section heading within workspace
+  h2: {
+    fontFamily: fontFamily.sans,
+    fontSize: '1.25rem', // 20px
+    fontWeight: '600',
+    lineHeight: lineHeight.snug,
+  },
+
+  // H3 - Card title, panel heading
+  h3: {
+    fontFamily: fontFamily.sans,
+    fontSize: '1rem', // 16px
+    fontWeight: '600',
+    lineHeight: lineHeight.snug,
+  },
+
   // Caption text
   caption: {
     fontFamily: fontFamily.sans,
@@ -106,4 +130,8 @@ export const typographyClasses = {
   // Captions / Hints
   caption: 'fin-caption',
   hint: 'fin-caption text-[var(--text-tertiary)]',
+  // Headings
+  h1: 'fin-h1',
+  h2: 'fin-h2',
+  h3: 'fin-h3',
 } as const;

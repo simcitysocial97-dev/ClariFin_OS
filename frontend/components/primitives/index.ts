@@ -30,6 +30,14 @@ export { Kbd, ShortcutHint } from './kbd';
 export { FinancialIcon, getFinancialIcon } from './icon-system';
 export type { FinancialIconName } from './icon-system';
 
+// Card
+export { Card, CardHeader, CardBody, CardFooter, cardVariants } from './card';
+export type { CardProps, CardHeaderProps, CardBodyProps, CardFooterProps } from './card';
+
+// Chart
+export { ChartContainer } from './chart';
+export type { ChartContainerProps } from './chart';
+
 // Metric (existing)
 export { MetricTile } from './metric-tile/metric-tile';
 export { EntityCard } from './entity-card/entity-card';

@@ -100,6 +100,7 @@ export const easing = {
 export const fontFamily = {
   sans: 'var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)',
   mono: 'var(--font-mono, "SF Mono", "Fira Code", "Roboto Mono", monospace)',
+  display: 'var(--font-display, "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)',
 } as const;
 
 // ===== Font Size =====

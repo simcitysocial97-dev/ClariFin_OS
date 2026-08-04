@@ -38,8 +38,8 @@ export function Kbd({
   return (
     <kbd
       className={cn(
-        'inline-flex items-center gap-0.5 font-mono leading-none',
-        size === 'sm' ? 'text-[10px]' : 'text-xs',
+        'inline-flex items-center gap-0.5 font-mono leading-none fin-hint',
+        size === 'sm' ? 'text-[10px]' : 'fin-caption',
         className
       )}
       {...props}

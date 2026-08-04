@@ -9,6 +9,7 @@ import {
   ArrowDownRight,
   CheckSquare,
   Eye,
+  GitBranch,
   LayoutDashboard,
   ArrowRight,
   ArrowLeftRight,
@@ -84,6 +85,7 @@ const iconMap: Record<string, LucideIcon> = {
   salary: Banknote,
   home: Home,
   evidence: FileSearch,
+  graph: GitBranch,
 };
 
 // ===== Icon Props =====

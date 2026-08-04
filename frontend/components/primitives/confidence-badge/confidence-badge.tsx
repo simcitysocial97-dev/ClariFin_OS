@@ -39,7 +39,7 @@ export function ConfidenceBadge({
         title={`Confidence: ${confidence}%`}
       />
       {showLabel && (
-        <span className="text-xs text-gray-600">{label}</span>
+        <span className="fin-caption text-[var(--text-secondary)]">{label}</span>
       )}
     </div>
   );

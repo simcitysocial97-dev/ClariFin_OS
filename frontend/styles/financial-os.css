@@ -412,6 +412,30 @@
   }
 
   /* === Display Typography === */
+  .fin-h1 {
+    font-family: var(--font-display, var(--font-sans));
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
+  .fin-h2 {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
+  .fin-h3 {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
   .fin-label {
     font-family: var(--font-sans);
     font-size: var(--fs-sm);
@@ -875,6 +899,14 @@
     --density-font-size: 14px;
   }
 
+  .fin-density-spacious {
+    --density-table-row-height: 56px;
+    --density-panel-padding: 16px;
+    --density-icon-size: 18px;
+    --density-font-size: 14px;
+  }
+
+  /* Alias for backward compatibility */
   .fin-density-analytical {
     --density-table-row-height: 48px;
     --density-panel-padding: 16px;
