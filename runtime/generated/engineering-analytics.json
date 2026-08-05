@@ -1,0 +1,150 @@
+{
+  "local": {
+    "verification": {
+      "total_runs": 2,
+      "passed_runs": 0,
+      "failed_runs": 2,
+      "success_rate": 0.0,
+      "avg_duration_seconds": 0.06,
+      "min_duration_seconds": 0.05,
+      "max_duration_seconds": 0.07
+    },
+    "planner": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "execution": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "aggregation": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "cache": {
+      "hit_rate": 0.0,
+      "hits": 0,
+      "total": 2
+    },
+    "intent_frequency": {
+      "developer-feedback": 3
+    },
+    "environment_frequency": {
+      "local": 3
+    },
+    "profile_usage": {
+      "quick": 1,
+      "backend": 1
+    },
+    "blast_radius": {
+      "avg_engines": 0.0,
+      "avg_services": 0.0,
+      "avg_endpoints": 0.0,
+      "avg_components": 0.0
+    },
+    "rolling_averages": {
+      "rolling_avg_30": 0.06,
+      "window": 2
+    },
+    "trends": {
+      "duration_trend": "increasing",
+      "success_rate_trend": "stable",
+      "data_points": 2
+    }
+  },
+  "ci": {
+    "verification": {
+      "total_runs": 0,
+      "success_rate": 0.0
+    },
+    "planner": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "execution": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "aggregation": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "cache": {
+      "hit_rate": 0.0,
+      "hits": 0,
+      "total": 0
+    },
+    "intent_frequency": {},
+    "environment_frequency": {},
+    "profile_usage": {},
+    "blast_radius": {
+      "avg_engines": 0,
+      "avg_services": 0,
+      "avg_endpoints": 0,
+      "avg_components": 0
+    },
+    "rolling_averages": {
+      "rolling_avg_30": 0.0,
+      "window": 30
+    },
+    "trends": {
+      "duration_trend": "stable",
+      "success_rate_trend": "stable",
+      "data_points": 0
+    }
+  },
+  "combined": {
+    "verification": {
+      "total_runs": 2,
+      "passed_runs": 0,
+      "failed_runs": 2,
+      "success_rate": 0.0,
+      "avg_duration_seconds": 0.06,
+      "min_duration_seconds": 0.05,
+      "max_duration_seconds": 0.07
+    },
+    "planner": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "execution": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "aggregation": {
+      "avg_duration_seconds": 0.0,
+      "runs": 0
+    },
+    "cache": {
+      "hit_rate": 0.0,
+      "hits": 0,
+      "total": 2
+    },
+    "intent_frequency": {
+      "developer-feedback": 3
+    },
+    "environment_frequency": {
+      "local": 3
+    },
+    "profile_usage": {
+      "quick": 1,
+      "backend": 1
+    },
+    "blast_radius": {
+      "avg_engines": 0.0,
+      "avg_services": 0.0,
+      "avg_endpoints": 0.0,
+      "avg_components": 0.0
+    },
+    "rolling_averages": {
+      "rolling_avg_30": 0.06,
+      "window": 2
+    },
+    "trends": {
+      "duration_trend": "increasing",
+      "success_rate_trend": "stable",
+      "data_points": 2
+    }
+  },
+  "generated_at": "2026-08-05T00:36:47.284843+00:00"
+}

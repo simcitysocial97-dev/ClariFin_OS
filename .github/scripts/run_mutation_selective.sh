@@ -80,3 +80,12 @@ EOF
 else
   echo "Could not parse mutation score"
 fi
+
+# ── Generate aggregate report ─────────────────────
+# Consumes the mutmut cache to emit mutation-report.md + mutation-summary.json
+# so the GitHub Actions workflow remains thin (delegates to verify.py only).
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+(cd "$REPO_ROOT" && python3 "$SCRIPT_DIR/generate_mutation_report.py") || echo "Mutation report generation skipped"
+
+echo "Mutation results saved to: $MUTATION_OUTPUT_DIR/"

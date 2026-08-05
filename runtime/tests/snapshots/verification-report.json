@@ -1,0 +1,55 @@
+# Verification Report
+
+**Profile:** quick
+**Generated:** 2026-01-01T00:00:00+00:00
+**Overall Status:** passed
+
+## Changed Files
+
+- `backend/src/engines/loan_engine/amortization.py`
+
+## Blast Radius
+
+No blast radius data available.
+
+## Verification Plan
+
+- **Plan ID:** plan-20260101-000000
+- **Scope:** quick
+- **Targets:** 10
+- **Steps:** 10
+- **Estimated Duration:** 9480s
+
+## Tasks Executed
+
+| Task ID | Name | Status | Duration |
+|---------|------|--------|----------|
+| step-0001 | no-op | skipped | 0.0s |
+| step-0002 | no-op | skipped | 0.0s |
+| step-0003 | no-op | skipped | 0.0s |
+| step-0004 | no-op | skipped | 0.0s |
+| step-0005 | no-op | skipped | 0.0s |
+| step-0006 | no-op | skipped | 0.0s |
+| step-0007 | no-op | skipped | 0.0s |
+| step-0008 | no-op | skipped | 0.0s |
+| step-0009 | no-op | skipped | 0.0s |
+| step-0010 | no-op | skipped | 0.0s |
+
+## Results Summary
+
+- **Passed:** 0
+- **Failed:** 0
+- **Skipped:** 10
+- **Total Duration:** 0.0s
+
+## Dependency Chains (Program 7A)
+
+No dependency chains available (Program 7A cross-layer map not loaded).
+
+## Evidence Files
+
+No evidence files generated.
+
+## Recommendations
+
+No recommendations.

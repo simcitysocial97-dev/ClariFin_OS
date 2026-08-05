@@ -65,6 +65,9 @@ class VerificationScope(str, Enum):
     INTEGRATION = "integration"
     MIGRATION = "migration"
     REPOSITORY = "repository"
+    RUNTIME = "runtime"
+    GOLDEN = "golden"
+    PLAYWRIGHT = "playwright"
     FULL = "full"
 
 
@@ -157,6 +160,53 @@ class VerificationResult:
     error: str | None = None
     duration_seconds: float = 0.0
     metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True, slots=True)
+class VerificationTask:
+    """A discrete verification task within a profile."""
+
+    id: str
+    name: str
+    profile: str
+    commands: list[str]
+    category: VerificationCategory
+    scope: VerificationScope
+    dependencies: list[str] = field(default_factory=list)
+    estimated_duration_seconds: int = 0
+    required_evidence: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutionResult:
+    """Result of executing a single verification command."""
+
+    task_id: str
+    command: str
+    status: VerificationStatus
+    exit_code: int
+    duration_seconds: float
+    stdout_path: str
+    stderr_path: str
+    error: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class VerificationSummary:
+    """Summary of a completed verification run."""
+
+    profile: str
+    total_tasks: int
+    passed: int
+    failed: int
+    skipped: int
+    duration_seconds: float
+    report_path: str
+    cache_path: str
+    changed_files: list[str] = field(default_factory=list)
+    dependency_chains: list[dict[str, Any]] = field(default_factory=list)
+    recommendations: list[str] = field(default_factory=list)
+    overall_status: VerificationStatus = VerificationStatus.PASSED
 
 
 @dataclass(frozen=True, slots=True)
