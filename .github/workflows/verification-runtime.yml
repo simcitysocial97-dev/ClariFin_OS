@@ -1,0 +1,107 @@
+# .github/workflows/verification-runtime.yml
+#
+# PURPOSE: Engineering Runtime self-validation (runtime/tests + integrity).
+# RESPONSIBILITY: Run `runtime/verify.py runtime` — the ONLY verification command.
+# Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+
+name: Verification Runtime
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "runtime/**"
+      - "backend/src/engines/**"
+      - "backend/src/routers/**"
+      - "backend/src/mappers/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "runtime/**"
+      - "backend/src/engines/**"
+      - "backend/src/routers/**"
+      - "backend/src/mappers/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify-runtime:
+    name: Runtime Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Run runtime verification
+        run: python runtime/verify.py runtime
+
+      - name: Upload shared artifact — cross-layer-map
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: cross-layer-map
+          path: runtime/generated/cross-layer-map.json
+          retention-days: 14
+
+      - name: Upload shared artifact — knowledge-index
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: knowledge-index
+          path: runtime/generated/knowledge-index.json
+          retention-days: 14
+
+      - name: Upload shared artifact — verification-cache
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: verification-cache
+          path: runtime/generated/verification-cache.json
+          retention-days: 14
+
+      - name: Upload shared artifact — engineering-history
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: engineering-history
+          path: runtime/generated/engineering-history.json
+          retention-days: 14
+
+      - name: Upload runtime report
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: runtime-quality
+          path: |
+            runtime/generated/verification-report.md
+            runtime/generated/verification/
+          retention-days: 14
+
+      - name: Upload performance metrics
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: runtime-performance
+          path: runtime/generated/verification-performance.json
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+        shell: bash
