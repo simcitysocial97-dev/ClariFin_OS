@@ -1,0 +1,58 @@
+{
+  "engines": {
+    "category": "engines",
+    "current_count": 4,
+    "previous_count": 4,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581622+00:00"
+  },
+  "services": {
+    "category": "services",
+    "current_count": 1,
+    "previous_count": 1,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581632+00:00"
+  },
+  "routers": {
+    "category": "routers",
+    "current_count": 1,
+    "previous_count": 1,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581639+00:00"
+  },
+  "endpoints": {
+    "category": "endpoints",
+    "current_count": 1,
+    "previous_count": 1,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581644+00:00"
+  },
+  "capability_hooks": {
+    "category": "capability_hooks",
+    "current_count": 1,
+    "previous_count": 1,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581649+00:00"
+  },
+  "components": {
+    "category": "components",
+    "current_count": 1,
+    "previous_count": 1,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581654+00:00"
+  },
+  "graph_renderers": {
+    "category": "graph_renderers",
+    "current_count": 0,
+    "previous_count": 0,
+    "delta": 0,
+    "growth_rate": 0.0,
+    "timestamp": "2026-08-04T23:42:35.581660+00:00"
+  }
+}

@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { Surface } from '../../../components/primitives/surface/surface';
 import { Card } from '../../../components/primitives/card/card';
 import { ChartContainer } from '../../../components/primitives/chart/chart-container';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 describe('Performance Validation — Milestone 10', () => {
   describe('Rendering Performance', () => {

@@ -1,0 +1,19 @@
+{
+  "frontend/lib/renderers/loangraphrenderer.tsx": {
+    "engine": "backend/src/engines/loan_engine/amortization.py",
+    "services": ["LoanService"],
+    "routers": ["backend/src/routers/loans.py"],
+    "endpoints": ["GET /api/loans/{loan_id}/schedule"],
+    "capabilities": ["useLoansCapability"],
+    "mappers": ["loansMapper"],
+    "viewModels": ["LoansViewModel"],
+    "pages": ["app/loans/page.tsx"],
+    "workspace": ["LoansWorkspace"],
+    "components": ["AmortizationTable", "LoansSummary"],
+    "tests": [
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/contract/generated/test_loans.py"
+    ],
+    "graphRenderers": ["LoanGraphRenderer"]
+  }
+}

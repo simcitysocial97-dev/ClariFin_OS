@@ -1,0 +1,78 @@
+# .github/workflows/dependency-update.yml
+#
+# PURPOSE: Scheduled dependency health monitoring (weekly).
+# RESPONSIBILITY: Run the dependency health check script.
+# Rule 4: identical setup via shared composite actions. Rule 9: status summary.
+# Not a verification profile workflow (operational); logic lives in
+# .github/scripts/run_dependency_checks.sh, never inlined in YAML.
+
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-health:
+    name: Dependency Health
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "20"
+          working-directory: "frontend"
+
+      - name: Run dependency checks
+        run: bash .github/scripts/run_dependency_checks.sh
+
+      - name: Upload python dependencies
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: python-dependencies
+          path: dependency-reports/python-audit.txt
+          retention-days: 30
+
+      - name: Upload npm dependencies
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: npm-dependencies
+          path: |
+            dependency-reports/npm-audit.txt
+            dependency-reports/npm-outdated.json
+          retention-days: 30
+
+      - name: Upload dependency health
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: dependency-health
+          path: dependency-reports/dependency-health.md
+          retention-days: 30
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+        shell: bash

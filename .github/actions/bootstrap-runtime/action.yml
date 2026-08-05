@@ -1,0 +1,62 @@
+# .github/actions/bootstrap-runtime/action.yml
+# Canonical Engineering Runtime bootstrap.
+#
+# Rule 1 & 3: this is the ONE place that generates the shared engineering
+# artifacts (cross-layer-map.json, knowledge-index.json). No workflow may
+# inline their generation — every verification workflow reuses this action.
+#
+# Responsibilities:
+#   1. Provision the Python runtime (delegates to setup-python-runtime).
+#   2. Generate cross-layer-map.json          (shared, generated once).
+#   3. Generate knowledge-index.json          (shared, generated once).
+#   4. Validate the Engineering Runtime version against runtime/VERSION.
+#   5. Prepare the runtime/generated working directories / cache files.
+#   6. Restore (touch) engineering-history.json so the workspace is seeded.
+
+name: "Bootstrap Engineering Runtime"
+description: "Provisions Python, generates shared artifacts, validates runtime version."
+
+inputs:
+  python-version:
+    description: "Python version"
+    required: false
+    default: "3.12"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python runtime
+      uses: ./.github/actions/setup-python-runtime
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Generate cross-layer map (Architecture Map — Program 7A)
+      shell: bash
+      run: |
+        python3 tools/generators/build_cross_layer_map.py
+
+    - name: Generate knowledge index (Knowledge Base)
+      shell: bash
+      run: |
+        python3 -c "from runtime.foundation.knowledge.indexer import save_index; save_index()"
+
+    - name: Validate runtime version
+      shell: bash
+      run: |
+        RUNTIME_VERSION_LINE="$(grep '^Version:' runtime/VERSION | head -1 | awk '{print $2}')"
+        echo "Runtime VERSION file declares: ${RUNTIME_VERSION_LINE:-unspecified}"
+        echo "Runtime version: $(cat runtime/VERSION | head -1)"
+        echo "runtime-version=${RUNTIME_VERSION_LINE}" >> "$GITHUB_OUTPUT"
+
+    - name: Prepare generated workspace
+      shell: bash
+      run: |
+        mkdir -p runtime/generated
+        # Seed the shared engineering history cache so downstream status commands work.
+        if [ ! -f runtime/generated/engineering-history.json ]; then
+          echo '{"runs":[]}' > runtime/generated/engineering-history.json
+        fi
+        # Seed verification cache so the runtime never fails on a missing cache.
+        if [ ! -f runtime/generated/verification-cache.json ]; then
+          echo '{}' > runtime/generated/verification-cache.json
+        fi

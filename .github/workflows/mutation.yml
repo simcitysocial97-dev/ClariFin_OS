@@ -1,214 +1,104 @@
 # .github/workflows/mutation.yml
 #
-# PURPOSE: Mutation testing — finds gaps in test effectiveness
-# SCHEDULE: Nightly at 2 AM UTC (runs while you sleep)
-# MANUAL:   Can also be triggered manually for specific engines
+# PURPOSE: Mutation testing — finds gaps in test effectiveness (nightly).
+# RESPONSIBILITY: Run `runtime/verify.py mutation` — the ONLY verification command.
+# Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+# Concurrency: never cancel (mutation is in the Rule 6 exception list).
 #
-# Why nightly?
-#   Mutation testing is slow (30-90 minutes for full suite)
-#   It would make every PR take too long
-#   Nightly gives you fresh results every morning
+# The selective-mutation logic (run_mutation_selective.sh) owns discovery,
+# execution and aggregate-report generation. The workflow only orchestrates.
 
 name: Mutation Testing
 
 on:
-  # Nightly schedule — 2 AM UTC = 7:30 AM IST
   schedule:
-    - cron: "0 2 * * *"    # Every day at 2 AM UTC
-  
-  # Allow manual trigger with custom target
+    - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
       target-path:
-        description: "Path to mutate (e.g., src/engines/loan_engine.py)"
+        description: "Path to mutate (e.g. src/engines/loan_engine.py)"
         required: false
         default: ""
-      
       engine-name:
-        description: "Specific engine name (e.g., loan, credit_card)"
+        description: "Specific engine name (e.g. loan, credit_card)"
         required: false
         default: "all"
 
-# No concurrency cancellation here
-# We want mutation runs to complete fully
 concurrency:
-  group: mutation-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: read
+
 jobs:
-
-  # ── Discover Mutation Targets ────────────────────────────────────────────
-  discover:
-    name: "Discover Mutation Targets"
+  mutation:
+    name: Mutation Testing
     runs-on: ubuntu-latest
-    outputs:
-      engines: ${{ steps.discover.outputs.engines }}
-    
+    timeout-minutes: 90
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Python environment
-        uses: ./.github/actions/setup-python-env
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
-          working-directory: "backend"
-
-      - name: Discover engines from runtime
-        id: discover
-        working-directory: backend
-        run: |
-          python -m tests.runtime.ci_targets --mutation --json > mutation-targets.json
-          ENGINES=$(python -c "import json; data=json.load(open('mutation-targets.json')); print(json.dumps([p.split('/')[-1].replace('.py','') for p in data['mutation']]))")
-          echo "engines=$ENGINES" >> "$GITHUB_OUTPUT"
-          echo "Discovered engines: $ENGINES"
-
-  # ── Selective Mutation (Nightly) ──────────────────────────────────────────
-  mutation-engines:
-    name: "Mutation — Engines"
-    runs-on: ubuntu-latest
-    timeout-minutes: 90    # Mutation is slow — give it time
-    needs: discover
-    
-    strategy:
-      # Run mutation for each engine in parallel
-      # This distributes the work across multiple runners
-      matrix:
-        engine: ${{ fromJson(needs.discover.outputs.engines) }}
-      
-      # Continue other engines even if one fails
-      fail-fast: false
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python environment
-        uses: ./.github/actions/setup-python-env
-        with:
-          python-version: "3.12"
-          working-directory: "backend"
-
-      - name: Find engine file
-        id: find-engine
-        working-directory: backend
-        run: |
-          ENGINE="${{ matrix.engine }}"
-          ENGINE_PATH="src/engines/${ENGINE}.py"
-          
-          if [ -f "$ENGINE_PATH" ]; then
-            echo "Found: $ENGINE_PATH"
-            echo "engine-path=$ENGINE_PATH" >> "$GITHUB_OUTPUT"
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "Engine file not found for: $ENGINE"
-            echo "engine-path=" >> "$GITHUB_OUTPUT"
-            echo "found=false" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Run mutation testing
-        if: steps.find-engine.outputs.found == 'true'
-        working-directory: backend
-        run: |
-          ENGINE_PATH="${{ steps.find-engine.outputs.engine-path }}"
-          ENGINE_NAME="${{ matrix.engine }}"
-          
-          echo "Mutating: $ENGINE_PATH"
-          
-          mkdir -p "tests/generated/mutation"
-          
-          # Run mutmut on this specific engine
-          mutmut run \
-            --paths-to-mutate "$ENGINE_PATH" \
-            --runner "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30 2>&1" \
-            2>&1 | tee "tests/generated/mutation/${ENGINE_NAME}-run.log"
-          
-          # Capture results
-          mutmut results 2>&1 | tee "tests/generated/mutation/${ENGINE_NAME}-results.txt"
-          
-          # Show surviving mutants
-          mutmut show 2>&1 | tee "tests/generated/mutation/${ENGINE_NAME}-survivors.txt" || true
+        run: python runtime/verify.py mutation
 
-      - name: Upload mutation results
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Upload shared artifact — cross-layer-map
+        uses: ./.github/actions/upload-runtime
         with:
-          name: mutation-${{ matrix.engine }}-${{ github.run_id }}
-          path: |
-            backend/tests/generated/mutation/${{ matrix.engine }}*.log
-            backend/tests/generated/mutation/${{ matrix.engine }}*.txt
-          retention-days: 90    # Keep 3 months of mutation history
+          name: cross-layer-map
+          path: runtime/generated/cross-layer-map.json
+          retention-days: 14
 
-  # ── Aggregate Results ─────────────────────────────────────────────────────
-  mutation-report:
-    name: "Mutation — Aggregate Report"
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: mutation-engines
-    if: always()    # Generate report even if some engines failed
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python environment
-        uses: ./.github/actions/setup-python-env
+      - name: Upload shared artifact — knowledge-index
+        uses: ./.github/actions/upload-runtime
         with:
-          python-version: "3.12"
-          working-directory: "backend"
+          name: knowledge-index
+          path: runtime/generated/knowledge-index.json
+          retention-days: 14
 
-      - name: Download all mutation artifacts
-        uses: actions/download-artifact@v4
+      - name: Upload shared artifact — verification-cache
+        uses: ./.github/actions/upload-runtime
         with:
-          pattern: mutation-*-${{ github.run_id }}
-          path: backend/tests/generated/mutation/
-          merge-multiple: true
+          name: verification-cache
+          path: runtime/generated/verification-cache.json
+          retention-days: 14
 
-      - name: Generate aggregate report
-        working-directory: backend
-        run: |
-          python ../.github/scripts/generate_mutation_report.py
-
-      - name: Upload final report
-        uses: actions/upload-artifact@v4
+      - name: Upload shared artifact — engineering-history
+        uses: ./.github/actions/upload-runtime
         with:
-          name: mutation-report-${{ github.run_id }}
+          name: engineering-history
+          path: runtime/generated/engineering-history.json
+          retention-days: 14
+
+      - name: Upload mutation report
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: mutation-report
           path: |
             backend/tests/generated/mutation/mutation-report.md
             backend/tests/generated/mutation/mutation-summary.json
           retention-days: 90
 
-      - name: Comment on last commit (nightly)
-        if: github.event_name == 'schedule'
-        uses: actions/github-script@v7
+      - name: Upload mutation evidence
+        uses: ./.github/actions/upload-runtime
         with:
-          script: |
-            const fs = require('fs');
-            const reportPath = 'backend/tests/generated/mutation/mutation-report.md';
-            
-            let report = '## Nightly Mutation Report\n\n';
-            
-            if (fs.existsSync(reportPath)) {
-              report += fs.readFileSync(reportPath, 'utf8');
-            } else {
-              report += 'Mutation report not generated.';
-            }
-            
-            // Create a commit comment
-            await github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              commit_sha: context.sha,
-              body: report.substring(0, 65536)  // GitHub limit
-            });
+          name: mutation-evidence
+          path: backend/tests/generated/mutation/
+          retention-days: 30
 
-      # Job Summary
       - name: Job Summary
         if: always()
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
         shell: bash

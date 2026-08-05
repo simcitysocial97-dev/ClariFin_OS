@@ -1,27 +1,30 @@
+# .github/workflows/backend-verify.yml
+#
+# PURPOSE: Backend verification via the autonomous runtime.
+# RESPONSIBILITY: Run `runtime/verify.py backend` — the ONLY verification command.
+# Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+
 name: Backend Verification
 
 on:
   push:
-    branches: ["**"]
+    branches:
+      - "**"
     paths:
       - "backend/**"
+      - "runtime/**"
   pull_request:
-    branches: [main, develop]
+    branches:
+      - main
+      - develop
     paths:
       - "backend/**"
+      - "runtime/**"
   workflow_dispatch:
-    inputs:
-      mode:
-        description: "selective | full | mutation-only"
-        default: "selective"
-        required: false
-      target_engine:
-        description: "Specific engine name (optional)"
-        default: ""
-        required: false
 
 concurrency:
-  group: backend-verify-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -29,449 +32,72 @@ permissions:
   pull-requests: write
 
 jobs:
-  plan:
-    name: Verification Plan
+  verify:
+    name: Backend Verification
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      run_unit: ${{ steps.plan.outputs.run_unit }}
-      run_property: ${{ steps.plan.outputs.run_property }}
-      run_contract: ${{ steps.plan.outputs.run_contract }}
-      run_mutation: ${{ steps.plan.outputs.run_mutation }}
-      run_integration: ${{ steps.plan.outputs.run_integration }}
-      run_golden: ${{ steps.plan.outputs.run_golden }}
-      affected_engines: ${{ steps.plan.outputs.affected_engines }}
-      affected_services: ${{ steps.plan.outputs.affected_services }}
-      affected_routers: ${{ steps.plan.outputs.affected_routers }}
-      blast_radius: ${{ steps.plan.outputs.blast_radius }}
-      unit_paths: ${{ steps.plan.outputs.unit_paths }}
-      property_paths: ${{ steps.plan.outputs.property_paths }}
-      contract_paths: ${{ steps.plan.outputs.contract_paths }}
-      mutation_targets: ${{ steps.plan.outputs.mutation_targets }}
-      integration_paths: ${{ steps.plan.outputs.integration_paths }}
-      golden_paths: ${{ steps.plan.outputs.golden_paths }}
-
+    timeout-minutes: 30
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
 
-      - name: Find changed files
-        id: changes
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED=$(git diff --name-only "${{ github.base_ref }}"...HEAD 2>/dev/null || echo "")
-          else
-            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
-          fi
-          echo "changed_files<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$CHANGED" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+      - name: Run backend verification
+        run: python runtime/verify.py backend
 
-      # Program 7A: Generate cross-layer map once, share across all jobs
-      - name: Generate cross-layer map
-        id: cross-layer
-        run: |
-          python3 tools/generators/build_cross_layer_map.py
-
-      - name: Upload cross-layer map
-        uses: actions/upload-artifact@v4
+      - name: Upload shared artifact — cross-layer-map
+        uses: ./.github/actions/upload-runtime
         with:
           name: cross-layer-map
           path: runtime/generated/cross-layer-map.json
-          retention-days: 5
+          retention-days: 14
 
-      - name: Generate verification plan
-        id: plan
-        run: |
-          python3 .github/scripts/generate_plan.py
-        env:
-          CHANGED_FILES: ${{ steps.changes.outputs.changed_files }}
-
-      - name: Upload verification plan
-        uses: actions/upload-artifact@v4
+      - name: Upload shared artifact — knowledge-index
+        uses: ./.github/actions/upload-runtime
         with:
-          name: verification-plan
-          path: runtime/generated/verification/plan.json
-          retention-days: 5
+          name: knowledge-index
+          path: runtime/generated/knowledge-index.json
+          retention-days: 14
 
-  unit-tests:
-    name: Unit Tests
-    needs: plan
-    if: needs.plan.outputs.run_unit == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Upload shared artifact — verification-cache
+        uses: ./.github/actions/upload-runtime
         with:
-          python-version: "3.12"
+          name: verification-cache
+          path: runtime/generated/verification-cache.json
+          retention-days: 14
 
-      - name: Install backend dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install pytest pytest-cov hypothesis
-          if [ -f backend/requirements.txt ]; then
-            pip install -r backend/requirements.txt
-          elif [ -f backend/pyproject.toml ]; then
-            pip install -e backend/
-          fi
-
-      - name: Download verification plan
-        uses: actions/download-artifact@v4
+      - name: Upload shared artifact — engineering-history
+        uses: ./.github/actions/upload-runtime
         with:
-          name: verification-plan
-          path: .
+          name: engineering-history
+          path: runtime/generated/engineering-history.json
+          retention-days: 14
 
-      - name: Run unit tests
-        run: |
-          python3 -c "import json; p=json.load(open('runtime/generated/verification/plan.json')); print('Unit paths:', p['unit_tests']['paths'])"
-          cd backend
-          python3 -m pytest -x \
-            --junit-xml=tests/generated/junit.xml \
-            --cov=src --cov-report=json:tests/generated/coverage.json \
-            --cov-report=xml:tests/generated/coverage.xml \
-            --cov-config=.coveragerc \
-            ${UNIT_PATHS:-tests/unit/}
-        env:
-          UNIT_PATHS: ${{ needs.plan.outputs.unit_paths }}
-
-      - name: Upload evidence artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload backend report
+        uses: ./.github/actions/upload-runtime
         with:
-          name: evidence-unit-${{ github.run_id }}
+          name: backend-report
           path: |
-            backend/tests/generated/coverage.json
-            backend/tests/generated/coverage.xml
-            backend/tests/generated/junit.xml
-          retention-days: 5
+            runtime/generated/verification-report.md
+            runtime/generated/verification/
+          retention-days: 14
+
+      - name: Upload backend evidence
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: backend-evidence
+          path: runtime/generated/execution/
+          retention-days: 30
+
+      - name: Job Summary
         if: always()
-
-  property-tests:
-    name: Property Tests
-    needs: plan
-    if: needs.plan.outputs.run_property == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install backend dependencies
         run: |
-          pip install pytest pytest-cov hypothesis
-          pip install -e backend/ 2>/dev/null || true
-
-      - name: Download verification plan
-        uses: actions/download-artifact@v4
-        with:
-          name: verification-plan
-          path: .
-
-      - name: Run property tests
-        run: |
-          cd backend
-          HYPOTHESIS_MAX_EXAMPLES=200 python3 -m pytest \
-            --junit-xml=tests/generated/junit-property.xml \
-            ${PROPERTY_PATHS:-tests/properties/} \
-            2>&1 || true
-        env:
-          PROPERTY_PATHS: ${{ needs.plan.outputs.property_paths }}
-
-      - name: Upload evidence artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: evidence-property-${{ github.run_id }}
-          path: backend/tests/generated/junit-property.xml
-          retention-days: 5
-        if: always()
-
-  contract-tests:
-    name: Contract Tests (Schemathesis)
-    needs: plan
-    if: needs.plan.outputs.run_contract == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          pip install schemathesis 2>/dev/null || true
-          pip install -e backend/ 2>/dev/null || true
-
-      - name: Download verification plan
-        uses: actions/download-artifact@v4
-        with:
-          name: verification-plan
-          path: .
-
-      - name: Run contract tests
-        run: |
-          cd backend
-          mkdir -p tests/generated
-          python3 -m schemathesis run \
-            --hypothesis-max-examples=50 \
-            --hypothesis-database=none \
-            --output tests/generated/schemathesis-report.json \
-            tests/contract/ 2>&1 || echo "Contract tests did not complete" || true
-
-      - name: Upload contract evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: evidence-contract-${{ github.run_id }}
-          path: backend/tests/generated/
-          retention-days: 5
-        if: always()
-
-  integration-tests:
-    name: Integration Tests
-    needs: plan
-    if: needs.plan.outputs.run_integration == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install backend dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install pytest pytest-cov hypothesis
-          if [ -f backend/requirements.txt ]; then
-            pip install -r backend/requirements.txt
-          elif [ -f backend/pyproject.toml ]; then
-            pip install -e backend/
-          fi
-
-      - name: Download verification plan
-        uses: actions/download-artifact@v4
-        with:
-          name: verification-plan
-          path: .
-
-      - name: Run integration tests
-        run: |
-          cd backend
-          python3 -m pytest -x \
-            --junit-xml=tests/generated/junit-integration.xml \
-            ${INTEGRATION_PATHS:-tests/integration/} \
-            2>&1 || true
-        env:
-          INTEGRATION_PATHS: ${{ needs.plan.outputs.integration_paths }}
-
-      - name: Upload evidence artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: evidence-integration-${{ github.run_id }}
-          path: |
-            backend/tests/generated/junit-integration.xml
-          retention-days: 5
-        if: always()
-
-  golden-tests:
-    name: Golden Tests
-    needs: plan
-    if: needs.plan.outputs.run_golden == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install backend dependencies
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install pytest pytest-cov hypothesis
-          if [ -f backend/requirements.txt ]; then
-            pip install -r backend/requirements.txt
-          elif [ -f backend/pyproject.toml ]; then
-            pip install -e backend/
-          fi
-
-      - name: Download verification plan
-        uses: actions/download-artifact@v4
-        with:
-          name: verification-plan
-          path: .
-
-      - name: Run golden tests
-        run: |
-          cd backend
-          GOLDEN_PATHS="${{ needs.plan.outputs.golden_paths }}"
-          if [ -z "$GOLDEN_PATHS" ]; then
-            GOLDEN_PATHS="tests/"
-          fi
-          python3 -m pytest -x \
-            --junit-xml=tests/generated/junit-golden.xml \
-            ${GOLDEN_PATHS} \
-            -m golden \
-            2>&1 || true
-
-      - name: Upload evidence artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: evidence-golden-${{ github.run_id }}
-          path: |
-            backend/tests/generated/junit-golden.xml
-          retention-days: 5
-        if: always()
-
-  mutation:
-    name: Mutation — ${{ matrix.engine }}
-    needs: unit-tests
-    if: needs.unit-tests.result == 'success' && needs.plan.outputs.run_mutation == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    strategy:
-      fail-fast: false
-      matrix:
-        engine: ${{ fromJSON(needs.plan.outputs.affected_engines || '[]') }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: |
-          pip install mutmut pytest 2>/dev/null || true
-          pip install -e backend/ 2>/dev/null || true
-
-      - name: Download verification plan
-        uses: actions/download-artifact@v4
-        with:
-          name: verification-plan
-          path: .
-
-      - name: Run mutation for ${{ matrix.engine }}
-        run: |
-          cd backend
-          ENGINE="${{ matrix.engine }}"
-          ENGINE_DIR="src/engines/${ENGINE}_engine/"
-          ENGINE_FILE="src/engines/${ENGINE}_engine.py"
-          if [ -d "$ENGINE_DIR" ]; then
-            MUTATE_PATH="$ENGINE_DIR"
-          elif [ -f "$ENGINE_FILE" ]; then
-            MUTATE_PATH="$ENGINE_FILE"
-          else
-            echo "Warning: no engine path found for ${ENGINE}"
-            MUTATE_PATH="$ENGINE_DIR"
-          fi
-          TESTS_DIR="tests/unit/engines/${ENGINE}/"
-          if [ ! -d "$TESTS_DIR" ]; then
-            echo "Warning: no test directory found for ${ENGINE}"
-          fi
-          python3 -m mutmut run \
-            --paths-to-mutate "$MUTATE_PATH" \
-            --tests-dir "$TESTS_DIR" \
-            2>&1 || true
-          python3 -m mutmut results 2>&1 || true
-          mkdir -p tests/generated/mutation
-          mutmut show 2>/dev/null | tail -30 > tests/generated/mutation/${{ matrix.engine }}-results.txt || true
-          mutmut survivals 2>/dev/null | grep -A20 "Survived" > tests/generated/mutation/${{ matrix.engine }}-survivors.txt || true
-
-      - name: Upload mutation evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: evidence-mutation-${{ matrix.engine }}-${{ github.run_id }}
-          path: backend/tests/generated/mutation/
-          retention-days: 5
-        if: always()
-
-  evidence:
-    name: Evidence Collection
-    needs: [unit-tests, property-tests, contract-tests, integration-tests, golden-tests, mutation]
-    if: always()
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Download all evidence artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: evidence/
-          merge-multiple: true
-
-      - name: Run evidence aggregator
-        run: |
-          python3 .github/scripts/aggregate_evidence.py evidence/
-
-      - name: Upload evidence summary
-        uses: actions/upload-artifact@v4
-        with:
-          name: evidence-summary-${{ github.run_id }}
-          path: |
-            runtime/generated/evidence/summary.json
-            runtime/generated/evidence/summary.md
-          retention-days: 5
-
-      - name: Post PR comment
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const summary = fs.readFileSync('runtime/generated/evidence/summary.md', 'utf8');
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
-            const botComment = comments.find(c => c.user.type === 'Bot' && c.body.includes('Verification Evidence'));
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: summary
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: summary
-              });
-            }
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+        shell: bash

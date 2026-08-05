@@ -202,6 +202,15 @@ class VerificationPlanner:
                 scopes.add(VerificationScope.FRONTEND)
                 scopes.add(VerificationScope.CONTRACTS)
 
+            # End-to-end tests
+            elif norm_path.startswith("e2e/") or norm_path.startswith("frontend/e2e/"):
+                scopes.add(VerificationScope.PLAYWRIGHT)
+                scopes.add(VerificationScope.FRONTEND)
+
+            # Runtime self-verification
+            elif norm_path.startswith("runtime/"):
+                scopes.add(VerificationScope.RUNTIME)
+
             # Contract tests
             elif "contract" in norm_path and norm_path.endswith(".py"):
                 scopes.add(VerificationScope.CONTRACTS)
@@ -285,6 +294,9 @@ class VerificationPlanner:
                 VerificationScope.MIGRATION,
                 VerificationScope.REPOSITORY,
             ],
+            VerificationScope.RUNTIME: [VerificationScope.RUNTIME],
+            VerificationScope.GOLDEN: [VerificationScope.GOLDEN],
+            VerificationScope.PLAYWRIGHT: [VerificationScope.PLAYWRIGHT],
             VerificationScope.FULL: list(VerificationScope),
         }
 
@@ -529,7 +541,7 @@ class VerificationPlanner:
             for script in self._registry.get_scripts_by_category(cat):
                 scripts.add(script.id)
 
-        return list(workflows), list(scripts)
+        return sorted(workflows), sorted(scripts)
 
     def _build_steps(
         self,

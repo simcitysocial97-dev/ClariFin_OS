@@ -1,0 +1,13 @@
+{
+  "scenario": "baseline",
+  "description": "No changes — baseline fixture for determinism and snapshot tests",
+  "changed_files": [],
+  "expected_affected_engines": [],
+  "expected_affected_services": [],
+  "expected_affected_capabilities": [],
+  "expected_affected_mappers": [],
+  "expected_affected_workspaces": [],
+  "expected_affected_components": [],
+  "expected_affected_tests": [],
+  "expected_excluded": []
+}

@@ -1,0 +1,39 @@
+{
+  "last_commit": "0cd52e8c7a9ddc27d5a5fddd030c81655df0ba71",
+  "changed_files": [
+    ".github/actions/job-summary/action.yml",
+    ".github/actions/setup-node-env/action.yml",
+    ".github/actions/setup-python-env/action.yml",
+    ".github/actions/upload-test-artifacts/action.yml",
+    ".github/scripts/run_fast_checks.sh",
+    ".github/scripts/run_mutation_selective.sh",
+    ".github/workflows/backend-verify.yml",
+    ".github/workflows/backend.yml",
+    ".github/workflows/ci.yml",
+    ".github/workflows/frontend-build.yml",
+    ".github/workflows/frontend.yml",
+    ".github/workflows/full-validation.yml",
+    ".github/workflows/golden.yml",
+    ".github/workflows/mutation.yml",
+    ".github/workflows/nightly-property-tests.yml",
+    ".github/workflows/playwright.yml",
+    ".github/workflows/quality.yml",
+    "docs/EXECUTION_STATE.md",
+    "frontend/components/global-search/search-provider.tsx",
+    "frontend/lib/validation/__tests__/performance.test.tsx",
+    "frontend/styles/financial-os.css",
+    "runtime/foundation/verification/__init__.py",
+    "runtime/foundation/verification/models/__init__.py",
+    "runtime/foundation/verification/models/model.py",
+    "runtime/foundation/verification/planner/planner.py",
+    "runtime/foundation/verification/registry/registry.py",
+    "runtime/foundation/verification/verification.yaml"
+  ],
+  "executed_profiles": [
+    "quick",
+    "backend",
+    "runtime"
+  ],
+  "duration": 17.159075353003573,
+  "timestamp": "2026-08-05T12:05:59.567761+00:00"
+}

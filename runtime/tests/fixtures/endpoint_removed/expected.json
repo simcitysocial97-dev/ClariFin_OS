@@ -1,0 +1,27 @@
+{
+  "scenario": "endpoint_removed",
+  "description": "An API endpoint is removed, breaking downstream consumers",
+  "changed_files": [
+    "backend/src/routers/loans.py"
+  ],
+  "expected_affected_routers": ["backend/src/routers/loans.py"],
+  "expected_affected_endpoints": ["GET /api/loans/{loan_id}/schedule"],
+  "expected_affected_services": ["LoanService"],
+  "expected_affected_capabilities": ["useLoansCapability"],
+  "expected_affected_workspaces": ["LoansWorkspace"],
+  "expected_affected_components": ["AmortizationTable"],
+  "expected_affected_tests": [
+    "backend/tests/contract/generated/test_loans.py",
+    "backend/tests/contract/generated/test_v1.py"
+  ],
+  "expected_excluded": [
+    "dashboard",
+    "forecast",
+    "investments",
+    "cards",
+    "cashflow",
+    "behaviour",
+    "reconciliation",
+    "account_engine"
+  ]
+}

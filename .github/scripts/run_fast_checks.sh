@@ -66,7 +66,7 @@ else
 fi
 
 # ── Check 5: Architecture boundaries ─────────────
-echo -e "\n${YELLOW}[5/5] Architecture boundary tests...${NC}"
+echo -e "\n${YELLOW}[5/6] Architecture boundary tests...${NC}"
 if pytest tests/architecture/ \
     --timeout=30 \
     --tb=short \
@@ -76,6 +76,19 @@ if pytest tests/architecture/ \
 else
   echo -e "${RED}✗ Architecture tests failed${NC}"
   FAILED_CHECKS+=("architecture-tests")
+fi
+
+# ── Check 6: Meta / registry tests ───────────────────
+echo -e "\n${YELLOW}[6/6] Meta / registry tests...${NC}"
+if pytest tests/meta/ \
+    --timeout=30 \
+    --tb=short \
+    -q \
+    --no-header; then
+  echo -e "${GREEN}✓ Meta tests passed${NC}"
+else
+  echo -e "${RED}✗ Meta tests failed${NC}"
+  FAILED_CHECKS+=("meta-tests")
 fi
 
 # ── Summary ───────────────────────────────────────
@@ -89,4 +102,5 @@ else
   echo -e "${RED}  Failed checks: ${FAILED_CHECKS[*]}${NC}"
   echo "================================================"
   exit 1
+fi
 fi

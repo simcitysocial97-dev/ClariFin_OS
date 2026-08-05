@@ -1,16 +1,17 @@
 # .github/workflows/golden.yml
 #
-# PURPOSE: Run golden dataset regression tests
-# SCHEDULE: Nightly
-# WHY SEPARATE: Golden tests are slow (full scenarios) but critical
+# PURPOSE: Golden dataset regression tests (nightly).
+# RESPONSIBILITY: Run `runtime/verify.py golden` — the ONLY verification command.
+# Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+# Concurrency: never cancel (golden is in the Rule 6 exception list).
 
 name: Golden Dataset Regression
 
 on:
   schedule:
-    - cron: "0 3 * * *"    # 3 AM UTC = 8:30 AM IST (after mutation finishes)
-  
-  workflow_dispatch:        # Allow manual trigger
+    - cron: "0 3 * * *"
+  workflow_dispatch:
     inputs:
       dataset:
         description: "Specific dataset (or 'all')"
@@ -18,94 +19,79 @@ on:
         default: "all"
 
 concurrency:
-  group: golden-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
-jobs:
+permissions:
+  contents: read
 
-  golden-regression:
-    name: "Golden Datasets"
+jobs:
+  golden:
+    name: Golden Dataset Regression
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Python environment
-        uses: ./.github/actions/setup-python-env
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
         with:
           python-version: "3.12"
-          working-directory: "backend"
 
-      - name: Run golden regression tests
-        working-directory: backend
-        run: |
-          pytest tests/golden/ \
-            --timeout=120 \
-            --tb=long \
-            -v \
-            --no-header
+      - name: Run golden verification
+        run: python runtime/verify.py golden
 
-      - name: Run capability tests with golden data
-        working-directory: backend
-        run: |
-          pytest tests/capability/ \
-            --timeout=120 \
-            --tb=short \
-            -v \
-            --no-header
-
-      - name: Upload golden test results
-        uses: actions/upload-artifact@v4
-        if: always()
+      - name: Upload shared artifact — cross-layer-map
+        uses: ./.github/actions/upload-runtime
         with:
-          name: golden-results-${{ github.run_id }}
+          name: cross-layer-map
+          path: runtime/generated/cross-layer-map.json
+          retention-days: 14
+
+      - name: Upload shared artifact — knowledge-index
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: knowledge-index
+          path: runtime/generated/knowledge-index.json
+          retention-days: 14
+
+      - name: Upload shared artifact — verification-cache
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: verification-cache
+          path: runtime/generated/verification-cache.json
+          retention-days: 14
+
+      - name: Upload shared artifact — engineering-history
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: engineering-history
+          path: runtime/generated/engineering-history.json
+          retention-days: 14
+
+      - name: Upload golden report
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: golden-report
           path: |
-            backend/tests/golden/regressions/
+            runtime/generated/verification-report.md
+            runtime/generated/verification/
           retention-days: 90
 
-  # ── Detect Regressions ────────────────────────────────────────────────────
-  regression-comparison:
-    name: "Regression Comparison"
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: golden-regression
-    if: always()
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download golden results
-        uses: actions/download-artifact@v4
+      - name: Upload golden evidence
+        uses: ./.github/actions/upload-runtime
         with:
-          name: golden-results-${{ github.run_id }}
-          path: new-results/
-          fail-on-error: false
+          name: golden-evidence
+          path: backend/tests/generated/
+          retention-days: 30
 
-      - name: Compare with baseline
-        run: |
-          echo "Comparing golden results..."
-          
-          # Check if regression files exist
-          if [ -d "new-results" ] && [ "$(ls -A new-results)" ]; then
-            echo "Golden regression files found"
-            ls -la new-results/
-          else
-            echo "No regression files generated"
-          fi
-          
-          # Future: compare against stored baseline
-          echo "Regression comparison complete"
-
-      # Job Summary
       - name: Job Summary
         if: always()
         run: |
           echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
         shell: bash

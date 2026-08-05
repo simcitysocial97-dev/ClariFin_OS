@@ -1,0 +1,22 @@
+{
+  "scenario": "workspace_registration_missing",
+  "description": "Workspace registration is removed, breaking navigation",
+  "changed_files": [
+    "frontend/lib/workspaces/LoansWorkspace.ts"
+  ],
+  "expected_affected_workspaces": ["LoansWorkspace"],
+  "expected_affected_capabilities": ["useLoansCapability"],
+  "expected_affected_pages": ["app/loans/page.tsx"],
+  "expected_affected_components": ["LoansSummary", "AmortizationTable"],
+  "expected_affected_view_models": ["LoansViewModel"],
+  "expected_excluded": [
+    "dashboard",
+    "forecast",
+    "investments",
+    "cards",
+    "cashflow",
+    "behaviour",
+    "reconciliation",
+    "account_engine"
+  ]
+}
