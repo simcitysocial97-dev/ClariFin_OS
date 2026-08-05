@@ -1,0 +1,81 @@
+# .github/workflows/release.yml
+#
+# PURPOSE: Build and publish a release.
+# RESPONSIBILITY: Build frontend distribution + package release artifacts.
+# Rule 4: identical setup via shared composite actions. Rule 5: release
+# artifacts retained permanently. Release is not a verification profile
+# workflow; Rule 8's verify.py-delegation applies to verification workflows.
+
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release"
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "20"
+          working-directory: "frontend"
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm ci && npm run build
+
+      - name: Upload frontend distribution
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: frontend-dist
+          path: frontend/.next
+          retention-days: 90
+          if-condition: always()
+
+      - name: Generate release notes
+        run: bash .github/scripts/generate_release_notes.sh "${{ github.event.release.tag_name || inputs.version }}"
+
+      - name: Upload release notes
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: release-notes
+          path: RELEASE_NOTES.md
+          retention-days: 90
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ github.event.release.tag_name || inputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        shell: bash
