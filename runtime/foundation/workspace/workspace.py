@@ -47,9 +47,27 @@ class WorkspaceLoader:
     Only consumes artifacts already produced by Programs 7-8.
     """
 
-    def __init__(self, repo_root: Path | None = None) -> None:
+    def __init__(self, repo_root: Path | None = None, chain_map: dict | None = None) -> None:
         self.repo_root = repo_root or Path(__file__).resolve().parents[3]
         self.generated_dir = self.repo_root / "runtime" / "generated"
+        # Explicit injection seam for isolated unit tests only. At runtime this
+        # is always ``None`` and the canonical provider is used.
+        self._chain_map = chain_map
+
+    def _load_chain_map(self) -> dict:
+        """Provider-derived chain map (Program 13.3).
+
+        The workspace never reads the legacy cross-layer artifact; it consumes
+        the canonical architecture provider like every other subsystem.
+        """
+        try:
+            if self._chain_map is not None:
+                return self._chain_map
+            from runtime.foundation.architecture.chains import get_chain_map
+
+            return get_chain_map()
+        except Exception:
+            return {}
 
     def _load_json(self, name: str) -> Any:
         path = self.generated_dir / name
@@ -140,7 +158,7 @@ class WorkspaceLoader:
         )
 
     def load_cross_layer_status(self) -> CrossLayerStatus:
-        cross_layer = self._load_json("cross-layer-map.json") or {}
+        cross_layer = self._load_chain_map()
         total_engines = 0
         total_services = 0
         total_endpoints = 0
@@ -222,7 +240,7 @@ class WorkspaceLoader:
             if isinstance(data, dict):
                 total_files += data.get("local", {}).get("runs", 0)
                 total_files += data.get("ci", {}).get("runs", 0)
-        cross_layer = self._load_json("cross-layer-map.json") or {}
+        cross_layer = self._load_chain_map()
         total_files = max(total_files, len(cross_layer))
         high = max(0, total_files // 4)
         medium = max(0, total_files // 4)
@@ -412,7 +430,7 @@ class WorkspaceLoader:
         )
 
     def load_dependency_chain(self, file_path: str) -> DependencyExplorerResult:
-        cross_layer = self._load_json("cross-layer-map.json") or {}
+        cross_layer = self._load_chain_map()
         entry = cross_layer.get(file_path)
         if entry is None:
             return DependencyExplorerResult(file_path=file_path, chain=None, found=False)
@@ -435,4 +453,4 @@ class WorkspaceLoader:
         return DependencyExplorerResult(file_path=file_path, chain=chain, found=True)
 
     def load_cross_layer_map(self) -> dict[str, Any]:
-        return self._load_json("cross-layer-map.json") or {}
+        return self._load_chain_map()

@@ -1,0 +1,73 @@
+{
+  "schema": "intelligence-inventory/v1",
+  "generated_at": "2026-08-06T14:24:40.114647+00:00",
+  "package": "runtime/foundation/intelligence",
+  "legacy_modules_found": 6,
+  "legacy_modules_remaining": 0,
+  "canonical_implementation": "runtime/foundation/intelligence/platform",
+  "modules": [
+    {
+      "module": "runtime/foundation/intelligence/affected.py",
+      "responsibility": "Affected test planning for changed files",
+      "replacement": "runtime/foundation/intelligence/platform/optimizer.py + blast.py + api.verification_plan",
+      "migration_status": "eliminated",
+      "constitutional_violations": [
+        "inferred test paths from filenames (f'backend/tests/unit/engines/{engine_name}/')",
+        "consumed CrossLayerImpactPlanner instead of the canonical provider"
+      ],
+      "lines_removed": 117
+    },
+    {
+      "module": "runtime/foundation/intelligence/diagnostics.py",
+      "responsibility": "Developer diagnostics (changed layers, repair, risk)",
+      "replacement": "runtime/foundation/intelligence/platform/{change,blast,risk,repair}.py + api",
+      "migration_status": "eliminated",
+      "constitutional_violations": [
+        "consumed CrossLayerImpactPlanner for change/impact analysis",
+        "owned a second, independent change-intelligence implementation"
+      ],
+      "lines_removed": 229
+    },
+    {
+      "module": "runtime/foundation/intelligence/risk.py",
+      "responsibility": "Risk scoring",
+      "replacement": "runtime/foundation/intelligence/platform/risk.py (assess_risk)",
+      "migration_status": "eliminated",
+      "constitutional_violations": [
+        "consumed CrossLayerImpactPlanner",
+        "counted category changes rather than citing provider evidence"
+      ],
+      "lines_removed": 219
+    },
+    {
+      "module": "runtime/foundation/intelligence/repair.py",
+      "responsibility": "Repair suggestion generation",
+      "replacement": "runtime/foundation/intelligence/platform/repair.py (build_repair_intelligence)",
+      "migration_status": "eliminated",
+      "constitutional_violations": [
+        "built suggestions from dependency-chain dicts, not the canonical provider"
+      ],
+      "lines_removed": 177
+    },
+    {
+      "module": "runtime/foundation/intelligence/formatter.py",
+      "responsibility": "CLI formatting of legacy dataclasses",
+      "replacement": "runtime/foundation/intelligence/platform/cli_format.py",
+      "migration_status": "eliminated",
+      "constitutional_violations": [
+        "formatted pre-14.0 DiagnosticReport/RiskReport/AffectedTestPlan models"
+      ],
+      "lines_removed": 206
+    },
+    {
+      "module": "runtime/foundation/intelligence/models.py",
+      "responsibility": "Legacy dataclasses (DiagnosticReport, RiskReport, etc.)",
+      "replacement": "canonical platform dataclasses (ChangeIntelligence, BlastRadius, ...)",
+      "migration_status": "eliminated",
+      "constitutional_violations": [
+        "defined the types the legacy intelligence operated on"
+      ],
+      "lines_removed": 117
+    }
+  ]
+}

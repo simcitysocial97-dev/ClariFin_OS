@@ -1,0 +1,990 @@
+{
+  "generated_at": "2026-08-06T11:40:05.708576+00:00",
+  "schema": "knowledge-migration-report",
+  "principle": "Knowledge is owned by the architectural ENTITY it describes (engine, capability, service, router, repository). Knowledge is reconstructed from the architecture, not from filename scanning.",
+  "single_source": "runtime.foundation.architecture.get_architecture",
+  "entity_count": 85,
+  "entities": [
+    {
+      "id": "engine:account_engine",
+      "type": "Engine",
+      "name": "account_engine",
+      "owner": "useAccountsCapability",
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/account_engine/__init__.py.",
+        "Implement 6 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/account_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE"
+    },
+    {
+      "id": "engine:balance_engine",
+      "type": "Engine",
+      "name": "balance_engine",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/balance_engine.py.",
+        "Implement 0 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/statement_service.py"
+      ],
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL"
+    },
+    {
+      "id": "engine:behaviour_engine",
+      "type": "Engine",
+      "name": "behaviour_engine",
+      "owner": "useBehaviourCapability",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/behaviour_engine/__init__.py.",
+        "Implement 15 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/import_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE"
+    },
+    {
+      "id": "engine:credit_card_engine",
+      "type": "Engine",
+      "name": "credit_card_engine",
+      "owner": "useCreditCardsCapability",
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/credit_card_engine/__init__.py.",
+        "Implement 7 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/credit_card_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE"
+    },
+    {
+      "id": "engine:financial_events",
+      "type": "Engine",
+      "name": "financial_events",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/financial_events/__init__.py.",
+        "Implement 1 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/financial_events_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL"
+    },
+    {
+      "id": "engine:financial_intelligence",
+      "type": "Engine",
+      "name": "financial_intelligence",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/financial_intelligence/__init__.py.",
+        "Implement 7 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/financial_intelligence_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL"
+    },
+    {
+      "id": "engine:insight_generator",
+      "type": "Engine",
+      "name": "insight_generator",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/insight_generator.py.",
+        "Implement 0 implementation module(s)."
+      ],
+      "consumers": [
+        "engine:behaviour_engine"
+      ],
+      "migration_status": "ORPHAN_INTERNAL"
+    },
+    {
+      "id": "engine:ledger_audit_engine",
+      "type": "Engine",
+      "name": "ledger_audit_engine",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/ledger_audit_engine.py.",
+        "Implement 0 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/audit_service.py"
+      ],
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL"
+    },
+    {
+      "id": "engine:loan_engine",
+      "type": "Engine",
+      "name": "loan_engine",
+      "owner": "useLoansCapability",
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/loan_engine/__init__.py.",
+        "Implement 8 implementation module(s)."
+      ],
+      "consumers": [
+        "engine:credit_card_engine",
+        "engine:financial_intelligence",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/loan_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE"
+    },
+    {
+      "id": "engine:nudge_engine",
+      "type": "Engine",
+      "name": "nudge_engine",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/nudge_engine.py.",
+        "Implement 0 implementation module(s)."
+      ],
+      "consumers": [
+        "engine:behaviour_engine"
+      ],
+      "migration_status": "ORPHAN_INTERNAL"
+    },
+    {
+      "id": "engine:recommendation_engine",
+      "type": "Engine",
+      "name": "recommendation_engine",
+      "owner": "useBehaviourCapability",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/recommendation_engine/__init__.py.",
+        "Implement 1 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/recommendation_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE"
+    },
+    {
+      "id": "engine:reconciliation_engine",
+      "type": "Engine",
+      "name": "reconciliation_engine",
+      "owner": "useReconciliationCapability",
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/reconciliation_engine.py.",
+        "Implement 0 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/reconciliation_service.py"
+      ],
+      "migration_status": "CANONICAL_SINGLE_FILE"
+    },
+    {
+      "id": "engine:transaction_intelligence",
+      "type": "Engine",
+      "name": "transaction_intelligence",
+      "owner": "INTERNAL (no capability owner)",
+      "capabilities": [],
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via backend/src/engines/transaction_intelligence/__init__.py.",
+        "Implement 4 implementation module(s)."
+      ],
+      "consumers": [
+        "service:backend/src/services/transaction_intelligence_service.py"
+      ],
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL"
+    },
+    {
+      "id": "capability:useAccountsCapability",
+      "type": "Capability",
+      "name": "useAccountsCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [
+        "account_engine"
+      ],
+      "endpoint_count": 25,
+      "workspaces": [
+        "accounts"
+      ],
+      "resolved": true
+    },
+    {
+      "id": "capability:useBehaviourCapability",
+      "type": "Capability",
+      "name": "useBehaviourCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "endpoint_count": 18,
+      "workspaces": [
+        "behaviour"
+      ],
+      "resolved": true
+    },
+    {
+      "id": "capability:useCashflowCapability",
+      "type": "Capability",
+      "name": "useCashflowCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [],
+      "endpoint_count": 0,
+      "workspaces": [],
+      "resolved": false
+    },
+    {
+      "id": "capability:useCreditCardsCapability",
+      "type": "Capability",
+      "name": "useCreditCardsCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [
+        "credit_card_engine"
+      ],
+      "endpoint_count": 14,
+      "workspaces": [
+        "cards"
+      ],
+      "resolved": true
+    },
+    {
+      "id": "capability:useForecastCapability",
+      "type": "Capability",
+      "name": "useForecastCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [],
+      "endpoint_count": 0,
+      "workspaces": [
+        "forecast"
+      ],
+      "resolved": false
+    },
+    {
+      "id": "capability:useInvestmentsCapability",
+      "type": "Capability",
+      "name": "useInvestmentsCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [],
+      "endpoint_count": 0,
+      "workspaces": [
+        "investments"
+      ],
+      "resolved": false
+    },
+    {
+      "id": "capability:useLoansCapability",
+      "type": "Capability",
+      "name": "useLoansCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [
+        "loan_engine"
+      ],
+      "endpoint_count": 13,
+      "workspaces": [
+        "loans"
+      ],
+      "resolved": true
+    },
+    {
+      "id": "capability:useNetWorthCapability",
+      "type": "Capability",
+      "name": "useNetWorthCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [],
+      "endpoint_count": 0,
+      "workspaces": [],
+      "resolved": false
+    },
+    {
+      "id": "capability:useReconciliationCapability",
+      "type": "Capability",
+      "name": "useReconciliationCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [
+        "reconciliation_engine"
+      ],
+      "endpoint_count": 6,
+      "workspaces": [
+        "reconciliation"
+      ],
+      "resolved": true
+    },
+    {
+      "id": "capability:useTransactionCapability",
+      "type": "Capability",
+      "name": "useTransactionCapability",
+      "owner": "Frontend Workspace",
+      "backing_engines": [],
+      "endpoint_count": 0,
+      "workspaces": [
+        "transactions"
+      ],
+      "resolved": false
+    },
+    {
+      "id": "service:backend/src/services/__init__.py",
+      "type": "Service",
+      "name": "__init__",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/account_service.py",
+      "type": "Service",
+      "name": "account_service",
+      "owner": [
+        "account_engine"
+      ],
+      "routers": [
+        "backend/src/routers/accounts.py",
+        "backend/src/routers/managed_accounts.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/audit_service.py",
+      "type": "Service",
+      "name": "audit_service",
+      "owner": [
+        "ledger_audit_engine"
+      ],
+      "routers": [
+        "backend/src/routers/audit.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/bank_service.py",
+      "type": "Service",
+      "name": "bank_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/base.py",
+      "type": "Service",
+      "name": "base",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/base_service.py",
+      "type": "Service",
+      "name": "base_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/behaviour_service.py",
+      "type": "Service",
+      "name": "behaviour_service",
+      "owner": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/behaviour_workspace_service.py",
+      "type": "Service",
+      "name": "behaviour_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/cashflow_service.py",
+      "type": "Service",
+      "name": "cashflow_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/cashflow_workspace_service.py",
+      "type": "Service",
+      "name": "cashflow_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/credit_card_service.py",
+      "type": "Service",
+      "name": "credit_card_service",
+      "owner": [
+        "credit_card_engine"
+      ],
+      "routers": [
+        "backend/src/routers/credit_cards.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/credit_cards_workspace_service.py",
+      "type": "Service",
+      "name": "credit_cards_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/dashboard_service.py",
+      "type": "Service",
+      "name": "dashboard_service",
+      "owner": [
+        "behaviour_engine"
+      ],
+      "routers": [
+        "backend/src/routers/dashboard.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/export_service.py",
+      "type": "Service",
+      "name": "export_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/financial_events_service.py",
+      "type": "Service",
+      "name": "financial_events_service",
+      "owner": [
+        "financial_events"
+      ],
+      "routers": [
+        "backend/src/routers/financial_events.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/financial_intelligence_service.py",
+      "type": "Service",
+      "name": "financial_intelligence_service",
+      "owner": [
+        "financial_intelligence"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/forecast_service.py",
+      "type": "Service",
+      "name": "forecast_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/import_service.py",
+      "type": "Service",
+      "name": "import_service",
+      "owner": [
+        "behaviour_engine"
+      ],
+      "routers": [
+        "backend/src/routers/import_router.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/investment_service.py",
+      "type": "Service",
+      "name": "investment_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/investments_workspace_service.py",
+      "type": "Service",
+      "name": "investments_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/loan_analysis_service.py",
+      "type": "Service",
+      "name": "loan_analysis_service",
+      "owner": [
+        "loan_engine"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/loan_service.py",
+      "type": "Service",
+      "name": "loan_service",
+      "owner": [
+        "loan_engine"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/loan_simulation_service.py",
+      "type": "Service",
+      "name": "loan_simulation_service",
+      "owner": [
+        "loan_engine"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/loans_workspace_service.py",
+      "type": "Service",
+      "name": "loans_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/member_service.py",
+      "type": "Service",
+      "name": "member_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/networth_service.py",
+      "type": "Service",
+      "name": "networth_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/networth_workspace_service.py",
+      "type": "Service",
+      "name": "networth_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/recommendation_service.py",
+      "type": "Service",
+      "name": "recommendation_service",
+      "owner": [
+        "recommendation_engine"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/reconciliation_service.py",
+      "type": "Service",
+      "name": "reconciliation_service",
+      "owner": [
+        "reconciliation_engine"
+      ],
+      "routers": [
+        "backend/src/routers/reconciliation.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/reconciliation_workspace_service.py",
+      "type": "Service",
+      "name": "reconciliation_workspace_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/statement_service.py",
+      "type": "Service",
+      "name": "statement_service",
+      "owner": [
+        "balance_engine"
+      ],
+      "routers": [
+        "backend/src/routers/cards_statements.py"
+      ]
+    },
+    {
+      "id": "service:backend/src/services/transaction_intelligence_service.py",
+      "type": "Service",
+      "name": "transaction_intelligence_service",
+      "owner": [
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "routers": []
+    },
+    {
+      "id": "service:backend/src/services/transaction_service.py",
+      "type": "Service",
+      "name": "transaction_service",
+      "owner": [
+        "UNRESOLVED"
+      ],
+      "routers": []
+    },
+    {
+      "id": "router:backend/src/routers/accounts.py",
+      "type": "Router",
+      "name": "accounts",
+      "owner": [
+        "account_engine"
+      ],
+      "endpoint_count": 19
+    },
+    {
+      "id": "router:backend/src/routers/audit.py",
+      "type": "Router",
+      "name": "audit",
+      "owner": [
+        "ledger_audit_engine"
+      ],
+      "endpoint_count": 1
+    },
+    {
+      "id": "router:backend/src/routers/behaviour.py",
+      "type": "Router",
+      "name": "behaviour",
+      "owner": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "endpoint_count": 7
+    },
+    {
+      "id": "router:backend/src/routers/cards_statements.py",
+      "type": "Router",
+      "name": "cards_statements",
+      "owner": [
+        "balance_engine"
+      ],
+      "endpoint_count": 0
+    },
+    {
+      "id": "router:backend/src/routers/credit_cards.py",
+      "type": "Router",
+      "name": "credit_cards",
+      "owner": [
+        "credit_card_engine"
+      ],
+      "endpoint_count": 14
+    },
+    {
+      "id": "router:backend/src/routers/dashboard.py",
+      "type": "Router",
+      "name": "dashboard",
+      "owner": [
+        "behaviour_engine"
+      ],
+      "endpoint_count": 1
+    },
+    {
+      "id": "router:backend/src/routers/financial_events.py",
+      "type": "Router",
+      "name": "financial_events",
+      "owner": [
+        "financial_events"
+      ],
+      "endpoint_count": 0
+    },
+    {
+      "id": "router:backend/src/routers/financial_intelligence.py",
+      "type": "Router",
+      "name": "financial_intelligence",
+      "owner": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "endpoint_count": 6
+    },
+    {
+      "id": "router:backend/src/routers/import_router.py",
+      "type": "Router",
+      "name": "import_router",
+      "owner": [
+        "behaviour_engine"
+      ],
+      "endpoint_count": 3
+    },
+    {
+      "id": "router:backend/src/routers/loans.py",
+      "type": "Router",
+      "name": "loans",
+      "owner": [
+        "loan_engine"
+      ],
+      "endpoint_count": 13
+    },
+    {
+      "id": "router:backend/src/routers/managed_accounts.py",
+      "type": "Router",
+      "name": "managed_accounts",
+      "owner": [
+        "account_engine"
+      ],
+      "endpoint_count": 6
+    },
+    {
+      "id": "router:backend/src/routers/reconciliation.py",
+      "type": "Router",
+      "name": "reconciliation",
+      "owner": [
+        "reconciliation_engine"
+      ],
+      "endpoint_count": 6
+    },
+    {
+      "id": "repository:account_balance_repository",
+      "type": "Repository",
+      "name": "account_balance_repository",
+      "owner": [
+        "account_engine"
+      ],
+      "path": "backend/src/repositories/account_balance_repository.py"
+    },
+    {
+      "id": "repository:account_link_repository",
+      "type": "Repository",
+      "name": "account_link_repository",
+      "owner": [
+        "account_engine"
+      ],
+      "path": "backend/src/repositories/account_link_repository.py"
+    },
+    {
+      "id": "repository:account_repository",
+      "type": "Repository",
+      "name": "account_repository",
+      "owner": [
+        "account_engine",
+        "behaviour_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/account_repository.py"
+    },
+    {
+      "id": "repository:behaviour_repository",
+      "type": "Repository",
+      "name": "behaviour_repository",
+      "owner": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "path": "backend/src/repositories/behaviour_repository.py"
+    },
+    {
+      "id": "repository:credit_card_repository",
+      "type": "Repository",
+      "name": "credit_card_repository",
+      "owner": [
+        "behaviour_engine",
+        "credit_card_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/credit_card_repository.py"
+    },
+    {
+      "id": "repository:credit_card_statement_repository",
+      "type": "Repository",
+      "name": "credit_card_statement_repository",
+      "owner": [
+        "credit_card_engine"
+      ],
+      "path": "backend/src/repositories/credit_card_statement_repository.py"
+    },
+    {
+      "id": "repository:financial_event_repository",
+      "type": "Repository",
+      "name": "financial_event_repository",
+      "owner": [
+        "financial_events",
+        "financial_intelligence",
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/financial_event_repository.py"
+    },
+    {
+      "id": "repository:financial_goal_repository",
+      "type": "Repository",
+      "name": "financial_goal_repository",
+      "owner": [
+        "financial_intelligence"
+      ],
+      "path": "backend/src/repositories/financial_goal_repository.py"
+    },
+    {
+      "id": "repository:institution_repository",
+      "type": "Repository",
+      "name": "institution_repository",
+      "owner": [
+        "account_engine"
+      ],
+      "path": "backend/src/repositories/institution_repository.py"
+    },
+    {
+      "id": "repository:liquidity_pattern_repository",
+      "type": "Repository",
+      "name": "liquidity_pattern_repository",
+      "owner": [
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/liquidity_pattern_repository.py"
+    },
+    {
+      "id": "repository:loan_payment_repository",
+      "type": "Repository",
+      "name": "loan_payment_repository",
+      "owner": [
+        "loan_engine"
+      ],
+      "path": "backend/src/repositories/loan_payment_repository.py"
+    },
+    {
+      "id": "repository:loan_repository",
+      "type": "Repository",
+      "name": "loan_repository",
+      "owner": [
+        "behaviour_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/loan_repository.py"
+    },
+    {
+      "id": "repository:pattern_repository",
+      "type": "Repository",
+      "name": "pattern_repository",
+      "owner": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "path": "backend/src/repositories/pattern_repository.py"
+    },
+    {
+      "id": "repository:reconciliation_repository",
+      "type": "Repository",
+      "name": "reconciliation_repository",
+      "owner": [
+        "behaviour_engine",
+        "reconciliation_engine"
+      ],
+      "path": "backend/src/repositories/reconciliation_repository.py"
+    },
+    {
+      "id": "repository:statement_repository",
+      "type": "Repository",
+      "name": "statement_repository",
+      "owner": [
+        "balance_engine",
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/statement_repository.py"
+    },
+    {
+      "id": "repository:transaction_classification_repository",
+      "type": "Repository",
+      "name": "transaction_classification_repository",
+      "owner": [
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/transaction_classification_repository.py"
+    },
+    {
+      "id": "repository:transaction_repository",
+      "type": "Repository",
+      "name": "transaction_repository",
+      "owner": [
+        "behaviour_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ],
+      "path": "backend/src/repositories/transaction_repository.py"
+    }
+  ],
+  "unresolved_capabilities": [
+    "useCashflowCapability",
+    "useForecastCapability",
+    "useInvestmentsCapability",
+    "useNetWorthCapability",
+    "useTransactionCapability"
+  ],
+  "notes": [
+    "Capability->engine is MANY-TO-MANY (e.g. useBehaviourCapability backs both behaviour_engine and recommendation_engine).",
+    "Capabilities with no backend router (frontend-only fetch via the API client) are reported as unresolved rather than force-linked."
+  ]
+}

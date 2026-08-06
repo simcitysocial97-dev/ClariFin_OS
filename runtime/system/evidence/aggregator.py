@@ -15,18 +15,23 @@ from .collectors.test_results import TestResultCollector, TestResultEvidence
 from .collectors.contract import ContractCollector, ContractEvidence
 
 # Program 7A: Cross-layer dependency chain enrichment
-CROSS_LAYER_MAP_PATH = Path("runtime/generated/cross-layer-map.json")
+# Program 13.3: chains come from the canonical architecture provider, never
+# from the legacy cross-layer-map artifact. This override is an explicit
+# test-injection seam only; it is ``None`` at runtime.
+CROSS_LAYER_MAP_PATH: Path | None = None
 
 
 def _load_cross_layer_map() -> dict[str, Any]:
-    """Load the cross-layer map for dependency chain enrichment."""
+    """Provider-derived chain map used for dependency chain enrichment."""
     try:
-        if CROSS_LAYER_MAP_PATH.exists():
+        if CROSS_LAYER_MAP_PATH is not None and CROSS_LAYER_MAP_PATH.exists():
             with open(CROSS_LAYER_MAP_PATH, encoding="utf-8") as f:
                 return json.load(f)
+        from runtime.foundation.architecture.chains import get_chain_map
+
+        return get_chain_map()
     except Exception:
-        pass
-    return {}
+        return {}
 
 
 def _find_dependency_chain(

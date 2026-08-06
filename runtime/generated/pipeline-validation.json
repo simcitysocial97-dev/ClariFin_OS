@@ -4,7 +4,7 @@
       "stage": "repository",
       "name": "Repository Index Audit",
       "status": "pass",
-      "duration_seconds": 4.62,
+      "duration_seconds": 4.63,
       "findings_count": 10,
       "passed": 10,
       "failed": 0
@@ -12,17 +12,17 @@
     {
       "stage": "cross_layer",
       "name": "Cross-Layer Map Audit",
-      "status": "fail",
-      "duration_seconds": 0.0,
-      "findings_count": 11,
-      "passed": 10,
-      "failed": 1
+      "status": "pass",
+      "duration_seconds": 0.08,
+      "findings_count": 12,
+      "passed": 12,
+      "failed": 0
     },
     {
       "stage": "dependency_graph",
       "name": "Dependency Graph Audit",
       "status": "pass",
-      "duration_seconds": 0.18,
+      "duration_seconds": 0.2,
       "findings_count": 12,
       "passed": 12,
       "failed": 0
@@ -31,7 +31,7 @@
       "stage": "planner",
       "name": "Verification Planner Audit",
       "status": "pass",
-      "duration_seconds": 0.04,
+      "duration_seconds": 0.05,
       "findings_count": 36,
       "passed": 36,
       "failed": 0
@@ -58,7 +58,7 @@
       "stage": "observability",
       "name": "Observability Audit",
       "status": "pass",
-      "duration_seconds": 0.02,
+      "duration_seconds": 0.03,
       "findings_count": 8,
       "passed": 8,
       "failed": 0
@@ -67,7 +67,7 @@
       "stage": "knowledge",
       "name": "Knowledge Base Audit",
       "status": "pass",
-      "duration_seconds": 0.07,
+      "duration_seconds": 0.08,
       "findings_count": 11,
       "passed": 11,
       "failed": 0
@@ -76,7 +76,7 @@
       "stage": "workspace",
       "name": "Workspace Audit",
       "status": "pass",
-      "duration_seconds": 1.35,
+      "duration_seconds": 1.51,
       "findings_count": 16,
       "passed": 16,
       "failed": 0
@@ -85,7 +85,7 @@
       "stage": "integrity",
       "name": "Integrity Engine Audit",
       "status": "pass",
-      "duration_seconds": 4.39,
+      "duration_seconds": 4.15,
       "findings_count": 90,
       "passed": 90,
       "failed": 0
@@ -94,7 +94,7 @@
       "stage": "github_actions",
       "name": "GitHub Actions Audit",
       "status": "pass",
-      "duration_seconds": 0.3,
+      "duration_seconds": 0.46,
       "findings_count": 90,
       "passed": 90,
       "failed": 0
@@ -103,7 +103,7 @@
       "stage": "runtime_cli",
       "name": "Runtime CLI Audit",
       "status": "pass",
-      "duration_seconds": 9.55,
+      "duration_seconds": 10.86,
       "findings_count": 43,
       "passed": 43,
       "failed": 0
@@ -112,7 +112,7 @@
       "stage": "github_runtime",
       "name": "GitHub Runtime Audit",
       "status": "pass",
-      "duration_seconds": 30.12,
+      "duration_seconds": 3.89,
       "findings_count": 4,
       "passed": 4,
       "failed": 0
@@ -129,17 +129,17 @@
     {
       "stage": "artifact_ownership",
       "name": "Artifact Ownership Audit",
-      "status": "fail",
-      "duration_seconds": 0.07,
-      "findings_count": 69,
-      "passed": 5,
+      "status": "pass",
+      "duration_seconds": 0.04,
+      "findings_count": 7,
+      "passed": 7,
       "failed": 0
     },
     {
       "stage": "performance",
       "name": "Runtime Performance Audit",
       "status": "pass",
-      "duration_seconds": 1.83,
+      "duration_seconds": 1.73,
       "findings_count": 7,
       "passed": 7,
       "failed": 0
@@ -148,7 +148,7 @@
       "stage": "failure_injection",
       "name": "Failure Injection Audit",
       "status": "pass",
-      "duration_seconds": 0.01,
+      "duration_seconds": 0.0,
       "findings_count": 10,
       "passed": 10,
       "failed": 0

@@ -24,10 +24,9 @@ class TestDependencyExplorer:
     """Tests for dependency explorer."""
 
     def test_render_dependencies_found(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {
+        loader = WorkspaceLoader(
+            repo_root=tmp_path,
+            chain_map={
                 "backend/src/engines/loan_engine/amortization.py": {
                     "engine": "backend/src/engines/loan_engine/amortization.py",
                     "services": ["LoanService"],
@@ -52,20 +51,18 @@ class TestDependencyExplorer:
         assert "backend/tests/unit/engines/loan/test_amortization.py" in output
 
     def test_render_dependencies_not_found(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {},
+        loader = WorkspaceLoader(
+            repo_root=tmp_path,
+            chain_map={},
         )
         result = loader.load_dependency_chain("nonexistent.py")
         output = render_dependencies(result)
         assert "No dependency chain found" in output
 
     def test_load_dependency_chain_empty_entry(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {"file.py": {}},
+        loader = WorkspaceLoader(
+            repo_root=tmp_path,
+            chain_map={"file.py": {}},
         )
         result = loader.load_dependency_chain("file.py")
         assert result.found is True

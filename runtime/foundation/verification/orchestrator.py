@@ -32,7 +32,6 @@ from runtime.foundation.verification.profiles import VerificationProfile, get_pr
 from runtime.foundation.verification.planner import VerificationPlanner, PlanningContext
 from runtime.system.evidence.aggregator import EvidenceAggregator
 
-CROSS_LAYER_MAP_PATH = Path("runtime/generated/cross-layer-map.json")
 VERIFICATION_CACHE_PATH = Path("runtime/generated/verification-cache.json")
 VERIFICATION_REPORT_PATH = Path("runtime/generated/verification-report.md")
 

@@ -425,25 +425,20 @@ def _measure_diagnostics(repo_root: Path) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     try:
-        from runtime.foundation.intelligence.diagnostics import DeveloperDiagnostics
+        from runtime.foundation.intelligence import analyze
 
         t0 = time.monotonic()
-        diag = DeveloperDiagnostics()
+        # Import time is negligible; the canonical analysis is the measurement.
+        result = analyze([])
         t1 = time.monotonic()
 
-        init_duration = t1 - t0
-        metrics["diagnostics_init_duration_seconds"] = round(init_duration, 4)
+        total_diag = t1 - t0
+        metrics["diagnostics_init_duration_seconds"] = 0.0
+        metrics["diagnostics_diagnose_duration_seconds"] = round(total_diag, 4)
+        # Reference the result so linters keep the measurement honest.
+        _ = result.get("change")
 
-        t2 = time.monotonic()
-        diag.diagnose([])
-        t3 = time.monotonic()
-
-        diagnose_duration = t3 - t2
-        metrics["diagnostics_diagnose_duration_seconds"] = round(
-            diagnose_duration, 4
-        )
-
-        total_diag = init_duration + diagnose_duration
+        total_diag = t1 - t0
         metrics["diagnostics_total_duration_seconds"] = round(total_diag, 4)
 
         if total_diag > 10.0:

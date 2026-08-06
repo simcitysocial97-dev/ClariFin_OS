@@ -33,6 +33,7 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
@@ -217,77 +218,64 @@ def cmd_ci_doctor() -> int:
 
 
 def cmd_diagnose() -> int:
-    from runtime.system.observability.health_report import EngineeringHealthReport
-
-    report = EngineeringHealthReport()
-    output = report.generate()
-    print(output)
-    return 0
-
-
-def cmd_diagnose() -> int:
-    from runtime.foundation.intelligence.diagnostics import DeveloperDiagnostics
-    from runtime.foundation.intelligence.formatter import format_diagnostic_report
+    from runtime.foundation.intelligence import (
+        analyze,
+        format_diagnostic,
+    )
 
     changed_files = _collect_changed_files() if _is_git_available() else []
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
 
-    diagnostics = DeveloperDiagnostics()
-    report = diagnostics.diagnose(changed_files)
-    output = format_diagnostic_report(report)
-    print(output)
+    bundle = analyze(changed_files=changed_files)
+    print(format_diagnostic(
+        bundle["change"], bundle["blast"], bundle["risk"], bundle["repair"]
+    ))
     return 0
 
 
 def cmd_affected() -> int:
-    from runtime.foundation.intelligence.affected import AffectedTestPlanner
-    from runtime.foundation.intelligence.formatter import format_affected_test_plan
+    from runtime.foundation.intelligence import (
+        blast_radius,
+        verification_plan,
+        format_affected,
+    )
 
     changed_files = _collect_changed_files() if _is_git_available() else []
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
 
-    planner = AffectedTestPlanner()
-    plan = planner.build_test_plan(changed_files)
-    output = format_affected_test_plan(plan)
-    print(output)
+    blast = blast_radius(changed_files)
+    plan = verification_plan(changed_files)
+    print(format_affected(blast, plan))
     return 0
 
 
 def cmd_repair() -> int:
-    from runtime.foundation.intelligence.diagnostics import DeveloperDiagnostics
-    from runtime.foundation.intelligence.formatter import format_repair_suggestions
+    from runtime.foundation.intelligence import repair_plan, format_repair
 
     changed_files = _collect_changed_files() if _is_git_available() else []
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
 
-    diagnostics = DeveloperDiagnostics()
-    report = diagnostics.diagnose(changed_files)
-    output = format_repair_suggestions(report.repair_suggestions)
-    print(output)
+    repair = repair_plan(changed_files=changed_files)
+    print(format_repair(repair))
     return 0
 
 
 def cmd_risk() -> int:
-    from runtime.foundation.intelligence.diagnostics import DeveloperDiagnostics
-    from runtime.foundation.intelligence.formatter import format_risk_report
-    from runtime.foundation.intelligence.risk import RiskAnalyzer
+    from runtime.foundation.intelligence import engineering_risk, format_risk
 
     changed_files = _collect_changed_files() if _is_git_available() else []
     if not changed_files:
         print("No changed files detected.", file=sys.stderr)
         return 1
 
-    diagnostics = DeveloperDiagnostics()
-    diagnostic_report = diagnostics.diagnose(changed_files)
-    risk_report = RiskAnalyzer().analyze(diagnostic_report)
-    output = format_risk_report(risk_report)
-    print(output)
+    risk = engineering_risk(changed_files)
+    print(format_risk(risk))
     return 0
 
 
@@ -315,8 +303,9 @@ def cmd_knowledge() -> int:
 
 
 def cmd_knowledge_endpoint() -> int:
-    from runtime.foundation.knowledge.indexer import build_index
     from runtime.foundation.knowledge.query import query_endpoint
+    from runtime.foundation.knowledge.indexer import build_index
+    build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
@@ -324,7 +313,6 @@ def cmd_knowledge_endpoint() -> int:
         return 1
 
     path = sys.argv[3]
-    index = build_index()
     result = query_endpoint(path)
     if result is None:
         print(f"No endpoint found for path: {path}", file=sys.stderr)
@@ -335,8 +323,9 @@ def cmd_knowledge_endpoint() -> int:
 
 
 def cmd_knowledge_capability() -> int:
-    from runtime.foundation.knowledge.indexer import build_index
     from runtime.foundation.knowledge.query import query_capability
+    from runtime.foundation.knowledge.indexer import build_index
+    build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
@@ -344,7 +333,6 @@ def cmd_knowledge_capability() -> int:
         return 1
 
     name = sys.argv[3]
-    index = build_index()
     result = query_capability(name)
     if result is None:
         print(f"No capability found for name: {name}", file=sys.stderr)
@@ -355,8 +343,9 @@ def cmd_knowledge_capability() -> int:
 
 
 def cmd_knowledge_workspace() -> int:
-    from runtime.foundation.knowledge.indexer import build_index
     from runtime.foundation.knowledge.query import query_workspace
+    from runtime.foundation.knowledge.indexer import build_index
+    build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
@@ -364,7 +353,6 @@ def cmd_knowledge_workspace() -> int:
         return 1
 
     name = sys.argv[3]
-    index = build_index()
     result = query_workspace(name)
     if result is None:
         print(f"No workspace found for name: {name}", file=sys.stderr)
@@ -375,8 +363,9 @@ def cmd_knowledge_workspace() -> int:
 
 
 def cmd_knowledge_rule() -> int:
-    from runtime.foundation.knowledge.indexer import build_index
     from runtime.foundation.knowledge.query import query_rule
+    from runtime.foundation.knowledge.indexer import build_index
+    build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
@@ -384,7 +373,6 @@ def cmd_knowledge_rule() -> int:
         return 1
 
     rule_id = sys.argv[3]
-    index = build_index()
     result = query_rule(rule_id)
     if result is None:
         print(f"No rule found for id: {rule_id}", file=sys.stderr)
@@ -395,8 +383,9 @@ def cmd_knowledge_rule() -> int:
 
 
 def cmd_knowledge_component() -> int:
-    from runtime.foundation.knowledge.indexer import build_index
     from runtime.foundation.knowledge.query import query_component
+    from runtime.foundation.knowledge.indexer import build_index
+    build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
@@ -404,7 +393,6 @@ def cmd_knowledge_component() -> int:
         return 1
 
     name = sys.argv[3]
-    index = build_index()
     result = query_component(name)
     if result is None:
         print(f"No component found for name: {name}", file=sys.stderr)
@@ -420,6 +408,92 @@ def cmd_dashboard() -> int:
     generator = DashboardGenerator()
     dashboard = generator.generate()
     print(json.dumps(dashboard, indent=2, default=str))
+    return 0
+
+
+def cmd_intelligence() -> int:
+    """Program 14.0 — run the Engineering Intelligence Layer."""
+    from runtime.foundation.intelligence.platform.pipeline import run_intelligence
+
+    allow_logs = "--logs" in sys.argv
+    collect_ci = "--no-ci" not in sys.argv
+
+    run = run_intelligence(collect_ci=collect_ci, allow_logs=allow_logs)
+
+    print("Engineering Intelligence Layer")
+    print(f"  Changed files:      {len(run.change.changeset.files)}")
+    print(f"  Direct impact:      {len(run.blast.direct)}")
+    print(f"  Indirect impact:    {len(run.blast.indirect)}")
+    print(f"  Risk:               {run.risk.overall_level} "
+          f"(score {run.risk.overall_score}, confidence {run.risk.confidence})")
+    print(f"  Verification units: {len(run.plan.selected)} selected, "
+          f"{len(run.plan.skipped)} skipped")
+    print(f"  Estimated cost:     {run.plan.estimated_seconds}s "
+          f"(baseline {run.plan.baseline_seconds}s)")
+    print("\nArtifacts:")
+    for path in run.written:
+        print(f"  {path.relative_to(REPO_ROOT)}")
+    return 0
+
+
+def cmd_certify_v4() -> int:
+    """Program 14.0 — Phase 10 production certification."""
+    from runtime.foundation.intelligence.platform import certification
+
+    result = certification.certify()
+    output_json = REPO_ROOT / "runtime" / "generated" / "engineering-platform-audit-v4.json"
+    output_md = REPO_ROOT / "runtime" / "generated" / "program14-certification.md"
+    output_json.parent.mkdir(parents=True, exist_ok=True)
+    output_json.write_text(
+        json.dumps(result.to_dict(), indent=2, default=str) + "\n", encoding="utf-8"
+    )
+    output_md.write_text(certification.render_markdown(result), encoding="utf-8")
+
+    for check in result.checks:
+        print(f"  {check.id} {check.name}: {check.status.upper()}")
+        if check.status != "pass":
+            print(f"      {check.detail}")
+
+    print(f"\nRuntime audit: {result.audit_status}")
+    print(f"Program 14 certification: "
+          f"{'CERTIFIED' if result.passed else 'NOT CERTIFIED'}")
+    print(f"  {output_json.relative_to(REPO_ROOT)}")
+    print(f"  {output_md.relative_to(REPO_ROOT)}")
+    return 0 if result.passed else 1
+
+
+def cmd_certify_v5() -> int:
+    """Program 14.1 — eliminate legacy intelligence & complete migration."""
+    from runtime.foundation.intelligence.platform import certification
+
+    result = certification.certify_v5()
+
+    for check in result["intelligence_checks"]:
+        mark = "PASS" if check["status"] == "pass" else "FAIL"
+        print(f"  {check['id']} {check['name']}: {mark}")
+        if check["status"] != "pass":
+            print(f"      {check['detail']}")
+
+    print(f"\nRuntime audit: {result['runtime_audit']['certification_status']}")
+    print(
+        f"Program 14.1 certification: {result['certification_status']}"
+    )
+    print(f"  {REPO_ROOT / 'runtime/generated/engineering-platform-audit-v5.json'}")
+    print(f"  {REPO_ROOT / 'runtime/generated/program14.1-certification.md'}")
+    return 0 if result["certification_status"] == "CERTIFIED" else 1
+
+
+def cmd_intelligence_audit() -> int:
+    """Generate the Program 14.1 migration report artifacts."""
+    from runtime.foundation.intelligence.platform.migration import (
+        generate_migration_artifacts,
+    )
+
+    artifacts = generate_migration_artifacts()
+    print("Program 14.1 migration reports generated:")
+    for name in artifacts:
+        path = REPO_ROOT / "runtime" / "generated" / name
+        print(f"  {path.relative_to(REPO_ROOT)}")
     return 0
 
 
@@ -508,7 +582,7 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, audit",
+            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit",
             file=sys.stderr,
         )
         return 1
@@ -558,6 +632,14 @@ def main() -> int:
         return cmd_knowledge()
     if command == "dashboard":
         return cmd_dashboard()
+    if command == "intelligence":
+        return cmd_intelligence()
+    if command == "certify-v4":
+        return cmd_certify_v4()
+    if command == "certify-v5":
+        return cmd_certify_v5()
+    if command == "intelligence-audit":
+        return cmd_intelligence_audit()
     if command == "audit":
         return cmd_audit()
 

@@ -1,0 +1,549 @@
+{
+  "schema": "blast-radius/v1",
+  "generated_at": "2026-08-06T14:13:02.143260+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "graphs": [
+    "ownership",
+    "execution",
+    "dependency"
+  ],
+  "propagation": "reverse edges (dependents), evidence-backed",
+  "max_depth": 6,
+  "seeds": [
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/architecture-inventory-summary.json",
+      "id": "artifact:runtime/generated/architecture-inventory-summary.json",
+      "name": "",
+      "path": "runtime/generated/architecture-inventory-summary.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/architecture-inventory.json",
+      "id": "artifact:runtime/generated/architecture-inventory.json",
+      "name": "",
+      "path": "runtime/generated/architecture-inventory.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/architecture-provider.json",
+      "id": "artifact:runtime/generated/architecture-provider.json",
+      "name": "",
+      "path": "runtime/generated/architecture-provider.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/artifact-ownership-v2.json",
+      "id": "artifact:runtime/generated/artifact-ownership-v2.json",
+      "name": "",
+      "path": "runtime/generated/artifact-ownership-v2.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/artifact-ownership-v3.json",
+      "id": "artifact:runtime/generated/artifact-ownership-v3.json",
+      "name": "",
+      "path": "runtime/generated/artifact-ownership-v3.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/artifact-ownership.json",
+      "id": "artifact:runtime/generated/artifact-ownership.json",
+      "name": "",
+      "path": "runtime/generated/artifact-ownership.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/certification-gap-analysis.json",
+      "id": "artifact:runtime/generated/certification-gap-analysis.json",
+      "name": "",
+      "path": "runtime/generated/certification-gap-analysis.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/cross-layer-map-v2.json",
+      "id": "artifact:runtime/generated/cross-layer-map-v2.json",
+      "name": "",
+      "path": "runtime/generated/cross-layer-map-v2.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/cross-layer-map.json",
+      "id": "artifact:runtime/generated/cross-layer-map.json",
+      "name": "",
+      "path": "runtime/generated/cross-layer-map.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/dependency-graph-v2.json",
+      "id": "artifact:runtime/generated/dependency-graph-v2.json",
+      "name": "",
+      "path": "runtime/generated/dependency-graph-v2.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/engine-normalization.json",
+      "id": "artifact:runtime/generated/engine-normalization.json",
+      "name": "",
+      "path": "runtime/generated/engine-normalization.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/engine-topology.json",
+      "id": "artifact:runtime/generated/engine-topology.json",
+      "name": "",
+      "path": "runtime/generated/engine-topology.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/engineering-platform-audit.json",
+      "id": "artifact:runtime/generated/engineering-platform-audit.json",
+      "name": "",
+      "path": "runtime/generated/engineering-platform-audit.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/engineering-platform-audit.md",
+      "id": "artifact:runtime/generated/engineering-platform-audit.md",
+      "name": "",
+      "path": "runtime/generated/engineering-platform-audit.md"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/execution-graph.json",
+      "id": "artifact:runtime/generated/execution-graph.json",
+      "name": "",
+      "path": "runtime/generated/execution-graph.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/knowledge-index.json",
+      "id": "artifact:runtime/generated/knowledge-index.json",
+      "name": "",
+      "path": "runtime/generated/knowledge-index.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/knowledge-migration-report.json",
+      "id": "artifact:runtime/generated/knowledge-migration-report.json",
+      "name": "",
+      "path": "runtime/generated/knowledge-migration-report.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/knowledge-reconstruction.json",
+      "id": "artifact:runtime/generated/knowledge-reconstruction.json",
+      "name": "",
+      "path": "runtime/generated/knowledge-reconstruction.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/ownership-graph.json",
+      "id": "artifact:runtime/generated/ownership-graph.json",
+      "name": "",
+      "path": "runtime/generated/ownership-graph.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/pipeline-certification.md",
+      "id": "artifact:runtime/generated/pipeline-certification.md",
+      "name": "",
+      "path": "runtime/generated/pipeline-certification.md"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/pipeline-validation.json",
+      "id": "artifact:runtime/generated/pipeline-validation.json",
+      "name": "",
+      "path": "runtime/generated/pipeline-validation.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/runtime-consistency.json",
+      "id": "artifact:runtime/generated/runtime-consistency.json",
+      "name": "",
+      "path": "runtime/generated/runtime-consistency.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/runtime-defects.json",
+      "id": "artifact:runtime/generated/runtime-defects.json",
+      "name": "",
+      "path": "runtime/generated/runtime-defects.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/runtime-discovery-sources.json",
+      "id": "artifact:runtime/generated/runtime-discovery-sources.json",
+      "name": "",
+      "path": "runtime/generated/runtime-discovery-sources.json"
+    },
+    {
+      "kind": "artifact",
+      "key": "runtime/generated/system-health-score.json",
+      "id": "artifact:runtime/generated/system-health-score.json",
+      "name": "",
+      "path": "runtime/generated/system-health-score.json"
+    },
+    {
+      "kind": "view_model",
+      "key": "ViewModel",
+      "id": "viewmodel:ViewModel",
+      "name": "ViewModel",
+      "path": "runtime/foundation/architecture/models.py"
+    }
+  ],
+  "direct_impact": [
+    {
+      "ref": "artifact:runtime/generated/architecture-inventory-summary.json",
+      "kind": "artifact",
+      "key": "runtime/generated/architecture-inventory-summary.json",
+      "path": "runtime/generated/architecture-inventory-summary.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/architecture-inventory.json",
+      "kind": "artifact",
+      "key": "runtime/generated/architecture-inventory.json",
+      "path": "runtime/generated/architecture-inventory.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/architecture-provider.json",
+      "kind": "artifact",
+      "key": "runtime/generated/architecture-provider.json",
+      "path": "runtime/generated/architecture-provider.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/artifact-ownership-v2.json",
+      "kind": "artifact",
+      "key": "runtime/generated/artifact-ownership-v2.json",
+      "path": "runtime/generated/artifact-ownership-v2.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/artifact-ownership-v3.json",
+      "kind": "artifact",
+      "key": "runtime/generated/artifact-ownership-v3.json",
+      "path": "runtime/generated/artifact-ownership-v3.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/artifact-ownership.json",
+      "kind": "artifact",
+      "key": "runtime/generated/artifact-ownership.json",
+      "path": "runtime/generated/artifact-ownership.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/certification-gap-analysis.json",
+      "kind": "artifact",
+      "key": "runtime/generated/certification-gap-analysis.json",
+      "path": "runtime/generated/certification-gap-analysis.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/cross-layer-map-v2.json",
+      "kind": "artifact",
+      "key": "runtime/generated/cross-layer-map-v2.json",
+      "path": "runtime/generated/cross-layer-map-v2.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/cross-layer-map.json",
+      "kind": "artifact",
+      "key": "runtime/generated/cross-layer-map.json",
+      "path": "runtime/generated/cross-layer-map.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/dependency-graph-v2.json",
+      "kind": "artifact",
+      "key": "runtime/generated/dependency-graph-v2.json",
+      "path": "runtime/generated/dependency-graph-v2.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/engine-normalization.json",
+      "kind": "artifact",
+      "key": "runtime/generated/engine-normalization.json",
+      "path": "runtime/generated/engine-normalization.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/engine-topology.json",
+      "kind": "artifact",
+      "key": "runtime/generated/engine-topology.json",
+      "path": "runtime/generated/engine-topology.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/engineering-platform-audit.json",
+      "kind": "artifact",
+      "key": "runtime/generated/engineering-platform-audit.json",
+      "path": "runtime/generated/engineering-platform-audit.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/engineering-platform-audit.md",
+      "kind": "artifact",
+      "key": "runtime/generated/engineering-platform-audit.md",
+      "path": "runtime/generated/engineering-platform-audit.md",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/execution-graph.json",
+      "kind": "artifact",
+      "key": "runtime/generated/execution-graph.json",
+      "path": "runtime/generated/execution-graph.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/knowledge-index.json",
+      "kind": "artifact",
+      "key": "runtime/generated/knowledge-index.json",
+      "path": "runtime/generated/knowledge-index.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/knowledge-migration-report.json",
+      "kind": "artifact",
+      "key": "runtime/generated/knowledge-migration-report.json",
+      "path": "runtime/generated/knowledge-migration-report.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/knowledge-reconstruction.json",
+      "kind": "artifact",
+      "key": "runtime/generated/knowledge-reconstruction.json",
+      "path": "runtime/generated/knowledge-reconstruction.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/ownership-graph.json",
+      "kind": "artifact",
+      "key": "runtime/generated/ownership-graph.json",
+      "path": "runtime/generated/ownership-graph.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/pipeline-certification.md",
+      "kind": "artifact",
+      "key": "runtime/generated/pipeline-certification.md",
+      "path": "runtime/generated/pipeline-certification.md",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/pipeline-validation.json",
+      "kind": "artifact",
+      "key": "runtime/generated/pipeline-validation.json",
+      "path": "runtime/generated/pipeline-validation.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/runtime-consistency.json",
+      "kind": "artifact",
+      "key": "runtime/generated/runtime-consistency.json",
+      "path": "runtime/generated/runtime-consistency.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/runtime-defects.json",
+      "kind": "artifact",
+      "key": "runtime/generated/runtime-defects.json",
+      "path": "runtime/generated/runtime-defects.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/runtime-discovery-sources.json",
+      "kind": "artifact",
+      "key": "runtime/generated/runtime-discovery-sources.json",
+      "path": "runtime/generated/runtime-discovery-sources.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "artifact:runtime/generated/system-health-score.json",
+      "kind": "artifact",
+      "key": "runtime/generated/system-health-score.json",
+      "path": "runtime/generated/system-health-score.json",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    },
+    {
+      "ref": "view_model:ViewModel",
+      "kind": "view_model",
+      "key": "ViewModel",
+      "path": "runtime/foundation/architecture/models.py",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    }
+  ],
+  "indirect_impact": [],
+  "verification_impact": [],
+  "user_visible_impact": [
+    {
+      "ref": "view_model:ViewModel",
+      "kind": "view_model",
+      "key": "ViewModel",
+      "path": "runtime/foundation/architecture/models.py",
+      "depth": 0,
+      "evidence": {
+        "graph": "change",
+        "via": "changed",
+        "relation": "changed"
+      }
+    }
+  ],
+  "developer_impact": [],
+  "counts": {
+    "seeds": 26,
+    "direct": 26,
+    "indirect": 0,
+    "verification": 0,
+    "user_visible": 1,
+    "developer": 0,
+    "by_kind": {
+      "artifact": 25,
+      "view_model": 1
+    }
+  },
+  "unresolved_nodes": [],
+  "traversal": {
+    "nodes_visited": 28,
+    "edges_followed": 0,
+    "graphs_traversed": [
+      "dependency",
+      "execution",
+      "ownership"
+    ]
+  }
+}

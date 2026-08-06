@@ -1,0 +1,94 @@
+{
+  "schema": "verification-plan/v1",
+  "generated_at": "2026-08-06T14:13:02.143473+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "selection_rule": "a suite is skipped only when the blast radius contains no impacted entity of the kind it verifies",
+  "selected": [
+    {
+      "id": "runtime-self-test",
+      "category": "runtime",
+      "command": "python3 -m pytest runtime/tests/ -q",
+      "targets": [
+        "runtime/tests/"
+      ],
+      "reason": "the Engineering Runtime itself changed",
+      "evidence": [
+        "artifact:runtime/generated/architecture-inventory-summary.json",
+        "artifact:runtime/generated/architecture-inventory.json",
+        "artifact:runtime/generated/architecture-provider.json",
+        "artifact:runtime/generated/artifact-ownership-v2.json",
+        "artifact:runtime/generated/artifact-ownership-v3.json",
+        "artifact:runtime/generated/artifact-ownership.json",
+        "artifact:runtime/generated/certification-gap-analysis.json",
+        "artifact:runtime/generated/cross-layer-map-v2.json",
+        "artifact:runtime/generated/cross-layer-map.json",
+        "artifact:runtime/generated/dependency-graph-v2.json",
+        "artifact:runtime/generated/engine-normalization.json",
+        "artifact:runtime/generated/engine-topology.json",
+        "artifact:runtime/generated/engineering-platform-audit.json",
+        "artifact:runtime/generated/engineering-platform-audit.md",
+        "artifact:runtime/generated/execution-graph.json",
+        "artifact:runtime/generated/knowledge-index.json",
+        "artifact:runtime/generated/knowledge-migration-report.json",
+        "artifact:runtime/generated/knowledge-reconstruction.json",
+        "artifact:runtime/generated/ownership-graph.json",
+        "artifact:runtime/generated/pipeline-certification.md"
+      ],
+      "estimated_seconds": 120
+    }
+  ],
+  "skipped": [
+    {
+      "id": "unit-targeted",
+      "category": "unit",
+      "reason": "no impacted engine has provider-recorded tests",
+      "justification": "blast radius contains no engine with tests"
+    },
+    {
+      "id": "contracts-schemathesis",
+      "category": "contract",
+      "reason": "no endpoint impacted",
+      "justification": "blast radius contains 0 entities of kind 'endpoint'"
+    },
+    {
+      "id": "backend-integration",
+      "category": "integration",
+      "reason": "no router, service or repository impacted",
+      "justification": "blast radius contains no backend wiring entities"
+    },
+    {
+      "id": "frontend-unit",
+      "category": "frontend",
+      "reason": "no frontend file impacted",
+      "justification": "no impacted entity has a path under frontend/; capability/workspace impact=1 but none map to files"
+    },
+    {
+      "id": "playwright-e2e",
+      "category": "e2e",
+      "reason": "no workspace impacted",
+      "justification": "blast radius contains 0 entities of kind 'workspace'"
+    },
+    {
+      "id": "mutation-run",
+      "category": "mutation",
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it"
+    },
+    {
+      "id": "golden-regression",
+      "category": "golden",
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it"
+    }
+  ],
+  "counts": {
+    "selected": 1,
+    "skipped": 7,
+    "unit_tests": 0
+  },
+  "estimated_seconds": 120,
+  "baseline_profile": "full",
+  "baseline_seconds": 900,
+  "savings_seconds": 780,
+  "fallback_profile": "graph"
+}

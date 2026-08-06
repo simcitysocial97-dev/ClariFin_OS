@@ -1,0 +1,182 @@
+{
+  "schema": "cli-consistency/v1",
+  "generated_at": "2026-08-06T14:24:40.172955+00:00",
+  "single_entity_resolver": true,
+  "single_architecture_provider": true,
+  "all_commands_consistent": true,
+  "legacy_intelligence_imports_present": false,
+  "commands": [
+    {
+      "command": "cmd_affected",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_analytics",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_audit",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_certify_v4",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence.platform"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_certify_v5",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence.platform"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_ci_doctor",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_dashboard",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_deps",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_diagnose",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_doctor",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_health",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_history",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_integrity",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_intelligence",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence.platform.pipeline"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_intelligence_audit",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence.platform.migration"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_knowledge",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_knowledge_capability",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_knowledge_component",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_knowledge_endpoint",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_knowledge_rule",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_knowledge_workspace",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_metrics",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_repair",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_risk",
+      "intelligence_imports": [
+        "runtime.foundation.intelligence"
+      ],
+      "legacy_imports": [],
+      "consumes_canonical_layer": true
+    },
+    {
+      "command": "cmd_status",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    },
+    {
+      "command": "cmd_verify_status",
+      "intelligence_imports": [],
+      "legacy_imports": [],
+      "consumes_canonical_layer": false
+    }
+  ]
+}
