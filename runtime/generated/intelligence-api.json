@@ -1,0 +1,40 @@
+{
+  "schema": "intelligence-api/v1",
+  "generated_at": "2026-08-06T14:24:40.172995+00:00",
+  "module": "runtime/foundation/intelligence/platform/api.py",
+  "rule": "all commands communicate through this single internal API",
+  "services": [
+    {
+      "service": "resolve_entity",
+      "summary": ""
+    },
+    {
+      "service": "affected_entities",
+      "summary": ""
+    },
+    {
+      "service": "blast_radius",
+      "summary": ""
+    },
+    {
+      "service": "verification_plan",
+      "summary": ""
+    },
+    {
+      "service": "engineering_risk",
+      "summary": ""
+    },
+    {
+      "service": "repair_plan",
+      "summary": ""
+    },
+    {
+      "service": "test_resolution",
+      "summary": "Resolve affected tests strictly from provider state."
+    },
+    {
+      "service": "analyze",
+      "summary": ""
+    }
+  ]
+}

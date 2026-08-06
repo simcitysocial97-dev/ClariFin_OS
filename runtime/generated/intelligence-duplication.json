@@ -1,0 +1,62 @@
+{
+  "schema": "intelligence-duplication/v1",
+  "generated_at": "2026-08-06T14:24:40.114688+00:00",
+  "duplicated_algorithms_found": 9,
+  "duplicated_algorithms_remaining": 0,
+  "pairs": [
+    {
+      "capability": "change analysis",
+      "old_implementation": "runtime/foundation/intelligence/diagnostics.py (DeveloperDiagnostics)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/change.py (analyze_changes)",
+      "removal_safety": "all consumers migrated to api.affected_entities"
+    },
+    {
+      "capability": "dependency / graph traversal",
+      "old_implementation": "runtime/foundation/verification/planner/planner.py (CrossLayerImpactPlanner, used by diagnostics/affected)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/blast.py (compute_blast_radius)",
+      "removal_safety": "CrossLayerImpactPlanner retained only for the certified verification runtime (Program 7B), not intelligence"
+    },
+    {
+      "capability": "blast radius",
+      "old_implementation": "runtime/foundation/intelligence/diagnostics.py (dependency_chains)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/blast.py",
+      "removal_safety": "no remaining consumers"
+    },
+    {
+      "capability": "affected tests",
+      "old_implementation": "runtime/foundation/intelligence/affected.py (AffectedTestPlanner)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/{optimizer,blast}.py (verification_impact)",
+      "removal_safety": "replaced by provider-recorded Engine.tests; no filename inference"
+    },
+    {
+      "capability": "repair planning",
+      "old_implementation": "runtime/foundation/intelligence/repair.py (build_repair_guidance)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/repair.py (build_repair_intelligence)",
+      "removal_safety": "no remaining consumers"
+    },
+    {
+      "capability": "risk scoring",
+      "old_implementation": "runtime/foundation/intelligence/risk.py (RiskAnalyzer)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/risk.py (assess_risk)",
+      "removal_safety": "no remaining consumers"
+    },
+    {
+      "capability": "ownership lookup",
+      "old_implementation": "runtime/foundation/intelligence/diagnostics.py (engine name parsing)",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/resolver.py (EntityResolver)",
+      "removal_safety": "single resolver shared by all phases"
+    },
+    {
+      "capability": "capability lookup",
+      "old_implementation": "runtime/foundation/intelligence/diagnostics.py (affected_capabilities)",
+      "canonical_replacement": "runtime/foundation/architecture.get_architecture().capabilities",
+      "removal_safety": "provider is canonical"
+    },
+    {
+      "capability": "verification planning",
+      "old_implementation": "runtime/foundation/intelligence/affected.py + diagnostics._suggest_profile",
+      "canonical_replacement": "runtime/foundation/intelligence/platform/optimizer.py",
+      "removal_safety": "no remaining consumers"
+    }
+  ]
+}

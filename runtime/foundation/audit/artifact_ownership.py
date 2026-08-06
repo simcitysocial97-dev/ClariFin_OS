@@ -6,6 +6,7 @@ overwrites, retention policies, duplicates, and unused artifacts.
 
 from __future__ import annotations
 
+import json
 import time
 from pathlib import Path
 from typing import Any
@@ -52,6 +53,38 @@ ARTIFACT_OWNERS = {
     "engineering-health.md": {"owner": "platform", "creator": "health_report", "consumer": "reporting"},
     "engineering-platform-audit.json": {"owner": "platform", "creator": "audit", "consumer": "reporting"},
     "engineering-platform-audit.md": {"owner": "platform", "creator": "audit", "consumer": "reporting"},
+    "engineering-platform-audit-v2.json": {"owner": "certification", "creator": "runtime/foundation/audit/certification.py", "consumer": "reporting"},
+    "engineering-platform-audit-v3.json": {"owner": "certification", "creator": "runtime/foundation/audit/certification.py", "consumer": "reporting"},
+    "engineering-platform-audit-v3.md": {"owner": "certification", "creator": "runtime/foundation/audit/certification.py", "consumer": "reporting"},
+    "runtime-migration-report.md": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "provider-consumer-inventory.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "runtime-id-consistency.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "provider-performance.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "runtime-retirement-plan.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "runtime-constitution.json": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    "runtime-consumer-migration.md": {"owner": "certification", "creator": "runtime/foundation/architecture", "consumer": "documentation"},
+    # --- Program 14.0: Engineering Intelligence Layer ---
+    "change-intelligence.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/change.py", "consumer": "blast_radius,verification_optimizer,platform_state"},
+    "blast-radius.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/blast.py", "consumer": "verification_optimizer,risk_engine,repair_intelligence"},
+    "verification-plan.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/optimizer.py", "consumer": "verification_cost,platform_state"},
+    "engineering-risk.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/risk.py", "consumer": "platform_state,reporting"},
+    "repair-intelligence.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/repair.py", "consumer": "platform_state,reporting"},
+    "engineering-memory.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/memory.py", "consumer": "risk_engine,platform_state"},
+    "github-intelligence.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/ci.py", "consumer": "platform_state,reporting"},
+    "verification-cost.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/cost.py", "consumer": "platform_state,reporting"},
+    "platform-state.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/state.py", "consumer": "dashboard,reporting"},
+    "engineering-platform-audit-v4.json": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "reporting"},
+    "engineering-platform-audit-v5.json": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "reporting"},
+    "program14-certification.md": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "documentation"},
+    "program14.1-certification.md": {"owner": "certification", "creator": "runtime/foundation/intelligence/platform/certification.py", "consumer": "documentation"},
+    "intelligence-inventory.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
+    "intelligence-duplication.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
+    "test-resolution.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "verification"},
+    "cli-consistency.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
+    "intelligence-api.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
+    "intelligence-retirement-plan.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
+    "intelligence-constitution.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
+    "runtime-simplification.json": {"owner": "intelligence", "creator": "runtime/foundation/intelligence/platform/migration.py", "consumer": "documentation"},
     "github-actions-health.json": {"owner": "platform", "creator": "github_health", "consumer": "reporting"},
     "index.json": {"owner": "platform", "creator": "repository_indexer", "consumer": "graph_service"},
     "junit-property.xml": {"owner": "runtime", "creator": "test_runner", "consumer": "quality_gate"},
@@ -133,6 +166,40 @@ RETENTION_POLICIES = {
     "runtime-defects.json": "30_days",
     "summary.json": "30_days",
     "summary.md": "30_days",
+    "engineering-platform-audit-v2.json": "30_days",
+    "engineering-platform-audit-v3.json": "30_days",
+    "engineering-platform-audit-v3.md": "30_days",
+    "runtime-migration-report.md": "permanent",
+    "provider-consumer-inventory.json": "permanent",
+    "runtime-id-consistency.json": "permanent",
+    "provider-performance.json": "permanent",
+    "runtime-retirement-plan.json": "permanent",
+    "runtime-constitution.json": "permanent",
+    "runtime-consumer-migration.md": "permanent",
+    # --- Program 14.0: Engineering Intelligence Layer ---
+    # Intelligence outputs describe the CURRENT change set, so they are
+    # short-lived; certification records are permanent.
+    "change-intelligence.json": "14_days",
+    "blast-radius.json": "14_days",
+    "verification-plan.json": "14_days",
+    "engineering-risk.json": "30_days",
+    "repair-intelligence.json": "30_days",
+    "engineering-memory.json": "permanent",
+    "github-intelligence.json": "14_days",
+    "verification-cost.json": "30_days",
+    "platform-state.json": "30_days",
+    "engineering-platform-audit-v4.json": "permanent",
+    "program14-certification.md": "permanent",
+    "program14.1-certification.md": "permanent",
+    "intelligence-inventory.json": "90_days",
+    "intelligence-duplication.json": "90_days",
+    "test-resolution.json": "90_days",
+    "cli-consistency.json": "30_days",
+    "intelligence-api.json": "permanent",
+    "intelligence-retirement-plan.json": "permanent",
+    "intelligence-constitution.json": "permanent",
+    "runtime-simplification.json": "permanent",
+    "engineering-platform-audit-v5.json": "permanent",
     "system-health-score.json": "30_days",
     "verification-performance.json": "30_days",
 }
@@ -171,7 +238,9 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     metrics["total_artifacts"] = len(artifact_files)
     metrics["generated_dir_exists"] = True
 
-    ownership_check = _check_ownership(artifact_files)
+    v3_by_name = _load_v3_by_name(repo_root)
+
+    ownership_check = _check_ownership(artifact_files, v3_by_name)
     findings.extend(ownership_check["findings"])
     metrics.update(ownership_check["metrics"])
 
@@ -179,7 +248,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     findings.extend(overwrite_check["findings"])
     metrics.update(overwrite_check["metrics"])
 
-    retention_check = _check_retention_policies(artifact_files)
+    retention_check = _check_retention_policies(artifact_files, v3_by_name)
     findings.extend(retention_check["findings"])
     metrics.update(retention_check["metrics"])
 
@@ -195,7 +264,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     findings.extend(workflow_ref_check["findings"])
     metrics.update(workflow_ref_check["metrics"])
 
-    consumer_check = _check_consumers(artifact_files)
+    consumer_check = _check_consumers(artifact_files, v3_by_name)
     findings.extend(consumer_check["findings"])
     metrics.update(consumer_check["metrics"])
 
@@ -220,7 +289,44 @@ def _list_artifacts(generated_dir: Path) -> list[Path]:
     return artifacts
 
 
-def _check_ownership(artifact_files: list[Path]) -> dict[str, Any]:
+def _load_v3_by_name(repo_root: Path) -> dict[str, dict[str, Any]]:
+    """Load the canonical artifact-ownership-v3 registry keyed by file name.
+
+    Program 13.2: the canonical registry (built by the architecture provider)
+    is the single source of artifact ownership truth, replacing the hardcoded
+    ``ARTIFACT_OWNERS`` table.
+    """
+    path = repo_root / "runtime" / "generated" / "artifact-ownership-v3.json"
+    if not path.exists():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+    by_name: dict[str, dict[str, Any]] = {}
+    for entry in data.get("artifacts", []):
+        name = entry.get("artifact", "").split("/")[-1]
+        if name:
+            by_name[name] = entry
+    return by_name
+
+
+def _record_for(name: str, v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any] | None:
+    if name in v3_by_name:
+        rec = v3_by_name[name]
+        return {
+            "owner": rec.get("owner", ""),
+            "creator": rec.get("creator") or rec.get("producer", ""),
+            "consumer": ",".join(rec.get("consumers", [])) if rec.get("consumers") else "",
+            "retention": rec.get("retention", ""),
+            "source": "artifact-ownership-v3",
+        }
+    if name in ARTIFACT_OWNERS:
+        return {**ARTIFACT_OWNERS[name], "source": "legacy-registry"}
+    return None
+
+
+def _check_ownership(artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
@@ -229,11 +335,11 @@ def _check_ownership(artifact_files: list[Path]) -> dict[str, Any]:
 
     for artifact in artifact_files:
         name = artifact.name
-        if name in ARTIFACT_OWNERS:
+        rec = _record_for(name, v3_by_name)
+        if rec:
             owned_count += 1
-            info = ARTIFACT_OWNERS[name]
-            metrics[f"artifact_{name}_owner"] = info["owner"]
-            metrics[f"artifact_{name}_creator"] = info["creator"]
+            metrics[f"artifact_{name}_owner"] = rec["owner"]
+            metrics[f"artifact_{name}_creator"] = rec["creator"]
         else:
             unowned_count += 1
             findings.append(
@@ -325,14 +431,15 @@ def _check_overwrites(artifact_files: list[Path]) -> dict[str, Any]:
     return {"findings": findings, "metrics": metrics}
 
 
-def _check_retention_policies(artifact_files: list[Path]) -> dict[str, Any]:
+def _check_retention_policies(artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
     for artifact in artifact_files:
         name = artifact.name
-        if name in RETENTION_POLICIES:
-            policy = RETENTION_POLICIES[name]
+        rec = _record_for(name, v3_by_name)
+        policy = (rec or {}).get("retention") or RETENTION_POLICIES.get(name)
+        if policy:
             metrics[f"artifact_{name}_retention"] = policy
         else:
             findings.append(
@@ -488,17 +595,17 @@ def _check_workflow_references(repo_root: Path) -> dict[str, Any]:
     return {"findings": findings, "metrics": metrics}
 
 
-def _check_consumers(artifact_files: list[Path]) -> dict[str, Any]:
+def _check_consumers(artifact_files: list[Path], v3_by_name: dict[str, dict[str, Any]]) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
     artifacts_without_consumers = []
     for artifact in artifact_files:
         name = artifact.name
-        if name in ARTIFACT_OWNERS:
-            consumers = ARTIFACT_OWNERS[name].get("consumer", "")
-            if not consumers or consumers.strip() == "":
-                artifacts_without_consumers.append(name)
+        rec = _record_for(name, v3_by_name)
+        consumers = (rec or {}).get("consumer", "") if rec else ""
+        if rec and (not consumers or consumers.strip() == ""):
+            artifacts_without_consumers.append(name)
 
     metrics["artifacts_with_consumers"] = len(artifact_files) - len(artifacts_without_consumers)
     metrics["artifacts_without_consumers"] = len(artifacts_without_consumers)

@@ -1,24 +1,20 @@
 # Engineering Platform Certification Audit
 
-**Generated:** 2026-08-06T08:30:28.554100+00:00
+**Generated:** 2026-08-06T14:31:31.372029+00:00
 **Overall Status:** pass
 **Certification:** CERTIFIED
-**Duration:** 53.63s
+**Duration:** 28.80s
 
 ## Executive Summary
 
 This audit validates every engineering subsystem works together in practice.
 Certification status: **CERTIFIED**.
 
-### Medium/Low-Priority Improvements
-
-- **Component ownership mapping**: Found 0 chains without capabilities, 5 without routers
-
 ## Section Results
 
 ### Repository Index Audit
 - **Status:** PASS
-- **Duration:** 4.62s
+- **Duration:** 4.63s
 - **total_checks:** 10
 - **failures:** 0
 - **passes:** 10
@@ -39,31 +35,33 @@ Certification status: **CERTIFIED**.
 - [PASS] Graph build reproducibility: Fresh graph build succeeded with 1200 nodes, 1398 edges
 
 ### Cross-Layer Map Audit
-- **Status:** FAIL
-- **Duration:** 0.00s
-- **total_chains:** 57
-- **total_checks:** 11
-- **failures:** 1
-- **passes:** 10
-- **total_endpoints:** 72
-- **total_components:** 447
-- **total_test_refs:** 235
+- **Status:** PASS
+- **Duration:** 0.08s
+- **total_chains:** 13
+- **total_checks:** 12
+- **failures:** 0
+- **passes:** 12
+- **total_endpoints:** 89
+- **total_components:** 0
+- **total_test_refs:** 50
+- **internal_engines:** 7
 
-- [PASS] Cross-layer map existence: Cross-layer map exists at /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/cross-layer-map.json
-- [PASS] Cross-layer map JSON validity: Cross-layer map JSON is valid
-- [PASS] Chain field completeness: All 57 chains have complete fields
+- [PASS] Canonical architecture provider available: Canonical architecture provider resolved all artifacts.
+- [PASS] Chain field completeness: All 13 chains have complete fields
 - [PASS] Chain field types: All chain fields have correct types
-- [PASS] Engine file existence: All 57 engine files exist on disk
+- [PASS] Engine file existence: All 13 engine files exist on disk
 - [PASS] Router file existence: All router files exist on disk
-- [PASS] No duplicate engine chains: All 57 engine references are unique
-- [PASS] Chain completeness: All 57 chains are complete (have engine + at least one component type)
-- [FAIL] Component ownership mapping: Found 0 chains without capabilities, 5 without routers
-- [PASS] Endpoint deduplication across chains: All 72 endpoints are unique across chains
-- [PASS] Test mapping completeness: 19 of 57 chains have no test mappings (67% coverage)
+- [PASS] No duplicate engine chains: All 13 engine references are unique
+- [PASS] Chain completeness: All external chains are complete (engine + at least one component type)
+- [PASS] Internal engines (known architectural debt): 7 internal engine(s) have no HTTP surface / capability by design (consumed internally): financial_events, financial_intelligence, transaction_intelligence, balance_engine, insight_generator, ledger_audit_engine, nudge_engine
+- [PASS] Component ownership mapping: All external chains have ownership mapping (capabilities + routers)
+- [PASS] Internal engine ownership (known debt): Internal engines exempt from capability/router ownership: financial_events, financial_intelligence, transaction_intelligence, balance_engine, insight_generator, ledger_audit_engine, nudge_engine
+- [PASS] Endpoint deduplication (unique owning router): Every endpoint is owned by exactly one router (shared routers permitted)
+- [PASS] Test mapping completeness: All 6 external chains have test mappings
 
 ### Dependency Graph Audit
 - **Status:** PASS
-- **Duration:** 0.18s
+- **Duration:** 0.20s
 - **total_checks:** 12
 - **failures:** 0
 - **passes:** 12
@@ -85,7 +83,7 @@ Certification status: **CERTIFIED**.
 
 ### Verification Planner Audit
 - **Status:** PASS
-- **Duration:** 0.04s
+- **Duration:** 0.05s
 - **total_checks:** 36
 - **failures:** 0
 - **passes:** 36
@@ -179,7 +177,7 @@ Certification status: **CERTIFIED**.
 
 ### Observability Audit
 - **Status:** PASS
-- **Duration:** 0.02s
+- **Duration:** 0.03s
 - **total_events:** 6
 - **event_types:** ['TestEvent', 'VerificationCompleted']
 - **analytics_profiles:** 3
@@ -200,11 +198,11 @@ Certification status: **CERTIFIED**.
 
 ### Knowledge Base Audit
 - **Status:** PASS
-- **Duration:** 0.07s
-- **total_indexed_objects:** 311
-- **endpoints_count:** 72
+- **Duration:** 0.08s
+- **total_indexed_objects:** 337
+- **endpoints_count:** 76
 - **capabilities_count:** 10
-- **workspaces_count:** 4
+- **workspaces_count:** 8
 - **rules_count:** 28
 - **documentation_count:** 132
 - **artifacts_count:** 9
@@ -212,11 +210,11 @@ Certification status: **CERTIFIED**.
 - **broken_links:** 0
 - **duplicates:** 0
 - **indexer_consistent:** True
-- **query_results_count:** 311
+- **query_results_count:** 337
 
-- [PASS] Endpoints are indexed: Endpoints category has 72 entries in the knowledge index
+- [PASS] Endpoints are indexed: Endpoints category has 76 entries in the knowledge index
 - [PASS] Capabilities are indexed: Capabilities category has 10 entries in the knowledge index
-- [PASS] Workspaces are indexed: Workspaces category has 4 entries in the knowledge index
+- [PASS] Workspaces are indexed: Workspaces category has 8 entries in the knowledge index
 - [PASS] Rules are indexed: Rules category has 28 entries in the knowledge index
 - [PASS] Documentation are indexed: Documentation category has 132 entries in the knowledge index
 - [PASS] Artifacts are indexed: Artifacts category has 9 entries in the knowledge index
@@ -224,11 +222,11 @@ Certification status: **CERTIFIED**.
 - [PASS] No broken links found: All reference links in the knowledge index point to existing files
 - [PASS] No duplicate entries found: No duplicate entries found in the knowledge index
 - [PASS] Indexer consistency verified: Knowledge indexer rebuild produces consistent counts with saved index
-- [PASS] Knowledge query engine works: KnowledgeQueryEngine.query_all() returned 311 results
+- [PASS] Knowledge query engine works: KnowledgeQueryEngine.query_all() returned 337 results
 
 ### Workspace Audit
 - **Status:** PASS
-- **Duration:** 1.35s
+- **Duration:** 1.51s
 - **commands_checked:** 5
 - **commands_passed:** 5
 - **commands_failed:** 0
@@ -254,14 +252,14 @@ Certification status: **CERTIFIED**.
 
 ### Integrity Engine Audit
 - **Status:** PASS
-- **Duration:** 4.39s
+- **Duration:** 4.15s
 - **rules_evaluated:** 28
 - **rules_passed:** 28
 - **rules_failed:** 0
 - **total_violations:** 0
 - **severity_counts:** {'CRITICAL': 0, 'HIGH': 0, 'MEDIUM': 0, 'LOW': 0, 'INFO': 0}
 - **files_scanned:** 845
-- **cross_layer_entries:** 57
+- **cross_layer_entries:** 13
 
 - [PASS] All 28 rules present: Expected 28 rules, found 28
 - [PASS] ARCH-001 severity assignment: ARCH-001 severity 'HIGH' is correct
@@ -356,7 +354,7 @@ Certification status: **CERTIFIED**.
 
 ### GitHub Actions Audit
 - **Status:** PASS
-- **Duration:** 0.30s
+- **Duration:** 0.46s
 - **workflows_audited:** 9
 - **composite_actions_audited:** 5
 - **total_findings:** 90
@@ -457,7 +455,7 @@ Certification status: **CERTIFIED**.
 
 ### Runtime CLI Audit
 - **Status:** PASS
-- **Duration:** 9.55s
+- **Duration:** 10.86s
 - **commands_audited:** 16
 - **commands_passed:** 16
 - **commands_failed:** 0
@@ -468,14 +466,14 @@ Certification status: **CERTIFIED**.
 - [PASS] No arguments shows usage: Running without arguments exits with code 1 (expected non-zero)
 - [PASS] No-args invocation shows usage: Usage information present in output
 - [PASS] Invalid profile shows error: Invalid profile exits with code 1 (expected non-zero)
-- [PASS] Performance: status: status completed in 0.263s
-- [PASS] Performance: metrics: metrics completed in 0.270s
-- [PASS] Performance: history: history completed in 0.272s
-- [PASS] Performance: verify-status: verify-status completed in 0.272s
-- [PASS] Performance: integrity: integrity completed in 1.730s
-- [PASS] Performance summary: Avg: 0.561s, Min: 0.263s, Max: 1.730s
+- [PASS] Performance: status: status completed in 0.532s
+- [PASS] Performance: metrics: metrics completed in 0.355s
+- [PASS] Performance: history: history completed in 0.271s
+- [PASS] Performance: verify-status: verify-status completed in 0.286s
+- [PASS] Performance: integrity: integrity completed in 1.769s
+- [PASS] Performance summary: Avg: 0.643s, Min: 0.271s, Max: 1.769s
 - [PASS] Command 'doctor' exit code: 'doctor' returned exit code 0
-- [PASS] Command 'doctor' produces output: 'doctor' produced 2522 bytes of output
+- [PASS] Command 'doctor' produces output: 'doctor' produced 2518 bytes of output
 - [PASS] Command 'ci-doctor' exit code: 'ci-doctor' returned exit code 0
 - [PASS] Command 'ci-doctor' produces output: 'ci-doctor' produced 73 bytes of output
 - [PASS] Command 'ci-doctor' validates GitHub Actions: 'ci-doctor' executed and returned exit code 0
@@ -486,36 +484,36 @@ Certification status: **CERTIFIED**.
 - [PASS] Command 'history' exit code: 'history' returned exit code 0
 - [PASS] Command 'history' produces output: 'history' produced 5103 bytes of output
 - [PASS] Command 'knowledge' exit code: 'knowledge' returned exit code 0
-- [PASS] Command 'knowledge' produces output: 'knowledge' produced 24373 bytes of output
+- [PASS] Command 'knowledge' produces output: 'knowledge' produced 26721 bytes of output
 - [PASS] Command 'knowledge' subcommands work: 'knowledge endpoint' subcommand executed (exit 1)
 - [PASS] Command 'integrity' exit code: 'integrity' returned exit code 0
 - [PASS] Command 'integrity' produces output: 'integrity' produced 969 bytes of output
 - [PASS] Command 'diagnose' exit code: 'diagnose' returned exit code 0
-- [PASS] Command 'diagnose' produces output: 'diagnose' produced 7370 bytes of output
+- [PASS] Command 'diagnose' produces output: 'diagnose' produced 2506 bytes of output
 - [PASS] Command 'affected' exit code: 'affected' returned exit code 0
-- [PASS] Command 'affected' produces output: 'affected' produced 994 bytes of output
+- [PASS] Command 'affected' produces output: 'affected' produced 569 bytes of output
 - [PASS] Command 'repair' exit code: 'repair' returned exit code 0
-- [PASS] Command 'repair' produces output: 'repair' produced 12953 bytes of output
+- [PASS] Command 'repair' produces output: 'repair' produced 14895 bytes of output
 - [PASS] Command 'risk' exit code: 'risk' returned exit code 0
-- [PASS] Command 'risk' produces output: 'risk' produced 468 bytes of output
+- [PASS] Command 'risk' produces output: 'risk' produced 858 bytes of output
 - [PASS] Command 'deps' exit code: 'deps' returned exit code 1 (expected non-zero for deps without args)
 - [PASS] Command 'deps' produces output: 'deps' produced 111 bytes of output
 - [PASS] Command 'deps' requires file_path argument: 'deps' without argument returned exit code 1 (expected non-zero)
 - [PASS] Command 'verify-status' exit code: 'verify-status' returned exit code 0
 - [PASS] Command 'verify-status' produces output: 'verify-status' produced 4107 bytes of output
 - [PASS] Command 'health' exit code: 'health' returned exit code 0
-- [PASS] Command 'health' produces output: 'health' produced 2522 bytes of output
+- [PASS] Command 'health' produces output: 'health' produced 2518 bytes of output
 - [PASS] Command 'analytics' exit code: 'analytics' returned exit code 0
 - [PASS] Command 'analytics' produces output: 'analytics' produced 3093 bytes of output
 - [PASS] Command 'dashboard' exists: 'dashboard' returned exit code 0
 
 ### GitHub Runtime Audit
 - **Status:** PASS
-- **Duration:** 30.12s
+- **Duration:** 3.89s
 - **workflow_count:** 9
 - **gh_cli_available:** True
-- **gh_runs_fetched:** 0
-- **failed_runs_in_history:** 0
+- **gh_runs_fetched:** 20
+- **failed_runs_in_history:** 19
 - **verification-runtime_uploads_cross-layer-map:** True
 - **verification-runtime_uploads_knowledge-index:** True
 - **verification-runtime_uploads_verification-cache:** True
@@ -578,7 +576,7 @@ Certification status: **CERTIFIED**.
 - **cache_changed_files_count:** 27
 - **cache_executed_profiles:** ['quick', 'backend', 'runtime']
 - **cache_has_data:** True
-- **planner_generated_plan_id:** plan-20260806-083025
+- **planner_generated_plan_id:** plan-20260806-143128
 - **planner_scope:** quick
 - **planner_target_count:** 1
 - **planner_step_count:** 1
@@ -598,161 +596,306 @@ Certification status: **CERTIFIED**.
 - [PASS] No duplicate task IDs found: All 39 task IDs across 10 profiles are unique
 
 ### Artifact Ownership Audit
-- **Status:** FAIL
-- **Duration:** 0.07s
-- **total_artifacts:** 95
+- **Status:** PASS
+- **Duration:** 0.04s
+- **total_artifacts:** 112
 - **generated_dir_exists:** True
+- **artifact_runtime-consumer-migration.md_owner:** certification
+- **artifact_runtime-consumer-migration.md_creator:** runtime/foundation/architecture
 - **artifact_engineering-platform-audit.json_owner:** platform
-- **artifact_engineering-platform-audit.json_creator:** audit
+- **artifact_engineering-platform-audit.json_creator:** runtime/foundation/audit/certification.py
+- **artifact_engine-normalization.json_owner:** certification
+- **artifact_engine-normalization.json_creator:** runtime/analyze_engine_normalization.py (Program 13)
 - **artifact_normalized-issues.json_owner:** platform
-- **artifact_normalized-issues.json_creator:** audit_normalizer
+- **artifact_normalized-issues.json_creator:** runtime/foundation/audit/normalize.py
+- **artifact_artifact-ownership-v2.json_owner:** certification
+- **artifact_artifact-ownership-v2.json_creator:** runtime/analyze_artifacts.py (Program 13)
 - **artifact_validation-summary.md_owner:** platform
-- **artifact_validation-summary.md_creator:** validator
+- **artifact_validation-summary.md_creator:** runtime/foundation/verification/validation/validator.py
 - **artifact_verification-profile-matrix.md_owner:** platform
-- **artifact_verification-profile-matrix.md_creator:** profile_manager
+- **artifact_verification-profile-matrix.md_creator:** runtime/foundation/verification/profiles.py
+- **artifact_execution-graph.json_owner:** certification
+- **artifact_execution-graph.json_creator:** runtime/analyze_execution.py (Program 13)
+- **artifact_runtime-id-consistency.json_owner:** certification
+- **artifact_runtime-id-consistency.json_creator:** runtime/foundation/architecture
+- **artifact_github-intelligence.json_owner:** intelligence
+- **artifact_github-intelligence.json_creator:** runtime/foundation/intelligence/platform/ci.py
+- **artifact_intelligence-api.json_owner:** intelligence
+- **artifact_intelligence-api.json_creator:** runtime/foundation/intelligence/platform/migration.py
+- **artifact_program14-certification.md_owner:** certification
+- **artifact_program14-certification.md_creator:** runtime/foundation/intelligence/platform/certification.py
+- **artifact_runtime-consistency.json_owner:** platform
+- **artifact_runtime-consistency.json_creator:** engineering-runtime
 - **artifact_root-cause-clusters.json_owner:** platform
-- **artifact_root-cause-clusters.json_creator:** cluster_analyzer
+- **artifact_root-cause-clusters.json_creator:** runtime/foundation/audit/cluster.py
 - **artifact_cost-analysis.json_owner:** platform
-- **artifact_cost-analysis.json_creator:** cost_analyzer
-- **artifact_flaky-tests.json_owner:** runtime
-- **artifact_flaky-tests.json_creator:** test_runner
+- **artifact_cost-analysis.json_creator:** runtime/system/observability/cost_analysis.py
+- **artifact_runtime-simplification.json_owner:** intelligence
+- **artifact_runtime-simplification.json_creator:** runtime/foundation/intelligence/platform/migration.py
+- **artifact_flaky-tests.json_owner:** platform
+- **artifact_flaky-tests.json_creator:** runtime/system/observability/flaky_tests.py
 - **artifact_dashboard.json_owner:** platform
-- **artifact_dashboard.json_creator:** dashboard_generator
+- **artifact_dashboard.json_creator:** runtime/system/observability/dashboard.py
 - **artifact_pipeline-certification.md_owner:** platform
-- **artifact_pipeline-certification.md_creator:** pipeline
+- **artifact_pipeline-certification.md_creator:** runtime/foundation/audit/pipeline.py
+- **artifact_intelligence-inventory.json_owner:** intelligence
+- **artifact_intelligence-inventory.json_creator:** runtime/foundation/intelligence/platform/migration.py
+- **artifact_cross-layer-map-v2.json_owner:** platform
+- **artifact_cross-layer-map-v2.json_creator:** engineering-runtime
+- **artifact_intelligence-duplication.json_owner:** intelligence
+- **artifact_intelligence-duplication.json_creator:** runtime/foundation/intelligence/platform/migration.py
+- **artifact_verification-plan.json_owner:** intelligence
+- **artifact_verification-plan.json_creator:** runtime/foundation/intelligence/platform/optimizer.py
 - **artifact_engineering-platform-audit.md_owner:** platform
-- **artifact_engineering-platform-audit.md_creator:** audit
+- **artifact_engineering-platform-audit.md_creator:** runtime/foundation/audit/certification.py
+- **artifact_provider-performance.json_owner:** certification
+- **artifact_provider-performance.json_creator:** runtime/foundation/architecture
+- **artifact_intelligence-constitution.json_owner:** intelligence
+- **artifact_intelligence-constitution.json_creator:** runtime/foundation/intelligence/platform/migration.py
 - **artifact_program8-completion-report.md_owner:** platform
 - **artifact_program8-completion-report.md_creator:** program8
 - **artifact_repair-order.json_owner:** platform
-- **artifact_repair-order.json_creator:** repair_orderer
+- **artifact_repair-order.json_creator:** runtime/foundation/audit/repair_order.py
 - **artifact_dependency-health.json_owner:** platform
-- **artifact_dependency-health.json_creator:** dependency_tracker
+- **artifact_dependency-health.json_creator:** tools/development/check_paths.py
+- **artifact_runtime-retirement-plan.json_owner:** certification
+- **artifact_runtime-retirement-plan.json_creator:** runtime/foundation/architecture
+- **artifact_verification-cost.json_owner:** intelligence
+- **artifact_verification-cost.json_creator:** runtime/foundation/intelligence/platform/cost.py
+- **artifact_artifact-ownership-v3.json_owner:** platform
+- **artifact_artifact-ownership-v3.json_creator:** engineering-runtime
+- **artifact_engineering-platform-audit-v4.json_owner:** certification
+- **artifact_engineering-platform-audit-v4.json_creator:** runtime/foundation/intelligence/platform/certification.py
 - **artifact_system-health-score.json_owner:** platform
-- **artifact_system-health-score.json_creator:** health_scorer
+- **artifact_system-health-score.json_creator:** runtime/system/observability/health_report.py
 - **artifact_dependency-growth.json_owner:** platform
-- **artifact_dependency-growth.json_creator:** dependency_tracker
+- **artifact_dependency-growth.json_creator:** runtime/system/observability/dependency_growth.py
+- **artifact_cli-consistency.json_owner:** intelligence
+- **artifact_cli-consistency.json_creator:** runtime/foundation/intelligence/platform/migration.py
+- **artifact_runtime-constitution.json_owner:** certification
+- **artifact_runtime-constitution.json_creator:** runtime/foundation/architecture
+- **artifact_platform-state.json_owner:** intelligence
+- **artifact_platform-state.json_creator:** runtime/foundation/intelligence/platform/state.py
+- **artifact_test-resolution.json_owner:** intelligence
+- **artifact_test-resolution.json_creator:** runtime/foundation/intelligence/platform/migration.py
 - **artifact_verification-quality.md_owner:** platform
-- **artifact_verification-quality.md_creator:** quality_gate
-- **artifact_verification-performance.json_owner:** runtime
-- **artifact_verification-performance.json_creator:** performance_tracker
+- **artifact_verification-quality.md_creator:** runtime/foundation/verification/validation/validator.py
+- **artifact_verification-performance.json_owner:** platform
+- **artifact_verification-performance.json_creator:** runtime/foundation/verification/executor.py
+- **artifact_intelligence-retirement-plan.json_owner:** intelligence
+- **artifact_intelligence-retirement-plan.json_creator:** runtime/foundation/intelligence/platform/migration.py
+- **artifact_provider-consumer-inventory.json_owner:** certification
+- **artifact_provider-consumer-inventory.json_creator:** runtime/foundation/architecture
 - **artifact_platform-remediation.md_owner:** platform
-- **artifact_platform-remediation.md_creator:** remediation_engine
-- **artifact_verification-report.md_owner:** runtime
-- **artifact_verification-report.md_creator:** orchestrator
+- **artifact_platform-remediation.md_creator:** runtime/foundation/audit/remediation.py
+- **artifact_runtime-discovery-sources.json_owner:** platform
+- **artifact_runtime-discovery-sources.json_creator:** engineering-runtime
+- **artifact_verification-report.md_owner:** platform
+- **artifact_verification-report.md_creator:** runtime/foundation/verification/orchestrator.py
 - **artifact_knowledge-index.json_owner:** platform
-- **artifact_knowledge-index.json_creator:** knowledge_indexer
-- **artifact_verification-cache.json_owner:** runtime
-- **artifact_verification-cache.json_creator:** verification_runtime
+- **artifact_knowledge-index.json_creator:** runtime/foundation/knowledge/indexer.py
+- **artifact_blast-radius.json_owner:** intelligence
+- **artifact_blast-radius.json_creator:** runtime/foundation/intelligence/platform/blast.py
+- **artifact_verification-cache.json_owner:** platform
+- **artifact_verification-cache.json_creator:** runtime/foundation/verification/runtime.py
+- **artifact_engineering-risk.json_owner:** intelligence
+- **artifact_engineering-risk.json_creator:** runtime/foundation/intelligence/platform/risk.py
+- **artifact_knowledge-reconstruction.json_owner:** certification
+- **artifact_knowledge-reconstruction.json_creator:** runtime/analyze_knowledge.py (Program 13)
 - **artifact_runtime-defects.json_owner:** platform
-- **artifact_runtime-defects.json_creator:** defect_detector
+- **artifact_runtime-defects.json_creator:** runtime/foundation/audit/artifact_ownership.py
+- **artifact_repair-intelligence.json_owner:** intelligence
+- **artifact_repair-intelligence.json_creator:** runtime/foundation/intelligence/platform/repair.py
 - **artifact_pipeline-validation.json_owner:** platform
-- **artifact_pipeline-validation.json_creator:** pipeline
+- **artifact_pipeline-validation.json_creator:** runtime/foundation/audit/pipeline.py
 - **artifact_certification-history.json_owner:** platform
-- **artifact_certification-history.json_creator:** certification_tracker
+- **artifact_certification-history.json_creator:** runtime/foundation/audit/certification.py
+- **artifact_runtime-migration-report.md_owner:** certification
+- **artifact_runtime-migration-report.md_creator:** runtime/foundation/architecture
+- **artifact_program14.1-certification.md_owner:** certification
+- **artifact_program14.1-certification.md_creator:** runtime/foundation/intelligence/platform/certification.py
+- **artifact_dependency-graph-v2.json_owner:** platform
+- **artifact_dependency-graph-v2.json_creator:** engineering-runtime
+- **artifact_engine-topology.json_owner:** certification
+- **artifact_engine-topology.json_creator:** runtime/analyze_engine_topology.py (Program 13)
+- **artifact_architecture-provider.json_owner:** platform
+- **artifact_architecture-provider.json_creator:** engineering-runtime
 - **artifact_certification-dashboard.json_owner:** platform
-- **artifact_certification-dashboard.json_creator:** certification_tracker
+- **artifact_certification-dashboard.json_creator:** runtime/system/observability/dashboard.py
 - **artifact_artifact-ownership.json_owner:** platform
-- **artifact_artifact-ownership.json_creator:** audit
+- **artifact_artifact-ownership.json_creator:** engineering-runtime
+- **artifact_architecture-inventory.json_owner:** certification
+- **artifact_architecture-inventory.json_creator:** runtime/analyze_architecture.py (Program 13)
 - **artifact_cross-layer-map.json_owner:** platform
-- **artifact_cross-layer-map.json_creator:** build_cross_layer_map
+- **artifact_cross-layer-map.json_creator:** tools/generators/build_cross_layer_map.py
+- **artifact_ownership-graph.json_owner:** certification
+- **artifact_ownership-graph.json_creator:** runtime/analyze_ownership.py (Program 13)
+- **artifact_change-intelligence.json_owner:** intelligence
+- **artifact_change-intelligence.json_creator:** runtime/foundation/intelligence/platform/change.py
 - **artifact_github-workflow-inventory.json_owner:** platform
-- **artifact_github-workflow-inventory.json_creator:** workflow_scanner
-- **artifact_verification-pipeline.md_owner:** runtime
-- **artifact_verification-pipeline.md_creator:** planner
+- **artifact_github-workflow-inventory.json_creator:** runtime/foundation/repository/scanner/workflow_scanner.py
+- **artifact_knowledge-migration-report.json_owner:** platform
+- **artifact_knowledge-migration-report.json_creator:** engineering-runtime
+- **artifact_engineering-platform-audit-v2.json_owner:** certification
+- **artifact_engineering-platform-audit-v2.json_creator:** runtime/foundation/audit/certification.py
+- **artifact_architecture-inventory-summary.json_owner:** platform
+- **artifact_architecture-inventory-summary.json_creator:** engineering-runtime
+- **artifact_engineering-platform-audit-v3.md_owner:** certification
+- **artifact_engineering-platform-audit-v3.md_creator:** runtime/foundation/audit/certification.py
+- **artifact_verification-pipeline.md_owner:** platform
+- **artifact_verification-pipeline.md_creator:** runtime/foundation/verification/planner/planner.py
+- **artifact_engineering-platform-audit-v5.json_owner:** certification
+- **artifact_engineering-platform-audit-v5.json_creator:** runtime/foundation/intelligence/platform/certification.py
+- **artifact_engineering-memory.json_owner:** intelligence
+- **artifact_engineering-memory.json_creator:** runtime/foundation/intelligence/platform/memory.py
+- **artifact_certification-gap-analysis.json_owner:** certification
+- **artifact_certification-gap-analysis.json_creator:** runtime/analyze_gap.py (Program 13)
 - **artifact_certification-progress.json_owner:** platform
-- **artifact_certification-progress.json_creator:** certification_tracker
+- **artifact_certification-progress.json_creator:** runtime/foundation/audit/certification.py
 - **artifact_github-actions-health.json_owner:** platform
-- **artifact_github-actions-health.json_creator:** github_health
+- **artifact_github-actions-health.json_creator:** runtime/foundation/audit/github_actions.py
+- **artifact_engineering-platform-audit-v3.json_owner:** certification
+- **artifact_engineering-platform-audit-v3.json_creator:** runtime/foundation/audit/certification.py
 - **artifact_engineering-health.md_owner:** platform
-- **artifact_engineering-health.md_creator:** health_report
+- **artifact_engineering-health.md_creator:** runtime/system/observability/health_report.py
 - **artifact_engineering-analytics.json_owner:** platform
-- **artifact_engineering-analytics.json_creator:** analytics_engine
+- **artifact_engineering-analytics.json_creator:** runtime/system/observability/analytics.py
 - **artifact_engineering-events.jsonl_owner:** platform
-- **artifact_engineering-events.jsonl_creator:** event_collector
+- **artifact_engineering-events.jsonl_creator:** runtime/system/observability/event_store.py
 - **artifact_engineering-history.json_owner:** platform
-- **artifact_engineering-history.json_creator:** observability
+- **artifact_engineering-history.json_creator:** runtime/system/observability/repository.py
 - **artifact_acceptance_planner.py_owner:** platform
-- **artifact_acceptance_planner.py_creator:** planner
+- **artifact_acceptance_planner.py_creator:** engineering-runtime
 - **artifact_plan.json_owner:** platform
-- **artifact_plan.json_creator:** planner
+- **artifact_plan.json_creator:** engineering-runtime
 - **artifact_index.json_owner:** platform
-- **artifact_index.json_creator:** repository_indexer
+- **artifact_index.json_creator:** runtime/foundation/repository/builder/builder.py
 - **artifact_contract_partial.json_owner:** platform
-- **artifact_contract_partial.json_creator:** contract_generator
+- **artifact_contract_partial.json_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_coverage_empty.json_owner:** platform
-- **artifact_coverage_empty.json_creator:** coverage_collector
+- **artifact_coverage_empty.json_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_run_aggregator_tests.py_owner:** platform
+- **artifact_run_aggregator_tests.py_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_summary.md_owner:** platform
-- **artifact_summary.md_creator:** aggregator
+- **artifact_summary.md_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_run_collector_tests.py_owner:** platform
+- **artifact_run_collector_tests.py_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_contract_valid.json_owner:** platform
-- **artifact_contract_valid.json_creator:** contract_generator
-- **artifact_junit_partial.xml_owner:** runtime
-- **artifact_junit_partial.xml_creator:** test_runner
+- **artifact_contract_valid.json_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_junit_partial.xml_owner:** platform
+- **artifact_junit_partial.xml_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_coverage_invalid.json_owner:** platform
-- **artifact_coverage_invalid.json_creator:** coverage_collector
-- **artifact_junit_valid.xml_owner:** runtime
-- **artifact_junit_valid.xml_creator:** test_runner
+- **artifact_coverage_invalid.json_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_junit_valid.xml_owner:** platform
+- **artifact_junit_valid.xml_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_coverage_valid.json_owner:** platform
-- **artifact_coverage_valid.json_creator:** coverage_collector
+- **artifact_coverage_valid.json_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_contract_invalid.json_owner:** platform
-- **artifact_contract_invalid.json_creator:** contract_generator
+- **artifact_contract_invalid.json_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_contract_empty.json_owner:** platform
-- **artifact_contract_empty.json_creator:** contract_generator
-- **artifact_junit_empty.xml_owner:** runtime
-- **artifact_junit_empty.xml_creator:** test_runner
-- **artifact_junit_invalid.xml_owner:** runtime
-- **artifact_junit_invalid.xml_creator:** test_runner
+- **artifact_contract_empty.json_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_junit_empty.xml_owner:** platform
+- **artifact_junit_empty.xml_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_junit_invalid.xml_owner:** platform
+- **artifact_junit_invalid.xml_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_coverage_partial.json_owner:** platform
-- **artifact_coverage_partial.json_creator:** coverage_collector
+- **artifact_coverage_partial.json_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_summary.json_owner:** platform
-- **artifact_summary.json_creator:** aggregator
-- **artifact_loan-results.txt_owner:** platform
-- **artifact_loan-results.txt_creator:** loan_engine
-- **artifact_mutation-summary.json_owner:** platform
-- **artifact_mutation-summary.json_creator:** mutation_runner
+- **artifact_summary.json_creator:** runtime test fixture (verification runtime self-test)
+- **artifact_loan-results.txt_owner:** runtime
+- **artifact_loan-results.txt_creator:** loan_engine (mutation runner)
+- **artifact_mutation-summary.json_owner:** runtime
+- **artifact_mutation-summary.json_creator:** mutation runner
 - **artifact_junit.xml_owner:** runtime
-- **artifact_junit.xml_creator:** test_runner
-- **artifact_coverage.json_owner:** platform
-- **artifact_coverage.json_creator:** coverage_collector
+- **artifact_junit.xml_creator:** pytest|schemathesis
+- **artifact_coverage.json_owner:** runtime
+- **artifact_coverage.json_creator:** pytest|coverage
 - **artifact_contract.json_owner:** platform
-- **artifact_contract.json_creator:** contract_generator
+- **artifact_contract.json_creator:** runtime test fixture (verification runtime self-test)
 - **artifact_junit-property.xml_owner:** runtime
-- **artifact_junit-property.xml_creator:** test_runner
-- **owned_artifacts:** 63
-- **unowned_artifacts:** 32
-- **unique_artifact_names:** 90
+- **artifact_junit-property.xml_creator:** pytest property tests
+- **owned_artifacts:** 112
+- **unowned_artifacts:** 0
+- **unique_artifact_names:** 107
 - **duplicate_artifact_names:** 0
+- **artifact_runtime-consumer-migration.md_retention:** permanent
 - **artifact_engineering-platform-audit.json_retention:** 30_days
+- **artifact_engine-normalization.json_retention:** permanent
 - **artifact_normalized-issues.json_retention:** 30_days
+- **artifact_artifact-ownership-v2.json_retention:** permanent
 - **artifact_validation-summary.md_retention:** 30_days
 - **artifact_verification-profile-matrix.md_retention:** 30_days
+- **artifact_execution-graph.json_retention:** permanent
+- **artifact_runtime-id-consistency.json_retention:** permanent
+- **artifact_github-intelligence.json_retention:** 14_days
+- **artifact_intelligence-api.json_retention:** permanent
+- **artifact_program14-certification.md_retention:** permanent
+- **artifact_runtime-consistency.json_retention:** 30_days
 - **artifact_root-cause-clusters.json_retention:** 90_days
 - **artifact_cost-analysis.json_retention:** 30_days
+- **artifact_runtime-simplification.json_retention:** permanent
 - **artifact_flaky-tests.json_retention:** 14_days
 - **artifact_dashboard.json_retention:** 30_days
 - **artifact_pipeline-certification.md_retention:** permanent
+- **artifact_intelligence-inventory.json_retention:** 90_days
+- **artifact_cross-layer-map-v2.json_retention:** 30_days
+- **artifact_intelligence-duplication.json_retention:** 90_days
+- **artifact_verification-plan.json_retention:** 14_days
 - **artifact_engineering-platform-audit.md_retention:** 30_days
+- **artifact_provider-performance.json_retention:** permanent
+- **artifact_intelligence-constitution.json_retention:** permanent
 - **artifact_program8-completion-report.md_retention:** permanent
 - **artifact_repair-order.json_retention:** 90_days
 - **artifact_dependency-health.json_retention:** 30_days
+- **artifact_runtime-retirement-plan.json_retention:** permanent
+- **artifact_verification-cost.json_retention:** 30_days
+- **artifact_artifact-ownership-v3.json_retention:** 30_days
+- **artifact_engineering-platform-audit-v4.json_retention:** permanent
 - **artifact_system-health-score.json_retention:** 30_days
 - **artifact_dependency-growth.json_retention:** 30_days
+- **artifact_cli-consistency.json_retention:** 30_days
+- **artifact_runtime-constitution.json_retention:** permanent
+- **artifact_platform-state.json_retention:** 30_days
+- **artifact_test-resolution.json_retention:** 90_days
 - **artifact_verification-quality.md_retention:** 30_days
 - **artifact_verification-performance.json_retention:** 30_days
+- **artifact_intelligence-retirement-plan.json_retention:** permanent
+- **artifact_provider-consumer-inventory.json_retention:** permanent
 - **artifact_platform-remediation.md_retention:** permanent
+- **artifact_runtime-discovery-sources.json_retention:** 30_days
 - **artifact_verification-report.md_retention:** 30_days
 - **artifact_knowledge-index.json_retention:** 90_days
+- **artifact_blast-radius.json_retention:** 14_days
 - **artifact_verification-cache.json_retention:** 14_days
+- **artifact_engineering-risk.json_retention:** 30_days
+- **artifact_knowledge-reconstruction.json_retention:** permanent
 - **artifact_runtime-defects.json_retention:** 30_days
+- **artifact_repair-intelligence.json_retention:** 30_days
 - **artifact_pipeline-validation.json_retention:** 30_days
 - **artifact_certification-history.json_retention:** permanent
+- **artifact_runtime-migration-report.md_retention:** permanent
+- **artifact_program14.1-certification.md_retention:** permanent
+- **artifact_dependency-graph-v2.json_retention:** 30_days
+- **artifact_engine-topology.json_retention:** permanent
+- **artifact_architecture-provider.json_retention:** 30_days
 - **artifact_certification-dashboard.json_retention:** 30_days
 - **artifact_artifact-ownership.json_retention:** 30_days
+- **artifact_architecture-inventory.json_retention:** permanent
 - **artifact_cross-layer-map.json_retention:** 90_days
+- **artifact_ownership-graph.json_retention:** permanent
+- **artifact_change-intelligence.json_retention:** 14_days
 - **artifact_github-workflow-inventory.json_retention:** 30_days
+- **artifact_knowledge-migration-report.json_retention:** 30_days
+- **artifact_engineering-platform-audit-v2.json_retention:** 30_days
+- **artifact_architecture-inventory-summary.json_retention:** 30_days
+- **artifact_engineering-platform-audit-v3.md_retention:** 30_days
 - **artifact_verification-pipeline.md_retention:** 30_days
+- **artifact_engineering-platform-audit-v5.json_retention:** permanent
+- **artifact_engineering-memory.json_retention:** permanent
+- **artifact_certification-gap-analysis.json_retention:** permanent
 - **artifact_certification-progress.json_retention:** 30_days
 - **artifact_github-actions-health.json_retention:** 30_days
+- **artifact_engineering-platform-audit-v3.json_retention:** 30_days
 - **artifact_engineering-health.md_retention:** 30_days
 - **artifact_engineering-analytics.json_retention:** 30_days
 - **artifact_engineering-events.jsonl_retention:** 90_days
@@ -760,59 +903,92 @@ Certification status: **CERTIFIED**.
 - **artifact_acceptance_planner.py_retention:** 30_days
 - **artifact_plan.json_retention:** 30_days
 - **artifact_index.json_retention:** 90_days
-- **artifact_contract_partial.json_retention:** 30_days
-- **artifact_coverage_empty.json_retention:** 30_days
-- **artifact_summary.md_retention:** 30_days
-- **artifact_contract_valid.json_retention:** 30_days
-- **artifact_junit_partial.xml_retention:** 14_days
-- **artifact_coverage_invalid.json_retention:** 30_days
-- **artifact_junit_valid.xml_retention:** 14_days
-- **artifact_coverage_valid.json_retention:** 30_days
-- **artifact_contract_invalid.json_retention:** 30_days
-- **artifact_contract_empty.json_retention:** 30_days
-- **artifact_junit_empty.xml_retention:** 14_days
-- **artifact_junit_invalid.xml_retention:** 14_days
-- **artifact_coverage_partial.json_retention:** 30_days
-- **artifact_summary.json_retention:** 30_days
+- **artifact_contract_partial.json_retention:** permanent
+- **artifact_coverage_empty.json_retention:** permanent
+- **artifact_run_aggregator_tests.py_retention:** permanent
+- **artifact_summary.md_retention:** permanent
+- **artifact_run_collector_tests.py_retention:** permanent
+- **artifact_contract_valid.json_retention:** permanent
+- **artifact_junit_partial.xml_retention:** permanent
+- **artifact_coverage_invalid.json_retention:** permanent
+- **artifact_junit_valid.xml_retention:** permanent
+- **artifact_coverage_valid.json_retention:** permanent
+- **artifact_contract_invalid.json_retention:** permanent
+- **artifact_contract_empty.json_retention:** permanent
+- **artifact_junit_empty.xml_retention:** permanent
+- **artifact_junit_invalid.xml_retention:** permanent
+- **artifact_coverage_partial.json_retention:** permanent
+- **artifact_summary.json_retention:** permanent
 - **artifact_loan-results.txt_retention:** 30_days
-- **artifact_mutation-summary.json_retention:** 90_days
+- **artifact_mutation-summary.json_retention:** 30_days
 - **artifact_junit.xml_retention:** 14_days
-- **artifact_coverage.json_retention:** 30_days
-- **artifact_contract.json_retention:** 30_days
+- **artifact_coverage.json_retention:** 14_days
+- **artifact_contract.json_retention:** permanent
 - **artifact_junit-property.xml_retention:** 14_days
-- **content_unique_artifacts:** 95
+- **content_unique_artifacts:** 112
 - **content_duplicate_groups:** 0
+- **artifact_runtime-consumer-migration.md_consumer_count:** 1
 - **artifact_engineering-platform-audit.json_consumer_count:** 1
 - **artifact_normalized-issues.json_consumer_count:** 1
 - **artifact_validation-summary.md_consumer_count:** 1
 - **artifact_verification-profile-matrix.md_consumer_count:** 1
+- **artifact_runtime-id-consistency.json_consumer_count:** 1
+- **artifact_github-intelligence.json_consumer_count:** 2
+- **artifact_intelligence-api.json_consumer_count:** 1
+- **artifact_program14-certification.md_consumer_count:** 1
 - **artifact_root-cause-clusters.json_consumer_count:** 1
 - **artifact_cost-analysis.json_consumer_count:** 1
+- **artifact_runtime-simplification.json_consumer_count:** 1
 - **artifact_flaky-tests.json_consumer_count:** 1
 - **artifact_dashboard.json_consumer_count:** 2
 - **artifact_pipeline-certification.md_consumer_count:** 1
+- **artifact_intelligence-inventory.json_consumer_count:** 1
+- **artifact_intelligence-duplication.json_consumer_count:** 1
+- **artifact_verification-plan.json_consumer_count:** 2
 - **artifact_engineering-platform-audit.md_consumer_count:** 1
+- **artifact_provider-performance.json_consumer_count:** 1
+- **artifact_intelligence-constitution.json_consumer_count:** 1
 - **artifact_program8-completion-report.md_consumer_count:** 1
 - **artifact_repair-order.json_consumer_count:** 1
 - **artifact_dependency-health.json_consumer_count:** 1
+- **artifact_runtime-retirement-plan.json_consumer_count:** 1
+- **artifact_verification-cost.json_consumer_count:** 2
+- **artifact_engineering-platform-audit-v4.json_consumer_count:** 1
 - **artifact_system-health-score.json_consumer_count:** 2
 - **artifact_dependency-growth.json_consumer_count:** 1
+- **artifact_cli-consistency.json_consumer_count:** 1
+- **artifact_runtime-constitution.json_consumer_count:** 1
+- **artifact_platform-state.json_consumer_count:** 2
+- **artifact_test-resolution.json_consumer_count:** 1
 - **artifact_verification-quality.md_consumer_count:** 1
 - **artifact_verification-performance.json_consumer_count:** 1
+- **artifact_intelligence-retirement-plan.json_consumer_count:** 1
+- **artifact_provider-consumer-inventory.json_consumer_count:** 1
 - **artifact_platform-remediation.md_consumer_count:** 1
 - **artifact_verification-report.md_consumer_count:** 2
 - **artifact_knowledge-index.json_consumer_count:** 2
+- **artifact_blast-radius.json_consumer_count:** 3
 - **artifact_verification-cache.json_consumer_count:** 2
+- **artifact_engineering-risk.json_consumer_count:** 2
 - **artifact_runtime-defects.json_consumer_count:** 1
+- **artifact_repair-intelligence.json_consumer_count:** 2
 - **artifact_pipeline-validation.json_consumer_count:** 1
 - **artifact_certification-history.json_consumer_count:** 1
+- **artifact_runtime-migration-report.md_consumer_count:** 1
+- **artifact_program14.1-certification.md_consumer_count:** 1
 - **artifact_certification-dashboard.json_consumer_count:** 2
 - **artifact_artifact-ownership.json_consumer_count:** 1
 - **artifact_cross-layer-map.json_consumer_count:** 3
+- **artifact_change-intelligence.json_consumer_count:** 3
 - **artifact_github-workflow-inventory.json_consumer_count:** 1
+- **artifact_engineering-platform-audit-v2.json_consumer_count:** 1
+- **artifact_engineering-platform-audit-v3.md_consumer_count:** 1
 - **artifact_verification-pipeline.md_consumer_count:** 1
+- **artifact_engineering-platform-audit-v5.json_consumer_count:** 1
+- **artifact_engineering-memory.json_consumer_count:** 2
 - **artifact_certification-progress.json_consumer_count:** 1
 - **artifact_github-actions-health.json_consumer_count:** 1
+- **artifact_engineering-platform-audit-v3.json_consumer_count:** 1
 - **artifact_engineering-health.md_consumer_count:** 1
 - **artifact_engineering-analytics.json_consumer_count:** 2
 - **artifact_engineering-events.jsonl_consumer_count:** 2
@@ -853,128 +1029,66 @@ Certification status: **CERTIFIED**.
 - **artifact_verification-performance.json_referenced_in:** ['verification-runtime.yml']
 - **artifact_dependency-health.json_referenced_in:** ['dependency-update.yml']
 - **artifact_mutation-summary.json_referenced_in:** ['mutation.yml']
-- **artifacts_with_consumers:** 95
+- **artifacts_with_consumers:** 112
 - **artifacts_without_consumers:** 0
 
-- [WARNING] Artifact has no registered owner: verify-stderr-1dkbm2i6.txt: Artifact verify-stderr-1dkbm2i6.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-vlie0w_l.txt: Artifact verify-stdout-vlie0w_l.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-f8c8pqfc.txt: Artifact verify-stdout-f8c8pqfc.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-53m8b7la.txt: Artifact verify-stderr-53m8b7la.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-nmf4brpq.txt: Artifact verify-stdout-nmf4brpq.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-ojblly5z.txt: Artifact verify-stdout-ojblly5z.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-x3qk4acb.txt: Artifact verify-stderr-x3qk4acb.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-2b104hzs.txt: Artifact verify-stderr-2b104hzs.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-gvkw05t1.txt: Artifact verify-stdout-gvkw05t1.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-64lkn75i.txt: Artifact verify-stdout-64lkn75i.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-5v4i23o3.txt: Artifact verify-stdout-5v4i23o3.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-gq05_juh.txt: Artifact verify-stderr-gq05_juh.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-pbs4kdh8.txt: Artifact verify-stdout-pbs4kdh8.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-4m3gl2zp.txt: Artifact verify-stdout-4m3gl2zp.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-sr98mpnd.txt: Artifact verify-stdout-sr98mpnd.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-f4iys_d2.txt: Artifact verify-stdout-f4iys_d2.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-vt79a3mr.txt: Artifact verify-stderr-vt79a3mr.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-sgf479b6.txt: Artifact verify-stdout-sgf479b6.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-n37wuaqx.txt: Artifact verify-stderr-n37wuaqx.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-vy5cl13e.txt: Artifact verify-stdout-vy5cl13e.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-8qir16b1.txt: Artifact verify-stderr-8qir16b1.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-cd7whkp3.txt: Artifact verify-stderr-cd7whkp3.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-x6a7wp48.txt: Artifact verify-stderr-x6a7wp48.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-u8brsx0_.txt: Artifact verify-stderr-u8brsx0_.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-x8my9g3_.txt: Artifact verify-stderr-x8my9g3_.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-xa_t6tv8.txt: Artifact verify-stdout-xa_t6tv8.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-84aow8p4.txt: Artifact verify-stderr-84aow8p4.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-syrlvprv.txt: Artifact verify-stderr-syrlvprv.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stdout-ob5okgk1.txt: Artifact verify-stdout-ob5okgk1.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: verify-stderr-syujt9y6.txt: Artifact verify-stderr-syujt9y6.txt in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: run_aggregator_tests.py: Artifact run_aggregator_tests.py in runtime/generated/ has no registered owner
-- [WARNING] Artifact has no registered owner: run_collector_tests.py: Artifact run_collector_tests.py in runtime/generated/ has no registered owner
+- [PASS] All artifacts have registered owners: All 112 artifacts in runtime/generated/ have registered owners
 - [PASS] No artifact overwrites detected: All artifact names in runtime/generated/ are unique
-- [WARNING] Artifact has no retention policy: verify-stderr-1dkbm2i6.txt: Artifact verify-stderr-1dkbm2i6.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-vlie0w_l.txt: Artifact verify-stdout-vlie0w_l.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-f8c8pqfc.txt: Artifact verify-stdout-f8c8pqfc.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-53m8b7la.txt: Artifact verify-stderr-53m8b7la.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-nmf4brpq.txt: Artifact verify-stdout-nmf4brpq.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-ojblly5z.txt: Artifact verify-stdout-ojblly5z.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-x3qk4acb.txt: Artifact verify-stderr-x3qk4acb.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-2b104hzs.txt: Artifact verify-stderr-2b104hzs.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-gvkw05t1.txt: Artifact verify-stdout-gvkw05t1.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-64lkn75i.txt: Artifact verify-stdout-64lkn75i.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-5v4i23o3.txt: Artifact verify-stdout-5v4i23o3.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-gq05_juh.txt: Artifact verify-stderr-gq05_juh.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-pbs4kdh8.txt: Artifact verify-stdout-pbs4kdh8.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-4m3gl2zp.txt: Artifact verify-stdout-4m3gl2zp.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-sr98mpnd.txt: Artifact verify-stdout-sr98mpnd.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-f4iys_d2.txt: Artifact verify-stdout-f4iys_d2.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-vt79a3mr.txt: Artifact verify-stderr-vt79a3mr.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-sgf479b6.txt: Artifact verify-stdout-sgf479b6.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-n37wuaqx.txt: Artifact verify-stderr-n37wuaqx.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-vy5cl13e.txt: Artifact verify-stdout-vy5cl13e.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-8qir16b1.txt: Artifact verify-stderr-8qir16b1.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-cd7whkp3.txt: Artifact verify-stderr-cd7whkp3.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-x6a7wp48.txt: Artifact verify-stderr-x6a7wp48.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-u8brsx0_.txt: Artifact verify-stderr-u8brsx0_.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-x8my9g3_.txt: Artifact verify-stderr-x8my9g3_.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-xa_t6tv8.txt: Artifact verify-stdout-xa_t6tv8.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-84aow8p4.txt: Artifact verify-stderr-84aow8p4.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-syrlvprv.txt: Artifact verify-stderr-syrlvprv.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stdout-ob5okgk1.txt: Artifact verify-stdout-ob5okgk1.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: verify-stderr-syujt9y6.txt: Artifact verify-stderr-syujt9y6.txt has no defined retention policy
-- [WARNING] Artifact has no retention policy: run_aggregator_tests.py: Artifact run_aggregator_tests.py has no defined retention policy
-- [WARNING] Artifact has no retention policy: run_collector_tests.py: Artifact run_collector_tests.py has no defined retention policy
+- [PASS] All artifacts have retention policies: All 112 artifacts have defined retention policies
 - [PASS] No duplicate artifact content detected: All artifacts in runtime/generated/ have unique content
-- [PASS] Artifact consumption tracking complete: All 95 artifacts have registered consumers
+- [PASS] Artifact consumption tracking complete: All 112 artifacts have registered consumers
 - [PASS] Workflow artifact references checked: Checked 9 workflow files for artifact references; 11 artifacts are referenced
-- [PASS] All artifacts have registered consumers: All 95 artifacts have registered consumers
+- [PASS] All artifacts have registered consumers: All 112 artifacts have registered consumers
 
 ### Runtime Performance Audit
 - **Status:** PASS
-- **Duration:** 1.83s
-- **planner_duration_seconds:** 0.0006
+- **Duration:** 1.73s
+- **planner_duration_seconds:** 0.0002
 - **planner_step_count:** 1
 - **planner_target_count:** 1
 - **planner_estimated_duration:** 3600
-- **graph_load_duration_seconds:** 0.1675
-- **graph_statistics_duration_seconds:** 0.0014
+- **graph_load_duration_seconds:** 0.1041
+- **graph_statistics_duration_seconds:** 0.0017
 - **graph_node_count:** 0
 - **graph_edge_count:** 0
 - **knowledge_query_count:** 9
 - **knowledge_successful_queries:** 9
-- **knowledge_total_duration_seconds:** 0.0211
-- **knowledge_avg_duration_seconds:** 0.0023
+- **knowledge_total_duration_seconds:** 0.0219
+- **knowledge_avg_duration_seconds:** 0.0024
 - **workspace_render_duration_seconds:** 0.0
 - **workspace_verification_render_duration_seconds:** 0.0
 - **workspace_total_render_duration_seconds:** 0.0
-- **integrity_check_duration_seconds:** 1.5237
+- **integrity_check_duration_seconds:** 1.449
 - **integrity_violation_count:** 0
 - **integrity_total_violations:** 0
 - **integrity_rules_passed:** 28
 - **integrity_rules_failed:** 0
 - **diagnostics_init_duration_seconds:** 0.0
-- **diagnostics_diagnose_duration_seconds:** 0.0015
-- **diagnostics_total_duration_seconds:** 0.0015
+- **diagnostics_diagnose_duration_seconds:** 0.0132
+- **diagnostics_total_duration_seconds:** 0.0132
 - **github_workflow_files_count:** 9
-- **github_parse_verification-runtime_duration_seconds:** 0.0092
-- **github_parse_quality_duration_seconds:** 0.01
-- **github_parse_golden_duration_seconds:** 0.0081
-- **github_parse_dependency-update_duration_seconds:** 0.009
-- **github_parse_backend-verify_duration_seconds:** 0.0082
-- **github_parse_release_duration_seconds:** 0.0073
-- **github_parse_playwright_duration_seconds:** 0.0089
-- **github_parse_mutation_duration_seconds:** 0.0099
-- **github_parse_frontend-verify_duration_seconds:** 0.0084
-- **github_total_parse_duration_seconds:** 0.0789
+- **github_parse_verification-runtime_duration_seconds:** 0.0093
+- **github_parse_quality_duration_seconds:** 0.0105
+- **github_parse_golden_duration_seconds:** 0.0083
+- **github_parse_dependency-update_duration_seconds:** 0.008
+- **github_parse_backend-verify_duration_seconds:** 0.0083
+- **github_parse_release_duration_seconds:** 0.0077
+- **github_parse_playwright_duration_seconds:** 0.0092
+- **github_parse_mutation_duration_seconds:** 0.0104
+- **github_parse_frontend-verify_duration_seconds:** 0.0102
+- **github_total_parse_duration_seconds:** 0.0819
 
-- [PASS] Planner performance is acceptable: Planner completed in 0.0006s
-- [PASS] Graph loading performance is acceptable: Graph loaded in 0.1675s with 0 nodes
-- [PASS] Knowledge lookup performance is acceptable: Knowledge lookups completed in 0.0211s (9/9 successful)
+- [PASS] Planner performance is acceptable: Planner completed in 0.0002s
+- [PASS] Graph loading performance is acceptable: Graph loaded in 0.1041s with 0 nodes
+- [PASS] Knowledge lookup performance is acceptable: Knowledge lookups completed in 0.0219s (9/9 successful)
 - [PASS] Workspace rendering performance is acceptable: Workspace rendering completed in 0.0000s
-- [PASS] Integrity check performance is acceptable: Integrity checks completed in 1.5237s with 0 violations
-- [PASS] Diagnostics performance is acceptable: Diagnostics completed in 0.0015s
-- [PASS] GitHub parsing performance is acceptable: GitHub workflow parsing completed in 0.0789s for 9 files
+- [PASS] Integrity check performance is acceptable: Integrity checks completed in 1.4490s with 0 violations
+- [PASS] Diagnostics performance is acceptable: Diagnostics completed in 0.0132s
+- [PASS] GitHub parsing performance is acceptable: GitHub workflow parsing completed in 0.0819s for 9 files
 
 ### Failure Injection Audit
 - **Status:** PASS
-- **Duration:** 0.01s
+- **Duration:** 0.00s
 - **injected_missing_endpoint:** /api/v1/nonexistent
 - **endpoint_map_size:** 2
 - **synthetic_endpoint_map:** {'/api/v1/accounts': {'method': 'GET', 'handler': 'account_handler'}, '/api/v1/transfers': {'method': 'POST', 'handler': 'transfer_handler'}}
@@ -1044,13 +1158,13 @@ Certification status: **CERTIFIED**.
 - **pipeline_stages_passed:** 12
 - **pipeline_stages_failed:** 0
 - **pipeline_stages_warning:** 0
-- **pipeline_total_duration_seconds:** 0.0248
-- **pipeline_results:** [{'stage': 'git_change', 'name': 'Git Change Detection', 'status': 'pass', 'duration_seconds': 0.0118, 'findings_count': 1}, {'stage': 'planner', 'name': 'Verification Planner', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'tests_selected', 'name': 'Test Selection', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'executor', 'name': 'Test Executor', 'status': 'pass', 'duration_seconds': 0.0002, 'findings_count': 1}, {'stage': 'results', 'name': 'Results Collection', 'status': 'pass', 'duration_seconds': 0.0002, 'findings_count': 1}, {'stage': 'evidence', 'name': 'Evidence Aggregation', 'status': 'pass', 'duration_seconds': 0.0017, 'findings_count': 1}, {'stage': 'knowledge', 'name': 'Knowledge Indexing', 'status': 'pass', 'duration_seconds': 0.0039, 'findings_count': 1}, {'stage': 'workspace', 'name': 'Workspace Rendering', 'status': 'pass', 'duration_seconds': 0.0033, 'findings_count': 1}, {'stage': 'dashboard', 'name': 'Dashboard Generation', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'github', 'name': 'GitHub Reporting', 'status': 'pass', 'duration_seconds': 0.0002, 'findings_count': 1}, {'stage': 'artifact', 'name': 'Artifact Management', 'status': 'pass', 'duration_seconds': 0.0028, 'findings_count': 1}, {'stage': 'status', 'name': 'Status Reporting', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}]
+- **pipeline_total_duration_seconds:** 0.0317
+- **pipeline_results:** [{'stage': 'git_change', 'name': 'Git Change Detection', 'status': 'pass', 'duration_seconds': 0.0175, 'findings_count': 1}, {'stage': 'planner', 'name': 'Verification Planner', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'tests_selected', 'name': 'Test Selection', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}, {'stage': 'executor', 'name': 'Test Executor', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'results', 'name': 'Results Collection', 'status': 'pass', 'duration_seconds': 0.0002, 'findings_count': 1}, {'stage': 'evidence', 'name': 'Evidence Aggregation', 'status': 'pass', 'duration_seconds': 0.0015, 'findings_count': 1}, {'stage': 'knowledge', 'name': 'Knowledge Indexing', 'status': 'pass', 'duration_seconds': 0.0048, 'findings_count': 1}, {'stage': 'workspace', 'name': 'Workspace Rendering', 'status': 'pass', 'duration_seconds': 0.0022, 'findings_count': 1}, {'stage': 'dashboard', 'name': 'Dashboard Generation', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'github', 'name': 'GitHub Reporting', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'artifact', 'name': 'Artifact Management', 'status': 'pass', 'duration_seconds': 0.0045, 'findings_count': 1}, {'stage': 'status', 'name': 'Status Reporting', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}]
 - **pipeline_trace_complete:** True
 - **pipeline_stages_traced:** 12
 
-- [PASS] Git change detection stage passed: Git is available and 11 changed files detected
-- [PASS] Planner stage passed: Planner generated plan plan-20260806-083027 with 1 steps and 1 targets
+- [PASS] Git change detection stage passed: Git is available and 36 changed files detected
+- [PASS] Planner stage passed: Planner generated plan plan-20260806-143130 with 1 steps and 1 targets
 - [PASS] Test selection stage passed: Test selection found 39 tasks across 10 profiles with 39 total commands
 - [PASS] Executor stage passed: Executor initialized successfully
 - [PASS] Results collection stage passed: Results file exists and has content
@@ -1059,7 +1173,7 @@ Certification status: **CERTIFIED**.
 - [PASS] Workspace rendering stage passed: Workspace loader initialized and status workspace loaded
 - [PASS] Dashboard generation stage passed: Dashboard file exists and is valid
 - [PASS] GitHub reporting stage passed: GitHub workflow directory exists with 9 workflow files
-- [PASS] Artifact management stage passed: Artifact directory exists with 95 files
+- [PASS] Artifact management stage passed: Artifact directory exists with 112 files
 - [PASS] Status reporting stage passed: Pipeline status reporting completed successfully
 - [PASS] All pipeline stages passed: All 12 pipeline stages passed successfully
 
@@ -1068,7 +1182,7 @@ Certification status: **CERTIFIED**.
 - **Duration:** 1.02s
 - **without_runtime:** {'repository_files_manually_inspected': 0, 'commands_executed_manually': 0, 'time_to_identify_failing_component_seconds': 300.0, 'time_to_identify_blast_radius_seconds': 600.0, 'time_to_identify_required_tests_seconds': 450.0, 'time_to_identify_repair_location_seconds': 300.0, 'time_to_identify_affected_workflows_seconds': 180.0, 'total_manual_time_seconds': 1830.0}
 - **with_runtime:** {'repository_files_auto_inspected': 0, 'commands_executed_automatically': 0, 'time_to_identify_failing_component_seconds': 5.0, 'time_to_identify_blast_radius_seconds': 10.0, 'time_to_identify_required_tests_seconds': 8.0, 'time_to_identify_repair_location_seconds': 5.0, 'time_to_identify_affected_workflows_seconds': 3.0, 'total_runtime_time_seconds': 31.0}
-- **manual_inspection:** {'total_python_files': 6179, 'backend_python_files': 5967, 'runtime_python_files': 167, 'manual_inspection_time_per_file_seconds': 120.0, 'manual_inspection_total_time_seconds': 741480.0}
+- **manual_inspection:** {'total_python_files': 6209, 'backend_python_files': 5967, 'runtime_python_files': 196, 'manual_inspection_time_per_file_seconds': 120.0, 'manual_inspection_total_time_seconds': 745080.0}
 - **commands_executed:** {'manual_commands_per_session': 15, 'runtime_commands_per_session': 1, 'manual_command_average_duration_seconds': 30.0, 'runtime_command_average_duration_seconds': 5.0, 'manual_total_command_time_seconds': 450.0, 'runtime_total_command_time_seconds': 5.0}
 - **time_to_failure:** {'manual_time_to_failure_seconds': 300.0, 'runtime_time_to_failure_seconds': 5.0, 'time_saved_failure_seconds': 295.0, 'improvement_factor_failure': 60.0}
 - **time_to_blast_radius:** {'manual_time_to_blast_radius_seconds': 600.0, 'runtime_time_to_blast_radius_seconds': 10.0, 'time_saved_blast_radius_seconds': 590.0, 'improvement_factor_blast_radius': 60.0}

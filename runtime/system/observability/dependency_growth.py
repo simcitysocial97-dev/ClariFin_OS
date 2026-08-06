@@ -14,7 +14,6 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-CROSS_LAYER_MAP_PATH = REPO_ROOT / "runtime" / "generated" / "cross-layer-map.json"
 DEPENDENCY_GROWTH_PATH = REPO_ROOT / "runtime" / "generated" / "dependency-growth.json"
 
 
@@ -44,16 +43,13 @@ class DependencyGrowthIntelligence:
     """Analyzes cross-layer dependency growth."""
 
     def __init__(self, cross_layer_map_path: Path | None = None) -> None:
-        self._cross_layer_map_path = cross_layer_map_path or CROSS_LAYER_MAP_PATH
+        # Program 13.3: chains come from the architecture provider. A path may
+        # still be injected by isolated tests; it is never the runtime default.
+        self._cross_layer_map_path = cross_layer_map_path
 
     def compute(self) -> dict[str, DependencyGrowthRecord]:
-        if not self._cross_layer_map_path.exists():
-            return {}
-
-        try:
-            with open(self._cross_layer_map_path, "r", encoding="utf-8") as f:
-                cross_map = json.load(f)
-        except (json.JSONDecodeError, OSError):
+        cross_map = self._load_chains()
+        if not cross_map:
             return {}
 
         growth: dict[str, DependencyGrowthRecord] = {}
@@ -81,6 +77,22 @@ class DependencyGrowthIntelligence:
                     growth[category].current_count += count
 
         return growth
+
+    def _load_chains(self) -> dict[str, Any]:
+        if self._cross_layer_map_path is not None:
+            if not self._cross_layer_map_path.exists():
+                return {}
+            try:
+                with open(self._cross_layer_map_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, OSError):
+                return {}
+        try:
+            from runtime.foundation.architecture.chains import get_chain_map
+
+            return get_chain_map()
+        except Exception:
+            return {}
 
     def save(self, path: Path | None = None) -> None:
         target = path or DEPENDENCY_GROWTH_PATH

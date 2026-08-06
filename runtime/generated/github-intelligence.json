@@ -1,0 +1,36 @@
+{
+  "schema": "github-intelligence/v1",
+  "generated_at": "2026-08-06T14:13:02.173662+00:00",
+  "available": false,
+  "retrieval_policy": {
+    "order": [
+      "run_metadata",
+      "failed_jobs",
+      "failed_steps",
+      "annotations",
+      "job_summaries",
+      "artifacts",
+      "failed_step_logs (opt-in only)"
+    ],
+    "structured_metadata_first": true,
+    "full_log_archive_download": "never",
+    "failed_step_logs": "opt-in only (allow_logs=True)"
+  },
+  "runs": [],
+  "failed_jobs": [],
+  "annotations": [],
+  "artifacts": [],
+  "logs_fetched": [],
+  "counts": {
+    "runs": 0,
+    "failed_jobs": 0,
+    "annotations": 0,
+    "artifacts": 0,
+    "logs_fetched": 0,
+    "api_calls": 0
+  },
+  "api_calls": [],
+  "notes": [
+    "CI collection disabled for this run"
+  ]
+}

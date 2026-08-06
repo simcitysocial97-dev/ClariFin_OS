@@ -147,7 +147,14 @@ class TestArchitecturalScanner:
         assert len(graph.scan_errors) > 0
 
     def test_scan_with_empty_repo(self, tmp_path: Path) -> None:
-        scanner = ArchitecturalScanner(repo_root=tmp_path)
+        # Program 13.3: chains come from the provider; an explicit empty map is
+        # injected to verify isolated behaviour.
+        map_path = tmp_path / "runtime" / "generated" / "cross-layer-map.json"
+        map_path.parent.mkdir(parents=True, exist_ok=True)
+        map_path.write_text("{}", encoding="utf-8")
+        scanner = ArchitecturalScanner(
+            repo_root=tmp_path, cross_layer_map_path=map_path
+        )
         graph = scanner.scan()
         assert graph.files_scanned == 0
         assert len(graph.cross_layer_map) == 0

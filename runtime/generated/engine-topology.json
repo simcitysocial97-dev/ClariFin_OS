@@ -1,0 +1,633 @@
+{
+  "generated_at": "2026-08-06T16:33:17.114046",
+  "engine_count": 13,
+  "engines": {
+    "account_engine": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/account_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/account_engine/balance.py",
+        "backend/src/engines/account_engine/cashflow.py",
+        "backend/src/engines/account_engine/dormant.py",
+        "backend/src/engines/account_engine/history.py",
+        "backend/src/engines/account_engine/lifecycle.py",
+        "backend/src/engines/account_engine/metrics.py"
+      ],
+      "implementation_module_count": 6,
+      "services": [
+        "backend/src/services/account_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/accounts.py",
+        "backend/src/routers/managed_accounts.py"
+      ],
+      "repositories": [
+        "account_balance_repository",
+        "account_link_repository",
+        "account_repository",
+        "institution_repository"
+      ],
+      "endpoints": [
+        "DELETE /accounts/manage/{account_id}",
+        "DELETE /accounts/{account_id}",
+        "DELETE /accounts/{account_id}/links/{linked_account_id}",
+        "GET /accounts",
+        "GET /accounts/manage",
+        "GET /accounts/{account_id}",
+        "GET /accounts/{account_id}/analytics",
+        "GET /accounts/{account_id}/balance",
+        "GET /accounts/{account_id}/balance-history",
+        "GET /accounts/{account_id}/balance-history/latest",
+        "GET /accounts/{account_id}/dormancy",
+        "GET /accounts/{account_id}/links",
+        "GET /accounts/{account_id}/metrics",
+        "GET /accounts/{account_id}/running-balance",
+        "GET /accounts/{account_id}/status",
+        "GET /institutions",
+        "GET /institutions/{institution_id}",
+        "POST /accounts",
+        "POST /accounts/manage",
+        "POST /accounts/{account_id}/balance-history",
+        "POST /accounts/{account_id}/links",
+        "POST /institutions",
+        "PUT /accounts/manage/{account_id}",
+        "PUT /accounts/{account_id}",
+        "PUT /institutions/{institution_id}"
+      ],
+      "endpoint_count": 25,
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/account/test_account_engine.py"
+      ],
+      "artifacts": [],
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/routers/accounts.py",
+          "backend/src/services/account_service.py"
+        ]
+      }
+    },
+    "behaviour_engine": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/behaviour_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/behaviour_engine/account.py",
+        "backend/src/engines/behaviour_engine/cashflow.py",
+        "backend/src/engines/behaviour_engine/core.py",
+        "backend/src/engines/behaviour_engine/credit_dependency.py",
+        "backend/src/engines/behaviour_engine/debt.py",
+        "backend/src/engines/behaviour_engine/income.py",
+        "backend/src/engines/behaviour_engine/lifestyle.py",
+        "backend/src/engines/behaviour_engine/patterns.py",
+        "backend/src/engines/behaviour_engine/profile.py",
+        "backend/src/engines/behaviour_engine/resilience.py",
+        "backend/src/engines/behaviour_engine/savings.py",
+        "backend/src/engines/behaviour_engine/stress.py",
+        "backend/src/engines/behaviour_engine/temporal.py",
+        "backend/src/engines/behaviour_engine/utils.py",
+        "backend/src/engines/behaviour_engine/wellness.py"
+      ],
+      "implementation_module_count": 15,
+      "services": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/dashboard_service.py",
+        "backend/src/services/import_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/dashboard.py",
+        "backend/src/routers/import_router.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "reconciliation_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [
+        "GET /cashflow-health",
+        "GET /debt-health",
+        "GET /monthly-report",
+        "GET /patterns",
+        "GET /profile",
+        "GET /recommendations",
+        "GET /summary",
+        "GET /wellness-score",
+        "POST /import/detect",
+        "POST /import/execute",
+        "POST /upload"
+      ],
+      "endpoint_count": 11,
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/behaviour/test_core.py",
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/behaviour/test_metrics.py",
+        "backend/tests/unit/engines/behaviour/test_patterns.py"
+      ],
+      "artifacts": [],
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "evidence": {
+        "import_references": 3,
+        "importer_files": [
+          "backend/src/services/behaviour_service.py",
+          "backend/src/services/dashboard_service.py",
+          "backend/src/services/import_service.py"
+        ]
+      }
+    },
+    "credit_card_engine": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/credit_card_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/credit_card_engine/billing.py",
+        "backend/src/engines/credit_card_engine/emi.py",
+        "backend/src/engines/credit_card_engine/foreclosure.py",
+        "backend/src/engines/credit_card_engine/interest.py",
+        "backend/src/engines/credit_card_engine/metrics.py",
+        "backend/src/engines/credit_card_engine/outstanding.py",
+        "backend/src/engines/credit_card_engine/utilization.py"
+      ],
+      "implementation_module_count": 7,
+      "services": [
+        "backend/src/services/credit_card_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/credit_cards.py"
+      ],
+      "repositories": [
+        "credit_card_repository",
+        "credit_card_statement_repository"
+      ],
+      "endpoints": [
+        "DELETE /credit-cards/{card_id}",
+        "GET /credit-cards",
+        "GET /credit-cards/{card_id}",
+        "GET /credit-cards/{card_id}/metrics",
+        "GET /credit-cards/{card_id}/next-statement-date",
+        "GET /credit-cards/{card_id}/outstanding",
+        "GET /credit-cards/{card_id}/statements",
+        "GET /credit-cards/{card_id}/utilization",
+        "POST /credit-cards",
+        "POST /credit-cards/{card_id}/emi-conversion",
+        "POST /credit-cards/{card_id}/foreclosure",
+        "POST /credit-cards/{card_id}/payments",
+        "POST /credit-cards/{card_id}/statements",
+        "PUT /credit-cards/{card_id}"
+      ],
+      "endpoint_count": 14,
+      "tests": [
+        "backend/tests/properties/credit_card_engine/__init__.py",
+        "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+        "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+        "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+      ],
+      "artifacts": [],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/credit_card_service.py"
+        ]
+      }
+    },
+    "financial_events": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/financial_events/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/financial_events/lineage_walker.py"
+      ],
+      "implementation_module_count": 1,
+      "services": [
+        "backend/src/services/financial_events_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/financial_events.py"
+      ],
+      "repositories": [
+        "financial_event_repository"
+      ],
+      "endpoints": [
+        "GET /",
+        "GET /{event_id}",
+        "POST /"
+      ],
+      "endpoint_count": 3,
+      "tests": [
+        "backend/tests/capability/financial_events/__init__.py",
+        "backend/tests/capability/financial_events/test_capability.py",
+        "backend/tests/capability/financial_events/test_revocation.py",
+        "backend/tests/contract/generated/test_financial_events.py",
+        "backend/tests/invariants/financial_events.py",
+        "backend/tests/properties/financial_events/__init__.py",
+        "backend/tests/properties/financial_events/test_engine_properties.py",
+        "backend/tests/properties/financial_events/test_lineage_properties.py",
+        "backend/tests/unit/engines/financial_events/__init__.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+      ],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/financial_events_service.py"
+        ]
+      }
+    },
+    "financial_intelligence": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/financial_intelligence/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/financial_intelligence/forecasting.py",
+        "backend/src/engines/financial_intelligence/goal_planner.py",
+        "backend/src/engines/financial_intelligence/intelligence.py",
+        "backend/src/engines/financial_intelligence/models.py",
+        "backend/src/engines/financial_intelligence/optimization.py",
+        "backend/src/engines/financial_intelligence/scenario.py",
+        "backend/src/engines/financial_intelligence/utils.py"
+      ],
+      "implementation_module_count": 7,
+      "services": [
+        "backend/src/services/financial_intelligence_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "repositories": [
+        "financial_event_repository",
+        "financial_goal_repository"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /credit-forecast",
+        "GET /liquidity-forecast",
+        "GET /outlook",
+        "GET /priorities",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}",
+        "GET /report"
+      ],
+      "endpoint_count": 8,
+      "tests": [
+        "backend/tests/properties/forecasting/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/financial_intelligence_service.py"
+        ]
+      }
+    },
+    "loan_engine": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/loan_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/loan_engine/amortization.py",
+        "backend/src/engines/loan_engine/emi.py",
+        "backend/src/engines/loan_engine/floating_rate.py",
+        "backend/src/engines/loan_engine/foreclosure.py",
+        "backend/src/engines/loan_engine/metrics.py",
+        "backend/src/engines/loan_engine/models.py",
+        "backend/src/engines/loan_engine/prepayment.py",
+        "backend/src/engines/loan_engine/utils.py"
+      ],
+      "implementation_module_count": 8,
+      "services": [
+        "backend/src/services/loan_analysis_service.py",
+        "backend/src/services/loan_service.py",
+        "backend/src/services/loan_simulation_service.py",
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_payment_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [
+        "DELETE /loans/{loan_id}",
+        "GET /loans",
+        "GET /loans/analysis/priority",
+        "GET /loans/{loan_id}",
+        "GET /loans/{loan_id}/schedule",
+        "POST /loans",
+        "POST /loans/analysis/surplus-allocation",
+        "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+        "POST /loans/{loan_id}/foreclosure-simulation",
+        "POST /loans/{loan_id}/payments",
+        "POST /loans/{loan_id}/prepayment-simulation",
+        "POST /loans/{loan_id}/rate-change-simulation",
+        "PUT /loans/{loan_id}"
+      ],
+      "endpoint_count": 13,
+      "tests": [
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/properties/loan_engine/__init__.py",
+        "backend/tests/properties/loan_engine/test_amortization_properties.py",
+        "backend/tests/properties/loan_engine/test_emi_properties.py",
+        "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+        "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+        "backend/tests/properties/loan_engine/test_metrics_properties.py",
+        "backend/tests/properties/loan_engine/test_prepayment_properties.py",
+        "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/unit/engines/loan/test_loan_engine.py"
+      ],
+      "artifacts": [],
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "evidence": {
+        "import_references": 8,
+        "importer_files": [
+          "backend/src/engines/credit_card_engine/billing.py",
+          "backend/src/engines/credit_card_engine/foreclosure.py",
+          "backend/src/engines/financial_intelligence/scenario.py",
+          "backend/src/models/loan_simulation.py",
+          "backend/src/services/loan_analysis_service.py",
+          "backend/src/services/loan_service.py",
+          "backend/src/services/loan_simulation_service.py",
+          "backend/src/services/transaction_intelligence_service.py"
+        ]
+      }
+    },
+    "recommendation_engine": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/recommendation_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/recommendation_engine/recommendations.py"
+      ],
+      "implementation_module_count": 1,
+      "services": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/recommendation_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /cashflow-health",
+        "GET /credit-forecast",
+        "GET /debt-health",
+        "GET /liquidity-forecast",
+        "GET /monthly-report",
+        "GET /outlook",
+        "GET /patterns",
+        "GET /priorities",
+        "GET /profile",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}",
+        "GET /report",
+        "GET /wellness-score"
+      ],
+      "endpoint_count": 14,
+      "tests": [
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+      ],
+      "artifacts": [],
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/services/behaviour_service.py",
+          "backend/src/services/recommendation_service.py"
+        ]
+      }
+    },
+    "transaction_intelligence": {
+      "canonical_style": "package",
+      "public_entry_point": "engines/transaction_intelligence/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+        "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+        "backend/src/engines/transaction_intelligence/detector_result.py",
+        "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
+      ],
+      "implementation_module_count": 4,
+      "services": [
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "routers": [],
+      "repositories": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [],
+      "endpoint_count": 0,
+      "tests": [
+        "backend/tests/capability/transaction_intelligence/__init__.py",
+        "backend/tests/capability/transaction_intelligence/test_capability.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/transaction_intelligence/__init__.py",
+        "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+        "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+      ],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/transaction_intelligence_service.py"
+        ]
+      }
+    },
+    "balance_engine": {
+      "canonical_style": "single_file",
+      "public_entry_point": "engines/balance_engine.py",
+      "implementation_modules": [],
+      "implementation_module_count": 0,
+      "services": [
+        "backend/src/services/statement_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/cards_statements.py"
+      ],
+      "repositories": [
+        "statement_repository"
+      ],
+      "endpoints": [
+        "GET /cards",
+        "GET /statements",
+        "GET /statements/{statement_id}/validate"
+      ],
+      "endpoint_count": 3,
+      "tests": [
+        "backend/tests/invariants/test_determinism.py"
+      ],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/engines/balance_engine.py",
+          "backend/src/services/statement_service.py"
+        ]
+      }
+    },
+    "insight_generator": {
+      "canonical_style": "single_file",
+      "public_entry_point": "engines/insight_generator.py",
+      "implementation_modules": [],
+      "implementation_module_count": 0,
+      "services": [],
+      "routers": [],
+      "repositories": [],
+      "endpoints": [],
+      "endpoint_count": 0,
+      "tests": [],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/engines/behaviour_engine/core.py"
+        ]
+      }
+    },
+    "ledger_audit_engine": {
+      "canonical_style": "single_file",
+      "public_entry_point": "engines/ledger_audit_engine.py",
+      "implementation_modules": [],
+      "implementation_module_count": 0,
+      "services": [
+        "backend/src/services/audit_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/audit.py"
+      ],
+      "repositories": [],
+      "endpoints": [
+        "GET /report"
+      ],
+      "endpoint_count": 1,
+      "tests": [
+        "backend/tests/audits/test_audit_minimal.py"
+      ],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/audit_service.py"
+        ]
+      }
+    },
+    "nudge_engine": {
+      "canonical_style": "single_file",
+      "public_entry_point": "engines/nudge_engine.py",
+      "implementation_modules": [],
+      "implementation_module_count": 0,
+      "services": [],
+      "routers": [],
+      "repositories": [],
+      "endpoints": [],
+      "endpoint_count": 0,
+      "tests": [
+        "backend/tests/properties/recommendations/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "capabilities": [],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/engines/behaviour_engine/core.py"
+        ]
+      }
+    },
+    "reconciliation_engine": {
+      "canonical_style": "single_file",
+      "public_entry_point": "engines/reconciliation_engine.py",
+      "implementation_modules": [],
+      "implementation_module_count": 0,
+      "services": [
+        "backend/src/services/reconciliation_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/reconciliation.py"
+      ],
+      "repositories": [
+        "reconciliation_repository"
+      ],
+      "endpoints": [
+        "GET /pending",
+        "GET /scan",
+        "POST /batch-insert",
+        "POST /create",
+        "POST /{reconciliation_id}/confirm",
+        "POST /{reconciliation_id}/reject"
+      ],
+      "endpoint_count": 6,
+      "tests": [
+        "backend/tests/invariants/test_reconciliation_determinism.py",
+        "backend/tests/invariants/test_reconciliation_properties.py",
+        "backend/tests/properties/reconciliation/test_engine_properties.py",
+        "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+      ],
+      "artifacts": [],
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/engines/reconciliation_engine.py",
+          "backend/src/services/reconciliation_service.py"
+        ]
+      }
+    }
+  },
+  "parked_facades": {
+    "behavior_engine": {
+      "path": "engines/behavior_engine.py",
+      "status": "PARKED_LEGACY",
+      "replaces": "engines/behaviour_engine/",
+      "import_references": 0
+    }
+  },
+  "notes": [
+    "Cross-layer-map invents 7 non-existent '.py' engine files (account_engine.py, credit_card_engine.py, financial_events.py, financial_intelligence.py, recommendation_engine.py, transaction_intelligence.py, behaviour_engine.py) by treating engine PACKAGE directories as files. These package roots are real engines; their __init__.py is the public entry point.",
+    "Internal engine submodules (e.g. behaviour_engine/core.py, account_engine/balance.py) are listed as separate 'engines' in cross-layer-map. They are Engine Modules, NOT ownership roots."
+  ]
+}

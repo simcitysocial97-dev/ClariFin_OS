@@ -723,26 +723,29 @@ class CrossLayerImpactPlanner:
     """
     Program 7A: Cross-layer dependency intelligence.
 
-    Uses runtime/generated/cross-layer-map.json to determine blast radius
-    for changed files across the entire stack without re-reading the repo.
+    Program 13.3: the blast-radius map is a projection of the canonical
+    architecture provider (``runtime.foundation.architecture``). No legacy
+    artifact is read at runtime. ``map_path`` remains only as an explicit
+    fixture-injection point for isolated tests; it is never a runtime default.
     """
 
-    DEFAULT_MAP_PATH = Path("runtime/generated/cross-layer-map.json")
-
     def __init__(self, map_path: Path | None = None):
-        self.map_path = map_path or self.DEFAULT_MAP_PATH
+        self.map_path = map_path
         self._map: dict[str, dict[str, Any]] = {}
         self._load_map()
 
     def _load_map(self) -> None:
-        """Load the cross-layer map from disk."""
-        if not self.map_path.exists():
-            raise FileNotFoundError(
-                f"Cross-layer map not found at {self.map_path}. "
-                "Run `python3 tools/generators/build_cross_layer_map.py` first."
-            )
-        with open(self.map_path, encoding="utf-8") as f:
-            self._map = json.load(f)
+        """Load chains from the architecture provider (or an injected fixture)."""
+        if self.map_path is not None:
+            if not self.map_path.exists():
+                raise FileNotFoundError(f"Injected chain fixture not found: {self.map_path}")
+            with open(self.map_path, encoding="utf-8") as f:
+                self._map = json.load(f)
+            return
+
+        from runtime.foundation.architecture.chains import get_chain_map
+
+        self._map = get_chain_map()
 
     def analyze_cross_layer_impact(
         self, changed_files: list[str]
@@ -766,6 +769,12 @@ class CrossLayerImpactPlanner:
         # Direct engine file match
         if file_path in self._map:
             return self._map[file_path]
+
+        # Provider-resolved ownership (canonical; no filename heuristics).
+        if self.map_path is None:
+            resolved = self._resolve_via_provider(file_path)
+            if resolved is not None:
+                return resolved
 
         # Service file match - find engines that map to this service
         # changed file is a service module
@@ -805,8 +814,75 @@ class CrossLayerImpactPlanner:
 
         return None
 
+    def _resolve_via_provider(self, file_path: str) -> dict[str, Any] | None:
+        """Resolve a changed file to its owning engine chain using the provider.
+
+        Ownership evidence only: engine module ownership, router ownership,
+        service ownership, capability ownership, workspace/component linkage.
+        """
+        from runtime.foundation.architecture import get_architecture
+
+        arch = get_architecture()
+        norm = file_path.replace("\\", "/")
+
+        engine = arch.engine_for_path(norm)
+        if engine is not None:
+            return self._map.get(engine.path)
+
+        def chain_for_engines(engine_names: tuple[str, ...] | list[str]):
+            for name in engine_names:
+                eng = arch.engine(name)
+                if eng is not None and eng.path in self._map:
+                    return self._map[eng.path]
+            return None
+
+        router = arch.routers.get(norm)
+        if router is not None:
+            found = chain_for_engines(router.engines)
+            if found is not None:
+                return found
+
+        service = arch.services.get(norm)
+        if service is not None:
+            found = chain_for_engines(service.engines)
+            if found is not None:
+                return found
+
+        for cap in arch.capabilities.values():
+            if cap.path == norm:
+                found = chain_for_engines(cap.engines)
+                if found is not None:
+                    return found
+
+        for ws in arch.workspaces.values():
+            if ws.path and ws.path == norm:
+                for cap_name in ws.capabilities:
+                    cap = arch.capabilities.get(cap_name)
+                    if cap is None:
+                        continue
+                    found = chain_for_engines(cap.engines)
+                    if found is not None:
+                        return found
+
+        component = arch.components.get(norm)
+        if component is not None:
+            for ws_name in component.workspaces:
+                ws = arch.workspaces.get(ws_name)
+                if ws is None:
+                    continue
+                for cap_name in ws.capabilities:
+                    cap = arch.capabilities.get(cap_name)
+                    if cap is None:
+                        continue
+                    found = chain_for_engines(cap.engines)
+                    if found is not None:
+                        return found
+
+        return None
+
     def _service_name_from_path(self, file_path: str) -> str | None:
         """Extract service class name from a service file path."""
+
         if not file_path.startswith("backend/src/services/"):
             return None
         parts = file_path.split("/")

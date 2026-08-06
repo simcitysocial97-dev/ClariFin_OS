@@ -162,10 +162,8 @@ class TestWorkspaceLoader:
         assert cache.is_valid is True
 
     def test_load_risk_summary(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {"a.py": {}, "b.py": {}},
+        loader = WorkspaceLoader(
+            repo_root=tmp_path, chain_map={"a.py": {}, "b.py": {}}
         )
         risk = loader.load_risk_summary()
         assert isinstance(risk, RiskSummary)
@@ -399,10 +397,9 @@ class TestWorkspaceLoader:
         assert isinstance(workspace.pending, PendingVerification)
 
     def test_load_dependency_chain_found(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {
+        loader = WorkspaceLoader(
+            repo_root=tmp_path,
+            chain_map={
                 "backend/src/engines/loan_engine/amortization.py": {
                     "engine": "backend/src/engines/loan_engine/amortization.py",
                     "services": ["LoanService"],
@@ -427,21 +424,13 @@ class TestWorkspaceLoader:
         assert result.chain.tests == ["backend/tests/unit/engines/loan/test_amortization.py"]
 
     def test_load_dependency_chain_missing(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            {},
-        )
+        loader = WorkspaceLoader(repo_root=tmp_path, chain_map={})
         result = loader.load_dependency_chain("nonexistent.py")
         assert result.found is False
         assert result.chain is None
 
     def test_load_cross_layer_map(self, tmp_path: Path):
-        loader = WorkspaceLoader(repo_root=tmp_path)
         data = {"a.py": {"engine": "a.py"}}
-        _write_json(
-            tmp_path / "runtime" / "generated" / "cross-layer-map.json",
-            data,
-        )
+        loader = WorkspaceLoader(repo_root=tmp_path, chain_map=data)
         result = loader.load_cross_layer_map()
         assert result == data

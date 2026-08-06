@@ -68,7 +68,7 @@ def _extract_endpoints(cross_layer_map: dict[str, Any]) -> list[EndpointEntry]:
                     path_part = parts[1] if len(parts) > 1 else ep
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 for svc in entry.get("services", []):
                     references[f"service:{svc}"] = f"service:{svc}"
@@ -106,7 +106,7 @@ def _extract_capabilities(cross_layer_map: dict[str, Any]) -> list[CapabilityEnt
                 seen.add(cap)
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 for ep in entry.get("endpoints", []):
                     references[f"endpoint:{ep}"] = f"endpoint:{ep}"
@@ -135,7 +135,7 @@ def _extract_mappers(cross_layer_map: dict[str, Any]) -> list[MapperEntry]:
                 seen.add(mp)
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 for cap in entry.get("capabilities", []):
                     references[f"capability:{cap}"] = f"capability:{cap}"
@@ -160,7 +160,7 @@ def _extract_view_models(cross_layer_map: dict[str, Any]) -> list[ViewModelEntry
                 seen.add(vm)
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 for mp in entry.get("mappers", []):
                     references[f"mapper:{mp}"] = f"mapper:{mp}"
@@ -185,7 +185,7 @@ def _extract_workspaces(cross_layer_map: dict[str, Any]) -> list[WorkspaceEntry]
                 seen.add(ws)
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 for comp in entry.get("components", []):
                     references[f"component:{comp}"] = f"component:{comp}"
@@ -210,7 +210,7 @@ def _extract_components(cross_layer_map: dict[str, Any]) -> list[ComponentEntry]
                 seen.add(comp)
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 for ws in entry.get("workspace", []):
                     references[f"workspace:{ws}"] = f"workspace:{ws}"
@@ -235,7 +235,7 @@ def _extract_graph_renderers(cross_layer_map: dict[str, Any]) -> list[GraphRende
                 seen.add(gr)
                 references = {
                     "source_file": file_path,
-                    "cross_layer_map": "runtime/generated/cross-layer-map.json",
+                    "architecture_provider": "runtime.foundation.architecture.get_architecture",
                 }
                 renderers.append(
                     GraphRendererEntry(
@@ -339,13 +339,76 @@ def _extract_verification_profiles() -> list[VerificationProfileEntry]:
     return profiles
 
 
+def _merge_from_provider(
+    endpoints: list[EndpointEntry],
+    capabilities: list[CapabilityEntry],
+    workspaces: list[WorkspaceEntry],
+) -> tuple[list[EndpointEntry], list[CapabilityEntry], list[WorkspaceEntry]]:
+    """Augment the cross-layer extracted entries with canonical-provider entities.
+
+    Program 13.2: the canonical provider is the single source of architectural
+    truth. The cross-layer map is the primary extraction source (it carries rich
+    references), but entities only present in the provider (e.g. frontend-only
+    capabilities with no backend router) are merged in so the knowledge base is
+    complete and consistent with the provider.
+    """
+    from runtime.foundation.architecture.provider import get_architecture
+
+    arch = get_architecture(refresh=False)
+    existing_eps = {(e.method, e.path) for e in endpoints}
+    existing_caps = {c.name for c in capabilities}
+    existing_ws = {w.name for w in workspaces}
+
+    out_eps = list(endpoints)
+    out_caps = list(capabilities)
+    out_ws = list(workspaces)
+
+    for sig, ep in arch.endpoints.items():
+        if (ep.method, ep.path) in existing_eps:
+            continue
+        existing_eps.add((ep.method, ep.path))
+        refs = {"source_file": ep.router, "provider": "architecture-provider"}
+        for eng in ep.engines:
+            refs[f"engine:{eng}"] = f"engine:{eng}"
+        for cap in ep.capabilities:
+            refs[f"capability:{cap}"] = f"capability:{cap}"
+        out_eps.append(EndpointEntry(path=ep.path, method=ep.method, references=refs, tags=("provider",)))
+
+    for name, cap in arch.capabilities.items():
+        if name in existing_caps:
+            continue
+        existing_caps.add(name)
+        refs = {"source_file": cap.path or "", "provider": "architecture-provider"}
+        for eng in cap.engines:
+            refs[f"engine:{eng}"] = f"engine:{eng}"
+        for ep in cap.endpoints:
+            refs[f"endpoint:{ep}"] = f"endpoint:{ep}"
+        tag = "provider" if cap.engines else "provider-frontend-only"
+        out_caps.append(CapabilityEntry(name=name, references=refs, tags=(tag,)))
+
+    for name, ws in arch.workspaces.items():
+        if name in existing_ws:
+            continue
+        existing_ws.add(name)
+        refs = {"source_file": ws.path, "provider": "architecture-provider"}
+        out_ws.append(WorkspaceEntry(name=name, references=refs, tags=("provider",)))
+
+    return out_eps, out_caps, out_ws
+
+
 def build_index() -> KnowledgeIndex:
     """Build the complete knowledge index from all runtime artifacts.
 
     Returns:
         Immutable KnowledgeIndex with all catalog entries.
     """
-    cross_layer_map = _load_json(GENERATED_DIR / "cross-layer-map.json")
+    # Program 13.3: chains come from the canonical architecture provider.
+    from runtime.foundation.architecture.chains import get_chain_map
+
+    try:
+        cross_layer_map = get_chain_map()
+    except Exception:  # provider not yet discovered
+        cross_layer_map = {}
 
     endpoints = _extract_endpoints(cross_layer_map)
     capabilities = _extract_capabilities(cross_layer_map)
@@ -354,6 +417,7 @@ def build_index() -> KnowledgeIndex:
     workspaces = _extract_workspaces(cross_layer_map)
     components = _extract_components(cross_layer_map)
     graph_renderers = _extract_graph_renderers(cross_layer_map)
+    endpoints, capabilities, workspaces = _merge_from_provider(endpoints, capabilities, workspaces)
     runtime_artifacts = _extract_runtime_artifacts()
     documentation = _extract_documentation()
     integrity_rules = _extract_integrity_rules()
@@ -376,7 +440,7 @@ def build_index() -> KnowledgeIndex:
     set_catalog(catalog)
 
     source_artifacts = [
-        "runtime/generated/cross-layer-map.json",
+        "runtime.foundation.architecture (canonical provider)",
         "runtime/generated/dashboard.json",
         "runtime/generated/engineering-history.json",
         "runtime/generated/engineering-health.md",

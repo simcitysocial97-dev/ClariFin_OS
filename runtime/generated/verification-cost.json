@@ -1,0 +1,140 @@
+{
+  "schema": "verification-cost/v1",
+  "generated_at": "2026-08-06T14:13:02.173840+00:00",
+  "model": {
+    "ci_usd_per_minute": 0.008,
+    "cpu_weight_by_category": {
+      "contract": 1.5,
+      "e2e": 3.0,
+      "frontend": 2.0,
+      "golden": 1.5,
+      "integration": 2.0,
+      "mutation": 4.0,
+      "runtime": 1.0,
+      "unit": 1.0
+    },
+    "calibration": "durations are taken from verification profile estimated_duration_seconds; no invented constants"
+  },
+  "selected": [
+    {
+      "id": "runtime-self-test",
+      "category": "runtime",
+      "expected_runtime_seconds": 120,
+      "cpu_core_seconds": 120.0,
+      "ci_minutes": 2.0,
+      "ci_usd": 0.016
+    }
+  ],
+  "avoided": [
+    {
+      "id": "unit-targeted",
+      "category": "unit",
+      "expected_runtime_seconds": 120,
+      "cpu_core_seconds": 120.0,
+      "ci_minutes": 2.0,
+      "ci_usd": 0.016,
+      "avoided_because": "blast radius contains no engine with tests"
+    },
+    {
+      "id": "contracts-schemathesis",
+      "category": "contract",
+      "expected_runtime_seconds": 180,
+      "cpu_core_seconds": 270.0,
+      "ci_minutes": 3.0,
+      "ci_usd": 0.024,
+      "avoided_because": "blast radius contains 0 entities of kind 'endpoint'"
+    },
+    {
+      "id": "backend-integration",
+      "category": "integration",
+      "expected_runtime_seconds": 180,
+      "cpu_core_seconds": 360.0,
+      "ci_minutes": 3.0,
+      "ci_usd": 0.024,
+      "avoided_because": "blast radius contains no backend wiring entities"
+    },
+    {
+      "id": "frontend-unit",
+      "category": "frontend",
+      "expected_runtime_seconds": 120,
+      "cpu_core_seconds": 240.0,
+      "ci_minutes": 2.0,
+      "ci_usd": 0.016,
+      "avoided_because": "no impacted entity has a path under frontend/; capability/workspace impact=1 but none map to files"
+    },
+    {
+      "id": "playwright-e2e",
+      "category": "e2e",
+      "expected_runtime_seconds": 1800,
+      "cpu_core_seconds": 5400.0,
+      "ci_minutes": 30.0,
+      "ci_usd": 0.24,
+      "avoided_because": "blast radius contains 0 entities of kind 'workspace'"
+    },
+    {
+      "id": "mutation-run",
+      "category": "mutation",
+      "expected_runtime_seconds": 600,
+      "cpu_core_seconds": 2400.0,
+      "ci_minutes": 10.0,
+      "ci_usd": 0.08,
+      "avoided_because": "heavyweight suite; blast radius does not by itself justify it"
+    },
+    {
+      "id": "golden-regression",
+      "category": "golden",
+      "expected_runtime_seconds": 600,
+      "cpu_core_seconds": 900.0,
+      "ci_minutes": 10.0,
+      "ci_usd": 0.08,
+      "avoided_because": "heavyweight suite; blast radius does not by itself justify it"
+    }
+  ],
+  "totals": {
+    "expected_runtime_seconds": 120,
+    "expected_runtime_minutes": 2.0,
+    "cpu_core_seconds": 120.0,
+    "ci_minutes": 2.0,
+    "ci_usd": 0.016,
+    "avoided_seconds": 3600,
+    "avoided_ci_usd": 0.48,
+    "reduction_percent": 96.8,
+    "by_dimension": {
+      "mutation": {
+        "seconds": 600,
+        "ci_usd": 0.08,
+        "selected": true
+      },
+      "coverage": {
+        "seconds": 120,
+        "ci_usd": 0.016,
+        "selected": true
+      },
+      "playwright": {
+        "seconds": 1800,
+        "ci_usd": 0.24,
+        "selected": true
+      },
+      "golden": {
+        "seconds": 600,
+        "ci_usd": 0.08,
+        "selected": true
+      },
+      "contract": {
+        "seconds": 180,
+        "ci_usd": 0.024,
+        "selected": true
+      }
+    }
+  },
+  "recommendation": {
+    "plan": "targeted",
+    "units": [
+      "runtime-self-test"
+    ],
+    "rationale": "selected plan costs 120s vs 900s for the full profile, while covering every impacted entity kind",
+    "cheapest_valid_plan_seconds": 120,
+    "fastest_single_unit": "runtime-self-test",
+    "baseline_profile_seconds": 900
+  }
+}

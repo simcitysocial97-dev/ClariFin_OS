@@ -1,0 +1,61 @@
+{
+  "generated_at": "2026-08-06T13:17:41.810444+00:00",
+  "program": "13.3",
+  "candidates": [
+    {
+      "file": "tools/generators/build_cross_layer_map.py",
+      "role": "Legacy cross-layer map generator (now a delegating shim)",
+      "replacement": "runtime.foundation.architecture.cross_layer (provider)",
+      "dependency_count": 1,
+      "safe_removal_status": "KEEP as optional export writer; runtime no longer imports it. Remove only after all external readers consume the provider."
+    },
+    {
+      "file": "runtime/generated/cross-layer-map.json",
+      "role": "Legacy compatibility artifact (derived from provider)",
+      "replacement": "get_architecture() / chains.get_chain_map()",
+      "dependency_count": 0,
+      "safe_removal_status": "Transitional export only; no runtime module reads it. Remove once every reader consumes the provider directly."
+    },
+    {
+      "file": "runtime/analyze_artifacts.py",
+      "role": "Artifact report generator (Program 13 pipeline)",
+      "replacement": "runtime/foundation/audit/artifact_ownership.py (provider)",
+      "dependency_count": 0,
+      "safe_removal_status": "Analysis tooling, not runtime; safe to keep or retire independently of the runtime."
+    },
+    {
+      "file": "runtime/analyze_engine_topology.py",
+      "role": "Topology report generator (Program 13 pipeline)",
+      "replacement": "runtime/foundation/architecture.provider",
+      "dependency_count": 0,
+      "safe_removal_status": "Analysis tooling; not a runtime dependency."
+    },
+    {
+      "file": "runtime/analyze_ownership.py",
+      "role": "Ownership report generator (Program 13 pipeline)",
+      "replacement": "runtime/foundation/architecture.provider",
+      "dependency_count": 0,
+      "safe_removal_status": "Analysis tooling; not a runtime dependency."
+    },
+    {
+      "file": "runtime/analyze_execution.py",
+      "role": "Execution report generator (Program 13 pipeline)",
+      "replacement": "runtime/foundation/architecture.provider",
+      "dependency_count": 0,
+      "safe_removal_status": "Analysis tooling; not a runtime dependency."
+    }
+  ],
+  "auto_deleted": false,
+  "safe_to_remove_now": [
+    "runtime/generated/cross-layer-map.json"
+  ],
+  "kept_pending_full_migration": [
+    "tools/generators/build_cross_layer_map.py",
+    "runtime/generated/cross-layer-map.json",
+    "runtime/analyze_artifacts.py",
+    "runtime/analyze_engine_topology.py",
+    "runtime/analyze_ownership.py",
+    "runtime/analyze_execution.py"
+  ],
+  "conclusion": "No file was auto-deleted. The transitional legacy artifact and the delegating shim are retained strictly as optional exports; the Program-13 analysis generators are pipeline tooling, not runtime dependencies."
+}

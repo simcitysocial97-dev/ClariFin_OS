@@ -34,9 +34,42 @@ from runtime.foundation.integrity.models import ArchitectureLayer
 _BACKEND_ROOT = "backend/src"
 _FRONTEND_ROOT = "frontend"
 
-_ENGINE_DIRS = {"engines", "ledger_audit_engine.py", "insight_generator.py",
-                "nudge_engine.py", "reconciliation_engine.py",
-                "balance_engine.py", "behavior_engine.py"}
+_ENGINE_ROOTS_FALLBACK = frozenset({"engines"})
+
+
+def _engine_paths() -> frozenset[str]:
+    """Engine ownership roots, taken from the canonical architecture provider.
+
+    Program 13.3 removed the hardcoded single-file-engine inventory. The
+    provider is the only authority on what an engine is.
+    """
+    cached = getattr(_engine_paths, "_cache", None)
+    if cached is not None:
+        return cached
+    try:
+        from runtime.foundation.architecture import get_architecture
+
+        arch = get_architecture()
+        paths = frozenset(e.path for e in arch.engines.values()) | frozenset(
+            e.entry_point for e in arch.engines.values()
+        )
+    except Exception:
+        paths = frozenset()
+    _engine_paths._cache = paths  # type: ignore[attr-defined]
+    return paths
+
+
+def _is_engine_path(norm: str) -> bool:
+    """True when the provider says ``norm`` belongs to an engine."""
+    engine_paths = _engine_paths()
+    if norm in engine_paths:
+        return True
+    for root in engine_paths:
+        if not root.endswith(".py") and norm.startswith(root.rstrip("/") + "/"):
+            return True
+    return False
+
+
 _SERVICE_DIRS = {"services"}
 _ROUTER_DIRS = {"routers"}
 _DTO_DIRS = {"core/dtos", "models"}
@@ -62,7 +95,7 @@ def classify_layer(file_path: str) -> ArchitectureLayer:
             rel = norm[len("backend/src/"):] if norm.startswith("backend/src/") else norm[len("backend/"):]
             parts = rel.split("/")
             top = parts[0] if parts else ""
-            if top in _ENGINE_DIRS or norm.startswith("backend/src/engines/"):
+            if _is_engine_path(norm) or top in _ENGINE_ROOTS_FALLBACK:
                 return ArchitectureLayer.BACKEND_ENGINE
             if top in _SERVICE_DIRS:
                 return ArchitectureLayer.BACKEND_SERVICE
@@ -468,7 +501,6 @@ class ArchitecturalScanner:
     """
 
     DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[3]
-    DEFAULT_CROSS_LAYER_MAP = "runtime/generated/cross-layer-map.json"
     DEFAULT_GRAPH_INDEX = "runtime/generated/repository/index.json"
 
     def __init__(
@@ -478,10 +510,9 @@ class ArchitecturalScanner:
         graph_index_path: Path | None = None,
     ) -> None:
         self.repo_root = repo_root or self.DEFAULT_REPO_ROOT
-        self.cross_layer_map_path = (
-            cross_layer_map_path
-            or self.repo_root / self.DEFAULT_CROSS_LAYER_MAP
-        )
+        # Program 13.3: chains come from the architecture provider. A path is
+        # accepted only as an explicit test-fixture injection seam.
+        self.cross_layer_map_path = cross_layer_map_path
         self.graph_index_path = (
             graph_index_path
             or self.repo_root / self.DEFAULT_GRAPH_INDEX
@@ -600,6 +631,14 @@ class ArchitecturalScanner:
         )
 
     def _load_cross_layer_map(self, errors: list[str]) -> dict[str, Any]:
+        if self.cross_layer_map_path is None:
+            try:
+                from runtime.foundation.architecture.chains import get_chain_map
+
+                return get_chain_map()
+            except Exception as exc:  # noqa: BLE001
+                errors.append(f"Architecture provider unavailable: {exc}")
+                return {}
         try:
             with open(self.cross_layer_map_path, encoding="utf-8") as f:
                 data = json.load(f)

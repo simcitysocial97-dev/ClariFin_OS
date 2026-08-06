@@ -1,0 +1,1906 @@
+{
+  "generated_at": "2026-08-06T16:33:17.635190",
+  "basis": "architecture (engine-topology + ownership-graph), not filesystem",
+  "entity_count": 62,
+  "entities": {
+    "engine:account_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: account_engine",
+      "owner": "useAccountsCapability",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/account_engine/__init__.py (package).",
+        "Implement 6 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/account_service.py"
+      ],
+      "dependencies": [
+        "account_balance_repository",
+        "account_link_repository",
+        "account_repository",
+        "institution_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/account/test_account_engine.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/account_engine/__init__.py"
+      ],
+      "endpoints": [
+        "DELETE /accounts/manage/{account_id}",
+        "DELETE /accounts/{account_id}",
+        "DELETE /accounts/{account_id}/links/{linked_account_id}",
+        "GET /accounts",
+        "GET /accounts/manage",
+        "GET /accounts/{account_id}",
+        "GET /accounts/{account_id}/analytics",
+        "GET /accounts/{account_id}/balance",
+        "GET /accounts/{account_id}/balance-history",
+        "GET /accounts/{account_id}/balance-history/latest",
+        "GET /accounts/{account_id}/dormancy",
+        "GET /accounts/{account_id}/links",
+        "GET /accounts/{account_id}/metrics",
+        "GET /accounts/{account_id}/running-balance",
+        "GET /accounts/{account_id}/status",
+        "GET /institutions",
+        "GET /institutions/{institution_id}",
+        "POST /accounts",
+        "POST /accounts/manage",
+        "POST /accounts/{account_id}/balance-history",
+        "POST /accounts/{account_id}/links",
+        "POST /institutions",
+        "PUT /accounts/manage/{account_id}",
+        "PUT /accounts/{account_id}",
+        "PUT /institutions/{institution_id}"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "engine:behaviour_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: behaviour_engine",
+      "owner": "useBehaviourCapability",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/behaviour_engine/__init__.py (package).",
+        "Implement 15 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/dashboard_service.py",
+        "backend/src/services/import_service.py"
+      ],
+      "dependencies": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "reconciliation_repository",
+        "transaction_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/behaviour/test_core.py",
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/behaviour/test_metrics.py",
+        "backend/tests/unit/engines/behaviour/test_patterns.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/behaviour_engine/__init__.py"
+      ],
+      "endpoints": [
+        "GET /cashflow-health",
+        "GET /debt-health",
+        "GET /monthly-report",
+        "GET /patterns",
+        "GET /profile",
+        "GET /recommendations",
+        "GET /summary",
+        "GET /wellness-score",
+        "POST /import/detect",
+        "POST /import/execute",
+        "POST /upload"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "engine:credit_card_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: credit_card_engine",
+      "owner": "useCreditCardsCapability",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/credit_card_engine/__init__.py (package).",
+        "Implement 7 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/credit_card_service.py"
+      ],
+      "dependencies": [
+        "credit_card_repository",
+        "credit_card_statement_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/properties/credit_card_engine/__init__.py",
+        "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+        "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+        "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/credit_card_engine/__init__.py"
+      ],
+      "endpoints": [
+        "DELETE /credit-cards/{card_id}",
+        "GET /credit-cards",
+        "GET /credit-cards/{card_id}",
+        "GET /credit-cards/{card_id}/metrics",
+        "GET /credit-cards/{card_id}/next-statement-date",
+        "GET /credit-cards/{card_id}/outstanding",
+        "GET /credit-cards/{card_id}/statements",
+        "GET /credit-cards/{card_id}/utilization",
+        "POST /credit-cards",
+        "POST /credit-cards/{card_id}/emi-conversion",
+        "POST /credit-cards/{card_id}/foreclosure",
+        "POST /credit-cards/{card_id}/payments",
+        "POST /credit-cards/{card_id}/statements",
+        "PUT /credit-cards/{card_id}"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "engine:financial_events": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: financial_events",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/financial_events/__init__.py (package).",
+        "Implement 1 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/financial_events_service.py"
+      ],
+      "dependencies": [
+        "financial_event_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/capability/financial_events/__init__.py",
+        "backend/tests/capability/financial_events/test_capability.py",
+        "backend/tests/capability/financial_events/test_revocation.py",
+        "backend/tests/contract/generated/test_financial_events.py",
+        "backend/tests/invariants/financial_events.py",
+        "backend/tests/properties/financial_events/__init__.py",
+        "backend/tests/properties/financial_events/test_engine_properties.py",
+        "backend/tests/properties/financial_events/test_lineage_properties.py",
+        "backend/tests/unit/engines/financial_events/__init__.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/financial_events/__init__.py"
+      ],
+      "endpoints": [
+        "GET /",
+        "GET /{event_id}",
+        "POST /"
+      ],
+      "capabilities": []
+    },
+    "engine:financial_intelligence": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: financial_intelligence",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/financial_intelligence/__init__.py (package).",
+        "Implement 7 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/financial_intelligence_service.py"
+      ],
+      "dependencies": [
+        "financial_event_repository",
+        "financial_goal_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/properties/forecasting/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/financial_intelligence/__init__.py"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /credit-forecast",
+        "GET /liquidity-forecast",
+        "GET /outlook",
+        "GET /priorities",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}",
+        "GET /report"
+      ],
+      "capabilities": []
+    },
+    "engine:loan_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: loan_engine",
+      "owner": "useLoansCapability",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/loan_engine/__init__.py (package).",
+        "Implement 8 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/loan_analysis_service.py",
+        "backend/src/services/loan_service.py",
+        "backend/src/services/loan_simulation_service.py",
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "dependencies": [
+        "account_repository",
+        "billing",
+        "credit_card_repository",
+        "financial_event_repository",
+        "foreclosure",
+        "liquidity_pattern_repository",
+        "loan_payment_repository",
+        "loan_repository",
+        "scenario",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/properties/loan_engine/__init__.py",
+        "backend/tests/properties/loan_engine/test_amortization_properties.py",
+        "backend/tests/properties/loan_engine/test_emi_properties.py",
+        "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+        "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+        "backend/tests/properties/loan_engine/test_metrics_properties.py",
+        "backend/tests/properties/loan_engine/test_prepayment_properties.py",
+        "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/unit/engines/loan/test_loan_engine.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/loan_engine/__init__.py"
+      ],
+      "endpoints": [
+        "DELETE /loans/{loan_id}",
+        "GET /loans",
+        "GET /loans/analysis/priority",
+        "GET /loans/{loan_id}",
+        "GET /loans/{loan_id}/schedule",
+        "POST /loans",
+        "POST /loans/analysis/surplus-allocation",
+        "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+        "POST /loans/{loan_id}/foreclosure-simulation",
+        "POST /loans/{loan_id}/payments",
+        "POST /loans/{loan_id}/prepayment-simulation",
+        "POST /loans/{loan_id}/rate-change-simulation",
+        "PUT /loans/{loan_id}"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "engine:recommendation_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: recommendation_engine",
+      "owner": "useBehaviourCapability",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/recommendation_engine/__init__.py (package).",
+        "Implement 1 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/recommendation_service.py"
+      ],
+      "dependencies": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "transaction_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/recommendation_engine/__init__.py"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /cashflow-health",
+        "GET /credit-forecast",
+        "GET /debt-health",
+        "GET /liquidity-forecast",
+        "GET /monthly-report",
+        "GET /outlook",
+        "GET /patterns",
+        "GET /priorities",
+        "GET /profile",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}",
+        "GET /report",
+        "GET /wellness-score"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "engine:transaction_intelligence": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: transaction_intelligence",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/transaction_intelligence/__init__.py (package).",
+        "Implement 4 implementation modules."
+      ],
+      "consumers": [
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "dependencies": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/capability/transaction_intelligence/__init__.py",
+        "backend/tests/capability/transaction_intelligence/test_capability.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/transaction_intelligence/__init__.py",
+        "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+        "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/transaction_intelligence/__init__.py"
+      ],
+      "endpoints": [],
+      "capabilities": []
+    },
+    "engine:balance_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: balance_engine",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/balance_engine.py (single_file)."
+      ],
+      "consumers": [
+        "backend/src/services/statement_service.py"
+      ],
+      "dependencies": [
+        "balance_engine",
+        "statement_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/invariants/test_determinism.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/balance_engine.py"
+      ],
+      "endpoints": [
+        "GET /cards",
+        "GET /statements",
+        "GET /statements/{statement_id}/validate"
+      ],
+      "capabilities": []
+    },
+    "engine:insight_generator": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: insight_generator",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/insight_generator.py (single_file)."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "core"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/insight_generator.py"
+      ],
+      "endpoints": [],
+      "capabilities": []
+    },
+    "engine:ledger_audit_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: ledger_audit_engine",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/ledger_audit_engine.py (single_file)."
+      ],
+      "consumers": [
+        "backend/src/services/audit_service.py"
+      ],
+      "dependencies": [],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/audits/test_audit_minimal.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/ledger_audit_engine.py"
+      ],
+      "endpoints": [
+        "GET /report"
+      ],
+      "capabilities": []
+    },
+    "engine:nudge_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: nudge_engine",
+      "owner": "INTERNAL (no capability owner)",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/nudge_engine.py (single_file)."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "core"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/properties/recommendations/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/nudge_engine.py"
+      ],
+      "endpoints": [],
+      "capabilities": []
+    },
+    "engine:reconciliation_engine": {
+      "type": "Engine",
+      "purpose": "Deterministic computation engine: reconciliation_engine",
+      "owner": "useReconciliationCapability",
+      "responsibilities": [
+        "Expose pure deterministic compute functions (no DB, no I/O).",
+        "Public API via engines/reconciliation_engine.py (single_file)."
+      ],
+      "consumers": [
+        "backend/src/services/reconciliation_service.py"
+      ],
+      "dependencies": [
+        "reconciliation_engine",
+        "reconciliation_repository"
+      ],
+      "verification_profiles": [
+        "backend",
+        "mutation",
+        "contracts",
+        "runtime"
+      ],
+      "tests": [
+        "backend/tests/invariants/test_reconciliation_determinism.py",
+        "backend/tests/invariants/test_reconciliation_properties.py",
+        "backend/tests/properties/reconciliation/test_engine_properties.py",
+        "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+      ],
+      "artifacts": [],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "engines/reconciliation_engine.py"
+      ],
+      "endpoints": [
+        "GET /pending",
+        "GET /scan",
+        "POST /batch-insert",
+        "POST /create",
+        "POST /{reconciliation_id}/confirm",
+        "POST /{reconciliation_id}/reject"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "capability:useAccountsCapability": {
+      "type": "Capability",
+      "purpose": "Frontend data-fetching capability backing a workspace (useAccountsCapability).",
+      "owner": "Frontend Workspace",
+      "responsibilities": [
+        "Fetch and bind domain data for the workspace.",
+        "Map API DTOs to view models via mappers."
+      ],
+      "consumers": [
+        "workspace:accounts"
+      ],
+      "dependencies": [
+        "engine:account_engine"
+      ],
+      "verification_profiles": [
+        "frontend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "frontend/lib/capabilities/accounts-capability.ts"
+      ]
+    },
+    "capability:useBehaviourCapability": {
+      "type": "Capability",
+      "purpose": "Frontend data-fetching capability backing a workspace (useBehaviourCapability).",
+      "owner": "Frontend Workspace",
+      "responsibilities": [
+        "Fetch and bind domain data for the workspace.",
+        "Map API DTOs to view models via mappers."
+      ],
+      "consumers": [
+        "workspace:behaviour"
+      ],
+      "dependencies": [
+        "engine:behaviour_engine",
+        "engine:recommendation_engine"
+      ],
+      "verification_profiles": [
+        "frontend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "frontend/lib/capabilities/behaviour-capability.ts"
+      ]
+    },
+    "capability:useCreditCardsCapability": {
+      "type": "Capability",
+      "purpose": "Frontend data-fetching capability backing a workspace (useCreditCardsCapability).",
+      "owner": "Frontend Workspace",
+      "responsibilities": [
+        "Fetch and bind domain data for the workspace.",
+        "Map API DTOs to view models via mappers."
+      ],
+      "consumers": [
+        "workspace:creditcards"
+      ],
+      "dependencies": [
+        "engine:credit_card_engine"
+      ],
+      "verification_profiles": [
+        "frontend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "frontend/lib/capabilities/creditcards-capability.ts"
+      ]
+    },
+    "capability:useLoansCapability": {
+      "type": "Capability",
+      "purpose": "Frontend data-fetching capability backing a workspace (useLoansCapability).",
+      "owner": "Frontend Workspace",
+      "responsibilities": [
+        "Fetch and bind domain data for the workspace.",
+        "Map API DTOs to view models via mappers."
+      ],
+      "consumers": [
+        "workspace:loans"
+      ],
+      "dependencies": [
+        "engine:loan_engine"
+      ],
+      "verification_profiles": [
+        "frontend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "frontend/lib/capabilities/loans-capability.ts"
+      ]
+    },
+    "capability:useReconciliationCapability": {
+      "type": "Capability",
+      "purpose": "Frontend data-fetching capability backing a workspace (useReconciliationCapability).",
+      "owner": "Frontend Workspace",
+      "responsibilities": [
+        "Fetch and bind domain data for the workspace.",
+        "Map API DTOs to view models via mappers."
+      ],
+      "consumers": [
+        "workspace:reconciliation"
+      ],
+      "dependencies": [
+        "engine:reconciliation_engine"
+      ],
+      "verification_profiles": [
+        "frontend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "frontend/lib/capabilities/reconciliation-capability.ts"
+      ]
+    },
+    "service:backend/src/services/account_service.py": {
+      "type": "Service",
+      "purpose": "Account Service - Orchestration layer for account operations.",
+      "owner": "engine:account_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/accounts.py",
+        "backend/src/routers/managed_accounts.py"
+      ],
+      "dependencies": [
+        "account_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/account_service.py"
+      ]
+    },
+    "service:backend/src/services/audit_service.py": {
+      "type": "Service",
+      "purpose": "Audit business orchestration service.",
+      "owner": "engine:ledger_audit_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/audit.py"
+      ],
+      "dependencies": [
+        "ledger_audit_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/audit_service.py"
+      ]
+    },
+    "service:backend/src/services/behaviour_service.py": {
+      "type": "Service",
+      "purpose": "Behaviour Service - Orchestration layer for financial behaviour analysis.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/dashboard.py",
+        "backend/src/routers/import_router.py"
+      ],
+      "dependencies": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/behaviour_service.py"
+      ]
+    },
+    "service:backend/src/services/credit_card_service.py": {
+      "type": "Service",
+      "purpose": "Credit Card Service - Orchestration layer for credit card operations.",
+      "owner": "engine:credit_card_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/credit_cards.py"
+      ],
+      "dependencies": [
+        "credit_card_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/credit_card_service.py"
+      ]
+    },
+    "service:backend/src/services/dashboard_service.py": {
+      "type": "Service",
+      "purpose": "Dashboard business orchestration service.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/dashboard.py",
+        "backend/src/routers/import_router.py"
+      ],
+      "dependencies": [
+        "behaviour_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/dashboard_service.py"
+      ]
+    },
+    "service:backend/src/services/financial_events_service.py": {
+      "type": "Service",
+      "purpose": "Financial Events Service - Orchestration layer for event lifecycle management.",
+      "owner": "engine:financial_events",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/financial_events.py"
+      ],
+      "dependencies": [
+        "financial_events"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/financial_events_service.py"
+      ]
+    },
+    "service:backend/src/services/financial_intelligence_service.py": {
+      "type": "Service",
+      "purpose": "Financial Intelligence Service - Orchestration layer for forecasting and goal planning.",
+      "owner": "engine:financial_intelligence",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "dependencies": [
+        "financial_intelligence"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/financial_intelligence_service.py"
+      ]
+    },
+    "service:backend/src/services/import_service.py": {
+      "type": "Service",
+      "purpose": "Import Service - Orchestration layer for statement and CSV import operations.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/dashboard.py",
+        "backend/src/routers/import_router.py"
+      ],
+      "dependencies": [
+        "behaviour_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/import_service.py"
+      ]
+    },
+    "service:backend/src/services/loan_analysis_service.py": {
+      "type": "Service",
+      "purpose": "Loan Analysis Service - Personal loan optimization recommendations.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/loans.py"
+      ],
+      "dependencies": [
+        "loan_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/loan_analysis_service.py"
+      ]
+    },
+    "service:backend/src/services/loan_service.py": {
+      "type": "Service",
+      "purpose": "Loan Service - Orchestration layer for loan operations.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/loans.py"
+      ],
+      "dependencies": [
+        "loan_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/loan_service.py"
+      ]
+    },
+    "service:backend/src/services/loan_simulation_service.py": {
+      "type": "Service",
+      "purpose": "Loan Simulation Service - Pure what-if scenario calculations.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/loans.py"
+      ],
+      "dependencies": [
+        "loan_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/loan_simulation_service.py"
+      ]
+    },
+    "service:backend/src/services/recommendation_service.py": {
+      "type": "Service",
+      "purpose": "Recommendation Service - Personalized financial recommendations.",
+      "owner": "engine:recommendation_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "dependencies": [
+        "recommendation_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/recommendation_service.py"
+      ]
+    },
+    "service:backend/src/services/reconciliation_service.py": {
+      "type": "Service",
+      "purpose": "Reconciliation business orchestration service.",
+      "owner": "engine:reconciliation_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/reconciliation.py"
+      ],
+      "dependencies": [
+        "reconciliation_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/reconciliation_service.py"
+      ]
+    },
+    "service:backend/src/services/statement_service.py": {
+      "type": "Service",
+      "purpose": "Statement business orchestration service.",
+      "owner": "engine:balance_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/cards_statements.py"
+      ],
+      "dependencies": [
+        "balance_engine"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/statement_service.py"
+      ]
+    },
+    "service:backend/src/services/transaction_intelligence_service.py": {
+      "type": "Service",
+      "purpose": "Transaction Intelligence Service - Orchestrates transaction classification.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Coordinate repositories and engines to implement business logic.",
+        "No direct DB access (delegates to repositories)."
+      ],
+      "consumers": [
+        "backend/src/routers/loans.py"
+      ],
+      "dependencies": [
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/services/transaction_intelligence_service.py"
+      ]
+    },
+    "router:backend/src/routers/accounts.py": {
+      "type": "Router",
+      "purpose": "Account management endpoints.",
+      "owner": "service:backend/src/services/account_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "account_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/accounts.py"
+      ]
+    },
+    "router:backend/src/routers/audit.py": {
+      "type": "Router",
+      "purpose": "Audit and integrity verification endpoints.",
+      "owner": "service:backend/src/services/audit_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "ledger_audit_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/audit.py"
+      ]
+    },
+    "router:backend/src/routers/behaviour.py": {
+      "type": "Router",
+      "purpose": "Behaviour Engine API endpoints.",
+      "owner": "service:backend/src/services/behaviour_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/behaviour.py"
+      ]
+    },
+    "router:backend/src/routers/cards_statements.py": {
+      "type": "Router",
+      "purpose": "Cards and statements endpoints.",
+      "owner": "service:backend/src/services/statement_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "balance_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/cards_statements.py"
+      ]
+    },
+    "router:backend/src/routers/credit_cards.py": {
+      "type": "Router",
+      "purpose": "Credit card management endpoints for the new engine.",
+      "owner": "service:backend/src/services/credit_card_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "credit_card_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/credit_cards.py"
+      ]
+    },
+    "router:backend/src/routers/dashboard.py": {
+      "type": "Router",
+      "purpose": "Dashboard summary endpoint.",
+      "owner": "service:backend/src/services/behaviour_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "behaviour_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/dashboard.py"
+      ]
+    },
+    "router:backend/src/routers/financial_events.py": {
+      "type": "Router",
+      "purpose": "Financial Events API router.",
+      "owner": "service:backend/src/services/financial_events_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "financial_events"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/financial_events.py"
+      ]
+    },
+    "router:backend/src/routers/financial_intelligence.py": {
+      "type": "Router",
+      "purpose": "Financial Intelligence API endpoints.",
+      "owner": "service:backend/src/services/behaviour_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/financial_intelligence.py"
+      ]
+    },
+    "router:backend/src/routers/import_router.py": {
+      "type": "Router",
+      "purpose": "Statement upload and import endpoints.",
+      "owner": "service:backend/src/services/behaviour_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "behaviour_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/import_router.py"
+      ]
+    },
+    "router:backend/src/routers/loans.py": {
+      "type": "Router",
+      "purpose": "Loan management endpoints.",
+      "owner": "service:backend/src/services/loan_analysis_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "loan_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    "router:backend/src/routers/managed_accounts.py": {
+      "type": "Router",
+      "purpose": "Managed accounts endpoints (DB-backed).",
+      "owner": "service:backend/src/services/account_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "account_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/managed_accounts.py"
+      ]
+    },
+    "router:backend/src/routers/reconciliation.py": {
+      "type": "Router",
+      "purpose": "Reconciliation matching and confirmation endpoints.",
+      "owner": "service:backend/src/services/reconciliation_service.py",
+      "responsibilities": [
+        "Declare HTTP endpoints (no business logic).",
+        "Delegate to services."
+      ],
+      "consumers": [],
+      "dependencies": [
+        "reconciliation_engine"
+      ],
+      "verification_profiles": [
+        "backend",
+        "contracts"
+      ],
+      "tests": [],
+      "artifacts": [
+        "runtime/generated/cross-layer-map.json"
+      ],
+      "generated_reports": [
+        "runtime/generated/engineering-platform-audit.json"
+      ],
+      "documentation": [
+        "backend/src/routers/reconciliation.py"
+      ]
+    },
+    "repository:account_balance_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for account_balance_repository.",
+      "owner": "engine:account_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/account_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/account_balance_repository.py"
+      ]
+    },
+    "repository:account_link_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for account_link_repository.",
+      "owner": "engine:account_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/account_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/account_link_repository.py"
+      ]
+    },
+    "repository:account_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for account_repository.",
+      "owner": "engine:account_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/recommendation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/account_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/account_repository.py"
+      ]
+    },
+    "repository:behaviour_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for behaviour_repository.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/recommendation_service.py",
+        "service:backend/src/services/dashboard_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/behaviour_repository.py"
+      ]
+    },
+    "repository:credit_card_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for credit_card_repository.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/credit_card_service.py",
+        "service:backend/src/services/recommendation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/credit_card_repository.py"
+      ]
+    },
+    "repository:credit_card_statement_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for credit_card_statement_repository.",
+      "owner": "engine:credit_card_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/credit_card_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/credit_card_statement_repository.py"
+      ]
+    },
+    "repository:financial_event_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for financial_event_repository.",
+      "owner": "engine:financial_events",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/financial_intelligence_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/financial_events_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/financial_event_repository.py"
+      ]
+    },
+    "repository:financial_goal_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for financial_goal_repository.",
+      "owner": "engine:financial_intelligence",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/financial_intelligence_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/financial_goal_repository.py"
+      ]
+    },
+    "repository:institution_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for institution_repository.",
+      "owner": "engine:account_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/account_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/institution_repository.py"
+      ]
+    },
+    "repository:liquidity_pattern_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for liquidity_pattern_repository.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/liquidity_pattern_repository.py"
+      ]
+    },
+    "repository:loan_payment_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for loan_payment_repository.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/loan_payment_repository.py"
+      ]
+    },
+    "repository:loan_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for loan_repository.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/recommendation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/loan_repository.py"
+      ]
+    },
+    "repository:pattern_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for pattern_repository.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/recommendation_service.py",
+        "service:backend/src/services/dashboard_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/pattern_repository.py"
+      ]
+    },
+    "repository:reconciliation_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for reconciliation_repository.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/reconciliation_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/reconciliation_repository.py"
+      ]
+    },
+    "repository:statement_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for statement_repository.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/loan_service.py",
+        "service:backend/src/services/statement_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/statement_repository.py"
+      ]
+    },
+    "repository:transaction_classification_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for transaction_classification_repository.",
+      "owner": "engine:loan_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/transaction_classification_repository.py"
+      ]
+    },
+    "repository:transaction_repository": {
+      "type": "Repository",
+      "purpose": "Persistence access for transaction_repository.",
+      "owner": "engine:behaviour_engine",
+      "responsibilities": [
+        "Encapsulate DB read/write for one aggregate."
+      ],
+      "consumers": [
+        "service:backend/src/services/behaviour_service.py",
+        "service:backend/src/services/recommendation_service.py",
+        "service:backend/src/services/loan_analysis_service.py",
+        "service:backend/src/services/dashboard_service.py",
+        "service:backend/src/services/transaction_intelligence_service.py",
+        "service:backend/src/services/import_service.py",
+        "service:backend/src/services/loan_simulation_service.py",
+        "service:backend/src/services/loan_service.py"
+      ],
+      "dependencies": [
+        "database:finance.db"
+      ],
+      "verification_profiles": [
+        "backend"
+      ],
+      "tests": [],
+      "artifacts": [],
+      "generated_reports": [],
+      "documentation": [
+        "backend/src/repositories/transaction_repository.py"
+      ]
+    }
+  },
+  "notes": [
+    "Each entity's Owner is resolved from the ownership graph, not from filenames.",
+    "Engines without a capability owner are marked INTERNAL and their knowledge is reconstructed under their consuming engine/service.",
+    "Knowledge completeness FAILS in the legacy audit because the knowledge index was built from the (defective) cross-layer-map filesystem keys, not from the canonical engine architecture."
+  ]
+}

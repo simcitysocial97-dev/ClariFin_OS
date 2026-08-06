@@ -1,0 +1,30 @@
+{
+  "schema": "engineering-memory/v1",
+  "generated_at": "2026-08-06T14:13:02.145622+00:00",
+  "sources": [
+    "artifact-ownership.json",
+    "engineering-events.jsonl",
+    "engineering-history.json",
+    "flaky-tests.json",
+    "github-actions-health.json",
+    "repair-order.json"
+  ],
+  "observations": 6,
+  "recurring_failures": [
+    {
+      "signature": "profile=quick failed_tasks=9",
+      "occurrences": 3
+    }
+  ],
+  "recurring_repairs": [],
+  "recurring_ci_failures": [],
+  "recurring_ownership_problems": [],
+  "recurring_verification_failures": [
+    {
+      "signature": "profile=quick status=failed",
+      "occurrences": 3
+    }
+  ],
+  "notes": [],
+  "usage": "future diagnoses should weight these observed frequencies instead of applying static heuristics"
+}

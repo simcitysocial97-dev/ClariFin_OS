@@ -1,0 +1,2510 @@
+{
+  "schema": "change-intelligence/v1",
+  "generated_at": "2026-08-06T14:13:02.129993+00:00",
+  "provider": "runtime.foundation.architecture.get_architecture",
+  "discovery": "none (provider-resolved)",
+  "changeset": {
+    "base": "HEAD",
+    "head": "1c5071f8b4c22df747a68f9db7bc49953d428bd2",
+    "source": "git",
+    "file_count": 119,
+    "files": [
+      {
+        "path": "runtime/analyze_architecture.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_artifacts.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_engine_normalization.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_engine_topology.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_execution.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_gap.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_knowledge.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/analyze_ownership.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/__init__.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/chains.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/cross_layer.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/discovery.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/ids.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/migration_reports.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/models.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/provider.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/architecture/sources.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/audit/artifact_ownership.py",
+        "status": "modified",
+        "added_lines": 123,
+        "removed_lines": 16,
+        "changed_symbols": [
+          "_check_consumers",
+          "_check_ownership",
+          "_check_retention_policies",
+          "_load_v3_by_name",
+          "_record_for"
+        ],
+        "changed_imports": [
+          "json"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/audit/cross_layer.py",
+        "status": "modified",
+        "added_lines": 212,
+        "removed_lines": 177,
+        "changed_symbols": [
+          "_build_data_from_provider",
+          "_check_file_exists",
+          "_check_provider_available",
+          "_find_map_path",
+          "_load_map",
+          "_verify_endpoint_deduplication",
+          "_verify_map_existence",
+          "_verify_map_json_validity"
+        ],
+        "changed_imports": [
+          "json",
+          "os",
+          "runtime.foundation.architecture.provider"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/audit/performance.py",
+        "status": "modified",
+        "added_lines": 9,
+        "removed_lines": 14,
+        "changed_symbols": [],
+        "changed_imports": [
+          "runtime.foundation.intelligence",
+          "runtime.foundation.intelligence.diagnostics"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/integrity/scanner.py",
+        "status": "modified",
+        "added_lines": 48,
+        "removed_lines": 9,
+        "changed_symbols": [
+          "_engine_paths",
+          "_is_engine_path"
+        ],
+        "changed_imports": [
+          "runtime.foundation.architecture",
+          "runtime.foundation.architecture.chains"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/__init__.py",
+        "status": "modified",
+        "added_lines": 49,
+        "removed_lines": 18,
+        "changed_symbols": [],
+        "changed_imports": [
+          "__future__",
+          "runtime.foundation.intelligence.affected",
+          "runtime.foundation.intelligence.diagnostics",
+          "runtime.foundation.intelligence.models",
+          "runtime.foundation.intelligence.platform.api",
+          "runtime.foundation.intelligence.platform.cli_format",
+          "runtime.foundation.intelligence.platform.resolver",
+          "runtime.foundation.intelligence.repair",
+          "runtime.foundation.intelligence.risk"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/affected.py",
+        "status": "deleted",
+        "added_lines": 0,
+        "removed_lines": 118,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/diagnostics.py",
+        "status": "deleted",
+        "added_lines": 0,
+        "removed_lines": 233,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/formatter.py",
+        "status": "deleted",
+        "added_lines": 0,
+        "removed_lines": 207,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/models.py",
+        "status": "deleted",
+        "added_lines": 0,
+        "removed_lines": 118,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/__init__.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/api.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/blast.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/certification.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/change.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/changeset.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/ci.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/cli_format.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/cost.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/memory.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/migration.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/optimizer.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/pipeline.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/repair.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/resolver.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/risk.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/platform/state.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/repair.py",
+        "status": "deleted",
+        "added_lines": 0,
+        "removed_lines": 178,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/intelligence/risk.py",
+        "status": "deleted",
+        "added_lines": 0,
+        "removed_lines": 220,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/knowledge/indexer.py",
+        "status": "modified",
+        "added_lines": 73,
+        "removed_lines": 9,
+        "changed_symbols": [
+          "_merge_from_provider"
+        ],
+        "changed_imports": [
+          "runtime.foundation.architecture.chains",
+          "runtime.foundation.architecture.provider"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/verification/orchestrator.py",
+        "status": "modified",
+        "added_lines": 0,
+        "removed_lines": 1,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/verification/planner/planner.py",
+        "status": "modified",
+        "added_lines": 89,
+        "removed_lines": 13,
+        "changed_symbols": [
+          "_resolve_via_provider",
+          "chain_for_engines"
+        ],
+        "changed_imports": [
+          "runtime.foundation.architecture",
+          "runtime.foundation.architecture.chains"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/foundation/workspace/workspace.py",
+        "status": "modified",
+        "added_lines": 23,
+        "removed_lines": 5,
+        "changed_symbols": [
+          "__init__",
+          "_load_chain_map"
+        ],
+        "changed_imports": [
+          "runtime.foundation.architecture.chains"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/architecture-inventory-summary.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/architecture-inventory.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/architecture-provider.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/artifact-ownership-v2.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/artifact-ownership-v3.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/artifact-ownership.json",
+        "status": "modified",
+        "added_lines": 7,
+        "removed_lines": 509,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/blast-radius.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/certification-gap-analysis.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/change-intelligence.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/cli-consistency.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/cross-layer-map-v2.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/cross-layer-map.json",
+        "status": "modified",
+        "added_lines": 413,
+        "removed_lines": 2204,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/dependency-graph-v2.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engine-normalization.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engine-topology.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-memory.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit-v2.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit-v3.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit-v3.md",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit-v4.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit-v5.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit.json",
+        "status": "modified",
+        "added_lines": 534,
+        "removed_lines": 1207,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-platform-audit.md",
+        "status": "modified",
+        "added_lines": 369,
+        "removed_lines": 254,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/engineering-risk.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/execution-graph.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/github-intelligence.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/intelligence-api.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/intelligence-constitution.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/intelligence-duplication.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/intelligence-inventory.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/intelligence-retirement-plan.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/knowledge-index.json",
+        "status": "modified",
+        "added_lines": 7596,
+        "removed_lines": 5915,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/knowledge-migration-report.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/knowledge-reconstruction.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/ownership-graph.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/pipeline-certification.md",
+        "status": "modified",
+        "added_lines": 4,
+        "removed_lines": 4,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/pipeline-validation.json",
+        "status": "modified",
+        "added_lines": 23,
+        "removed_lines": 23,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/platform-state.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/program14-certification.md",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/program14.1-certification.md",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/provider-consumer-inventory.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/provider-performance.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/repair-intelligence.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-consistency.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-constitution.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-consumer-migration.md",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-defects.json",
+        "status": "modified",
+        "added_lines": 22,
+        "removed_lines": 16,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-discovery-sources.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-id-consistency.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-migration-report.md",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-retirement-plan.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/runtime-simplification.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/system-health-score.json",
+        "status": "modified",
+        "added_lines": 6,
+        "removed_lines": 6,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/test-resolution.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/verification-cost.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/generated/verification-plan.json",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/system/evidence/aggregator.py",
+        "status": "modified",
+        "added_lines": 10,
+        "removed_lines": 5,
+        "changed_symbols": [],
+        "changed_imports": [
+          "runtime.foundation.architecture.chains"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/system/observability/dependency_growth.py",
+        "status": "modified",
+        "added_lines": 21,
+        "removed_lines": 9,
+        "changed_symbols": [
+          "_load_chains"
+        ],
+        "changed_imports": [
+          "runtime.foundation.architecture.chains"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_affected.py",
+        "status": "modified",
+        "added_lines": 40,
+        "removed_lines": 158,
+        "changed_symbols": [
+          "TestAffectedTestPlanner",
+          "sample_map_path",
+          "test_affected_report_lists_selected_and_skipped",
+          "test_affected_tests_come_from_provider",
+          "test_build_test_plan_deterministic",
+          "test_build_test_plan_excludes_unrelated",
+          "test_build_test_plan_has_backend_tests",
+          "test_build_test_plan_has_contracts",
+          "test_build_test_plan_has_frontend_tests",
+          "test_build_test_plan_has_runtime_tests",
+          "test_build_test_plan_no_related_files",
+          "test_build_test_plan_returns_plan",
+          "test_build_test_plan_total_count_matches",
+          "test_plan_immutable",
+          "test_test_resolution_never_infers_paths"
+        ],
+        "changed_imports": [
+          "__future__",
+          "json",
+          "pathlib",
+          "runtime.foundation.intelligence",
+          "runtime.foundation.intelligence.affected",
+          "runtime.foundation.intelligence.models"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_dependencies.py",
+        "status": "modified",
+        "added_lines": 9,
+        "removed_lines": 12,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_diagnostics.py",
+        "status": "modified",
+        "added_lines": 33,
+        "removed_lines": 187,
+        "changed_symbols": [
+          "TestDeveloperDiagnostics",
+          "planner_with_sample_map",
+          "sample_changed_files",
+          "test_diagnose_dependency_chain_not_empty",
+          "test_diagnose_estimate_positive",
+          "test_diagnose_formats_change_blast_risk_repair",
+          "test_diagnose_has_repair_suggestions",
+          "test_diagnose_identifies_capabilities",
+          "test_diagnose_identifies_endpoints",
+          "test_diagnose_identifies_tests",
+          "test_diagnose_identifies_workspaces",
+          "test_diagnose_immutable_report",
+          "test_diagnose_reports_unmapped_paths_explicitly",
+          "test_diagnose_resolves_ownership_from_provider",
+          "test_diagnose_returns_report",
+          "test_diagnose_risk_score_is_int",
+          "test_diagnose_suggests_verification_profile"
+        ],
+        "changed_imports": [
+          "json",
+          "pathlib",
+          "runtime.foundation.intelligence",
+          "runtime.foundation.intelligence.diagnostics",
+          "runtime.foundation.intelligence.models",
+          "runtime.foundation.intelligence.platform.blast",
+          "runtime.foundation.intelligence.platform.change",
+          "runtime.foundation.intelligence.platform.optimizer",
+          "runtime.foundation.intelligence.platform.repair",
+          "runtime.foundation.intelligence.platform.risk",
+          "runtime.foundation.verification.planner.planner"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_engineering_intelligence.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_integrity_scanner.py",
+        "status": "modified",
+        "added_lines": 8,
+        "removed_lines": 1,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_knowledge_queries.py",
+        "status": "modified",
+        "added_lines": 10,
+        "removed_lines": 8,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_repair.py",
+        "status": "modified",
+        "added_lines": 31,
+        "removed_lines": 90,
+        "changed_symbols": [
+          "TestRepairGuidance",
+          "order",
+          "test_all_suggestions_returns_all",
+          "test_build_repair_guidance_from_chain",
+          "test_build_repair_guidance_returns_repair_guidance",
+          "test_empty_chain_produces_no_suggestions",
+          "test_for_capability_finds_suggestions",
+          "test_for_component_finds_suggestions",
+          "test_for_endpoint_finds_suggestions",
+          "test_for_mapper_finds_suggestions",
+          "test_for_router_finds_suggestions",
+          "test_for_view_model_finds_suggestions",
+          "test_for_workspace_finds_suggestions",
+          "test_repair_plan_handles_empty_defects",
+          "test_repair_plan_is_reproducible",
+          "test_repair_plan_orders_and_cites_provider_owners",
+          "test_suggestion_has_required_fields",
+          "test_suggestions_are_immutable"
+        ],
+        "changed_imports": [
+          "runtime.foundation.intelligence",
+          "runtime.foundation.intelligence.platform.repair",
+          "runtime.foundation.intelligence.repair"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_risk.py",
+        "status": "modified",
+        "added_lines": 40,
+        "removed_lines": 167,
+        "changed_symbols": [
+          "TestRiskAnalyzer",
+          "sample_map_path",
+          "test_analyze_changed_layers",
+          "test_analyze_cross_layer_depth",
+          "test_analyze_factors_contains_expected_keys",
+          "test_analyze_has_reasons",
+          "test_analyze_returns_risk_report",
+          "test_analyze_score_is_deterministic",
+          "test_analyze_severity_classification",
+          "test_empty_report_low_score",
+          "test_format_risk_renders_level",
+          "test_risk_dimensions_carry_evidence",
+          "test_risk_exposes_seven_dimensions",
+          "test_risk_never_masks_high_dimension",
+          "test_risk_report_immutable"
+        ],
+        "changed_imports": [
+          "__future__",
+          "json",
+          "pathlib",
+          "runtime.foundation.intelligence",
+          "runtime.foundation.intelligence.models",
+          "runtime.foundation.intelligence.platform.resolver",
+          "runtime.foundation.intelligence.risk",
+          "runtime.foundation.verification.planner.planner"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/tests/test_workspace.py",
+        "status": "modified",
+        "added_lines": 7,
+        "removed_lines": 18,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "runtime/verify.py",
+        "status": "modified",
+        "added_lines": 121,
+        "removed_lines": 27,
+        "changed_symbols": [
+          "cmd_certify_v4",
+          "cmd_certify_v5",
+          "cmd_intelligence",
+          "cmd_intelligence_audit"
+        ],
+        "changed_imports": [
+          "runtime.foundation.intelligence",
+          "runtime.foundation.intelligence.affected",
+          "runtime.foundation.intelligence.diagnostics",
+          "runtime.foundation.intelligence.formatter",
+          "runtime.foundation.intelligence.platform",
+          "runtime.foundation.intelligence.platform.blast",
+          "runtime.foundation.intelligence.platform.change",
+          "runtime.foundation.intelligence.platform.migration",
+          "runtime.foundation.intelligence.platform.pipeline",
+          "runtime.foundation.intelligence.risk"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "tools/generators/build_consumer_migration.py",
+        "status": "added",
+        "added_lines": 0,
+        "removed_lines": 0,
+        "changed_symbols": [],
+        "changed_imports": [],
+        "changed_routes": [],
+        "api_changed": false
+      },
+      {
+        "path": "tools/generators/build_cross_layer_map.py",
+        "status": "modified",
+        "added_lines": 44,
+        "removed_lines": 431,
+        "changed_symbols": [
+          "CapabilityEntry",
+          "EngineEntry",
+          "RouterEntry",
+          "ServiceEntry",
+          "WorkspaceEntry",
+          "_build",
+          "_find_api_paths",
+          "_find_classes",
+          "_find_components",
+          "_find_endpoints",
+          "_find_engine_imports",
+          "_find_engine_tests",
+          "_find_mappers",
+          "_find_router_prefix",
+          "_find_service_imports",
+          "_find_view_models",
+          "_hook_name",
+          "_parse_layer_a",
+          "_parse_layer_b",
+          "_parse_layer_c",
+          "_parse_layer_d",
+          "_read"
+        ],
+        "changed_imports": [
+          "ast",
+          "dataclasses",
+          "re",
+          "runtime.foundation.architecture"
+        ],
+        "changed_routes": [],
+        "api_changed": false
+      }
+    ],
+    "notes": []
+  },
+  "changed": {
+    "engines": [],
+    "modules": [],
+    "capabilities": [],
+    "routers": [],
+    "endpoints": [],
+    "services": [],
+    "repositories": [],
+    "workspaces": [],
+    "components": [],
+    "mappers": [],
+    "dtos": [],
+    "view_models": [
+      {
+        "kind": "view_model",
+        "key": "ViewModel",
+        "id": "viewmodel:ViewModel",
+        "name": "ViewModel",
+        "path": "runtime/foundation/architecture/models.py"
+      }
+    ],
+    "tests": [],
+    "artifacts": [
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/architecture-inventory-summary.json",
+        "id": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "name": "",
+        "path": "runtime/generated/architecture-inventory-summary.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/architecture-inventory.json",
+        "id": "artifact:runtime/generated/architecture-inventory.json",
+        "name": "",
+        "path": "runtime/generated/architecture-inventory.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/architecture-provider.json",
+        "id": "artifact:runtime/generated/architecture-provider.json",
+        "name": "",
+        "path": "runtime/generated/architecture-provider.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/artifact-ownership-v2.json",
+        "id": "artifact:runtime/generated/artifact-ownership-v2.json",
+        "name": "",
+        "path": "runtime/generated/artifact-ownership-v2.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/artifact-ownership-v3.json",
+        "id": "artifact:runtime/generated/artifact-ownership-v3.json",
+        "name": "",
+        "path": "runtime/generated/artifact-ownership-v3.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/artifact-ownership.json",
+        "id": "artifact:runtime/generated/artifact-ownership.json",
+        "name": "",
+        "path": "runtime/generated/artifact-ownership.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/certification-gap-analysis.json",
+        "id": "artifact:runtime/generated/certification-gap-analysis.json",
+        "name": "",
+        "path": "runtime/generated/certification-gap-analysis.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/cross-layer-map-v2.json",
+        "id": "artifact:runtime/generated/cross-layer-map-v2.json",
+        "name": "",
+        "path": "runtime/generated/cross-layer-map-v2.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/cross-layer-map.json",
+        "id": "artifact:runtime/generated/cross-layer-map.json",
+        "name": "",
+        "path": "runtime/generated/cross-layer-map.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/dependency-graph-v2.json",
+        "id": "artifact:runtime/generated/dependency-graph-v2.json",
+        "name": "",
+        "path": "runtime/generated/dependency-graph-v2.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/engine-normalization.json",
+        "id": "artifact:runtime/generated/engine-normalization.json",
+        "name": "",
+        "path": "runtime/generated/engine-normalization.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/engine-topology.json",
+        "id": "artifact:runtime/generated/engine-topology.json",
+        "name": "",
+        "path": "runtime/generated/engine-topology.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/engineering-platform-audit.json",
+        "id": "artifact:runtime/generated/engineering-platform-audit.json",
+        "name": "",
+        "path": "runtime/generated/engineering-platform-audit.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/engineering-platform-audit.md",
+        "id": "artifact:runtime/generated/engineering-platform-audit.md",
+        "name": "",
+        "path": "runtime/generated/engineering-platform-audit.md"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/execution-graph.json",
+        "id": "artifact:runtime/generated/execution-graph.json",
+        "name": "",
+        "path": "runtime/generated/execution-graph.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/knowledge-index.json",
+        "id": "artifact:runtime/generated/knowledge-index.json",
+        "name": "",
+        "path": "runtime/generated/knowledge-index.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/knowledge-migration-report.json",
+        "id": "artifact:runtime/generated/knowledge-migration-report.json",
+        "name": "",
+        "path": "runtime/generated/knowledge-migration-report.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/knowledge-reconstruction.json",
+        "id": "artifact:runtime/generated/knowledge-reconstruction.json",
+        "name": "",
+        "path": "runtime/generated/knowledge-reconstruction.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/ownership-graph.json",
+        "id": "artifact:runtime/generated/ownership-graph.json",
+        "name": "",
+        "path": "runtime/generated/ownership-graph.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/pipeline-certification.md",
+        "id": "artifact:runtime/generated/pipeline-certification.md",
+        "name": "",
+        "path": "runtime/generated/pipeline-certification.md"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/pipeline-validation.json",
+        "id": "artifact:runtime/generated/pipeline-validation.json",
+        "name": "",
+        "path": "runtime/generated/pipeline-validation.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/runtime-consistency.json",
+        "id": "artifact:runtime/generated/runtime-consistency.json",
+        "name": "",
+        "path": "runtime/generated/runtime-consistency.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/runtime-defects.json",
+        "id": "artifact:runtime/generated/runtime-defects.json",
+        "name": "",
+        "path": "runtime/generated/runtime-defects.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/runtime-discovery-sources.json",
+        "id": "artifact:runtime/generated/runtime-discovery-sources.json",
+        "name": "",
+        "path": "runtime/generated/runtime-discovery-sources.json"
+      },
+      {
+        "kind": "artifact",
+        "key": "runtime/generated/system-health-score.json",
+        "id": "artifact:runtime/generated/system-health-score.json",
+        "name": "",
+        "path": "runtime/generated/system-health-score.json"
+      }
+    ]
+  },
+  "counts": {
+    "engines": 0,
+    "modules": 0,
+    "capabilities": 0,
+    "routers": 0,
+    "endpoints": 0,
+    "services": 0,
+    "repositories": 0,
+    "workspaces": 0,
+    "components": 0,
+    "mappers": 0,
+    "dtos": 0,
+    "view_models": 1,
+    "tests": 0,
+    "artifacts": 25
+  },
+  "owning_engines": [],
+  "changed_endpoints": [],
+  "unmapped_paths": [],
+  "platform_paths": [
+    "runtime/analyze_architecture.py",
+    "runtime/analyze_artifacts.py",
+    "runtime/analyze_engine_normalization.py",
+    "runtime/analyze_engine_topology.py",
+    "runtime/analyze_execution.py",
+    "runtime/analyze_gap.py",
+    "runtime/analyze_knowledge.py",
+    "runtime/analyze_ownership.py",
+    "runtime/foundation/architecture/__init__.py",
+    "runtime/foundation/architecture/chains.py",
+    "runtime/foundation/architecture/cross_layer.py",
+    "runtime/foundation/architecture/discovery.py",
+    "runtime/foundation/architecture/ids.py",
+    "runtime/foundation/architecture/migration_reports.py",
+    "runtime/foundation/architecture/provider.py",
+    "runtime/foundation/architecture/sources.py",
+    "runtime/foundation/audit/artifact_ownership.py",
+    "runtime/foundation/audit/cross_layer.py",
+    "runtime/foundation/audit/performance.py",
+    "runtime/foundation/integrity/scanner.py",
+    "runtime/foundation/intelligence/__init__.py",
+    "runtime/foundation/intelligence/affected.py",
+    "runtime/foundation/intelligence/diagnostics.py",
+    "runtime/foundation/intelligence/formatter.py",
+    "runtime/foundation/intelligence/models.py",
+    "runtime/foundation/intelligence/platform/__init__.py",
+    "runtime/foundation/intelligence/platform/api.py",
+    "runtime/foundation/intelligence/platform/blast.py",
+    "runtime/foundation/intelligence/platform/certification.py",
+    "runtime/foundation/intelligence/platform/change.py",
+    "runtime/foundation/intelligence/platform/changeset.py",
+    "runtime/foundation/intelligence/platform/ci.py",
+    "runtime/foundation/intelligence/platform/cli_format.py",
+    "runtime/foundation/intelligence/platform/cost.py",
+    "runtime/foundation/intelligence/platform/memory.py",
+    "runtime/foundation/intelligence/platform/migration.py",
+    "runtime/foundation/intelligence/platform/optimizer.py",
+    "runtime/foundation/intelligence/platform/pipeline.py",
+    "runtime/foundation/intelligence/platform/repair.py",
+    "runtime/foundation/intelligence/platform/resolver.py",
+    "runtime/foundation/intelligence/platform/risk.py",
+    "runtime/foundation/intelligence/platform/state.py",
+    "runtime/foundation/intelligence/repair.py",
+    "runtime/foundation/intelligence/risk.py",
+    "runtime/foundation/knowledge/indexer.py",
+    "runtime/foundation/verification/orchestrator.py",
+    "runtime/foundation/verification/planner/planner.py",
+    "runtime/foundation/workspace/workspace.py",
+    "runtime/generated/blast-radius.json",
+    "runtime/generated/change-intelligence.json",
+    "runtime/generated/cli-consistency.json",
+    "runtime/generated/engineering-memory.json",
+    "runtime/generated/engineering-platform-audit-v2.json",
+    "runtime/generated/engineering-platform-audit-v3.json",
+    "runtime/generated/engineering-platform-audit-v3.md",
+    "runtime/generated/engineering-platform-audit-v4.json",
+    "runtime/generated/engineering-platform-audit-v5.json",
+    "runtime/generated/engineering-risk.json",
+    "runtime/generated/github-intelligence.json",
+    "runtime/generated/intelligence-api.json",
+    "runtime/generated/intelligence-constitution.json",
+    "runtime/generated/intelligence-duplication.json",
+    "runtime/generated/intelligence-inventory.json",
+    "runtime/generated/intelligence-retirement-plan.json",
+    "runtime/generated/platform-state.json",
+    "runtime/generated/program14-certification.md",
+    "runtime/generated/program14.1-certification.md",
+    "runtime/generated/provider-consumer-inventory.json",
+    "runtime/generated/provider-performance.json",
+    "runtime/generated/repair-intelligence.json",
+    "runtime/generated/runtime-constitution.json",
+    "runtime/generated/runtime-consumer-migration.md",
+    "runtime/generated/runtime-id-consistency.json",
+    "runtime/generated/runtime-migration-report.md",
+    "runtime/generated/runtime-retirement-plan.json",
+    "runtime/generated/runtime-simplification.json",
+    "runtime/generated/test-resolution.json",
+    "runtime/generated/verification-cost.json",
+    "runtime/generated/verification-plan.json",
+    "runtime/system/evidence/aggregator.py",
+    "runtime/system/observability/dependency_growth.py",
+    "runtime/tests/test_affected.py",
+    "runtime/tests/test_dependencies.py",
+    "runtime/tests/test_diagnostics.py",
+    "runtime/tests/test_engineering_intelligence.py",
+    "runtime/tests/test_integrity_scanner.py",
+    "runtime/tests/test_knowledge_queries.py",
+    "runtime/tests/test_repair.py",
+    "runtime/tests/test_risk.py",
+    "runtime/tests/test_workspace.py",
+    "runtime/verify.py",
+    "tools/generators/build_consumer_migration.py",
+    "tools/generators/build_cross_layer_map.py"
+  ],
+  "path_scopes": {
+    "note": "the canonical provider models PRODUCTION architecture; Engineering Runtime files under runtime/ are the platform itself and are out of that scope by construction, so they are reported separately from genuinely unowned paths",
+    "platform": 93,
+    "unmapped": 0
+  },
+  "evidence": [
+    {
+      "path": "runtime/analyze_architecture.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_artifacts.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_engine_normalization.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_engine_topology.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_execution.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_gap.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_knowledge.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/analyze_ownership.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/__init__.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/chains.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/cross_layer.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/discovery.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/ids.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/migration_reports.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/models.py",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "view_model:ViewModel"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/foundation/architecture/provider.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/architecture/sources.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/audit/artifact_ownership.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/audit/cross_layer.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/audit/performance.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/integrity/scanner.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/__init__.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/affected.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/diagnostics.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/formatter.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/models.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/__init__.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/api.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/blast.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/certification.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/change.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/changeset.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/ci.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/cli_format.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/cost.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/memory.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/migration.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/optimizer.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/pipeline.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/repair.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/resolver.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/risk.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/state.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/repair.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/intelligence/risk.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/knowledge/indexer.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/verification/orchestrator.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/verification/planner/planner.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/foundation/workspace/workspace.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/architecture-inventory-summary.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/architecture-inventory-summary.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/architecture-inventory.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/architecture-inventory.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/architecture-provider.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/architecture-provider.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/artifact-ownership-v2.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/artifact-ownership-v2.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/artifact-ownership-v3.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/artifact-ownership-v3.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/artifact-ownership.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/artifact-ownership.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/blast-radius.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/certification-gap-analysis.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/certification-gap-analysis.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/change-intelligence.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/cli-consistency.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/cross-layer-map-v2.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/cross-layer-map-v2.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/cross-layer-map.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/cross-layer-map.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/dependency-graph-v2.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/dependency-graph-v2.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/engine-normalization.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/engine-normalization.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/engine-topology.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/engine-topology.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/engineering-memory.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit-v2.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit-v3.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit-v3.md",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit-v4.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit-v5.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/engineering-platform-audit.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/engineering-platform-audit.md",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/engineering-platform-audit.md"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/engineering-risk.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/execution-graph.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/execution-graph.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/github-intelligence.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/intelligence-api.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/intelligence-constitution.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/intelligence-duplication.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/intelligence-inventory.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/intelligence-retirement-plan.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/knowledge-index.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/knowledge-index.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/knowledge-migration-report.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/knowledge-migration-report.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/knowledge-reconstruction.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/knowledge-reconstruction.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/ownership-graph.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/ownership-graph.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/pipeline-certification.md",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/pipeline-certification.md"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/pipeline-validation.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/pipeline-validation.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/platform-state.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/program14-certification.md",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/program14.1-certification.md",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/provider-consumer-inventory.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/provider-performance.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/repair-intelligence.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/runtime-consistency.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/runtime-consistency.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/runtime-constitution.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/runtime-consumer-migration.md",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/runtime-defects.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/runtime-defects.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/runtime-discovery-sources.json",
+      "status": "added",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/runtime-discovery-sources.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/runtime-id-consistency.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/runtime-migration-report.md",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/runtime-retirement-plan.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/runtime-simplification.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/system-health-score.json",
+      "status": "modified",
+      "resolution": "provider",
+      "entities": [
+        "artifact:runtime/generated/system-health-score.json"
+      ],
+      "owning_engine": null,
+      "changed_symbols": [],
+      "changed_imports": [],
+      "changed_routes": []
+    },
+    {
+      "path": "runtime/generated/test-resolution.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/verification-cost.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/generated/verification-plan.json",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/system/evidence/aggregator.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/system/observability/dependency_growth.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_affected.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_dependencies.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_diagnostics.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_engineering_intelligence.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_integrity_scanner.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_knowledge_queries.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_repair.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_risk.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/tests/test_workspace.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "runtime/verify.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "tools/generators/build_consumer_migration.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    },
+    {
+      "path": "tools/generators/build_cross_layer_map.py",
+      "resolution": "platform",
+      "reason": "Engineering Runtime file; outside the production architecture the provider models"
+    }
+  ]
+}
