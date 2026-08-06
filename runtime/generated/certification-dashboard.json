@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-08-06T08:25:26.922132+00:00",
+  "current_snapshot": {
+    "timestamp": "2026-08-06T07:59:48.345168+00:00",
+    "overall_status": "pass",
+    "certification_status": "CERTIFIED",
+    "critical_count": 0,
+    "high_count": 0,
+    "medium_count": 10,
+    "low_count": 0,
+    "sections_passed": 14,
+    "sections_total": 19
+  },
+  "progress": {
+    "critical_delta": 0,
+    "high_delta": 0,
+    "trend": "stable"
+  },
+  "total_audits": 1
+}

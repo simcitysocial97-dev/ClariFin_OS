@@ -195,6 +195,9 @@ class BackendScanner(BaseScanner):
                     if not node.module.startswith("src."):
                         continue
 
+                    if self._is_inside_function(node, tree):
+                        continue
+
                     target_module = node.module
                     target_rel = self._module_to_path(target_module, self.src_dir)
                     if target_rel is None:
@@ -203,7 +206,6 @@ class BackendScanner(BaseScanner):
                     self._infer_module_type(target_rel)
                     target_id = f"module:{target_rel}"
 
-                    # Determine relationship type based on what's being imported
                     rel_type = self._infer_relationship(source_module, target_module)
 
                     result.add_edge(
@@ -213,6 +215,15 @@ class BackendScanner(BaseScanner):
                         confidence=0.8,
                         evidence=f"import_from:{target_module}",
                     )
+
+    @staticmethod
+    def _is_inside_function(node: ast.AST, tree: ast.AST) -> bool:
+        """Check if an AST node is inside a function/method definition."""
+        for parent in ast.walk(tree):
+            if isinstance(parent, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if node in ast.walk(parent):
+                    return True
+        return False
 
     # -- helpers -------------------------------------------------------------
 

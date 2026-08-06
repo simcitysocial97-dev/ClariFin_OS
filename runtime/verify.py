@@ -99,79 +99,6 @@ def _update_cache(profile_name: str, changed_files: list[str], commit: str, dura
     _save_cache(cache)
 
 
-def main() -> int:
-    if len(sys.argv) < 2:
-        print(
-            "Usage: python runtime/verify.py <profile>",
-            file=sys.stderr,
-        )
-        print(
-            "Profiles: quick, backend, frontend, contracts, graph, full",
-            file=sys.stderr,
-        )
-        return 1
-
-    profile_name = sys.argv[1]
-
-    try:
-        profile = get_profile(profile_name)
-    except ValueError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
-
-    commit = _get_current_commit()
-    changed_files = _collect_changed_files() if _is_git_available() else []
-
-    if not changed_files and profile_name not in ("full", "graph"):
-        print(
-            "No changed files detected and git is unavailable. "
-            "Falling back to FULL verification profile.",
-            file=sys.stderr,
-        )
-        profile = get_profile("full")
-
-    if _is_cache_valid(profile_name, changed_files, commit):
-        print(
-            f"Cache hit for profile '{profile_name}' "
-            f"(commit: {commit[:8]}). Reusing previous plan.",
-            file=sys.stderr,
-        )
-    else:
-        print(
-            f"Running verification profile: {profile_name}",
-            file=sys.stderr,
-        )
-        print(f"Changed files: {len(changed_files)}", file=sys.stderr)
-
-    orchestrator = VerificationOrchestrator(profile=profile)
-
-    import time
-
-    start_time = time.monotonic()
-    report = orchestrator.run(scope=profile.scope)
-    elapsed = time.monotonic() - start_time
-
-    report_path = VERIFICATION_REPORT_PATH
-    report.save_markdown(report_path)
-
-    _update_cache(profile_name, changed_files, commit, elapsed)
-    _record_verification_event(report, profile_name, elapsed)
-
-    print(f"\nVerification Report: {report_path}")
-    print(f"Profile: {report.profile}")
-    print(f"Passed: {report.summary.passed}")
-    print(f"Failed: {report.summary.failed}")
-    print(f"Skipped: {report.summary.skipped}")
-    print(f"Duration: {elapsed:.1f}s")
-
-    if report.summary.overall_status == VerificationStatus.FAILED:
-        print("\nVerification FAILED", file=sys.stderr)
-        return 1
-
-    print("\nVerification PASSED")
-    return 0
-
-
 def _record_verification_event(report: Any, profile_name: str, elapsed: float) -> None:
     try:
         from runtime.system.observability.execution_context import create_context
@@ -261,6 +188,35 @@ def cmd_analytics() -> int:
 
 
 def cmd_health() -> int:
+    from runtime.system.observability.health_report import EngineeringHealthReport
+
+    report = EngineeringHealthReport()
+    output = report.generate()
+    print(output)
+    return 0
+
+
+def cmd_doctor() -> int:
+    return cmd_health()
+
+
+def cmd_ci_doctor() -> int:
+    import subprocess
+    import sys as _sys
+
+    script_path = REPO_ROOT / ".github" / "scripts" / "validate_actions.py"
+    result = subprocess.run(
+        [_sys.executable, str(script_path)],
+        capture_output=True,
+        text=True,
+    )
+    print(result.stdout, end="")
+    if result.stderr:
+        print(result.stderr, file=_sys.stderr, end="")
+    return result.returncode
+
+
+def cmd_diagnose() -> int:
     from runtime.system.observability.health_report import EngineeringHealthReport
 
     report = EngineeringHealthReport()
@@ -458,6 +414,89 @@ def cmd_knowledge_component() -> int:
     return 0
 
 
+def cmd_dashboard() -> int:
+    from runtime.system.observability.dashboard import DashboardGenerator
+
+    generator = DashboardGenerator()
+    dashboard = generator.generate()
+    print(json.dumps(dashboard, indent=2, default=str))
+    return 0
+
+
+def cmd_audit() -> int:
+    from runtime.foundation.audit.runner import AuditRunner
+    from runtime.foundation.audit.reporter import AuditReporter
+    from runtime.foundation.audit.repository import audit as _audit_repository
+    from runtime.foundation.audit.cross_layer import audit as _audit_cross_layer
+    from runtime.foundation.audit.dependency_graph import audit as _audit_dependency_graph
+    from runtime.foundation.audit.planner import audit as _audit_planner
+    from runtime.foundation.audit.executor import audit as _audit_executor
+    from runtime.foundation.audit.evidence import audit as _audit_evidence
+    from runtime.foundation.audit.observability import audit as _audit_observability
+    from runtime.foundation.audit.knowledge import audit as _audit_knowledge
+    from runtime.foundation.audit.workspace import audit as _audit_workspace
+    from runtime.foundation.audit.integrity import audit as _audit_integrity
+    from runtime.foundation.audit.github_actions import audit as _audit_github_actions
+    from runtime.foundation.audit.runtime_cli import audit as _audit_runtime_cli
+    from runtime.foundation.audit.github_runtime import audit as _audit_github_runtime
+    from runtime.foundation.audit.verification_profiles import audit as _audit_verification_profiles
+    from runtime.foundation.audit.artifact_ownership import audit as _audit_artifact_ownership
+    from runtime.foundation.audit.performance import audit as _audit_performance
+    from runtime.foundation.audit.failure_injection import audit as _audit_failure_injection
+    from runtime.foundation.audit.pipeline import audit as _audit_pipeline
+    from runtime.foundation.audit.roi import audit as _audit_roi
+
+    runner = AuditRunner()
+
+    runner.register("repository", lambda: _audit_repository())
+    runner.register("cross_layer", lambda: _audit_cross_layer())
+    runner.register("dependency_graph", lambda: _audit_dependency_graph())
+    runner.register("planner", lambda: _audit_planner())
+    runner.register("executor", lambda: _audit_executor())
+    runner.register("evidence", lambda: _audit_evidence())
+    runner.register("observability", lambda: _audit_observability())
+    runner.register("knowledge", lambda: _audit_knowledge())
+    runner.register("workspace", lambda: _audit_workspace())
+    runner.register("integrity", lambda: _audit_integrity())
+    runner.register("github_actions", lambda: _audit_github_actions())
+    runner.register("runtime_cli", lambda: _audit_runtime_cli())
+    runner.register("github_runtime", lambda: _audit_github_runtime())
+    runner.register("verification_profiles", lambda: _audit_verification_profiles())
+    runner.register("artifact_ownership", lambda: _audit_artifact_ownership())
+    runner.register("performance", lambda: _audit_performance())
+    runner.register("failure_injection", lambda: _audit_failure_injection())
+    runner.register("pipeline", lambda: _audit_pipeline())
+    runner.register("roi", lambda: _audit_roi())
+
+    print("Running Engineering Platform Certification Audit...", file=sys.stderr)
+    report = runner.run()
+    reporter = AuditReporter(report)
+    paths = reporter.save_all(REPO_ROOT)
+
+    print(f"\nAudit Report: {paths['markdown']}")
+    print(f"Certification: {report.certification_status}")
+    print(f"Overall Status: {report.overall_status.value}")
+    print(f"Duration: {report.total_duration_seconds:.2f}s")
+    print(f"Critical Issues: {len(report.critical_issues)}")
+    print(f"High Priority Issues: {len(report.high_priority_issues)}")
+    print(f"Medium Priority Issues: {len(report.medium_priority_issues)}")
+    print(f"Low Priority Issues: {len(report.low_priority_issues)}")
+
+    for s in report.sections:
+        print(f"  {s.name}: {s.status.value.upper()} ({s.duration_seconds:.2f}s)")
+
+    if report.overall_status.value == "fail":
+        print("\nAudit FAILED", file=sys.stderr)
+        return 1
+
+    if report.certification_status == "CERTIFIED":
+        print("\nCertification achieved: CERTIFIED")
+        return 0
+
+    print("\nAudit PASSED with warnings")
+    return 0
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         print(
@@ -469,7 +508,7 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Commands: status, metrics, history, deps, verify-status, analytics, health, diagnose, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component",
+            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, audit",
             file=sys.stderr,
         )
         return 1
@@ -490,6 +529,10 @@ def main() -> int:
         return cmd_analytics()
     if command == "health":
         return cmd_health()
+    if command == "doctor":
+        return cmd_doctor()
+    if command == "ci-doctor":
+        return cmd_ci_doctor()
     if command == "diagnose":
         return cmd_diagnose()
     if command == "affected":
@@ -513,6 +556,10 @@ def main() -> int:
         if sub_command == "component":
             return cmd_knowledge_component()
         return cmd_knowledge()
+    if command == "dashboard":
+        return cmd_dashboard()
+    if command == "audit":
+        return cmd_audit()
 
     profile_name = command
 

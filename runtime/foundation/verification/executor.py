@@ -1,17 +1,13 @@
-"""
-Execution Pipeline — Program 7B
-
-Executes verification commands and returns structured ExecutionResult objects.
-No direct printing. Everything returns typed dataclasses.
-"""
-
 from __future__ import annotations
 
 import os
 import subprocess
 import tempfile
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from runtime.foundation.verification.models import (
     ExecutionResult,
@@ -31,6 +27,9 @@ class Executor:
     - playwright
     - schemathesis
     - Shell commands (bash ...)
+    - Retry logic for transient failures
+    - Cancellation of long-running commands
+    - Parallel execution of multiple commands
 
     Returns structured ExecutionResult objects.
     No direct printing.
@@ -40,9 +39,34 @@ class Executor:
         self._repo_root = repo_root or Path.cwd()
         self._results_dir = self._repo_root / "runtime" / "generated" / "execution"
         self._results_dir.mkdir(parents=True, exist_ok=True)
+        self._max_retries = 3
+        self._retry_delay = 1
+        self._cancel_flag = threading.Event()
+        self._parallel_executor: ThreadPoolExecutor | None = None
 
-    def execute(self, command: str, task_id: str = "") -> ExecutionResult:
-        """Execute a command and return a structured result."""
+    def execute(self, command: str, task_id: str = "", max_retries: int = 0) -> ExecutionResult:
+        """Execute a command and return a structured result with optional retry."""
+        last_result: ExecutionResult | None = None
+        attempts = max(1, max_retries + 1)
+        for attempt in range(attempts):
+            if self._cancel_flag.is_set():
+                return ExecutionResult(
+                    task_id=task_id,
+                    command=command,
+                    status=VerificationStatus.FAILED,
+                    exit_code=-1,
+                    duration_seconds=0.0,
+                    stdout_path="",
+                    stderr_path="",
+                    error="Command cancelled",
+                )
+            last_result = self._execute_once(command, task_id)
+            if last_result.status == VerificationStatus.PASSED or attempt == attempts - 1:
+                break
+        return last_result
+
+    def _execute_once(self, command: str, task_id: str = "") -> ExecutionResult:
+        """Execute a command once without retry logic."""
         start_time = datetime.now(timezone.utc)
 
         stdout_file = self._create_temp_file("stdout")
@@ -110,12 +134,54 @@ class Executor:
             self._cleanup_temp_file(stdout_file.name)
             self._cleanup_temp_file(stderr_file.name)
 
+    def retry(self, command: str, task_id: str = "", max_retries: int = 3) -> ExecutionResult:
+        """Execute a command with retry logic for transient failures."""
+        return self.execute(command, task_id=task_id, max_retries=max_retries)
+
+    def cancel(self) -> None:
+        """Cancel any currently running commands."""
+        self._cancel_flag.set()
+
+    def reset_cancel(self) -> None:
+        """Reset the cancel flag to allow new commands."""
+        self._cancel_flag.clear()
+
+    def execute_parallel(
+        self, commands: list[str], task_id: str = ""
+    ) -> list[ExecutionResult]:
+        """Execute multiple commands in parallel using a thread pool."""
+        self._cancel_flag.clear()
+        results: list[ExecutionResult] = []
+        with ThreadPoolExecutor(max_workers=min(len(commands), 4)) as executor:
+            future_to_cmd = {
+                executor.submit(self.execute, cmd, f"{task_id}-{i}"): cmd
+                for i, cmd in enumerate(commands)
+            }
+            for future in as_completed(future_to_cmd):
+                try:
+                    result = future.result()
+                    results.append(result)
+                except Exception as exc:
+                    results.append(
+                        ExecutionResult(
+                            task_id=task_id,
+                            command=future_to_cmd[future],
+                            status=VerificationStatus.FAILED,
+                            exit_code=-1,
+                            duration_seconds=0.0,
+                            stdout_path="",
+                            stderr_path="",
+                            error=str(exc),
+                        )
+                    )
+        return results
+
     def execute_python(self, module: str, args: list[str] | None = None) -> ExecutionResult:
         """Execute a Python module command."""
-        cmd_parts = ["python3", "-m", module]
+        cmd = f"python3 -m {module}"
         if args:
-            cmd_parts.extend(args)
-        return self.execute(" ".join(cmd_parts))
+            cmd += " " + " ".join(args)
+        return self.execute(cmd)
 
     def execute_npm(self, command: str, cwd: str | None = None) -> ExecutionResult:
         """Execute an npm command."""
@@ -130,26 +196,26 @@ class Executor:
         extra_args: list[str] | None = None,
     ) -> ExecutionResult:
         """Execute pytest with optional paths and arguments."""
-        cmd_parts = ["python3", "-m", "pytest"]
+        cmd = "python3 -m pytest"
         if paths:
-            cmd_parts.extend(paths)
+            cmd += " " + " ".join(paths)
         if extra_args:
-            cmd_parts.extend(extra_args)
-        return self.execute(" ".join(cmd_parts))
+            cmd += " " + " ".join(extra_args)
+        return self.execute(cmd)
 
     def execute_vitest(self, args: list[str] | None = None) -> ExecutionResult:
         """Execute vitest."""
-        cmd_parts = ["cd", "frontend", "&&", "npx", "vitest", "run"]
+        cmd = "cd frontend && npx vitest run"
         if args:
-            cmd_parts.extend(args)
-        return self.execute(" ".join(cmd_parts))
+            cmd += " " + " ".join(args)
+        return self.execute(cmd)
 
     def execute_playwright(self, args: list[str] | None = None) -> ExecutionResult:
         """Execute Playwright tests."""
-        cmd_parts = ["cd", "frontend", "&&", "npx", "playwright", "test"]
+        cmd = "cd frontend && npx playwright test"
         if args:
-            cmd_parts.extend(args)
-        return self.execute(" ".join(cmd_parts))
+            cmd += " " + " ".join(args)
+        return self.execute(cmd)
 
     def execute_schemathesis(
         self,

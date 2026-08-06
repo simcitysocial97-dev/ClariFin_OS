@@ -182,9 +182,36 @@ class MetadataScanner(BaseScanner):
             },
         )
 
+        type_prefix_map = {
+            "module": "module",
+            "engine": "module",
+            "service": "module",
+            "router": "module",
+            "repository": "module",
+            "model": "module",
+            "contract": "endpoint",
+            "property_test": "module",
+            "capability_test": "module",
+            "invariant_test": "module",
+            "golden_dataset": "generated_artifact",
+            "database_table": "database_table",
+            "capability": "capability",
+            "endpoint": "endpoint",
+            "generated_artifact": "generated_artifact",
+        }
+
+        node_ids = {n.id for n in result.nodes}
         for edge in dep_map.get("edges", []):
-            source_id = f"{edge.get('source_type', 'module')}:{edge.get('source', '')}"
-            target_id = f"{edge.get('target_type', 'module')}:{edge.get('target', '')}"
+            source_type = edge.get("source_type", "module")
+            target_type = edge.get("target_type", "module")
+            source_prefix = type_prefix_map.get(source_type, source_type)
+            target_prefix = type_prefix_map.get(target_type, target_type)
+            source_id = f"{source_prefix}:{edge.get('source', '')}"
+            target_id = f"{target_prefix}:{edge.get('target', '')}"
+
+            if source_id not in node_ids or target_id not in node_ids:
+                continue
+
             result.add_edge(
                 source_id=source_id,
                 target_id=target_id,
