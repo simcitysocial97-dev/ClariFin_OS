@@ -33,10 +33,12 @@ omit =
     */routers/*
 
     # Tooling & Scripts — not application core code
-    fix_lint.py
-    diagnose_db.py
-    tools/*
-    scripts/*
+    */tools/*
+    */scripts/*
+    */fix_lint.py
+    */diagnose_db.py
+    *tools*
+    *scripts*
 
     # Environment and Cache directories
     */site-packages/*

@@ -18,7 +18,7 @@ CROSS_LAYER_MAP_PATH = REPO_ROOT / "runtime" / "generated" / "cross-layer-map.js
 DEPENDENCY_GROWTH_PATH = REPO_ROOT / "runtime" / "generated" / "dependency-growth.json"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(slots=True)
 class DependencyGrowthRecord:
     """Growth metrics for a single dependency category."""
 

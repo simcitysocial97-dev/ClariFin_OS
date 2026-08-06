@@ -99,6 +99,12 @@ class RepositoryBuilder:
             for edge in scan_result.edges:
                 self.graph.add_edge(edge)
 
+        node_ids = {n.id for n in self.graph.nodes}
+        self.graph.edges = [
+            e for e in self.graph.edges
+            if e.source in node_ids and e.target in node_ids
+        ]
+
         # Assign ownership to all nodes (Phase 2.1)
         self._assign_ownership()
 
@@ -398,9 +404,11 @@ class RepositoryBuilder:
         for n in self.graph.nodes:
             node_counts[n.type] = node_counts.get(n.type, 0) + 1
 
+        unique_edges = self._unique_edges_as_dicts()
         edge_counts: Dict[str, int] = {}
-        for e in self.graph.edges:
-            edge_counts[e.relationship] = edge_counts.get(e.relationship, 0) + 1
+        for e in unique_edges:
+            rel = e.get("relationship", "unknown")
+            edge_counts[rel] = edge_counts.get(rel, 0) + 1
 
         index_data = {
             "metadata": {
@@ -421,13 +429,13 @@ class RepositoryBuilder:
                     "MigrationScanner": "1.0",
                 },
                 "node_count": len(self.graph.nodes),
-                "edge_count": len(self.graph.edges),
+                "edge_count": len(unique_edges),
                 "node_types": dict(sorted(node_counts.items())),
                 "edge_relationships": dict(sorted(edge_counts.items())),
                 "ownership_classes": list(sorted(OWNERSHIP_CLASSES)),
                 "validation_summary": {
                     "total_nodes": len(self.graph.nodes),
-                    "total_edges": len(self.graph.edges),
+                    "total_edges": len(unique_edges),
                     "unknown_ownership_nodes": sum(
                         1 for n in self.graph.nodes if n.ownership == "unknown"
                     ),

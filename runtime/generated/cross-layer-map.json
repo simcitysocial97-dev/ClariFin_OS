@@ -89,33 +89,7 @@
       "Grid",
       "LoadingSpinner"
     ],
-    "endpoints": [
-      "GET /api/v1/accounts",
-      "POST /api/v1/accounts",
-      "GET /api/v1/accounts/{account_id}",
-      "PUT /api/v1/accounts/{account_id}",
-      "DELETE /api/v1/accounts/{account_id}",
-      "POST /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history/latest",
-      "GET /api/v1/accounts/{account_id}/analytics",
-      "GET /api/v1/accounts/{account_id}/metrics",
-      "GET /api/v1/accounts/{account_id}/status",
-      "GET /api/v1/accounts/{account_id}/dormancy",
-      "GET /api/v1/institutions",
-      "POST /api/v1/institutions",
-      "GET /api/v1/institutions/{institution_id}",
-      "PUT /api/v1/institutions/{institution_id}",
-      "POST /api/v1/accounts/{account_id}/links",
-      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "GET /api/v1/accounts/{account_id}/links",
-      "GET /api/accounts/manage",
-      "POST /api/accounts/manage",
-      "PUT /api/accounts/manage/{account_id}",
-      "DELETE /api/accounts/manage/{account_id}",
-      "GET /api/accounts/{account_id}/balance",
-      "GET /api/accounts/{account_id}/running-balance"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/account_engine/balance.py",
     "graphRenderers": [],
     "mappers": [
@@ -164,33 +138,7 @@
       "Grid",
       "LoadingSpinner"
     ],
-    "endpoints": [
-      "GET /api/v1/accounts",
-      "POST /api/v1/accounts",
-      "GET /api/v1/accounts/{account_id}",
-      "PUT /api/v1/accounts/{account_id}",
-      "DELETE /api/v1/accounts/{account_id}",
-      "POST /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history/latest",
-      "GET /api/v1/accounts/{account_id}/analytics",
-      "GET /api/v1/accounts/{account_id}/metrics",
-      "GET /api/v1/accounts/{account_id}/status",
-      "GET /api/v1/accounts/{account_id}/dormancy",
-      "GET /api/v1/institutions",
-      "POST /api/v1/institutions",
-      "GET /api/v1/institutions/{institution_id}",
-      "PUT /api/v1/institutions/{institution_id}",
-      "POST /api/v1/accounts/{account_id}/links",
-      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "GET /api/v1/accounts/{account_id}/links",
-      "GET /api/accounts/manage",
-      "POST /api/accounts/manage",
-      "PUT /api/accounts/manage/{account_id}",
-      "DELETE /api/accounts/manage/{account_id}",
-      "GET /api/accounts/{account_id}/balance",
-      "GET /api/accounts/{account_id}/running-balance"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/account_engine/cashflow.py",
     "graphRenderers": [],
     "mappers": [
@@ -239,33 +187,7 @@
       "Grid",
       "LoadingSpinner"
     ],
-    "endpoints": [
-      "GET /api/v1/accounts",
-      "POST /api/v1/accounts",
-      "GET /api/v1/accounts/{account_id}",
-      "PUT /api/v1/accounts/{account_id}",
-      "DELETE /api/v1/accounts/{account_id}",
-      "POST /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history/latest",
-      "GET /api/v1/accounts/{account_id}/analytics",
-      "GET /api/v1/accounts/{account_id}/metrics",
-      "GET /api/v1/accounts/{account_id}/status",
-      "GET /api/v1/accounts/{account_id}/dormancy",
-      "GET /api/v1/institutions",
-      "POST /api/v1/institutions",
-      "GET /api/v1/institutions/{institution_id}",
-      "PUT /api/v1/institutions/{institution_id}",
-      "POST /api/v1/accounts/{account_id}/links",
-      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "GET /api/v1/accounts/{account_id}/links",
-      "GET /api/accounts/manage",
-      "POST /api/accounts/manage",
-      "PUT /api/accounts/manage/{account_id}",
-      "DELETE /api/accounts/manage/{account_id}",
-      "GET /api/accounts/{account_id}/balance",
-      "GET /api/accounts/{account_id}/running-balance"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/account_engine/dormant.py",
     "graphRenderers": [],
     "mappers": [
@@ -314,33 +236,7 @@
       "Grid",
       "LoadingSpinner"
     ],
-    "endpoints": [
-      "GET /api/v1/accounts",
-      "POST /api/v1/accounts",
-      "GET /api/v1/accounts/{account_id}",
-      "PUT /api/v1/accounts/{account_id}",
-      "DELETE /api/v1/accounts/{account_id}",
-      "POST /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history/latest",
-      "GET /api/v1/accounts/{account_id}/analytics",
-      "GET /api/v1/accounts/{account_id}/metrics",
-      "GET /api/v1/accounts/{account_id}/status",
-      "GET /api/v1/accounts/{account_id}/dormancy",
-      "GET /api/v1/institutions",
-      "POST /api/v1/institutions",
-      "GET /api/v1/institutions/{institution_id}",
-      "PUT /api/v1/institutions/{institution_id}",
-      "POST /api/v1/accounts/{account_id}/links",
-      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "GET /api/v1/accounts/{account_id}/links",
-      "GET /api/accounts/manage",
-      "POST /api/accounts/manage",
-      "PUT /api/accounts/manage/{account_id}",
-      "DELETE /api/accounts/manage/{account_id}",
-      "GET /api/accounts/{account_id}/balance",
-      "GET /api/accounts/{account_id}/running-balance"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/account_engine/history.py",
     "graphRenderers": [],
     "mappers": [
@@ -389,33 +285,7 @@
       "Grid",
       "LoadingSpinner"
     ],
-    "endpoints": [
-      "GET /api/v1/accounts",
-      "POST /api/v1/accounts",
-      "GET /api/v1/accounts/{account_id}",
-      "PUT /api/v1/accounts/{account_id}",
-      "DELETE /api/v1/accounts/{account_id}",
-      "POST /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history/latest",
-      "GET /api/v1/accounts/{account_id}/analytics",
-      "GET /api/v1/accounts/{account_id}/metrics",
-      "GET /api/v1/accounts/{account_id}/status",
-      "GET /api/v1/accounts/{account_id}/dormancy",
-      "GET /api/v1/institutions",
-      "POST /api/v1/institutions",
-      "GET /api/v1/institutions/{institution_id}",
-      "PUT /api/v1/institutions/{institution_id}",
-      "POST /api/v1/accounts/{account_id}/links",
-      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "GET /api/v1/accounts/{account_id}/links",
-      "GET /api/accounts/manage",
-      "POST /api/accounts/manage",
-      "PUT /api/accounts/manage/{account_id}",
-      "DELETE /api/accounts/manage/{account_id}",
-      "GET /api/accounts/{account_id}/balance",
-      "GET /api/accounts/{account_id}/running-balance"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/account_engine/lifecycle.py",
     "graphRenderers": [],
     "mappers": [
@@ -464,33 +334,7 @@
       "Grid",
       "LoadingSpinner"
     ],
-    "endpoints": [
-      "GET /api/v1/accounts",
-      "POST /api/v1/accounts",
-      "GET /api/v1/accounts/{account_id}",
-      "PUT /api/v1/accounts/{account_id}",
-      "DELETE /api/v1/accounts/{account_id}",
-      "POST /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history",
-      "GET /api/v1/accounts/{account_id}/balance-history/latest",
-      "GET /api/v1/accounts/{account_id}/analytics",
-      "GET /api/v1/accounts/{account_id}/metrics",
-      "GET /api/v1/accounts/{account_id}/status",
-      "GET /api/v1/accounts/{account_id}/dormancy",
-      "GET /api/v1/institutions",
-      "POST /api/v1/institutions",
-      "GET /api/v1/institutions/{institution_id}",
-      "PUT /api/v1/institutions/{institution_id}",
-      "POST /api/v1/accounts/{account_id}/links",
-      "DELETE /api/v1/accounts/{account_id}/links/{linked_account_id}",
-      "GET /api/v1/accounts/{account_id}/links",
-      "GET /api/accounts/manage",
-      "POST /api/accounts/manage",
-      "PUT /api/accounts/manage/{account_id}",
-      "DELETE /api/accounts/manage/{account_id}",
-      "GET /api/accounts/{account_id}/balance",
-      "GET /api/accounts/{account_id}/running-balance"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/account_engine/metrics.py",
     "graphRenderers": [],
     "mappers": [
@@ -588,17 +432,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/account.py",
     "graphRenderers": [],
     "mappers": [
@@ -651,17 +485,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/cashflow.py",
     "graphRenderers": [],
     "mappers": [
@@ -699,12 +523,12 @@
     ]
   },
   "backend/src/engines/behaviour_engine/core.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
+    "capabilities": [
+      "useDashboardCapability",
+      "useImportCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/core.py",
     "graphRenderers": [],
     "mappers": [],
@@ -747,17 +571,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/credit_dependency.py",
     "graphRenderers": [],
     "mappers": [
@@ -810,17 +624,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/debt.py",
     "graphRenderers": [],
     "mappers": [
@@ -873,15 +677,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/income.py",
     "graphRenderers": [],
     "mappers": [
@@ -930,15 +726,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/lifestyle.py",
     "graphRenderers": [],
     "mappers": [
@@ -987,17 +775,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/patterns.py",
     "graphRenderers": [],
     "mappers": [
@@ -1050,17 +828,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/profile.py",
     "graphRenderers": [],
     "mappers": [
@@ -1113,17 +881,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/resilience.py",
     "graphRenderers": [],
     "mappers": [
@@ -1176,17 +934,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/savings.py",
     "graphRenderers": [],
     "mappers": [
@@ -1239,17 +987,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/stress.py",
     "graphRenderers": [],
     "mappers": [
@@ -1302,17 +1040,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/temporal.py",
     "graphRenderers": [],
     "mappers": [
@@ -1365,17 +1093,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /api/dashboard/summary",
-      "POST /api/import/execute"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/utils.py",
     "graphRenderers": [],
     "mappers": [
@@ -1428,15 +1146,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/behaviour_engine/wellness.py",
     "graphRenderers": [],
     "mappers": [
@@ -1539,22 +1249,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/billing.py",
     "graphRenderers": [],
     "mappers": [
@@ -1598,22 +1293,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/emi.py",
     "graphRenderers": [],
     "mappers": [
@@ -1657,22 +1337,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/foreclosure.py",
     "graphRenderers": [],
     "mappers": [
@@ -1716,22 +1381,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/interest.py",
     "graphRenderers": [],
     "mappers": [
@@ -1775,22 +1425,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/metrics.py",
     "graphRenderers": [],
     "mappers": [
@@ -1834,22 +1469,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/outstanding.py",
     "graphRenderers": [],
     "mappers": [
@@ -1893,22 +1513,7 @@
       "CreditCardsErrorState",
       "CreditCardsEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/credit-cards",
-      "GET /api/v1/credit-cards/{card_id}",
-      "POST /api/v1/credit-cards",
-      "PUT /api/v1/credit-cards/{card_id}",
-      "DELETE /api/v1/credit-cards/{card_id}",
-      "GET /api/v1/credit-cards/{card_id}/statements",
-      "POST /api/v1/credit-cards/{card_id}/statements",
-      "GET /api/v1/credit-cards/{card_id}/outstanding",
-      "GET /api/v1/credit-cards/{card_id}/utilization",
-      "GET /api/v1/credit-cards/{card_id}/metrics",
-      "GET /api/v1/credit-cards/{card_id}/next-statement-date",
-      "POST /api/v1/credit-cards/{card_id}/payments",
-      "POST /api/v1/credit-cards/{card_id}/emi-conversion",
-      "POST /api/v1/credit-cards/{card_id}/foreclosure"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/credit_card_engine/utilization.py",
     "graphRenderers": [],
     "mappers": [
@@ -1937,7 +1542,9 @@
     ]
   },
   "backend/src/engines/financial_events.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useFinancialEventsCapability"
+    ],
     "components": [],
     "endpoints": [
       "POST /api/financial-events/",
@@ -1959,13 +1566,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_events/lineage_walker.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "POST /api/financial-events/",
-      "GET /api/financial-events/",
-      "GET /api/financial-events/{event_id}"
+    "capabilities": [
+      "useFinancialEventsCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_events/lineage_walker.py",
     "graphRenderers": [],
     "mappers": [],
@@ -1981,7 +1586,9 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
+    ],
     "components": [],
     "endpoints": [
       "GET /financial-intelligence/cashflow-forecast",
@@ -2008,18 +1615,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/forecasting.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/forecasting.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2035,18 +1635,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/goal_planner.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/goal_planner.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2062,18 +1655,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/intelligence.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/intelligence.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2089,18 +1675,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/models.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/models.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2116,18 +1695,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/optimization.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/optimization.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2143,18 +1715,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/scenario.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/scenario.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2170,18 +1735,11 @@
     "workspace": []
   },
   "backend/src/engines/financial_intelligence/utils.py": {
-    "capabilities": [],
-    "components": [],
-    "endpoints": [
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
+    "capabilities": [
+      "useFinancialIntelligenceCapability"
     ],
+    "components": [],
+    "endpoints": [],
     "engine": "backend/src/engines/financial_intelligence/utils.py",
     "graphRenderers": [],
     "mappers": [],
@@ -2276,21 +1834,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/amortization.py",
     "graphRenderers": [],
     "mappers": [
@@ -2339,21 +1883,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/emi.py",
     "graphRenderers": [],
     "mappers": [
@@ -2402,21 +1932,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/floating_rate.py",
     "graphRenderers": [],
     "mappers": [
@@ -2465,21 +1981,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/foreclosure.py",
     "graphRenderers": [],
     "mappers": [
@@ -2528,21 +2030,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/metrics.py",
     "graphRenderers": [],
     "mappers": [
@@ -2591,21 +2079,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/models.py",
     "graphRenderers": [],
     "mappers": [
@@ -2652,21 +2126,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/prepayment.py",
     "graphRenderers": [],
     "mappers": [
@@ -2715,21 +2175,7 @@
       "LoansErrorState",
       "LoansEmptyState"
     ],
-    "endpoints": [
-      "GET /api/loans",
-      "GET /api/loans/{loan_id}",
-      "POST /api/loans",
-      "PUT /api/loans/{loan_id}",
-      "DELETE /api/loans/{loan_id}",
-      "GET /api/loans/{loan_id}/schedule",
-      "POST /api/loans/{loan_id}/prepayment-simulation",
-      "POST /api/loans/{loan_id}/foreclosure-simulation",
-      "POST /api/loans/{loan_id}/rate-change-simulation",
-      "POST /api/loans/{loan_id}/payments",
-      "GET /api/loans/analysis/priority",
-      "POST /api/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
-      "POST /api/loans/analysis/surplus-allocation"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/loan_engine/utils.py",
     "graphRenderers": [],
     "mappers": [
@@ -2777,23 +2223,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/recommendation_engine.py",
     "graphRenderers": [],
     "mappers": [
@@ -2834,23 +2264,7 @@
       "BehaviourErrorState",
       "BehaviourEmptyState"
     ],
-    "endpoints": [
-      "GET /api/v1/behaviour/profile",
-      "GET /api/v1/behaviour/wellness-score",
-      "GET /api/v1/behaviour/debt-health",
-      "GET /api/v1/behaviour/cashflow-health",
-      "GET /api/v1/behaviour/patterns",
-      "GET /api/v1/behaviour/recommendations",
-      "GET /api/v1/behaviour/monthly-report",
-      "GET /financial-intelligence/cashflow-forecast",
-      "GET /financial-intelligence/liquidity-forecast",
-      "GET /financial-intelligence/credit-forecast",
-      "GET /financial-intelligence/outlook",
-      "GET /financial-intelligence/report",
-      "GET /financial-intelligence/priorities",
-      "GET /financial-intelligence/recommendations",
-      "GET /financial-intelligence/recommendations/{recommendation_id}"
-    ],
+    "endpoints": [],
     "engine": "backend/src/engines/recommendation_engine/recommendations.py",
     "graphRenderers": [],
     "mappers": [
@@ -2880,7 +2294,9 @@
     ]
   },
   "backend/src/engines/transaction_intelligence.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useEngineCapability"
+    ],
     "components": [],
     "endpoints": [],
     "engine": "backend/src/engines/transaction_intelligence.py",
@@ -2896,7 +2312,9 @@
     "workspace": []
   },
   "backend/src/engines/transaction_intelligence/cash_conversion_detector.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useTransactionIntelligenceCapability"
+    ],
     "components": [],
     "endpoints": [],
     "engine": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
@@ -2912,7 +2330,9 @@
     "workspace": []
   },
   "backend/src/engines/transaction_intelligence/cc_payment_detector.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useTransactionIntelligenceCapability"
+    ],
     "components": [],
     "endpoints": [],
     "engine": "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
@@ -2928,7 +2348,9 @@
     "workspace": []
   },
   "backend/src/engines/transaction_intelligence/detector_result.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useTransactionIntelligenceCapability"
+    ],
     "components": [],
     "endpoints": [],
     "engine": "backend/src/engines/transaction_intelligence/detector_result.py",
@@ -2944,7 +2366,9 @@
     "workspace": []
   },
   "backend/src/engines/transaction_intelligence/loan_emi_detector.py": {
-    "capabilities": [],
+    "capabilities": [
+      "useTransactionIntelligenceCapability"
+    ],
     "components": [],
     "endpoints": [],
     "engine": "backend/src/engines/transaction_intelligence/loan_emi_detector.py",

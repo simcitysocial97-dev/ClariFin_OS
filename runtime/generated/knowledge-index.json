@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-05T13:19:42.007943+00:00",
+  "indexed_at": "2026-08-06T08:22:36.783235+00:00",
   "source_artifacts": [
     "runtime/generated/cross-layer-map.json",
     "runtime/generated/dashboard.json",
@@ -404,6 +404,7 @@
           "source_file": "backend/src/engines/financial_events.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialEventsService": "service:FinancialEventsService",
+          "capability:useFinancialEventsCapability": "capability:useFinancialEventsCapability",
           "router:backend/src/routers/financial_events.py": "router:backend/src/routers/financial_events.py"
         },
         "tags": [
@@ -465,6 +466,7 @@
           "source_file": "backend/src/engines/financial_events.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialEventsService": "service:FinancialEventsService",
+          "capability:useFinancialEventsCapability": "capability:useFinancialEventsCapability",
           "router:backend/src/routers/financial_events.py": "router:backend/src/routers/financial_events.py"
         },
         "tags": [
@@ -527,6 +529,7 @@
           "source_file": "backend/src/engines/financial_events.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialEventsService": "service:FinancialEventsService",
+          "capability:useFinancialEventsCapability": "capability:useFinancialEventsCapability",
           "router:backend/src/routers/financial_events.py": "router:backend/src/routers/financial_events.py"
         },
         "tags": [
@@ -4104,6 +4107,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4168,6 +4172,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4234,6 +4239,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4299,6 +4305,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4366,6 +4373,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4435,6 +4443,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4505,6 +4514,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4576,6 +4586,7 @@
           "source_file": "backend/src/engines/financial_intelligence.py",
           "cross_layer_map": "runtime/generated/cross-layer-map.json",
           "service:FinancialIntelligenceService": "service:FinancialIntelligenceService",
+          "capability:useFinancialIntelligenceCapability": "capability:useFinancialIntelligenceCapability",
           "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py"
         },
         "tags": [
@@ -4759,7 +4770,101 @@
         "tags": [
           "useAccountsCapability",
           "useBehaviourCapability",
-          "useCreditCardsCapability"
+          "useCreditCardsCapability",
+          "useDashboardCapability",
+          "useImportCapability"
+        ]
+      },
+      {
+        "name": "useDashboardCapability",
+        "references": {
+          "source_file": "backend/src/engines/behaviour_engine/core.py",
+          "cross_layer_map": "runtime/generated/cross-layer-map.json",
+          "service:DashboardService": "service:DashboardService",
+          "service:ImportService": "service:ImportService"
+        },
+        "tags": [
+          "useAccountsCapability",
+          "useBehaviourCapability",
+          "useDashboardCapability"
+        ]
+      },
+      {
+        "name": "useEngineCapability",
+        "references": {
+          "source_file": "backend/src/engines/transaction_intelligence.py",
+          "cross_layer_map": "runtime/generated/cross-layer-map.json",
+          "service:TransactionIntelligenceService": "service:TransactionIntelligenceService"
+        },
+        "tags": [
+          "useAccountsCapability",
+          "useBehaviourCapability",
+          "useCreditCardsCapability",
+          "useDashboardCapability",
+          "useEngineCapability",
+          "useFinancialEventsCapability",
+          "useFinancialIntelligenceCapability",
+          "useImportCapability",
+          "useLoansCapability"
+        ]
+      },
+      {
+        "name": "useFinancialEventsCapability",
+        "references": {
+          "source_file": "backend/src/engines/financial_events.py",
+          "cross_layer_map": "runtime/generated/cross-layer-map.json",
+          "endpoint:POST /api/financial-events/": "endpoint:POST /api/financial-events/",
+          "endpoint:GET /api/financial-events/": "endpoint:GET /api/financial-events/",
+          "endpoint:GET /api/financial-events/{event_id}": "endpoint:GET /api/financial-events/{event_id}",
+          "service:FinancialEventsService": "service:FinancialEventsService"
+        },
+        "tags": [
+          "useAccountsCapability",
+          "useBehaviourCapability",
+          "useCreditCardsCapability",
+          "useDashboardCapability",
+          "useFinancialEventsCapability",
+          "useImportCapability"
+        ]
+      },
+      {
+        "name": "useFinancialIntelligenceCapability",
+        "references": {
+          "source_file": "backend/src/engines/financial_intelligence.py",
+          "cross_layer_map": "runtime/generated/cross-layer-map.json",
+          "endpoint:GET /financial-intelligence/cashflow-forecast": "endpoint:GET /financial-intelligence/cashflow-forecast",
+          "endpoint:GET /financial-intelligence/liquidity-forecast": "endpoint:GET /financial-intelligence/liquidity-forecast",
+          "endpoint:GET /financial-intelligence/credit-forecast": "endpoint:GET /financial-intelligence/credit-forecast",
+          "endpoint:GET /financial-intelligence/outlook": "endpoint:GET /financial-intelligence/outlook",
+          "endpoint:GET /financial-intelligence/report": "endpoint:GET /financial-intelligence/report",
+          "endpoint:GET /financial-intelligence/priorities": "endpoint:GET /financial-intelligence/priorities",
+          "endpoint:GET /financial-intelligence/recommendations": "endpoint:GET /financial-intelligence/recommendations",
+          "endpoint:GET /financial-intelligence/recommendations/{recommendation_id}": "endpoint:GET /financial-intelligence/recommendations/{recommendation_id}",
+          "service:FinancialIntelligenceService": "service:FinancialIntelligenceService"
+        },
+        "tags": [
+          "useAccountsCapability",
+          "useBehaviourCapability",
+          "useCreditCardsCapability",
+          "useDashboardCapability",
+          "useFinancialEventsCapability",
+          "useFinancialIntelligenceCapability",
+          "useImportCapability"
+        ]
+      },
+      {
+        "name": "useImportCapability",
+        "references": {
+          "source_file": "backend/src/engines/behaviour_engine/core.py",
+          "cross_layer_map": "runtime/generated/cross-layer-map.json",
+          "service:DashboardService": "service:DashboardService",
+          "service:ImportService": "service:ImportService"
+        },
+        "tags": [
+          "useAccountsCapability",
+          "useBehaviourCapability",
+          "useDashboardCapability",
+          "useImportCapability"
         ]
       },
       {
@@ -4801,7 +4906,31 @@
           "useAccountsCapability",
           "useBehaviourCapability",
           "useCreditCardsCapability",
+          "useDashboardCapability",
+          "useFinancialEventsCapability",
+          "useFinancialIntelligenceCapability",
+          "useImportCapability",
           "useLoansCapability"
+        ]
+      },
+      {
+        "name": "useTransactionIntelligenceCapability",
+        "references": {
+          "source_file": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+          "cross_layer_map": "runtime/generated/cross-layer-map.json",
+          "service:TransactionIntelligenceService": "service:TransactionIntelligenceService"
+        },
+        "tags": [
+          "useAccountsCapability",
+          "useBehaviourCapability",
+          "useCreditCardsCapability",
+          "useDashboardCapability",
+          "useEngineCapability",
+          "useFinancialEventsCapability",
+          "useFinancialIntelligenceCapability",
+          "useImportCapability",
+          "useLoansCapability",
+          "useTransactionIntelligenceCapability"
         ]
       }
     ],
@@ -6861,6 +6990,16 @@
         ]
       },
       {
+        "title": "PROGRAM_11.6_EVALUATION_REPORT",
+        "path": "docs/PROGRAM_11.6_EVALUATION_REPORT.md",
+        "references": {
+          "path": "docs/PROGRAM_11.6_EVALUATION_REPORT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "VERIFICATION_REPORT",
         "path": "docs/VERIFICATION_REPORT.md",
         "references": {
@@ -8004,7 +8143,7 @@
   },
   "counts": {
     "endpoints": 72,
-    "capabilities": 4,
+    "capabilities": 10,
     "mappers": 4,
     "view_models": 4,
     "workspaces": 4,
@@ -8013,6 +8152,6 @@
     "verification_profiles": 10,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 131
+    "documentation": 132
   }
 }

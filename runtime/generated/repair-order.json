@@ -1,0 +1,120 @@
+{
+  "generated_at": "2026-08-06T07:58:50.736033+00:00",
+  "repair_dag": [
+    {
+      "order": 1,
+      "cluster_id": "CLUSTER-REPOSITORY_GRAPH_INTEGRITY",
+      "name": "Repository Graph Integrity",
+      "depends_on": [],
+      "rationale": "All downstream subsystems depend on a clean repository index"
+    },
+    {
+      "order": 2,
+      "cluster_id": "CLUSTER-CROSS_LAYER_COMPLETENESS",
+      "name": "Cross-Layer Map Completeness",
+      "depends_on": [
+        "CLUSTER-REPOSITORY_GRAPH_INTEGRITY"
+      ],
+      "rationale": "Cross-layer map is built from repository index"
+    },
+    {
+      "order": 3,
+      "cluster_id": "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY",
+      "name": "Dependency Graph Integrity",
+      "depends_on": [
+        "CLUSTER-REPOSITORY_GRAPH_INTEGRITY",
+        "CLUSTER-CROSS_LAYER_COMPLETENESS"
+      ],
+      "rationale": "Dependency graph depends on clean repository and cross-layer data"
+    },
+    {
+      "order": 4,
+      "cluster_id": "CLUSTER-KNOWLEDGE_DATA_QUALITY",
+      "name": "Knowledge Base Data Quality",
+      "depends_on": [
+        "CLUSTER-CROSS_LAYER_COMPLETENESS",
+        "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY"
+      ],
+      "rationale": "Knowledge index is built from cross-layer map and repository artifacts"
+    },
+    {
+      "order": 5,
+      "cluster_id": "CLUSTER-EXECUTOR_COMMAND_FORMTING",
+      "name": "Executor Command Formatting",
+      "depends_on": [],
+      "rationale": "Independent of graph issues; can be fixed in parallel"
+    },
+    {
+      "order": 6,
+      "cluster_id": "CLUSTER-EXECUTOR_RESILIENCE",
+      "name": "Executor Resilience",
+      "depends_on": [
+        "CLUSTER-EXECUTOR_COMMAND_FORMTING"
+      ],
+      "rationale": "Resilience features depend on correct command formatting"
+    },
+    {
+      "order": 7,
+      "cluster_id": "CLUSTER-CLI_COMPLETENESS",
+      "name": "CLI Completeness",
+      "depends_on": [],
+      "rationale": "Independent feature gap"
+    },
+    {
+      "order": 8,
+      "cluster_id": "CLUSTER-GITHUB_ACTIONS_COMPLETENESS",
+      "name": "GitHub Actions Completeness",
+      "depends_on": [],
+      "rationale": "Independent workflow configuration issue"
+    },
+    {
+      "order": 9,
+      "cluster_id": "CLUSTER-ARTIFACT_ORGANIZATION",
+      "name": "Artifact Organization",
+      "depends_on": [],
+      "rationale": "Independent artifact management issue"
+    }
+  ],
+  "total_clusters": 9,
+  "execution_phases": [
+    {
+      "phase": 1,
+      "description": "Fix repository graph integrity",
+      "clusters": [
+        "CLUSTER-REPOSITORY_GRAPH_INTEGRITY"
+      ]
+    },
+    {
+      "phase": 2,
+      "description": "Fix cross-layer and dependency graph",
+      "clusters": [
+        "CLUSTER-CROSS_LAYER_COMPLETENESS",
+        "CLUSTER-DEPENDENCY_GRAPH_INTEGRITY"
+      ]
+    },
+    {
+      "phase": 3,
+      "description": "Fix knowledge base",
+      "clusters": [
+        "CLUSTER-KNOWLEDGE_DATA_QUALITY"
+      ]
+    },
+    {
+      "phase": 4,
+      "description": "Fix executor formatting and resilience",
+      "clusters": [
+        "CLUSTER-EXECUTOR_COMMAND_FORMTING",
+        "CLUSTER-EXECUTOR_RESILIENCE"
+      ]
+    },
+    {
+      "phase": 5,
+      "description": "Fix CLI, GitHub Actions, and artifacts",
+      "clusters": [
+        "CLUSTER-CLI_COMPLETENESS",
+        "CLUSTER-GITHUB_ACTIONS_COMPLETENESS",
+        "CLUSTER-ARTIFACT_ORGANIZATION"
+      ]
+    }
+  ]
+}

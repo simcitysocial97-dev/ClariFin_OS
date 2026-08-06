@@ -1,0 +1,24 @@
+{
+  "defects": [
+    {
+      "section": "cross_layer",
+      "check_id": "cl-component-ownership",
+      "name": "Component ownership mapping",
+      "severity": "medium",
+      "priority": "medium",
+      "message": "Found 0 chains without capabilities, 5 without routers",
+      "recommendation": "Add capability and router mappings to chains",
+      "details": {
+        "chains_without_capabilities": [],
+        "chains_without_routers": [
+          "backend/src/engines/transaction_intelligence.py",
+          "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+          "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+          "backend/src/engines/transaction_intelligence/detector_result.py",
+          "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
+        ]
+      }
+    }
+  ],
+  "total": 1
+}

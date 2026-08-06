@@ -1,0 +1,30 @@
+{
+  "overall_status": "pass",
+  "certification_status": "CERTIFIED",
+  "total_duration_seconds": 53.63,
+  "section_statuses": {
+    "repository": "pass",
+    "cross_layer": "fail",
+    "dependency_graph": "pass",
+    "planner": "pass",
+    "executor": "pass",
+    "evidence": "pass",
+    "observability": "pass",
+    "knowledge": "pass",
+    "workspace": "pass",
+    "integrity": "pass",
+    "github_actions": "pass",
+    "runtime_cli": "pass",
+    "github_runtime": "pass",
+    "verification_profiles": "pass",
+    "artifact_ownership": "fail",
+    "performance": "pass",
+    "failure_injection": "pass",
+    "pipeline": "pass",
+    "roi": "pass"
+  },
+  "critical_count": 0,
+  "high_count": 0,
+  "medium_count": 1,
+  "low_count": 0
+}
