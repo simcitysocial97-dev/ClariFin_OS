@@ -1,0 +1,63 @@
+{
+  "program": "Program D — Quality Gate Stabilization",
+  "workflow": "Quality Gate",
+  "validation_date": "2026-08-07",
+  "validations": [
+    {
+      "id": "VAL-001",
+      "artifact": ".github/scripts/run_fast_checks.sh",
+      "command": "bash -n .github/scripts/run_fast_checks.sh",
+      "result": "PASS",
+      "output": "exit 0",
+      "notes": "Shell syntax valid"
+    },
+    {
+      "id": "VAL-002",
+      "artifact": "backend/tests/generated/capability-registry.yaml",
+      "command": "python3 -c \"import yaml; data=yaml.safe_load(open('backend/tests/generated/capability-registry.yaml')); print('None entries:', sum(1 for c in data.get('capabilities',[]) if c is None or any(v is None for v in c.values() if isinstance(v, list))))\"",
+      "result": "PASS",
+      "output": "None entries: 0",
+      "notes": "All list fields normalized to []"
+    },
+    {
+      "id": "VAL-003",
+      "artifact": "backend/tests/meta/",
+      "command": "python3 -m pytest backend/tests/meta/ -x --tb=short -q",
+      "result": "PASS",
+      "output": "61 passed, 1 warning in 26.47s",
+      "notes": "All 9 previously failing meta tests now pass"
+    },
+    {
+      "id": "VAL-004",
+      "artifact": "backend/",
+      "command": "black --check --diff .",
+      "result": "PASS",
+      "output": "All done! 460 files would be left unchanged.",
+      "notes": "Black formatting compliant"
+    },
+    {
+      "id": "VAL-005",
+      "artifact": "backend/scripts/scan_test_anti_patterns.py",
+      "command": "ruff check backend/scripts/scan_test_anti_patterns.py",
+      "result": "PASS",
+      "output": "All checks passed!",
+      "notes": "Ruff lint clean"
+    },
+    {
+      "id": "VAL-006",
+      "artifact": "runtime/verify.py (quick profile)",
+      "command": "python3 runtime/verify.py quick",
+      "result": "PASS",
+      "output": "Verification PASSED — Passed: 1, Failed: 0, Skipped: 0, Duration: 91.7s",
+      "notes": "End-to-end Quality Gate verification passes within CI budget"
+    },
+    {
+      "id": "VAL-007",
+      "artifact": ".github/scripts/run_fast_checks.sh",
+      "command": "bash .github/scripts/run_fast_checks.sh backend",
+      "result": "PASS",
+      "output": "All fast checks passed!",
+      "notes": "Full fast-check script passes: ruff, black, mypy, unit tests, architecture tests, meta tests"
+    }
+  ]
+}

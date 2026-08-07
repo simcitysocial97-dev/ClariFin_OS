@@ -335,7 +335,34 @@ def generate_capability_registry(
     if not CAPABILITY_REGISTRY.exists():
         return {"capabilities": []}
     with open(CAPABILITY_REGISTRY) as f:
-        return yaml.safe_load(f) or {"capabilities": []}
+        registry = yaml.safe_load(f) or {"capabilities": []}
+
+    _normalize_registry(registry)
+    return registry
+
+
+def _normalize_registry(registry: dict[str, Any]) -> None:
+    """Normalize null list fields to empty lists in the capability registry."""
+    list_fields = (
+        "routers",
+        "services",
+        "engines",
+        "repositories",
+        "tables",
+        "golden_datasets",
+        "property_tests",
+        "invariants",
+        "architecture_tests",
+        "contracts",
+        "capability_tests",
+        "dependencies",
+    )
+    for cap in registry.get("capabilities", []):
+        if not isinstance(cap, dict):
+            continue
+        for field in list_fields:
+            if cap.get(field) is None:
+                cap[field] = []
 
 
 def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:

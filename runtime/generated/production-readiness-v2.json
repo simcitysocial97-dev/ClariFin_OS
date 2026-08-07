@@ -1,0 +1,68 @@
+{
+  "schema": "production-readiness-v2/v1",
+  "generated_at": "2026-08-06T16:44:36.545646Z",
+  "program": "18.0",
+  "overall_score": 89,
+  "overall_status": "PRODUCTION_READY_CONDITIONAL",
+  "previous_score": 88,
+  "score_change": 1,
+  "components": {
+    "backend": {
+      "score": 87,
+      "status": "CONDITIONAL",
+      "issues": [
+        "23 never-reachable items (engines + routers)",
+        "0 parked engines"
+      ]
+    },
+    "frontend": {
+      "score": 81,
+      "status": "CONDITIONAL",
+      "issues": [
+        "9 frontend workspaces without backend capability",
+        "Duplicate Money/MoneyViewModel types"
+      ]
+    },
+    "runtime": {
+      "score": 100,
+      "status": "PASS",
+      "issues": []
+    },
+    "testing": {
+      "score": 88,
+      "status": "CONDITIONAL",
+      "issues": [
+        "10 engines missing integration tests",
+        "12 engines missing contract tests"
+      ]
+    },
+    "architecture": {
+      "score": 85,
+      "status": "CONDITIONAL",
+      "issues": [
+        "23 legacy drifts detected",
+        "9 accidental drifts detected"
+      ]
+    },
+    "ci": {
+      "score": 95,
+      "status": "PASS",
+      "issues": []
+    },
+    "engineering_maturity": {
+      "score": 87,
+      "status": "PASS",
+      "issues": [
+        "Engineering platform CERTIFIED",
+        "Repository convergence plan complete",
+        "8 simplification opportunities identified"
+      ]
+    }
+  },
+  "evidence": {
+    "safe_deletions_executed": 2,
+    "workspace_gaps_remaining": 9,
+    "technical_debt_items": 8,
+    "migration_steps_pending": 14
+  }
+}

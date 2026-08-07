@@ -201,7 +201,11 @@ def test_empty_changes_handled() -> None:
 def test_unknown_file_handling() -> None:
     """Files not in capability graph should get UNKNOWN capability and LOW confidence."""
     result = subprocess.run(
-        [sys.executable, "tools/development/change_intelligence.py", "some_random_file.py"],
+        [
+            sys.executable,
+            "tools/development/change_intelligence.py",
+            "some_random_file.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,

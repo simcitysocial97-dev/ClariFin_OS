@@ -283,7 +283,7 @@ class VerificationRegistry:
                 scope=VerificationScope.FULL,
                 command="bash .github/scripts/run_full_verification.sh",
                 estimated_duration_seconds=3600,
-                scopes=list(VerificationScope),
+                scopes=[VerificationScope.FULL],
             ),
             "runtime": VerificationWorkflow(
                 id="runtime",

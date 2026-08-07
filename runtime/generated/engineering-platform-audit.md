@@ -1,9 +1,9 @@
 # Engineering Platform Certification Audit
 
-**Generated:** 2026-08-06T14:31:31.372029+00:00
+**Generated:** 2026-08-06T16:47:58.627434+00:00
 **Overall Status:** pass
 **Certification:** CERTIFIED
-**Duration:** 28.80s
+**Duration:** 19.04s
 
 ## Executive Summary
 
@@ -14,7 +14,7 @@ Certification status: **CERTIFIED**.
 
 ### Repository Index Audit
 - **Status:** PASS
-- **Duration:** 4.63s
+- **Duration:** 3.06s
 - **total_checks:** 10
 - **failures:** 0
 - **passes:** 10
@@ -32,11 +32,11 @@ Certification status: **CERTIFIED**.
 - [PASS] Edge deduplication: All 2095 edges are unique (no duplicates)
 - [PASS] Ownership completeness: All nodes have valid ownership; 103 with 'unknown' (acceptable)
 - [PASS] Node type coverage: All node types are valid (16 types found)
-- [PASS] Graph build reproducibility: Fresh graph build succeeded with 1200 nodes, 1398 edges
+- [PASS] Graph build reproducibility: Fresh graph build succeeded with 1198 nodes, 1398 edges
 
 ### Cross-Layer Map Audit
 - **Status:** PASS
-- **Duration:** 0.08s
+- **Duration:** 0.05s
 - **total_chains:** 13
 - **total_checks:** 12
 - **failures:** 0
@@ -61,7 +61,7 @@ Certification status: **CERTIFIED**.
 
 ### Dependency Graph Audit
 - **Status:** PASS
-- **Duration:** 0.20s
+- **Duration:** 0.12s
 - **total_checks:** 12
 - **failures:** 0
 - **passes:** 12
@@ -83,7 +83,7 @@ Certification status: **CERTIFIED**.
 
 ### Verification Planner Audit
 - **Status:** PASS
-- **Duration:** 0.05s
+- **Duration:** 0.03s
 - **total_checks:** 36
 - **failures:** 0
 - **passes:** 36
@@ -129,7 +129,7 @@ Certification status: **CERTIFIED**.
 
 ### Executor Audit
 - **Status:** PASS
-- **Duration:** 0.01s
+- **Duration:** 0.30s
 - **total_commands:** 7
 - **methods_with_timeout:** 1
 - **has_env_vars:** 1
@@ -177,8 +177,8 @@ Certification status: **CERTIFIED**.
 
 ### Observability Audit
 - **Status:** PASS
-- **Duration:** 0.03s
-- **total_events:** 6
+- **Duration:** 0.02s
+- **total_events:** 11
 - **event_types:** ['TestEvent', 'VerificationCompleted']
 - **analytics_profiles:** 3
 - **dashboard_sections:** 3
@@ -187,7 +187,7 @@ Certification status: **CERTIFIED**.
 - **cost_phases:** 7
 - **metrics_computed:** True
 
-- [PASS] JSONL event store is readable: EngineeringEventStore loaded 6 events from JSONL
+- [PASS] JSONL event store is readable: EngineeringEventStore loaded 11 events from JSONL
 - [PASS] Event history retrieval works: EngineeringEventStore.load_events() returns a list of events
 - [PASS] Analytics computation works: AnalyticsEngine.compute() returns a valid AnalyticsReport
 - [PASS] Dashboard generation works: DashboardGenerator.generate() returns valid dashboard data
@@ -198,7 +198,7 @@ Certification status: **CERTIFIED**.
 
 ### Knowledge Base Audit
 - **Status:** PASS
-- **Duration:** 0.08s
+- **Duration:** 0.07s
 - **total_indexed_objects:** 337
 - **endpoints_count:** 76
 - **capabilities_count:** 10
@@ -226,7 +226,7 @@ Certification status: **CERTIFIED**.
 
 ### Workspace Audit
 - **Status:** PASS
-- **Duration:** 1.51s
+- **Duration:** 1.00s
 - **commands_checked:** 5
 - **commands_passed:** 5
 - **commands_failed:** 0
@@ -252,13 +252,13 @@ Certification status: **CERTIFIED**.
 
 ### Integrity Engine Audit
 - **Status:** PASS
-- **Duration:** 4.15s
+- **Duration:** 2.70s
 - **rules_evaluated:** 28
 - **rules_passed:** 28
 - **rules_failed:** 0
 - **total_violations:** 0
 - **severity_counts:** {'CRITICAL': 0, 'HIGH': 0, 'MEDIUM': 0, 'LOW': 0, 'INFO': 0}
-- **files_scanned:** 845
+- **files_scanned:** 843
 - **cross_layer_entries:** 13
 
 - [PASS] All 28 rules present: Expected 28 rules, found 28
@@ -354,7 +354,7 @@ Certification status: **CERTIFIED**.
 
 ### GitHub Actions Audit
 - **Status:** PASS
-- **Duration:** 0.46s
+- **Duration:** 0.18s
 - **workflows_audited:** 9
 - **composite_actions_audited:** 5
 - **total_findings:** 90
@@ -455,7 +455,7 @@ Certification status: **CERTIFIED**.
 
 ### Runtime CLI Audit
 - **Status:** PASS
-- **Duration:** 10.86s
+- **Duration:** 6.82s
 - **commands_audited:** 16
 - **commands_passed:** 16
 - **commands_failed:** 0
@@ -466,14 +466,14 @@ Certification status: **CERTIFIED**.
 - [PASS] No arguments shows usage: Running without arguments exits with code 1 (expected non-zero)
 - [PASS] No-args invocation shows usage: Usage information present in output
 - [PASS] Invalid profile shows error: Invalid profile exits with code 1 (expected non-zero)
-- [PASS] Performance: status: status completed in 0.532s
-- [PASS] Performance: metrics: metrics completed in 0.355s
-- [PASS] Performance: history: history completed in 0.271s
-- [PASS] Performance: verify-status: verify-status completed in 0.286s
-- [PASS] Performance: integrity: integrity completed in 1.769s
-- [PASS] Performance summary: Avg: 0.643s, Min: 0.271s, Max: 1.769s
+- [PASS] Performance: status: status completed in 0.224s
+- [PASS] Performance: metrics: metrics completed in 0.222s
+- [PASS] Performance: history: history completed in 0.164s
+- [PASS] Performance: verify-status: verify-status completed in 0.166s
+- [PASS] Performance: integrity: integrity completed in 1.137s
+- [PASS] Performance summary: Avg: 0.383s, Min: 0.164s, Max: 1.137s
 - [PASS] Command 'doctor' exit code: 'doctor' returned exit code 0
-- [PASS] Command 'doctor' produces output: 'doctor' produced 2518 bytes of output
+- [PASS] Command 'doctor' produces output: 'doctor' produced 2530 bytes of output
 - [PASS] Command 'ci-doctor' exit code: 'ci-doctor' returned exit code 0
 - [PASS] Command 'ci-doctor' produces output: 'ci-doctor' produced 73 bytes of output
 - [PASS] Command 'ci-doctor' validates GitHub Actions: 'ci-doctor' executed and returned exit code 0
@@ -482,38 +482,38 @@ Certification status: **CERTIFIED**.
 - [PASS] Command 'metrics' exit code: 'metrics' returned exit code 0
 - [PASS] Command 'metrics' produces output: 'metrics' produced 4205 bytes of output
 - [PASS] Command 'history' exit code: 'history' returned exit code 0
-- [PASS] Command 'history' produces output: 'history' produced 5103 bytes of output
+- [PASS] Command 'history' produces output: 'history' produced 7143 bytes of output
 - [PASS] Command 'knowledge' exit code: 'knowledge' returned exit code 0
 - [PASS] Command 'knowledge' produces output: 'knowledge' produced 26721 bytes of output
 - [PASS] Command 'knowledge' subcommands work: 'knowledge endpoint' subcommand executed (exit 1)
 - [PASS] Command 'integrity' exit code: 'integrity' returned exit code 0
 - [PASS] Command 'integrity' produces output: 'integrity' produced 969 bytes of output
 - [PASS] Command 'diagnose' exit code: 'diagnose' returned exit code 0
-- [PASS] Command 'diagnose' produces output: 'diagnose' produced 2506 bytes of output
+- [PASS] Command 'diagnose' produces output: 'diagnose' produced 2334 bytes of output
 - [PASS] Command 'affected' exit code: 'affected' returned exit code 0
-- [PASS] Command 'affected' produces output: 'affected' produced 569 bytes of output
+- [PASS] Command 'affected' produces output: 'affected' produced 570 bytes of output
 - [PASS] Command 'repair' exit code: 'repair' returned exit code 0
-- [PASS] Command 'repair' produces output: 'repair' produced 14895 bytes of output
+- [PASS] Command 'repair' produces output: 'repair' produced 15295 bytes of output
 - [PASS] Command 'risk' exit code: 'risk' returned exit code 0
-- [PASS] Command 'risk' produces output: 'risk' produced 858 bytes of output
+- [PASS] Command 'risk' produces output: 'risk' produced 883 bytes of output
 - [PASS] Command 'deps' exit code: 'deps' returned exit code 1 (expected non-zero for deps without args)
 - [PASS] Command 'deps' produces output: 'deps' produced 111 bytes of output
 - [PASS] Command 'deps' requires file_path argument: 'deps' without argument returned exit code 1 (expected non-zero)
 - [PASS] Command 'verify-status' exit code: 'verify-status' returned exit code 0
 - [PASS] Command 'verify-status' produces output: 'verify-status' produced 4107 bytes of output
 - [PASS] Command 'health' exit code: 'health' returned exit code 0
-- [PASS] Command 'health' produces output: 'health' produced 2518 bytes of output
+- [PASS] Command 'health' produces output: 'health' produced 2530 bytes of output
 - [PASS] Command 'analytics' exit code: 'analytics' returned exit code 0
-- [PASS] Command 'analytics' produces output: 'analytics' produced 3093 bytes of output
+- [PASS] Command 'analytics' produces output: 'analytics' produced 3103 bytes of output
 - [PASS] Command 'dashboard' exists: 'dashboard' returned exit code 0
 
 ### GitHub Runtime Audit
 - **Status:** PASS
-- **Duration:** 3.89s
+- **Duration:** 2.90s
 - **workflow_count:** 9
 - **gh_cli_available:** True
 - **gh_runs_fetched:** 20
-- **failed_runs_in_history:** 19
+- **failed_runs_in_history:** 20
 - **verification-runtime_uploads_cross-layer-map:** True
 - **verification-runtime_uploads_knowledge-index:** True
 - **verification-runtime_uploads_verification-cache:** True
@@ -572,11 +572,11 @@ Certification status: **CERTIFIED**.
 - **golden_total_estimated_seconds:** 630
 - **playwright_total_estimated_seconds:** 1830
 - **total_estimated_seconds_all_profiles:** 5650
-- **cache_last_commit:** 0cd52e8c
-- **cache_changed_files_count:** 27
+- **cache_last_commit:** 22ed278d
+- **cache_changed_files_count:** 29
 - **cache_executed_profiles:** ['quick', 'backend', 'runtime']
 - **cache_has_data:** True
-- **planner_generated_plan_id:** plan-20260806-143128
+- **planner_generated_plan_id:** plan-20260806-164756
 - **planner_scope:** quick
 - **planner_target_count:** 1
 - **planner_step_count:** 1
@@ -596,9 +596,9 @@ Certification status: **CERTIFIED**.
 - [PASS] No duplicate task IDs found: All 39 task IDs across 10 profiles are unique
 
 ### Artifact Ownership Audit
-- **Status:** PASS
-- **Duration:** 0.04s
-- **total_artifacts:** 112
+- **Status:** FAIL
+- **Duration:** 0.03s
+- **total_artifacts:** 166
 - **generated_dir_exists:** True
 - **artifact_runtime-consumer-migration.md_owner:** certification
 - **artifact_runtime-consumer-migration.md_creator:** runtime/foundation/architecture
@@ -815,8 +815,8 @@ Certification status: **CERTIFIED**.
 - **artifact_junit-property.xml_owner:** runtime
 - **artifact_junit-property.xml_creator:** pytest property tests
 - **owned_artifacts:** 112
-- **unowned_artifacts:** 0
-- **unique_artifact_names:** 107
+- **unowned_artifacts:** 54
+- **unique_artifact_names:** 161
 - **duplicate_artifact_names:** 0
 - **artifact_runtime-consumer-migration.md_retention:** permanent
 - **artifact_engineering-platform-audit.json_retention:** 30_days
@@ -925,7 +925,7 @@ Certification status: **CERTIFIED**.
 - **artifact_coverage.json_retention:** 14_days
 - **artifact_contract.json_retention:** permanent
 - **artifact_junit-property.xml_retention:** 14_days
-- **content_unique_artifacts:** 112
+- **content_unique_artifacts:** 166
 - **content_duplicate_groups:** 0
 - **artifact_runtime-consumer-migration.md_consumer_count:** 1
 - **artifact_engineering-platform-audit.json_consumer_count:** 1
@@ -1029,62 +1029,168 @@ Certification status: **CERTIFIED**.
 - **artifact_verification-performance.json_referenced_in:** ['verification-runtime.yml']
 - **artifact_dependency-health.json_referenced_in:** ['dependency-update.yml']
 - **artifact_mutation-summary.json_referenced_in:** ['mutation.yml']
-- **artifacts_with_consumers:** 112
+- **artifacts_with_consumers:** 166
 - **artifacts_without_consumers:** 0
 
-- [PASS] All artifacts have registered owners: All 112 artifacts in runtime/generated/ have registered owners
+- [WARNING] Artifact has no registered owner: repository-cleanup-executed.json: Artifact repository-cleanup-executed.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: workspace-completion.json: Artifact workspace-completion.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: deletion-validation.json: Artifact deletion-validation.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: platform-accuracy.py: Artifact platform-accuracy.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: end-to-end-pipeline.json: Artifact end-to-end-pipeline.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: production-readiness-v2.json: Artifact production-readiness-v2.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: duplicate-implementation.json: Artifact duplicate-implementation.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: engineering-platform-audit-v6.json: Artifact engineering-platform-audit-v6.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: engineering-platform-audit-v9.json: Artifact engineering-platform-audit-v9.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: test-modernization-v2.json: Artifact test-modernization-v2.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: dependency-health-v2.json: Artifact dependency-health-v2.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-modernization.json: Artifact repository-modernization.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-gap-analysis.py: Artifact repository-gap-analysis.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-canonicalization.json: Artifact repository-canonicalization.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: production-readiness.json: Artifact production-readiness.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: test-modernization.json: Artifact test-modernization.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-readiness.py: Artifact repository-readiness.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: workflow-validation.py: Artifact workflow-validation.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: architectural-drift.json: Artifact architectural-drift.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-certification-readiness.json: Artifact repository-certification-readiness.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-gap-analysis.json: Artifact repository-gap-analysis.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: engineering-platform-audit-v7.json: Artifact engineering-platform-audit-v7.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: program15-validation-report.md: Artifact program15-validation-report.md in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-readiness.json: Artifact repository-readiness.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: program18-certification.md: Artifact program18-certification.md in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-cleanup-roadmap.json: Artifact repository-cleanup-roadmap.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: real-defect-validation.json: Artifact real-defect-validation.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: workflow-validation.json: Artifact workflow-validation.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: real-defect-validation.py: Artifact real-defect-validation.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-simplification.json: Artifact repository-simplification.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: runtime-reachability.json: Artifact runtime-reachability.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: program16-certification.md: Artifact program16-certification.md in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: framework-gap-register.json: Artifact framework-gap-register.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: engineering-platform-audit-v8.json: Artifact engineering-platform-audit-v8.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: ci-validation.json: Artifact ci-validation.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-technical-debt.json: Artifact repository-technical-debt.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: capability-completion-v2.json: Artifact capability-completion-v2.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: test-ownership.json: Artifact test-ownership.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: program17-certification.md: Artifact program17-certification.md in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: framework-gap-register.py: Artifact framework-gap-register.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: engine-convergence.json: Artifact engine-convergence.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-migration-dag.json: Artifact repository-migration-dag.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: technical-debt-execution.json: Artifact technical-debt-execution.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: api-convergence.json: Artifact api-convergence.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: productivity-validation.json: Artifact productivity-validation.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: ci-validation.py: Artifact ci-validation.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: capability-completion.json: Artifact capability-completion.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: platform-accuracy.json: Artifact platform-accuracy.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: api-canonicalization.json: Artifact api-canonicalization.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: repository-health-baseline.json: Artifact repository-health-baseline.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: productivity-validation.py: Artifact productivity-validation.py in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: engine-migration-plan.json: Artifact engine-migration-plan.json in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: verify-stderr-4x3uvgif.txt: Artifact verify-stderr-4x3uvgif.txt in runtime/generated/ has no registered owner
+- [WARNING] Artifact has no registered owner: verify-stdout-g7qtlb_q.txt: Artifact verify-stdout-g7qtlb_q.txt in runtime/generated/ has no registered owner
 - [PASS] No artifact overwrites detected: All artifact names in runtime/generated/ are unique
-- [PASS] All artifacts have retention policies: All 112 artifacts have defined retention policies
+- [WARNING] Artifact has no retention policy: repository-cleanup-executed.json: Artifact repository-cleanup-executed.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: workspace-completion.json: Artifact workspace-completion.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: deletion-validation.json: Artifact deletion-validation.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: platform-accuracy.py: Artifact platform-accuracy.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: end-to-end-pipeline.json: Artifact end-to-end-pipeline.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: production-readiness-v2.json: Artifact production-readiness-v2.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: duplicate-implementation.json: Artifact duplicate-implementation.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: engineering-platform-audit-v6.json: Artifact engineering-platform-audit-v6.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: engineering-platform-audit-v9.json: Artifact engineering-platform-audit-v9.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: test-modernization-v2.json: Artifact test-modernization-v2.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: dependency-health-v2.json: Artifact dependency-health-v2.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-modernization.json: Artifact repository-modernization.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-gap-analysis.py: Artifact repository-gap-analysis.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-canonicalization.json: Artifact repository-canonicalization.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: production-readiness.json: Artifact production-readiness.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: test-modernization.json: Artifact test-modernization.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-readiness.py: Artifact repository-readiness.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: workflow-validation.py: Artifact workflow-validation.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: architectural-drift.json: Artifact architectural-drift.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-certification-readiness.json: Artifact repository-certification-readiness.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-gap-analysis.json: Artifact repository-gap-analysis.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: engineering-platform-audit-v7.json: Artifact engineering-platform-audit-v7.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: program15-validation-report.md: Artifact program15-validation-report.md has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-readiness.json: Artifact repository-readiness.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: program18-certification.md: Artifact program18-certification.md has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-cleanup-roadmap.json: Artifact repository-cleanup-roadmap.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: real-defect-validation.json: Artifact real-defect-validation.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: workflow-validation.json: Artifact workflow-validation.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: real-defect-validation.py: Artifact real-defect-validation.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-simplification.json: Artifact repository-simplification.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: runtime-reachability.json: Artifact runtime-reachability.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: program16-certification.md: Artifact program16-certification.md has no defined retention policy
+- [WARNING] Artifact has no retention policy: framework-gap-register.json: Artifact framework-gap-register.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: engineering-platform-audit-v8.json: Artifact engineering-platform-audit-v8.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: ci-validation.json: Artifact ci-validation.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-technical-debt.json: Artifact repository-technical-debt.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: capability-completion-v2.json: Artifact capability-completion-v2.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: test-ownership.json: Artifact test-ownership.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: program17-certification.md: Artifact program17-certification.md has no defined retention policy
+- [WARNING] Artifact has no retention policy: framework-gap-register.py: Artifact framework-gap-register.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: engine-convergence.json: Artifact engine-convergence.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-migration-dag.json: Artifact repository-migration-dag.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: technical-debt-execution.json: Artifact technical-debt-execution.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: api-convergence.json: Artifact api-convergence.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: productivity-validation.json: Artifact productivity-validation.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: ci-validation.py: Artifact ci-validation.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: capability-completion.json: Artifact capability-completion.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: platform-accuracy.json: Artifact platform-accuracy.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: api-canonicalization.json: Artifact api-canonicalization.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: repository-health-baseline.json: Artifact repository-health-baseline.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: productivity-validation.py: Artifact productivity-validation.py has no defined retention policy
+- [WARNING] Artifact has no retention policy: engine-migration-plan.json: Artifact engine-migration-plan.json has no defined retention policy
+- [WARNING] Artifact has no retention policy: verify-stderr-4x3uvgif.txt: Artifact verify-stderr-4x3uvgif.txt has no defined retention policy
+- [WARNING] Artifact has no retention policy: verify-stdout-g7qtlb_q.txt: Artifact verify-stdout-g7qtlb_q.txt has no defined retention policy
 - [PASS] No duplicate artifact content detected: All artifacts in runtime/generated/ have unique content
-- [PASS] Artifact consumption tracking complete: All 112 artifacts have registered consumers
+- [PASS] Artifact consumption tracking complete: All 166 artifacts have registered consumers
 - [PASS] Workflow artifact references checked: Checked 9 workflow files for artifact references; 11 artifacts are referenced
-- [PASS] All artifacts have registered consumers: All 112 artifacts have registered consumers
+- [PASS] All artifacts have registered consumers: All 166 artifacts have registered consumers
 
 ### Runtime Performance Audit
 - **Status:** PASS
-- **Duration:** 1.73s
-- **planner_duration_seconds:** 0.0002
+- **Duration:** 1.07s
+- **planner_duration_seconds:** 0.0001
 - **planner_step_count:** 1
 - **planner_target_count:** 1
 - **planner_estimated_duration:** 3600
-- **graph_load_duration_seconds:** 0.1041
-- **graph_statistics_duration_seconds:** 0.0017
+- **graph_load_duration_seconds:** 0.0634
+- **graph_statistics_duration_seconds:** 0.0011
 - **graph_node_count:** 0
 - **graph_edge_count:** 0
 - **knowledge_query_count:** 9
 - **knowledge_successful_queries:** 9
-- **knowledge_total_duration_seconds:** 0.0219
-- **knowledge_avg_duration_seconds:** 0.0024
+- **knowledge_total_duration_seconds:** 0.013
+- **knowledge_avg_duration_seconds:** 0.0014
 - **workspace_render_duration_seconds:** 0.0
 - **workspace_verification_render_duration_seconds:** 0.0
 - **workspace_total_render_duration_seconds:** 0.0
-- **integrity_check_duration_seconds:** 1.449
+- **integrity_check_duration_seconds:** 0.9003
 - **integrity_violation_count:** 0
 - **integrity_total_violations:** 0
 - **integrity_rules_passed:** 28
 - **integrity_rules_failed:** 0
 - **diagnostics_init_duration_seconds:** 0.0
-- **diagnostics_diagnose_duration_seconds:** 0.0132
-- **diagnostics_total_duration_seconds:** 0.0132
+- **diagnostics_diagnose_duration_seconds:** 0.0066
+- **diagnostics_total_duration_seconds:** 0.0066
 - **github_workflow_files_count:** 9
-- **github_parse_verification-runtime_duration_seconds:** 0.0093
-- **github_parse_quality_duration_seconds:** 0.0105
-- **github_parse_golden_duration_seconds:** 0.0083
-- **github_parse_dependency-update_duration_seconds:** 0.008
-- **github_parse_backend-verify_duration_seconds:** 0.0083
-- **github_parse_release_duration_seconds:** 0.0077
-- **github_parse_playwright_duration_seconds:** 0.0092
-- **github_parse_mutation_duration_seconds:** 0.0104
-- **github_parse_frontend-verify_duration_seconds:** 0.0102
-- **github_total_parse_duration_seconds:** 0.0819
+- **github_parse_verification-runtime_duration_seconds:** 0.007
+- **github_parse_quality_duration_seconds:** 0.0051
+- **github_parse_golden_duration_seconds:** 0.0049
+- **github_parse_dependency-update_duration_seconds:** 0.0046
+- **github_parse_backend-verify_duration_seconds:** 0.0062
+- **github_parse_release_duration_seconds:** 0.0039
+- **github_parse_playwright_duration_seconds:** 0.0071
+- **github_parse_mutation_duration_seconds:** 0.0062
+- **github_parse_frontend-verify_duration_seconds:** 0.0056
+- **github_total_parse_duration_seconds:** 0.0506
 
-- [PASS] Planner performance is acceptable: Planner completed in 0.0002s
-- [PASS] Graph loading performance is acceptable: Graph loaded in 0.1041s with 0 nodes
-- [PASS] Knowledge lookup performance is acceptable: Knowledge lookups completed in 0.0219s (9/9 successful)
+- [PASS] Planner performance is acceptable: Planner completed in 0.0001s
+- [PASS] Graph loading performance is acceptable: Graph loaded in 0.0634s with 0 nodes
+- [PASS] Knowledge lookup performance is acceptable: Knowledge lookups completed in 0.0130s (9/9 successful)
 - [PASS] Workspace rendering performance is acceptable: Workspace rendering completed in 0.0000s
-- [PASS] Integrity check performance is acceptable: Integrity checks completed in 1.4490s with 0 violations
-- [PASS] Diagnostics performance is acceptable: Diagnostics completed in 0.0132s
-- [PASS] GitHub parsing performance is acceptable: GitHub workflow parsing completed in 0.0819s for 9 files
+- [PASS] Integrity check performance is acceptable: Integrity checks completed in 0.9003s with 0 violations
+- [PASS] Diagnostics performance is acceptable: Diagnostics completed in 0.0066s
+- [PASS] GitHub parsing performance is acceptable: GitHub workflow parsing completed in 0.0506s for 9 files
 
 ### Failure Injection Audit
 - **Status:** PASS
@@ -1153,18 +1259,18 @@ Certification status: **CERTIFIED**.
 
 ### Pipeline Validation Audit
 - **Status:** PASS
-- **Duration:** 0.03s
+- **Duration:** 0.02s
 - **pipeline_stages:** 12
 - **pipeline_stages_passed:** 12
 - **pipeline_stages_failed:** 0
 - **pipeline_stages_warning:** 0
-- **pipeline_total_duration_seconds:** 0.0317
-- **pipeline_results:** [{'stage': 'git_change', 'name': 'Git Change Detection', 'status': 'pass', 'duration_seconds': 0.0175, 'findings_count': 1}, {'stage': 'planner', 'name': 'Verification Planner', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'tests_selected', 'name': 'Test Selection', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}, {'stage': 'executor', 'name': 'Test Executor', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'results', 'name': 'Results Collection', 'status': 'pass', 'duration_seconds': 0.0002, 'findings_count': 1}, {'stage': 'evidence', 'name': 'Evidence Aggregation', 'status': 'pass', 'duration_seconds': 0.0015, 'findings_count': 1}, {'stage': 'knowledge', 'name': 'Knowledge Indexing', 'status': 'pass', 'duration_seconds': 0.0048, 'findings_count': 1}, {'stage': 'workspace', 'name': 'Workspace Rendering', 'status': 'pass', 'duration_seconds': 0.0022, 'findings_count': 1}, {'stage': 'dashboard', 'name': 'Dashboard Generation', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'github', 'name': 'GitHub Reporting', 'status': 'pass', 'duration_seconds': 0.0003, 'findings_count': 1}, {'stage': 'artifact', 'name': 'Artifact Management', 'status': 'pass', 'duration_seconds': 0.0045, 'findings_count': 1}, {'stage': 'status', 'name': 'Status Reporting', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}]
+- **pipeline_total_duration_seconds:** 0.0181
+- **pipeline_results:** [{'stage': 'git_change', 'name': 'Git Change Detection', 'status': 'pass', 'duration_seconds': 0.0111, 'findings_count': 1}, {'stage': 'planner', 'name': 'Verification Planner', 'status': 'pass', 'duration_seconds': 0.0002, 'findings_count': 1}, {'stage': 'tests_selected', 'name': 'Test Selection', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}, {'stage': 'executor', 'name': 'Test Executor', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'results', 'name': 'Results Collection', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'evidence', 'name': 'Evidence Aggregation', 'status': 'pass', 'duration_seconds': 0.0009, 'findings_count': 1}, {'stage': 'knowledge', 'name': 'Knowledge Indexing', 'status': 'pass', 'duration_seconds': 0.0025, 'findings_count': 1}, {'stage': 'workspace', 'name': 'Workspace Rendering', 'status': 'pass', 'duration_seconds': 0.0013, 'findings_count': 1}, {'stage': 'dashboard', 'name': 'Dashboard Generation', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'github', 'name': 'GitHub Reporting', 'status': 'pass', 'duration_seconds': 0.0001, 'findings_count': 1}, {'stage': 'artifact', 'name': 'Artifact Management', 'status': 'pass', 'duration_seconds': 0.0017, 'findings_count': 1}, {'stage': 'status', 'name': 'Status Reporting', 'status': 'pass', 'duration_seconds': 0.0, 'findings_count': 1}]
 - **pipeline_trace_complete:** True
 - **pipeline_stages_traced:** 12
 
-- [PASS] Git change detection stage passed: Git is available and 36 changed files detected
-- [PASS] Planner stage passed: Planner generated plan plan-20260806-143130 with 1 steps and 1 targets
+- [PASS] Git change detection stage passed: Git is available and 30 changed files detected
+- [PASS] Planner stage passed: Planner generated plan plan-20260806-164757 with 1 steps and 1 targets
 - [PASS] Test selection stage passed: Test selection found 39 tasks across 10 profiles with 39 total commands
 - [PASS] Executor stage passed: Executor initialized successfully
 - [PASS] Results collection stage passed: Results file exists and has content
@@ -1173,16 +1279,16 @@ Certification status: **CERTIFIED**.
 - [PASS] Workspace rendering stage passed: Workspace loader initialized and status workspace loaded
 - [PASS] Dashboard generation stage passed: Dashboard file exists and is valid
 - [PASS] GitHub reporting stage passed: GitHub workflow directory exists with 9 workflow files
-- [PASS] Artifact management stage passed: Artifact directory exists with 112 files
+- [PASS] Artifact management stage passed: Artifact directory exists with 166 files
 - [PASS] Status reporting stage passed: Pipeline status reporting completed successfully
 - [PASS] All pipeline stages passed: All 12 pipeline stages passed successfully
 
 ### Engineering ROI Audit
 - **Status:** PASS
-- **Duration:** 1.02s
+- **Duration:** 0.66s
 - **without_runtime:** {'repository_files_manually_inspected': 0, 'commands_executed_manually': 0, 'time_to_identify_failing_component_seconds': 300.0, 'time_to_identify_blast_radius_seconds': 600.0, 'time_to_identify_required_tests_seconds': 450.0, 'time_to_identify_repair_location_seconds': 300.0, 'time_to_identify_affected_workflows_seconds': 180.0, 'total_manual_time_seconds': 1830.0}
 - **with_runtime:** {'repository_files_auto_inspected': 0, 'commands_executed_automatically': 0, 'time_to_identify_failing_component_seconds': 5.0, 'time_to_identify_blast_radius_seconds': 10.0, 'time_to_identify_required_tests_seconds': 8.0, 'time_to_identify_repair_location_seconds': 5.0, 'time_to_identify_affected_workflows_seconds': 3.0, 'total_runtime_time_seconds': 31.0}
-- **manual_inspection:** {'total_python_files': 6209, 'backend_python_files': 5967, 'runtime_python_files': 196, 'manual_inspection_time_per_file_seconds': 120.0, 'manual_inspection_total_time_seconds': 745080.0}
+- **manual_inspection:** {'total_python_files': 6217, 'backend_python_files': 5966, 'runtime_python_files': 205, 'manual_inspection_time_per_file_seconds': 120.0, 'manual_inspection_total_time_seconds': 746040.0}
 - **commands_executed:** {'manual_commands_per_session': 15, 'runtime_commands_per_session': 1, 'manual_command_average_duration_seconds': 30.0, 'runtime_command_average_duration_seconds': 5.0, 'manual_total_command_time_seconds': 450.0, 'runtime_total_command_time_seconds': 5.0}
 - **time_to_failure:** {'manual_time_to_failure_seconds': 300.0, 'runtime_time_to_failure_seconds': 5.0, 'time_saved_failure_seconds': 295.0, 'improvement_factor_failure': 60.0}
 - **time_to_blast_radius:** {'manual_time_to_blast_radius_seconds': 600.0, 'runtime_time_to_blast_radius_seconds': 10.0, 'time_saved_blast_radius_seconds': 590.0, 'improvement_factor_blast_radius': 60.0}

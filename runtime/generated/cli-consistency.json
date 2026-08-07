@@ -1,6 +1,6 @@
 {
   "schema": "cli-consistency/v1",
-  "generated_at": "2026-08-06T14:24:40.172955+00:00",
+  "generated_at": "2026-08-06T15:11:31.336096+00:00",
   "single_entity_resolver": true,
   "single_architecture_provider": true,
   "all_commands_consistent": true,

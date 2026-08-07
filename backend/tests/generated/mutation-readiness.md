@@ -1,14 +1,15 @@
 # Mutation Readiness Report
 
-Generated: 2026-07-31T18:21:58.496087+00:00
+Generated: 2026-08-07T17:37:10.219782+00:00
 
 ## Engine Readiness Status
 
 | Engine | Pure Functions | Impure Functions | Readiness | Killability Estimate |
 |--------|----------------|------------------|-----------|---------------------|
+| `src/engines/balance_engine.py` | 4 | 0 | Ready | HIGH |
 | `src/engines/cashflow_engine.py` | 1 | 0 | Ready | HIGH |
-| `src/engines/insight_generator.py` | 2 | 0 | Ready | HIGH |
-| `src/engines/nudge_engine.py` | 3 | 0 | Ready | HIGH |
+| `src/engines/ledger_audit_engine.py` | 3 | 0 | Ready | HIGH |
+| `src/engines/reconciliation_engine.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/transaction_intelligence/detector_result.py` | 0 | 0 | Partial | UNKNOWN |
 | `src/engines/transaction_intelligence/cc_payment_detector.py` | 4 | 0 | Ready | HIGH |
 | `src/engines/transaction_intelligence/cash_conversion_detector.py` | 1 | 0 | Ready | HIGH |
@@ -33,13 +34,14 @@ Generated: 2026-07-31T18:21:58.496087+00:00
 | `src/engines/account_engine/lifecycle.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/account_engine/metrics.py` | 1 | 0 | Ready | HIGH |
 | `src/engines/recommendation_engine/recommendations.py` | 5 | 0 | Ready | HIGH |
-| `src/engines/behaviour_engine/core.py` | 0 | 0 | Partial | UNKNOWN |
+| `src/engines/behaviour_engine/core.py` | 4 | 1 | Partial | MEDIUM |
 | `src/engines/behaviour_engine/income.py` | 5 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/cashflow.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/temporal.py` | 6 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/lifestyle.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/utils.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/resilience.py` | 2 | 0 | Ready | HIGH |
+| `src/engines/behaviour_engine/insights.py` | 2 | 0 | Ready | MEDIUM |
 | `src/engines/behaviour_engine/patterns.py` | 5 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/debt.py` | 4 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/wellness.py` | 2 | 0 | Ready | HIGH |
@@ -48,6 +50,7 @@ Generated: 2026-07-31T18:21:58.496087+00:00
 | `src/engines/behaviour_engine/credit_dependency.py` | 6 | 2 | Partial | MEDIUM |
 | `src/engines/behaviour_engine/savings.py` | 3 | 0 | Ready | HIGH |
 | `src/engines/behaviour_engine/stress.py` | 5 | 1 | Partial | MEDIUM |
+| `src/engines/behaviour_engine/nudges.py` | 3 | 0 | Ready | MEDIUM |
 | `src/engines/loan_engine/models.py` | 0 | 0 | Partial | UNKNOWN |
 | `src/engines/loan_engine/amortization.py` | 6 | 1 | Partial | MEDIUM |
 | `src/engines/loan_engine/prepayment.py` | 4 | 1 | Partial | MEDIUM |
@@ -56,10 +59,6 @@ Generated: 2026-07-31T18:21:58.496087+00:00
 | `src/engines/loan_engine/utils.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/foreclosure.py` | 2 | 0 | Ready | HIGH |
 | `src/engines/loan_engine/floating_rate.py` | 1 | 1 | Partial | MEDIUM |
-| `src/engines/balance_engine.py` | 0 | 4 | Blocked | LOW |
-| `src/engines/behavior_engine.py` | 0 | 5 | Blocked | LOW |
-| `src/engines/ledger_audit_engine.py` | 0 | 3 | Blocked | LOW |
-| `src/engines/reconciliation_engine.py` | 0 | 2 | Blocked | LOW |
 | `src/engines/financial_events/lineage_walker.py` | 0 | 3 | Blocked | LOW |
 | `src/engines/account_engine/history.py` | 0 | 2 | Blocked | LOW |
 

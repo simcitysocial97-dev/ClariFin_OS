@@ -15,14 +15,10 @@ Phase 2B.1: Deterministic matching with confidence scoring.
 Run: python -m pytest tests/test_reconciliation.py -v
 """
 
-import os
 import sqlite3
-import tempfile
 
 import pytest
 
-# Add parent directory to path
-from db import FinanceDB
 from repositories.reconciliation_repository import ReconciliationRepository
 from repositories.statement_repository import StatementRepository
 from src.engines.reconciliation_engine import (
@@ -32,42 +28,21 @@ from src.engines.reconciliation_engine import (
     find_potential_matches,
 )
 
-# ============================================================
-# Fixtures
-# ============================================================
-
 
 @pytest.fixture
-def temp_db():
-    """Create a temporary database for testing."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+def populated_db(temp_db: str) -> str:
+    """Provide a database populated with reconciliation test data.
 
-    db = FinanceDB(db_path=db_path)
+    Uses the global schema-initialized temp_db to avoid expensive
+    full database initialization per test.
+    """
+    db_path = temp_db
     stmt_repo = StatementRepository(db_path)
 
-    # Insert test statements for different accounts
     stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
     stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
 
-    yield db, db_path
-
-    # Cleanup - ensure connection is closed
-    if db._conn:
-        db._conn.close()
-        db._conn = None
-    os.unlink(db_path)
-
-
-@pytest.fixture
-def populated_db(temp_db):
-    """Populate database with test transactions."""
-    db, db_path = temp_db
-
     conn = sqlite3.connect(db_path)
-
-    # Insert transactions for Account A (debits)
-    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES
@@ -76,9 +51,6 @@ def populated_db(temp_db):
             (1, '10/01/2025', '2025-01-10', 'Different amount', 50000, 'debit', 'Account_A'),
             (1, '15/01/2025', '2025-01-15', 'Same account transfer', 30000, 'debit', 'Account_A')
     """)
-
-    # Insert transactions for Account B (credits)
-    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES
@@ -87,11 +59,10 @@ def populated_db(temp_db):
             (2, '10/01/2025', '2025-01-10', 'Different amount', 75000, 'credit', 'Account_B'),
             (2, '15/01/2025', '2025-01-15', 'Same account credit', 30000, 'credit', 'Account_B')
     """)
-
     conn.commit()
     conn.close()
 
-    yield db, db_path
+    return db_path
 
 
 # ============================================================
@@ -101,7 +72,7 @@ def populated_db(temp_db):
 
 def test_exact_match_detection(populated_db):
     """Test that exact matches (same amount, same date, different accounts) are detected."""
-    db, db_path = populated_db
+    db_path = populated_db
 
     matches = find_potential_matches(db_path)
 
@@ -123,7 +94,7 @@ def test_exact_match_detection(populated_db):
 
 def test_date_window_detection(populated_db):
     """Test that date window matches (same amount, within 3 days) are detected."""
-    db, db_path = populated_db
+    db_path = populated_db
 
     matches = find_potential_matches(db_path)
 
@@ -145,7 +116,7 @@ def test_date_window_detection(populated_db):
 
 def test_no_false_positives_different_amounts(populated_db):
     """Test that transactions with different amounts are NOT matched."""
-    db, db_path = populated_db
+    db_path = populated_db
 
     matches = find_potential_matches(db_path)
 
@@ -171,7 +142,7 @@ def test_no_false_positives_different_amounts(populated_db):
 
 def test_no_same_account_matches(populated_db):
     """Test that transactions in the same account are NOT matched."""
-    db, db_path = populated_db
+    db_path = populated_db
 
     matches = find_potential_matches(db_path)
 
@@ -189,7 +160,7 @@ def test_no_same_account_matches(populated_db):
 
 def test_confirm_no_transaction_mutation(populated_db):
     """Test that confirming a reconciliation does NOT modify transaction records."""
-    db, db_path = populated_db
+    db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
@@ -263,7 +234,7 @@ def test_confirm_no_transaction_mutation(populated_db):
 
 def test_reject_no_transaction_mutation(populated_db):
     """Test that rejecting a reconciliation does NOT modify transaction records."""
-    db, db_path = populated_db
+    db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
@@ -337,7 +308,7 @@ def test_reject_no_transaction_mutation(populated_db):
 
 def test_prevent_duplicate_pairs(populated_db):
     """Test that duplicate reconciliation pairs are prevented via idempotent insert."""
-    db, db_path = populated_db
+    db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with
@@ -386,7 +357,7 @@ def test_prevent_duplicate_pairs(populated_db):
 
 def test_prevent_mirrored_pairs(populated_db):
     """Test that mirrored pairs (A,B) and (B,A) are prevented via deterministic key."""
-    db, db_path = populated_db
+    db_path = populated_db
     rec_repo = ReconciliationRepository(db_path)
 
     # Get a match to work with

@@ -301,7 +301,9 @@ class VerificationPlanner:
         }
 
         result = set(scope_hierarchy.get(requested, [requested]))
-        result.update(impacted)
+
+        if requested != VerificationScope.QUICK:
+            result.update(impacted)
 
         # If repository or full requested, include everything
         if requested in (VerificationScope.REPOSITORY, VerificationScope.FULL):
@@ -373,10 +375,13 @@ class VerificationPlanner:
         requirements = []
 
         # From capabilities
+        allowed_scopes = set(scopes)
         for cap_id in capabilities:
             cap = self._registry.get_capability(cap_id)
             if cap:
-                requirements.extend(cap.requirements)
+                for req in cap.requirements:
+                    if req.scope in allowed_scopes:
+                        requirements.append(req)
 
         # From scopes
         for scope in scopes:

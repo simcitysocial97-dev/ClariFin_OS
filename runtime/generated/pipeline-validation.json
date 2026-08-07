@@ -4,7 +4,7 @@
       "stage": "repository",
       "name": "Repository Index Audit",
       "status": "pass",
-      "duration_seconds": 4.63,
+      "duration_seconds": 3.06,
       "findings_count": 10,
       "passed": 10,
       "failed": 0
@@ -13,7 +13,7 @@
       "stage": "cross_layer",
       "name": "Cross-Layer Map Audit",
       "status": "pass",
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.05,
       "findings_count": 12,
       "passed": 12,
       "failed": 0
@@ -22,7 +22,7 @@
       "stage": "dependency_graph",
       "name": "Dependency Graph Audit",
       "status": "pass",
-      "duration_seconds": 0.2,
+      "duration_seconds": 0.12,
       "findings_count": 12,
       "passed": 12,
       "failed": 0
@@ -31,7 +31,7 @@
       "stage": "planner",
       "name": "Verification Planner Audit",
       "status": "pass",
-      "duration_seconds": 0.05,
+      "duration_seconds": 0.03,
       "findings_count": 36,
       "passed": 36,
       "failed": 0
@@ -40,7 +40,7 @@
       "stage": "executor",
       "name": "Executor Audit",
       "status": "pass",
-      "duration_seconds": 0.01,
+      "duration_seconds": 0.3,
       "findings_count": 17,
       "passed": 17,
       "failed": 0
@@ -58,7 +58,7 @@
       "stage": "observability",
       "name": "Observability Audit",
       "status": "pass",
-      "duration_seconds": 0.03,
+      "duration_seconds": 0.02,
       "findings_count": 8,
       "passed": 8,
       "failed": 0
@@ -67,7 +67,7 @@
       "stage": "knowledge",
       "name": "Knowledge Base Audit",
       "status": "pass",
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.07,
       "findings_count": 11,
       "passed": 11,
       "failed": 0
@@ -76,7 +76,7 @@
       "stage": "workspace",
       "name": "Workspace Audit",
       "status": "pass",
-      "duration_seconds": 1.51,
+      "duration_seconds": 1.0,
       "findings_count": 16,
       "passed": 16,
       "failed": 0
@@ -85,7 +85,7 @@
       "stage": "integrity",
       "name": "Integrity Engine Audit",
       "status": "pass",
-      "duration_seconds": 4.15,
+      "duration_seconds": 2.7,
       "findings_count": 90,
       "passed": 90,
       "failed": 0
@@ -94,7 +94,7 @@
       "stage": "github_actions",
       "name": "GitHub Actions Audit",
       "status": "pass",
-      "duration_seconds": 0.46,
+      "duration_seconds": 0.18,
       "findings_count": 90,
       "passed": 90,
       "failed": 0
@@ -103,7 +103,7 @@
       "stage": "runtime_cli",
       "name": "Runtime CLI Audit",
       "status": "pass",
-      "duration_seconds": 10.86,
+      "duration_seconds": 6.82,
       "findings_count": 43,
       "passed": 43,
       "failed": 0
@@ -112,7 +112,7 @@
       "stage": "github_runtime",
       "name": "GitHub Runtime Audit",
       "status": "pass",
-      "duration_seconds": 3.89,
+      "duration_seconds": 2.9,
       "findings_count": 4,
       "passed": 4,
       "failed": 0
@@ -129,17 +129,17 @@
     {
       "stage": "artifact_ownership",
       "name": "Artifact Ownership Audit",
-      "status": "pass",
-      "duration_seconds": 0.04,
-      "findings_count": 7,
-      "passed": 7,
+      "status": "fail",
+      "duration_seconds": 0.03,
+      "findings_count": 113,
+      "passed": 5,
       "failed": 0
     },
     {
       "stage": "performance",
       "name": "Runtime Performance Audit",
       "status": "pass",
-      "duration_seconds": 1.73,
+      "duration_seconds": 1.07,
       "findings_count": 7,
       "passed": 7,
       "failed": 0
@@ -157,7 +157,7 @@
       "stage": "pipeline",
       "name": "Pipeline Validation Audit",
       "status": "pass",
-      "duration_seconds": 0.03,
+      "duration_seconds": 0.02,
       "findings_count": 13,
       "passed": 13,
       "failed": 0
@@ -166,7 +166,7 @@
       "stage": "roi",
       "name": "Engineering ROI Audit",
       "status": "pass",
-      "duration_seconds": 1.02,
+      "duration_seconds": 0.66,
       "findings_count": 1,
       "passed": 1,
       "failed": 0

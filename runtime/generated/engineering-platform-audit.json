@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-08-06T14:31:31.372029+00:00",
+  "generated_at": "2026-08-06T16:47:58.627434+00:00",
   "overall_status": "pass",
   "certification_status": "CERTIFIED",
-  "total_duration_seconds": 28.8,
+  "total_duration_seconds": 19.04,
   "sections": [
     {
       "section": "repository",
       "name": "Repository Index Audit",
       "status": "pass",
-      "duration_seconds": 4.63,
+      "duration_seconds": 3.06,
       "metrics": {
         "total_checks": 10,
         "failures": 0,
@@ -186,9 +186,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Fresh graph build succeeded with 1200 nodes, 1398 edges",
+          "message": "Fresh graph build succeeded with 1198 nodes, 1398 edges",
           "details": {
-            "built_node_count": 1200,
+            "built_node_count": 1198,
             "built_edge_count": 1398,
             "validation_errors": [],
             "validation_warnings": [
@@ -757,11 +757,6 @@
                   "id": "module:src/services/base.py",
                   "path": "src/services/base.py",
                   "name": "base"
-                },
-                {
-                  "id": "module:src/services/base_service.py",
-                  "path": "src/services/base_service.py",
-                  "name": "base_service"
                 },
                 {
                   "id": "module:src/services/behaviour_workspace_service.py",
@@ -1421,7 +1416,7 @@
       "section": "cross_layer",
       "name": "Cross-Layer Map Audit",
       "status": "pass",
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.05,
       "metrics": {
         "total_chains": 13,
         "total_checks": 12,
@@ -1617,7 +1612,7 @@
       "section": "dependency_graph",
       "name": "Dependency Graph Audit",
       "status": "pass",
-      "duration_seconds": 0.2,
+      "duration_seconds": 0.12,
       "metrics": {
         "total_checks": 12,
         "failures": 0,
@@ -1901,7 +1896,7 @@
       "section": "planner",
       "name": "Verification Planner Audit",
       "status": "pass",
-      "duration_seconds": 0.05,
+      "duration_seconds": 0.03,
       "metrics": {
         "total_checks": 36,
         "failures": 0,
@@ -2559,7 +2554,7 @@
               "backend",
               "runtime"
             ],
-            "last_commit": "0cd52e8c7a9ddc27d5a5fddd030c81655df0ba71"
+            "last_commit": "22ed278d4f7a44a8ede26cd65f7500b39c616741"
           },
           "recommendation": ""
         },
@@ -2586,7 +2581,7 @@
       "section": "executor",
       "name": "Executor Audit",
       "status": "pass",
-      "duration_seconds": 0.01,
+      "duration_seconds": 0.3,
       "metrics": {
         "total_commands": 7,
         "methods_with_timeout": 1,
@@ -2937,7 +2932,7 @@
           "priority": "low",
           "message": "EvidenceSummary.save() correctly writes JSON file",
           "details": {
-            "path": "/tmp/tmpk7x6ynnq/test-summary.json"
+            "path": "/tmp/tmp2aisyd3z/test-summary.json"
           },
           "recommendation": ""
         }
@@ -2947,9 +2942,9 @@
       "section": "observability",
       "name": "Observability Audit",
       "status": "pass",
-      "duration_seconds": 0.03,
+      "duration_seconds": 0.02,
       "metrics": {
-        "total_events": 6,
+        "total_events": 11,
         "event_types": [
           "TestEvent",
           "VerificationCompleted"
@@ -2969,9 +2964,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "EngineeringEventStore loaded 6 events from JSONL",
+          "message": "EngineeringEventStore loaded 11 events from JSONL",
           "details": {
-            "event_count": 6
+            "event_count": 11
           },
           "recommendation": ""
         },
@@ -2984,7 +2979,7 @@
           "priority": "low",
           "message": "EngineeringEventStore.load_events() returns a list of events",
           "details": {
-            "returned_count": 6
+            "returned_count": 11
           },
           "recommendation": ""
         },
@@ -2997,7 +2992,7 @@
           "priority": "low",
           "message": "AnalyticsEngine.compute() returns a valid AnalyticsReport",
           "details": {
-            "local_runs": 5,
+            "local_runs": 10,
             "ci_runs": 0
           },
           "recommendation": ""
@@ -3032,7 +3027,7 @@
           "priority": "low",
           "message": "AnalyticsEngine computes verification metrics correctly",
           "details": {
-            "total_runs": 5,
+            "total_runs": 10,
             "success_rate": 0.0
           },
           "recommendation": ""
@@ -3082,7 +3077,7 @@
       "section": "knowledge",
       "name": "Knowledge Base Audit",
       "status": "pass",
-      "duration_seconds": 0.08,
+      "duration_seconds": 0.07,
       "metrics": {
         "total_indexed_objects": 337,
         "endpoints_count": 76,
@@ -3253,7 +3248,7 @@
       "section": "workspace",
       "name": "Workspace Audit",
       "status": "pass",
-      "duration_seconds": 1.51,
+      "duration_seconds": 1.0,
       "metrics": {
         "commands_checked": 5,
         "commands_passed": 5,
@@ -3478,7 +3473,7 @@
       "section": "integrity",
       "name": "Integrity Engine Audit",
       "status": "pass",
-      "duration_seconds": 4.15,
+      "duration_seconds": 2.7,
       "metrics": {
         "rules_evaluated": 28,
         "rules_passed": 28,
@@ -3491,7 +3486,7 @@
           "LOW": 0,
           "INFO": 0
         },
-        "files_scanned": 845,
+        "files_scanned": 843,
         "cross_layer_entries": 13
       },
       "findings": [
@@ -4896,8 +4891,8 @@
             "run2_violations": 0,
             "run1_rules": 28,
             "run2_rules": 28,
-            "run1_files": 845,
-            "run2_files": 845,
+            "run1_files": 843,
+            "run2_files": 843,
             "run1_cross_layer": 13,
             "run2_cross_layer": 13
           },
@@ -4909,7 +4904,7 @@
       "section": "github_actions",
       "name": "GitHub Actions Audit",
       "status": "pass",
-      "duration_seconds": 0.46,
+      "duration_seconds": 0.18,
       "metrics": {
         "workflows_audited": 9,
         "composite_actions_audited": 5,
@@ -6288,7 +6283,7 @@
       "section": "runtime_cli",
       "name": "Runtime CLI Audit",
       "status": "pass",
-      "duration_seconds": 10.86,
+      "duration_seconds": 6.82,
       "metrics": {
         "commands_audited": 16,
         "commands_passed": 16,
@@ -6345,9 +6340,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "status completed in 0.532s",
+          "message": "status completed in 0.224s",
           "details": {
-            "duration_seconds": 0.532,
+            "duration_seconds": 0.224,
             "exit_code": 0
           },
           "recommendation": ""
@@ -6359,9 +6354,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "metrics completed in 0.355s",
+          "message": "metrics completed in 0.222s",
           "details": {
-            "duration_seconds": 0.355,
+            "duration_seconds": 0.222,
             "exit_code": 0
           },
           "recommendation": ""
@@ -6373,9 +6368,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "history completed in 0.271s",
+          "message": "history completed in 0.164s",
           "details": {
-            "duration_seconds": 0.271,
+            "duration_seconds": 0.164,
             "exit_code": 0
           },
           "recommendation": ""
@@ -6387,9 +6382,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "verify-status completed in 0.286s",
+          "message": "verify-status completed in 0.166s",
           "details": {
-            "duration_seconds": 0.286,
+            "duration_seconds": 0.166,
             "exit_code": 0
           },
           "recommendation": ""
@@ -6401,9 +6396,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "integrity completed in 1.769s",
+          "message": "integrity completed in 1.137s",
           "details": {
-            "duration_seconds": 1.769,
+            "duration_seconds": 1.137,
             "exit_code": 0
           },
           "recommendation": ""
@@ -6415,11 +6410,11 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Avg: 0.643s, Min: 0.271s, Max: 1.769s",
+          "message": "Avg: 0.383s, Min: 0.164s, Max: 1.137s",
           "details": {
-            "avg_seconds": 0.643,
-            "min_seconds": 0.271,
-            "max_seconds": 1.769
+            "avg_seconds": 0.383,
+            "min_seconds": 0.164,
+            "max_seconds": 1.137
           },
           "recommendation": ""
         },
@@ -6443,9 +6438,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'doctor' produced 2518 bytes of output",
+          "message": "'doctor' produced 2530 bytes of output",
           "details": {
-            "stdout_length": 2518,
+            "stdout_length": 2530,
             "has_output": true
           },
           "recommendation": ""
@@ -6566,9 +6561,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'history' produced 5103 bytes of output",
+          "message": "'history' produced 7143 bytes of output",
           "details": {
-            "stdout_length": 5103,
+            "stdout_length": 7143,
             "has_output": true
           },
           "recommendation": ""
@@ -6661,9 +6656,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'diagnose' produced 2506 bytes of output",
+          "message": "'diagnose' produced 2334 bytes of output",
           "details": {
-            "stdout_length": 2506,
+            "stdout_length": 2334,
             "has_output": true
           },
           "recommendation": ""
@@ -6688,9 +6683,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'affected' produced 569 bytes of output",
+          "message": "'affected' produced 570 bytes of output",
           "details": {
-            "stdout_length": 569,
+            "stdout_length": 570,
             "has_output": true
           },
           "recommendation": ""
@@ -6715,9 +6710,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'repair' produced 14895 bytes of output",
+          "message": "'repair' produced 15295 bytes of output",
           "details": {
-            "stdout_length": 14895,
+            "stdout_length": 15295,
             "has_output": true
           },
           "recommendation": ""
@@ -6742,9 +6737,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'risk' produced 858 bytes of output",
+          "message": "'risk' produced 883 bytes of output",
           "details": {
-            "stdout_length": 858,
+            "stdout_length": 883,
             "has_output": true
           },
           "recommendation": ""
@@ -6836,9 +6831,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'health' produced 2518 bytes of output",
+          "message": "'health' produced 2530 bytes of output",
           "details": {
-            "stdout_length": 2518,
+            "stdout_length": 2530,
             "has_output": true
           },
           "recommendation": ""
@@ -6863,9 +6858,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "'analytics' produced 3093 bytes of output",
+          "message": "'analytics' produced 3103 bytes of output",
           "details": {
-            "stdout_length": 3093,
+            "stdout_length": 3103,
             "has_output": true
           },
           "recommendation": ""
@@ -6890,12 +6885,12 @@
       "section": "github_runtime",
       "name": "GitHub Runtime Audit",
       "status": "pass",
-      "duration_seconds": 3.89,
+      "duration_seconds": 2.9,
       "metrics": {
         "workflow_count": 9,
         "gh_cli_available": true,
         "gh_runs_fetched": 20,
-        "failed_runs_in_history": 19,
+        "failed_runs_in_history": 20,
         "verification-runtime_uploads_cross-layer-map": true,
         "verification-runtime_uploads_knowledge-index": true,
         "verification-runtime_uploads_verification-cache": true,
@@ -7020,15 +7015,15 @@
         "golden_total_estimated_seconds": 630,
         "playwright_total_estimated_seconds": 1830,
         "total_estimated_seconds_all_profiles": 5650,
-        "cache_last_commit": "0cd52e8c",
-        "cache_changed_files_count": 27,
+        "cache_last_commit": "22ed278d",
+        "cache_changed_files_count": 29,
         "cache_executed_profiles": [
           "quick",
           "backend",
           "runtime"
         ],
         "cache_has_data": true,
-        "planner_generated_plan_id": "plan-20260806-143128",
+        "planner_generated_plan_id": "plan-20260806-164756",
         "planner_scope": "quick",
         "planner_target_count": 1,
         "planner_step_count": 1,
@@ -7063,7 +7058,7 @@
           "priority": "low",
           "message": "Planner generated a valid plan with 1 steps and 1 targets",
           "details": {
-            "plan_id": "plan-20260806-143128",
+            "plan_id": "plan-20260806-164756",
             "step_count": 1,
             "target_count": 1
           },
@@ -7096,10 +7091,10 @@
     {
       "section": "artifact_ownership",
       "name": "Artifact Ownership Audit",
-      "status": "pass",
-      "duration_seconds": 0.04,
+      "status": "fail",
+      "duration_seconds": 0.03,
       "metrics": {
-        "total_artifacts": 112,
+        "total_artifacts": 166,
         "generated_dir_exists": true,
         "artifact_runtime-consumer-migration.md_owner": "certification",
         "artifact_runtime-consumer-migration.md_creator": "runtime/foundation/architecture",
@@ -7316,8 +7311,8 @@
         "artifact_junit-property.xml_owner": "runtime",
         "artifact_junit-property.xml_creator": "pytest property tests",
         "owned_artifacts": 112,
-        "unowned_artifacts": 0,
-        "unique_artifact_names": 107,
+        "unowned_artifacts": 54,
+        "unique_artifact_names": 161,
         "duplicate_artifact_names": 0,
         "artifact_runtime-consumer-migration.md_retention": "permanent",
         "artifact_engineering-platform-audit.json_retention": "30_days",
@@ -7426,7 +7421,7 @@
         "artifact_coverage.json_retention": "14_days",
         "artifact_contract.json_retention": "permanent",
         "artifact_junit-property.xml_retention": "14_days",
-        "content_unique_artifacts": 112,
+        "content_unique_artifacts": 166,
         "content_duplicate_groups": 0,
         "artifact_runtime-consumer-migration.md_consumer_count": 1,
         "artifact_engineering-platform-audit.json_consumer_count": 1,
@@ -7600,20 +7595,765 @@
         "artifact_mutation-summary.json_referenced_in": [
           "mutation.yml"
         ],
-        "artifacts_with_consumers": 112,
+        "artifacts_with_consumers": 166,
         "artifacts_without_consumers": 0
       },
       "findings": [
         {
           "section": "artifact_ownership",
-          "check_id": "AO-003",
-          "name": "All artifacts have registered owners",
-          "status": "pass",
-          "severity": "info",
-          "priority": "low",
-          "message": "All 112 artifacts in runtime/generated/ have registered owners",
-          "details": {},
-          "recommendation": "Continue registering ownership for all generated artifacts"
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-cleanup-executed.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-cleanup-executed.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-cleanup-executed.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-executed.json"
+          },
+          "recommendation": "Register an owner for repository-cleanup-executed.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: workspace-completion.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact workspace-completion.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "workspace-completion.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workspace-completion.json"
+          },
+          "recommendation": "Register an owner for workspace-completion.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: deletion-validation.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact deletion-validation.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "deletion-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/deletion-validation.json"
+          },
+          "recommendation": "Register an owner for deletion-validation.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: platform-accuracy.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact platform-accuracy.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "platform-accuracy.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.py"
+          },
+          "recommendation": "Register an owner for platform-accuracy.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: end-to-end-pipeline.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact end-to-end-pipeline.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "end-to-end-pipeline.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/end-to-end-pipeline.json"
+          },
+          "recommendation": "Register an owner for end-to-end-pipeline.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: production-readiness-v2.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact production-readiness-v2.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "production-readiness-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness-v2.json"
+          },
+          "recommendation": "Register an owner for production-readiness-v2.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: duplicate-implementation.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact duplicate-implementation.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "duplicate-implementation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/duplicate-implementation.json"
+          },
+          "recommendation": "Register an owner for duplicate-implementation.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: engineering-platform-audit-v6.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact engineering-platform-audit-v6.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "engineering-platform-audit-v6.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v6.json"
+          },
+          "recommendation": "Register an owner for engineering-platform-audit-v6.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: engineering-platform-audit-v9.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact engineering-platform-audit-v9.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "engineering-platform-audit-v9.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v9.json"
+          },
+          "recommendation": "Register an owner for engineering-platform-audit-v9.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: test-modernization-v2.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact test-modernization-v2.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "test-modernization-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization-v2.json"
+          },
+          "recommendation": "Register an owner for test-modernization-v2.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: dependency-health-v2.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact dependency-health-v2.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "dependency-health-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/dependency-health-v2.json"
+          },
+          "recommendation": "Register an owner for dependency-health-v2.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-modernization.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-modernization.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-modernization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-modernization.json"
+          },
+          "recommendation": "Register an owner for repository-modernization.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-gap-analysis.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-gap-analysis.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-gap-analysis.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.py"
+          },
+          "recommendation": "Register an owner for repository-gap-analysis.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-canonicalization.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-canonicalization.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-canonicalization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-canonicalization.json"
+          },
+          "recommendation": "Register an owner for repository-canonicalization.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: production-readiness.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact production-readiness.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "production-readiness.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness.json"
+          },
+          "recommendation": "Register an owner for production-readiness.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: test-modernization.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact test-modernization.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "test-modernization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization.json"
+          },
+          "recommendation": "Register an owner for test-modernization.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-readiness.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-readiness.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-readiness.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.py"
+          },
+          "recommendation": "Register an owner for repository-readiness.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: workflow-validation.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact workflow-validation.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "workflow-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.py"
+          },
+          "recommendation": "Register an owner for workflow-validation.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: architectural-drift.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact architectural-drift.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "architectural-drift.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/architectural-drift.json"
+          },
+          "recommendation": "Register an owner for architectural-drift.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-certification-readiness.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-certification-readiness.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-certification-readiness.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-certification-readiness.json"
+          },
+          "recommendation": "Register an owner for repository-certification-readiness.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-gap-analysis.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-gap-analysis.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-gap-analysis.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.json"
+          },
+          "recommendation": "Register an owner for repository-gap-analysis.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: engineering-platform-audit-v7.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact engineering-platform-audit-v7.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "engineering-platform-audit-v7.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v7.json"
+          },
+          "recommendation": "Register an owner for engineering-platform-audit-v7.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: program15-validation-report.md",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact program15-validation-report.md in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "program15-validation-report.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program15-validation-report.md"
+          },
+          "recommendation": "Register an owner for program15-validation-report.md in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-readiness.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-readiness.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-readiness.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.json"
+          },
+          "recommendation": "Register an owner for repository-readiness.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: program18-certification.md",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact program18-certification.md in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "program18-certification.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program18-certification.md"
+          },
+          "recommendation": "Register an owner for program18-certification.md in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-cleanup-roadmap.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-cleanup-roadmap.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-cleanup-roadmap.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-roadmap.json"
+          },
+          "recommendation": "Register an owner for repository-cleanup-roadmap.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: real-defect-validation.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact real-defect-validation.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "real-defect-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.json"
+          },
+          "recommendation": "Register an owner for real-defect-validation.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: workflow-validation.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact workflow-validation.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "workflow-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.json"
+          },
+          "recommendation": "Register an owner for workflow-validation.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: real-defect-validation.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact real-defect-validation.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "real-defect-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.py"
+          },
+          "recommendation": "Register an owner for real-defect-validation.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-simplification.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-simplification.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-simplification.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-simplification.json"
+          },
+          "recommendation": "Register an owner for repository-simplification.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: runtime-reachability.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact runtime-reachability.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "runtime-reachability.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/runtime-reachability.json"
+          },
+          "recommendation": "Register an owner for runtime-reachability.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: program16-certification.md",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact program16-certification.md in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "program16-certification.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program16-certification.md"
+          },
+          "recommendation": "Register an owner for program16-certification.md in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: framework-gap-register.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact framework-gap-register.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "framework-gap-register.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.json"
+          },
+          "recommendation": "Register an owner for framework-gap-register.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: engineering-platform-audit-v8.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact engineering-platform-audit-v8.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "engineering-platform-audit-v8.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v8.json"
+          },
+          "recommendation": "Register an owner for engineering-platform-audit-v8.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: ci-validation.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact ci-validation.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "ci-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.json"
+          },
+          "recommendation": "Register an owner for ci-validation.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-technical-debt.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-technical-debt.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-technical-debt.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-technical-debt.json"
+          },
+          "recommendation": "Register an owner for repository-technical-debt.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: capability-completion-v2.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact capability-completion-v2.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "capability-completion-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion-v2.json"
+          },
+          "recommendation": "Register an owner for capability-completion-v2.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: test-ownership.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact test-ownership.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "test-ownership.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-ownership.json"
+          },
+          "recommendation": "Register an owner for test-ownership.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: program17-certification.md",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact program17-certification.md in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "program17-certification.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program17-certification.md"
+          },
+          "recommendation": "Register an owner for program17-certification.md in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: framework-gap-register.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact framework-gap-register.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "framework-gap-register.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.py"
+          },
+          "recommendation": "Register an owner for framework-gap-register.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: engine-convergence.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact engine-convergence.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "engine-convergence.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-convergence.json"
+          },
+          "recommendation": "Register an owner for engine-convergence.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-migration-dag.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-migration-dag.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-migration-dag.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-migration-dag.json"
+          },
+          "recommendation": "Register an owner for repository-migration-dag.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: technical-debt-execution.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact technical-debt-execution.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "technical-debt-execution.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/technical-debt-execution.json"
+          },
+          "recommendation": "Register an owner for technical-debt-execution.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: api-convergence.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact api-convergence.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "api-convergence.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-convergence.json"
+          },
+          "recommendation": "Register an owner for api-convergence.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: productivity-validation.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact productivity-validation.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "productivity-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.json"
+          },
+          "recommendation": "Register an owner for productivity-validation.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: ci-validation.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact ci-validation.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "ci-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.py"
+          },
+          "recommendation": "Register an owner for ci-validation.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: capability-completion.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact capability-completion.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "capability-completion.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion.json"
+          },
+          "recommendation": "Register an owner for capability-completion.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: platform-accuracy.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact platform-accuracy.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "platform-accuracy.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.json"
+          },
+          "recommendation": "Register an owner for platform-accuracy.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: api-canonicalization.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact api-canonicalization.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "api-canonicalization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-canonicalization.json"
+          },
+          "recommendation": "Register an owner for api-canonicalization.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: repository-health-baseline.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact repository-health-baseline.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "repository-health-baseline.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-health-baseline.json"
+          },
+          "recommendation": "Register an owner for repository-health-baseline.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: productivity-validation.py",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact productivity-validation.py in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "productivity-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.py"
+          },
+          "recommendation": "Register an owner for productivity-validation.py in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: engine-migration-plan.json",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact engine-migration-plan.json in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "engine-migration-plan.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-migration-plan.json"
+          },
+          "recommendation": "Register an owner for engine-migration-plan.json in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: verify-stderr-4x3uvgif.txt",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact verify-stderr-4x3uvgif.txt in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "verify-stderr-4x3uvgif.txt",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stderr-4x3uvgif.txt"
+          },
+          "recommendation": "Register an owner for verify-stderr-4x3uvgif.txt in the artifact ownership registry"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-002",
+          "name": "Artifact has no registered owner: verify-stdout-g7qtlb_q.txt",
+          "status": "warning",
+          "severity": "medium",
+          "priority": "medium",
+          "message": "Artifact verify-stdout-g7qtlb_q.txt in runtime/generated/ has no registered owner",
+          "details": {
+            "artifact": "verify-stdout-g7qtlb_q.txt",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stdout-g7qtlb_q.txt"
+          },
+          "recommendation": "Register an owner for verify-stdout-g7qtlb_q.txt in the artifact ownership registry"
         },
         {
           "section": "artifact_ownership",
@@ -7628,14 +8368,759 @@
         },
         {
           "section": "artifact_ownership",
-          "check_id": "AO-007",
-          "name": "All artifacts have retention policies",
-          "status": "pass",
-          "severity": "info",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-cleanup-executed.json",
+          "status": "warning",
+          "severity": "low",
           "priority": "low",
-          "message": "All 112 artifacts have defined retention policies",
-          "details": {},
-          "recommendation": "Review retention policies periodically"
+          "message": "Artifact repository-cleanup-executed.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-cleanup-executed.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-executed.json"
+          },
+          "recommendation": "Define a retention policy for repository-cleanup-executed.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: workspace-completion.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact workspace-completion.json has no defined retention policy",
+          "details": {
+            "artifact": "workspace-completion.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workspace-completion.json"
+          },
+          "recommendation": "Define a retention policy for workspace-completion.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: deletion-validation.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact deletion-validation.json has no defined retention policy",
+          "details": {
+            "artifact": "deletion-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/deletion-validation.json"
+          },
+          "recommendation": "Define a retention policy for deletion-validation.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: platform-accuracy.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact platform-accuracy.py has no defined retention policy",
+          "details": {
+            "artifact": "platform-accuracy.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.py"
+          },
+          "recommendation": "Define a retention policy for platform-accuracy.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: end-to-end-pipeline.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact end-to-end-pipeline.json has no defined retention policy",
+          "details": {
+            "artifact": "end-to-end-pipeline.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/end-to-end-pipeline.json"
+          },
+          "recommendation": "Define a retention policy for end-to-end-pipeline.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: production-readiness-v2.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact production-readiness-v2.json has no defined retention policy",
+          "details": {
+            "artifact": "production-readiness-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness-v2.json"
+          },
+          "recommendation": "Define a retention policy for production-readiness-v2.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: duplicate-implementation.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact duplicate-implementation.json has no defined retention policy",
+          "details": {
+            "artifact": "duplicate-implementation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/duplicate-implementation.json"
+          },
+          "recommendation": "Define a retention policy for duplicate-implementation.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: engineering-platform-audit-v6.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact engineering-platform-audit-v6.json has no defined retention policy",
+          "details": {
+            "artifact": "engineering-platform-audit-v6.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v6.json"
+          },
+          "recommendation": "Define a retention policy for engineering-platform-audit-v6.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: engineering-platform-audit-v9.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact engineering-platform-audit-v9.json has no defined retention policy",
+          "details": {
+            "artifact": "engineering-platform-audit-v9.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v9.json"
+          },
+          "recommendation": "Define a retention policy for engineering-platform-audit-v9.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: test-modernization-v2.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact test-modernization-v2.json has no defined retention policy",
+          "details": {
+            "artifact": "test-modernization-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization-v2.json"
+          },
+          "recommendation": "Define a retention policy for test-modernization-v2.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: dependency-health-v2.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact dependency-health-v2.json has no defined retention policy",
+          "details": {
+            "artifact": "dependency-health-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/dependency-health-v2.json"
+          },
+          "recommendation": "Define a retention policy for dependency-health-v2.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-modernization.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-modernization.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-modernization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-modernization.json"
+          },
+          "recommendation": "Define a retention policy for repository-modernization.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-gap-analysis.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-gap-analysis.py has no defined retention policy",
+          "details": {
+            "artifact": "repository-gap-analysis.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.py"
+          },
+          "recommendation": "Define a retention policy for repository-gap-analysis.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-canonicalization.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-canonicalization.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-canonicalization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-canonicalization.json"
+          },
+          "recommendation": "Define a retention policy for repository-canonicalization.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: production-readiness.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact production-readiness.json has no defined retention policy",
+          "details": {
+            "artifact": "production-readiness.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness.json"
+          },
+          "recommendation": "Define a retention policy for production-readiness.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: test-modernization.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact test-modernization.json has no defined retention policy",
+          "details": {
+            "artifact": "test-modernization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization.json"
+          },
+          "recommendation": "Define a retention policy for test-modernization.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-readiness.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-readiness.py has no defined retention policy",
+          "details": {
+            "artifact": "repository-readiness.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.py"
+          },
+          "recommendation": "Define a retention policy for repository-readiness.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: workflow-validation.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact workflow-validation.py has no defined retention policy",
+          "details": {
+            "artifact": "workflow-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.py"
+          },
+          "recommendation": "Define a retention policy for workflow-validation.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: architectural-drift.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact architectural-drift.json has no defined retention policy",
+          "details": {
+            "artifact": "architectural-drift.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/architectural-drift.json"
+          },
+          "recommendation": "Define a retention policy for architectural-drift.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-certification-readiness.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-certification-readiness.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-certification-readiness.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-certification-readiness.json"
+          },
+          "recommendation": "Define a retention policy for repository-certification-readiness.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-gap-analysis.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-gap-analysis.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-gap-analysis.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.json"
+          },
+          "recommendation": "Define a retention policy for repository-gap-analysis.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: engineering-platform-audit-v7.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact engineering-platform-audit-v7.json has no defined retention policy",
+          "details": {
+            "artifact": "engineering-platform-audit-v7.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v7.json"
+          },
+          "recommendation": "Define a retention policy for engineering-platform-audit-v7.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: program15-validation-report.md",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact program15-validation-report.md has no defined retention policy",
+          "details": {
+            "artifact": "program15-validation-report.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program15-validation-report.md"
+          },
+          "recommendation": "Define a retention policy for program15-validation-report.md"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-readiness.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-readiness.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-readiness.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.json"
+          },
+          "recommendation": "Define a retention policy for repository-readiness.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: program18-certification.md",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact program18-certification.md has no defined retention policy",
+          "details": {
+            "artifact": "program18-certification.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program18-certification.md"
+          },
+          "recommendation": "Define a retention policy for program18-certification.md"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-cleanup-roadmap.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-cleanup-roadmap.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-cleanup-roadmap.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-roadmap.json"
+          },
+          "recommendation": "Define a retention policy for repository-cleanup-roadmap.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: real-defect-validation.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact real-defect-validation.json has no defined retention policy",
+          "details": {
+            "artifact": "real-defect-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.json"
+          },
+          "recommendation": "Define a retention policy for real-defect-validation.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: workflow-validation.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact workflow-validation.json has no defined retention policy",
+          "details": {
+            "artifact": "workflow-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.json"
+          },
+          "recommendation": "Define a retention policy for workflow-validation.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: real-defect-validation.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact real-defect-validation.py has no defined retention policy",
+          "details": {
+            "artifact": "real-defect-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.py"
+          },
+          "recommendation": "Define a retention policy for real-defect-validation.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-simplification.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-simplification.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-simplification.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-simplification.json"
+          },
+          "recommendation": "Define a retention policy for repository-simplification.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: runtime-reachability.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact runtime-reachability.json has no defined retention policy",
+          "details": {
+            "artifact": "runtime-reachability.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/runtime-reachability.json"
+          },
+          "recommendation": "Define a retention policy for runtime-reachability.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: program16-certification.md",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact program16-certification.md has no defined retention policy",
+          "details": {
+            "artifact": "program16-certification.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program16-certification.md"
+          },
+          "recommendation": "Define a retention policy for program16-certification.md"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: framework-gap-register.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact framework-gap-register.json has no defined retention policy",
+          "details": {
+            "artifact": "framework-gap-register.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.json"
+          },
+          "recommendation": "Define a retention policy for framework-gap-register.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: engineering-platform-audit-v8.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact engineering-platform-audit-v8.json has no defined retention policy",
+          "details": {
+            "artifact": "engineering-platform-audit-v8.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v8.json"
+          },
+          "recommendation": "Define a retention policy for engineering-platform-audit-v8.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: ci-validation.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact ci-validation.json has no defined retention policy",
+          "details": {
+            "artifact": "ci-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.json"
+          },
+          "recommendation": "Define a retention policy for ci-validation.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-technical-debt.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-technical-debt.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-technical-debt.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-technical-debt.json"
+          },
+          "recommendation": "Define a retention policy for repository-technical-debt.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: capability-completion-v2.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact capability-completion-v2.json has no defined retention policy",
+          "details": {
+            "artifact": "capability-completion-v2.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion-v2.json"
+          },
+          "recommendation": "Define a retention policy for capability-completion-v2.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: test-ownership.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact test-ownership.json has no defined retention policy",
+          "details": {
+            "artifact": "test-ownership.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-ownership.json"
+          },
+          "recommendation": "Define a retention policy for test-ownership.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: program17-certification.md",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact program17-certification.md has no defined retention policy",
+          "details": {
+            "artifact": "program17-certification.md",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program17-certification.md"
+          },
+          "recommendation": "Define a retention policy for program17-certification.md"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: framework-gap-register.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact framework-gap-register.py has no defined retention policy",
+          "details": {
+            "artifact": "framework-gap-register.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.py"
+          },
+          "recommendation": "Define a retention policy for framework-gap-register.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: engine-convergence.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact engine-convergence.json has no defined retention policy",
+          "details": {
+            "artifact": "engine-convergence.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-convergence.json"
+          },
+          "recommendation": "Define a retention policy for engine-convergence.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-migration-dag.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-migration-dag.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-migration-dag.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-migration-dag.json"
+          },
+          "recommendation": "Define a retention policy for repository-migration-dag.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: technical-debt-execution.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact technical-debt-execution.json has no defined retention policy",
+          "details": {
+            "artifact": "technical-debt-execution.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/technical-debt-execution.json"
+          },
+          "recommendation": "Define a retention policy for technical-debt-execution.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: api-convergence.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact api-convergence.json has no defined retention policy",
+          "details": {
+            "artifact": "api-convergence.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-convergence.json"
+          },
+          "recommendation": "Define a retention policy for api-convergence.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: productivity-validation.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact productivity-validation.json has no defined retention policy",
+          "details": {
+            "artifact": "productivity-validation.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.json"
+          },
+          "recommendation": "Define a retention policy for productivity-validation.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: ci-validation.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact ci-validation.py has no defined retention policy",
+          "details": {
+            "artifact": "ci-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.py"
+          },
+          "recommendation": "Define a retention policy for ci-validation.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: capability-completion.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact capability-completion.json has no defined retention policy",
+          "details": {
+            "artifact": "capability-completion.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion.json"
+          },
+          "recommendation": "Define a retention policy for capability-completion.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: platform-accuracy.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact platform-accuracy.json has no defined retention policy",
+          "details": {
+            "artifact": "platform-accuracy.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.json"
+          },
+          "recommendation": "Define a retention policy for platform-accuracy.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: api-canonicalization.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact api-canonicalization.json has no defined retention policy",
+          "details": {
+            "artifact": "api-canonicalization.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-canonicalization.json"
+          },
+          "recommendation": "Define a retention policy for api-canonicalization.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: repository-health-baseline.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact repository-health-baseline.json has no defined retention policy",
+          "details": {
+            "artifact": "repository-health-baseline.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-health-baseline.json"
+          },
+          "recommendation": "Define a retention policy for repository-health-baseline.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: productivity-validation.py",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact productivity-validation.py has no defined retention policy",
+          "details": {
+            "artifact": "productivity-validation.py",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.py"
+          },
+          "recommendation": "Define a retention policy for productivity-validation.py"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: engine-migration-plan.json",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact engine-migration-plan.json has no defined retention policy",
+          "details": {
+            "artifact": "engine-migration-plan.json",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-migration-plan.json"
+          },
+          "recommendation": "Define a retention policy for engine-migration-plan.json"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: verify-stderr-4x3uvgif.txt",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact verify-stderr-4x3uvgif.txt has no defined retention policy",
+          "details": {
+            "artifact": "verify-stderr-4x3uvgif.txt",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stderr-4x3uvgif.txt"
+          },
+          "recommendation": "Define a retention policy for verify-stderr-4x3uvgif.txt"
+        },
+        {
+          "section": "artifact_ownership",
+          "check_id": "AO-006",
+          "name": "Artifact has no retention policy: verify-stdout-g7qtlb_q.txt",
+          "status": "warning",
+          "severity": "low",
+          "priority": "low",
+          "message": "Artifact verify-stdout-g7qtlb_q.txt has no defined retention policy",
+          "details": {
+            "artifact": "verify-stdout-g7qtlb_q.txt",
+            "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stdout-g7qtlb_q.txt"
+          },
+          "recommendation": "Define a retention policy for verify-stdout-g7qtlb_q.txt"
         },
         {
           "section": "artifact_ownership",
@@ -7655,7 +9140,7 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "All 112 artifacts have registered consumers",
+          "message": "All 166 artifacts have registered consumers",
           "details": {},
           "recommendation": "Continue tracking artifact consumers"
         },
@@ -7761,7 +9246,7 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "All 112 artifacts have registered consumers",
+          "message": "All 166 artifacts have registered consumers",
           "details": {},
           "recommendation": "Continue registering consumers for all artifacts"
         }
@@ -7771,42 +9256,42 @@
       "section": "performance",
       "name": "Runtime Performance Audit",
       "status": "pass",
-      "duration_seconds": 1.73,
+      "duration_seconds": 1.07,
       "metrics": {
-        "planner_duration_seconds": 0.0002,
+        "planner_duration_seconds": 0.0001,
         "planner_step_count": 1,
         "planner_target_count": 1,
         "planner_estimated_duration": 3600,
-        "graph_load_duration_seconds": 0.1041,
-        "graph_statistics_duration_seconds": 0.0017,
+        "graph_load_duration_seconds": 0.0634,
+        "graph_statistics_duration_seconds": 0.0011,
         "graph_node_count": 0,
         "graph_edge_count": 0,
         "knowledge_query_count": 9,
         "knowledge_successful_queries": 9,
-        "knowledge_total_duration_seconds": 0.0219,
-        "knowledge_avg_duration_seconds": 0.0024,
+        "knowledge_total_duration_seconds": 0.013,
+        "knowledge_avg_duration_seconds": 0.0014,
         "workspace_render_duration_seconds": 0.0,
         "workspace_verification_render_duration_seconds": 0.0,
         "workspace_total_render_duration_seconds": 0.0,
-        "integrity_check_duration_seconds": 1.449,
+        "integrity_check_duration_seconds": 0.9003,
         "integrity_violation_count": 0,
         "integrity_total_violations": 0,
         "integrity_rules_passed": 28,
         "integrity_rules_failed": 0,
         "diagnostics_init_duration_seconds": 0.0,
-        "diagnostics_diagnose_duration_seconds": 0.0132,
-        "diagnostics_total_duration_seconds": 0.0132,
+        "diagnostics_diagnose_duration_seconds": 0.0066,
+        "diagnostics_total_duration_seconds": 0.0066,
         "github_workflow_files_count": 9,
-        "github_parse_verification-runtime_duration_seconds": 0.0093,
-        "github_parse_quality_duration_seconds": 0.0105,
-        "github_parse_golden_duration_seconds": 0.0083,
-        "github_parse_dependency-update_duration_seconds": 0.008,
-        "github_parse_backend-verify_duration_seconds": 0.0083,
-        "github_parse_release_duration_seconds": 0.0077,
-        "github_parse_playwright_duration_seconds": 0.0092,
-        "github_parse_mutation_duration_seconds": 0.0104,
-        "github_parse_frontend-verify_duration_seconds": 0.0102,
-        "github_total_parse_duration_seconds": 0.0819
+        "github_parse_verification-runtime_duration_seconds": 0.007,
+        "github_parse_quality_duration_seconds": 0.0051,
+        "github_parse_golden_duration_seconds": 0.0049,
+        "github_parse_dependency-update_duration_seconds": 0.0046,
+        "github_parse_backend-verify_duration_seconds": 0.0062,
+        "github_parse_release_duration_seconds": 0.0039,
+        "github_parse_playwright_duration_seconds": 0.0071,
+        "github_parse_mutation_duration_seconds": 0.0062,
+        "github_parse_frontend-verify_duration_seconds": 0.0056,
+        "github_total_parse_duration_seconds": 0.0506
       },
       "findings": [
         {
@@ -7816,9 +9301,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Planner completed in 0.0002s",
+          "message": "Planner completed in 0.0001s",
           "details": {
-            "duration_seconds": 0.0002
+            "duration_seconds": 0.0001
           },
           "recommendation": "Continue monitoring planner performance"
         },
@@ -7829,9 +9314,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Graph loaded in 0.1041s with 0 nodes",
+          "message": "Graph loaded in 0.0634s with 0 nodes",
           "details": {
-            "duration_seconds": 0.1041,
+            "duration_seconds": 0.0634,
             "node_count": 0
           },
           "recommendation": "Continue monitoring graph loading performance"
@@ -7843,9 +9328,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Knowledge lookups completed in 0.0219s (9/9 successful)",
+          "message": "Knowledge lookups completed in 0.0130s (9/9 successful)",
           "details": {
-            "total_duration_seconds": 0.0219
+            "total_duration_seconds": 0.013
           },
           "recommendation": "Continue monitoring knowledge lookup performance"
         },
@@ -7869,9 +9354,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Integrity checks completed in 1.4490s with 0 violations",
+          "message": "Integrity checks completed in 0.9003s with 0 violations",
           "details": {
-            "duration_seconds": 1.449,
+            "duration_seconds": 0.9003,
             "violation_count": 0
           },
           "recommendation": "Continue monitoring integrity check performance"
@@ -7883,9 +9368,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Diagnostics completed in 0.0132s",
+          "message": "Diagnostics completed in 0.0066s",
           "details": {
-            "duration_seconds": 0.0132
+            "duration_seconds": 0.0066
           },
           "recommendation": "Continue monitoring diagnostics performance"
         },
@@ -7896,9 +9381,9 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "GitHub workflow parsing completed in 0.0819s for 9 files",
+          "message": "GitHub workflow parsing completed in 0.0506s for 9 files",
           "details": {
-            "duration_seconds": 0.0819
+            "duration_seconds": 0.0506
           },
           "recommendation": "Continue monitoring GitHub parsing performance"
         }
@@ -8251,26 +9736,26 @@
       "section": "pipeline",
       "name": "Pipeline Validation Audit",
       "status": "pass",
-      "duration_seconds": 0.03,
+      "duration_seconds": 0.02,
       "metrics": {
         "pipeline_stages": 12,
         "pipeline_stages_passed": 12,
         "pipeline_stages_failed": 0,
         "pipeline_stages_warning": 0,
-        "pipeline_total_duration_seconds": 0.0317,
+        "pipeline_total_duration_seconds": 0.0181,
         "pipeline_results": [
           {
             "stage": "git_change",
             "name": "Git Change Detection",
             "status": "pass",
-            "duration_seconds": 0.0175,
+            "duration_seconds": 0.0111,
             "findings_count": 1
           },
           {
             "stage": "planner",
             "name": "Verification Planner",
             "status": "pass",
-            "duration_seconds": 0.0003,
+            "duration_seconds": 0.0002,
             "findings_count": 1
           },
           {
@@ -8291,49 +9776,49 @@
             "stage": "results",
             "name": "Results Collection",
             "status": "pass",
-            "duration_seconds": 0.0002,
+            "duration_seconds": 0.0001,
             "findings_count": 1
           },
           {
             "stage": "evidence",
             "name": "Evidence Aggregation",
             "status": "pass",
-            "duration_seconds": 0.0015,
+            "duration_seconds": 0.0009,
             "findings_count": 1
           },
           {
             "stage": "knowledge",
             "name": "Knowledge Indexing",
             "status": "pass",
-            "duration_seconds": 0.0048,
+            "duration_seconds": 0.0025,
             "findings_count": 1
           },
           {
             "stage": "workspace",
             "name": "Workspace Rendering",
             "status": "pass",
-            "duration_seconds": 0.0022,
+            "duration_seconds": 0.0013,
             "findings_count": 1
           },
           {
             "stage": "dashboard",
             "name": "Dashboard Generation",
             "status": "pass",
-            "duration_seconds": 0.0003,
+            "duration_seconds": 0.0001,
             "findings_count": 1
           },
           {
             "stage": "github",
             "name": "GitHub Reporting",
             "status": "pass",
-            "duration_seconds": 0.0003,
+            "duration_seconds": 0.0001,
             "findings_count": 1
           },
           {
             "stage": "artifact",
             "name": "Artifact Management",
             "status": "pass",
-            "duration_seconds": 0.0045,
+            "duration_seconds": 0.0017,
             "findings_count": 1
           },
           {
@@ -8355,21 +9840,21 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Git is available and 36 changed files detected",
+          "message": "Git is available and 30 changed files detected",
           "details": {
             "git_available": true,
-            "changed_files_count": 36,
+            "changed_files_count": 30,
             "changed_files": [
-              "runtime/foundation/audit/artifact_ownership.py",
-              "runtime/foundation/audit/cross_layer.py",
-              "runtime/foundation/audit/performance.py",
-              "runtime/foundation/integrity/scanner.py",
-              "runtime/foundation/intelligence/__init__.py",
-              "runtime/foundation/intelligence/affected.py",
-              "runtime/foundation/intelligence/diagnostics.py",
-              "runtime/foundation/intelligence/formatter.py",
-              "runtime/foundation/intelligence/models.py",
-              "runtime/foundation/intelligence/repair.py"
+              "frontend/types/financial.ts",
+              "runtime/generated/artifact-ownership.json",
+              "runtime/generated/blast-radius.json",
+              "runtime/generated/change-intelligence.json",
+              "runtime/generated/cli-consistency.json",
+              "runtime/generated/engineering-events.jsonl",
+              "runtime/generated/engineering-history.json",
+              "runtime/generated/engineering-memory.json",
+              "runtime/generated/engineering-platform-audit-v5.json",
+              "runtime/generated/engineering-platform-audit.json"
             ]
           },
           "recommendation": "Continue monitoring git change detection"
@@ -8381,10 +9866,10 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Planner generated plan plan-20260806-143130 with 1 steps and 1 targets",
+          "message": "Planner generated plan plan-20260806-164757 with 1 steps and 1 targets",
           "details": {
             "planner_stage_passed": true,
-            "plan_id": "plan-20260806-143130",
+            "plan_id": "plan-20260806-164757",
             "plan_scope": "quick",
             "plan_targets": 1,
             "plan_steps": 1,
@@ -8433,7 +9918,7 @@
           "details": {
             "results_stage_passed": true,
             "results_file_exists": true,
-            "results_file_size": 5166,
+            "results_file_size": 4334,
             "results_has_content": true
           },
           "recommendation": "Continue collecting results"
@@ -8532,10 +10017,10 @@
           "status": "pass",
           "severity": "info",
           "priority": "low",
-          "message": "Artifact directory exists with 112 files",
+          "message": "Artifact directory exists with 166 files",
           "details": {
             "artifact_dir_exists": true,
-            "artifact_files_count": 112,
+            "artifact_files_count": 166,
             "artifact_stage_passed": true
           },
           "recommendation": "Continue managing artifacts"
@@ -8564,7 +10049,7 @@
           "message": "All 12 pipeline stages passed successfully",
           "details": {
             "total_stages": 12,
-            "total_duration": 0.0317
+            "total_duration": 0.0181
           },
           "recommendation": "Continue monitoring pipeline execution"
         }
@@ -8574,7 +10059,7 @@
       "section": "roi",
       "name": "Engineering ROI Audit",
       "status": "pass",
-      "duration_seconds": 1.02,
+      "duration_seconds": 0.66,
       "metrics": {
         "without_runtime": {
           "repository_files_manually_inspected": 0,
@@ -8597,11 +10082,11 @@
           "total_runtime_time_seconds": 31.0
         },
         "manual_inspection": {
-          "total_python_files": 6209,
-          "backend_python_files": 5967,
-          "runtime_python_files": 196,
+          "total_python_files": 6217,
+          "backend_python_files": 5966,
+          "runtime_python_files": 205,
           "manual_inspection_time_per_file_seconds": 120.0,
-          "manual_inspection_total_time_seconds": 745080.0
+          "manual_inspection_total_time_seconds": 746040.0
         },
         "commands_executed": {
           "manual_commands_per_session": 15,
@@ -8708,7 +10193,7 @@
     "runtime_cli": "pass",
     "github_runtime": "pass",
     "verification_profiles": "pass",
-    "artifact_ownership": "pass",
+    "artifact_ownership": "fail",
     "performance": "pass",
     "failure_injection": "pass",
     "pipeline": "pass",

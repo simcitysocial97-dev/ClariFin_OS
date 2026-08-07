@@ -8,33 +8,10 @@ Validates service layer behavior without database mutation.
 Run: python -m pytest tests/test_services.py -v
 """
 
-import os
-import tempfile
-
 import pytest
 
-# Add src to path
-from src.db import FinanceDB
 from src.services.dashboard_service import DashboardService
 from src.services.reconciliation_service import ReconciliationService
-
-# ============================================================
-# Fixtures
-# ============================================================
-
-
-@pytest.fixture
-def temp_db():
-    """Create a temporary database for testing."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-
-    FinanceDB(db_path=db_path)
-
-    yield db_path
-
-    os.unlink(db_path)
-
 
 # ============================================================
 # Dashboard Service Tests

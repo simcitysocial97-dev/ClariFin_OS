@@ -1,0 +1,97 @@
+{
+  "schema": "debt-wave1/v1",
+  "generated_at": "2026-08-07T03:25:00.000000Z",
+  "program": "19.0",
+  "phase": "Phase 7 - Technical Debt Reduction",
+  "total_items": 8,
+  "summary": {
+    "executed": 0,
+    "deferred": 8,
+    "executed_deletions": 0,
+    "executed_migrations": 0,
+    "executed_implementations": 0,
+    "executed_consolidations": 0,
+    "executed_test_additions": 0
+  },
+  "items": [
+    {
+      "id": "DELETE-duplicate-behaviour-ownership",
+      "type": "deletion",
+      "target": "behavior_engine.py (legacy) vs behaviour_engine/ (canonical)",
+      "priority": 1,
+      "risk": "LOW",
+      "decision": "DEFERRED",
+      "decision_reason": "Safe Delete classification requires zero test references. behavior_engine.py has 52 test references. Cannot delete without Phase 5 test alignment, which requires migration to be completed first. Migration of insight_generator/nudge_engine is deferred, blocking this deletion."
+    },
+    {
+      "id": "DELETE-unused-base_service",
+      "type": "deletion",
+      "target": "backend/src/services/base_service.py",
+      "priority": 1,
+      "risk": "LOW",
+      "decision": "ALREADY COMPLETED",
+      "decision_reason": "File already deleted in Program 18. Repository cleanup executed. No further action needed."
+    },
+    {
+      "id": "DELETE-orphan-frontend-financial-types",
+      "type": "deletion",
+      "target": "frontend/types/financial.ts",
+      "priority": 1,
+      "risk": "LOW",
+      "decision": "ALREADY COMPLETED",
+      "decision_reason": "File already deleted in Program 18. Repository cleanup executed. No further action needed."
+    },
+    {
+      "id": "MIGRATE-insight_generator.py",
+      "type": "migration",
+      "target": "backend/src/engines/insight_generator.py",
+      "priority": 2,
+      "risk": "MEDIUM",
+      "decision": "DEFERRED",
+      "decision_reason": "Ownership ambiguous (canonical_implementation=null in engine-convergence.json). Program 19.0 explicitly prohibits automatic merge of insight_generator. Dependency on DELETE-cashflow_engine-parked not met (parked file preserved)."
+    },
+    {
+      "id": "MIGRATE-nudge_engine.py",
+      "type": "migration",
+      "target": "backend/src/engines/nudge_engine.py",
+      "priority": 2,
+      "risk": "MEDIUM",
+      "decision": "DEFERRED",
+      "decision_reason": "Ownership ambiguous (canonical_implementation=null in engine-convergence.json). Program 19.0 explicitly prohibits automatic merge of nudge_engine. Depends on MIGRATE-insight_generator which is deferred."
+    },
+    {
+      "id": "WORKSPACE-GAPS",
+      "type": "implementation",
+      "target": "frontend workspaces without backend capability",
+      "priority": 3,
+      "risk": "MEDIUM",
+      "decision": "DEFERRED",
+      "decision_reason": "Requires creating new backend capabilities. Program 19.0 Phase 3 prohibits synthetic capability creation. No placeholder workspaces allowed."
+    },
+    {
+      "id": "WORKSPACE-ROUTER-CONSOLIDATION",
+      "type": "consolidation",
+      "target": "backend/src/routers/*_workspace.py",
+      "priority": 4,
+      "risk": "MEDIUM",
+      "decision": "DEFERRED",
+      "decision_reason": "Would require router restructuring. Program 19.0 Phase 4 explicitly forbids router restructuring, URL changes, and request/response changes."
+    },
+    {
+      "id": "TEST-ADD-INTERACTION",
+      "type": "test_addition",
+      "target": "backend/tests/integration/",
+      "priority": 5,
+      "risk": "LOW",
+      "decision": "DEFERRED",
+      "decision_reason": "Outside Wave 1 scope. No repository artifacts were migrated, so no test alignment is needed. Adding new integration tests is test addition, not test alignment. Verification command is python3 runtime/verify.py backend (heavyweight profile - delegated to CI only)."
+    }
+  ],
+  "additional_notes": [
+    "No technical debt items executed during Wave 1.",
+    "All 8 items deferred or already completed.",
+    "No architectural redesign performed.",
+    "No speculative cleanup performed.",
+    "No cosmetic refactoring performed."
+  ]
+}

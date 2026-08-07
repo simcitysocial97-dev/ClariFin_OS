@@ -7,12 +7,9 @@ Run: cd backend && ./venv/bin/python3 -m pytest tests/test_institution_repositor
 """
 
 import json
-import os
-import tempfile
 
 import pytest
 
-from db import FinanceDB
 from src.repositories.institution_repository import InstitutionRepository
 
 
@@ -34,197 +31,123 @@ def _create_institutions_table(db_path: str) -> None:
     conn.close()
 
 
-# ============================================================
-# Test: Institution CRUD Operations
-# ============================================================
+@pytest.fixture
+def db_path(temp_db: str) -> str:
+    """Schema-initialized database with institutions table."""
+    _create_institutions_table(temp_db)
+    return temp_db
 
 
-def test_institution_create_and_get():
+def test_institution_create_and_get(db_path: str) -> None:
     """Verify institution creation and retrieval."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    inst_id = repo.create(
+        institution_id="HDFC",
+        name="HDFC Bank",
+        institution_type="BANK",
+        interest_rate_bps=350,
+        supported_features_json=json.dumps(["UPI", "IMPS", "NEFT"]),
+    )
 
-        # Create institution
-        inst_id = repo.create(
-            institution_id="HDFC",
-            name="HDFC Bank",
-            institution_type="BANK",
-            interest_rate_bps=350,  # 3.5%
-            supported_features_json=json.dumps(["UPI", "IMPS", "NEFT"]),
-        )
+    assert inst_id == "HDFC"
 
-        assert inst_id == "HDFC"
-
-        # Get institution
-        inst = repo.get("HDFC")
-        assert inst is not None
-        assert inst["name"] == "HDFC Bank"
-        assert inst["type"] == "BANK"
-        assert inst["interest_rate_bps"] == 350
-
-    finally:
-        os.unlink(db_path)
+    inst = repo.get("HDFC")
+    assert inst is not None
+    assert inst["name"] == "HDFC Bank"
+    assert inst["type"] == "BANK"
+    assert inst["interest_rate_bps"] == 350
 
 
-def test_institution_list():
+def test_institution_list(db_path: str) -> None:
     """Verify listing institutions."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    repo.create("HDFC", "HDFC Bank", "BANK", 350)
+    repo.create("ICICI", "ICICI Bank", "BANK", 340)
+    repo.create("PAYTM", "Paytm Payments Bank", "WALLET", 400)
 
-        # Create multiple institutions
-        repo.create("HDFC", "HDFC Bank", "BANK", 350)
-        repo.create("ICICI", "ICICI Bank", "BANK", 340)
-        repo.create("PAYTM", "Paytm Payments Bank", "WALLET", 400)
+    insts = repo.list()
+    assert len(insts) == 3
 
-        insts = repo.list()
-        assert len(insts) == 3
-
-        names = {inst["name"] for inst in insts}
-        assert "HDFC Bank" in names
-        assert "ICICI Bank" in names
-        assert "Paytm Payments Bank" in names
-
-    finally:
-        os.unlink(db_path)
+    names = {inst["name"] for inst in insts}
+    assert "HDFC Bank" in names
+    assert "ICICI Bank" in names
+    assert "Paytm Payments Bank" in names
 
 
-def test_institution_update():
+def test_institution_update(db_path: str) -> None:
     """Verify institution update."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    repo.create("HDFC", "HDFC Bank", "BANK", 350)
 
-        repo.create("HDFC", "HDFC Bank", "BANK", 350)
+    inst = repo.update("HDFC", interest_rate_bps=360)
+    assert inst is not None
+    assert inst["interest_rate_bps"] == 360
 
-        # Update interest rate
-        inst = repo.update("HDFC", interest_rate_bps=360)
-        assert inst is not None
-        assert inst["interest_rate_bps"] == 360
-
-        # Update name
-        inst = repo.update("HDFC", name="HDFC Bank Ltd")
-        assert inst is not None
-        assert inst["name"] == "HDFC Bank Ltd"
-
-    finally:
-        os.unlink(db_path)
+    inst = repo.update("HDFC", name="HDFC Bank Ltd")
+    assert inst is not None
+    assert inst["name"] == "HDFC Bank Ltd"
 
 
-def test_institution_delete():
+def test_institution_delete(db_path: str) -> None:
     """Verify institution deletion."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    repo.create("HDFC", "HDFC Bank", "BANK", 350)
 
-        repo.create("HDFC", "HDFC Bank", "BANK", 350)
+    inst = repo.get("HDFC")
+    assert inst is not None
 
-        inst = repo.get("HDFC")
-        assert inst is not None
+    result = repo.delete("HDFC")
+    assert result is True
 
-        result = repo.delete("HDFC")
-        assert result is True
-
-        inst = repo.get("HDFC")
-        assert inst is None
-
-    finally:
-        os.unlink(db_path)
+    inst = repo.get("HDFC")
+    assert inst is None
 
 
-def test_duplicate_institution_handling():
+def test_duplicate_institution_handling(db_path: str) -> None:
     """Verify duplicate institutions are ignored gracefully."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    repo.create("HDFC", "HDFC Bank", "BANK", 350)
 
-        # Create institution
-        repo.create("HDFC", "HDFC Bank", "BANK", 350)
+    repo.create("HDFC", "HDFC Bank Updated", "BANK", 400)
 
-        # Try to create duplicate - should be ignored
-        repo.create("HDFC", "HDFC Bank Updated", "BANK", 400)
+    inst = repo.get("HDFC")
+    assert inst is not None
+    assert inst["interest_rate_bps"] == 350, "Original rate preserved"
 
-        # Verify original preserved
-        inst = repo.get("HDFC")
-        assert inst is not None
-        assert inst["interest_rate_bps"] == 350, "Original rate preserved"
-
-        # Verify only one record
-        insts = repo.list()
-        assert len(insts) == 1
-
-    finally:
-        os.unlink(db_path)
+    insts = repo.list()
+    assert len(insts) == 1
 
 
-def test_institution_types():
+def test_institution_types(db_path: str) -> None:
     """Verify all institution types work."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    repo.create("HDFC", "HDFC Bank", "BANK", 350)
+    repo.create("PAYTM", "Paytm", "WALLET", 400)
+    repo.create("ZERODHA", "Zerodha", "BROKER", None)
+    repo.create("OTHER", "Other", "OTHER", None)
 
-        repo.create("HDFC", "HDFC Bank", "BANK", 350)
-        repo.create("PAYTM", "Paytm", "WALLET", 400)
-        repo.create("ZERODHA", "Zerodha", "BROKER", None)
-        repo.create("OTHER", "Other", "OTHER", None)
+    insts = repo.list()
+    types = {inst["type"] for inst in insts}
 
-        insts = repo.list()
-        types = {inst["type"] for inst in insts}
-
-        assert "BANK" in types
-        assert "WALLET" in types
-        assert "BROKER" in types
-        assert "OTHER" in types
-
-    finally:
-        os.unlink(db_path)
+    assert "BANK" in types
+    assert "WALLET" in types
+    assert "BROKER" in types
+    assert "OTHER" in types
 
 
-def test_get_nonexistent_institution():
+def test_get_nonexistent_institution(db_path: str) -> None:
     """Verify get returns None for non-existent institution."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
+    repo = InstitutionRepository(db_path=db_path)
 
-    try:
-        FinanceDB(db_path=db_path)
-        _create_institutions_table(db_path)
-        repo = InstitutionRepository(db_path=db_path)
+    inst = repo.get("NONEXISTENT")
+    assert inst is None
 
-        inst = repo.get("NONEXISTENT")
-        assert inst is None
-
-    finally:
-        os.unlink(db_path)
-
-
-# ============================================================
-# Run Tests
-# ============================================================
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

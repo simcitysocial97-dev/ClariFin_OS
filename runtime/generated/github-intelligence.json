@@ -1,7 +1,7 @@
 {
   "schema": "github-intelligence/v1",
-  "generated_at": "2026-08-06T14:13:02.173662+00:00",
-  "available": false,
+  "generated_at": "2026-08-06T15:06:55.942128+00:00",
+  "available": true,
   "retrieval_policy": {
     "order": [
       "run_metadata",
@@ -16,21 +16,215 @@
     "full_log_archive_download": "never",
     "failed_step_logs": "opt-in only (allow_logs=True)"
   },
-  "runs": [],
-  "failed_jobs": [],
+  "runs": [
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-06T14:36:24Z",
+      "databaseId": 31111663779,
+      "event": "push",
+      "headBranch": "feature/program-12-platform-certification",
+      "name": "Quality Gate",
+      "status": "completed",
+      "workflowName": "Quality Gate"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-06T14:36:24Z",
+      "databaseId": 31111663717,
+      "event": "push",
+      "headBranch": "feature/program-12-platform-certification",
+      "name": "Backend Verification",
+      "status": "completed",
+      "workflowName": "Backend Verification"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-06T14:36:24Z",
+      "databaseId": 31111663448,
+      "event": "push",
+      "headBranch": "feature/program-12-platform-certification",
+      "name": "Verification Runtime",
+      "status": "completed",
+      "workflowName": "Verification Runtime"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-06T14:36:24Z",
+      "databaseId": 31111663386,
+      "event": "push",
+      "headBranch": "feature/program-12-platform-certification",
+      "name": "Frontend Verification",
+      "status": "completed",
+      "workflowName": "Frontend Verification"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-06T05:39:35Z",
+      "databaseId": 31074785700,
+      "event": "schedule",
+      "headBranch": "main",
+      "name": "Golden Dataset Regression",
+      "status": "completed",
+      "workflowName": "Golden Dataset Regression"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-06T04:54:22Z",
+      "databaseId": 31072553675,
+      "event": "schedule",
+      "headBranch": "main",
+      "name": "Mutation Testing",
+      "status": "completed",
+      "workflowName": "Mutation Testing"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-05T14:13:48Z",
+      "databaseId": 31014121494,
+      "event": "push",
+      "headBranch": "main",
+      "name": "Playwright Tests",
+      "status": "completed",
+      "workflowName": "Playwright Tests"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-05T14:13:48Z",
+      "databaseId": 31014121298,
+      "event": "push",
+      "headBranch": "main",
+      "name": "Quality Gate",
+      "status": "completed",
+      "workflowName": "Quality Gate"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-05T14:13:34Z",
+      "databaseId": 31014100124,
+      "event": "pull_request",
+      "headBranch": "fix/workflow-platform-consolidation",
+      "name": "Playwright Tests",
+      "status": "completed",
+      "workflowName": "Playwright Tests"
+    },
+    {
+      "conclusion": "failure",
+      "createdAt": "2026-08-05T14:13:33Z",
+      "databaseId": 31014099072,
+      "event": "pull_request",
+      "headBranch": "fix/workflow-platform-consolidation",
+      "name": "Quality Gate",
+      "status": "completed",
+      "workflowName": "Quality Gate"
+    }
+  ],
+  "failed_jobs": [
+    {
+      "run_id": 31111663779,
+      "job_id": 92650719176,
+      "name": "Quality Gate",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run quick verification",
+          "number": 4,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663779/job/92650719176"
+    },
+    {
+      "run_id": 31111663717,
+      "job_id": 92650721955,
+      "name": "Backend Verification",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run backend verification",
+          "number": 4,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663717/job/92650721955"
+    },
+    {
+      "run_id": 31111663448,
+      "job_id": 92650718565,
+      "name": "Runtime Verification",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run runtime verification",
+          "number": 4,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663448/job/92650718565"
+    },
+    {
+      "run_id": 31111663386,
+      "job_id": 92650718002,
+      "name": "Frontend Verification",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run frontend verification",
+          "number": 5,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663386/job/92650718002"
+    },
+    {
+      "run_id": 31074785700,
+      "job_id": 92530464881,
+      "name": "Regression Comparison",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Download golden results",
+          "number": 3,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31074785700/job/92530464881"
+    }
+  ],
   "annotations": [],
   "artifacts": [],
   "logs_fetched": [],
   "counts": {
-    "runs": 0,
-    "failed_jobs": 0,
+    "runs": 10,
+    "failed_jobs": 5,
     "annotations": 0,
     "artifacts": 0,
     "logs_fetched": 0,
-    "api_calls": 0
+    "api_calls": 21
   },
-  "api_calls": [],
+  "api_calls": [
+    "gh run list --limit 10 --json databaseId,name,conclusion,status,headBranch,event,createdAt,workflowName",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663779/jobs",
+    "gh api repos/{owner}/{repo}/check-runs/31111663779/annotations",
+    "gh run view 31111663779 --json annotations",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663779/artifacts",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663717/jobs",
+    "gh api repos/{owner}/{repo}/check-runs/31111663717/annotations",
+    "gh run view 31111663717 --json annotations",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663717/artifacts",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663448/jobs",
+    "gh api repos/{owner}/{repo}/check-runs/31111663448/annotations",
+    "gh run view 31111663448 --json annotations",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663448/artifacts",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663386/jobs",
+    "gh api repos/{owner}/{repo}/check-runs/31111663386/annotations",
+    "gh run view 31111663386 --json annotations",
+    "gh api repos/{owner}/{repo}/actions/runs/31111663386/artifacts",
+    "gh api repos/{owner}/{repo}/actions/runs/31074785700/jobs",
+    "gh api repos/{owner}/{repo}/check-runs/31074785700/annotations",
+    "gh run view 31074785700 --json annotations",
+    "gh api repos/{owner}/{repo}/actions/runs/31074785700/artifacts"
+  ],
   "notes": [
-    "CI collection disabled for this run"
+    "5 failed job(s) found; logs NOT fetched (annotations and step metadata were sufficient). Pass allow_logs=True to retrieve failed-step logs."
   ]
 }

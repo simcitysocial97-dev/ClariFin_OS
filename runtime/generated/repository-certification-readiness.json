@@ -1,0 +1,107 @@
+{
+  "schema": "repository-certification-readiness/v1",
+  "generated_at": "2026-08-06T16:13:48.480345+00:00",
+  "program": "16.0",
+  "readiness": {
+    "backend": {
+      "status": "CONDITIONAL",
+      "score": 85,
+      "evidence": "13 engines, 10 with capabilities; 23 routers registered but only 10 in execution graph; 2 unused repositories; 7 orphan services",
+      "blocking_issues": [
+        "23 routers not in execution graph (0.5 capacity gap)",
+        "2 unused repositories (alert_repository, reconciliation_audit_repository)",
+        "7 orphan services with no router"
+      ],
+      "passed": [
+        "Engines properly classified",
+        "Capabilities correctly linked",
+        "Ownership graph consistent"
+      ]
+    },
+    "frontend": {
+      "status": "CONDITIONAL",
+      "score": 80,
+      "evidence": "11 capabilities, 10 mappers, 8 workspace pages; orphan types/financial.ts (0 importers)",
+      "blocking_issues": [
+        "Dead type file: frontend/types/financial.ts",
+        "Duplicate Money/MoneyViewModel types across 3+ files"
+      ],
+      "passed": [
+        "Capabilities properly registered",
+        "Mappers aligned with backend DTOs",
+        "Components linked to workspaces"
+      ]
+    },
+    "runtime": {
+      "status": "PASS",
+      "score": 100,
+      "evidence": "Program 15 certification CERTIFIED; single discovery pipeline; canonical provider operational",
+      "blocking_issues": [],
+      "passed": [
+        "All 15 certification checks pass",
+        "No runtime weakening",
+        "Single source of truth"
+      ]
+    },
+    "tests": {
+      "status": "CONDITIONAL",
+      "score": 92,
+      "evidence": "12/13 engines tested; insight_generator has 0 tests; 123 test modules total",
+      "blocking_issues": [
+        "insight_generator has no tests"
+      ],
+      "passed": [
+        "account_engine tested",
+        "behaviour_engine tested",
+        "credit_card_engine tested",
+        "loan_engine tested",
+        "reconciliation_engine tested"
+      ]
+    },
+    "ci": {
+      "status": "PASS",
+      "score": 95,
+      "evidence": "GitHub workflows operational; path filtering correct; no failing workflows",
+      "blocking_issues": [],
+      "passed": [
+        "Backend verification works",
+        "Frontend verification works",
+        "Runtime verification works"
+      ]
+    },
+    "architecture": {
+      "status": "CONDITIONAL",
+      "score": 88,
+      "evidence": "13 canonical engines; 8 packages, 5 single-file; 2 parked facades; 2 orphan engines",
+      "blocking_issues": [
+        "behavior_engine.py parked legacy not deleted",
+        "cashflow_engine.py.parked not deleted",
+        "insight_generator and nudge_engine orphans not migrated"
+      ],
+      "passed": [
+        "Canonical provider operational",
+        "Ownership graph consistent",
+        "Execution graph complete for capability-owned engines"
+      ]
+    },
+    "engineering_platform": {
+      "status": "PASS",
+      "score": 100,
+      "evidence": "Program 15 certification CERTIFIED; all 21 audit sections pass",
+      "blocking_issues": [],
+      "passed": [
+        "Repository Index",
+        "Dependency Graph",
+        "Cross-Layer Map",
+        "Knowledge Base",
+        "Integrity Engine"
+      ]
+    }
+  },
+  "overall": {
+    "status": "CONDITIONAL",
+    "score": 90,
+    "blocking_issues": 9,
+    "passed_sections": 3
+  }
+}

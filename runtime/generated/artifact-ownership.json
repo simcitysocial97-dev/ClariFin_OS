@@ -1,10 +1,437 @@
 {
-  "overall_status": "pass",
+  "overall_status": "fail",
   "artifacts": [
     {
-      "name": "All artifacts have registered owners",
-      "status": "pass",
-      "details": {}
+      "name": "Artifact has no registered owner: repository-cleanup-executed.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-cleanup-executed.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-executed.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: workspace-completion.json",
+      "status": "warning",
+      "details": {
+        "artifact": "workspace-completion.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workspace-completion.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: deletion-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "deletion-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/deletion-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: platform-accuracy.py",
+      "status": "warning",
+      "details": {
+        "artifact": "platform-accuracy.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: end-to-end-pipeline.json",
+      "status": "warning",
+      "details": {
+        "artifact": "end-to-end-pipeline.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/end-to-end-pipeline.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: production-readiness-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "production-readiness-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: duplicate-implementation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "duplicate-implementation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/duplicate-implementation.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: engineering-platform-audit-v6.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v6.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v6.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: engineering-platform-audit-v9.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v9.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v9.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: test-modernization-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "test-modernization-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: dependency-health-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "dependency-health-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/dependency-health-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-modernization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-modernization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-modernization.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-gap-analysis.py",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-gap-analysis.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-canonicalization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-canonicalization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-canonicalization.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: production-readiness.json",
+      "status": "warning",
+      "details": {
+        "artifact": "production-readiness.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: test-modernization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "test-modernization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-readiness.py",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-readiness.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: workflow-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "workflow-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: architectural-drift.json",
+      "status": "warning",
+      "details": {
+        "artifact": "architectural-drift.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/architectural-drift.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-certification-readiness.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-certification-readiness.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-certification-readiness.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-gap-analysis.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-gap-analysis.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: engineering-platform-audit-v7.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v7.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v7.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: program15-validation-report.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program15-validation-report.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program15-validation-report.md"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-readiness.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-readiness.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: program18-certification.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program18-certification.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program18-certification.md"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-cleanup-roadmap.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-cleanup-roadmap.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-roadmap.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: real-defect-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "real-defect-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: workflow-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "workflow-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: real-defect-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "real-defect-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-simplification.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-simplification.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-simplification.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: runtime-reachability.json",
+      "status": "warning",
+      "details": {
+        "artifact": "runtime-reachability.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/runtime-reachability.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: program16-certification.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program16-certification.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program16-certification.md"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: framework-gap-register.json",
+      "status": "warning",
+      "details": {
+        "artifact": "framework-gap-register.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: engineering-platform-audit-v8.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v8.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v8.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: ci-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "ci-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-technical-debt.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-technical-debt.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-technical-debt.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: capability-completion-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "capability-completion-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: test-ownership.json",
+      "status": "warning",
+      "details": {
+        "artifact": "test-ownership.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-ownership.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: program17-certification.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program17-certification.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program17-certification.md"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: framework-gap-register.py",
+      "status": "warning",
+      "details": {
+        "artifact": "framework-gap-register.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: engine-convergence.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engine-convergence.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-convergence.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-migration-dag.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-migration-dag.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-migration-dag.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: technical-debt-execution.json",
+      "status": "warning",
+      "details": {
+        "artifact": "technical-debt-execution.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/technical-debt-execution.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: api-convergence.json",
+      "status": "warning",
+      "details": {
+        "artifact": "api-convergence.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-convergence.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: productivity-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "productivity-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: ci-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "ci-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: capability-completion.json",
+      "status": "warning",
+      "details": {
+        "artifact": "capability-completion.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: platform-accuracy.json",
+      "status": "warning",
+      "details": {
+        "artifact": "platform-accuracy.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: api-canonicalization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "api-canonicalization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-canonicalization.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: repository-health-baseline.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-health-baseline.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-health-baseline.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: productivity-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "productivity-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: engine-migration-plan.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engine-migration-plan.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-migration-plan.json"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: verify-stderr-4x3uvgif.txt",
+      "status": "warning",
+      "details": {
+        "artifact": "verify-stderr-4x3uvgif.txt",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stderr-4x3uvgif.txt"
+      }
+    },
+    {
+      "name": "Artifact has no registered owner: verify-stdout-g7qtlb_q.txt",
+      "status": "warning",
+      "details": {
+        "artifact": "verify-stdout-g7qtlb_q.txt",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stdout-g7qtlb_q.txt"
+      }
     },
     {
       "name": "No artifact overwrites detected",
@@ -12,9 +439,436 @@
       "details": {}
     },
     {
-      "name": "All artifacts have retention policies",
-      "status": "pass",
-      "details": {}
+      "name": "Artifact has no retention policy: repository-cleanup-executed.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-cleanup-executed.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-executed.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: workspace-completion.json",
+      "status": "warning",
+      "details": {
+        "artifact": "workspace-completion.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workspace-completion.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: deletion-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "deletion-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/deletion-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: platform-accuracy.py",
+      "status": "warning",
+      "details": {
+        "artifact": "platform-accuracy.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: end-to-end-pipeline.json",
+      "status": "warning",
+      "details": {
+        "artifact": "end-to-end-pipeline.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/end-to-end-pipeline.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: production-readiness-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "production-readiness-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: duplicate-implementation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "duplicate-implementation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/duplicate-implementation.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: engineering-platform-audit-v6.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v6.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v6.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: engineering-platform-audit-v9.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v9.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v9.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: test-modernization-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "test-modernization-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: dependency-health-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "dependency-health-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/dependency-health-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-modernization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-modernization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-modernization.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-gap-analysis.py",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-gap-analysis.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-canonicalization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-canonicalization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-canonicalization.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: production-readiness.json",
+      "status": "warning",
+      "details": {
+        "artifact": "production-readiness.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/production-readiness.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: test-modernization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "test-modernization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-modernization.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-readiness.py",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-readiness.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: workflow-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "workflow-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: architectural-drift.json",
+      "status": "warning",
+      "details": {
+        "artifact": "architectural-drift.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/architectural-drift.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-certification-readiness.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-certification-readiness.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-certification-readiness.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-gap-analysis.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-gap-analysis.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-gap-analysis.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: engineering-platform-audit-v7.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v7.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v7.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: program15-validation-report.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program15-validation-report.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program15-validation-report.md"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-readiness.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-readiness.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-readiness.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: program18-certification.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program18-certification.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program18-certification.md"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-cleanup-roadmap.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-cleanup-roadmap.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-cleanup-roadmap.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: real-defect-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "real-defect-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: workflow-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "workflow-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/workflow-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: real-defect-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "real-defect-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/real-defect-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-simplification.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-simplification.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-simplification.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: runtime-reachability.json",
+      "status": "warning",
+      "details": {
+        "artifact": "runtime-reachability.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/runtime-reachability.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: program16-certification.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program16-certification.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program16-certification.md"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: framework-gap-register.json",
+      "status": "warning",
+      "details": {
+        "artifact": "framework-gap-register.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: engineering-platform-audit-v8.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engineering-platform-audit-v8.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engineering-platform-audit-v8.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: ci-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "ci-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-technical-debt.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-technical-debt.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-technical-debt.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: capability-completion-v2.json",
+      "status": "warning",
+      "details": {
+        "artifact": "capability-completion-v2.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion-v2.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: test-ownership.json",
+      "status": "warning",
+      "details": {
+        "artifact": "test-ownership.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/test-ownership.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: program17-certification.md",
+      "status": "warning",
+      "details": {
+        "artifact": "program17-certification.md",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/program17-certification.md"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: framework-gap-register.py",
+      "status": "warning",
+      "details": {
+        "artifact": "framework-gap-register.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/framework-gap-register.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: engine-convergence.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engine-convergence.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-convergence.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-migration-dag.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-migration-dag.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-migration-dag.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: technical-debt-execution.json",
+      "status": "warning",
+      "details": {
+        "artifact": "technical-debt-execution.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/technical-debt-execution.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: api-convergence.json",
+      "status": "warning",
+      "details": {
+        "artifact": "api-convergence.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-convergence.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: productivity-validation.json",
+      "status": "warning",
+      "details": {
+        "artifact": "productivity-validation.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: ci-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "ci-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/ci-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: capability-completion.json",
+      "status": "warning",
+      "details": {
+        "artifact": "capability-completion.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/capability-completion.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: platform-accuracy.json",
+      "status": "warning",
+      "details": {
+        "artifact": "platform-accuracy.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/platform-accuracy.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: api-canonicalization.json",
+      "status": "warning",
+      "details": {
+        "artifact": "api-canonicalization.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/api-canonicalization.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: repository-health-baseline.json",
+      "status": "warning",
+      "details": {
+        "artifact": "repository-health-baseline.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/repository-health-baseline.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: productivity-validation.py",
+      "status": "warning",
+      "details": {
+        "artifact": "productivity-validation.py",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/productivity-validation.py"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: engine-migration-plan.json",
+      "status": "warning",
+      "details": {
+        "artifact": "engine-migration-plan.json",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/engine-migration-plan.json"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: verify-stderr-4x3uvgif.txt",
+      "status": "warning",
+      "details": {
+        "artifact": "verify-stderr-4x3uvgif.txt",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stderr-4x3uvgif.txt"
+      }
+    },
+    {
+      "name": "Artifact has no retention policy: verify-stdout-g7qtlb_q.txt",
+      "status": "warning",
+      "details": {
+        "artifact": "verify-stdout-g7qtlb_q.txt",
+        "path": "/home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/verify-stdout-g7qtlb_q.txt"
+      }
     },
     {
       "name": "No duplicate artifact content detected",

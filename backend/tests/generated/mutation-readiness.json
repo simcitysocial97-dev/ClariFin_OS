@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-07-31T18:21:58.495064+00:00",
+  "generated_at": "2026-08-07T17:37:10.218174+00:00",
   "engines": [
     {
       "module_path": "src/engines/balance_engine.py",
-      "pure_functions": 0,
-      "impure_functions": 4,
+      "pure_functions": 4,
+      "impure_functions": 0,
       "unknown_functions": 0,
-      "readiness": "Blocked",
-      "killability_estimate": "LOW"
+      "readiness": "Ready",
+      "killability_estimate": "HIGH"
     },
     {
       "module_path": "src/engines/cashflow_engine.py",
@@ -18,40 +18,16 @@
       "killability_estimate": "HIGH"
     },
     {
-      "module_path": "src/engines/behavior_engine.py",
-      "pure_functions": 0,
-      "impure_functions": 5,
-      "unknown_functions": 0,
-      "readiness": "Blocked",
-      "killability_estimate": "LOW"
-    },
-    {
       "module_path": "src/engines/ledger_audit_engine.py",
-      "pure_functions": 0,
-      "impure_functions": 3,
-      "unknown_functions": 0,
-      "readiness": "Blocked",
-      "killability_estimate": "LOW"
-    },
-    {
-      "module_path": "src/engines/reconciliation_engine.py",
-      "pure_functions": 0,
-      "impure_functions": 2,
-      "unknown_functions": 0,
-      "readiness": "Blocked",
-      "killability_estimate": "LOW"
-    },
-    {
-      "module_path": "src/engines/insight_generator.py",
-      "pure_functions": 2,
+      "pure_functions": 3,
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
       "killability_estimate": "HIGH"
     },
     {
-      "module_path": "src/engines/nudge_engine.py",
-      "pure_functions": 3,
+      "module_path": "src/engines/reconciliation_engine.py",
+      "pure_functions": 2,
       "impure_functions": 0,
       "unknown_functions": 0,
       "readiness": "Ready",
@@ -267,11 +243,11 @@
     },
     {
       "module_path": "src/engines/behaviour_engine/core.py",
-      "pure_functions": 0,
-      "impure_functions": 0,
+      "pure_functions": 4,
+      "impure_functions": 1,
       "unknown_functions": 0,
       "readiness": "Partial",
-      "killability_estimate": "UNKNOWN"
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/income.py",
@@ -320,6 +296,14 @@
       "unknown_functions": 0,
       "readiness": "Ready",
       "killability_estimate": "HIGH"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/insights.py",
+      "pure_functions": 2,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
+      "killability_estimate": "MEDIUM"
     },
     {
       "module_path": "src/engines/behaviour_engine/patterns.py",
@@ -383,6 +367,14 @@
       "impure_functions": 1,
       "unknown_functions": 0,
       "readiness": "Partial",
+      "killability_estimate": "MEDIUM"
+    },
+    {
+      "module_path": "src/engines/behaviour_engine/nudges.py",
+      "pure_functions": 3,
+      "impure_functions": 0,
+      "unknown_functions": 0,
+      "readiness": "Ready",
       "killability_estimate": "MEDIUM"
     },
     {

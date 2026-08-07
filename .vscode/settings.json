@@ -27,5 +27,9 @@
   "python.terminal.activateEnvironment": true,
   "python.analysis.extraPaths": [
     "${workspaceFolder}/backend"
-  ]
+  ],
+
+  "terminal.integrated.env.linux": {
+    "PATH": "${workspaceFolder}/backend/venv/bin:${env:PATH}"
+  }
 }

@@ -7,9 +7,7 @@ on AccountRepository.
 Run: python -m pytest tests/test_household_repository.py -v
 """
 
-import os
 import sqlite3
-import tempfile
 
 import pytest
 
@@ -17,17 +15,13 @@ from repositories.account_repository import AccountRepository
 
 
 @pytest.fixture
-def multi_owner_db():
+def multi_owner_db(temp_db: str) -> str:
     """Create a temp DB with accounts spanning multiple owners/households."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(temp_db)
     conn.execute("PRAGMA foreign_keys=ON")
 
-    # Create accounts table WITH household columns (post-migration schema)
     conn.execute("""
-        CREATE TABLE accounts (
+        CREATE TABLE IF NOT EXISTS accounts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             bank TEXT NOT NULL,
@@ -43,12 +37,9 @@ def multi_owner_db():
         )
     """)
 
-    # Insert test accounts with various owner/household combos
     test_accounts = [
-        # Primary household, self-owned
         ("Savings A", "Bank1", "savings", "1234", 100000, 1, "self", "primary"),
         ("Current B", "Bank2", "current", "5678", 200000, 1, "self", "primary"),
-        # Primary household, spouse-owned
         ("Spouse Savings", "Bank1", "savings", "4321", 150000, 1, "spouse", "primary"),
         (
             "Spouse Credit",
@@ -60,9 +51,7 @@ def multi_owner_db():
             "spouse",
             "primary",
         ),
-        # Secondary household (vacation home), self-owned
         ("Vacation Account", "Bank4", "savings", "9999", 50000, 1, "self", "vacation"),
-        # Inactive account
         ("Closed Account", "Bank5", "savings", "0000", 0, 0, "self", "primary"),
     ]
     conn.executemany(
@@ -78,27 +67,19 @@ def multi_owner_db():
     conn.commit()
     conn.close()
 
-    yield db_path
-
-    os.unlink(db_path)
+    return temp_db
 
 
 @pytest.fixture
-def repo(multi_owner_db):
+def repo(multi_owner_db: str):
     """Create an AccountRepository connected to the temp DB."""
     return AccountRepository(multi_owner_db)
-
-
-# ============================================================
-# Tests
-# ============================================================
 
 
 def test_get_household_accounts_primary(repo):
     """Test getting all active accounts in the primary household."""
     accounts = repo.get_household_accounts("primary")
 
-    # Should return 4 active accounts from primary household
     names = {a["name"] for a in accounts}
     assert "Savings A" in names
     assert "Current B" in names
@@ -170,13 +151,11 @@ def test_accounts_by_owner_no_match(repo):
 
 def test_is_same_household_true(repo):
     """Test that two accounts in the same household return True."""
-    # Savings A (id=1) and Current B (id=2) are both in primary
     assert repo.is_same_household(1, 2) is True
 
 
 def test_is_same_household_false(repo):
     """Test that two accounts in different households return False."""
-    # Savings A (id=1) is in primary, Vacation Account (id=5) is in vacation
     assert repo.is_same_household(1, 5) is False
 
 
@@ -189,7 +168,6 @@ def test_is_same_household_nonexistent(repo):
 
 def test_is_same_household_spouse(repo):
     """Test that spouse and self accounts in same household return True."""
-    # Savings A (id=1, self) and Spouse Savings (id=3, spouse) are both primary
     assert repo.is_same_household(1, 3) is True
 
 

@@ -138,7 +138,7 @@ workflows:
     scope: "full"
     command: "bash .github/scripts/run_full_verification.sh"
     estimated_duration_seconds: 3600
-    scopes: ["quick", "backend", "frontend", "contracts", "property", "mutation", "integration", "migration", "repository", "runtime", "golden", "playwright", "full"]
+    scopes: ["full"]
 
   runtime:
     name: "Runtime Verification"

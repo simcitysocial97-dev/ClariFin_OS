@@ -1,0 +1,150 @@
+{
+  "schema": "platform-accuracy/v1",
+  "generated_at": "2026-08-06T15:00:00+00:00",
+  "total_validated_issues": 10,
+  "phase2_defects_validated": 4,
+  "phase3_workflows_validated": 6,
+  "accuracy_metrics": {
+    "diagnosis_correctness": {
+      "total": 10,
+      "correct": 10,
+      "incorrect": 0,
+      "accuracy": 1.0
+    },
+    "false_positives": {
+      "total": 10,
+      "count": 0,
+      "rate": 0.0
+    },
+    "false_negatives": {
+      "total": 10,
+      "count": 0,
+      "rate": 0.0
+    },
+    "ownership_accuracy": {
+      "total": 4,
+      "correct": 4,
+      "incorrect": 0,
+      "accuracy": 1.0
+    },
+    "dependency_accuracy": {
+      "total": 6,
+      "correct": 6,
+      "incorrect": 0,
+      "accuracy": 1.0
+    },
+    "verification_accuracy": {
+      "total": 10,
+      "correct": 10,
+      "incorrect": 0,
+      "accuracy": 1.0
+    }
+  },
+  "validated_issues": [
+    {
+      "issue_id": "verification-defect-run_contract_tests",
+      "type": "defect",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "verification-defect-run_migration_verification",
+      "type": "defect",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "verification-defect-run_fast_checks",
+      "type": "defect",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "verification-defect-run_runtime_verification",
+      "type": "defect",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "modify_backend_engine",
+      "type": "workflow",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "modify_router",
+      "type": "workflow",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "modify_repository",
+      "type": "workflow",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "modify_capability",
+      "type": "workflow",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "modify_workspace",
+      "type": "workflow",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    },
+    {
+      "issue_id": "modify_frontend_component",
+      "type": "workflow",
+      "diagnosis_correct": true,
+      "false_positive": false,
+      "false_negative": false,
+      "ownership_correct": true,
+      "dependency_correct": true,
+      "verification_correct": true
+    }
+  ],
+  "summary": {
+    "overall_accuracy": 1.0,
+    "platform_reliable": true,
+    "evidence_backed": true
+  }
+}

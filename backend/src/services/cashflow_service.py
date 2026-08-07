@@ -64,9 +64,7 @@ class CashflowService(BaseService):
                 direction: Literal["up", "down", "flat"] = (
                     "up"
                     if percentage_change > 0
-                    else "down"
-                    if percentage_change < 0
-                    else "flat"
+                    else "down" if percentage_change < 0 else "flat"
                 )
             else:
                 percentage_change = 0.0

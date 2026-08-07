@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { spacing, borderRadius, borderWidth, opacity, zIndex, duration, easing, fontFamily, fontSize, fontWeight, lineHeight, shadow, screen } from '@/lib/design-system/tokens';
-import { spacingPx } from '@/lib/design-system/spacing';
+import { borderRadius, borderWidth, opacity, zIndex, duration, easing, fontFamily, fontSize, fontWeight, lineHeight, shadow, screen } from '@/lib/design-system/tokens';
+import { spacing, spacingPx } from '@/lib/design-system/spacing';
 import { financialColors, nodeTypeColors, edgeTypeColors, confidenceColors, riskColors, uiColors } from '@/lib/design-system/colors';
 import { financialTypography, typographyClasses } from '@/lib/design-system/typography';
 import { densityConfig, densityClasses, DEFAULT_DENSITY, getDensityConfig, getDensityClass } from '@/lib/design-system/density';

@@ -1,6 +1,6 @@
 {
   "schema": "runtime-simplification/v1",
-  "generated_at": "2026-08-06T14:24:40.189819+00:00",
+  "generated_at": "2026-08-06T15:11:31.355094+00:00",
   "modules_retired": 6,
   "duplicated_algorithms_removed": 9,
   "duplicated_graph_traversals_removed": 1,
@@ -16,7 +16,7 @@
     "duplicate_repair_planners_eliminated": 1
   },
   "execution_improvement": {
-    "canonical_analysis_seconds": 0.0098,
+    "canonical_analysis_seconds": 0.0109,
     "note": "single provider read + shared resolver; no duplicated CrossLayerImpactPlanner runs per command"
   }
 }

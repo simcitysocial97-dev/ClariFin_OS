@@ -1,6 +1,6 @@
 {
   "schema": "verification-cost/v1",
-  "generated_at": "2026-08-06T14:13:02.173840+00:00",
+  "generated_at": "2026-08-06T15:06:55.942366+00:00",
   "model": {
     "ci_usd_per_minute": 0.008,
     "cpu_weight_by_category": {
@@ -15,16 +15,7 @@
     },
     "calibration": "durations are taken from verification profile estimated_duration_seconds; no invented constants"
   },
-  "selected": [
-    {
-      "id": "runtime-self-test",
-      "category": "runtime",
-      "expected_runtime_seconds": 120,
-      "cpu_core_seconds": 120.0,
-      "ci_minutes": 2.0,
-      "ci_usd": 0.016
-    }
-  ],
+  "selected": [],
   "avoided": [
     {
       "id": "unit-targeted",
@@ -60,7 +51,7 @@
       "cpu_core_seconds": 240.0,
       "ci_minutes": 2.0,
       "ci_usd": 0.016,
-      "avoided_because": "no impacted entity has a path under frontend/; capability/workspace impact=1 but none map to files"
+      "avoided_because": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
     },
     {
       "id": "playwright-e2e",
@@ -70,6 +61,15 @@
       "ci_minutes": 30.0,
       "ci_usd": 0.24,
       "avoided_because": "blast radius contains 0 entities of kind 'workspace'"
+    },
+    {
+      "id": "runtime-self-test",
+      "category": "runtime",
+      "expected_runtime_seconds": 120,
+      "cpu_core_seconds": 120.0,
+      "ci_minutes": 2.0,
+      "ci_usd": 0.016,
+      "avoided_because": "no directly changed entity has a runtime/ path"
     },
     {
       "id": "mutation-run",
@@ -91,14 +91,14 @@
     }
   ],
   "totals": {
-    "expected_runtime_seconds": 120,
-    "expected_runtime_minutes": 2.0,
-    "cpu_core_seconds": 120.0,
-    "ci_minutes": 2.0,
-    "ci_usd": 0.016,
-    "avoided_seconds": 3600,
-    "avoided_ci_usd": 0.48,
-    "reduction_percent": 96.8,
+    "expected_runtime_seconds": 0,
+    "expected_runtime_minutes": 0.0,
+    "cpu_core_seconds": 0,
+    "ci_minutes": 0,
+    "ci_usd": 0,
+    "avoided_seconds": 3720,
+    "avoided_ci_usd": 0.496,
+    "reduction_percent": 100.0,
     "by_dimension": {
       "mutation": {
         "seconds": 600,
@@ -128,13 +128,8 @@
     }
   },
   "recommendation": {
-    "plan": "targeted",
-    "units": [
-      "runtime-self-test"
-    ],
-    "rationale": "selected plan costs 120s vs 900s for the full profile, while covering every impacted entity kind",
-    "cheapest_valid_plan_seconds": 120,
-    "fastest_single_unit": "runtime-self-test",
-    "baseline_profile_seconds": 900
+    "plan": "none",
+    "rationale": "blast radius is empty; no verification is justified",
+    "cheapest_valid_plan_seconds": 0
   }
 }

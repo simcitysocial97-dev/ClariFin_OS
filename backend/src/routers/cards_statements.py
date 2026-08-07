@@ -52,9 +52,7 @@ def get_statements() -> list[dict[str, Any]]:
                 else (
                     "amber"
                     if validation_status == "close_match"
-                    else "red"
-                    if validation_status == "mismatch"
-                    else "gray"
+                    else "red" if validation_status == "mismatch" else "gray"
                 )
             )
 

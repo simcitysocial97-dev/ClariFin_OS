@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-07-31T18:21:58.491948+00:00",
+  "generated_at": "2026-08-07T17:37:10.213255+00:00",
   "functions": [
     {
       "module": "src/engines/balance_engine.py",
       "function": "compute_running_balance",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -14,17 +14,14 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "low"
     },
     {
       "module": "src/engines/balance_engine.py",
       "function": "compute_account_balance",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -33,17 +30,14 @@
         "Constant replacement",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "low"
     },
     {
       "module": "src/engines/balance_engine.py",
       "function": "validate_statement_balance",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -53,17 +47,14 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "low"
     },
     {
       "module": "src/engines/balance_engine.py",
       "function": "get_accounts_list",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -73,10 +64,7 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "low"
     },
@@ -98,94 +86,9 @@
       "risk": "low"
     },
     {
-      "module": "src/engines/behavior_engine.py",
-      "function": "invalidate_behavior_cache",
-      "purity": "IMPURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison"
-      ],
-      "blockers": [
-        "import:sqlite3"
-      ],
-      "criticality": "high",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "get_cached_behavior_profile",
-      "purity": "IMPURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean"
-      ],
-      "blockers": [
-        "import:sqlite3"
-      ],
-      "criticality": "high",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "set_cached_behavior_profile",
-      "purity": "IMPURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison"
-      ],
-      "blockers": [
-        "import:sqlite3"
-      ],
-      "criticality": "high",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "detect_india_risk_patterns",
-      "purity": "IMPURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Constant replacement",
-        "Boundary conditions",
-        "Loop termination"
-      ],
-      "blockers": [
-        "os.",
-        "import:sqlite3"
-      ],
-      "criticality": "high",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/behavior_engine.py",
-      "function": "compute_behavior_profile",
-      "purity": "IMPURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Constant replacement",
-        "Boundary conditions",
-        "Loop termination",
-        "Sign inversion"
-      ],
-      "blockers": [
-        "import:sqlite3"
-      ],
-      "criticality": "high",
-      "risk": "low"
-    },
-    {
       "module": "src/engines/ledger_audit_engine.py",
       "function": "validate_ledger_integrity",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -195,17 +98,14 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "medium"
     },
     {
       "module": "src/engines/ledger_audit_engine.py",
       "function": "verify_hash_signatures",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -215,33 +115,28 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "medium"
     },
     {
       "module": "src/engines/ledger_audit_engine.py",
       "function": "run_full_audit",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
         "Comparison",
         "Boolean"
       ],
-      "blockers": [
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "medium"
     },
     {
       "module": "src/engines/reconciliation_engine.py",
       "function": "find_potential_matches",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -253,17 +148,14 @@
         "Loop termination",
         "Sign inversion"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "medium"
     },
     {
       "module": "src/engines/reconciliation_engine.py",
       "function": "find_matches_for_transaction",
-      "purity": "IMPURE",
+      "purity": "PURE",
       "confidence": "HIGH",
       "mutation_types": [
         "Arithmetic",
@@ -273,96 +165,9 @@
         "Boundary conditions",
         "Loop termination"
       ],
-      "blockers": [
-        "sqlite3",
-        "import:sqlite3"
-      ],
+      "blockers": [],
       "criticality": "high",
       "risk": "medium"
-    },
-    {
-      "module": "src/engines/insight_generator.py",
-      "function": "generate_behavioral_insights",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Constant replacement",
-        "Boundary conditions",
-        "Off-by-one",
-        "Loop termination"
-      ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/insight_generator.py",
-      "function": "generate_summary_text",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Constant replacement",
-        "Loop termination"
-      ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/nudge_engine.py",
-      "function": "generate_nudges",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Constant replacement",
-        "Boundary conditions",
-        "Loop termination"
-      ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/nudge_engine.py",
-      "function": "get_top_nudge",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Constant replacement"
-      ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
-    },
-    {
-      "module": "src/engines/nudge_engine.py",
-      "function": "get_nudge_summary",
-      "purity": "PURE",
-      "confidence": "HIGH",
-      "mutation_types": [
-        "Arithmetic",
-        "Comparison",
-        "Boolean",
-        "Constant replacement",
-        "Boundary conditions",
-        "Loop termination",
-        "Sign inversion"
-      ],
-      "blockers": [],
-      "criticality": "medium",
-      "risk": "low"
     },
     {
       "module": "src/engines/transaction_intelligence/cc_payment_detector.py",
@@ -1643,6 +1448,83 @@
       "risk": "low"
     },
     {
+      "module": "src/engines/behaviour_engine/core.py",
+      "function": "invalidate_behavior_cache",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/core.py",
+      "function": "get_cached_behavior_profile",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/core.py",
+      "function": "set_cached_behavior_profile",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/core.py",
+      "function": "detect_india_risk_patterns",
+      "purity": "IMPURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination"
+      ],
+      "blockers": [
+        "os."
+      ],
+      "criticality": "high",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/core.py",
+      "function": "compute_behavior_profile",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination",
+        "Sign inversion"
+      ],
+      "blockers": [],
+      "criticality": "high",
+      "risk": "low"
+    },
+    {
       "module": "src/engines/behaviour_engine/income.py",
       "function": "classify_income_source",
       "purity": "PURE",
@@ -1985,6 +1867,40 @@
       ],
       "blockers": [],
       "criticality": "high",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/insights.py",
+      "function": "generate_behavioral_insights",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Off-by-one",
+        "Loop termination"
+      ],
+      "blockers": [],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/insights.py",
+      "function": "generate_summary_text",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Loop termination"
+      ],
+      "blockers": [],
+      "criticality": "medium",
       "risk": "low"
     },
     {
@@ -2543,6 +2459,56 @@
         "os."
       ],
       "criticality": "high",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/nudges.py",
+      "function": "generate_nudges",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination"
+      ],
+      "blockers": [],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/nudges.py",
+      "function": "get_top_nudge",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement"
+      ],
+      "blockers": [],
+      "criticality": "medium",
+      "risk": "low"
+    },
+    {
+      "module": "src/engines/behaviour_engine/nudges.py",
+      "function": "get_nudge_summary",
+      "purity": "PURE",
+      "confidence": "HIGH",
+      "mutation_types": [
+        "Arithmetic",
+        "Comparison",
+        "Boolean",
+        "Constant replacement",
+        "Boundary conditions",
+        "Loop termination",
+        "Sign inversion"
+      ],
+      "blockers": [],
+      "criticality": "medium",
       "risk": "low"
     },
     {
