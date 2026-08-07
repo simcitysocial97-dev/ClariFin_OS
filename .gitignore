@@ -86,7 +86,7 @@ runtime/generated/command/
 runtime/generated/intelligence/
 
 # Root-level stale directories
-src/
+/src/
 
 # Python build artifacts
 *.egg-info/
