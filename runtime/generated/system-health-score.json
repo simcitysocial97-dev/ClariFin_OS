@@ -1,7 +1,7 @@
 {
   "overall_status": "pass",
   "certification_status": "CERTIFIED",
-  "total_duration_seconds": 28.8,
+  "total_duration_seconds": 19.04,
   "section_statuses": {
     "repository": "pass",
     "cross_layer": "pass",
@@ -17,7 +17,7 @@
     "runtime_cli": "pass",
     "github_runtime": "pass",
     "verification_profiles": "pass",
-    "artifact_ownership": "pass",
+    "artifact_ownership": "fail",
     "performance": "pass",
     "failure_injection": "pass",
     "pipeline": "pass",

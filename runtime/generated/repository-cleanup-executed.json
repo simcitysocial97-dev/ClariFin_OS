@@ -1,0 +1,125 @@
+{
+  "schema": "repository-cleanup-executed/v1",
+  "generated_at": "2026-08-06T16:43:05.877307Z",
+  "program": "18.0",
+  "total_executed": 2,
+  "summary": {
+    "safe_deletes_executed": 2,
+    "preserved_candidates": 4,
+    "migrate_first": 0,
+    "runtime_impact": "none",
+    "certification_preserved": true
+  },
+  "executed": [
+    {
+      "path": "backend/src/services/base_service.py",
+      "action": "deleted",
+      "category": "unused service",
+      "reason": "Legacy base service not imported by any router or domain service. Superseded by backend/src/services/base.py.",
+      "evidence": "dependency-graph-v2.json shows 0 incoming edges to service:backend/src/services/base_service.py",
+      "dependencies_removed": 0,
+      "runtime_impact": "none",
+      "rollback_available": true
+    },
+    {
+      "path": "frontend/types/financial.ts",
+      "action": "deleted",
+      "category": "orphan",
+      "reason": "Frontend type file defining NetWorth, MonthlyCashflowResponse, BehaviorScore with ZERO importers. Dead code.",
+      "evidence": "architecture-inventory import scan shows zero importers for frontend/types/financial.ts",
+      "dependencies_removed": 0,
+      "runtime_impact": "none",
+      "rollback_available": true
+    }
+  ],
+  "rollback": [
+    {
+      "path": "backend/src/services/base_service.py",
+      "action": "delete",
+      "content_before": "from .base import BaseService\n\n__all__ = [\"BaseService\"]\n",
+      "reason": "Legacy base service not imported by any router or domain service. Superseded by backend/src/services/base.py.",
+      "evidence": "dependency-graph-v2.json shows 0 incoming edges to service:backend/src/services/base_service.py"
+    },
+    {
+      "path": "frontend/types/financial.ts",
+      "action": "delete",
+      "content_before": "/**\n * Financial Data Types\n * Types for net worth, cashflow, and related financial data\n */\n\n// Net Worth Response\nexport interface NetWorth {\n  net_worth_paise: number;\n  total_assets_paise: number;\n  total_liabilities_paise: number;\n  asset_count: number;\n  liability_count: number;\n}\n\n// Net Worth Trend Response\nexport interface NetWorthTrendResponse {\n  months: Array<{\n    month: string;\n    net_worth_paise: number;\n    assets_paise: number;\n    liabilities_paise: number;\n  }>;\n}\n\n// Monthly...",
+      "reason": "Frontend type file defining NetWorth, MonthlyCashflowResponse, BehaviorScore with ZERO importers. Dead code.",
+      "evidence": "architecture-inventory import scan shows zero importers for frontend/types/financial.ts"
+    }
+  ],
+  "preserve_candidates": [
+    {
+      "id": "legacy-behavior_engine-facade",
+      "path": "backend/src/engines/behavior_engine.py",
+      "category": "parked",
+      "owner": "behaviour_engine (canonical package)",
+      "reason": "PARKED legacy single-file facade fully replaced by behaviour_engine package. Import references: 0. Dead code.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 28,
+        "workflow_usage": 0,
+        "test_references": 52,
+        "documentation_references": 51,
+        "evidence": "engine-normalization.json parked_facades; architecture-inventory Engine Facade node_type; grep shows zero imports in backend/src"
+      }
+    },
+    {
+      "id": "legacy-cashflow_engine-parked",
+      "path": "backend/src/engines/cashflow_engine.py.parked",
+      "category": "parked",
+      "owner": "unknown (legacy)",
+      "reason": "PARKED legacy cashflow engine file. No canonical successor package exists. Import references: 0.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 11,
+        "workflow_usage": 0,
+        "test_references": 36,
+        "documentation_references": 19,
+        "evidence": "engine-normalization.json reports PARKED; grep finds zero importers"
+      }
+    },
+    {
+      "id": "unused-alert_repository",
+      "path": "backend/src/repositories/alert_repository.py",
+      "category": "unused repository",
+      "owner": "unknown (no service importer)",
+      "reason": "Repository defined but not imported by any service or engine. Zero import references.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 5,
+        "workflow_usage": 0,
+        "test_references": 3,
+        "documentation_references": 8,
+        "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:alert_repository"
+      }
+    },
+    {
+      "id": "unused-reconciliation_audit_repository",
+      "path": "backend/src/repositories/reconciliation_audit_repository.py",
+      "category": "unused repository",
+      "owner": "reconciliation_engine",
+      "reason": "Repository defined but not imported by any service. Zero service-level import references.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 5,
+        "workflow_usage": 0,
+        "test_references": 9,
+        "documentation_references": 3,
+        "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:reconciliation_audit_repository"
+      }
+    }
+  ]
+}

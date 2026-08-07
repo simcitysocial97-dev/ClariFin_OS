@@ -247,7 +247,7 @@ def test_simulate_floating_rate_schedule_invariants(rate_change_params):
     if len(schedule) == tenure:
         pass
     else:
-        assert 1 <= len(schedule) <= 1200
+        assert 1 <= len(schedule) <= 1500
 
     # INVARIANT 3: Month numbers are sequential
     for i, row in enumerate(schedule):

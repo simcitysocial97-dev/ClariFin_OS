@@ -1,6 +1,6 @@
 # Engineering Platform Certification
 
-**Generated:** 2026-08-06T14:31:31.372029+00:00
+**Generated:** 2026-08-06T16:47:58.627434+00:00
 **Status:** CERTIFIED
 
 | Section | Status |
@@ -19,7 +19,7 @@
 | Runtime CLI Audit | PASS |
 | GitHub Runtime Audit | PASS |
 | Verification Profiles Audit | PASS |
-| Artifact Ownership Audit | PASS |
+| Artifact Ownership Audit | FAIL |
 | Runtime Performance Audit | PASS |
 | Failure Injection Audit | PASS |
 | Pipeline Validation Audit | PASS |

@@ -8,8 +8,9 @@
  * - Prepares test environment
  */
 
-import { FullConfig, request } from '@playwright/test';
-import { spawn, execSync } from 'child_process';
+import type { FullConfig } from '@playwright/test';
+import { request } from '@playwright/test';
+import { spawn } from 'child_process';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
@@ -37,7 +38,7 @@ async function checkBackendHealth(): Promise<boolean> {
 async function isPortInUse(port: number): Promise<boolean> {
   try {
     const context = await request.newContext();
-    const response = await context.get(`http://localhost:${port}`, { timeout: 1000 });
+    const _response = await context.get(`http://localhost:${port}`, { timeout: 1000 });
     await context.dispose();
     return true;
   } catch {

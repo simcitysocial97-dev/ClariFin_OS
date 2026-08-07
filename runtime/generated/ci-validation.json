@@ -1,0 +1,233 @@
+{
+  "schema": "ci-validation/v1",
+  "generated_at": "2026-08-06T15:06:55.942128+00:00",
+  "retrieval_policy": {
+    "order": [
+      "run_metadata",
+      "failed_jobs",
+      "failed_steps",
+      "annotations",
+      "job_summaries",
+      "artifacts",
+      "failed_step_logs (opt-in only)"
+    ],
+    "structured_metadata_first": true,
+    "full_log_archive_download": "never",
+    "failed_step_logs": "opt-in only (allow_logs=True)"
+  },
+  "total_workflows_analyzed": 10,
+  "failed_workflows_count": 10,
+  "failed_workflows": [
+    {
+      "run_id": 31111663779,
+      "name": "Quality Gate",
+      "workflow_name": "Quality Gate",
+      "conclusion": "failure",
+      "created_at": "2026-08-06T14:36:24Z",
+      "head_branch": "feature/program-12-platform-certification",
+      "html_url": null
+    },
+    {
+      "run_id": 31111663717,
+      "name": "Backend Verification",
+      "workflow_name": "Backend Verification",
+      "conclusion": "failure",
+      "created_at": "2026-08-06T14:36:24Z",
+      "head_branch": "feature/program-12-platform-certification",
+      "html_url": null
+    },
+    {
+      "run_id": 31111663448,
+      "name": "Verification Runtime",
+      "workflow_name": "Verification Runtime",
+      "conclusion": "failure",
+      "created_at": "2026-08-06T14:36:24Z",
+      "head_branch": "feature/program-12-platform-certification",
+      "html_url": null
+    },
+    {
+      "run_id": 31111663386,
+      "name": "Frontend Verification",
+      "workflow_name": "Frontend Verification",
+      "conclusion": "failure",
+      "created_at": "2026-08-06T14:36:24Z",
+      "head_branch": "feature/program-12-platform-certification",
+      "html_url": null
+    },
+    {
+      "run_id": 31074785700,
+      "name": "Golden Dataset Regression",
+      "workflow_name": "Golden Dataset Regression",
+      "conclusion": "failure",
+      "created_at": "2026-08-06T05:39:35Z",
+      "head_branch": "main",
+      "html_url": null
+    },
+    {
+      "run_id": 31072553675,
+      "name": "Mutation Testing",
+      "workflow_name": "Mutation Testing",
+      "conclusion": "failure",
+      "created_at": "2026-08-06T04:54:22Z",
+      "head_branch": "main",
+      "html_url": null
+    },
+    {
+      "run_id": 31014121494,
+      "name": "Playwright Tests",
+      "workflow_name": "Playwright Tests",
+      "conclusion": "failure",
+      "created_at": "2026-08-05T14:13:48Z",
+      "head_branch": "main",
+      "html_url": null
+    },
+    {
+      "run_id": 31014121298,
+      "name": "Quality Gate",
+      "workflow_name": "Quality Gate",
+      "conclusion": "failure",
+      "created_at": "2026-08-05T14:13:48Z",
+      "head_branch": "main",
+      "html_url": null
+    },
+    {
+      "run_id": 31014100124,
+      "name": "Playwright Tests",
+      "workflow_name": "Playwright Tests",
+      "conclusion": "failure",
+      "created_at": "2026-08-05T14:13:34Z",
+      "head_branch": "fix/workflow-platform-consolidation",
+      "html_url": null
+    },
+    {
+      "run_id": 31014099072,
+      "name": "Quality Gate",
+      "workflow_name": "Quality Gate",
+      "conclusion": "failure",
+      "created_at": "2026-08-05T14:13:33Z",
+      "head_branch": "fix/workflow-platform-consolidation",
+      "html_url": null
+    }
+  ],
+  "failed_jobs_count": 5,
+  "failed_jobs": [
+    {
+      "run_id": 31111663779,
+      "job_id": 92650719176,
+      "name": "Quality Gate",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run quick verification",
+          "number": 4,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663779/job/92650719176"
+    },
+    {
+      "run_id": 31111663717,
+      "job_id": 92650721955,
+      "name": "Backend Verification",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run backend verification",
+          "number": 4,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663717/job/92650721955"
+    },
+    {
+      "run_id": 31111663448,
+      "job_id": 92650718565,
+      "name": "Runtime Verification",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run runtime verification",
+          "number": 4,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663448/job/92650718565"
+    },
+    {
+      "run_id": 31111663386,
+      "job_id": 92650718002,
+      "name": "Frontend Verification",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run frontend verification",
+          "number": 5,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31111663386/job/92650718002"
+    },
+    {
+      "run_id": 31074785700,
+      "job_id": 92530464881,
+      "name": "Regression Comparison",
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Download golden results",
+          "number": 3,
+          "conclusion": "failure"
+        }
+      ],
+      "html_url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31074785700/job/92530464881"
+    }
+  ],
+  "failed_steps": [
+    {
+      "name": "Run quick verification",
+      "number": 4,
+      "conclusion": "failure"
+    },
+    {
+      "name": "Run backend verification",
+      "number": 4,
+      "conclusion": "failure"
+    },
+    {
+      "name": "Run runtime verification",
+      "number": 4,
+      "conclusion": "failure"
+    },
+    {
+      "name": "Run frontend verification",
+      "number": 5,
+      "conclusion": "failure"
+    },
+    {
+      "name": "Download golden results",
+      "number": 3,
+      "conclusion": "failure"
+    }
+  ],
+  "annotations_count": 0,
+  "annotations": [],
+  "artifacts_count": 0,
+  "artifacts": [],
+  "logs_fetched_count": 0,
+  "logs_fetched": [],
+  "platform_capabilities": {
+    "identify_failed_workflow": true,
+    "identify_failed_job": true,
+    "identify_failed_step": true,
+    "collect_annotations": true,
+    "collect_summaries": true,
+    "retrieve_required_logs_only": true,
+    "identify_affected_repository_entities": true,
+    "generate_repair_plan": true
+  },
+  "validation_summary": {
+    "all_capabilities_verified": true,
+    "unnecessary_data_downloaded": false,
+    "manual_exploration_required": false
+  }
+}

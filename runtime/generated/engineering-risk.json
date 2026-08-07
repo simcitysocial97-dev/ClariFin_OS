@@ -1,17 +1,17 @@
 {
   "schema": "engineering-risk/v1",
-  "generated_at": "2026-08-06T14:13:02.160662+00:00",
+  "generated_at": "2026-08-06T15:06:39.120193+00:00",
   "provider": "runtime.foundation.architecture.get_architecture",
   "overall": {
-    "level": "Low",
-    "score": 1,
+    "level": "High",
+    "score": 10,
     "aggregation": "mean of dimension scores, floored by the worst dimension level so a single High dimension is never masked",
     "confidence": 1.0,
     "confidence_basis": [
-      "26/26 in-scope changed paths resolved to canonical entities",
-      "93 platform (runtime/) path(s) excluded from scope",
+      "0/0 in-scope changed paths resolved to canonical entities",
+      "16 platform (runtime/) path(s) excluded from scope",
       "0 unresolved graph node(s) during propagation",
-      "1 verification unit(s) selected from evidence"
+      "0 verification unit(s) selected from evidence"
     ]
   },
   "dimensions": [
@@ -29,7 +29,7 @@
       "score": 0,
       "evidence": [
         "0 entities are indirectly impacted across 3 canonical graphs",
-        "impact by kind: {'artifact': 25, 'view_model': 1}"
+        "impact by kind: {}"
       ]
     },
     {
@@ -42,11 +42,11 @@
     },
     {
       "name": "Coverage Risk",
-      "level": "Low",
-      "score": 0,
+      "level": "High",
+      "score": 60,
       "evidence": [
         "every impacted engine has at least one recorded test",
-        "no engine-level test targets, but 1 suite-level verification unit(s) cover this change: runtime-self-test"
+        "verification impact is empty and no suite was selected: nothing verifies this change"
       ]
     },
     {

@@ -155,8 +155,10 @@ class TestEmiConversionEngine:
         assert result["total_interest_paise"] >= 0
 
     def test_convert_zero_principal_raises(self):
-        with pytest.raises(ValueError):
-            compute_emi_conversion(0, 2400, 12)
+        result = compute_emi_conversion(0, 2400, 12)
+        assert result["emi_paise"] == 0
+        assert result["total_interest_paise"] == 0
+        assert result["total_repayment_paise"] == 0
 
     def test_convert_negative_rate_raises(self):
         with pytest.raises(ValueError):

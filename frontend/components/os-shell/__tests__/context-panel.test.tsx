@@ -8,6 +8,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ContextPanel } from '../context-panel';
 import { selectionRuntime } from '@/lib/runtime/selection-runtime';
 import { passiveInsightRuntime } from '@/lib/intelligence/passive-runtime';
@@ -32,12 +33,77 @@ vi.mock('@/lib/intelligence/investigative-runtime', () => ({
   },
 }));
 
+// ===== Mock Capabilities =====
+vi.mock('@/lib/capabilities/use-transaction-capability', () => ({
+  useTransactionCapability: () => ({
+    transactions: [],
+    loading: false,
+    error: null,
+  }),
+}));
+
+vi.mock('@/lib/capabilities/use-accounts-capability', () => ({
+  useAccountsCapability: () => ({
+    accounts: null,
+    loading: false,
+    error: null,
+  }),
+}));
+
+vi.mock('@/lib/capabilities/use-loans-capability', () => ({
+  useLoansCapability: () => ({
+    loans: null,
+    loading: false,
+    error: null,
+  }),
+}));
+
+vi.mock('@/lib/capabilities/use-credit-cards-capability', () => ({
+  useCreditCardsCapability: () => ({
+    creditCards: null,
+    loading: false,
+    error: null,
+  }),
+}));
+
+vi.mock('@/lib/capabilities/use-investments-capability', () => ({
+  useInvestmentsCapability: () => ({
+    investments: null,
+    loading: false,
+    error: null,
+  }),
+}));
+
+vi.mock('@/lib/capabilities/use-reconciliation-capability', () => ({
+  useReconciliationCapability: () => ({
+    reconciliation: null,
+    loading: false,
+    error: null,
+  }),
+}));
+
 // ===== Helper: Create Selection Entity =====
 function createSelection(type: SelectionEntity['type'], id: string | number): SelectionEntity {
   if (type === 'reconciliation') {
     return { type: 'reconciliation', id: id as number };
   }
   return { type, id: id as string };
+}
+
+// ===== Test Wrapper =====
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+    },
+  });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+  };
 }
 
 // ===== Test Setup =====
@@ -53,204 +119,95 @@ describe('ContextPanel — Milestone 4', () => {
 
   describe('Empty State (no selection)', () => {
     it('renders empty state message when no entity is selected', () => {
-      render(<ContextPanel />);
+      render(<ContextPanel />, { wrapper: createWrapper() });
       expect(screen.getByText('Select an entity to view context')).toBeInTheDocument();
     });
 
     it('renders hint text in empty state', () => {
-      render(<ContextPanel />);
+      render(<ContextPanel />, { wrapper: createWrapper() });
       expect(screen.getByText(/Click any row or card/)).toBeInTheDocument();
     });
   });
 
   describe('Transaction Context', () => {
-    it('renders transaction context when transaction is selected', () => {
+    it('shows not-found message when transaction data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('transaction', 'tx-abc'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Amount')).toBeInTheDocument();
-      expect(screen.getByText('Description')).toBeInTheDocument();
-      expect(screen.getByText('Category')).toBeInTheDocument();
-      expect(screen.getByText('Merchant')).toBeInTheDocument();
-      expect(screen.getByText('Date')).toBeInTheDocument();
-      expect(screen.getByText('Confidence')).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Transaction not found in current view/)).toBeInTheDocument();
     });
 
-    it('displays evidence section for transactions', () => {
+    it('displays not-found message when transaction data is missing', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('transaction', 'tx-abc'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText(/Matched source record #1/)).toBeInTheDocument();
-      expect(screen.getByText(/Matched source record #2/)).toBeInTheDocument();
-      expect(screen.getByText(/Matched source record #3/)).toBeInTheDocument();
-    });
-
-    it('displays explanation section for transactions', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('transaction', 'tx-abc'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText(/UPI transaction matched/)).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Transaction not found in current view/)).toBeInTheDocument();
     });
   });
 
   describe('Account Context', () => {
-    it('renders account context when account is selected', () => {
+    it('shows not-found message when account data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('account', 'acc-001'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Status')).toBeInTheDocument();
-      expect(screen.getByText('Balance')).toBeInTheDocument();
-      expect(screen.getByText('Institution')).toBeInTheDocument();
-      expect(screen.getByText('Opened')).toBeInTheDocument();
-      expect(screen.getByText('Transactions')).toBeInTheDocument();
-    });
-
-    it('displays account status badge', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('account', 'acc-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText('active')).toBeInTheDocument();
-    });
-
-    it('shows explanation section for accounts', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('account', 'acc-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText(/Savings account with consistent deposit pattern/)).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Account not found in current view/)).toBeInTheDocument();
     });
   });
 
   describe('Loan Context', () => {
-    it('renders loan context when loan is selected', () => {
+    it('shows not-found message when loan data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('loan', 'loan-001'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Outstanding')).toBeInTheDocument();
-      expect(screen.getByText('Monthly EMI')).toBeInTheDocument();
-      expect(screen.getByText('Interest Rate')).toBeInTheDocument();
-      expect(screen.getByText('Remaining')).toBeInTheDocument();
-      expect(screen.getByText('Lender')).toBeInTheDocument();
-    });
-
-    it('shows forecast section for loans', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('loan', 'loan-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText('Forecast')).toBeInTheDocument();
-      expect(screen.getByText(/Projected completion/)).toBeInTheDocument();
-    });
-
-    it('shows explanation section for loans', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('loan', 'loan-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText(/Home loan with consistent EMI payments/)).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Loan not found in current view/)).toBeInTheDocument();
     });
   });
 
   describe('Card Context', () => {
-    it('renders card context when card is selected', () => {
+    it('shows not-found message when card data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('card', 'card-001'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Last 4')).toBeInTheDocument();
-      expect(screen.getByText('Current Usage')).toBeInTheDocument();
-      expect(screen.getByText('Credit Limit')).toBeInTheDocument();
-      expect(screen.getByText('Utilization')).toBeInTheDocument();
-      expect(screen.getByText('Due Date')).toBeInTheDocument();
-    });
-
-    it('shows explanation section for cards', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('card', 'card-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText(/Credit utilization/)).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Card not found in current view/)).toBeInTheDocument();
     });
   });
 
   describe('Investment Context', () => {
-    it('renders investment context when investment is selected', () => {
+    it('shows not-found message when investment data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('investment', 'inv-001'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Scheme')).toBeInTheDocument();
-      expect(screen.getByText('Type')).toBeInTheDocument();
-      expect(screen.getByText('Units')).toBeInTheDocument();
-      expect(screen.getByText('NAV')).toBeInTheDocument();
-      expect(screen.getByText('Invested')).toBeInTheDocument();
-      expect(screen.getByText('Current Value')).toBeInTheDocument();
-      expect(screen.getByText('Gain')).toBeInTheDocument();
-    });
-
-    it('shows forecast section for investments', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('investment', 'inv-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText('Forecast')).toBeInTheDocument();
-    });
-
-    it('shows explanation section for investments', () => {
-      vi.mocked(selectionRuntime).state = {
-        active: createSelection('investment', 'inv-001'),
-        multi: new Set(),
-        history: [],
-      };
-      render(<ContextPanel />);
-      expect(screen.getByText(/Equity-linked savings fund/)).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Investment not found in current view/)).toBeInTheDocument();
     });
   });
 
   describe('Reconciliation Context', () => {
-    it('renders reconciliation context when reconciliation is selected', () => {
+    it('shows not-found message when reconciliation data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('reconciliation', 1),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Period')).toBeInTheDocument();
-      expect(screen.getByText('Matched')).toBeInTheDocument();
-      expect(screen.getByText('Unmatched')).toBeInTheDocument();
-      expect(screen.getByText('Discrepancy')).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Reconciliation not found in current view/)).toBeInTheDocument();
     });
   });
 
@@ -261,7 +218,7 @@ describe('ContextPanel — Milestone 4', () => {
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
+      render(<ContextPanel />, { wrapper: createWrapper() });
       expect(screen.getByText('Actions')).toBeInTheDocument();
     });
 
@@ -271,7 +228,7 @@ describe('ContextPanel — Milestone 4', () => {
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
+      render(<ContextPanel />, { wrapper: createWrapper() });
       expect(screen.getByText('View full evidence trail')).toBeInTheDocument();
       expect(screen.getByText('Run what-if analysis')).toBeInTheDocument();
       expect(screen.getByText('Compare with similar entities')).toBeInTheDocument();
@@ -285,27 +242,25 @@ describe('ContextPanel — Milestone 4', () => {
         multi: new Set(),
         history: [],
       };
-      const { container } = render(<ContextPanel />);
+      const { container } = render(<ContextPanel />, { wrapper: createWrapper() });
       const links = container.querySelectorAll('a[href]');
       expect(links.length).toBe(0);
     });
   });
 
   describe('Section Rendering', () => {
-    it('renders expected sections for a transaction', () => {
+    it('renders not-found message when entity data is not loaded', () => {
       vi.mocked(selectionRuntime).state = {
         active: createSelection('transaction', 'tx-001'),
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
-      expect(screen.getByText('Evidence')).toBeInTheDocument();
+      render(<ContextPanel />, { wrapper: createWrapper() });
+      expect(screen.getByText(/Transaction not found in current view/)).toBeInTheDocument();
       expect(screen.getByText('Actions')).toBeInTheDocument();
-      expect(screen.getAllByText('Explanation').length).toBeGreaterThanOrEqual(1);
     });
 
     it('renders Insight section only when matching insights exist', () => {
-      // Override the mock for this specific test
       const originalGetInsights = passiveInsightRuntime.getInsights;
       (passiveInsightRuntime as unknown as Record<string, unknown>).getInsights = () => [
         {
@@ -328,11 +283,10 @@ describe('ContextPanel — Milestone 4', () => {
         multi: new Set(),
         history: [],
       };
-      render(<ContextPanel />);
+      render(<ContextPanel />, { wrapper: createWrapper() });
       expect(screen.getByText('Insights')).toBeInTheDocument();
       expect(screen.getByText('Spending anomaly')).toBeInTheDocument();
 
-      // Restore
       (passiveInsightRuntime as unknown as Record<string, unknown>).getInsights = originalGetInsights;
     });
   });
@@ -344,7 +298,7 @@ describe('ContextPanel — Milestone 4', () => {
         multi: new Set(),
         history: [],
       };
-      const { container } = render(<ContextPanel />);
+      const { container } = render(<ContextPanel />, { wrapper: createWrapper() });
       expect(container.querySelector('[class*="overflow-y-auto"]')).toBeInTheDocument();
     });
 
@@ -354,8 +308,7 @@ describe('ContextPanel — Milestone 4', () => {
         multi: new Set(),
         history: [],
       };
-      const { container } = render(<ContextPanel />);
-      // Header contains entity type label and id
+      const { container } = render(<ContextPanel />, { wrapper: createWrapper() });
       expect(container.innerHTML).toContain('Transaction');
       expect(container.innerHTML).toContain('tx-001');
     });

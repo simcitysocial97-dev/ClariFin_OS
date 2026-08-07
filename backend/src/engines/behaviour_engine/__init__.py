@@ -13,7 +13,8 @@ Structure:
 - income.py — Income source classification, diversification score
 - account.py — Account concentration, idle cash, balance volatility, low balance risk
 - profile.py — Financial personality classification (SAVER, BALANCED, SPENDER, DEBT_OPTIMIZER, DEBT_DEPENDENT)
-- utils.py — Shared helper functions (median, variance, coefficient of variation)
+- insights.py — Behavioral insight generation
+- nudges.py — Behavioral nudge generation
 
 All functions are pure - no database access.
 """
@@ -42,9 +43,18 @@ from .income import (
     compute_true_income_total,
     filter_true_income,
 )
+from .insights import (
+    generate_behavioral_insights,
+    generate_summary_text,
+)
 from .lifestyle import (
     compute_lifestyle_creep_index,
     compute_lifestyle_inflation,
+)
+from .nudges import (
+    generate_nudges,
+    get_nudge_summary,
+    get_top_nudge,
 )
 from .patterns import (
     compute_night_spend_ratio,
@@ -103,4 +113,11 @@ __all__ = [
     "detect_low_balance_risk",
     # Profile Classification
     "classify_financial_personality",
+    # Insight generation
+    "generate_behavioral_insights",
+    "generate_summary_text",
+    # Nudge engine
+    "generate_nudges",
+    "get_top_nudge",
+    "get_nudge_summary",
 ]

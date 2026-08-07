@@ -1,7 +1,7 @@
 {
   "schema": "engineering-platform-audit/v5",
   "program": "14.1 \u2014 Eliminate Legacy Intelligence & Complete Constitutional Migration",
-  "generated_at": "2026-08-06T14:24:41.571838+00:00",
+  "generated_at": "2026-08-06T15:11:32.447623+00:00",
   "certification_status": "CERTIFIED",
   "intelligence_checks": [
     {
@@ -59,7 +59,7 @@
       "status": "pass",
       "detail": "no file under backend/src/ or frontend/ was modified",
       "evidence": {
-        "changed_file_count": 119,
+        "changed_file_count": 42,
         "production_files_changed": [],
         "scopes_checked": [
           "backend/src/",
@@ -122,7 +122,7 @@
             "id": "frontend-unit",
             "category": "frontend",
             "reason": "no frontend file impacted",
-            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=1 but none map to files"
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
           },
           {
             "id": "playwright-e2e",
@@ -516,7 +516,7 @@
       },
       {
         "name": "Artifact Ownership Audit",
-        "status": "pass"
+        "status": "fail"
       },
       {
         "name": "Runtime Performance Audit",

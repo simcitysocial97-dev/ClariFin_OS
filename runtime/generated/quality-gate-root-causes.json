@@ -1,0 +1,51 @@
+{
+  "program": "Program D — Quality Gate Stabilization",
+  "workflow": "Quality Gate",
+  "root_causes": [
+    {
+      "id": "RC-001",
+      "failure": "run_fast_checks.sh exited immediately with syntax error",
+      "root_cause": "Duplicate 'fi' on line 106 after the else block. Under 'set -euo pipefail', bash aborted on the syntax error before any checks ran.",
+      "responsible_script": ".github/scripts/run_fast_checks.sh",
+      "responsible_module": "Shell script (CI composite action runner)",
+      "responsible_artifact": ".github/scripts/run_fast_checks.sh",
+      "minimal_correction": "Removed trailing 'fi' on line 106"
+    },
+    {
+      "id": "RC-002",
+      "failure": "9 meta tests failed with TypeError: 'NoneType' object is not iterable",
+      "root_cause": "backend/tests/generated/capability-registry.yaml contained YAML entries like 'engines:' and 'capability_tests:' with no value. PyYAML parses these as Python None. Downstream tools (change_intelligence.py, mutation_discovery.py, test_strength.py, selective_verify.py) iterate over these fields with cap.get('engines', []), which returns None when the key exists with value None. Iterating over None raised TypeError.",
+      "responsible_script": "tools/development/change_intelligence.py, tools/development/mutation_discovery.py, tools/development/test_strength.py, tools/development/selective_verify.py",
+      "responsible_module": "Change Intelligence Framework (CIF) and meta test runners",
+      "responsible_artifact": "backend/tests/generated/capability-registry.yaml",
+      "minimal_correction": "Normalized 12 null list fields to [] in capability-registry.yaml. Added _normalize_registry() to check_coverage.py to prevent recurrence on regeneration."
+    },
+    {
+      "id": "RC-003",
+      "failure": "Black format check failed (12 files)",
+      "root_cause": "Code style drift: production and test files were not formatted according to backend/pyproject.toml black configuration",
+      "responsible_script": "black",
+      "responsible_module": "Formatting (CI fast-check stage)",
+      "responsible_artifact": "backend/ (12 files)",
+      "minimal_correction": "Ran 'black .' from backend/ to auto-format all non-compliant files"
+    },
+    {
+      "id": "RC-004",
+      "failure": "Ruff lint check failed (9 SIM102 errors in scan_test_anti_patterns.py)",
+      "root_cause": "Deeply nested if-blocks checking AST node types violated ruff rule SIM102 (use single if statement instead of nested if statements)",
+      "responsible_script": "ruff",
+      "responsible_module": "Linting (CI fast-check stage)",
+      "responsible_artifact": "backend/scripts/scan_test_anti_patterns.py",
+      "minimal_correction": "Flattened nested isinstance() checks into combined 'and' conditions"
+    },
+    {
+      "id": "RC-005",
+      "failure": "python3 runtime/verify.py quick hung indefinitely / exceeded CI timeout",
+      "root_cause": "VerificationPlanner._merge_scopes() merged impacted scopes (BACKEND, CONTRACTS, RUNTIME, etc.) into the QUICK requested scope. This caused the planner to expand a lightweight 1-step profile into a 12-step full verification suite. Additionally, _collect_requirements() did not filter capability requirements by allowed scope, allowing out-of-scope requirements to be pulled in via capability dependencies. The orchestrator then executed all 12 steps sequentially, exceeding the CI 10-minute budget.",
+      "responsible_script": "runtime/foundation/verification/planner/planner.py",
+      "responsible_module": "Verification Planner (Program 7B)",
+      "responsible_artifact": "runtime/foundation/verification/planner/planner.py",
+      "minimal_correction": "(1) Modified _merge_scopes() to exclude impacted scopes when requested scope is QUICK. (2) Modified _collect_requirements() to filter capability requirements by allowed scopes."
+    }
+  ]
+}

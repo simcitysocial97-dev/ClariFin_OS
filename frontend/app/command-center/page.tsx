@@ -15,6 +15,7 @@ import { useInvestments } from '@/lib/hooks/use-investments';
 import { useCashflow } from '@/lib/hooks/use-cashflow';
 import { useBehaviorScore } from '@/lib/hooks/use-behavior-score';
 import { useReconciliations } from '@/lib/hooks/use-reconciliation';
+import { useForecastCapability } from '@/lib/capabilities/use-forecast-capability';
 import { useNavigation } from '@/lib/runtime';
 
 export default function CommandCenterPage() {
@@ -27,6 +28,7 @@ export default function CommandCenterPage() {
   const { data: cashflowData } = useCashflow();
   const { data: behaviourData } = useBehaviorScore();
   const { data: reconciliationData } = useReconciliations();
+  const { forecast } = useForecastCapability();
 
   useEffect(() => {
     pushPath('/command-center', 'command-center');
@@ -39,14 +41,14 @@ export default function CommandCenterPage() {
       investments: investmentsData,
       cashflow: cashflowData,
       behaviour: behaviourData,
-      forecast: cashflowData,
+      forecast: forecast,
       reconciliation: reconciliationData,
     };
 
     if (Object.values(viewModels).some(v => v !== undefined)) {
       commandCenterRuntime.build(viewModels);
     }
-  }, [pushPath, dashboardData, accountsData, loansData, cardsData, investmentsData, cashflowData, behaviourData, reconciliationData]);
+  }, [pushPath, dashboardData, accountsData, loansData, cardsData, investmentsData, cashflowData, behaviourData, forecast, reconciliationData]);
 
   return (
     <CommandCenterLayout
@@ -58,7 +60,7 @@ export default function CommandCenterPage() {
         investments: investmentsData,
         cashflow: cashflowData,
         behaviour: behaviourData,
-        forecast: cashflowData,
+        forecast: forecast,
         reconciliation: reconciliationData,
       }}
     />

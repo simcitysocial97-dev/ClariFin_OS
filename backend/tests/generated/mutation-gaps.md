@@ -1,6 +1,6 @@
 # Mutation Validation Gaps Report
 
-Generated: 2026-07-31T18:21:58.498985+00:00
+Generated: 2026-08-07T17:37:10.224696+00:00
 
 ## Summary
 
@@ -59,30 +59,11 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 
 ### `src/engines/balance_engine.py`
 
-✗ No pure functions - blocked for mutation testing
+✓ Pure functions detected
 ✓ Property tests available
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
-✗ Impure functions (blockers): 4
-  - `compute_running_balance`: blocked by ['sqlite3', 'import:sqlite3']
-  - `compute_account_balance`: blocked by ['sqlite3', 'import:sqlite3']
-  - `validate_statement_balance`: blocked by ['sqlite3', 'import:sqlite3']
-  - `get_accounts_list`: blocked by ['sqlite3', 'import:sqlite3']
-
-### `src/engines/behavior_engine.py`
-
-✗ No pure functions - blocked for mutation testing
-✓ Property tests available
-✓ Golden datasets available
-✓ Invariant tests available
-✓ Contract tests available
-✗ Impure functions (blockers): 5
-  - `invalidate_behavior_cache`: blocked by ['import:sqlite3']
-  - `get_cached_behavior_profile`: blocked by ['import:sqlite3']
-  - `set_cached_behavior_profile`: blocked by ['import:sqlite3']
-  - `detect_india_risk_patterns`: blocked by ['os.', 'import:sqlite3']
-  - `compute_behavior_profile`: blocked by ['import:sqlite3']
 
 ### `src/engines/behaviour_engine/account.py`
 
@@ -99,6 +80,16 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
+
+### `src/engines/behaviour_engine/core.py`
+
+✓ Pure functions detected
+✓ Property tests available
+✓ Golden datasets available
+✓ Invariant tests available
+✓ Contract tests available
+✗ Impure functions (blockers): 1
+  - `detect_india_risk_patterns`: blocked by ['os.']
 
 ### `src/engines/behaviour_engine/credit_dependency.py`
 
@@ -127,6 +118,14 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 ✓ Invariant tests available
 ✓ Contract tests available
 
+### `src/engines/behaviour_engine/insights.py`
+
+✓ Pure functions detected
+✗ No property tests
+✗ No golden datasets
+✗ No invariant tests
+✗ No contract tests
+
 ### `src/engines/behaviour_engine/lifestyle.py`
 
 ✓ Pure functions detected
@@ -134,6 +133,14 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
+
+### `src/engines/behaviour_engine/nudges.py`
+
+✓ Pure functions detected
+✗ No property tests
+✗ No golden datasets
+✗ No invariant tests
+✗ No contract tests
 
 ### `src/engines/behaviour_engine/patterns.py`
 
@@ -329,25 +336,13 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 ✗ Impure functions (blockers): 1
   - `compute_trend_direction`: blocked by ['os.']
 
-### `src/engines/insight_generator.py`
+### `src/engines/ledger_audit_engine.py`
 
 ✓ Pure functions detected
 ✓ Property tests available
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
-
-### `src/engines/ledger_audit_engine.py`
-
-✗ No pure functions - blocked for mutation testing
-✓ Property tests available
-✓ Golden datasets available
-✓ Invariant tests available
-✓ Contract tests available
-✗ Impure functions (blockers): 3
-  - `validate_ledger_integrity`: blocked by ['sqlite3', 'import:sqlite3']
-  - `verify_hash_signatures`: blocked by ['sqlite3', 'import:sqlite3']
-  - `run_full_audit`: blocked by ['import:sqlite3']
 
 ### `src/engines/loan_engine/amortization.py`
 
@@ -413,14 +408,6 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 ✓ Invariant tests available
 ✓ Contract tests available
 
-### `src/engines/nudge_engine.py`
-
-✓ Pure functions detected
-✓ Property tests available
-✓ Golden datasets available
-✓ Invariant tests available
-✓ Contract tests available
-
 ### `src/engines/recommendation_engine/recommendations.py`
 
 ✓ Pure functions detected
@@ -431,14 +418,11 @@ Generated: 2026-07-31T18:21:58.498985+00:00
 
 ### `src/engines/reconciliation_engine.py`
 
-✗ No pure functions - blocked for mutation testing
+✓ Pure functions detected
 ✓ Property tests available
 ✓ Golden datasets available
 ✓ Invariant tests available
 ✓ Contract tests available
-✗ Impure functions (blockers): 2
-  - `find_potential_matches`: blocked by ['sqlite3', 'import:sqlite3']
-  - `find_matches_for_transaction`: blocked by ['sqlite3', 'import:sqlite3']
 
 ### `src/engines/transaction_intelligence/cash_conversion_detector.py`
 

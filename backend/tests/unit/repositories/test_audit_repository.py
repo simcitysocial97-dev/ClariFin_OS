@@ -7,9 +7,7 @@ and FK constraint enforcement.
 Run: python -m pytest tests/test_audit_repository.py -v
 """
 
-import os
 import sqlite3
-import tempfile
 
 import pytest
 
@@ -17,17 +15,13 @@ from repositories.reconciliation_audit_repository import ReconciliationAuditRepo
 
 
 @pytest.fixture
-def db_with_reconciliation():
+def db_with_reconciliation(raw_db: str) -> str:
     """Create a temp DB with a reconciliations table and one record."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(raw_db)
     conn.execute("PRAGMA foreign_keys=ON")
 
-    # Create minimal transactions table (for FK reference)
     conn.execute("""
-        CREATE TABLE transactions (
+        CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             statement_id INTEGER,
             date TEXT,
@@ -39,15 +33,13 @@ def db_with_reconciliation():
         )
     """)
 
-    # Insert a transaction so our reconciliation FK works
     conn.execute("""
         INSERT INTO transactions (id, statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES (1, 1, '01/01/2025', '2025-01-01', 'Test', 100000, 'debit', 'A')
     """)
 
-    # Create reconciliations table
     conn.execute("""
-        CREATE TABLE reconciliations (
+        CREATE TABLE IF NOT EXISTS reconciliations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             debit_txn_id INTEGER NOT NULL,
             credit_txn_id INTEGER NOT NULL,
@@ -64,14 +56,12 @@ def db_with_reconciliation():
         )
     """)
 
-    # Insert a reconciliation record
     conn.execute("""
         INSERT INTO reconciliations (id, debit_txn_id, credit_txn_id, debit_account_id, credit_account_id,
                                       amount_paise, date_diff_days, match_confidence, match_type)
         VALUES (1, 1, 1, 'A', 'B', 100000, 0, 0.9, 'exact')
     """)
 
-    # Create the audit log table (as migration would)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS reconciliation_audit_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,23 +83,16 @@ def db_with_reconciliation():
     conn.commit()
     conn.close()
 
-    yield db_path
-
-    os.unlink(db_path)
+    return raw_db
 
 
 @pytest.fixture
-def audit_repo(db_with_reconciliation):
+def audit_repo(db_with_reconciliation: str):
     """Create an audit repository connected to the temp DB."""
     return ReconciliationAuditRepository(db_with_reconciliation)
 
 
-# ============================================================
-# Tests
-# ============================================================
-
-
-def test_insert_audit_log(audit_repo, db_with_reconciliation):
+def test_insert_audit_log(audit_repo):
     """Test inserting an audit log entry returns a valid ID."""
     log_id = audit_repo.insert_audit_log(
         reconciliation_id=1,
@@ -125,7 +108,7 @@ def test_insert_audit_log(audit_repo, db_with_reconciliation):
     assert log_id > 0, "log ID should be positive"
 
 
-def test_get_audit_trail_single(audit_repo, db_with_reconciliation):
+def test_get_audit_trail_single(audit_repo):
     """Test retrieving an audit trail with one entry."""
     audit_repo.insert_audit_log(
         reconciliation_id=1,
@@ -140,7 +123,7 @@ def test_get_audit_trail_single(audit_repo, db_with_reconciliation):
     assert trail[0]["reconciliation_id"] == 1
 
 
-def test_get_audit_trail_multiple(audit_repo, db_with_reconciliation):
+def test_get_audit_trail_multiple(audit_repo):
     """Test retrieving an audit trail with multiple entries in order."""
     actions = [
         ("confirm", "user1", "initial confirmation"),
@@ -159,25 +142,21 @@ def test_get_audit_trail_multiple(audit_repo, db_with_reconciliation):
     trail = audit_repo.get_audit_trail(reconciliation_id=1)
     assert len(trail) == 3
 
-    # Verify order (oldest first)
     assert trail[0]["action"] == "confirm"
     assert trail[1]["action"] == "modify"
     assert trail[2]["action"] == "reject"
 
 
-def test_get_audit_trail_empty(audit_repo, db_with_reconciliation):
+def test_get_audit_trail_empty(audit_repo):
     """Test retrieving an audit trail when no entries exist."""
     trail = audit_repo.get_audit_trail(reconciliation_id=999)
     assert trail == [], "Should return empty list for non-existent reconciliation"
 
 
-def test_insert_audit_log_invalid_fk(audit_repo, db_with_reconciliation):
-    """Test that inserting with an invalid reconciliation_id fails cleanly.
-
-    This is the negative test — verifies FK constraint enforcement.
-    """
+def test_insert_audit_log_invalid_fk(audit_repo):
+    """Test that inserting with an invalid reconciliation_id fails cleanly."""
     log_id = audit_repo.insert_audit_log(
-        reconciliation_id=99999,  # Does not exist
+        reconciliation_id=99999,
         action="confirm",
         actor="test_user",
     )
@@ -187,7 +166,7 @@ def test_insert_audit_log_invalid_fk(audit_repo, db_with_reconciliation):
     ), "insert_audit_log should return None when FK constraint fails"
 
 
-def test_insert_audit_log_with_all_fields(audit_repo, db_with_reconciliation):
+def test_insert_audit_log_with_all_fields(audit_repo):
     """Test inserting an audit log entry with all optional fields."""
     log_id = audit_repo.insert_audit_log(
         reconciliation_id=1,

@@ -1,0 +1,73 @@
+{
+  "schema": "duplicate-implementation/v1",
+  "generated_at": "2026-08-06T16:13:48.475711+00:00",
+  "program": "16.0",
+  "total_duplicates": 6,
+  "duplicates": [
+    {
+      "id": "dup-cashflow-service-vs-engine-module",
+      "location_a": "backend/src/services/cashflow_service.py",
+      "location_b": "backend/src/engines/behaviour_engine/cashflow.py",
+      "domain": "cashflow",
+      "similarity": "HIGH",
+      "description": "CashflowService and behaviour_engine/cashflow.py both implement cashflow analysis logic. CashflowService is a service-layer wrapper; cashflow.py is the engine module.",
+      "confidence": "HIGH",
+      "evidence": "architecture-inventory shows both as separate modules; cashflow_service.py imports cashflow-related DTOs"
+    },
+    {
+      "id": "dup-insight-generator-subsumed",
+      "location_a": "backend/src/engines/insight_generator.py",
+      "location_b": "backend/src/engines/behaviour_engine/core.py",
+      "domain": "insight generation",
+      "similarity": "HIGH",
+      "description": "insight_generator.py imported by behaviour_engine/core.py via backward-compat imports. Logic may be duplicated.",
+      "confidence": "MEDIUM",
+      "evidence": "behaviour_engine/core.py imports src.engines.insight_generator.generate_behavioral_insights"
+    },
+    {
+      "id": "dup-nudge-engine-subsumed",
+      "location_a": "backend/src/engines/nudge_engine.py",
+      "location_b": "backend/src/engines/behaviour_engine/core.py",
+      "domain": "nudge/recommendation",
+      "similarity": "HIGH",
+      "description": "nudge_engine.py imported by behaviour_engine/core.py. Nudge logic may be duplicated in recommendation_engine.",
+      "confidence": "MEDIUM",
+      "evidence": "behaviour_engine/core.py imports src.engines.nudge_engine.generate_nudges"
+    },
+    {
+      "id": "dup-frontend-intelligence-engines",
+      "location_a": "frontend/lib/intelligence/{behaviour,health,spending,debt,risk,...}-engine.ts",
+      "location_b": "backend/src/engines/{behaviour_engine,financial_intelligence,loan_engine,recommendation_engine}/",
+      "domain": "financial intelligence",
+      "similarity": "MEDIUM",
+      "description": "Frontend intelligence engines implement client-side logic that may overlap with backend engine calculations.",
+      "confidence": "MEDIUM",
+      "evidence": "frontend/lib/intelligence/ has 12 engine files; backend has 13 engines"
+    },
+    {
+      "id": "dup-money-types-frontend",
+      "location_a": "frontend/types/transaction.ts (Money)",
+      "location_b": "frontend/lib/money.ts (Money) + multiple view-model files (MoneyViewModel)",
+      "domain": "types",
+      "similarity": "HIGH",
+      "description": "Money type defined in transaction.ts and frontend/lib/money.ts. MoneyViewModel in 3 view-model files.",
+      "confidence": "HIGH",
+      "evidence": "architecture-inventory shows Money in both transaction.ts and frontend/lib/money.ts"
+    },
+    {
+      "id": "dup-workspace-services",
+      "location_a": "backend/src/services/*_workspace_service.py",
+      "location_b": "backend/src/services/*_service.py",
+      "domain": "service layer",
+      "similarity": "LOW",
+      "description": "7 workspace service files wrap 7 domain services. Architectural duplication of service patterns.",
+      "confidence": "MEDIUM",
+      "evidence": "backend/src/services/ has 33 service files; 7 are workspace services"
+    }
+  ],
+  "summary": {
+    "high_similarity": 4,
+    "medium_similarity": 1,
+    "low_similarity": 1
+  }
+}

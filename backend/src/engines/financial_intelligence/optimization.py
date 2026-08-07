@@ -409,9 +409,7 @@ def optimize_goal_prioritization(
             (
                 0
                 if g.get("goal_type") == "emergency_fund"
-                else 1
-                if g.get("goal_type") == "debt_payoff"
-                else 2
+                else 1 if g.get("goal_type") == "debt_payoff" else 2
             ),
             int(g.get("priority", 5) or 5),  # Lower number = higher priority
         ),

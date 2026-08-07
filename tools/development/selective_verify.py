@@ -17,10 +17,21 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
 
-# Project root from this file's location (tools/development → backend → project_root)
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-BACKEND_DIR = PROJECT_ROOT / "backend"
-GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
+# Project root from this file's location.
+# Supports both:
+#   tools/development/selective_verify.py (repo root)
+#   backend/tools/development/selective_verify.py (backend subdirectory)
+_candidate = Path(__file__).parent.parent.parent
+if (_candidate / "backend" / "tests" / "generated").exists():
+    PROJECT_ROOT = _candidate
+    BACKEND_DIR = PROJECT_ROOT / "backend"
+elif (_candidate.parent / "backend" / "tests" / "generated").exists():
+    PROJECT_ROOT = _candidate.parent
+    BACKEND_DIR = PROJECT_ROOT / "backend"
+else:
+    PROJECT_ROOT = _candidate
+    BACKEND_DIR = PROJECT_ROOT / "backend"
+GENERATED_DIR = BACKEND_DIR / "tests" / "generated"
 
 
 @dataclass
@@ -102,7 +113,7 @@ def load_change_report() -> dict[str, Any]:
         if git_mtime > report_mtime and git_mtime > 0:
             print("Regenerating stale change-report.json...")
             regenerate_result = subprocess.run(
-                [sys.executable, str(BACKEND_DIR / "tools" / "change_intelligence.py")],
+                [sys.executable, str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py")],
                 cwd=PROJECT_ROOT,
                 capture_output=True,
                 text=True,
@@ -117,7 +128,7 @@ def load_change_report() -> dict[str, Any]:
             print("Generating change-report.json...")
             file_args = [
                 sys.executable,
-                str(BACKEND_DIR / "tools" / "change_intelligence.py"),
+                str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py"),
             ] + changed_files
             regenerate_result = subprocess.run(
                 file_args,
@@ -497,7 +508,7 @@ def run_full_verification() -> tuple[int, float]:
 
     # Run via verify-local.sh equivalent but without spawning
     result = subprocess.run(
-        [sys.executable, str(BACKEND_DIR / "tools" / "change_intelligence.py")],
+        [sys.executable, str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py")],
         cwd=PROJECT_ROOT,
     )
 
@@ -614,7 +625,7 @@ def main() -> None:
         # Generate report for specific files
         file_args = [
             sys.executable,
-            str(BACKEND_DIR / "tools" / "change_intelligence.py"),
+            str(PROJECT_ROOT / "tools" / "development" / "change_intelligence.py"),
         ] + args.files
         result = subprocess.run(
             file_args,

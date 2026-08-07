@@ -1,6 +1,6 @@
 {
   "schema": "engineering-memory/v1",
-  "generated_at": "2026-08-06T14:13:02.145622+00:00",
+  "generated_at": "2026-08-06T15:06:39.119717+00:00",
   "sources": [
     "artifact-ownership.json",
     "engineering-events.jsonl",

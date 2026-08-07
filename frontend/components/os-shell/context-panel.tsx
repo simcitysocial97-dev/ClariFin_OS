@@ -25,6 +25,12 @@ import { ScrollRegion } from '@/components/primitives/layout/scroll-region';
 import { Stack } from '@/components/primitives/layout/stack';
 import type { SelectionEntity } from '@/lib/runtime/runtime-types';
 import { GraphContextPanel } from '@/components/graph/graph-context-panel';
+import { useTransactionCapability } from '@/lib/capabilities/use-transaction-capability';
+import { useAccountsCapability } from '@/lib/capabilities/use-accounts-capability';
+import { useLoansCapability } from '@/lib/capabilities/use-loans-capability';
+import { useCreditCardsCapability } from '@/lib/capabilities/use-credit-cards-capability';
+import { useInvestmentsCapability } from '@/lib/capabilities/use-investments-capability';
+import { useReconciliationCapability } from '@/lib/capabilities/use-reconciliation-capability';
 
 // ===== Severity Color Mapping =====
 const severityColors: Record<string, string> = {
@@ -130,16 +136,29 @@ interface AccountContextProps {
 }
 
 function AccountContext({ entity }: AccountContextProps) {
-  const context = useMemo(() => ({
-    id: String(entity.id),
-    name: `Account ${String(entity.id).slice(0, 8)}`,
-    type: entity.type,
-    balance_paise: 2500000,
-    institution: 'HDFC Bank',
-    status: 'active' as const,
-    opened_date: '2023-01-15',
-    transactions_count: 142,
-  }), [entity]);
+  const { accounts, loading } = useAccountsCapability();
+  const account = useMemo(() =>
+    accounts?.accounts.find(a => a.id === String(entity.id)),
+    [accounts, entity.id]
+  );
+
+  if (loading && !account) {
+    return (
+      <InspectorSection title="Account" icon="wallet">
+        <p className="fin-body-small text-[var(--text-tertiary)]">Loading account data...</p>
+      </InspectorSection>
+    );
+  }
+
+  if (!account) {
+    return (
+      <InspectorSection title="Account" icon="wallet">
+        <p className="fin-body-small text-[var(--text-secondary)]">
+          Account not found in current view. Open the Accounts workspace to load data.
+        </p>
+      </InspectorSection>
+    );
+  }
 
   return (
     <>
@@ -147,32 +166,34 @@ function AccountContext({ entity }: AccountContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Status</span>
-            <FinancialBadge semantic={context.status === 'active' ? 'positive' : 'neutral'} variant="ghost" className="text-[9px] px-1">
-              {context.status}
+            <FinancialBadge semantic={account.status === 'active' ? 'positive' : 'neutral'} variant="ghost" className="text-[9px] px-1">
+              {account.status}
             </FinancialBadge>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Balance</span>
-            <span className="fin-mono font-medium">{formatINR(context.balance_paise)}</span>
+            <span className="fin-mono font-medium">{formatINR(account.balance_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Institution</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.institution}</span>
+            <span className="fin-body text-[var(--text-primary)]">{account.institution}</span>
           </div>
+          {account.opened_date && (
+            <div className="flex items-center justify-between">
+              <span className="fin-caption text-[var(--text-secondary)]">Opened</span>
+              <span className="fin-body text-[var(--text-primary)]">{formatDateDisplay(account.opened_date)}</span>
+            </div>
+          )}
           <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Opened</span>
-            <span className="fin-body text-[var(--text-primary)]">{formatDateDisplay(context.opened_date)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Transactions</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.transactions_count}</span>
+            <span className="fin-caption text-[var(--text-secondary)]">Type</span>
+            <span className="fin-body text-[var(--text-primary)]">{account.type}</span>
           </div>
         </Stack>
       </InspectorSection>
 
       <InspectorSection title="Explanation" icon="evidence">
         <p className="fin-body-small text-[var(--text-secondary)]">
-          Savings account with consistent deposit pattern over 18 months. Average monthly credit of ₹45,000.
+          {account.name} with current balance of {formatINR(account.balance_paise)} at {account.institution}.
         </p>
       </InspectorSection>
     </>
@@ -185,17 +206,29 @@ interface TransactionContextProps {
 }
 
 function TransactionContext({ entity }: TransactionContextProps) {
-  const context = useMemo(() => ({
-    id: String(entity.id),
-    description: 'Amazon Pay UPI',
-    amount_paise: -129900,
-    date: '2026-07-28',
-    category: 'Shopping',
-    merchant: 'Amazon',
-    confidence: 94,
-    evidence_count: 3,
-    reconciliation_status: 'confirmed' as const,
-  }), [entity]);
+  const { transactions, loading } = useTransactionCapability();
+  const transaction = useMemo(() =>
+    transactions.find(t => t.id === String(entity.id)),
+    [transactions, entity.id]
+  );
+
+  if (loading && !transaction) {
+    return (
+      <InspectorSection title="Transaction" icon="receipt">
+        <p className="fin-body-small text-[var(--text-tertiary)]">Loading transaction data...</p>
+      </InspectorSection>
+    );
+  }
+
+  if (!transaction) {
+    return (
+      <InspectorSection title="Transaction" icon="receipt">
+        <p className="fin-body-small text-[var(--text-secondary)]">
+          Transaction not found in current view. Open the Transactions workspace to load data.
+        </p>
+      </InspectorSection>
+    );
+  }
 
   return (
     <>
@@ -203,57 +236,53 @@ function TransactionContext({ entity }: TransactionContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Amount</span>
-            <span className={cn('fin-mono font-semibold', context.amount_paise < 0 ? 'text-[var(--color-negative-500)]' : 'text-[var(--color-positive-500)]')}>
-              {formatINR(context.amount_paise)}
+            <span className={cn('fin-mono font-semibold', transaction.amount.paise < 0 ? 'text-[var(--color-negative-500)]' : 'text-[var(--color-positive-500)]')}>
+              {formatINR(transaction.amount.paise)}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Description</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.description}</span>
+            <span className="fin-body text-[var(--text-primary)]">{transaction.description}</span>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Category</span>
-            <FinancialBadge semantic="info" variant="ghost" className="text-[9px] px-1">
-              {context.category}
-            </FinancialBadge>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Merchant</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.merchant}</span>
-          </div>
+          {transaction.category_name && (
+            <div className="flex items-center justify-between">
+              <span className="fin-caption text-[var(--text-secondary)]">Category</span>
+              <FinancialBadge semantic="info" variant="ghost" className="text-[9px] px-1">
+                {transaction.category_path || transaction.category_name}
+              </FinancialBadge>
+            </div>
+          )}
+          {transaction.merchant_name && (
+            <div className="flex items-center justify-between">
+              <span className="fin-caption text-[var(--text-secondary)]">Merchant</span>
+              <span className="fin-body text-[var(--text-primary)]">{transaction.merchant_name}</span>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Date</span>
-            <span className="fin-body text-[var(--text-primary)]">{formatDateDisplay(context.date)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Confidence</span>
-            <div className="flex items-center gap-1.5">
-              <div className="w-12 h-1.5 bg-[var(--color-neutral-200)] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-[var(--color-confidence-high)] rounded-full"
-                  style={{ width: `${context.confidence}%` }}
-                />
-              </div>
-              <span className="fin-caption text-[var(--text-tertiary)]">{context.confidence}%</span>
-            </div>
+            <span className="fin-body text-[var(--text-primary)]">{formatDateDisplay(transaction.date)}</span>
           </div>
         </Stack>
       </InspectorSection>
 
       <InspectorSection title="Evidence" icon="evidence">
         <Stack gap={1}>
-          {['categorization', 'import', 'balance'].map((type, i) => (
+          {transaction.evidence?.map((ev, i) => (
             <div key={i} className="flex items-start gap-1.5">
-              <FinancialBadge semantic="info" variant="ghost" className="text-[8px] px-1 shrink-0 mt-0.5">{type}</FinancialBadge>
-              <span className="fin-caption text-[var(--text-secondary)]">Matched source record #{i + 1}</span>
+              <FinancialBadge semantic="info" variant="ghost" className="text-[8px] px-1 shrink-0 mt-0.5">{ev.type}</FinancialBadge>
+              <span className="fin-caption text-[var(--text-secondary)]">{ev.summary}</span>
             </div>
-          ))}
+          )) ?? (
+            <span className="fin-caption text-[var(--text-tertiary)]">No evidence available</span>
+          )}
         </Stack>
       </InspectorSection>
 
       <InspectorSection title="Explanation" icon="evidence">
         <p className="fin-body-small text-[var(--text-secondary)]">
-          UPI transaction matched to Amazon statement import. Category confidence high based on historical merchant patterns.
+          {transaction.category_path
+            ? `Categorized as ${transaction.category_path} based on historical merchant patterns.`
+            : 'No categorization explanation available.'}
         </p>
       </InspectorSection>
     </>
@@ -266,17 +295,32 @@ interface LoanContextProps {
 }
 
 function LoanContext({ entity }: LoanContextProps) {
-  const context = useMemo(() => ({
-    id: String(entity.id),
-    name: 'Home Loan',
-    lender: 'SBI',
-    original_amount_paise: 500000000,
-    outstanding_paise: 387500000,
-    emi_paise: 4500000,
-    interest_rate_bps: 875,
-    remaining_months: 156,
-    status: 'active' as const,
-  }), [entity]);
+  const { loans, loading } = useLoansCapability();
+  const loan = useMemo(() =>
+    loans?.loans.find(l => l.id === String(entity.id)),
+    [loans, entity.id]
+  );
+
+  if (loading && !loan) {
+    return (
+      <InspectorSection title="Loan" icon="loan">
+        <p className="fin-body-small text-[var(--text-tertiary)]">Loading loan data...</p>
+      </InspectorSection>
+    );
+  }
+
+  if (!loan) {
+    return (
+      <InspectorSection title="Loan" icon="loan">
+        <p className="fin-body-small text-[var(--text-secondary)]">
+          Loan not found in current view. Open the Loans workspace to load data.
+        </p>
+      </InspectorSection>
+    );
+  }
+
+  const paid_principal_paise = loan.original_amount_paise - loan.outstanding_paise;
+  const paid_interest_paise = (loan.emi_paise * loan.remaining_months) - paid_principal_paise;
 
   return (
     <>
@@ -284,23 +328,23 @@ function LoanContext({ entity }: LoanContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Outstanding</span>
-            <span className="fin-mono font-semibold">{formatINR(context.outstanding_paise)}</span>
+            <span className="fin-mono font-semibold">{formatINR(loan.outstanding_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Monthly EMI</span>
-            <span className="fin-mono">{formatINR(context.emi_paise)}</span>
+            <span className="fin-mono">{formatINR(loan.emi_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Interest Rate</span>
-            <span className="fin-body text-[var(--text-primary)]">{(context.interest_rate_bps / 100).toFixed(2)}%</span>
+            <span className="fin-body text-[var(--text-primary)]">{(loan.interest_rate_bps / 100).toFixed(2)}%</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Remaining</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.remaining_months} months</span>
+            <span className="fin-body text-[var(--text-primary)]">{loan.remaining_months} months</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Lender</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.lender}</span>
+            <span className="fin-body text-[var(--text-primary)]">{loan.lender}</span>
           </div>
         </Stack>
       </InspectorSection>
@@ -309,22 +353,18 @@ function LoanContext({ entity }: LoanContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Paid (Principal)</span>
-            <span className="fin-mono text-[var(--color-positive-600)]">{formatINR(context.original_amount_paise - context.outstanding_paise)}</span>
+            <span className="fin-mono text-[var(--color-positive-600)]">{formatINR(paid_principal_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Paid (Interest)</span>
-            <span className="fin-mono text-[var(--color-negative-600)]">₹42,75,000.00</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Est. Completion</span>
-            <span className="fin-body text-[var(--text-primary)]">Mar 2038</span>
+            <span className="fin-mono text-[var(--color-negative-600)]">{formatINR(Math.max(0, paid_interest_paise))}</span>
           </div>
         </Stack>
       </InspectorSection>
 
       <InspectorSection title="Explanation" icon="evidence">
         <p className="fin-body-small text-[var(--text-secondary)]">
-          Home loan with consistent EMI payments. Principal portion increasing monthly as amortization progresses. Interest-to-principal ratio improving.
+          {loan.name} with {loan.remaining_months} months remaining at {(loan.interest_rate_bps / 100).toFixed(2)}% interest. Principal portion increasing as amortization progresses.
         </p>
       </InspectorSection>
     </>
@@ -337,17 +377,31 @@ interface CardContextProps {
 }
 
 function CardContext({ entity }: CardContextProps) {
-  const context = useMemo(() => ({
-    id: String(entity.id),
-    name: 'HDFC Regalia',
-    last4: '4521',
-    credit_limit_paise: 50000000,
-    current_usage_paise: 1245000,
-    due_date: '2026-08-10',
-    statement_date: '2026-07-15',
-  }), [entity]);
+  const { creditCards, loading } = useCreditCardsCapability();
+  const card = useMemo(() =>
+    creditCards?.cards.find(c => c.id === String(entity.id)),
+    [creditCards, entity.id]
+  );
 
-  const utilization = Math.round((context.current_usage_paise / context.credit_limit_paise) * 100);
+  if (loading && !card) {
+    return (
+      <InspectorSection title="Card" icon="credit-card">
+        <p className="fin-body-small text-[var(--text-tertiary)]">Loading card data...</p>
+      </InspectorSection>
+    );
+  }
+
+  if (!card) {
+    return (
+      <InspectorSection title="Card" icon="credit-card">
+        <p className="fin-body-small text-[var(--text-secondary)]">
+          Card not found in current view. Open the Credit Cards workspace to load data.
+        </p>
+      </InspectorSection>
+    );
+  }
+
+  const utilization = Math.round((card.current_balance_paise / card.credit_limit_paise) * 100);
 
   return (
     <>
@@ -355,19 +409,19 @@ function CardContext({ entity }: CardContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Card</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.name}</span>
+            <span className="fin-body text-[var(--text-primary)]">{card.name}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Last 4</span>
-            <span className="fin-mono">{context.last4}</span>
+            <span className="fin-mono">{card.card_number_last4}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Current Usage</span>
-            <span className="fin-mono font-semibold">{formatINR(context.current_usage_paise)}</span>
+            <span className="fin-mono font-semibold">{formatINR(card.current_balance_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Credit Limit</span>
-            <span className="fin-mono">{formatINR(context.credit_limit_paise)}</span>
+            <span className="fin-mono">{formatINR(card.credit_limit_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Utilization</span>
@@ -383,14 +437,14 @@ function CardContext({ entity }: CardContextProps) {
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Due Date</span>
-            <span className="fin-body text-[var(--text-primary)]">{formatDateDisplay(context.due_date)}</span>
+            <span className="fin-body text-[var(--text-primary)]">{formatDateDisplay(card.due_date)}</span>
           </div>
         </Stack>
       </InspectorSection>
 
       <InspectorSection title="Explanation" icon="evidence">
         <p className="fin-body-small text-[var(--text-secondary)]">
-          Credit utilization at {utilization}% — within healthy range. Payment due in {parseInt(context.due_date?.slice(8) || '0')} days.
+          Credit utilization at {utilization}% — {utilization > 80 ? 'above' : 'within'} healthy range. Payment due on {formatDateDisplay(card.due_date)}.
         </p>
       </InspectorSection>
     </>
@@ -403,18 +457,32 @@ interface InvestmentContextProps {
 }
 
 function InvestmentContext({ entity }: InvestmentContextProps) {
-  const context = useMemo(() => ({
-    id: String(entity.id),
-    name: 'Axis Long Term Equity Fund',
-    type: 'Mutual Fund',
-    units: 125.45,
-    nav: 45.32,
-    invested_paise: 5000000,
-    current_value_paise: 5684500,
-  }), [entity]);
+  const { investments, loading } = useInvestmentsCapability();
+  const investment = useMemo(() =>
+    investments?.investments.find(i => i.id === String(entity.id)),
+    [investments, entity.id]
+  );
 
-  const gain_paise = context.current_value_paise - context.invested_paise;
-  const gain_pct = ((gain_paise / context.invested_paise) * 100).toFixed(1);
+  if (loading && !investment) {
+    return (
+      <InspectorSection title="Investment" icon="investment">
+        <p className="fin-body-small text-[var(--text-tertiary)]">Loading investment data...</p>
+      </InspectorSection>
+    );
+  }
+
+  if (!investment) {
+    return (
+      <InspectorSection title="Investment" icon="investment">
+        <p className="fin-body-small text-[var(--text-secondary)]">
+          Investment not found in current view. Open the Investments workspace to load data.
+        </p>
+      </InspectorSection>
+    );
+  }
+
+  const gain_paise = investment.current_value_paise - investment.invested_paise;
+  const gain_pct = investment.invested_paise > 0 ? ((gain_paise / investment.invested_paise) * 100).toFixed(1) : '0.0';
 
   return (
     <>
@@ -422,27 +490,23 @@ function InvestmentContext({ entity }: InvestmentContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Scheme</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.name}</span>
+            <span className="fin-body text-[var(--text-primary)]">{investment.name}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Type</span>
-            <FinancialBadge semantic="info" variant="ghost" className="text-[9px] px-1">{context.type}</FinancialBadge>
+            <FinancialBadge semantic="info" variant="ghost" className="text-[9px] px-1">{investment.type}</FinancialBadge>
           </div>
           <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Units</span>
-            <span className="fin-mono">{context.units.toFixed(2)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">NAV</span>
-            <span className="fin-mono">₹{context.nav.toFixed(2)}</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Invested</span>
-            <span className="fin-mono">{formatINR(context.invested_paise)}</span>
+            <span className="fin-caption text-[var(--text-secondary)]">Institution</span>
+            <span className="fin-body text-[var(--text-primary)]">{investment.institution}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Current Value</span>
-            <span className="fin-mono font-semibold">{formatINR(context.current_value_paise)}</span>
+            <span className="fin-mono font-semibold">{formatINR(investment.current_value_paise)}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="fin-caption text-[var(--text-secondary)]">Invested</span>
+            <span className="fin-mono">{formatINR(investment.invested_paise)}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Gain</span>
@@ -453,22 +517,9 @@ function InvestmentContext({ entity }: InvestmentContextProps) {
         </Stack>
       </InspectorSection>
 
-      <InspectorSection title="Forecast" icon="forecast">
-        <Stack gap={1}>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">1Y Projected</span>
-            <span className="fin-mono text-[var(--color-positive-600)]">+₹4,25,000.00</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Confidence</span>
-            <FinancialBadge semantic="confidence" variant="ghost" className="text-[9px] px-1">Medium</FinancialBadge>
-          </div>
-        </Stack>
-      </InspectorSection>
-
       <InspectorSection title="Explanation" icon="evidence">
         <p className="fin-body-small text-[var(--text-secondary)]">
-          Equity-linked savings fund with consistent growth over 3 years. Outperforming Nifty 50 by 2.3% annually.
+          {investment.name} with current value of {formatINR(investment.current_value_paise)} against an investment of {formatINR(investment.invested_paise)}.
         </p>
       </InspectorSection>
     </>
@@ -481,14 +532,31 @@ interface ReconciliationContextProps {
 }
 
 function ReconciliationContext({ entity }: ReconciliationContextProps) {
-  const context = useMemo(() => ({
-    id: String(entity.id),
-    period: 'July 2026',
-    matched: 142,
-    unmatched: 3,
-    discrepancy_paise: 2500,
-    status: 'in_progress' as const,
-  }), [entity]);
+  const { reconciliation, loading } = useReconciliationCapability();
+  const statement = useMemo(() =>
+    reconciliation?.statements.find(s => String(s.statement_id) === String(entity.id)),
+    [reconciliation, entity.id]
+  );
+
+  if (loading && !statement) {
+    return (
+      <InspectorSection title="Reconciliation" icon="check-square">
+        <p className="fin-body-small text-[var(--text-tertiary)]">Loading reconciliation data...</p>
+      </InspectorSection>
+    );
+  }
+
+  if (!statement) {
+    return (
+      <InspectorSection title="Reconciliation" icon="check-square">
+        <p className="fin-body-small text-[var(--text-secondary)]">
+          Reconciliation not found in current view. Open the Reconciliation workspace to load data.
+        </p>
+      </InspectorSection>
+    );
+  }
+
+  const unmatched_count = statement.transaction_count - statement.reconciled_count;
 
   return (
     <>
@@ -496,26 +564,28 @@ function ReconciliationContext({ entity }: ReconciliationContextProps) {
         <Stack gap={1}>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Period</span>
-            <span className="fin-body text-[var(--text-primary)]">{context.period}</span>
+            <span className="fin-body text-[var(--text-primary)]">{statement.period_from} — {statement.period_to}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Matched</span>
-            <span className="fin-mono text-[var(--color-positive-600)]">{context.matched} txn</span>
+            <span className="fin-caption text-[var(--text-secondary)]">Bank</span>
+            <span className="fin-body text-[var(--text-primary)]">{statement.bank}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Unmatched</span>
-            <span className="fin-mono text-[var(--color-warning-600)]">{context.unmatched} txn</span>
+            <span className="fin-caption text-[var(--text-secondary)]">Transactions</span>
+            <span className="fin-mono text-[var(--color-positive-600)]">{statement.transaction_count}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="fin-caption text-[var(--text-secondary)]">Discrepancy</span>
-            <span className={cn('fin-mono font-semibold', context.discrepancy_paise !== 0 ? 'text-[var(--color-negative-500)]' : 'text-[var(--color-positive-500)]')}>
-              {formatINR(context.discrepancy_paise)}
-            </span>
+            <span className="fin-caption text-[var(--text-secondary)]">Reconciled</span>
+            <span className="fin-mono text-[var(--color-positive-600)]">{statement.reconciled_count}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="fin-caption text-[var(--text-secondary)]">Unreconciled</span>
+            <span className="fin-mono text-[var(--color-warning-600)]">{unmatched_count}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="fin-caption text-[var(--text-secondary)]">Status</span>
-            <FinancialBadge semantic={context.status === 'in_progress' ? 'warning' : 'positive'} variant="ghost" className="text-[9px] px-1">
-              {context.status.replace('_', ' ')}
+            <FinancialBadge semantic={statement.status === 'confirmed' ? 'positive' : 'warning'} variant="ghost" className="text-[9px] px-1">
+              {statement.status}
             </FinancialBadge>
           </div>
         </Stack>
@@ -523,7 +593,7 @@ function ReconciliationContext({ entity }: ReconciliationContextProps) {
 
       <InspectorSection title="Explanation" icon="evidence">
         <p className="fin-body-small text-[var(--text-secondary)]">
-          3 unmatched transactions require review. Discrepancy of ₹25.00 may indicate missing entry or timing difference.
+          Statement from {statement.bank} covering {statement.period_from} to {statement.period_to}. {statement.reconciled_count} of {statement.transaction_count} transactions reconciled.
         </p>
       </InspectorSection>
     </>

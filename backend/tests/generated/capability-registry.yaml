@@ -47,6 +47,7 @@ capabilities:
   dependencies: []
   failure_impact: Account data becomes inconsistent. Users cannot track balances or
     detect dormant accounts leading to inaccurate financial position reporting.
+  capability_tests: []
 - id: credit_cards
   name: Credit Cards
   description: 'Analyze credit card statements, compute utilization ratios, track
@@ -100,6 +101,7 @@ capabilities:
   failure_impact: Credit card repayment planning breaks. Users cannot optimize payment
     strategies or understand true cost of revolving debt, leading to excessive interest
     charges.
+  capability_tests: []
 - id: debt_management
   name: Debt Management
   description: 'Compute loan schedules, EMI calculations, foreclosure amounts, prepayment
@@ -149,6 +151,7 @@ capabilities:
   - household_cashflow
   failure_impact: Loan repayment planning breaks. Users cannot determine correct EMIs,
     foreclosure amounts, or prepayment savings, leading to incorrect debt decisions.
+  capability_tests: []
 - id: financial_events
   name: Financial Events
   description: 'Track lifecycle of financial events across accounts including settlements,
@@ -187,6 +190,7 @@ capabilities:
   - transaction_intelligence
   failure_impact: Event tracking breaks. Users lose audit trail for settlements, refunds,
     and transfers, making transaction history incomplete and non-compliant.
+  capability_tests: []
 - id: financial_health
   name: Financial Health
   description: 'Assess financial health through behaviour profiling, resilience scoring,
@@ -202,7 +206,6 @@ capabilities:
   services:
   - src/services/behaviour_service.py
   engines:
-  - src/engines/behavior_engine.py
   - src/engines/behaviour_engine/account.py
   - src/engines/behaviour_engine/cashflow.py
   - src/engines/behaviour_engine/credit_dependency.py
@@ -246,6 +249,7 @@ capabilities:
   failure_impact: Financial health assessments become unreliable. Users lose visibility
     into behaviour patterns, stress indicators, and wellness scores needed for corrective
     action.
+  capability_tests: []
 - id: forecasting
   name: Forecasting
   description: 'Project future cashflow, liquidity, and financial goals using deterministic
@@ -294,6 +298,7 @@ capabilities:
   - credit_cards
   failure_impact: Long-term planning becomes unreliable. Users cannot project liquidity,
     set achievable financial goals, or evaluate what-if scenarios for major decisions.
+  capability_tests: []
 - id: household_cashflow
   name: Household Cashflow
   description: 'Compute monthly household cashflow analysis including income, expenses,
@@ -333,6 +338,7 @@ capabilities:
   dependencies: []
   failure_impact: Core financial visibility. Loss causes inability to determine surplus/deficit,
     leading to incorrect budget and planning decisions.
+  capability_tests: []
 - id: pattern_analysis
   name: Pattern Analysis
   description: 'Identify spending patterns, liquidity patterns, and recurring transaction
@@ -344,8 +350,7 @@ capabilities:
   routers:
   - src/routers/transactions.py
   services: []
-  engines:
-  - src/engines/insight_generator.py
+  engines: []
   repositories:
   - src/repositories/pattern_repository.py
   - src/repositories/liquidity_pattern_repository.py
@@ -371,6 +376,7 @@ capabilities:
   - transaction_intelligence
   failure_impact: Pattern detection breaks. Users lose automated categorization and
     recurring transaction identification, reducing cashflow accuracy and insight generation.
+  capability_tests: []
 - id: recommendations
   name: Recommendations
   description: 'Generate personalized financial recommendations based on account state,
@@ -386,7 +392,6 @@ capabilities:
   engines:
   - src/engines/recommendation_engine/recommendations.py
   - src/engines/financial_intelligence/optimization.py
-  - src/engines/nudge_engine.py
   repositories:
   - src/repositories/financial_goal_repository.py
   tables:
@@ -413,6 +418,7 @@ capabilities:
   - financial_health
   failure_impact: Users miss actionable insights. No optimization suggestions or behavioural
     nudges reduce platform's ability to drive positive financial change.
+  capability_tests: []
 - id: reconciliation
   name: Reconciliation
   description: 'Match debit and credit transactions across accounts to identify matched
@@ -457,6 +463,7 @@ capabilities:
   failure_impact: Reconciliation accuracy breaks. Users cannot verify transaction
     completeness or detect missing/suspicious transactions across accounts, undermining
     audit confidence.
+  capability_tests: []
 - id: transaction_intelligence
   name: Transaction Intelligence
   description: 'Detect hidden financial patterns in transactions including credit
@@ -504,10 +511,11 @@ capabilities:
   failure_impact: Hidden financial obligations go undetected. Users miss credit card
     payments, loan EMIs, and cash conversion cycles, leading to inaccurate cashflow
     and unexpected charges.
-
+  capability_tests: []
 - id: verification
   name: Verification
-  description: 'Validate verification infrastructure including performance metrics, regression detection, and verification matrices for the verification runtime.'
+  description: Validate verification infrastructure including performance metrics,
+    regression detection, and verification matrices for the verification runtime.
   criticality: high
   risk: high
   routers: []
@@ -522,5 +530,7 @@ capabilities:
   - tests/architecture
   contracts: []
   dependencies: []
-  failure_impact: Verification infrastructure becomes unreliable. Performance regressions go undetected, verification matrices become stale, and confidence in automated verification decreases.
+  failure_impact: Verification infrastructure becomes unreliable. Performance regressions
+    go undetected, verification matrices become stale, and confidence in automated
+    verification decreases.
   capability_tests: []

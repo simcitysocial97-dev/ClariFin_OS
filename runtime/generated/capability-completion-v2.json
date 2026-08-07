@@ -1,0 +1,192 @@
+{
+  "schema": "capability-completion-v2/v1",
+  "generated_at": "2026-08-06T16:43:21.274887Z",
+  "program": "18.0",
+  "total_chains": 6,
+  "complete": 6,
+  "incomplete": 0,
+  "summary": {
+    "chains_with_all_layers": 6,
+    "chains_missing_capability": 0,
+    "chains_missing_workspace": 0,
+    "chains_missing_service": 0,
+    "chains_missing_router": 0,
+    "chains_missing_engine": 0,
+    "chains_missing_repository": 0,
+    "chains_missing_tests": 0,
+    "chains_missing_verification": 0
+  },
+  "complete_chains": [
+    {
+      "capability": "useAccountsCapability",
+      "engine": "backend/src/engines/account_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "accounts"
+        ],
+        "components": 12,
+        "page": true
+      },
+      "tests": 2,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useBehaviourCapability",
+      "engine": "backend/src/engines/behaviour_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "behaviour"
+        ],
+        "components": 10,
+        "page": true
+      },
+      "tests": 5,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useCreditCardsCapability",
+      "engine": "backend/src/engines/credit_card_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "cards"
+        ],
+        "components": 10,
+        "page": true
+      },
+      "tests": 7,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useLoansCapability",
+      "engine": "backend/src/engines/loan_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "loans"
+        ],
+        "components": 11,
+        "page": true
+      },
+      "tests": 10,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useBehaviourCapability",
+      "engine": "backend/src/engines/recommendation_engine",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "behaviour"
+        ],
+        "components": 10,
+        "page": true
+      },
+      "tests": 2,
+      "status": "Complete",
+      "missing": []
+    },
+    {
+      "capability": "useReconciliationCapability",
+      "engine": "backend/src/engines/reconciliation_engine.py",
+      "backend": {
+        "engine": true,
+        "service": true,
+        "router": true,
+        "endpoint": true
+      },
+      "frontend": {
+        "workspace": [
+          "reconciliation"
+        ],
+        "components": 11,
+        "page": true
+      },
+      "tests": 4,
+      "status": "Complete",
+      "missing": []
+    }
+  ],
+  "incomplete_chains": [],
+  "chain_analysis": [
+    {
+      "capability": "useAccountsCapability",
+      "engine": "backend/src/engines/account_engine",
+      "status": "Complete",
+      "missing_layers": [],
+      "first_missing": "none",
+      "completion_required": []
+    },
+    {
+      "capability": "useBehaviourCapability",
+      "engine": "backend/src/engines/behaviour_engine",
+      "status": "Complete",
+      "missing_layers": [],
+      "first_missing": "none",
+      "completion_required": []
+    },
+    {
+      "capability": "useCreditCardsCapability",
+      "engine": "backend/src/engines/credit_card_engine",
+      "status": "Complete",
+      "missing_layers": [],
+      "first_missing": "none",
+      "completion_required": []
+    },
+    {
+      "capability": "useLoansCapability",
+      "engine": "backend/src/engines/loan_engine",
+      "status": "Complete",
+      "missing_layers": [],
+      "first_missing": "none",
+      "completion_required": []
+    },
+    {
+      "capability": "useBehaviourCapability",
+      "engine": "backend/src/engines/recommendation_engine",
+      "status": "Complete",
+      "missing_layers": [],
+      "first_missing": "none",
+      "completion_required": []
+    },
+    {
+      "capability": "useReconciliationCapability",
+      "engine": "backend/src/engines/reconciliation_engine.py",
+      "status": "Complete",
+      "missing_layers": [],
+      "first_missing": "none",
+      "completion_required": []
+    }
+  ]
+}

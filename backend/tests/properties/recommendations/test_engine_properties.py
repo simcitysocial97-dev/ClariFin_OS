@@ -22,7 +22,7 @@ class TestNudgeEngineProperties:
         surplus_values: list[int],
     ) -> None:
         """Nudges should be generated for concerning patterns."""
-        from src.engines.nudge_engine import generate_nudges
+        from src.engines.behaviour_engine import generate_nudges
 
         profile = {
             "temporal_patterns": {

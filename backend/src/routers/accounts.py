@@ -13,9 +13,6 @@ from typing import Any
 
 from fastapi import APIRouter, Query
 
-# DELIBERATE ARCH-001 VIOLATION FOR PROGRAM 12 CERTIFICATION TEST
-from backend.src.engines.account_engine import AccountEngine
-
 from src.core.dtos.accounts_dto import (
     AccountAnalyticsDTO,
     AccountDetailDTO,

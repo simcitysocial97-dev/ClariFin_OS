@@ -1,10 +1,10 @@
 {
   "schema": "platform-state/v1",
-  "generated_at": "2026-08-06T14:13:02.180599+00:00",
+  "generated_at": "2026-08-06T15:06:55.965634+00:00",
   "provider": "runtime.foundation.architecture.get_architecture",
   "audits_rerun": false,
   "platform_health": {
-    "status": "HEALTHY",
+    "status": "CERTIFIED_WITH_OPEN_RISK",
     "architecture_counts": {
       "engines": 13,
       "engine_modules": 46,
@@ -22,173 +22,176 @@
       "view_models": 106,
       "artifacts": 137
     },
-    "risk_level": "Low",
-    "risk_score": 1,
+    "risk_level": "High",
+    "risk_score": 10,
     "confidence": 1.0
   },
   "certification": {
     "status": "CERTIFIED",
     "source": "engineering-platform-audit.json",
-    "as_of": "2026-08-06T14:08:22.942610+00:00",
+    "as_of": "2026-08-06T14:31:31.372029+00:00",
     "sections_total": 19,
-    "sections_passed": 18,
+    "sections_passed": 19,
     "note": "read from artifact; audits were NOT rerun"
   },
-  "open_risks": [],
+  "open_risks": [
+    {
+      "dimension": "Coverage Risk",
+      "level": "High",
+      "score": 60,
+      "top_evidence": "every impacted engine has at least one recorded test"
+    }
+  ],
   "recent_changes": {
-    "file_count": 119,
+    "file_count": 16,
     "source": "git",
     "base": "HEAD",
-    "head": "1c5071f8b4c22df747a68f9db7bc49953d428bd2",
-    "changed_counts": {
-      "artifacts": 25,
-      "view_models": 1
-    },
+    "head": "22ed278d4f7a44a8ede26cd65f7500b39c616741",
+    "changed_counts": {},
     "unmapped_paths": []
   },
   "verification_queue": {
-    "selected_units": [
-      "runtime-self-test"
-    ],
+    "selected_units": [],
     "skipped_units": [
       "unit-targeted",
       "contracts-schemathesis",
       "backend-integration",
       "frontend-unit",
       "playwright-e2e",
+      "runtime-self-test",
       "mutation-run",
       "golden-regression"
     ],
-    "estimated_seconds": 120,
-    "estimated_ci_usd": 0.016,
-    "savings_seconds": 780
+    "estimated_seconds": 0,
+    "estimated_ci_usd": 0,
+    "savings_seconds": 900
   },
   "pending_repairs": {
     "defect_count": 25,
     "repairs": [
       {
         "defect_id": "normalized-issue-308",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-309",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-310",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-18",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-343",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-359",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-360",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-361",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-362",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-363",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-364",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-365",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-366",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-367",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-368",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-369",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-370",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-371",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-372",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-373",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-374",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-375",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-376",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-377",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       },
       {
         "defect_id": "normalized-issue-378",
-        "first_target": "artifact:runtime/generated/architecture-inventory-summary.json",
+        "first_target": null,
         "confidence": 0.4
       }
     ]
@@ -219,20 +222,17 @@
     ]
   },
   "ci_health": {
-    "available": false,
-    "runs_inspected": 0,
-    "failed_jobs": 0,
+    "available": true,
+    "runs_inspected": 10,
+    "failed_jobs": 5,
     "annotations": 0,
     "logs_downloaded": 0,
     "recurring_ci_failures": 0
   },
   "blast_radius_summary": {
-    "direct": 26,
+    "direct": 0,
     "indirect": 0,
-    "user_visible": 1,
-    "by_kind": {
-      "artifact": 25,
-      "view_model": 1
-    }
+    "user_visible": 0,
+    "by_kind": {}
   }
 }

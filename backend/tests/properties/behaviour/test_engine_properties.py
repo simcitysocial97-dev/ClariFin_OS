@@ -101,7 +101,7 @@ class TestBehaviourEngineProperties:
         self, value: float, min_val: float, max_val: float
     ) -> None:
         """Normalize score must return values in [0, 1] range."""
-        from src.engines.behavior_engine import _normalize_score
+        from src.engines.behaviour_engine.core import _normalize_score
 
         normalized = _normalize_score(value, min_val, max_val)
         assert 0.0 <= normalized <= 1.0
@@ -112,7 +112,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_normalize_score_default_bounds(self, value: float) -> None:
         """Normalize score with default bounds must return values in [0, 1] range."""
-        from src.engines.behavior_engine import _normalize_score
+        from src.engines.behaviour_engine.core import _normalize_score
 
         normalized = _normalize_score(value)
         assert 0.0 <= normalized <= 1.0
@@ -125,7 +125,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_coefficient_of_variation_non_negative(self, values: list[float]) -> None:
         """Coefficient of variation must be non-negative."""
-        from src.engines.behavior_engine import _coefficient_of_variation
+        from src.engines.behaviour_engine.core import _coefficient_of_variation
 
         cv = _coefficient_of_variation(values)
         assert cv >= 0.0
@@ -138,7 +138,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_coefficient_of_variation_single_value(self, values: list[float]) -> None:
         """Coefficient of variation with single value must be 0."""
-        from src.engines.behavior_engine import _coefficient_of_variation
+        from src.engines.behaviour_engine.core import _coefficient_of_variation
 
         cv = _coefficient_of_variation(values)
         assert cv == 0.0
@@ -152,7 +152,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_moving_average_length(self, values: list[float], window: int) -> None:
         """Moving average must return list of same length as input."""
-        from src.engines.behavior_engine import _moving_average
+        from src.engines.behaviour_engine.core import _moving_average
 
         window = min(window, len(values))
         ma = _moving_average(values, window)
@@ -164,7 +164,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_impulsivity_score_bounds(self, transactions: list[dict]) -> None:
         """Impulsivity score must be in [0, 1] range."""
-        from src.engines.behavior_engine import _compute_impulsivity_score
+        from src.engines.behaviour_engine.core import _compute_impulsivity_score
 
         result = _compute_impulsivity_score(transactions)
         score = result.get("impulsivity_score", 0.0)
@@ -174,7 +174,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_habit_stability_score_bounds(self, transactions: list[dict]) -> None:
         """Habit stability score must be in [0, 1] range."""
-        from src.engines.behavior_engine import _compute_habit_stability_score
+        from src.engines.behaviour_engine.core import _compute_habit_stability_score
 
         result = _compute_habit_stability_score(transactions)
         score = result.get("habit_stability_score", 0.0)
@@ -184,7 +184,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_loss_aversion_index_bounds(self, transactions: list[dict]) -> None:
         """Loss aversion index must be in [0, 1] range."""
-        from src.engines.behavior_engine import _compute_loss_aversion_index
+        from src.engines.behaviour_engine.core import _compute_loss_aversion_index
 
         result = _compute_loss_aversion_index(transactions)
         index = result.get("loss_aversion_index", 0.0)
@@ -194,7 +194,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_financial_stress_index_bounds(self, transactions: list[dict]) -> None:
         """Financial stress index must be in [0, 1] range."""
-        from src.engines.behavior_engine import _compute_financial_stress_index
+        from src.engines.behaviour_engine.core import _compute_financial_stress_index
 
         result = _compute_financial_stress_index(transactions)
         index = result.get("financial_stress_index", 0.0)
@@ -204,7 +204,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_savings_discipline_score_bounds(self, transactions: list[dict]) -> None:
         """Savings discipline score must be in [0, 1] range."""
-        from src.engines.behavior_engine import _compute_savings_discipline_score
+        from src.engines.behaviour_engine.core import _compute_savings_discipline_score
 
         result = _compute_savings_discipline_score(transactions)
         score = result.get("savings_discipline_score", 0.0)
@@ -214,7 +214,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_temporal_patterns_deterministic(self, transactions: list[dict]) -> None:
         """Temporal patterns computation must be deterministic."""
-        from src.engines.behavior_engine import _compute_temporal_patterns
+        from src.engines.behaviour_engine.core import _compute_temporal_patterns
 
         result1 = _compute_temporal_patterns(transactions)
         result2 = _compute_temporal_patterns(transactions)
@@ -226,7 +226,7 @@ class TestBehaviourEngineProperties:
     @settings(max_examples=20)
     def test_india_risk_patterns_deterministic(self, transactions: list[dict]) -> None:
         """India risk patterns detection must be deterministic."""
-        from src.engines.behavior_engine import detect_india_risk_patterns
+        from src.engines.behaviour_engine.core import detect_india_risk_patterns
 
         result1 = detect_india_risk_patterns(transactions)
         result2 = detect_india_risk_patterns(transactions)

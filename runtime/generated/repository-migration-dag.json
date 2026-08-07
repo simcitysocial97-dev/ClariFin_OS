@@ -1,0 +1,147 @@
+{
+  "schema": "repository-migration-dag/v1",
+  "generated_at": "2026-08-06T16:44:29.420581Z",
+  "program": "18.0",
+  "total_steps": 7,
+  "summary": {
+    "completed": 4,
+    "pending": 0,
+    "blocked": 3,
+    "circular_dependencies": 0
+  },
+  "dag": [
+    {
+      "id": "STEP-001",
+      "action": "deleted",
+      "target": "backend/src/services/base_service.py",
+      "prerequisites": [],
+      "success_criteria": "File deleted: backend/src/services/base_service.py",
+      "rollback": "git checkout -- backend/src/services/base_service.py",
+      "verification_command": "python3 runtime/verify.py quick",
+      "estimated_impact": "none",
+      "status": "completed",
+      "priority": 1
+    },
+    {
+      "id": "STEP-002",
+      "action": "deleted",
+      "target": "frontend/types/financial.ts",
+      "prerequisites": [],
+      "success_criteria": "File deleted: frontend/types/financial.ts",
+      "rollback": "git checkout -- frontend/types/financial.ts",
+      "verification_command": "python3 runtime/verify.py quick",
+      "estimated_impact": "none",
+      "status": "completed",
+      "priority": 1
+    },
+    {
+      "id": "STEP-003",
+      "action": "merge_engine",
+      "target": "backend/src/engines/insight_generator.py",
+      "prerequisites": [
+        "STEP-001",
+        "STEP-002"
+      ],
+      "success_criteria": "backend/src/engines/insight_generator.py merged into behaviour_engine/insights.py",
+      "rollback": "git revert commit",
+      "verification_command": "python3 runtime/verify.py quick",
+      "estimated_impact": "none",
+      "status": "completed",
+      "priority": 2
+    },
+    {
+      "id": "STEP-004",
+      "action": "merge_engine",
+      "target": "backend/src/engines/nudge_engine.py",
+      "prerequisites": [
+        "STEP-001",
+        "STEP-002",
+        "STEP-003"
+      ],
+      "success_criteria": "backend/src/engines/nudge_engine.py merged into behaviour_engine/nudges.py",
+      "rollback": "git revert commit",
+      "verification_command": "python3 runtime/verify.py quick",
+      "estimated_impact": "none",
+      "status": "completed",
+      "priority": 2
+    },
+    {
+      "id": "STEP-005",
+      "action": "create_workspace",
+      "target": "frontend/app/__tests__/",
+      "prerequisites": [],
+      "success_criteria": "Workspace __tests__ created with backend capability",
+      "rollback": "git revert commit",
+      "verification_command": "python3 runtime/verify.py quick",
+      "estimated_impact": "low",
+      "status": "blocked",
+      "priority": 3,
+      "blocker": {
+        "type": "constitutional",
+        "reason": "Placeholder workspace creation is constitutionally forbidden. No canonical backend capability exists for the missing workspace domains. Engineering Constitution prohibits synthetic capability creation."
+      }
+    },
+    {
+      "id": "STEP-006",
+      "action": "consolidate_routers",
+      "target": "backend/src/routers/*_workspace.py",
+      "prerequisites": [],
+      "success_criteria": "7 workspace routers consolidated into main routers",
+      "rollback": "git revert commit",
+      "verification_command": "python3 runtime/verify.py quick",
+      "estimated_impact": "low",
+      "status": "blocked",
+      "priority": 4,
+      "blocker": {
+        "type": "constitutional",
+        "reason": "Router restructuring is explicitly forbidden by Engineering Constitution during repository convergence. Active workspace routers are registered in api.py and serve live endpoints. No concrete router migration is authorized by the migration DAG."
+      }
+    },
+    {
+      "id": "STEP-007",
+      "action": "add_tests",
+      "target": "backend/tests/integration/",
+      "prerequisites": [],
+      "success_criteria": "10 engines have integration tests",
+      "rollback": "git revert commit",
+      "verification_command": "python3 runtime/verify.py backend",
+      "estimated_impact": "none",
+      "status": "blocked",
+      "priority": 5,
+      "blocker": {
+        "type": "scope",
+        "reason": "Heavy integration testing is delegated to GitHub Actions. Local execution budget excludes full integration suite. Integration test directory exists with 3 subdirectories (e2e, orchestration, cross_capability) containing 4 test files. Adding new integration tests is test addition, not test alignment, and exceeds local execution policy."
+      }
+    }
+  ],
+  "dependency_order": [
+    "STEP-001",
+    "STEP-002",
+    "STEP-003",
+    "STEP-004",
+    "STEP-005",
+    "STEP-006",
+    "STEP-007"
+  ],
+  "executed_nodes": [
+    {
+      "id": "behavior_engine_retirement",
+      "action": "delete_legacy_facade",
+      "target": "backend/src/engines/behavior_engine.py",
+      "status": "completed",
+      "evidence": "14 test references migrated from src.engines.behavior_engine to src.engines.behaviour_engine.core. All 21 targeted tests pass. File deleted after verification.",
+      "files_modified": [
+        "backend/tests/unit/engines/behavior/test_behavior_engine.py",
+        "backend/tests/properties/behaviour/test_engine_properties.py"
+      ],
+      "files_deleted": [
+        "backend/src/engines/behavior_engine.py"
+      ],
+      "validation": {
+        "ruff": "PASS",
+        "mypy": "PASS",
+        "tests": "21/21 PASS"
+      }
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "schema": "deletion-validation/v1",
+  "generated_at": "2026-08-06T16:30:47.879012Z",
+  "program": "17.0",
+  "total_candidates": 7,
+  "summary": {
+    "safe_delete": 3,
+    "migrate_first": 0,
+    "preserve": 4
+  },
+  "candidates": [
+    {
+      "id": "legacy-behavior_engine-facade",
+      "path": "backend/src/engines/behavior_engine.py",
+      "category": "parked",
+      "owner": "behaviour_engine (canonical package)",
+      "reason": "PARKED legacy single-file facade fully replaced by behaviour_engine package. Import references: 0. Dead code.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 28,
+        "workflow_usage": 0,
+        "test_references": 52,
+        "documentation_references": 51,
+        "evidence": "engine-normalization.json parked_facades; architecture-inventory Engine Facade node_type; grep shows zero imports in backend/src"
+      }
+    },
+    {
+      "id": "legacy-cashflow_engine-parked",
+      "path": "backend/src/engines/cashflow_engine.py.parked",
+      "category": "parked",
+      "owner": "unknown (legacy)",
+      "reason": "PARKED legacy cashflow engine file. No canonical successor package exists. Import references: 0.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 11,
+        "workflow_usage": 0,
+        "test_references": 36,
+        "documentation_references": 19,
+        "evidence": "engine-normalization.json reports PARKED; grep finds zero importers"
+      }
+    },
+    {
+      "id": "duplicate-behaviour-ownership",
+      "path": "backend/src/engines/behavior_engine.py (legacy) vs backend/src/engines/behaviour_engine/ (canonical)",
+      "category": "duplicate",
+      "owner": "behaviour_engine (canonical package) + behavior_engine.py (parked legacy)",
+      "reason": "Same domain implemented twice: canonical behaviour_engine package AND legacy behavior_engine.py single-file facade. The legacy file is PARKED but not deleted.",
+      "classification": "Safe Delete",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 1,
+        "workflow_usage": 0,
+        "test_references": 0,
+        "documentation_references": 7,
+        "evidence": "engine-normalization.json partially_migrated_engines; architecture-inventory Engine Facade node_type; import grep shows zero importers"
+      }
+    },
+    {
+      "id": "unused-alert_repository",
+      "path": "backend/src/repositories/alert_repository.py",
+      "category": "unused repository",
+      "owner": "unknown (no service importer)",
+      "reason": "Repository defined but not imported by any service or engine. Zero import references.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 5,
+        "workflow_usage": 0,
+        "test_references": 3,
+        "documentation_references": 8,
+        "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:alert_repository"
+      }
+    },
+    {
+      "id": "unused-reconciliation_audit_repository",
+      "path": "backend/src/repositories/reconciliation_audit_repository.py",
+      "category": "unused repository",
+      "owner": "reconciliation_engine",
+      "reason": "Repository defined but not imported by any service. Zero service-level import references.",
+      "classification": "Preserve",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 5,
+        "workflow_usage": 0,
+        "test_references": 9,
+        "documentation_references": 3,
+        "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:reconciliation_audit_repository"
+      }
+    },
+    {
+      "id": "unused-base_service",
+      "path": "backend/src/services/base_service.py",
+      "category": "unused service",
+      "owner": "unknown (legacy)",
+      "reason": "Legacy base service not imported by any router or domain service. Superseded by backend/src/services/base.py.",
+      "classification": "Safe Delete",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 4,
+        "workflow_usage": 0,
+        "test_references": 0,
+        "documentation_references": 9,
+        "evidence": "dependency-graph-v2.json shows 0 incoming edges to service:backend/src/services/base_service.py"
+      }
+    },
+    {
+      "id": "orphan-frontend-financial-types",
+      "path": "frontend/types/financial.ts",
+      "category": "orphan",
+      "owner": "unknown",
+      "reason": "Frontend type file defining NetWorth, MonthlyCashflowResponse, BehaviorScore with ZERO importers. Dead code.",
+      "classification": "Safe Delete",
+      "confidence": "HIGH",
+      "validation": {
+        "runtime_imports": 0,
+        "dynamic_imports": 0,
+        "cli_usage": 8,
+        "workflow_usage": 0,
+        "test_references": 0,
+        "documentation_references": 1,
+        "evidence": "architecture-inventory import scan shows zero importers for frontend/types/financial.ts"
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-07-31T23:17:21.964774+00:00",
-  "git_sha": "2d73bf08afd202dd499f0c558ab2e8d4c6e057f2",
+  "generated_at": "2026-08-07T17:37:13.803843+00:00",
+  "git_sha": "22ed278d4f7a44a8ede26cd65f7500b39c616741",
   "changes": [
     {
       "file": "backend/src/engines/cashflow_engine.py",

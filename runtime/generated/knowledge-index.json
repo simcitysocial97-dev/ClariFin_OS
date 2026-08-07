@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-06T14:24:10.436202+00:00",
+  "indexed_at": "2026-08-07T14:07:41.704835+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -9521,6 +9521,46 @@
         ]
       },
       {
+        "title": "program-c-backlog",
+        "path": "docs/program-c-backlog.md",
+        "references": {
+          "path": "docs/program-c-backlog.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-c-gap-inventory",
+        "path": "docs/program-c-gap-inventory.md",
+        "references": {
+          "path": "docs/program-c-gap-inventory.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-c-repository-freeze",
+        "path": "docs/program-c-repository-freeze.md",
+        "references": {
+          "path": "docs/program-c-repository-freeze.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program19-wave1-report",
+        "path": "docs/program19-wave1-report.md",
+        "references": {
+          "path": "docs/program19-wave1-report.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "engineering-platform-v1.0",
         "path": "docs/releases/engineering-platform-v1.0.md",
         "references": {
@@ -9833,6 +9873,6 @@
     "verification_profiles": 10,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 132
+    "documentation": 136
   }
 }

@@ -1,0 +1,101 @@
+{
+  "schema": "repository-simplification/v1",
+  "generated_at": "2026-08-06T16:31:11.933430Z",
+  "program": "17.0",
+  "total_opportunities": 8,
+  "summary": {
+    "high_value": 2,
+    "medium_value": 5,
+    "low_value": 1
+  },
+  "opportunities": [
+    {
+      "id": "simp-dto-account-consolidation",
+      "type": "merge",
+      "target": "backend/src/core/dtos/account_dto.py + accounts_dto.py",
+      "description": "Merge account_dto.py (simple AccountDTO) and accounts_dto.py (detailed AccountDetailDTO with evidence chain) into single coherent DTO structure.",
+      "engineering_value": "MEDIUM",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "impact": "Reduces DTO count from 15 to ~14; simplifies mapper layer.",
+      "evidence": "duplicate-implementation.json dup-account-dtos"
+    },
+    {
+      "id": "simp-workspace-service-consolidation",
+      "type": "merge",
+      "target": "backend/src/services/*_workspace_service.py",
+      "description": "7 workspace service files wrap 7 domain services. Consolidate into single service with workspace parameter or merge into domain service.",
+      "engineering_value": "MEDIUM",
+      "risk": "MEDIUM",
+      "effort": "MODERATE",
+      "impact": "Reduces service count from 33 to ~26; simplifies dependency graph.",
+      "evidence": "duplicate-implementation.json dup-workspace-services"
+    },
+    {
+      "id": "simp-frontend-money-types",
+      "type": "merge",
+      "target": "frontend/types/transaction.ts + frontend/lib/money.ts",
+      "description": "Money type defined in both transaction.ts and money.ts. MoneyViewModel duplicated in 3 view-model files.",
+      "engineering_value": "MEDIUM",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "impact": "Eliminates duplicate type definitions; reduces frontend type complexity.",
+      "evidence": "duplicate-implementation.json dup-money-types-frontend"
+    },
+    {
+      "id": "simp-compat-layer-removal",
+      "type": "eliminate",
+      "target": "backend/src/engines/behavior_engine.py",
+      "description": "Legacy behavior_engine.py is a compatibility wrapper fully replaced by behaviour_engine package.",
+      "engineering_value": "HIGH",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "impact": "Eliminates legacy compatibility layer; reduces confusion.",
+      "evidence": "deletion-validation.json"
+    },
+    {
+      "id": "simp-duplicate-mappers",
+      "type": "merge",
+      "target": "frontend/lib/mappers/*",
+      "description": "Multiple mapper files may have overlapping responsibilities. Audit and consolidate where appropriate.",
+      "engineering_value": "LOW",
+      "risk": "LOW",
+      "effort": "MODERATE",
+      "impact": "Potential reduction in mapper count; improved consistency.",
+      "evidence": "cross-layer-map.json mapper analysis"
+    },
+    {
+      "id": "simp-service-consolidation",
+      "type": "merge",
+      "target": "backend/src/services/cashflow_service.py + behaviour_engine/cashflow.py",
+      "description": "CashflowService and behaviour_engine/cashflow.py both implement cashflow analysis logic.",
+      "engineering_value": "MEDIUM",
+      "risk": "MEDIUM",
+      "effort": "MODERATE",
+      "impact": "Eliminates duplicated cashflow logic; clarifies ownership.",
+      "evidence": "duplicate-implementation.json dup-cashflow-service-vs-engine-module"
+    },
+    {
+      "id": "simp-orphan-routers-removal",
+      "type": "eliminate",
+      "target": "backend/src/routers/{health.py, financial_events.py, export.py, banks.py, members.py, transactions.py, forecast.py, investments.py}",
+      "description": "7 routers registered but never reached by any capability chain. Remove or wire to capabilities.",
+      "engineering_value": "HIGH",
+      "risk": "LOW",
+      "effort": "MINIMAL",
+      "impact": "Reduces router count; eliminates dead code paths.",
+      "evidence": "runtime-reachability.json never_reachable"
+    },
+    {
+      "id": "simp-workspace-router-consolidation",
+      "type": "merge",
+      "target": "backend/src/routers/*_workspace.py",
+      "description": "7 workspace routers duplicate functionality from main routers. Consolidate into single router files.",
+      "engineering_value": "MEDIUM",
+      "risk": "MEDIUM",
+      "effort": "MODERATE",
+      "impact": "Reduces router count from 28 to ~21.",
+      "evidence": "api-canonicalization.json workspace_issues"
+    }
+  ]
+}

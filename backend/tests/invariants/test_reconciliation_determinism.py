@@ -12,55 +12,32 @@ Tests for:
 Run: python -m pytest tests/invariants/test_reconciliation_determinism.py -v
 """
 
-import os
 import sqlite3
-import tempfile
 from datetime import datetime
 
 import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
-from db import FinanceDB
 from repositories.statement_repository import StatementRepository
 from src.engines.reconciliation_engine import find_potential_matches
 
-# ============================================================
-# Fixtures
-# ============================================================
-
 
 @pytest.fixture
-def temp_db():
-    """Create a temporary database for testing."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-
-    db = FinanceDB(db_path=db_path)
-    stmt_repo = StatementRepository(db_path)
-
-    # Insert test statements for different accounts
+def reconciliation_db(temp_db: str) -> str:
+    """Provide a database pre-initialized with reconciliation test statements."""
+    stmt_repo = StatementRepository(temp_db)
     stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
     stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
-
-    yield db, db_path
-
-    # Cleanup - ensure connection is closed
-    if db._conn:
-        db._conn.close()
-        db._conn = None
-    os.unlink(db_path)
+    return temp_db
 
 
 @pytest.fixture
-def populated_db(temp_db):
+def populated_db(reconciliation_db: str) -> str:
     """Populate database with deterministic test transactions."""
-    db, db_path = temp_db
+    db_path = reconciliation_db
 
     conn = sqlite3.connect(db_path)
-
-    # Insert transactions for Account A (debits)
-    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES
@@ -68,9 +45,6 @@ def populated_db(temp_db):
             (1, '05/01/2025', '2025-01-05', 'Transfer to B late', 200000, 'debit', 'Account_A'),
             (1, '10/01/2025', '2025-01-10', 'Different amount', 50000, 'debit', 'Account_A')
     """)
-
-    # Insert transactions for Account B (credits)
-    # Note: debit/credit are GENERATED columns from amount_paise and type
     conn.execute("""
         INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id)
         VALUES
@@ -78,16 +52,10 @@ def populated_db(temp_db):
             (2, '07/01/2025', '2025-01-07', 'Transfer from A late', 200000, 'credit', 'Account_B'),
             (2, '10/01/2025', '2025-01-10', 'Different amount', 75000, 'credit', 'Account_B')
     """)
-
     conn.commit()
     conn.close()
 
-    return db, db_path
-
-
-# ============================================================
-# Hypothesis Strategies
-# ============================================================
+    return db_path
 
 
 def transaction_strategy():
@@ -129,29 +97,16 @@ def transactions_strategy():
     )
 
 
-# ============================================================
-# Property Tests
-# ============================================================
-
-
 @given(transactions=transactions_strategy())
 @settings(
     max_examples=5,
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_match_uniqueness_property(transactions):
+def test_match_uniqueness_property(transactions, reconciliation_db: str):
     """Property: No duplicate matches for the same transaction pair."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    db = FinanceDB(db_path=db_path)
-    stmt_repo = StatementRepository(db_path)
-    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(reconciliation_db)
     try:
-        # Insert generated transactions
         for txn in transactions:
             conn.execute(
                 """
@@ -169,13 +124,10 @@ def test_match_uniqueness_property(transactions):
                     txn["account_id"],
                 ),
             )
-
         conn.commit()
 
-        # Run reconciliation
-        matches = find_potential_matches(db_path)
+        matches = find_potential_matches(reconciliation_db)
 
-        # Check for duplicates
         seen_pairs = set()
         for match in matches:
             pair = (match["debit_txn_id"], match["credit_txn_id"])
@@ -183,9 +135,6 @@ def test_match_uniqueness_property(transactions):
             seen_pairs.add(pair)
     finally:
         conn.close()
-        if db._conn:
-            db._conn.close()
-        os.unlink(db_path)
 
 
 @given(transactions=transactions_strategy())
@@ -194,18 +143,10 @@ def test_match_uniqueness_property(transactions):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_deterministic_matching_property(transactions):
+def test_deterministic_matching_property(transactions, reconciliation_db: str):
     """Property: Same input must always produce the same matches."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    db = FinanceDB(db_path=db_path)
-    stmt_repo = StatementRepository(db_path)
-    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(reconciliation_db)
     try:
-        # Insert generated transactions
         for txn in transactions:
             conn.execute(
                 """
@@ -223,21 +164,17 @@ def test_deterministic_matching_property(transactions):
                     txn["account_id"],
                 ),
             )
-
         conn.commit()
 
-        # Run reconciliation twice
-        matches_1 = find_potential_matches(db_path)
-        matches_2 = find_potential_matches(db_path)
+        matches_1 = find_potential_matches(reconciliation_db)
+        matches_2 = find_potential_matches(reconciliation_db)
 
-        # Check deterministic output
         assert len(matches_1) == len(matches_2), "Match count should be identical"
 
         keys_1 = sorted([m["deterministic_key"] for m in matches_1])
         keys_2 = sorted([m["deterministic_key"] for m in matches_2])
         assert keys_1 == keys_2, "Match keys should be identical"
 
-        # Check confidence scores
         for m1, m2 in zip(
             sorted(matches_1, key=lambda x: x["deterministic_key"]),
             sorted(matches_2, key=lambda x: x["deterministic_key"]),
@@ -248,9 +185,6 @@ def test_deterministic_matching_property(transactions):
             ), f"Confidence should be identical for {m1['deterministic_key']}"
     finally:
         conn.close()
-        if db._conn:
-            db._conn.close()
-        os.unlink(db_path)
 
 
 @given(transactions=transactions_strategy())
@@ -259,18 +193,10 @@ def test_deterministic_matching_property(transactions):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_no_cycles_property(transactions):
+def test_no_cycles_property(transactions, reconciliation_db: str):
     """Property: Matching must not create cycles in the transaction graph."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    db = FinanceDB(db_path=db_path)
-    stmt_repo = StatementRepository(db_path)
-    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(reconciliation_db)
     try:
-        # Insert generated transactions
         for txn in transactions:
             conn.execute(
                 """
@@ -288,13 +214,10 @@ def test_no_cycles_property(transactions):
                     txn["account_id"],
                 ),
             )
-
         conn.commit()
 
-        # Run reconciliation
-        matches = find_potential_matches(db_path)
+        matches = find_potential_matches(reconciliation_db)
 
-        # Check for cycles (A->B and B->A)
         pairs = set()
         for match in matches:
             pair = (match["debit_txn_id"], match["credit_txn_id"])
@@ -303,9 +226,6 @@ def test_no_cycles_property(transactions):
             pairs.add(pair)
     finally:
         conn.close()
-        if db._conn:
-            db._conn.close()
-        os.unlink(db_path)
 
 
 @given(transactions=transactions_strategy())
@@ -314,18 +234,10 @@ def test_no_cycles_property(transactions):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_bipartite_matching_property(transactions):
+def test_bipartite_matching_property(transactions, reconciliation_db: str):
     """Property: Matches must be valid for bipartite graphs (debit ↔ credit)."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    db = FinanceDB(db_path=db_path)
-    stmt_repo = StatementRepository(db_path)
-    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(reconciliation_db)
     try:
-        # Insert generated transactions
         for txn in transactions:
             conn.execute(
                 """
@@ -343,13 +255,10 @@ def test_bipartite_matching_property(transactions):
                     txn["account_id"],
                 ),
             )
-
         conn.commit()
 
-        # Run reconciliation
-        matches = find_potential_matches(db_path)
+        matches = find_potential_matches(reconciliation_db)
 
-        # Check bipartite validity: debit ↔ credit only
         for match in matches:
             assert (
                 match["debit_account_id"] != match["credit_account_id"]
@@ -359,9 +268,6 @@ def test_bipartite_matching_property(transactions):
             ), "Invalid bipartite match: same transaction"
     finally:
         conn.close()
-        if db._conn:
-            db._conn.close()
-        os.unlink(db_path)
 
 
 @given(
@@ -376,18 +282,10 @@ def test_bipartite_matching_property(transactions):
     deadline=None,
     suppress_health_check=[HealthCheck.function_scoped_fixture],
 )
-def test_edge_cases_property(transactions):
+def test_edge_cases_property(transactions, reconciliation_db: str):
     """Property: Handle edge cases (zero or single transaction)."""
-    fd, db_path = tempfile.mkstemp(suffix=".db")
-    os.close(fd)
-    db = FinanceDB(db_path=db_path)
-    stmt_repo = StatementRepository(db_path)
-    stmt_repo.insert_statement("Account_A", "stmt_a.pdf", "01/01/2025", "31/01/2025")
-    stmt_repo.insert_statement("Account_B", "stmt_b.pdf", "01/01/2025", "31/01/2025")
-
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(reconciliation_db)
     try:
-        # Insert generated transactions
         for txn in transactions:
             conn.execute(
                 """
@@ -405,43 +303,29 @@ def test_edge_cases_property(transactions):
                     txn["account_id"],
                 ),
             )
-
         conn.commit()
 
-        # Run reconciliation
-        matches = find_potential_matches(db_path)
+        matches = find_potential_matches(reconciliation_db)
         assert isinstance(matches, list), "Matches should always be a list"
         assert len(matches) == 0, "No matches expected for edge cases"
     finally:
         conn.close()
-        if db._conn:
-            db._conn.close()
-        os.unlink(db_path)
-
-
-# ============================================================
-# Test 1: Same Dataset → Same Reconciliation Rows
-# ============================================================
 
 
 def test_deterministic_matching(populated_db):
     """Test that same dataset produces same reconciliation matches."""
-    db, db_path = populated_db
+    db_path = populated_db
 
-    # Run matching twice
     matches_1 = find_potential_matches(db_path)
     matches_2 = find_potential_matches(db_path)
 
-    # Should produce identical results
     assert len(matches_1) == len(matches_2), "Match count should be identical"
 
-    # Sort by deterministic key for comparison
     keys_1 = sorted([m["deterministic_key"] for m in matches_1])
     keys_2 = sorted([m["deterministic_key"] for m in matches_2])
 
     assert keys_1 == keys_2, "Match keys should be identical"
 
-    # Verify confidence scores are identical
     for m1, m2 in zip(
         sorted(matches_1, key=lambda x: x["deterministic_key"]),
         sorted(matches_2, key=lambda x: x["deterministic_key"]),
@@ -451,8 +335,6 @@ def test_deterministic_matching(populated_db):
             m1["match_confidence"] == m2["match_confidence"]
         ), f"Confidence should be identical for {m1['deterministic_key']}"
 
-
-# [Rest of the existing tests remain unchanged...]
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

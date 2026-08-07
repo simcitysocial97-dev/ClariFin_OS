@@ -89,8 +89,3 @@ export class CreditCardsMapper implements ICreditCardsMapper {
 }
 
 export const creditCardsMapper = new CreditCardsMapper()
-
-// Legacy function for backward compatibility
-export const mapCreditCardSummaryDTOToCardSummary = (dto: Record<string, unknown>): CardSummary => {
-  return creditCardsMapper.mapCreditCardSummary(dto)
-}

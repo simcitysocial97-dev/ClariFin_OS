@@ -6,7 +6,7 @@ and exercises its key utility functions.
 
 import pytest
 
-from src.engines.behavior_engine import (
+from src.engines.behaviour_engine.core import (
     _coefficient_of_variation,
     _moving_average,
     _normalize_score,
@@ -85,7 +85,7 @@ class TestBehaviorEngineCore:
 
     def test_date_parsing(self) -> None:
         """Test the _parse_date function."""
-        from src.engines.behavior_engine import _parse_date
+        from src.engines.behaviour_engine.core import _parse_date
 
         # Test various date formats
         assert _parse_date("2023-01-15") is not None

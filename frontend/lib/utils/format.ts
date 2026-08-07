@@ -57,23 +57,6 @@ export function formatINR(paise: number | null | undefined): string {
 }
 
 /**
- * Format paise to Indian Rupee string with lakh/crore grouping.
- * 
- * @deprecated Use formatINR instead. This is an alias for backward compatibility.
- * @param paise - Amount in paise (1 rupee = 100 paise)
- * @returns Formatted string like "₹1,234.56" or "₹1,00,000.00"
- * 
- * @example
- * formatPaise(123456)    // "₹1,234.56"
- * formatPaise(10000000)  // "₹1,00,000.00"
- * formatPaise(-500)      // "-₹5.00"
- */
-export function formatPaise(paise: number | null | undefined): string {
-  return formatINR(paise);
-}
-
-
-/**
  * Convert rupees (float) to paise (integer).
  * Uses rounding to handle floating-point precision issues.
  * 

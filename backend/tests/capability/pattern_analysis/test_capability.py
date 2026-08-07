@@ -10,9 +10,9 @@ class TestPatternAnalysisCapability:
 
     def test_import_pattern_engine(self) -> None:
         """Pattern engine must be importable."""
-        from src.engines import insight_generator
+        from src.engines.behaviour_engine import insights
 
-        assert insight_generator is not None
+        assert insights is not None
 
     def test_golden_dataset_pattern_scenario(self) -> None:
         """Golden dataset must load and validate."""

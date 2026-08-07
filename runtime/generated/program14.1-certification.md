@@ -1,7 +1,7 @@
 # Program 14.1 — Constituent Migration Certification
 
 **Status:** CERTIFIED
-**Generated:** 2026-08-06T14:24:41.571838+00:00
+**Generated:** 2026-08-06T15:11:32.447623+00:00
 **Intelligence checks:** 14/14 PASS
 **Runtime audit:** CERTIFIED (19 sections)
 
@@ -99,7 +99,7 @@ every verify.py intelligence command imports through runtime.foundation.intellig
 - Runtime CLI Audit: PASS
 - GitHub Runtime Audit: PASS
 - Verification Profiles Audit: PASS
-- Artifact Ownership Audit: PASS
+- Artifact Ownership Audit: FAIL
 - Runtime Performance Audit: PASS
 - Failure Injection Audit: PASS
 - Pipeline Validation Audit: PASS

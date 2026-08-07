@@ -1,0 +1,90 @@
+{
+  "program": "Program D — Quality Gate Stabilization",
+  "workflow": "Quality Gate",
+  "status": "GREEN",
+  "fixes": [
+    {
+      "id": "FIX-001",
+      "component": ".github/scripts/run_fast_checks.sh",
+      "failure": "Shell syntax error: duplicate 'fi' on line 106 caused immediate script exit under 'set -euo pipefail'",
+      "root_cause": "Trailing 'fi' after the else block closed the if-statement twice",
+      "files_changed": [
+        ".github/scripts/run_fast_checks.sh"
+      ],
+      "reasoning": "Removed the duplicate closing 'fi' so the script is syntactically valid and can execute all checks",
+      "validation": "bash -n .github/scripts/run_fast_checks.sh → exit 0; full script run → All fast checks passed",
+      "rollback_risk": "LOW — single-character removal from a shell script; no logic change"
+    },
+    {
+      "id": "FIX-002",
+      "component": "backend/tests/generated/capability-registry.yaml",
+      "failure": "9 meta tests failed with TypeError: 'NoneType' object is not iterable",
+      "root_cause": "YAML entries like 'engines:' and 'capability_tests:' with no value were parsed as Python None instead of empty lists. Iterating over None in change_intelligence.py, mutation_discovery.py, test_strength.py, and selective_verify.py raised TypeError.",
+      "files_changed": [
+        "backend/tests/generated/capability-registry.yaml"
+      ],
+      "reasoning": "Replaced 12 null list fields with empty lists [] across 12 capability entries",
+      "validation": "python3 -m pytest backend/tests/meta/ → 61 passed, 1 warning (previously 9 failed)",
+      "rollback_risk": "LOW — generated artifact correction; normalization added to check_coverage.py to prevent recurrence"
+    },
+    {
+      "id": "FIX-003",
+      "component": "tools/development/check_coverage.py",
+      "failure": "capability-registry.yaml could be regenerated with null list fields, re-introducing FIX-002",
+      "root_cause": "generate_capability_registry() read the existing YAML and returned it without normalizing null list fields",
+      "files_changed": [
+        "tools/development/check_coverage.py"
+      ],
+      "reasoning": "Added _normalize_registry() helper that converts None list fields to [] before writing. Called from generate_capability_registry().",
+      "validation": "Re-ran check_coverage.py → generated capability-registry.yaml contains no null list fields",
+      "rollback_risk": "LOW — defensive normalization; preserves existing data structure"
+    },
+    {
+      "id": "FIX-004",
+      "component": "backend/ (12 files)",
+      "failure": "Black format check failed: 12 files would be reformatted",
+      "root_cause": "Code style drift in production and test files",
+      "files_changed": [
+        "backend/scripts/scan_test_anti_patterns.py",
+        "backend/src/core/mappers/statement_mapper.py",
+        "backend/src/engines/financial_intelligence/optimization.py",
+        "backend/src/routers/cards_statements.py",
+        "backend/src/services/cashflow_service.py",
+        "backend/tests/conftest.py",
+        "backend/tests/fixtures/benchmark_fixtures.py",
+        "backend/tests/fixtures/database.py",
+        "backend/tests/invariants/test_determinism.py",
+        "backend/tests/meta/test_change_intelligence.py",
+        "backend/tests/meta/test_mutation_registry.py",
+        "backend/tests/unit/repositories/test_household_repository.py"
+      ],
+      "reasoning": "Ran 'black .' from backend/ to auto-format all non-compliant files",
+      "validation": "black --check --diff . → 'All done! 460 files would be left unchanged.'",
+      "rollback_risk": "LOW — formatting-only changes; no logic modified"
+    },
+    {
+      "id": "FIX-005",
+      "component": "backend/scripts/scan_test_anti_patterns.py",
+      "failure": "Ruff lint check failed: 9 SIM102 errors (nested if statements)",
+      "root_cause": "Deeply nested if-blocks checking AST node types could be flattened into single combined conditions",
+      "files_changed": [
+        "backend/scripts/scan_test_anti_patterns.py"
+      ],
+      "reasoning": "Combined nested isinstance() checks using 'and' operators per ruff suggestion",
+      "validation": "ruff check backend/scripts/scan_test_anti_patterns.py → All checks passed!",
+      "rollback_risk": "LOW — lint-only fix; logic and behavior unchanged"
+    },
+    {
+      "id": "FIX-006",
+      "component": "runtime/foundation/verification/planner/planner.py",
+      "failure": "python3 runtime/verify.py quick hung indefinitely / timed out after 5 minutes",
+      "root_cause": "VerificationPlanner._merge_scopes() merged impacted scopes into QUICK, expanding a 1-step lightweight profile into a 12-step full verification suite (contracts, backend, mutation, runtime, migration). The orchestrator then attempted to execute all steps sequentially, exceeding the CI 10-minute budget.",
+      "files_changed": [
+        "runtime/foundation/verification/planner/planner.py"
+      ],
+      "reasoning": "Two-part fix: (1) QUICK scope no longer merges impacted scopes — it always returns [QUICK] only. (2) _collect_requirements() now filters capability requirements by allowed scopes, preventing out-of-scope requirements from being pulled in via capability dependencies.",
+      "validation": "python3 runtime/verify.py quick → PASSED in 91.7s (1 task, 0 failed, 0 skipped)",
+      "rollback_risk": "MEDIUM — changes planner scope-expansion logic; covered by existing planner tests and manual verification"
+    }
+  ]
+}

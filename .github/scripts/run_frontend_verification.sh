@@ -15,6 +15,6 @@ echo ">> npx tsc --noEmit"
 npx tsc --noEmit 2>&1 || fail=1
 if [ -d "tests" ] || [ -d "src" ]; then
   echo ">> npx vitest run"
-  npx vitest run --no-header 2>&1 || fail=1
+  npx vitest run 2>&1 || fail=1
 fi
 exit $fail

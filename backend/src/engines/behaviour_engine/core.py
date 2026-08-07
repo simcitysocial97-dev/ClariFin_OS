@@ -957,11 +957,11 @@ def compute_behavior_profile(transactions: list[dict[str, Any]]) -> dict[str, An
 
 
 # Keep the insight and nudge engine imports for backward compatibility
-from src.engines.insight_generator import (
+from .insights import (
     generate_behavioral_insights,
     generate_summary_text,
 )
-from src.engines.nudge_engine import (
+from .nudges import (
     generate_nudges,
     get_top_nudge,
 )
