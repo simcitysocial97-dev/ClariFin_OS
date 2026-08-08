@@ -130,7 +130,7 @@ def isolated_registry(tmp_path: Path):
                 "scopes": ["backend", "property", "contracts", "integration", "repository"],
                 "workflows": ["property", "contracts", "backend"],
                 "scripts": ["run_fast_checks"],
-                "modules": ["backend/src/loan_engine"],
+                "modules": ["backend/src/engines/loan_engine"],
                 "requirements": [
                     {
                         "id": "loan-engine-property",
@@ -138,7 +138,7 @@ def isolated_registry(tmp_path: Path):
                         "severity": "critical",
                         "description": "Property tests",
                         "scope": "property",
-                        "module": "backend/src/loan_engine",
+                        "module": "backend/src/engines/loan_engine",
                         "capability": "loan-engine",
                     },
                     {
@@ -147,7 +147,7 @@ def isolated_registry(tmp_path: Path):
                         "severity": "critical",
                         "description": "Contract tests",
                         "scope": "contracts",
-                        "module": "backend/src/loan_engine",
+                        "module": "backend/src/engines/loan_engine",
                         "capability": "loan-engine",
                     },
                 ],
