@@ -80,7 +80,7 @@ def list_accounts() -> list[AccountDetailDTO]:
     accounts = service.list_accounts()
     result = [
         AccountDetailDTO(
-            id=acc["id"],
+            id=str(acc["id"]),
             name=acc["name"],
             type=acc["account_type"],
             institution=acc["bank"],

@@ -72,7 +72,7 @@ class AccountLinkRepository(BaseRepository):
         with self._get_conn() as conn:
             rows = conn.execute(
                 """
-                SELECT account_id, linked_account_id, relationship_type, created_at
+                SELECT id, account_id as primary_account_id, linked_account_id, relationship_type, created_at
                 FROM account_links
                 WHERE account_id = ? OR linked_account_id = ?
                 ORDER BY created_at DESC
