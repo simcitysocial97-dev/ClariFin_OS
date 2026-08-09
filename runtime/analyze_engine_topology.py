@@ -37,14 +37,14 @@ ENGINE_ROOTS = {
 }
 SINGLE_FILE_ENGINES = {
     "balance_engine": "engines/balance_engine.py",
+    "cashflow_engine": "engines/cashflow_engine.py",
     "ledger_audit_engine": "engines/ledger_audit_engine.py",
-    "nudge_engine": "engines/nudge_engine.py",
     "reconciliation_engine": "engines/reconciliation_engine.py",
-    "insight_generator": "engines/insight_generator.py",
 }
-PARKED_FACADE = {
-    "behavior_engine": "engines/behavior_engine.py",
-}
+# NOTE (Program J): behavior_engine.py, nudge_engine.py and insight_generator.py no
+# longer exist. Their behaviour lives in the behaviour_engine/ package
+# (nudges.py, insights.py). No parked facade remains on disk.
+PARKED_FACADE: dict[str, str] = {}
 
 
 def classify_importer(rel: str) -> str:
@@ -187,8 +187,7 @@ def engine_artifacts(engine_name: str):
         "balance_engine": [],
         "ledger_audit_engine": [],
         "reconciliation_engine": [],
-        "nudge_engine": [],
-        "insight_generator": [],
+        "cashflow_engine": [],
         "account_engine": [],
         "behaviour_engine": [],
         "credit_card_engine": [],

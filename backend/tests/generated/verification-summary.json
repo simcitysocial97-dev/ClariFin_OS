@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-07-30T02:21:07.294846+00:00",
+  "version": "1.0.0",
+  "reports": {
+    "dependency_map": {
+      "edge_count": 647,
+      "capability_count": 11,
+      "generated_at": "93c6883d747a"
+    },
+    "change_impact": {
+      "strategy": "fast",
+      "overall_risk": "LOW",
+      "generated_at": "2026-07-30T02:21:07.132243+00:00"
+    },
+    "verification_evidence": {
+      "total_capabilities": 11,
+      "fully_verified": 0,
+      "partial": 11,
+      "missing": 0,
+      "generated_at": "2026-07-30T02:21:07.207275+00:00"
+    },
+    "architectural_coverage": {
+      "summary": {
+        "total_capabilities": 11,
+        "complete": 0,
+        "partial": 11,
+        "gap": 0,
+        "average_coverage_percent": 88.9,
+        "total_gaps": 11
+      },
+      "generated_at": "2026-07-30T02:21:07.244898+00:00"
+    },
+    "risk_map": {
+      "entry_count": 149,
+      "generated_at": "2026-07-30T02:21:07.292065+00:00"
+    }
+  }
+}

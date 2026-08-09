@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-06T16:33:17.625763",
-  "engine_count": 15,
+  "generated_at": "2026-08-08T18:38:20.239100",
+  "engine_count": 12,
   "canonical_architecture": "package-preferred; single-file only for small cohesive engines",
   "engines": {
     "account_engine": {
@@ -30,9 +30,8 @@
         "backend/tests/unit/engines/account/test_account_engine.py"
       ],
       "evidence": {
-        "import_references": 2,
+        "import_references": 1,
         "importer_files": [
-          "backend/src/routers/accounts.py",
           "backend/src/services/account_service.py"
         ]
       }
@@ -42,7 +41,7 @@
       "legacy_style": false,
       "migration_status": "CANONICAL_PACKAGE",
       "entry_point": "engines/behaviour_engine/__init__.py",
-      "implementation_module_count": 15,
+      "implementation_module_count": 17,
       "services": [
         "backend/src/services/behaviour_service.py",
         "backend/src/services/dashboard_service.py",
@@ -66,7 +65,10 @@
         "useBehaviourCapability"
       ],
       "tests": [
+        "backend/tests/capability/pattern_analysis/test_capability.py",
         "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/properties/recommendations/test_engine_properties.py",
+        "backend/tests/unit/engines/behavior/test_behavior_engine.py",
         "backend/tests/unit/engines/behaviour/test_core.py",
         "backend/tests/unit/engines/behaviour/test_integration.py",
         "backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -79,8 +81,7 @@
           "backend/src/services/dashboard_service.py",
           "backend/src/services/import_service.py"
         ]
-      },
-      "note": "Canonical package exists; legacy behavior_engine.py still present (partial migration)."
+      }
     },
     "credit_card_engine": {
       "canonical_style": "package",
@@ -334,22 +335,23 @@
         ]
       }
     },
-    "insight_generator": {
+    "cashflow_engine": {
       "canonical_style": "single_file",
       "legacy_style": true,
       "migration_status": "ORPHAN_INTERNAL",
-      "entry_point": "engines/insight_generator.py",
+      "entry_point": "engines/cashflow_engine.py",
       "implementation_module_count": 0,
       "services": [],
       "routers": [],
       "repositories": [],
       "capabilities": [],
-      "tests": [],
+      "tests": [
+        "backend/tests/capability/household_cashflow/test_capability.py",
+        "backend/tests/properties/cashflow/test_engine_properties.py"
+      ],
       "evidence": {
-        "import_references": 1,
-        "importer_files": [
-          "backend/src/engines/behaviour_engine/core.py"
-        ]
+        "import_references": 0,
+        "importer_files": []
       }
     },
     "ledger_audit_engine": {
@@ -373,26 +375,6 @@
         "import_references": 1,
         "importer_files": [
           "backend/src/services/audit_service.py"
-        ]
-      }
-    },
-    "nudge_engine": {
-      "canonical_style": "single_file",
-      "legacy_style": true,
-      "migration_status": "ORPHAN_INTERNAL",
-      "entry_point": "engines/nudge_engine.py",
-      "implementation_module_count": 0,
-      "services": [],
-      "routers": [],
-      "repositories": [],
-      "capabilities": [],
-      "tests": [
-        "backend/tests/properties/recommendations/test_engine_properties.py"
-      ],
-      "evidence": {
-        "import_references": 1,
-        "importer_files": [
-          "backend/src/engines/behaviour_engine/core.py"
         ]
       }
     },
@@ -428,22 +410,6 @@
         ]
       }
     },
-    "behavior_engine": {
-      "canonical_style": "single_file",
-      "legacy_style": true,
-      "migration_status": "PARKED",
-      "entry_point": "backend/src/engines/behavior_engine.py",
-      "replaces": "backend/src/engines/behaviour_engine/",
-      "note": "PARKED legacy behaviour engine; fully replaced by behaviour_engine package."
-    },
-    "cashflow_engine": {
-      "canonical_style": "single_file",
-      "legacy_style": true,
-      "migration_status": "PARKED",
-      "entry_point": "backend/src/engines/cashflow_engine.py.parked",
-      "replaces": null,
-      "note": "PARKED legacy cashflow engine; no canonical successor package exists."
-    },
     "engines_namespace_facade": {
       "canonical_style": "package",
       "legacy_style": false,
@@ -455,46 +421,15 @@
   "report": {
     "legacy_engines": [
       "balance_engine",
-      "insight_generator",
+      "cashflow_engine",
       "ledger_audit_engine",
-      "nudge_engine",
       "reconciliation_engine"
     ],
-    "partially_migrated_engines": [
-      {
-        "domain": "behaviour",
-        "canonical": "backend/src/engines/behaviour_engine/",
-        "legacy": "backend/src/engines/behavior_engine.py",
-        "evidence": "Both behaviour_engine/ package and behavior_engine.py legacy file coexist."
-      }
-    ],
-    "duplicate_engines": [
-      {
-        "domain": "behaviour",
-        "engines": [
-          "backend/src/engines/behaviour_engine/ (package)",
-          "backend/src/engines/behavior_engine.py (legacy single-file)"
-        ],
-        "evidence": "Same domain implemented twice: package engine + legacy single-file facade."
-      }
-    ],
-    "parked_engines": [
-      {
-        "name": "behavior_engine",
-        "path": "backend/src/engines/behavior_engine.py",
-        "replaces": "backend/src/engines/behaviour_engine/",
-        "note": "PARKED legacy behaviour engine; fully replaced by behaviour_engine package."
-      },
-      {
-        "name": "cashflow_engine",
-        "path": "backend/src/engines/cashflow_engine.py.parked",
-        "replaces": null,
-        "note": "PARKED legacy cashflow engine; no canonical successor package exists."
-      }
-    ],
+    "partially_migrated_engines": [],
+    "duplicate_engines": [],
+    "parked_engines": [],
     "orphan_engines": [
-      "insight_generator",
-      "nudge_engine"
+      "cashflow_engine"
     ],
     "facade_engines": [
       {
@@ -553,7 +488,15 @@
       },
       {
         "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/insights.py"
+      },
+      {
+        "engine": "behaviour_engine",
         "module": "backend/src/engines/behaviour_engine/lifestyle.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/nudges.py"
       },
       {
         "engine": "behaviour_engine",
@@ -700,12 +643,13 @@
         "module": "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
       }
     ],
-    "implementation_only_module_count": 49
+    "implementation_only_module_count": 51
   },
   "notes": [
-    "8 of 13 canonical engines are PACKAGES; 5 are single-file.",
-    "Single-file engines kept (balance_engine, ledger_audit_engine, reconciliation_engine) are small/cohesive; nudge_engine & insight_generator are ORPHAN internal sub-engines (consumed only by behaviour_engine/core.py).",
-    "behaviour_engine is PARTIALLY MIGRATED: canonical package exists but the legacy behavior_engine.py is still present (parked, not deleted).",
+    "8 of 12 canonical engines are PACKAGES; 4 are single-file.",
+    "Single-file engines kept (balance_engine, cashflow_engine, ledger_audit_engine, reconciliation_engine) are small/cohesive.",
+    "behaviour_engine migration is COMPLETE: the canonical package is the only implementation; legacy behavior_engine.py, nudge_engine.py and insight_generator.py were removed and their behaviour now lives in behaviour_engine/nudges.py and behaviour_engine/insights.py.",
+    "cashflow_engine is a canonical single-file engine backing the household_cashflow capability (previously mis-recorded as parked).",
     "transaction_intelligence, financial_events, financial_intelligence have NO capability owner (internal engines); they are CANONICAL_PACKAGE_INTERNAL."
   ]
 }

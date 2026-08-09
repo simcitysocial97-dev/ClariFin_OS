@@ -134,7 +134,7 @@ function deduplicateInsights(passiveInsights: PassiveInsight[]): PassiveInsight[
 
 // ─── Session State ───────────────────────────────────────────────────────────
 
-let _dismissedIds: Set<string> = new Set();
+const _dismissedIds: Set<string> = new Set();
 const _listeners: Set<(insights: PassiveInsight[]) => void> = new Set();
 
 function notify() {

@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-07-29T14:09:52.194202",
+  "capabilities": [
+    {
+      "capability_id": "financial_events",
+      "capability_name": "Financial Events",
+      "test_type": "capability",
+      "test_count": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "risk_level": "MEDIUM",
+      "last_execution": "2026-07-29T14:09:52.194093",
+      "flaky_tests": 0,
+      "critical_failures": 0
+    },
+    {
+      "capability_id": "financial_events",
+      "capability_name": "Financial Events",
+      "test_type": "property",
+      "test_count": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "risk_level": "MEDIUM",
+      "last_execution": "2026-07-29T14:09:52.194112",
+      "flaky_tests": 0,
+      "critical_failures": 0
+    },
+    {
+      "capability_id": "credit_cards",
+      "capability_name": "Credit Cards",
+      "test_type": "capability",
+      "test_count": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "risk_level": "HIGH",
+      "last_execution": "2026-07-29T14:09:52.194117",
+      "flaky_tests": 0,
+      "critical_failures": 0
+    },
+    {
+      "capability_id": "credit_cards",
+      "capability_name": "Credit Cards",
+      "test_type": "contract",
+      "test_count": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "pass_rate": 0.0,
+      "risk_level": "HIGH",
+      "last_execution": "2026-07-29T14:09:52.194120",
+      "flaky_tests": 0,
+      "critical_failures": 1
+    },
+    {
+      "capability_id": "debt_management",
+      "capability_name": "Debt Management",
+      "test_type": "capability",
+      "test_count": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "risk_level": "HIGH",
+      "last_execution": "2026-07-29T14:09:52.194123",
+      "flaky_tests": 1,
+      "critical_failures": 0
+    },
+    {
+      "capability_id": "account_management",
+      "capability_name": "Account Management",
+      "test_type": "unit",
+      "test_count": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "pass_rate": 100.0,
+      "risk_level": "LOW",
+      "last_execution": "2026-07-29T14:09:52.194127",
+      "flaky_tests": 0,
+      "critical_failures": 0
+    }
+  ],
+  "overall_pass_rate": 83.33333333333334,
+  "high_risk_failures": 1,
+  "total_tests": 6,
+  "total_passed": 5,
+  "total_failed": 1,
+  "coverage_percentage": 20.0,
+  "historical_trends": {
+    "financial_events": [
+      100.0,
+      95.0,
+      90.0
+    ],
+    "credit_cards": [
+      0.0,
+      0,
+      0
+    ],
+    "debt_management": [
+      100.0,
+      95.0,
+      90.0
+    ],
+    "account_management": [
+      100.0,
+      95.0,
+      90.0
+    ]
+  }
+}

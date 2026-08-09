@@ -1,0 +1,213 @@
+{
+  "changed_files": [
+    ".gitignore",
+    ".kilo/kilo.jsonc",
+    "CAPABILITY_AUDIT.md",
+    "backend/pyproject.toml",
+    "backend/src/extraction/camelot_extractor.py",
+    "backend/src/extraction/hybrid_extractor.py",
+    "backend/src/statement_extractor.py",
+    "backend/src/verification/intelligence/selective_engine.py",
+    "backend/src/verification/runtime/registries.py",
+    "servers"
+  ],
+  "strategy": "selective",
+  "overall_risk": "MEDIUM",
+  "affected_capabilities": [],
+  "affected_engines": [],
+  "jobs": [
+    {
+      "job_id": "lint",
+      "name": "Lint & Format",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [
+        "ruff",
+        "black",
+        "mypy"
+      ],
+      "estimated_runtime_seconds": 60.0
+    },
+    {
+      "job_id": "unit",
+      "name": "Unit Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 120.0
+    },
+    {
+      "job_id": "property",
+      "name": "Property Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Property Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 180.0
+    },
+    {
+      "job_id": "contract",
+      "name": "Contract Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Contract Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 120.0
+    },
+    {
+      "job_id": "capability",
+      "name": "Capability Smoke Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Capability Smoke Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 60.0
+    },
+    {
+      "job_id": "invariant",
+      "name": "Invariant Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 60.0
+    },
+    {
+      "job_id": "golden",
+      "name": "Golden Regression",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Golden Regression",
+      "targets": [],
+      "estimated_runtime_seconds": 90.0
+    },
+    {
+      "job_id": "integration",
+      "name": "Integration Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Integration Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 180.0
+    },
+    {
+      "job_id": "architecture",
+      "name": "Architecture Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 30.0
+    },
+    {
+      "job_id": "mutation",
+      "name": "Mutation Testing",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Mutation Testing",
+      "targets": [
+        "src/engines/"
+      ],
+      "estimated_runtime_seconds": 3600.0
+    },
+    {
+      "job_id": "meta",
+      "name": "Meta / Registry Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 15.0
+    }
+  ],
+  "skipped_jobs": [
+    {
+      "job_id": "property",
+      "name": "Property Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Property Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 180.0
+    },
+    {
+      "job_id": "contract",
+      "name": "Contract Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Contract Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 120.0
+    },
+    {
+      "job_id": "capability",
+      "name": "Capability Smoke Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Capability Smoke Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 60.0
+    },
+    {
+      "job_id": "golden",
+      "name": "Golden Regression",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Golden Regression",
+      "targets": [],
+      "estimated_runtime_seconds": 90.0
+    },
+    {
+      "job_id": "integration",
+      "name": "Integration Tests",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Integration Tests",
+      "targets": [],
+      "estimated_runtime_seconds": 180.0
+    },
+    {
+      "job_id": "mutation",
+      "name": "Mutation Testing",
+      "must_run": false,
+      "reason": "Risk level MEDIUM below threshold for Mutation Testing",
+      "targets": [
+        "src/engines/"
+      ],
+      "estimated_runtime_seconds": 3600.0
+    }
+  ],
+  "must_run_jobs": [
+    {
+      "job_id": "lint",
+      "name": "Lint & Format",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [
+        "ruff",
+        "black",
+        "mypy"
+      ],
+      "estimated_runtime_seconds": 60.0
+    },
+    {
+      "job_id": "unit",
+      "name": "Unit Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 120.0
+    },
+    {
+      "job_id": "invariant",
+      "name": "Invariant Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 60.0
+    },
+    {
+      "job_id": "architecture",
+      "name": "Architecture Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 30.0
+    },
+    {
+      "job_id": "meta",
+      "name": "Meta / Registry Tests",
+      "must_run": true,
+      "reason": "Risk level MEDIUM requires this job",
+      "targets": [],
+      "estimated_runtime_seconds": 15.0
+    }
+  ],
+  "generated_at": "1c1b54f0eaa8781b"
+}

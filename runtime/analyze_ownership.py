@@ -216,7 +216,7 @@ def build():
             "Capability is the top ownership root. Workspace/ViewModel/Mapper live in the "
             "frontend; Router/Service/Engine/Repository live in the backend.",
             "transaction_intelligence, financial_events, balance_engine, ledger_audit_engine, "
-            "reconciliation_engine, nudge_engine, insight_generator have NO capability owner: "
+            "reconciliation_engine have NO capability owner: "
             "they are internal/sub engines consumed by other engines or services.",
         ],
     }

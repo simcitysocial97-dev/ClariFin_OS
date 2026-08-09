@@ -23,7 +23,7 @@ interface ParsingLock {
     currentFile: string | null;
 }
 
-let __PARSING_LOCK__: ParsingLock = {
+const __PARSING_LOCK__: ParsingLock = {
     isParsing: false,
     queue: [],
     currentFile: null

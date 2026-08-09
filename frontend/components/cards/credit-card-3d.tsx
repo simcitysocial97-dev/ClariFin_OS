@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard as CreditCardType } from '@/types/card';
+import type { CreditCard as CreditCardType } from '@/types/card';
 import { CreditCard, Calendar, IndianRupee, Wallet } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 

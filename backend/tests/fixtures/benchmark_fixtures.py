@@ -15,32 +15,29 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
-def benchmark_finance_db_init(db_path: str) -> float:
-    """Time a single FinanceDB initialization on a fresh database."""
-    from src.db import FinanceDB
+def benchmark_db_init(db_path: str) -> float:
+    """Time a single canonical database initialization on a fresh database.
+
+    Program K: this previously timed ``FinanceDB(db_path=...)``. It now calls
+    the canonical ``src.core.db.schema`` entry points directly. These are
+    exactly the three calls ``FinanceDB.__init__`` made, so the measurement is
+    unchanged while the legacy compatibility wrapper is no longer imported.
+    """
+    from src.core.db.schema import create_all, run_migrations, verify_schema
 
     start = time.perf_counter()
-    db = FinanceDB(db_path=db_path)
-    elapsed = time.perf_counter() - start
-    with contextlib_import().suppress(Exception):
-        if hasattr(db, "_conn") and db._conn:
-            db._conn.close()
-            db._conn = None
-    return elapsed
+    create_all(db_path)
+    run_migrations(db_path)
+    verify_schema(db_path)
+    return time.perf_counter() - start
 
 
-def contextlib_import():
-    import contextlib
-
-    return contextlib
-
-
-def benchmark_finance_db_on_copy(db_path_template: str, db_path_copy: str) -> float:
-    """Time FinanceDB initialization on an already-initialized database copy."""
+def benchmark_db_init_on_copy(db_path_template: str, db_path_copy: str) -> float:
+    """Time canonical initialization on an already-initialized database copy."""
     import shutil
 
     shutil.copy2(db_path_template, db_path_copy)
-    return benchmark_finance_db_init(db_path_copy)
+    return benchmark_db_init(db_path_copy)
 
 
 def benchmark_seed(db_path: str) -> float:
@@ -103,21 +100,21 @@ def main() -> int:
 
     with tempfile.TemporaryDirectory() as tmp:
 
-        # 1. Benchmark fresh FinanceDB init (old approach)
-        print("\n1. Fresh FinanceDB init (old approach)...")
+        # 1. Benchmark fresh canonical DB init (old approach)
+        print("\n1. Fresh canonical DB init (old approach)...")
         for i in range(3):
             db_path = os.path.join(tmp, f"fresh_{i}.db")
-            t = benchmark_finance_db_init(db_path)
+            t = benchmark_db_init(db_path)
             results["finance_db_init_fresh"].append(t)
             print(f"   Run {i+1}: {t:.3f}s")
 
         # 2. Benchmark template + copy approach (new approach)
-        print("\n2. Template copy + FinanceDB init (new approach)...")
+        print("\n2. Template copy + canonical DB init (new approach)...")
         template_path = os.path.join(tmp, "template.db")
-        benchmark_finance_db_init(template_path)  # Create template
+        benchmark_db_init(template_path)  # Create template
         for i in range(10):
             copy_path = os.path.join(tmp, f"copy_{i}.db")
-            t = benchmark_finance_db_on_copy(template_path, copy_path)
+            t = benchmark_db_init_on_copy(template_path, copy_path)
             results["finance_db_init_copy"].append(t)
         print(f"   Mean: {statistics.mean(results['finance_db_init_copy']):.3f}s")
         print(f"   Median: {statistics.median(results['finance_db_init_copy']):.3f}s")
@@ -126,7 +123,7 @@ def main() -> int:
         print("\n3. Seed inserts (canonical connection)...")
         for i in range(10):
             db_path = os.path.join(tmp, f"seed_{i}.db")
-            benchmark_finance_db_init(db_path)
+            benchmark_db_init(db_path)
             t = benchmark_seed(db_path)
             results["seed_inserts"].append(t)
         print(f"   Mean: {statistics.mean(results['seed_inserts']):.3f}s")

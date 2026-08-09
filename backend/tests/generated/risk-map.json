@@ -1,0 +1,2339 @@
+{
+  "entries": [
+    {
+      "id": "src.engines.balance_engine",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.cashflow_engine",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.behavior_engine",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.reconciliation_engine",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.transaction_intelligence.loan_emi_detector",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.interest",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.forecasting",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.account_engine.cashflow",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.account_engine.balance",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.cashflow",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.debt",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.credit_dependency",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.amortization",
+      "type": "engine",
+      "risk": "CRITICAL",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 80,
+      "regression_priority": 40,
+      "verification_order": 8,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "financial_engine"
+    },
+    {
+      "id": "src.engines.ledger_audit_engine",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.insight_generator",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.nudge_engine",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.transaction_intelligence.detector_result",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.transaction_intelligence.cc_payment_detector",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.transaction_intelligence.cash_conversion_detector",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.utilization",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.emi",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.metrics",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.foreclosure",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.billing",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.credit_card_engine.outstanding",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_events.lineage_walker",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.models",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.intelligence",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.scenario",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.goal_planner",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.utils",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.financial_intelligence.optimization",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.account_engine.dormant",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.account_engine.lifecycle",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.account_engine.metrics",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.account_engine.history",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.recommendation_engine.recommendations",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.core",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.income",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.temporal",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.lifestyle",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.utils",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.resilience",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.patterns",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.wellness",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.account",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.profile",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.savings",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.behaviour_engine.stress",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.models",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.prepayment",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.emi",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.metrics",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.utils",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.foreclosure",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.engines.loan_engine.floating_rate",
+      "type": "engine",
+      "risk": "HIGH",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property",
+        "invariant"
+      ],
+      "rationale": "infrastructure_engine"
+    },
+    {
+      "id": "src.services.reconciliation_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.loans_workspace_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.cashflow_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.investments_workspace_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.credit_card_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.loan_simulation_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.behavior_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.loan_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.reconciliation_workspace_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.credit_cards_workspace_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.behaviour_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.forecast_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.behaviour_workspace_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.loan_analysis_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.services.cashflow_workspace_service",
+      "type": "service",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "financial_service"
+    },
+    {
+      "id": "src.repositories.loan_payment_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.transaction_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.account_balance_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.transaction_classification_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.credit_card_statement_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.account_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.reconciliation_audit_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.cashflow_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.loan_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.behaviour_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.investment_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.reconciliation_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.credit_card_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "src.repositories.account_link_repository",
+      "type": "repository",
+      "risk": "HIGH",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 40,
+      "regression_priority": 20,
+      "verification_order": 4,
+      "ci_schedule": "every_commit",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "financial_repository"
+    },
+    {
+      "id": "credit_cards",
+      "type": "capability",
+      "risk": "MEDIUM",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality; has 1 downstream dependencies"
+    },
+    {
+      "id": "debt_management",
+      "type": "capability",
+      "risk": "MEDIUM",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality; has 1 downstream dependencies"
+    },
+    {
+      "id": "reconciliation",
+      "type": "capability",
+      "risk": "MEDIUM",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality; has 2 downstream dependencies"
+    },
+    {
+      "id": "src.services.statement_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.base",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.financial_events_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.financial_intelligence_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.dashboard_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.networth_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.audit_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.accounts_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.account_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.transaction_intelligence_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.transaction_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.services.networth_workspace_service",
+      "type": "service",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "property"
+      ],
+      "rationale": "infrastructure_service"
+    },
+    {
+      "id": "src.routers.reconciliation_workspace",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.reconciliation",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.cashflow",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.cashflow_workspace",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.loans_workspace",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.investments_workspace",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.loans",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.investments",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.forecast",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.credit_cards",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.managed_accounts",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.credit_cards_workspace",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.accounts_router",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.behaviour",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.accounts",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.routers.behaviour_workspace",
+      "type": "router",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "financial_router"
+    },
+    {
+      "id": "src.repositories.member_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.networth_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.liquidity_pattern_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.bank_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.base",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.alert_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.financial_event_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.institution_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.pattern_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.financial_goal_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.statement_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "src.repositories.import_mapping_repository",
+      "type": "repository",
+      "risk": "MEDIUM",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 20,
+      "regression_priority": 10,
+      "verification_order": 2,
+      "ci_schedule": "pull_request",
+      "evidence_required": [
+        "invariant"
+      ],
+      "rationale": "infrastructure_repository"
+    },
+    {
+      "id": "account_management",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality"
+    },
+    {
+      "id": "financial_events",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "has 2 downstream dependencies"
+    },
+    {
+      "id": "financial_health",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality; has 2 downstream dependencies"
+    },
+    {
+      "id": "forecasting",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "has 3 downstream dependencies"
+    },
+    {
+      "id": "household_cashflow",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality"
+    },
+    {
+      "id": "pattern_analysis",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "has 2 downstream dependencies"
+    },
+    {
+      "id": "recommendations",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "medium",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "has 4 downstream dependencies"
+    },
+    {
+      "id": "transaction_intelligence",
+      "type": "capability",
+      "risk": "LOW",
+      "criticality": "high",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract",
+        "property",
+        "golden",
+        "invariant",
+        "architecture"
+      ],
+      "rationale": "high criticality; has 3 downstream dependencies"
+    },
+    {
+      "id": "src.routers.financial_events",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.export",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.dashboard",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.health",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.import_router",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.financial_intelligence",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.banks",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.networth",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.cards_statements",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.transactions",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.audit",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.networth_workspace",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    },
+    {
+      "id": "src.routers.members",
+      "type": "router",
+      "risk": "LOW",
+      "criticality": "low",
+      "priority": 0,
+      "mutation_priority": 10,
+      "regression_priority": 5,
+      "verification_order": 1,
+      "ci_schedule": "nightly",
+      "evidence_required": [
+        "contract"
+      ],
+      "rationale": "infrastructure_router"
+    }
+  ],
+  "generated_at": "2026-07-30T02:21:07.292065+00:00"
+}

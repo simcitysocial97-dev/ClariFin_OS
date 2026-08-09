@@ -9,9 +9,9 @@ import sqlite3
 
 import pytest
 
-from db import _parse_amount_paise
 from repositories.statement_repository import StatementRepository
 from repositories.transaction_repository import TransactionRepository
+from src.common.calculations import _parse_amount_paise
 
 
 def test_parse_amount_paise():

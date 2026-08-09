@@ -5,7 +5,8 @@
 
 'use client';
 
-import { createContext, useContext, ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 import { useWorkspaceRuntime } from './workspace-runtime';
 import { useSelectionRuntime } from './selection-runtime';
 import { useTimelineRuntime } from './timeline-runtime';

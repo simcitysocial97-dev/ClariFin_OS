@@ -1,0 +1,16 @@
+{
+  "changed_files": [],
+  "affected_capabilities": [],
+  "affected_engines": [],
+  "affected_services": [],
+  "affected_repositories": [],
+  "affected_contracts": [],
+  "affected_properties": [],
+  "affected_golden_datasets": [],
+  "affected_integration_tests": [],
+  "affected_mutation_targets": [],
+  "overall_risk": "LOW",
+  "overall_confidence": "HIGH",
+  "strategy": "fast",
+  "generated_at": "2026-07-30T02:21:07.132243+00:00"
+}

@@ -10,7 +10,8 @@ import {
   type Statement,
 } from '@/lib/api/client';
 import type { OverviewData } from '@/lib/api/client';
-import { useAsyncQuery, HookState } from './use-async-query';
+import type { HookState } from './use-async-query';
+import { useAsyncQuery } from './use-async-query';
 
 // ============================================================================
 // Query Keys

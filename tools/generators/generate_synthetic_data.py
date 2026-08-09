@@ -29,7 +29,7 @@ from typing import Any
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from db import FinanceDB
+from src.core.db.schema import create_all, run_migrations, verify_schema
 
 # ============================================================
 # Configuration
@@ -157,8 +157,8 @@ SCENARIO_PROFILES = {
 
 def clear_database(db_path: Path) -> None:
     """Clear all data from the database and ensure schema is up to date."""
-    # First, initialize the database with FinanceDB to ensure all columns exist
-    FinanceDB(str(db_path))
+    # First, initialize the database with the canonical schema to ensure all columns exist
+    create_all(str(db_path))
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()

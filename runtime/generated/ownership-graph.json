@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-06T16:33:17.614544",
+  "generated_at": "2026-08-08T18:38:19.818445",
   "description": "Ownership graph: every edge has evidence. Ownership != execution.",
-  "node_count": 165,
-  "edge_count": 196,
+  "node_count": 169,
+  "edge_count": 201,
   "nodes": [
     {
       "id": "engine:account_engine",
@@ -130,9 +130,19 @@
       "label": "backend/src/engines/behaviour_engine/income.py"
     },
     {
+      "id": "module:backend/src/engines/behaviour_engine/insights.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/insights.py"
+    },
+    {
       "id": "module:backend/src/engines/behaviour_engine/lifestyle.py",
       "type": "EngineModule",
       "label": "backend/src/engines/behaviour_engine/lifestyle.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/nudges.py"
     },
     {
       "id": "module:backend/src/engines/behaviour_engine/patterns.py",
@@ -233,6 +243,21 @@
       "id": "repository:transaction_repository",
       "type": "Repository",
       "label": "transaction_repository"
+    },
+    {
+      "id": "test:backend/tests/capability/pattern_analysis/test_capability.py",
+      "type": "Test",
+      "label": "backend/tests/capability/pattern_analysis/test_capability.py"
+    },
+    {
+      "id": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/recommendations/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behavior/test_behavior_engine.py"
     },
     {
       "id": "test:backend/tests/unit/engines/behaviour/test_core.py",
@@ -740,14 +765,24 @@
       "label": "backend/tests/invariants/test_determinism.py"
     },
     {
-      "id": "engine:insight_generator",
+      "id": "engine:cashflow_engine",
       "type": "Engine",
-      "label": "insight_generator"
+      "label": "cashflow_engine"
     },
     {
-      "id": "engine:insight_generator:entry",
+      "id": "engine:cashflow_engine:entry",
       "type": "EngineEntryPoint",
-      "label": "engines/insight_generator.py"
+      "label": "engines/cashflow_engine.py"
+    },
+    {
+      "id": "test:backend/tests/capability/household_cashflow/test_capability.py",
+      "type": "Test",
+      "label": "backend/tests/capability/household_cashflow/test_capability.py"
+    },
+    {
+      "id": "test:backend/tests/properties/cashflow/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/cashflow/test_engine_properties.py"
     },
     {
       "id": "engine:ledger_audit_engine",
@@ -773,21 +808,6 @@
       "id": "test:backend/tests/audits/test_audit_minimal.py",
       "type": "Test",
       "label": "backend/tests/audits/test_audit_minimal.py"
-    },
-    {
-      "id": "engine:nudge_engine",
-      "type": "Engine",
-      "label": "nudge_engine"
-    },
-    {
-      "id": "engine:nudge_engine:entry",
-      "type": "EngineEntryPoint",
-      "label": "engines/nudge_engine.py"
-    },
-    {
-      "id": "test:backend/tests/properties/recommendations/test_engine_properties.py",
-      "type": "Test",
-      "label": "backend/tests/properties/recommendations/test_engine_properties.py"
     },
     {
       "id": "engine:reconciliation_engine",
@@ -994,9 +1014,23 @@
     },
     {
       "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/insights.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/insights.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
       "to": "module:backend/src/engines/behaviour_engine/lifestyle.py",
       "relation": "owns",
       "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/lifestyle.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/nudges.py",
       "layer": "backend"
     },
     {
@@ -1155,7 +1189,28 @@
     },
     {
       "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/capability/pattern_analysis/test_capability.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
       "to": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
       "relation": "owns",
       "evidence": "test file imports engines.behaviour_engine",
       "layer": "backend"
@@ -2057,10 +2112,24 @@
       "layer": "backend"
     },
     {
-      "from": "engine:insight_generator",
-      "to": "engine:insight_generator:entry",
+      "from": "engine:cashflow_engine",
+      "to": "engine:cashflow_engine:entry",
       "relation": "owns",
-      "evidence": "public_entry_point = engines/insight_generator.py (canonical_style=single_file)",
+      "evidence": "public_entry_point = engines/cashflow_engine.py (canonical_style=single_file)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:cashflow_engine",
+      "to": "test:backend/tests/capability/household_cashflow/test_capability.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.cashflow_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:cashflow_engine",
+      "to": "test:backend/tests/properties/cashflow/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.cashflow_engine",
       "layer": "backend"
     },
     {
@@ -2089,20 +2158,6 @@
       "to": "test:backend/tests/audits/test_audit_minimal.py",
       "relation": "owns",
       "evidence": "test file imports engines.ledger_audit_engine",
-      "layer": "backend"
-    },
-    {
-      "from": "engine:nudge_engine",
-      "to": "engine:nudge_engine:entry",
-      "relation": "owns",
-      "evidence": "public_entry_point = engines/nudge_engine.py (canonical_style=single_file)",
-      "layer": "backend"
-    },
-    {
-      "from": "engine:nudge_engine",
-      "to": "test:backend/tests/properties/recommendations/test_engine_properties.py",
-      "relation": "owns",
-      "evidence": "test file imports engines.nudge_engine",
       "layer": "backend"
     },
     {
@@ -2494,6 +2549,6 @@
   "notes": [
     "Implementation modules (EngineModule) are owned BY their engine; they are NOT ownership roots. The legacy cross-layer-map listed them as separate engines.",
     "Capability is the top ownership root. Workspace/ViewModel/Mapper live in the frontend; Router/Service/Engine/Repository live in the backend.",
-    "transaction_intelligence, financial_events, balance_engine, ledger_audit_engine, reconciliation_engine, nudge_engine, insight_generator have NO capability owner: they are internal/sub engines consumed by other engines or services."
+    "transaction_intelligence, financial_events, balance_engine, ledger_audit_engine, reconciliation_engine have NO capability owner: they are internal/sub engines consumed by other engines or services."
   ]
 }

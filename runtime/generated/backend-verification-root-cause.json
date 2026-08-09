@@ -1,0 +1,57 @@
+{
+  "program": "G",
+  "workflow": "Backend Verification",
+  "status": "resolved",
+  "ci_run_id": 31210598729,
+  "root_causes": [
+    {
+      "id": "RC-1",
+      "category": "repository_issue",
+      "file": "backend/src/routers/accounts.py",
+      "line": 83,
+      "description": "AccountDetailDTO expects id as str but router passes int from database",
+      "error": "pydantic_core._pydantic_core.ValidationError: Input should be a valid string [type=string_type, input_value=1, input_type=int]",
+      "test": "tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_contract"
+    },
+    {
+      "id": "RC-2",
+      "category": "repository_issue",
+      "file": "backend/src/repositories/account_link_repository.py",
+      "line": 75,
+      "description": "SQL query missing id column required by AccountLinkDTO mapping",
+      "error": "KeyError: 'primary_account_id'",
+      "test": "tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_links_contract"
+    },
+    {
+      "id": "RC-3",
+      "category": "configuration_issue",
+      "file": "runtime/tests/conftest.py",
+      "line": 133,
+      "description": "isolated_registry fixture uses incorrect module path backend/src/loan_engine instead of backend/src/engines/loan_engine",
+      "error": "Snapshot mismatch: target_count and step_count differ from expected",
+      "test": "runtime/tests/test_snapshots.py::test_verification_plan_snapshot"
+    }
+  ],
+  "first_actual_failure": "RC-1",
+  "affected_tests": [
+    "tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_contract",
+    "tests/contract/generated/test_v1.py::test_get__api_v1_accounts_contract",
+    "tests/contract/generated/test_accounts.py::test_get__api_v1_accounts_account_id_links_contract",
+    "tests/contract/generated/test_v1.py::test_get__api_v1_accounts_account_id_links_contract",
+    "runtime/tests/test_snapshots.py::test_verification_plan_snapshot",
+    "runtime/tests/test_snapshots.py::test_verification_report_snapshot"
+  ],
+  "pre_existing_failures": [
+    {
+      "id": "PRE-1",
+      "category": "implementation_bug",
+      "description": "Loan engine property tests fail due to floating-point precision issues in amortization calculations",
+      "tests": [
+        "tests/properties/loan_engine/test_floating_rate_properties.py::test_apply_floating_rate_change_math_accuracy",
+        "tests/properties/loan_engine/test_foreclosure_properties.py::test_compute_foreclosure_amount_math_accuracy",
+        "tests/properties/loan_engine/test_prepayment_properties.py::test_apply_prepayment_at_month_invariants",
+        "tests/properties/loan_engine/test_metrics_properties.py::test_calculate_tenure_saved_invariants"
+      ]
+    }
+  ]
+}
