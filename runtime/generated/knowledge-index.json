@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-09T00:22:15.199288+00:00",
+  "indexed_at": "2026-08-09T12:32:39.360419+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -8049,6 +8049,15 @@
         ]
       },
       {
+        "name": "integration",
+        "references": {
+          "profile": "integration"
+        },
+        "tags": [
+          "integration"
+        ]
+      },
+      {
         "name": "mutation",
         "references": {
           "profile": "mutation"
@@ -9618,6 +9627,36 @@
         ]
       },
       {
+        "title": "program-r-forensic-recovery",
+        "path": "docs/audits/recovery/program-r-forensic-recovery.md",
+        "references": {
+          "path": "docs/audits/recovery/program-r-forensic-recovery.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-r-review-and-unrecoverable-plan",
+        "path": "docs/audits/recovery/program-r-review-and-unrecoverable-plan.md",
+        "references": {
+          "path": "docs/audits/recovery/program-r-review-and-unrecoverable-plan.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-s-post-recovery-integrity",
+        "path": "docs/audits/recovery/program-s-post-recovery-integrity.md",
+        "references": {
+          "path": "docs/audits/recovery/program-s-post-recovery-integrity.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "INTEGRATION_DECISION_DOCUMENT",
         "path": "docs/decisions/INTEGRATION_DECISION_DOCUMENT.md",
         "references": {
@@ -10027,9 +10066,9 @@
     "workspaces": 8,
     "components": 54,
     "graph_renderers": 0,
-    "verification_profiles": 10,
+    "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 151
+    "documentation": 154
   }
 }

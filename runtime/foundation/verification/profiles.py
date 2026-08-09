@@ -378,6 +378,18 @@ _VERIFY_RUNTIME_TASKS = (
     ),
 )
 
+_VERIFY_INTEGRATION_TASKS = (
+    VerificationTask(
+        id="integration-api",
+        name="API integration tests",
+        profile="integration",
+        commands=["bash .github/scripts/run_integration_tests.sh"],
+        category=VerificationCategory.INTEGRATION,
+        scope=VerificationScope.INTEGRATION,
+        estimated_duration_seconds=600,
+    ),
+)
+
 _VERIFY_GOLDEN_TASKS = (
     VerificationTask(
         id="golden-regression",
@@ -456,6 +468,12 @@ _PROFILES: dict[str, VerificationProfile] = {
         scope=VerificationScope.FULL,
         description="Complete verification suite",
         tasks=_VERIFY_FULL_TASKS,
+    ),
+    "integration": VerificationProfile(
+        name="integration",
+        scope=VerificationScope.INTEGRATION,
+        description="API integration and cross-capability tests",
+        tasks=_VERIFY_INTEGRATION_TASKS,
     ),
     "mutation": VerificationProfile(
         name="mutation",
