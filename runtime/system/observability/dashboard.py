@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .analytics import AnalyticsEngine, AnalyticsReport
+from .analytics import AnalyticsEngine
 from .cost_analysis import CostAnalysis
 from .dependency_growth import DependencyGrowthIntelligence
 from .event_store import EngineeringEventStore

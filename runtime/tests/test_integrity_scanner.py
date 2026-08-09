@@ -6,13 +6,10 @@ Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
-import pytest
 
 from runtime.foundation.integrity.scanner import (
-    ArchitecturalGraph,
     ArchitecturalScanner,
     classify_layer,
     discover_source_files,

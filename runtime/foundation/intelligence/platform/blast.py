@@ -152,6 +152,241 @@ def _forward_index(graph: Any) -> dict[str, list[Any]]:
     return index
 
 
+def _enrich_dto_mapper_impact(
+    impacted: dict,
+    seeds: tuple,
+    seed_refs: set,
+    reverse: dict,
+    res: Any,
+    frontier: Any,
+    visited: dict,
+    max_depth: int = 3,
+) -> None:
+    """Bridge DTO → mapper → frontend capability gaps.
+
+    The dependency graph links DTOs to other DTOs (init re-exports) but does
+    not link DTOs to consuming mappers across backend/frontend layers. The
+    canonical chain map (``backend/src/engines/<e>``) records which
+    ``mappers`` and ``viewModels`` a DTO's engine consumes. This function
+    uses that bridge to add frontend-side entities when a backend DTO is
+    impacted, then lets the normal reverse-edge traversal continue.
+    """
+    try:
+        from runtime.foundation.architecture.chains import get_chain_map
+    except Exception:
+        return
+
+    chain_map = get_chain_map()
+    impacted_refs = {n.ref for n in impacted.values()} | set(seeds)
+    dto_nodes = [r for r in impacted_refs if r.kind == "dto"]
+    if not dto_nodes:
+        return
+
+    for dto_ref in dto_nodes:
+        engine_for_dto = res.arch.engine_for_path(dto_ref.path)
+        chain = None
+        if engine_for_dto is not None:
+            chain = chain_map.get(engine_for_dto.path)
+
+        if chain is None:
+            engine_name = _infer_engine_from_dto(dto_ref, chain_map)
+            for eng_path, cm_chain in chain_map.items():
+                if cm_chain.get("engineName") == engine_name:
+                    chain = cm_chain
+                    break
+
+        if chain is None:
+            continue
+
+        for mapper_path in chain.get("mappers", []):
+            if not mapper_path.startswith("frontend/"):
+                mapper_path = f"frontend/{mapper_path}"
+            mapper_full = _resolve_frontend_path(res, mapper_path)
+            mapper_ref = _resolve_frontend_entity(res, mapper_full, "mapper")
+            if mapper_ref is not None and mapper_ref.ref not in impacted:
+                impacted[mapper_ref.ref] = ImpactNode(
+                    ref=mapper_ref,
+                    depth=1,
+                    graph="chain-map",
+                    via=dto_ref.ref,
+                    relation="consumed-by",
+                )
+                for node_id in res.node_ids_for(mapper_ref):
+                    if node_id not in visited:
+                        visited[node_id] = 1
+                        frontier.append(
+                            (node_id, 1, "chain-map", dto_ref.ref, "consumed-by")
+                        )
+
+        for vm_path in chain.get("viewModels", []):
+            if not vm_path.startswith("frontend/"):
+                vm_path = f"frontend/{vm_path}"
+            vm_full = _resolve_frontend_path(res, vm_path)
+            vm_ref = _resolve_frontend_entity(res, vm_full, "view_model")
+            if vm_ref is not None and vm_ref.ref not in impacted:
+                impacted[vm_ref.ref] = ImpactNode(
+                    ref=vm_ref,
+                    depth=1,
+                    graph="chain-map",
+                    via=dto_ref.ref,
+                    relation="view-model",
+                )
+
+
+def _enrich_backend_bridge_impact(
+    impacted: dict,
+    seeds: tuple,
+    res: Any,
+    visited: dict,
+    frontier: Any,
+) -> None:
+    """C4 — propagate standalone backend mapper / router changes to the frontend.
+
+    When a backend ``mapper`` or ``router`` changes, the same chain-map
+    relationships that drive ``_enrich_dto_mapper_impact`` record which
+    frontend ``mappers`` / ``viewModels`` the owning engine consumes. Those
+    frontend entities must also be flagged, exactly as they are for a DTO
+    change. Without this, a backend transport/mapping change can silently
+    miss the frontend consumer that depends on the exact shape it emits.
+    """
+    try:
+        from runtime.foundation.architecture.chains import get_chain_map
+    except Exception:
+        return
+
+    chain_map = get_chain_map()
+    candidate_refs = {n.ref for n in impacted.values()} | set(seeds)
+
+    def _is_backend_bridge(ref: Any) -> bool:
+        if ref.kind not in ("mapper", "router"):
+            return False
+        return ref.path.startswith("backend/")
+
+    for ref in candidate_refs:
+        if not _is_backend_bridge(ref):
+            continue
+
+        engine_path = res.arch.engine_for_path(ref.path)
+        chain = chain_map.get(engine_path.path) if engine_path is not None else None
+
+        if chain is None:
+            engine_name = _infer_engine_from_dto(ref, chain_map)
+            if engine_name is not None:
+                for eng_path, cm_chain in chain_map.items():
+                    if cm_chain.get("engineName") == engine_name:
+                        chain = cm_chain
+                        break
+
+        if chain is None:
+            continue
+
+        for mapper_path in chain.get("mappers", []):
+            if not mapper_path.startswith("frontend/"):
+                mapper_path = f"frontend/{mapper_path}"
+            mapper_full = _resolve_frontend_path(res, mapper_path)
+            mapper_ref = _resolve_frontend_entity(res, mapper_full, "mapper")
+            if mapper_ref is not None and mapper_ref.ref not in impacted:
+                impacted[mapper_ref.ref] = ImpactNode(
+                    ref=mapper_ref,
+                    depth=1,
+                    graph="chain-map",
+                    via=ref.ref,
+                    relation="consumed-by",
+                )
+                for node_id in res.node_ids_for(mapper_ref):
+                    if node_id not in visited:
+                        visited[node_id] = 1
+                        frontier.append(
+                            (node_id, 1, "chain-map", ref.ref, "consumed-by")
+                        )
+
+        for vm_path in chain.get("viewModels", []):
+            if not vm_path.startswith("frontend/"):
+                vm_path = f"frontend/{vm_path}"
+            vm_full = _resolve_frontend_path(res, vm_path)
+            vm_ref = _resolve_frontend_entity(res, vm_full, "view_model")
+            if vm_ref is not None and vm_ref.ref not in impacted:
+                impacted[vm_ref.ref] = ImpactNode(
+                    ref=vm_ref,
+                    depth=1,
+                    graph="chain-map",
+                    via=ref.ref,
+                    relation="view-model",
+                )
+
+
+def _resolve_frontend_entity(res: Any, path: str, kind: str) -> Any:
+    """Resolve a frontend path to an EntityRef of the given kind."""
+    refs = res.entities_for_path(path)
+    for ref in refs:
+        if ref.kind == kind:
+            return ref
+    return None
+
+
+def _resolve_frontend_path(res: Any, partial_path: str) -> str:
+    """Resolve a partial frontend path (from chain map) to a concrete file path.
+
+    Chain-map entries store paths like ``lib/mappers/loans-mapper`` or
+    ``types/loans-view-model`` (without extension or even the ``frontend/``
+    prefix). This function tries common extensions to find the actual file
+    registered with the provider.
+    """
+    if res.entities_for_path(partial_path):
+        return partial_path
+    for ext in (".ts", ".tsx"):
+        candidate = f"{partial_path}{ext}"
+        if res.entities_for_path(candidate):
+            return candidate
+    return partial_path
+
+
+_DTO_ENGINE_HINTS = [
+    ("loan", "loan_engine"),
+    ("account", "account_engine"),
+    ("behaviour", "behaviour_engine"),
+    ("behavior", "behaviour_engine"),
+    ("cashflow", "behaviour_engine"),
+    ("credit_card", "credit_card_engine"),
+    ("creditcard", "credit_card_engine"),
+    ("reconciliation", "behaviour_engine"),
+    ("forecast", "financial_intelligence"),
+    ("investment", "financial_intelligence"),
+    ("networth", "behaviour_engine"),
+    ("dashboard", "behaviour_engine"),
+    ("transaction", "transaction_intelligence"),
+    ("statement", "account_engine"),
+]
+
+
+def _infer_engine_from_dto(dto_ref: Any, chain_map: dict) -> str | None:
+    """Infer the owning engine from a DTO file path.
+
+    Provider evidence: a DTO is consumed by the engine whose services/routers
+    reference that DTO. When direct engine resolution is unavailable (DTOs
+    are not registered as engine modules), infer the engine by matching the
+    DTO's module name against known engine module names and capability
+    mappings.
+    """
+    dto_path_lower = dto_ref.path.lower()
+
+    for eng_path, chain in chain_map.items():
+        eng_name = chain.get("engineName", "")
+        if eng_name and eng_name.lower() in dto_path_lower:
+            return eng_name
+        for svc in chain.get("services", []):
+            svc_stem = svc.split("/")[-1].replace(".py", "").lower()
+            if svc_stem and svc_stem in dto_path_lower:
+                return eng_name
+
+    dto_name = dto_ref.path.split("/")[-1].replace("_dto.py", "").lower()
+    for keyword, eng_name in _DTO_ENGINE_HINTS:
+        if keyword in dto_name:
+            return eng_name
+
+    return None
+
+
 def compute_blast_radius(
     change: ChangeIntelligence,
     resolver: EntityResolver | None = None,
@@ -238,6 +473,19 @@ def compute_blast_radius(
     for ref in seeds:
         if ref.kind == "test":
             verification[ref.ref] = ref
+
+    # GAP-004 enrichment: propagate DTO → mapper → frontend/mapper chain.
+    # The provider dependency graph does not directly link DTOs to their
+    # consuming mappers across layers, so chain-map relationships from the
+    # canonical architecture provider are used to bridge that gap.
+    _enrich_dto_mapper_impact(
+        impacted, seeds, seed_refs, reverse, res, frontier, visited, max_depth
+    )
+    # C4: standalone backend mapper / router changes must propagate to the
+    # frontend entities the same chain records.
+    _enrich_backend_bridge_impact(
+        impacted, seeds, res, visited, frontier
+    )
 
     direct = tuple(
         sorted(

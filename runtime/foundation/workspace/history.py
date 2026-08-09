@@ -9,7 +9,6 @@ Only presentation.
 
 from __future__ import annotations
 
-from typing import Any
 
 from runtime.foundation.workspace.formatter import (
     format_duration,

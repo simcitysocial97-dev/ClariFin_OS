@@ -11,7 +11,6 @@ from typing import Any
 
 from runtime.foundation.integrity.models import (
     ArchitectureLayer,
-    IntegrityReport,
     Violation,
     ViolationCategory,
     ViolationSeverity,

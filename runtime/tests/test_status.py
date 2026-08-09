@@ -9,9 +9,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 
-from runtime.foundation.workspace.models import StatusWorkspace
 from runtime.foundation.workspace.status import render_status
 from runtime.foundation.workspace.workspace import WorkspaceLoader
 

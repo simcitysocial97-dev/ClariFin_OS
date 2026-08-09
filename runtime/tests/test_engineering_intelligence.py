@@ -160,6 +160,48 @@ def test_verification_impact_uses_provider_tests(resolver):
         assert ref.key in known
 
 
+def test_backend_mapper_change_propagates_to_frontend(resolver):
+    """C4 — a standalone backend mapper change must reach the frontend consumer.
+
+    The backend loan mapper is not inside an engine directory, so ownership
+    alone would never link it to the frontend. The chain map records which
+    frontend mapper / view-model the owning engine consumes, and the blast
+    radius must bridge across that gap.
+    """
+    change = analyze_changes(
+        resolver=resolver, paths=["backend/src/core/mappers/loan_mapper.py"]
+    )
+    blast = compute_blast_radius(change, resolver=resolver)
+    refs = {n.ref.ref for n in blast.indirect}
+    assert "mapper:frontend/lib/mappers/loans-mapper.ts" in refs
+    assert any(r.startswith("view_model:") for r in refs)
+    # Must NOT be backend-only: the frontend consumer must be reached.
+    assert any("frontend/" in r for r in refs)
+
+
+def test_backend_router_change_propagates_to_frontend(resolver):
+    """C4 — a backend router change must also reach the frontend view-model/mapper."""
+    change = analyze_changes(resolver=resolver, paths=[ROUTER])
+    blast = compute_blast_radius(change, resolver=resolver)
+    refs = {n.ref.ref for n in blast.indirect}
+    assert "mapper:frontend/lib/mappers/accounts-mapper.ts" in refs
+    assert any(r.startswith("view_model:") for r in refs)
+
+
+def test_backend_bridge_impact_is_evidence_backed(resolver):
+    """C4 — the frontend propagation must carry its chain-map evidence."""
+    change = analyze_changes(
+        resolver=resolver, paths=["backend/src/core/mappers/loan_mapper.py"]
+    )
+    blast = compute_blast_radius(change, resolver=resolver)
+    bridges = [
+        n for n in blast.indirect if n.graph == "chain-map" and "frontend" in n.ref.ref
+    ]
+    assert bridges
+    for node in bridges:
+        assert node.via and node.relation
+
+
 # ---------------------------------------------------------------------------
 # Phase 3 — verification optimizer
 # ---------------------------------------------------------------------------
@@ -191,6 +233,35 @@ def test_empty_change_selects_no_unit_tests(resolver):
     plan = optimize_verification(compute_blast_radius(change, resolver=resolver))
     assert plan.estimated_seconds == 0
     assert not plan.selected
+
+
+def test_every_selected_unit_carries_provenance(resolver):
+    """C11 — every selected unit must explain *why* via capability/impact/source."""
+    change = analyze_changes(resolver=resolver, paths=[ENGINE_MODULE])
+    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))
+    assert plan.selected
+    for unit in plan.selected:
+        assert unit.source, "source must be set"
+        assert unit.impact_kinds, "impact_kinds must be set"
+        assert unit.reason, "reason must be set"
+        prov = unit.to_dict()["provenance"]
+        assert prov["source"] == unit.source
+        assert prov["impact_kinds"] == list(unit.impact_kinds)
+
+
+def test_frontend_selection_provenance_records_chain_map_source(resolver):
+    """C11 — a backend DTO change that escalates to frontend must be explainable.
+
+    The frontend unit's provenance must name the chain-map bridge as its
+    source, so an AI diagnosis can trace backend DTO → chain-map → frontend.
+    """
+    change = analyze_changes(resolver=resolver, paths=["backend/src/core/dtos/loans_dto.py"])
+    plan = optimize_verification(compute_blast_radius(change, resolver=resolver))
+    frontend_units = [u for u in plan.selected if u.category == "frontend"]
+    assert frontend_units
+    for unit in frontend_units:
+        assert unit.source == "chain-map+blast-radius"
+        assert "view_model" in unit.impact_kinds
 
 
 # ---------------------------------------------------------------------------

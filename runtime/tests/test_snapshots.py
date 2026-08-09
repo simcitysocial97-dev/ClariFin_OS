@@ -10,7 +10,6 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 
 from runtime.foundation.verification.models import VerificationScope, VerificationStatus
 from runtime.foundation.verification.planner import (
@@ -166,8 +165,9 @@ class TestSnapshots:
             import datetime as dt
             mock_dt.now.return_value = dt.datetime(2026, 1, 1, 0, 0, 0, tzinfo=dt.timezone.utc)
             mock_dt.timezone = dt.timezone
-            orchestrator = VerificationOrchestrator(repo_root=tmp_path)
+            orchestrator = VerificationOrchestrator(repo_root=tmp_path, map_path=map_path)
             orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator.analyze_cross_layer()
             plan = orchestrator.generate_plan(scope=VerificationScope.QUICK)
             new_steps = []
             for step in plan.steps:

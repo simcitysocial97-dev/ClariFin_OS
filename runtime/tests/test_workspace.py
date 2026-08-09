@@ -12,13 +12,9 @@ from pathlib import Path
 import pytest
 
 from runtime.foundation.workspace.models import (
-    CacheMetrics,
     CrossLayerStatus,
-    DependencyGrowth,
     EngineeringHealth,
     ExecutionHistory,
-    FailureRate,
-    FlakyTestInfo,
     MetricsWorkspace,
     PendingVerification,
     PlannerStatus,
@@ -27,9 +23,7 @@ from runtime.foundation.workspace.models import (
     RiskSummary,
     StatusWorkspace,
     VerificationCache,
-    VerificationCounts,
     VerificationHistory,
-    VerificationProfile,
     VerificationStatusInfo,
     VerificationWorkspace,
 )

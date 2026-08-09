@@ -5,7 +5,6 @@ Deterministic tests. No network. No repository mutation.
 
 from __future__ import annotations
 
-import pytest
 
 from runtime.foundation.knowledge.formatter import (
     format_catalog_summary,
@@ -13,11 +12,6 @@ from runtime.foundation.knowledge.formatter import (
     format_query_result,
 )
 from runtime.foundation.knowledge.indexer import build_index
-from runtime.foundation.knowledge.models import (
-    EndpointEntry,
-    KnowledgeIndex,
-    QueryResult,
-)
 
 
 class TestKnowledgeFormatter:

@@ -6,10 +6,8 @@ Deterministic. No network. No git mutation.
 
 from __future__ import annotations
 
-import pytest
 
 from runtime.foundation.integrity.registry import (
-    ConstitutionalRegistry,
     IntegrityRule,
     get_constitution,
 )

@@ -12,7 +12,6 @@ import time
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 
 from runtime.foundation.verification.models import VerificationScope, VerificationStatus
 from runtime.foundation.verification.planner import CrossLayerImpactPlanner
