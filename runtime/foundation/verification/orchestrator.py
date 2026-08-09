@@ -60,7 +60,15 @@ def _collect_changed_files() -> list[str]:
             timeout=10,
         )
         if result.returncode == 0 and result.stdout.strip():
-            return [f.strip() for f in result.stdout.splitlines() if f.strip()]
+            files = [f.strip() for f in result.stdout.splitlines() if f.strip()]
+            return [
+                f for f in files
+                if not f.startswith("runtime/generated/")
+                and not f.startswith("node_modules/")
+                and not f.startswith(".pytest_cache/")
+                and not f.startswith("__pycache__/")
+                and not f.endswith(".pyc")
+            ]
     except Exception:
         pass
     return []
