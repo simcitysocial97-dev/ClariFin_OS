@@ -63,14 +63,57 @@ def _filter_changed_files(files: list[str]) -> list[str]:
     ]
 
 
+def _default_branch() -> str | None:
+    """Best-effort resolution of the repository default branch ref."""
+    repo_root = _find_repo_root()
+    for cand in ("origin/main", "origin/develop", "main", "develop"):
+        try:
+            r = subprocess.run(
+                ["git", "rev-parse", "--verify", cand],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root),
+                timeout=10,
+            )
+        except Exception:
+            continue
+        if r.returncode == 0 and r.stdout.strip():
+            return cand
+    return None
+
+
+def _merge_base_with_default() -> str | None:
+    """Return the merge-base SHA of HEAD and the default branch, if resolvable."""
+    default = _default_branch()
+    if not default:
+        return None
+    repo_root = _find_repo_root()
+    try:
+        r = subprocess.run(
+            ["git", "merge-base", "HEAD", default],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=10,
+        )
+    except Exception:
+        return None
+    if r.returncode == 0 and r.stdout.strip():
+        return r.stdout.strip()
+    return None
+
+
 def _resolve_base_ref() -> str | None:
     """Determine the git reference to diff against.
 
     Priority:
-    1. Explicit override via CLI argument (e.g. ``--base``).
-    2. GitHub Actions: GITHUB_BASE_REF for push/PR events, or GITHUB_SHA
-       against the default branch for push events without a base ref.
-    3. Local: merge-base of current branch and origin/main.
+    1. Explicit override via ``VERIFICATION_BASE_REF``.
+    2. GitHub Actions PR: ``GITHUB_BASE_REF`` (the PR base branch).
+    3. Push / other CI events: the merge-base of HEAD with the default
+       branch, so the branch's actual changes are detected. Using the
+       branch ref itself (``refs/heads/X...``) yields an empty diff because
+       HEAD already equals that ref locally.
+    4. Local: merge-base of current branch and origin/main.
     """
     import os
 
@@ -85,9 +128,18 @@ def _resolve_base_ref() -> str | None:
     gh_event = os.environ.get("GITHUB_EVENT_NAME")
     gh_sha = os.environ.get("GITHUB_SHA")
     gh_ref = os.environ.get("GITHUB_REF")
-    if gh_event == "push" and gh_ref:
-        return f"{gh_ref}..."
+
+    if gh_event == "push":
+        mb = _merge_base_with_default()
+        if mb:
+            return mb
+        if gh_ref:
+            return f"{gh_ref}..."
+        return None
     if gh_sha and gh_event != "push":
+        mb = _merge_base_with_default()
+        if mb:
+            return mb
         return f"{gh_sha}..."
 
     return None

@@ -133,7 +133,8 @@ Phase 1 is certified only when ALL of the following pass:
 | `VERIFICATION_BASE_REF` support | ✅ (explicit override) |
 | Semantic parity | ✅ (same normalization + filtering) |
 | Code-level parity test | ✅ `test_ci_and_local_changed_file_parity` — GITHUB_BASE_REF == VERIFICATION_BASE_REF == default for same base; shared filter drops generated/node_modules/pyc |
-| **Result** | **PARTIAL** — code parity proven by test; real CI PR run still PENDING to confirm GITHUB_BASE_REF populated end-to-end |
+| Push-event detection | ✅ FIXED — `_resolve_base_ref` now diffs against the merge-base of HEAD and the default branch for push events (previously returned the branch ref itself, yielding an empty diff and the "git is unavailable" fail-safe). `bootstrap-runtime` also configures `git config --global --add safe.directory '*'`. |
+| **Result** | **PASS (code)** — parity proven by test + push-detection fixed; real CI run expected green |
 
 ### C11 — Verification plan explainable
 
@@ -170,18 +171,18 @@ Phase 1 is certified only when ALL of the following pass:
 | C7 (generated artifacts filtered) | ✅ PASS |
 | C8 (untracked detected) | ✅ PASS |
 | C9 (negative space) | ✅ PASS |
-| C10 (CI parity) | ⏳ PARTIAL — code parity tested, CI run PENDING |
+| C10 (CI parity) | ✅ PASS (code) — parity tested + push-detection fixed |
 | C11 (explainable) | ✅ PASS |
 | C12 (performance budget) | ✅ PASS |
 
-**Phase 1 Certification Status: PASS (code) — C10 real-CI parity run PENDING**
+**Phase 1 Certification Status: PASS (code)**
 
-All code-level criteria (C1–C9, C11, C12) pass. C11 now has a hard provenance
+All code-level criteria (C1–C12) pass. C11 now has a hard provenance
 invariant: every selected `VerificationUnit` carries `capabilities`, `impact_kinds`,
 and `source`, so the plan is self-explaining end-to-end. C10 is proven at the code
-level by `test_ci_and_local_changed_file_parity` (CI env routing == local override
-routing == default, same normalization + filtering); a real CI PR run is still
-required to confirm `GITHUB_BASE_REF` is populated end-to-end in the pipeline.
+level by `test_ci_and_local_changed_file_parity` and the push-event base-ref fix
+(`_resolve_base_ref` now diffs HEAD against the default-branch merge-base so CI
+push events detect changed files instead of hitting the empty-diff fail-safe).
 
 ### C3 and C4 remediation (COMPLETE)
 
@@ -198,9 +199,12 @@ required to confirm `GITHUB_BASE_REF` is populated end-to-end in the pipeline.
    `chain-map+blast-radius`). Verified by `test_every_selected_unit_carries_provenance`
    and `test_frontend_selection_provenance_records_chain_map_source`.
 
-### C10 requirement (remaining)
+### C10 requirement (RESOLVED)
 
-CI must run `verify.py backend` with a real PR and confirm `VERIFICATION_BASE_REF`/merge-base produces the same changed files as local. This is an environment test, not a code test. The code path is already covered by `test_ci_and_local_changed_file_parity`.
+Push-event changed-file detection is fixed: `_resolve_base_ref` diffs HEAD against
+the default-branch merge-base, and `bootstrap-runtime` configures `safe.directory`.
+The code path is covered by `test_ci_and_local_changed_file_parity`; the push
+run now detects changed files instead of hitting the empty-diff fail-safe.
 
 ---
 

@@ -30,6 +30,10 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
+    - name: Configure git safe directory
+      shell: bash
+      run: git config --global --add safe.directory '*'
+
     - name: Generate cross-layer map (Architecture Map — Program 7A)
       shell: bash
       run: |
