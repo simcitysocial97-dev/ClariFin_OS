@@ -554,7 +554,7 @@ class VerificationPlanner:
         workflows: list[str],
         scripts: list[str],
     ) -> list[VerificationStep]:
-        """Build ordered verification steps."""
+        """Build ordered verification steps with command-level deduplication."""
         steps = []
         step_id = 0
 
@@ -562,25 +562,38 @@ class VerificationPlanner:
         ordered_targets = self._topological_sort(targets)
 
         for target in ordered_targets:
-            # Find matching workflow
+            # Find matching workflow: prefer scope match over capability match
+            # to avoid a capability-only workflow stealing a target that has a
+            # more specific scope-aligned workflow (e.g. contracts stealing
+            # api-contract-frontend from frontend).
             workflow = None
             for wf_id in workflows:
                 wf = self._registry.get_workflow(wf_id)
-                if wf and (
-                    target.scope in wf.scopes or target.capability in wf.capabilities
-                ):
+                if wf and target.scope in wf.scopes:
                     workflow = wf
                     break
 
-            # Find matching script
+            if workflow is None:
+                for wf_id in workflows:
+                    wf = self._registry.get_workflow(wf_id)
+                    if wf and target.capability in wf.capabilities:
+                        workflow = wf
+                        break
+
+            # Find matching script: prefer scope match over capability match
             script = None
             for script_id in scripts:
                 scr = self._registry.get_script(script_id)
-                if scr and (
-                    target.scope == scr.scope or target.capability in scr.capabilities
-                ):
+                if scr and target.scope == scr.scope:
                     script = scr
                     break
+
+            if script is None:
+                for script_id in scripts:
+                    scr = self._registry.get_script(script_id)
+                    if scr and target.capability in scr.capabilities:
+                        script = scr
+                        break
 
             # Build command
             command = None
@@ -588,6 +601,10 @@ class VerificationPlanner:
                 command = workflow.command
             elif script and script.path:
                 command = f"bash {script.path}"
+
+            # Skip targets with no command
+            if not command:
+                continue
 
             # Determine required evidence
             required_evidence = []
@@ -622,7 +639,46 @@ class VerificationPlanner:
             )
             steps.append(step)
 
-        return steps
+        # Deduplicate steps by command, preserving first occurrence and
+        # remapping dependencies to kept steps.
+        seen_commands: dict[str, str] = {}
+        old_to_new_id: dict[str, str] = {}
+        unique_steps: list[VerificationStep] = []
+
+        for step in steps:
+            if step.command in seen_commands:
+                old_to_new_id[step.id] = seen_commands[step.command]
+                continue
+            new_id = f"step-{len(unique_steps) + 1:04d}"
+            seen_commands[step.command] = new_id
+            old_to_new_id[step.id] = new_id
+            unique_steps.append(step)
+
+        final_steps: list[VerificationStep] = []
+        for i, step in enumerate(unique_steps):
+            new_id = f"step-{i + 1:04d}"
+            remapped_deps = []
+            for dep_id in step.dependencies:
+                mapped = old_to_new_id.get(dep_id)
+                if mapped and mapped != new_id:
+                    remapped_deps.append(mapped)
+
+            final_steps.append(
+                VerificationStep(
+                    id=new_id,
+                    target=step.target,
+                    order=i + 1,
+                    command=step.command,
+                    workflow=step.workflow,
+                    script=step.script,
+                    estimated_duration_seconds=step.estimated_duration_seconds,
+                    required_evidence=step.required_evidence,
+                    dependencies=remapped_deps,
+                    status=step.status,
+                )
+            )
+
+        return final_steps
 
     def _topological_sort(
         self, targets: list[VerificationTarget]

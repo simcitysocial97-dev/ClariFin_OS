@@ -3,6 +3,10 @@
 # Backend verification: contract, invariant and property-based tests.
 # (Lint + unit are covered by the quick/fast-checks gate, so this focuses on
 #  backend-specific test suites.)
+#
+# The four test directories are independent and run in parallel to reduce
+# wall-clock time. Each directory uses its own isolated test database via
+# the session-scoped pristine template.
 
 set -uo pipefail
 
@@ -11,14 +15,26 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT/backend" || { echo "backend/ not found"; exit 1; }
 
 fail=0
+pids=()
+outputs=()
+
 for tdir in tests/contract tests/invariants tests/properties tests/unit/engines; do
   if [ -d "$tdir" ]; then
-    echo ">> pytest $tdir"
-    python3 -m pytest "$tdir" -q --no-header --tb=short
-    rc=$?
-    # 5 = no tests collected (acceptable)
-    [ "$rc" -eq 5 ] && rc=0
-    [ "$rc" -ne 0 ] && fail=1
+    out="$(mktemp)"
+    echo ">> pytest $tdir (parallel)"
+    python3 -m pytest "$tdir" -q --no-header --tb=short > "$out" 2>&1 &
+    pids+=($!)
+    outputs+=("$out")
   fi
 done
+
+for pid in "${pids[@]}"; do
+  wait "$pid" || fail=1
+done
+
+for out in "${outputs[@]}"; do
+  cat "$out"
+  rm -f "$out"
+done
+
 exit $fail
