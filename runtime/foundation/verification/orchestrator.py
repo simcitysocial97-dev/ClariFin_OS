@@ -49,29 +49,90 @@ def _find_repo_root() -> Path:
     return Path.cwd()
 
 
+def _filter_changed_files(files: list[str]) -> list[str]:
+    """Filter out generated, cache, and binary artifacts."""
+    return [
+        f
+        for f in files
+        if not f.startswith("runtime/generated/")
+        and not f.startswith("node_modules/")
+        and not f.startswith(".pytest_cache/")
+        and not f.startswith("__pycache__/")
+        and not f.startswith("frontend/node_modules/")
+        and not f.endswith(".pyc")
+    ]
+
+
+def _resolve_base_ref() -> str | None:
+    """Determine the git reference to diff against.
+
+    Priority:
+    1. Explicit override via CLI argument (e.g. ``--base``).
+    2. GitHub Actions: GITHUB_BASE_REF for push/PR events, or GITHUB_SHA
+       against the default branch for push events without a base ref.
+    3. Local: merge-base of current branch and origin/main.
+    """
+    import os
+
+    base_ref = os.environ.get("VERIFICATION_BASE_REF")
+    if base_ref:
+        return base_ref
+
+    gh_base = os.environ.get("GITHUB_BASE_REF")
+    if gh_base:
+        return gh_base
+
+    gh_event = os.environ.get("GITHUB_EVENT_NAME")
+    gh_sha = os.environ.get("GITHUB_SHA")
+    gh_ref = os.environ.get("GITHUB_REF")
+    if gh_event == "push" and gh_ref:
+        return f"{gh_ref}..."
+    if gh_sha and gh_event != "push":
+        return f"{gh_sha}..."
+
+    return None
+
+
 def _collect_changed_files() -> list[str]:
     repo_root = _find_repo_root()
-    try:
+    base_ref = _resolve_base_ref()
+
+    files: list[str] = []
+
+    def _run_diff(args: list[str]) -> str:
         result = subprocess.run(
-            ["git", "diff", "--name-only", "HEAD"],
+            ["git", "diff", "--name-only", *args],
             capture_output=True,
             text=True,
             cwd=str(repo_root),
             timeout=10,
         )
-        if result.returncode == 0 and result.stdout.strip():
-            files = [f.strip() for f in result.stdout.splitlines() if f.strip()]
-            return [
-                f for f in files
-                if not f.startswith("runtime/generated/")
-                and not f.startswith("node_modules/")
-                and not f.startswith(".pytest_cache/")
-                and not f.startswith("__pycache__/")
-                and not f.endswith(".pyc")
-            ]
-    except Exception:
-        pass
-    return []
+        if result.returncode == 0:
+            return result.stdout
+        return ""
+
+    if base_ref is not None:
+        combined = _run_diff([base_ref])
+        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
+    else:
+        combined = _run_diff(["HEAD"])
+        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
+
+    untracked_result = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard"],
+        capture_output=True,
+        text=True,
+        cwd=str(repo_root),
+        timeout=10,
+    )
+    untracked_files = (
+        [f.strip() for f in untracked_result.stdout.splitlines() if f.strip()]
+        if untracked_result.returncode == 0
+        else []
+    )
+
+    files = _filter_changed_files(diff_files + untracked_files)
+    return files
 
 
 def _get_current_commit() -> str:
@@ -241,12 +302,14 @@ class VerificationOrchestrator:
         self,
         profile: VerificationProfile | None = None,
         repo_root: Path | None = None,
+        map_path: Path | None = None,
     ):
         self._profile = profile or get_profile("quick")
         self._repo_root = repo_root or _find_repo_root()
         self._planner = VerificationPlanner()
         self._executor = Executor(repo_root=self._repo_root)
         self._aggregator = EvidenceAggregator(self._repo_root)
+        self._map_path = map_path
         self._changed_files: list[str] = []
         self._cross_layer_report: Any | None = None
         self._plan: VerificationPlan | None = None
@@ -280,12 +343,16 @@ class VerificationOrchestrator:
         return files
 
     def analyze_cross_layer(self) -> Any:
-        """Run CrossLayerImpactPlanner.analyze() from Program 7A."""
+        """Run CrossLayerImpactPlanner.analyze() from Program 7A.
+
+        Uses ``self._map_path`` if provided (test-injection seam); otherwise
+        falls back to the canonical architecture provider.
+        """
         from runtime.foundation.verification.planner.planner import (
             CrossLayerImpactPlanner,
         )
 
-        planner = CrossLayerImpactPlanner()
+        planner = CrossLayerImpactPlanner(map_path=self._map_path)
         if not self._changed_files:
             self._cross_layer_report = planner.analyze_cross_layer_impact([])
         else:
@@ -295,20 +362,72 @@ class VerificationOrchestrator:
         return self._cross_layer_report
 
     def generate_plan(self, scope: VerificationScope | None = None) -> VerificationPlan:
-        """Generate a verification plan using VerificationPlanner."""
+        """Generate a verification plan using VerificationPlanner.
+
+        GAP-002 fix: the blast-radius scopes computed by
+        CrossLayerImpactPlanner (impacted capabilities, frontend/UI,
+        contracts, runtime) are fed into the planning context so that
+        verification selection is driven by actual cross-layer impact
+        rather than path-prefix heuristics alone.
+        """
         target_scope = scope or self._profile.scope
 
-        planning_context = PlanningContext(
+        changed_capabilities: list[str] = []
+        changed_endpoints: list[str] = []
+        blast_scopes: list[VerificationScope] = []
+
+        if self._cross_layer_report is not None:
+            impact = self._cross_layer_report
+            changed_capabilities = list(impact.affected_capabilities)
+            changed_endpoints = list(impact.affected_endpoints)
+            blast_scopes = self._derive_scopes_from_impact(impact)
+
+        context = PlanningContext(
             changed_files=self._changed_files,
+            changed_capabilities=changed_capabilities,
+            changed_endpoints=changed_endpoints,
             requested_scope=target_scope,
             force_scope=target_scope,
             include_dependencies=True,
             include_dependents=False,
             max_depth=3,
+            blast_radius_scopes=tuple(blast_scopes),
         )
 
-        self._plan = self._planner.plan(planning_context)
+        self._plan = self._planner.plan(context)
         return self._plan
+
+    @staticmethod
+    def _derive_scopes_from_impact(impact: Any) -> list[VerificationScope]:
+        """Derive additional verification scopes from the cross-layer impact report.
+
+        Maps impact signals to the verification scopes those signals imply,
+        regardless of the originally requested profile scope. This is the
+        mechanism by which a backend DTO change can escalate to frontend
+        verification.
+        """
+        scopes: list[VerificationScope] = []
+
+        has_frontend = bool(
+            impact.affected_capabilities
+            or impact.affected_pages
+            or impact.affected_components
+            or impact.affected_view_models
+            or impact.affected_mappers
+            or impact.affected_routers
+            or impact.affected_endpoints
+        )
+        if has_frontend:
+            scopes.append(VerificationScope.FRONTEND)
+            scopes.append(VerificationScope.CONTRACTS)
+
+        if impact.affected_endpoints or impact.affected_routers:
+            scopes.append(VerificationScope.CONTRACTS)
+
+        if impact.affected_engines or impact.affected_services:
+            scopes.append(VerificationScope.BACKEND)
+
+        return scopes
 
     def execute(self) -> list[ExecutionResultModel]:
         """Execute all tasks from the verification plan."""

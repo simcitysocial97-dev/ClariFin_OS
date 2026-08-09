@@ -9,7 +9,6 @@ import sys
 from typing import Any
 
 from runtime.foundation.knowledge.models import (
-    KnowledgeEntry,
     KnowledgeIndex,
     QueryResult,
     RelationshipChain,
@@ -223,10 +222,10 @@ def format_query_result(result: QueryResult | None) -> str:
     if hasattr(entry, "path") and hasattr(entry, "method"):
         lines.append(f"Path: {entry.path}")
         lines.append(f"Method: {entry.method}")
-        lines.append(f"Category: endpoint")
+        lines.append("Category: endpoint")
     elif hasattr(entry, "rule_id"):
         lines.append(f"Rule ID: {entry.rule_id}")
-        lines.append(f"Category: integrity_rule")
+        lines.append("Category: integrity_rule")
     elif hasattr(entry, "name"):
         lines.append(f"ID: {entry.id if hasattr(entry, 'id') else entry.name}")
         lines.append(f"Name: {entry.name}")

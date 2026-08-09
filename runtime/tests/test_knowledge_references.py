@@ -5,21 +5,12 @@ Deterministic tests. No network. No repository mutation.
 
 from __future__ import annotations
 
-import pytest
 
-from runtime.foundation.knowledge.catalog import KnowledgeCatalog
-from runtime.foundation.knowledge.indexer import build_index
-from runtime.foundation.knowledge.models import (
-    EndpointEntry,
-    RelationshipChain,
-)
 from runtime.foundation.knowledge.references import (
     ReferenceEngine,
     resolve_capability,
     resolve_component,
     resolve_endpoint,
-    resolve_integrity_rule,
-    resolve_workspace,
 )
 
 

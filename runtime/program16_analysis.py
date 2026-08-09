@@ -5,7 +5,6 @@ Generates all 11 deliverables using canonical provider artifacts.
 """
 
 import json
-from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -255,7 +254,7 @@ def phase1():
             "id": f"unreachable-{svc_name}",
             "category": "unused service",
             "path": f"backend/src/services/{svc_name}.py",
-            "owner": f"unknown (no capability owner)",
+            "owner": "unknown (no capability owner)",
             "reason": reason,
             "incoming_references": [],
             "outgoing_references": [],
@@ -282,8 +281,8 @@ def phase1():
             "id": f"unreachable-router-{router.removesuffix('.py')}",
             "category": "unused router",
             "path": f"backend/src/routers/{router}",
-            "owner": f"no capability owner",
-            "reason": f"Router registered in api.py but no capability path in execution graph.",
+            "owner": "no capability owner",
+            "reason": "Router registered in api.py but no capability path in execution graph.",
             "incoming_references": [],
             "outgoing_references": [],
             "runtime_reachable": False,
@@ -623,7 +622,7 @@ def phase4():
                 "id": f"parked:{name}",
                 "path": pf.get("entry_point", ""),
                 "style": "single_file",
-                "reason": f"PARKED legacy engine.",
+                "reason": "PARKED legacy engine.",
                 "confidence": "HIGH",
                 "evidence": "engine-normalization.json engines.{name}"
             })
@@ -1351,7 +1350,7 @@ Program 16.0 successfully identified and documented all remaining repository arc
 6. Consolidate workspace services
 """
     (GEN / "program16-certification.md").write_text(md, encoding="utf-8")
-    print(f"Phase 10: program16-certification.md generated")
+    print("Phase 10: program16-certification.md generated")
 
     return report
 
@@ -1376,7 +1375,7 @@ if __name__ == "__main__":
     report = phase10()
 
     sys.stderr.write("\n" + "=" * 60 + "\n")
-    sys.stderr.write(f"Program 16.0 complete.\n")
+    sys.stderr.write("Program 16.0 complete.\n")
     sys.stderr.write(f"Runtime certification: {report.certification_status}\n")
     sys.stderr.write(f"Overall status: {report.overall_status.value}\n")
-    sys.stderr.write(f"Artifacts saved to runtime/generated/\n")
+    sys.stderr.write("Artifacts saved to runtime/generated/\n")

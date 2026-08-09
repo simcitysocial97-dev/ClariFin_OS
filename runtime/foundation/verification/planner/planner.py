@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -60,6 +60,7 @@ class PlanningContext:
     include_dependencies: bool = True
     include_dependents: bool = False
     max_depth: int = 3
+    blast_radius_scopes: tuple[VerificationScope, ...] = field(default_factory=tuple)
 
 
 class VerificationPlanner:
@@ -97,8 +98,10 @@ class VerificationPlanner:
         # Determine impacted scopes from changed files
         impacted_scopes = self._resolve_scopes_from_files(context.changed_files)
 
-        # Merge with requested scope
-        all_scopes = self._merge_scopes(scope, impacted_scopes)
+        # Merge with requested scope and blast-radius scopes (GAP-002)
+        all_scopes = self._merge_scopes(
+            scope, impacted_scopes, context.blast_radius_scopes
+        )
 
         # Determine impacted capabilities
         impacted_capabilities = self._resolve_capabilities(
@@ -142,7 +145,7 @@ class VerificationPlanner:
 
         # Create plan
         plan = VerificationPlan(
-            id=f"plan-{datetime.utcnow().strftime('%Y%m%d-%H%M%S')}",
+            id=f"plan-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
             name=f"Verification Plan - {scope.value}",
             scope=scope,
             targets=targets_with_deps,
@@ -160,7 +163,7 @@ class VerificationPlanner:
                 "include_dependencies": context.include_dependencies,
                 "include_dependents": context.include_dependents,
                 "max_depth": context.max_depth,
-                "generated_at": datetime.utcnow().isoformat(),
+                "generated_at": datetime.now(timezone.utc).isoformat(),
             },
         )
 
@@ -247,8 +250,14 @@ class VerificationPlanner:
         self,
         requested: VerificationScope,
         impacted: list[VerificationScope],
+        blast_scopes: tuple[VerificationScope, ...] = (),
     ) -> list[VerificationScope]:
-        """Merge requested scope with impacted scopes."""
+        """Merge requested scope with impacted scopes and blast-radius scopes.
+
+        GAP-002 fix: blast-radius scopes allow a backend-triggered profile
+        to escalate to frontend or contract verification when the cross-layer
+        impact planner identifies downstream consequences.
+        """
         scope_hierarchy = {
             VerificationScope.QUICK: [VerificationScope.QUICK],
             VerificationScope.BACKEND: [
@@ -301,9 +310,8 @@ class VerificationPlanner:
         }
 
         result = set(scope_hierarchy.get(requested, [requested]))
-
-        if requested != VerificationScope.QUICK:
-            result.update(impacted)
+        result.update(impacted)
+        result.update(blast_scopes)
 
         # If repository or full requested, include everything
         if requested in (VerificationScope.REPOSITORY, VerificationScope.FULL):
@@ -746,6 +754,8 @@ class ImpactReport:
     affected_endpoints: list[str] = field(default_factory=list)
     affected_capabilities: list[str] = field(default_factory=list)
     affected_mappers: list[str] = field(default_factory=list)
+    affected_dtos: list[str] = field(default_factory=list)
+    affected_models: list[str] = field(default_factory=list)
     affected_view_models: list[str] = field(default_factory=list)
     affected_pages: list[str] = field(default_factory=list)
     affected_workspaces: list[str] = field(default_factory=list)
@@ -767,6 +777,8 @@ class ImpactReport:
             "affected_endpoints": self.affected_endpoints,
             "affected_capabilities": self.affected_capabilities,
             "affected_mappers": self.affected_mappers,
+            "affected_dtos": self.affected_dtos,
+            "affected_models": self.affected_models,
             "affected_view_models": self.affected_view_models,
             "affected_pages": self.affected_pages,
             "affected_workspaces": self.affected_workspaces,
@@ -811,19 +823,101 @@ class CrossLayerImpactPlanner:
     def analyze_cross_layer_impact(
         self, changed_files: list[str]
     ) -> ImpactReport:
-        """Analyze impact of changed files across all layers."""
+        """Analyze impact of changed files across all layers.
+
+        Primary strategy: per-file chain-map lookup (fast, fixture-injectable).
+
+        GAP-004 fallback: for files not resolved by the chain map (e.g. DTOs,
+        mappers, generated types), delegate to the canonical architecture
+        provider graph traversal via ``compute_blast_radius`` so that every
+        provider-registered entity kind contributes to the blast radius.
+        """
         report = ImpactReport(changed_files=list(changed_files))
 
+        chain_resolved = set()
         for file_path in changed_files:
             norm = file_path.replace("\\", "/")
             chain = self._find_chain(norm)
             if chain:
                 self._add_chain_to_report(report, chain, file_path)
+                chain_resolved.add(file_path)
 
-        # Build structured verification plan
+        unresolved_files = [f for f in changed_files if f not in chain_resolved]
+
+        if self.map_path is None and unresolved_files:
+            self._enrich_from_intelligence(report, unresolved_files)
+
+        report.dependency_chains = self._build_dependency_chains(report, changed_files)
+
         report.verification_plan = self._build_minimal_plan(report)
 
         return report
+
+    def _enrich_from_intelligence(
+        self, report: ImpactReport, unresolved_files: list[str]
+    ) -> None:
+        """Enrich the report for files the chain map could not resolve.
+
+        Uses the canonical architecture provider graph (via the Intelligence
+        platform's ``compute_blast_radius``) so that entity kinds like
+        ``dto``, ``mapper`` (backend), ``view_model`` and others contribute
+        their downstream impact to the report.
+        """
+        try:
+            from runtime.foundation.intelligence.platform.change import (
+                analyze_changes,
+            )
+            from runtime.foundation.intelligence.platform.blast import (
+                compute_blast_radius,
+            )
+
+            change = analyze_changes(paths=unresolved_files)
+            blast = compute_blast_radius(change)
+
+            for node in blast.all_impacted:
+                ref = node.ref
+                if ref.kind == "engine":
+                    self._append_uniq(report.affected_engines, ref.ref)
+                elif ref.kind == "service":
+                    self._append_uniq(report.affected_services, ref.ref)
+                elif ref.kind == "router":
+                    self._append_uniq(report.affected_routers, ref.ref)
+                elif ref.kind == "endpoint":
+                    self._append_uniq(report.affected_endpoints, ref.ref)
+                elif ref.kind == "capability":
+                    self._append_uniq(report.affected_capabilities, ref.ref)
+                elif ref.kind == "mapper":
+                    self._append_uniq(report.affected_mappers, ref.ref)
+                elif ref.kind == "dto":
+                    self._append_uniq(report.affected_dtos, ref.ref)
+                elif ref.kind == "view_model":
+                    self._append_uniq(report.affected_view_models, ref.ref)
+                elif ref.kind == "workspace":
+                    self._append_uniq(report.affected_workspaces, ref.ref)
+                elif ref.kind == "component":
+                    self._append_uniq(report.affected_components, ref.ref)
+                elif ref.kind == "test":
+                    self._append_uniq(report.affected_tests, ref.path or ref.ref)
+                elif ref.kind == "engine_module":
+                    self._append_uniq(report.affected_engines, ref.ref)
+                elif ref.kind == "model":
+                    self._append_uniq(report.affected_models, ref.ref)
+
+            for verif in blast.verification:
+                self._append_uniq(report.affected_tests, verif.path or verif.ref)
+                if verif.ref not in report.affected_engines:
+                    self._append_uniq(report.affected_engines, verif.ref)
+
+            if report.affected_capabilities or report.affected_components or report.affected_view_models:
+                report.verification_plan["run_frontend"] = True
+                if report.affected_endpoints or report.affected_routers:
+                    report.verification_plan["run_contract"] = True
+                if report.affected_engines or report.affected_services:
+                    report.verification_plan["run_unit"] = True
+                    report.verification_plan["run_backend"] = True
+
+        except Exception:
+            pass
 
     def _find_chain(self, file_path: str) -> dict[str, Any] | None:
         """Find the cross-layer chain for a changed file."""
@@ -1031,12 +1125,18 @@ class CrossLayerImpactPlanner:
         """Build a minimal verification plan from the impact report."""
         # Determine which verification types are needed
         run_unit = bool(report.affected_engines or report.affected_services)
-        run_contract = bool(report.affected_endpoints or report.affected_routers)
+        run_contract = bool(
+            report.affected_endpoints
+            or report.affected_routers
+            or report.affected_dtos
+        )
         run_property = any("loan" in e.lower() for e in report.affected_engines)
         run_frontend = bool(
             report.affected_capabilities
             or report.affected_pages
             or report.affected_components
+            or report.affected_view_models
+            or report.affected_mappers
         )
         run_integration = bool(report.affected_routers)
 
@@ -1053,10 +1153,58 @@ class CrossLayerImpactPlanner:
             "capabilities": report.affected_capabilities,
             "engines": report.affected_engines,
             "services": report.affected_services,
+            "dtos": report.affected_dtos,
             "impact_summary": (
                 f"{len(report.affected_engines)} engines, "
                 f"{len(report.affected_services)} services, "
                 f"{len(report.affected_capabilities)} capabilities, "
+                f"{len(report.affected_dtos)} dtos, "
                 f"{len(report.affected_tests)} tests"
             ),
         }
+
+    @staticmethod
+    def _append_uniq(lst: list[str], value: str) -> None:
+        if value and value not in lst:
+            lst.append(value)
+
+    def _build_dependency_chains(
+        self, report: ImpactReport, changed_files: list[str]
+    ) -> list[dict[str, Any]]:
+        """Build structured dependency chains from the cross-layer report.
+
+        Falls back to a simplified per-file chain derived from the report's
+        aggregated impact lists when no explicit chains were added.
+        """
+        if report.dependency_chains:
+            return report.dependency_chains
+
+        chains: list[dict[str, Any]] = []
+        for source_file in changed_files:
+            has_impact = (
+                report.affected_engines
+                or report.affected_capabilities
+                or report.affected_services
+                or report.affected_routers
+                or report.affected_endpoints
+                or report.affected_dtos
+                or report.affected_mappers
+                or report.affected_components
+            )
+            if has_impact:
+                chains.append({
+                    "source": source_file,
+                    "engine": report.affected_engines[0] if report.affected_engines else "unknown",
+                    "services": report.affected_services,
+                    "routers": report.affected_routers,
+                    "endpoints": report.affected_endpoints,
+                    "capabilities": report.affected_capabilities,
+                    "mappers": report.affected_mappers,
+                    "dtos": report.affected_dtos,
+                    "view_models": report.affected_view_models,
+                    "workspaces": report.affected_workspaces,
+                    "components": report.affected_components,
+                    "tests": report.affected_tests,
+                })
+
+        return chains

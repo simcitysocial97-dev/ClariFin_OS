@@ -306,7 +306,7 @@ def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any
 
     if not incomplete:
         status = "pass"
-        message = f"All external chains are complete (engine + at least one component type)"
+        message = "All external chains are complete (engine + at least one component type)"
     else:
         status = "fail"
         message = f"Found {len(incomplete)} incomplete external chains"

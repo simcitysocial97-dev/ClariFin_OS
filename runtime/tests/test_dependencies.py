@@ -9,7 +9,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 
 from runtime.foundation.workspace.dependencies import render_dependencies
 from runtime.foundation.workspace.workspace import WorkspaceLoader

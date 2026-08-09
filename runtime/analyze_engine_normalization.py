@@ -165,7 +165,7 @@ def build():
         ],
     }
     (REPO / "runtime" / "generated" / "engine-normalization.json").write_text(json.dumps(out, indent=2))
-    print(f"Engine normalization audit complete.")
+    print("Engine normalization audit complete.")
     print(f"  legacy(single_file): {len(legacy)}  partial: {len(partial)}  "
           f"duplicate: {len(duplicate)}  parked: {len(parked)}")
     print(f"  orphan: {len(orphan)}  facade: {len(facade)}  impl_modules: {len(impl_only)}")

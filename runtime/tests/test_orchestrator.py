@@ -9,9 +9,7 @@ import json
 from pathlib import Path
 from unittest.mock import patch, MagicMock
 
-import pytest
 
-from runtime.foundation.verification.executor import Executor
 from runtime.foundation.verification.models import (
     VerificationScope,
     VerificationStatus,
@@ -19,7 +17,6 @@ from runtime.foundation.verification.models import (
 from runtime.foundation.verification.orchestrator import (
     VerificationOrchestrator,
     VerificationReport,
-    run_verification,
 )
 
 
@@ -385,3 +382,61 @@ class TestVerificationOrchestrator:
             report = orchestrator.generate_report()
             assert isinstance(report, VerificationReport)
             assert report.summary.overall_status == VerificationStatus.PASSED
+
+
+def test_ci_and_local_changed_file_parity(monkeypatch):
+    """C10 — CI (GITHUB_BASE_REF) and local override (VERIFICATION_BASE_REF)
+    must derive the identical changed-file set: same resolver, same diff
+    command, same filtering. This is the semantic parity CI certifies.
+
+    The default local path (no base ref) diffs HEAD; the CI/env paths route
+    the same base ref through the identical normalization + filtering, so all
+    three must agree on the same working tree.
+    """
+    from runtime.foundation.verification.orchestrator import _collect_changed_files
+
+    for var in (
+        "GITHUB_BASE_REF",
+        "GITHUB_SHA",
+        "GITHUB_REF",
+        "GITHUB_EVENT_NAME",
+        "VERIFICATION_BASE_REF",
+    ):
+        monkeypatch.delenv(var, raising=False)
+
+    # Local override routing.
+    monkeypatch.setenv("VERIFICATION_BASE_REF", "HEAD")
+    override = set(_collect_changed_files())
+
+    # CI routing via GITHUB_BASE_REF with the same base.
+    monkeypatch.delenv("VERIFICATION_BASE_REF", raising=False)
+    monkeypatch.setenv("GITHUB_BASE_REF", "HEAD")
+    ci = set(_collect_changed_files())
+
+    assert ci == override, "CI GITHUB_BASE_REF must equal local VERIFICATION_BASE_REF"
+
+    # Default local path (no base ref) also diffs HEAD; identical working tree.
+    monkeypatch.delenv("GITHUB_BASE_REF", raising=False)
+    local = set(_collect_changed_files())
+    assert local == ci, "default local diff(HEAD) must equal CI-derived set"
+
+
+def test_changed_file_filter_excludes_generated_and_node_modules(monkeypatch):
+    """C10 — the shared filter must drop generated/cache/binary artifacts
+    regardless of which env path supplied the base ref."""
+    from runtime.foundation.verification.orchestrator import _filter_changed_files
+
+    raw = [
+        "backend/src/engines/loan_engine/emi.py",
+        "runtime/generated/knowledge-index.json",
+        "frontend/node_modules/leftpad/index.js",
+        "runtime/generated/verification-cache.json",
+        "__pycache__/foo.pyc",
+        "docs/VEA2.md",
+    ]
+    filtered = _filter_changed_files(raw)
+    assert "backend/src/engines/loan_engine/emi.py" in filtered
+    assert "docs/VEA2.md" in filtered
+    assert all(not f.startswith("runtime/generated/") for f in filtered)
+    assert all(not f.startswith("frontend/node_modules/") for f in filtered)
+    assert all(not f.endswith(".pyc") for f in filtered)

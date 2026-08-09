@@ -5,6 +5,7 @@
   "affected_components": [
     "AmortizationTable"
   ],
+  "affected_dtos": [],
   "affected_endpoints": [
     "GET /api/loans/{loan_id}/schedule"
   ],
@@ -15,6 +16,7 @@
   "affected_mappers": [
     "loansMapper"
   ],
+  "affected_models": [],
   "affected_pages": [
     "app/loans/page.tsx"
   ],
@@ -84,10 +86,11 @@
     "contract_paths": [
       "backend/tests/contract/generated/test_loans.py"
     ],
+    "dtos": [],
     "engines": [
       "backend/src/engines/loan_engine/amortization.py"
     ],
-    "impact_summary": "1 engines, 1 services, 1 capabilities, 2 tests",
+    "impact_summary": "1 engines, 1 services, 1 capabilities, 0 dtos, 2 tests",
     "run_contract": true,
     "run_frontend": true,
     "run_integration": true,

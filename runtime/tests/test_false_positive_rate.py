@@ -15,7 +15,6 @@ from runtime.foundation.verification.models import VerificationScope
 from runtime.foundation.verification.planner import (
     CrossLayerImpactPlanner,
     VerificationPlanner,
-    plan_verification,
 )
 
 

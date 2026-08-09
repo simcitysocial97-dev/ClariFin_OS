@@ -8,12 +8,10 @@ and reports them.
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any
 
 from runtime.foundation.integrity.models import (
     IntegrityReport,
     Violation,
-    ViolationSeverity,
 )
 from runtime.foundation.integrity.registry import (
     ConstitutionalRegistry,

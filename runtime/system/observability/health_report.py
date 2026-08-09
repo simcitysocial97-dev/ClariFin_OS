@@ -6,7 +6,6 @@ Generates runtime/generated/engineering-health.md from analytics.
 
 from __future__ import annotations
 
-import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any

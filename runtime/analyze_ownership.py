@@ -11,7 +11,6 @@ Canonical ownership chain (per the program):
 """
 
 import json
-import re
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path

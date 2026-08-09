@@ -9,13 +9,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 
-from runtime.foundation.verification.models import VerificationScope
 from runtime.foundation.verification.planner import (
     CrossLayerImpactPlanner,
-    VerificationPlanner,
-    plan_verification,
 )
 
 

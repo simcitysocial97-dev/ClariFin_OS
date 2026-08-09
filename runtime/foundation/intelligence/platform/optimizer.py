@@ -36,6 +36,14 @@ class VerificationUnit:
     reason: str
     evidence: tuple[str, ...]
     estimated_seconds: int
+    # C11 provenance: every selected unit must explain *why* it was chosen.
+    # ``capabilities`` are the affected provider capabilities, ``impact_kinds``
+    # are the blast-radius entity kinds that triggered the selection, and
+    # ``source`` records the evidence graph that justified it. This is the
+    # foundation for AI-driven diagnosis of verification plans.
+    capabilities: tuple[str, ...] = ()
+    impact_kinds: tuple[str, ...] = ()
+    source: str = "blast-radius"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -46,6 +54,11 @@ class VerificationUnit:
             "reason": self.reason,
             "evidence": list(self.evidence),
             "estimated_seconds": self.estimated_seconds,
+            "provenance": {
+                "capabilities": list(self.capabilities),
+                "impact_kinds": list(self.impact_kinds),
+                "source": self.source,
+            },
         }
 
 
@@ -133,6 +146,12 @@ def optimize_verification(
     selected: list[VerificationUnit] = []
     skipped: list[SkippedSuite] = []
 
+    # C11 provenance — derived once and attached to every selected unit so the
+    # plan is self-explaining (capability / impact / source).
+    all_capabilities = tuple(impacted("capability"))
+    chain_evidence = any(n.graph == "chain-map" for n in blast.all_impacted)
+    cross_source = "chain-map+blast-radius" if chain_evidence else "blast-radius"
+
     # --- Unit tests: exact provider-known test files ---------------------
     unit_targets = tuple(sorted(r.path or r.key for r in blast.verification))
     if unit_targets:
@@ -151,6 +170,9 @@ def optimize_verification(
                     for r in blast.verification
                 ),
                 estimated_seconds=max(15, 8 * len(unit_targets)),
+                capabilities=all_capabilities,
+                impact_kinds=("engine",),
+                source="ownership",
             )
         )
     else:
@@ -164,7 +186,7 @@ def optimize_verification(
         )
 
     # --- Contract suites: only when endpoints are impacted ---------------
-    endpoints = impacted("endpoint")
+    endpoints = impacted("endpoint", "dto")
     if endpoints:
         selected.append(
             VerificationUnit(
@@ -175,6 +197,9 @@ def optimize_verification(
                 reason=f"{len(endpoints)} endpoint(s) are in the blast radius",
                 evidence=tuple(endpoints[:20]),
                 estimated_seconds=180,
+                capabilities=all_capabilities,
+                impact_kinds=("endpoint", "dto"),
+                source=cross_source,
             )
         )
     else:
@@ -201,6 +226,9 @@ def optimize_verification(
                 ),
                 evidence=tuple(integration[:20]),
                 estimated_seconds=180,
+                capabilities=all_capabilities,
+                impact_kinds=("router", "service", "repository"),
+                source=cross_source,
             )
         )
     else:
@@ -213,6 +241,56 @@ def optimize_verification(
             )
         )
 
+    # --- Backend unit tests: any backend entity kind ----------------------
+    backend_kinds = (
+        "engine", "engine_module", "service", "router", "dto", "mapper",
+        "model", "repository",
+    )
+    backend_direct = [
+        n.ref.ref
+        for n in blast.direct
+        if n.ref.kind in backend_kinds or (n.ref.kind == "entity" and n.ref.path.startswith("backend/"))
+    ]
+    backend_direct += [
+        n.ref.ref
+        for n in blast.all_impacted
+        if n.ref.kind in backend_kinds
+    ]
+    backend_files = [
+        n.ref.path
+        for n in blast.all_impacted
+        if n.ref.path.startswith("backend/")
+    ]
+    if backend_files:
+        selected.append(
+            VerificationUnit(
+                id="backend-unit",
+                category="unit",
+                command="python3 -m pytest backend/tests/unit/ -q",
+                targets=tuple(sorted(set(backend_files))),
+                reason=(
+                    f"{len(set(backend_files))} backend entity/entities impacted "
+                    f"(kinds: {sorted(set(n.ref.kind for n in blast.all_impacted if n.ref.kind in backend_kinds))})"
+                ),
+                evidence=tuple(sorted(set(backend_files))[:20]),
+                estimated_seconds=120,
+                capabilities=all_capabilities,
+                impact_kinds=tuple(
+                    sorted(set(n.ref.kind for n in blast.all_impacted if n.ref.kind in backend_kinds))
+                ),
+                source=cross_source,
+            )
+        )
+    else:
+        skipped.append(
+            SkippedSuite(
+                id="backend-unit",
+                category="unit",
+                reason="no backend entity impacted",
+                justification="blast radius contains no entity with a backend/ path",
+            )
+        )
+
     # --- Frontend: capabilities/workspaces/components/view models --------
     frontend = impacted("capability", "workspace", "component", "view_model", "mapper")
     frontend_files = [
@@ -220,6 +298,12 @@ def optimize_verification(
         for n in blast.all_impacted
         if n.ref.path.startswith("frontend/")
     ]
+    # MAPLEY: mapper refs can be frontend-relative (e.g. lib/mappers/...)
+    # Ensure frontend mapper impact is captured as a frontend path.
+    for n in blast.all_impacted:
+        if n.ref.kind == "mapper" and n.ref.path.startswith("frontend/"):
+            frontend_files.append(n.ref.ref if n.ref.ref else n.ref.path)
+    frontend_files = sorted(set(frontend_files))
     if frontend_files:
         selected.append(
             VerificationUnit(
@@ -230,6 +314,9 @@ def optimize_verification(
                 reason=f"{len(set(frontend_files))} frontend entities impacted",
                 evidence=tuple(sorted(set(frontend_files))[:20]),
                 estimated_seconds=120,
+                capabilities=all_capabilities,
+                impact_kinds=("capability", "workspace", "component", "view_model", "mapper"),
+                source=cross_source,
             )
         )
     else:
@@ -245,6 +332,36 @@ def optimize_verification(
             )
         )
 
+    # --- Frontend build/type check: any frontend entity kind impacted ----
+    frontend_any = bool(frontend_files)
+    if frontend_any:
+        selected.append(
+            VerificationUnit(
+                id="frontend-typecheck-build",
+                category="frontend",
+                command="cd frontend && npx tsc --noEmit && npm run build",
+                targets=("frontend/",),
+                reason=(
+                    "frontend entity/contract/capability impacted by backend or "
+                    "frontend change — type compatibility must be verified"
+                ),
+                evidence=tuple(frontend_files[:20]),
+                estimated_seconds=90,
+                capabilities=all_capabilities,
+                impact_kinds=("capability", "workspace", "component", "view_model", "mapper"),
+                source=cross_source,
+            )
+        )
+    else:
+        skipped.append(
+            SkippedSuite(
+                id="frontend-typecheck-build",
+                category="frontend",
+                reason="no frontend entity impacted",
+                justification="blast radius contains no entity with a frontend/ path",
+            )
+        )
+
     # --- Playwright: only for user-visible workspace/page impact ---------
     workspaces = impacted("workspace")
     if workspaces:
@@ -257,6 +374,9 @@ def optimize_verification(
                 reason=f"{len(workspaces)} user-facing workspace(s) impacted",
                 evidence=tuple(workspaces),
                 estimated_seconds=1800,
+                capabilities=all_capabilities,
+                impact_kinds=("workspace",),
+                source=cross_source,
             )
         )
     else:
@@ -285,6 +405,9 @@ def optimize_verification(
                     n.ref.ref for n in blast.direct if n.ref.path.startswith("runtime/")
                 )[:20],
                 estimated_seconds=120,
+                capabilities=(),
+                impact_kinds=("runtime",),
+                source="runtime-change",
             )
         )
     else:

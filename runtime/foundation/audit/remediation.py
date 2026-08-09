@@ -7,7 +7,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 REMEDIATION_PATH = REPO_ROOT / "runtime" / "generated" / "platform-remediation.md"

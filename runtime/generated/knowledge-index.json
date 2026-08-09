@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-09T12:32:39.360419+00:00",
+  "indexed_at": "2026-08-09T16:27:20.650255+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -9757,6 +9757,16 @@
         ]
       },
       {
+        "title": "progress",
+        "path": "docs/progress.md",
+        "references": {
+          "path": "docs/progress.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "engineering-platform-v1.0",
         "path": "docs/releases/engineering-platform-v1.0.md",
         "references": {
@@ -10055,6 +10065,26 @@
         "tags": [
           "md"
         ]
+      },
+      {
+        "title": "VEA1_AUDIT_REPORT",
+        "path": "docs/verification/VEA1_AUDIT_REPORT.md",
+        "references": {
+          "path": "docs/verification/VEA1_AUDIT_REPORT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA2_PHASE1_CERTIFICATION",
+        "path": "docs/verification/VEA2_PHASE1_CERTIFICATION.md",
+        "references": {
+          "path": "docs/verification/VEA2_PHASE1_CERTIFICATION.md"
+        },
+        "tags": [
+          "md"
+        ]
       }
     ]
   },
@@ -10069,6 +10099,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 154
+    "documentation": 157
   }
 }

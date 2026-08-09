@@ -5,7 +5,6 @@ Deterministic tests. No network. No repository mutation.
 
 from __future__ import annotations
 
-import pytest
 
 from runtime.foundation.knowledge.catalog import (
     KnowledgeCatalog,

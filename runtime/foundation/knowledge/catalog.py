@@ -6,7 +6,6 @@ Every catalog entry stores references only. No duplicated metadata.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from typing import Any
 
 from runtime.foundation.knowledge.models import (
@@ -15,7 +14,6 @@ from runtime.foundation.knowledge.models import (
     EndpointEntry,
     GraphRendererEntry,
     IntegrityRuleEntry,
-    KnowledgeEntry,
     MapperEntry,
     RuntimeArtifactEntry,
     VerificationProfileEntry,
