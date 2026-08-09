@@ -657,10 +657,12 @@ def main() -> int:
     if not changed_files and profile_name not in ("full", "graph"):
         print(
             "No changed files detected and git is unavailable. "
-            "Falling back to FULL verification profile.",
+            "Cannot run selective verification without a git working tree. "
+            "Use 'full' or 'graph' profile for comprehensive verification, "
+            "or run from a git repository.",
             file=sys.stderr,
         )
-        profile = get_profile("full")
+        return 1
 
     if _is_cache_valid(profile_name, changed_files, commit):
         print(

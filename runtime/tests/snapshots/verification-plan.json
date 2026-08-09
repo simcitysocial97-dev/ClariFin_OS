@@ -12,16 +12,11 @@
     "max_depth"
   ],
   "scope": "backend",
-  "step_count": 8,
+  "step_count": 3,
   "step_ids": [
     "step-0001",
     "step-0002",
-    "step-0003",
-    "step-0004",
-    "step-0005",
-    "step-0006",
-    "step-0007",
-    "step-0008"
+    "step-0003"
   ],
   "target_count": 8,
   "target_ids": [
