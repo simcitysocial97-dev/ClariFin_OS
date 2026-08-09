@@ -243,6 +243,18 @@ def test_compute_prepayment_breakup_math_accuracy(foreclosure_params):
         outstanding_paise, rate, months_elapsed, principal, tenure, penalty
     )
 
+    # When the balance has already been amortized to zero (possible due to
+    # EMI rounding clamping principal in a prior month), the loan is
+    # effectively closed. compute_prepayment_breakup handles this via its
+    # remaining_months<=0 / outstanding<=0 early-exit, so there is no
+    # remaining schedule to reconstruct.
+    if outstanding_paise <= 0 or remaining_months <= 0:
+        assert result["principal_remaining_paise"] == 0
+        assert result["accrued_interest_paise"] == 0
+        assert result["penalty_paise"] == 0
+        assert result["total_foreclosure_paise"] == 0
+        return
+
     # Calculate expected accrued interest
     remaining_schedule = generate_schedule(
         outstanding_paise, rate, remaining_months, start_date

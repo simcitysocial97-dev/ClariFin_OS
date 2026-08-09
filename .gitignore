@@ -67,6 +67,9 @@ Database
 *.sqlite3
 data/
 uploads/
+# "data/" above is unanchored and matched backend/src/data/, masking backend
+# source from clean checkouts. backend/src is source, never local data.
+!backend/src/data/
 
 Misc
 .vercel

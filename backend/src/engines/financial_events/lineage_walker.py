@@ -110,8 +110,12 @@ def walk_lineage(
         LineageProposal with proposed links and lifecycle updates.
     """
     proposed_links: list[dict[str, Any]] = []
-    lifecycle_updates: list[dict[str, Any]] = []
     superseded_events: list[int] = []
+
+    # Track lifecycle updates by event_id so each event has a single
+    # authoritative final state, even when multiple repayments settle the
+    # same advance or revocations overlap.
+    lifecycle_updates_by_event: dict[int, dict[str, Any]] = {}
 
     # Group events by account_id for efficient lookup
     events_by_account: dict[str, list[dict[str, Any]]] = {}
@@ -188,25 +192,69 @@ def walk_lineage(
             }
         )
 
-        lifecycle_updates.append(
+        lifecycle_updates_by_event[matched_advance_id] = _merge_lifecycle_update(
+            lifecycle_updates_by_event.get(matched_advance_id),
             {
                 "event_id": matched_advance_id,
                 "lifecycle_state": new_state,
                 "outstanding_paise": new_outstanding,
-            }
+            },
         )
 
-    # Detect and apply revocations
+    # Detect and apply revocations. Merge their lifecycle updates into the
+    # per-event dedup map so a revoked event is never emitted twice.
     revocation_proposal = detect_revocations(events, revocation_lookback_days)
     proposed_links.extend(revocation_proposal.proposed_links)
-    lifecycle_updates.extend(revocation_proposal.lifecycle_updates)
     superseded_events.extend(revocation_proposal.superseded_events)
+    for update in revocation_proposal.lifecycle_updates:
+        event_id = update.get("event_id", 0)
+        lifecycle_updates_by_event[event_id] = _merge_lifecycle_update(
+            lifecycle_updates_by_event.get(event_id), update
+        )
+
+    lifecycle_updates = list(lifecycle_updates_by_event.values())
 
     return LineageProposal(
         proposed_links=proposed_links,
         lifecycle_updates=lifecycle_updates,
         superseded_events=superseded_events,
     )
+
+
+# Lifecycle states ordered from most terminal (settled) to least terminal.
+_LIFECYCLE_STATE_RANK: dict[str, int] = {
+    "settled": 3,
+    "partially_settled": 2,
+    "revoked": 1,
+    "open": 0,
+}
+
+
+def _merge_lifecycle_update(
+    existing: dict[str, Any] | None,
+    candidate: dict[str, Any],
+) -> dict[str, Any]:
+    """Merge two lifecycle updates for the same event, preferring the more
+    terminal state. When states tie, prefer the smaller outstanding balance.
+    """
+    if existing is None:
+        return candidate
+    existing_rank = _LIFECYCLE_STATE_RANK.get(
+        existing.get("lifecycle_state", "open"), 0
+    )
+    candidate_rank = _LIFECYCLE_STATE_RANK.get(
+        candidate.get("lifecycle_state", "open"), 0
+    )
+    if candidate_rank > existing_rank:
+        return candidate
+    if candidate_rank < existing_rank:
+        return existing
+    # Same state rank: prefer smaller outstanding balance
+    existing_out = int(existing.get("outstanding_paise", 0) or 0)
+    candidate_out = int(candidate.get("outstanding_paise", 0) or 0)
+    if candidate_out < existing_out:
+        return candidate
+    return existing
 
 
 def detect_revocations(

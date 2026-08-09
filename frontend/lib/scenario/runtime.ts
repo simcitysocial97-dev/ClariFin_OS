@@ -46,7 +46,7 @@ export interface ComparisonDifference {
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
-let _scenarios: Map<string, Scenario> = new Map();
+const _scenarios: Map<string, Scenario> = new Map();
 let _activeScenarioId: string | null = null;
 const _listeners = new Set<() => void>();
 

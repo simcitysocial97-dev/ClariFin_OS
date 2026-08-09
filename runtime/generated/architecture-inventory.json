@@ -1,27 +1,26 @@
 {
-  "generated_at": "2026-08-06T16:33:16.969855",
-  "total_modules": 1140,
+  "generated_at": "2026-08-08T18:38:02.489871",
+  "total_modules": 1155,
   "type_counts": {
-    "Utility": 845,
-    "Engine Module": 46,
+    "Utility": 857,
+    "Engine Module": 48,
     "Repository": 34,
     "Router": 33,
-    "Service": 33,
+    "Service": 32,
+    "Artifact Producer": 26,
     "Mapper": 24,
     "Workspace": 23,
     "Entity": 22,
-    "Artifact Producer": 22,
     "DTO": 15,
     "Capability": 11,
     "Engine Package": 9,
-    "Engine": 5,
-    "Application": 3,
-    "Workflow": 3,
+    "Engine": 4,
+    "Workflow": 4,
     "Detector": 3,
     "Knowledge Source": 3,
+    "Application": 2,
     "Artifact Consumer": 2,
     "Verification Profile": 2,
-    "Engine Facade": 1,
     "ViewModel": 1
   },
   "modules": [
@@ -137,28 +136,6 @@
       "functions": [],
       "decorators": [],
       "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "backend/src/main.py",
-      "language": "python",
-      "node_type": "Application",
-      "imports": [
-        "json",
-        "pathlib.Path",
-        "typing.Any",
-        "src.extraction.column_mapper.ColumnMapper",
-        "src.extraction.table_extractor.TableExtractor",
-        "src.extraction.transaction_parser.TransactionParser"
-      ],
-      "classes": [],
-      "functions": [
-        "extract_transactions",
-        "test_bank",
-        "main"
-      ],
-      "decorators": [],
-      "docstring": "Main entry point - orchestrates table extraction and parsing\nPURE TABLE EXTRACTION - NO REGEX FOR TRANSACTION MATCHING",
       "engine_name": ""
     },
     {
@@ -1154,7 +1131,6 @@
         "typing.Any",
         "fastapi.APIRouter",
         "fastapi.Query",
-        "backend.src.engines.account_engine.AccountEngine",
         "src.core.dtos.accounts_dto.AccountAnalyticsDTO",
         "src.core.dtos.accounts_dto.AccountDetailDTO",
         "src.core.dtos.accounts_dto.AccountLinkDTO",
@@ -2002,6 +1978,24 @@
       "engine_name": ""
     },
     {
+      "path": "backend/src/engines/cashflow_engine.py",
+      "language": "python",
+      "node_type": "Engine",
+      "imports": [
+        "decimal.Decimal",
+        "typing.Any"
+      ],
+      "classes": [
+        "MonthClassification"
+      ],
+      "functions": [
+        "compute_monthly_cashflow"
+      ],
+      "decorators": [],
+      "docstring": "Cashflow Engine - Pure calculation library\n=========================================\n\nDeterministic monthly cashflow analysis combining transaction aggregates\nwith financial events (credit conversions, EMI payments, etc.).\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).  # MUTATED\nAll functions are pure - no database access.\n\nSign Conventions:\n- Income/Expense: income_paise positive, expense_paise positive\n- asset_change_paise: Positive = asset increase, Negative = asset decrease\n- liability_change_paise: Positive = liability increase (borrowing), Negative = decrease (repayment)\n- Net worth impact = asset_change_paise - liability_change_paise",
+      "engine_name": ""
+    },
+    {
       "path": "backend/src/engines/__init__.py",
       "language": "python",
       "node_type": "Engine Package",
@@ -2015,46 +2009,6 @@
       "functions": [],
       "decorators": [],
       "docstring": "Engines package for ClariFin OS.\n\nContains deterministic computation engines for financial data.",
-      "engine_name": ""
-    },
-    {
-      "path": "backend/src/engines/behavior_engine.py",
-      "language": "python",
-      "node_type": "Engine Facade",
-      "imports": [
-        "math",
-        "collections.defaultdict",
-        "datetime.datetime",
-        "datetime.timedelta",
-        "typing.Any",
-        "cachetools.TTLCache"
-      ],
-      "classes": [],
-      "functions": [
-        "invalidate_behavior_cache",
-        "get_cached_behavior_profile",
-        "set_cached_behavior_profile",
-        "_parse_date",
-        "_normalize_score",
-        "_coefficient_of_variation",
-        "_moving_average",
-        "_get_daily_spending_data",
-        "_get_monthly_category_spending_data",
-        "_get_monthly_income_expenses_data",
-        "_get_transaction_stats_data",
-        "_get_transactions_90_days",
-        "_get_recent_transactions",
-        "_compute_temporal_patterns",
-        "_compute_loss_aversion_index",
-        "_compute_impulsivity_score",
-        "_compute_habit_stability_score",
-        "_compute_financial_stress_index",
-        "_compute_savings_discipline_score",
-        "detect_india_risk_patterns",
-        "compute_behavior_profile"
-      ],
-      "decorators": [],
-      "docstring": "Behavior Engine\n===============\n\nDeterministic behavioral intelligence engine for financial analysis.\nRooted in Prospect Theory, Present Bias, Habit Loop Theory, Loss Aversion.\n\nPhase 3: Advanced Behavioral Intelligence Layer.\n\nAll calculations are deterministic and reproducible.\nNo ML models. No randomness. Overlay-only on immutable ledger.",
       "engine_name": ""
     },
     {
@@ -2101,39 +2055,6 @@
       ],
       "decorators": [],
       "docstring": "Reconciliation Engine - Deterministic Cross-Account Matching\n=============================================================\n\nPhase 2B.1: Deterministic matching engine for cross-account transfers.\n\nKey Principles:\n1. NO ledger mutation - reconciliation is metadata-only\n2. NO fuzzy AI scoring - deterministic rules only\n3. Confidence calculated from weighted factors\n4. All matches are explainable\n5. Idempotent - same inputs \u2192 same outputs\n\nMatching Rules:\n1. Exact Match: Same amount (debit = credit), same date, different accounts\n2. Date Window Match: Same amount, date within 3 days, different accounts\n\nConfidence Calculation:\n- Exact same date: +0.4\n- Within 1 day: +0.3\n- Amount exact: +0.4\n- Description similarity > 0.7: +0.2\n- Cap at 1.0, round to 4 decimals\n\nUsage:\n    from engines.reconciliation_engine import find_potential_matches\n    matches = find_potential_matches(db_path)",
-      "engine_name": ""
-    },
-    {
-      "path": "backend/src/engines/insight_generator.py",
-      "language": "python",
-      "node_type": "Engine",
-      "imports": [
-        "typing.Any"
-      ],
-      "classes": [],
-      "functions": [
-        "generate_behavioral_insights",
-        "generate_summary_text"
-      ],
-      "decorators": [],
-      "docstring": "Insight Generator\n=================\n\nGenerates deterministic, evidence-based behavioral insights.\nNo motivational fluff. No randomness.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer.",
-      "engine_name": ""
-    },
-    {
-      "path": "backend/src/engines/nudge_engine.py",
-      "language": "python",
-      "node_type": "Engine",
-      "imports": [
-        "typing.Any"
-      ],
-      "classes": [],
-      "functions": [
-        "generate_nudges",
-        "get_top_nudge",
-        "get_nudge_summary"
-      ],
-      "decorators": [],
-      "docstring": "Nudge Engine\n============\n\nRules-based behavioral suggestion engine.\nNon-intrusive, deterministic nudges based on behavioral profile.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer.\n\nBased on behavioral economics principles:\n- Default bias\n- Friction mechanisms\n- Goal framing\n- Loss aversion messaging",
       "engine_name": ""
     },
     {
@@ -3177,19 +3098,6 @@
       ],
       "decorators": [],
       "docstring": "Audit business orchestration service.",
-      "engine_name": ""
-    },
-    {
-      "path": "backend/src/services/base_service.py",
-      "language": "python",
-      "node_type": "Service",
-      "imports": [
-        "base.BaseService"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
       "engine_name": ""
     },
     {
@@ -4971,10 +4879,10 @@
         "datetime.timedelta",
         "typing.Any",
         "cachetools.TTLCache",
-        "src.engines.insight_generator.generate_behavioral_insights",
-        "src.engines.insight_generator.generate_summary_text",
-        "src.engines.nudge_engine.generate_nudges",
-        "src.engines.nudge_engine.get_top_nudge"
+        "insights.generate_behavioral_insights",
+        "insights.generate_summary_text",
+        "nudges.generate_nudges",
+        "nudges.get_top_nudge"
       ],
       "classes": [],
       "functions": [
@@ -5025,8 +4933,13 @@
         "income.compute_salary_dependence_ratio",
         "income.compute_true_income_total",
         "income.filter_true_income",
+        "insights.generate_behavioral_insights",
+        "insights.generate_summary_text",
         "lifestyle.compute_lifestyle_creep_index",
         "lifestyle.compute_lifestyle_inflation",
+        "nudges.generate_nudges",
+        "nudges.get_nudge_summary",
+        "nudges.get_top_nudge",
         "patterns.compute_night_spend_ratio",
         "patterns.compute_weekend_spend_ratio",
         "patterns.detect_impulse_transactions",
@@ -5042,7 +4955,7 @@
       "classes": [],
       "functions": [],
       "decorators": [],
-      "docstring": "Behaviour Engine \u2014 Core, Debt, Pattern Detection, Income Intelligence, and Account Intelligence.\n\nDeterministic behavioural metrics for financial analysis.\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\n\nStructure:\n- savings.py \u2014 Savings rate, borrowed lifestyle ratio, monthly surplus\n- cashflow.py \u2014 Income/expense stability, cashflow stability index\n- resilience.py \u2014 Liquidity months, resilience index\n- lifestyle.py \u2014 Lifestyle inflation, lifestyle creep index\n- debt.py \u2014 Credit dependency, debt cycle, FOIR, revolver ratio\n- patterns.py \u2014 Impulse detection, weekend/night ratios, recurring merchants, subscriptions\n- income.py \u2014 Income source classification, diversification score\n- account.py \u2014 Account concentration, idle cash, balance volatility, low balance risk\n- profile.py \u2014 Financial personality classification (SAVER, BALANCED, SPENDER, DEBT_OPTIMIZER, DEBT_DEPENDENT)\n- utils.py \u2014 Shared helper functions (median, variance, coefficient of variation)\n\nAll functions are pure - no database access.",
+      "docstring": "Behaviour Engine \u2014 Core, Debt, Pattern Detection, Income Intelligence, and Account Intelligence.\n\nDeterministic behavioural metrics for financial analysis.\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\n\nStructure:\n- savings.py \u2014 Savings rate, borrowed lifestyle ratio, monthly surplus\n- cashflow.py \u2014 Income/expense stability, cashflow stability index\n- resilience.py \u2014 Liquidity months, resilience index\n- lifestyle.py \u2014 Lifestyle inflation, lifestyle creep index\n- debt.py \u2014 Credit dependency, debt cycle, FOIR, revolver ratio\n- patterns.py \u2014 Impulse detection, weekend/night ratios, recurring merchants, subscriptions\n- income.py \u2014 Income source classification, diversification score\n- account.py \u2014 Account concentration, idle cash, balance volatility, low balance risk\n- profile.py \u2014 Financial personality classification (SAVER, BALANCED, SPENDER, DEBT_OPTIMIZER, DEBT_DEPENDENT)\n- insights.py \u2014 Behavioral insight generation\n- nudges.py \u2014 Behavioral nudge generation\n\nAll functions are pure - no database access.",
       "engine_name": "Behaviour Engine"
     },
     {
@@ -5164,6 +5077,22 @@
       ],
       "decorators": [],
       "docstring": "Resilience metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.",
+      "engine_name": "Behaviour Engine"
+    },
+    {
+      "path": "backend/src/engines/behaviour_engine/insights.py",
+      "language": "python",
+      "node_type": "Engine Module",
+      "imports": [
+        "typing.Any"
+      ],
+      "classes": [],
+      "functions": [
+        "generate_behavioral_insights",
+        "generate_summary_text"
+      ],
+      "decorators": [],
+      "docstring": "Insight Generator\n=================\n\nGenerates deterministic, evidence-based behavioral insights.\nNo motivational fluff. No randomness.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer.",
       "engine_name": "Behaviour Engine"
     },
     {
@@ -5342,6 +5271,23 @@
       ],
       "decorators": [],
       "docstring": "Stress and behavioural indices for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nTransactions are expected as dicts with keys:\n- date_iso: str - YYYY-MM-DD format\n- time_iso: str (optional) - HH:MM format\n- description: str - merchant/description\n- amount_paise: int - transaction amount\n- type: str - \"debit\" or \"credit\"\n- category: str - transaction category",
+      "engine_name": "Behaviour Engine"
+    },
+    {
+      "path": "backend/src/engines/behaviour_engine/nudges.py",
+      "language": "python",
+      "node_type": "Engine Module",
+      "imports": [
+        "typing.Any"
+      ],
+      "classes": [],
+      "functions": [
+        "generate_nudges",
+        "get_top_nudge",
+        "get_nudge_summary"
+      ],
+      "decorators": [],
+      "docstring": "Nudge Engine\n============\n\nRules-based behavioral suggestion engine.\nNon-intrusive, deterministic nudges based on behavioral profile.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer.\n\nBased on behavioral economics principles:\n- Default bias\n- Friction mechanisms\n- Goal framing\n- Loss aversion messaging",
       "engine_name": "Behaviour Engine"
     },
     {
@@ -6103,9 +6049,6 @@
         "contextlib",
         "logging",
         "sqlite3",
-        "decimal.ROUND_HALF_UP",
-        "decimal.Decimal",
-        "decimal.InvalidOperation",
         "typing.Any",
         "src.core.db.config.get_db_path",
         "datetime.datetime",
@@ -6116,7 +6059,6 @@
       "classes": [],
       "functions": [
         "_parse_date_to_ymd",
-        "_parse_amount_paise",
         "_row_to_dict",
         "create_all",
         "run_migrations",
@@ -6668,6 +6610,7 @@
         "json",
         "sys",
         "pathlib.Path",
+        "typing.Any",
         "runtime.foundation.verification.models.VerificationStatus",
         "runtime.foundation.verification.orchestrator.VerificationOrchestrator",
         "runtime.foundation.verification.orchestrator._collect_changed_files",
@@ -6683,36 +6626,39 @@
         "runtime.system.observability.health_report.EngineeringHealthReport",
         "subprocess",
         "sys",
-        "runtime.system.observability.health_report.EngineeringHealthReport",
-        "runtime.foundation.intelligence.diagnostics.DeveloperDiagnostics",
-        "runtime.foundation.intelligence.formatter.format_diagnostic_report",
-        "runtime.foundation.intelligence.affected.AffectedTestPlanner",
-        "runtime.foundation.intelligence.formatter.format_affected_test_plan",
-        "runtime.foundation.intelligence.diagnostics.DeveloperDiagnostics",
-        "runtime.foundation.intelligence.formatter.format_repair_suggestions",
-        "runtime.foundation.intelligence.diagnostics.DeveloperDiagnostics",
-        "runtime.foundation.intelligence.formatter.format_risk_report",
-        "runtime.foundation.intelligence.risk.RiskAnalyzer",
+        "runtime.foundation.intelligence.analyze",
+        "runtime.foundation.intelligence.format_diagnostic",
+        "runtime.foundation.intelligence.blast_radius",
+        "runtime.foundation.intelligence.verification_plan",
+        "runtime.foundation.intelligence.format_affected",
+        "runtime.foundation.intelligence.repair_plan",
+        "runtime.foundation.intelligence.format_repair",
+        "runtime.foundation.intelligence.engineering_risk",
+        "runtime.foundation.intelligence.format_risk",
         "runtime.foundation.integrity.engine.evaluate_integrity",
         "runtime.foundation.integrity.formatter.format_integrity_report",
         "runtime.foundation.knowledge.indexer.build_index",
         "runtime.foundation.knowledge.formatter.format_knowledge_report",
-        "runtime.foundation.knowledge.indexer.build_index",
         "runtime.foundation.knowledge.query.query_endpoint",
-        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.indexer.build_index",
+        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.query.query_capability",
-        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.indexer.build_index",
+        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.query.query_workspace",
-        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.indexer.build_index",
+        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.query.query_rule",
-        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.indexer.build_index",
+        "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.foundation.knowledge.query.query_component",
+        "runtime.foundation.knowledge.indexer.build_index",
         "runtime.foundation.knowledge.formatter.format_query_result",
         "runtime.system.observability.dashboard.DashboardGenerator",
+        "runtime.foundation.intelligence.platform.pipeline.run_intelligence",
+        "runtime.foundation.intelligence.platform.certification",
+        "runtime.foundation.intelligence.platform.certification",
+        "runtime.foundation.intelligence.platform.migration.generate_migration_artifacts",
         "runtime.foundation.audit.runner.AuditRunner",
         "runtime.foundation.audit.reporter.AuditReporter",
         "runtime.foundation.audit.repository.audit",
@@ -6758,7 +6704,6 @@
         "cmd_doctor",
         "cmd_ci_doctor",
         "cmd_diagnose",
-        "cmd_diagnose",
         "cmd_affected",
         "cmd_repair",
         "cmd_risk",
@@ -6770,6 +6715,10 @@
         "cmd_knowledge_rule",
         "cmd_knowledge_component",
         "cmd_dashboard",
+        "cmd_intelligence",
+        "cmd_certify_v4",
+        "cmd_certify_v5",
+        "cmd_intelligence_audit",
         "cmd_audit",
         "main"
       ],
@@ -6797,6 +6746,41 @@
       ],
       "decorators": [],
       "docstring": "Phase 7: Artifact Ownership (v2).\n\nEvery generated artifact must have: Producer, Owner, Consumers, Verification Stage,\nPipeline, Lifecycle, Retention, Regeneration Source. Unknown ownership is a\ncertification failure -> this registry assigns ALL fields for EVERY artifact\n(no 'unknown').",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/program16_analysis.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "json",
+        "collections.defaultdict",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "collections.Counter",
+        "runtime.foundation.audit.runner.AuditRunner",
+        "runtime.foundation.audit.reporter.AuditReporter",
+        "sys"
+      ],
+      "classes": [],
+      "functions": [
+        "load",
+        "save",
+        "now",
+        "phase1",
+        "phase2",
+        "phase3",
+        "phase4",
+        "phase5",
+        "phase6",
+        "phase7",
+        "phase8",
+        "phase9",
+        "phase10"
+      ],
+      "decorators": [],
+      "docstring": "Program 16.0 \u2014 Repository Canonicalization & Technical Debt Elimination\nGenerates all 11 deliverables using canonical provider artifacts.",
       "engine_name": ""
     },
     {
@@ -6968,6 +6952,171 @@
       "engine_name": ""
     },
     {
+      "path": "runtime/generated/platform-accuracy.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path"
+      ],
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 6 \u2014 Platform Accuracy Validation.\n\nMeasures platform accuracy against validated issues.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/repository-gap-analysis.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path"
+      ],
+      "classes": [],
+      "functions": [
+        "main",
+        "_categorize_defect"
+      ],
+      "decorators": [],
+      "docstring": "Phase 5 \u2014 Repository Coverage Validation.\n\nCompares repository implementation against platform knowledge.\nDetects engines without tests, services without ownership, routers without verification,\nrepositories without integrity, workspaces without capabilities, undocumented execution paths.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/repository-readiness.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path"
+      ],
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 9 \u2014 Repository Readiness Assessment.\n\nAssesses whether the repository is ready for continued feature development.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/workflow-validation.py",
+      "language": "python",
+      "node_type": "Workflow",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path",
+        "runtime.foundation.intelligence.platform.changeset.ChangeSet",
+        "runtime.foundation.intelligence.platform.changeset.ChangedFile",
+        "runtime.foundation.intelligence.platform.change.analyze_changes",
+        "runtime.foundation.intelligence.platform.blast.compute_blast_radius",
+        "runtime.foundation.intelligence.platform.repair.build_repair_intelligence",
+        "runtime.foundation.intelligence.platform.risk.assess_risk",
+        "runtime.foundation.intelligence.platform.optimizer.optimize_verification",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver"
+      ],
+      "classes": [],
+      "functions": [
+        "build_changeset",
+        "validate_workflow",
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 3 \u2014 Engineering Workflow Validation.\n\nSimulates common developer workflows and validates that the platform\ncorrectly produces affected entities, affected tests, verification plan,\nengineering risk, and repair recommendations.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/real-defect-validation.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path",
+        "runtime.foundation.intelligence.platform.pipeline.run_intelligence",
+        "runtime.foundation.intelligence.platform.changeset.ChangeSet",
+        "runtime.foundation.intelligence.platform.changeset.ChangedFile",
+        "runtime.foundation.intelligence.platform.blast.compute_blast_radius",
+        "runtime.foundation.intelligence.platform.repair.build_repair_intelligence",
+        "runtime.foundation.intelligence.platform.risk.assess_risk",
+        "runtime.foundation.intelligence.platform.optimizer.optimize_verification",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.change.analyze_changes"
+      ],
+      "classes": [],
+      "functions": [
+        "build_verification_defect_changeset",
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 2 \u2014 Real Defect Validation.\n\nAnalyzes verification failures using the Engineering Intelligence Layer\nwithout manual repository exploration.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/framework-gap-register.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path"
+      ],
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 8 \u2014 Framework Gap Register.\n\nDocuments evidence-backed platform limitations observed during validation.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/ci-validation.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path"
+      ],
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 4 \u2014 CI Workflow Validation.\n\nValidates the complete GitHub workflow lifecycle using collected CI intelligence.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/generated/productivity-validation.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "sys",
+        "pathlib.Path"
+      ],
+      "classes": [],
+      "functions": [
+        "main"
+      ],
+      "decorators": [],
+      "docstring": "Phase 7 \u2014 Developer Productivity Validation.\n\nMeasures practical engineering value.",
+      "engine_name": ""
+    },
+    {
       "path": "runtime/foundation/__init__.py",
       "language": "python",
       "node_type": "Utility",
@@ -6990,7 +7139,8 @@
         "datetime.datetime",
         "datetime.timezone",
         "pathlib.Path",
-        "typing.Any"
+        "typing.Any",
+        "runtime.foundation.architecture.chains.get_chain_map"
       ],
       "classes": [
         "DependencyGrowthRecord",
@@ -7001,6 +7151,7 @@
         "to_dict",
         "__init__",
         "compute",
+        "_load_chains",
         "save"
       ],
       "decorators": [],
@@ -7453,6 +7604,7 @@
         "collectors.test_results.TestResultEvidence",
         "collectors.contract.ContractCollector",
         "collectors.contract.ContractEvidence",
+        "runtime.foundation.architecture.chains.get_chain_map",
         "subprocess",
         "subprocess"
       ],
@@ -8161,6 +8313,36 @@
       "engine_name": ""
     },
     {
+      "path": "runtime/foundation/architecture/migration_reports.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any",
+        "runtime.foundation.architecture.ids",
+        "runtime.foundation.architecture.provider.get_architecture"
+      ],
+      "classes": [],
+      "functions": [
+        "build_dependency_graph_v2",
+        "_serialize_graph",
+        "build_artifact_ownership_v3",
+        "build_knowledge_migration_report",
+        "_consumers_from_dependency",
+        "build_runtime_consistency",
+        "_write",
+        "generate_all",
+        "add"
+      ],
+      "decorators": [],
+      "docstring": "Migration report generators \u2014 Program 13.2, Phases 4, 5, 6, 9.\n\nEvery report here is derived EXCLUSIVELY from the canonical architecture\nreturned by :func:`runtime.foundation.architecture.get_architecture`. No\nmodule in this file performs independent discovery; it is a consumer of the\nsingle provider, exactly like every other runtime subsystem.",
+      "engine_name": ""
+    },
+    {
       "path": "runtime/foundation/architecture/__init__.py",
       "language": "python",
       "node_type": "Utility",
@@ -8288,6 +8470,32 @@
       ],
       "decorators": [],
       "docstring": "The single architecture discovery pipeline \u2014 Program 13.2, Phase 2.\n\nConstitutional rule: *there must be exactly one architecture discovery\npipeline; everything else is a consumer.*\n\nThis module is that pipeline. It owns the ordered set of discovery phases\nestablished by Program 13.1 and is the only code path allowed to WRITE the\nconstitutional artifacts under ``runtime/generated/``.\n\nEvery other runtime subsystem must read through\n:func:`runtime.foundation.architecture.get_architecture`.\n\nPhases (ordered; later phases consume earlier outputs):\n\n    1. inventory       -> architecture-inventory.json\n    2. topology        -> engine-topology.json\n    3. ownership       -> ownership-graph.json\n    4. execution       -> execution-graph.json\n    5. normalization   -> engine-normalization.json\n    6. knowledge       -> knowledge-reconstruction.json\n    7. artifacts       -> artifact-ownership-v2.json\n    8. gap             -> certification-gap-analysis.json",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/architecture/chains.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "typing.Any",
+        "runtime.foundation.architecture.models.Architecture",
+        "runtime.foundation.architecture.provider.GENERATED_DIR",
+        "runtime.foundation.architecture.provider.get_architecture"
+      ],
+      "classes": [],
+      "functions": [
+        "_engine_key",
+        "_inventory_imports",
+        "_frontend_projection",
+        "build_chain_map",
+        "get_chain_map",
+        "chain_for_path",
+        "reset_cache"
+      ],
+      "decorators": [],
+      "docstring": "Provider-backed chain projection \u2014 Program 13.3, Phase 2.\n\nRuntime subsystems (planner, workspace, evidence, integrity, observability)\nhistorically read ``runtime/generated/cross-layer-map.json`` from disk. That\nfile is now only an OPTIONAL EXPORT artifact; it must never be an operational\nruntime dependency.\n\nThis module gives those consumers the same *shape* of data, but computed\nin-memory from the single canonical architecture provider\n(:func:`runtime.foundation.architecture.get_architecture`). There is no file\nread, no rediscovery, no ownership invention: every field is a projection of\nprovider state.\n\nThe projection is cached per-Architecture-instance, so the provider still\ninitialises exactly once and all consumers share one structure.",
       "engine_name": ""
     },
     {
@@ -8779,6 +8987,8 @@
         "runtime.foundation.knowledge.models.VerificationProfileEntry",
         "runtime.foundation.knowledge.models.ViewModelEntry",
         "runtime.foundation.knowledge.models.WorkspaceEntry",
+        "runtime.foundation.architecture.provider.get_architecture",
+        "runtime.foundation.architecture.chains.get_chain_map",
         "runtime.foundation.integrity.registry.get_constitution",
         "runtime.foundation.verification.profiles.list_profiles"
       ],
@@ -8797,6 +9007,7 @@
         "_extract_documentation",
         "_extract_integrity_rules",
         "_extract_verification_profiles",
+        "_merge_from_provider",
         "build_index",
         "save_index"
       ],
@@ -8959,22 +9170,20 @@
     {
       "path": "runtime/foundation/audit/cross_layer.py",
       "language": "python",
-      "node_type": "Utility",
+      "node_type": "Artifact Producer",
       "imports": [
         "__future__.annotations",
-        "json",
-        "os",
         "time",
         "pathlib.Path",
-        "typing.Any"
+        "typing.Any",
+        "runtime.foundation.architecture.provider.get_architecture",
+        "runtime.foundation.architecture.provider.architecture_available",
+        "runtime.foundation.architecture.provider.get_architecture"
       ],
       "classes": [],
       "functions": [
-        "_find_map_path",
-        "_load_map",
-        "_check_file_exists",
-        "_verify_map_existence",
-        "_verify_map_json_validity",
+        "_build_data_from_provider",
+        "_check_provider_available",
         "_verify_chain_field_completeness",
         "_verify_chain_field_types",
         "_verify_engine_file_existence",
@@ -8987,7 +9196,7 @@
         "audit"
       ],
       "decorators": [],
-      "docstring": "Cross-Layer Map Audit \u2014 Program 12.\n\nVerifies the cross-layer dependency map (cross-layer-map.json) for:\n- File existence of all chain components\n- Chain completeness (each chain has at least engine + one component type)\n- No duplicate chains (same engine appearing multiple times)\n- Ownership mapping validity\n- Structural consistency across chains",
+      "docstring": "Cross-Layer Map Audit \u2014 Program 13.2 (provider-migrated).\n\nProgram 13.2: this audit no longer performs its own discovery or reads the\nlegacy ``cross-layer-map.json``. It consumes the single canonical architecture\nvia :func:`runtime.foundation.architecture.get_architecture`.\n\nInternal engines (no capability, no router \u2014 e.g. ``nudge_engine``,\n``insight_generator``, ``transaction_intelligence``) are GENUINE architectural\ndebt under the constitutional model. They are reported as known debt\n(informational), never as false-positive failures.",
       "engine_name": ""
     },
     {
@@ -9359,6 +9568,7 @@
       "node_type": "Artifact Consumer",
       "imports": [
         "__future__.annotations",
+        "json",
         "time",
         "pathlib.Path",
         "typing.Any",
@@ -9368,6 +9578,8 @@
       "functions": [
         "audit",
         "_list_artifacts",
+        "_load_v3_by_name",
+        "_record_for",
         "_check_ownership",
         "_check_overwrites",
         "_check_retention_policies",
@@ -9496,7 +9708,7 @@
         "runtime.foundation.knowledge.indexer.build_index",
         "runtime.foundation.knowledge.query.KnowledgeQueryEngine",
         "runtime.foundation.integrity.engine.ArchitecturalIntegrityEngine",
-        "runtime.foundation.intelligence.diagnostics.DeveloperDiagnostics",
+        "runtime.foundation.intelligence.analyze",
         "yaml"
       ],
       "classes": [],
@@ -9724,204 +9936,32 @@
       "engine_name": ""
     },
     {
-      "path": "runtime/foundation/intelligence/models.py",
-      "language": "python",
-      "node_type": "Utility",
-      "imports": [
-        "__future__.annotations",
-        "dataclasses.dataclass",
-        "dataclasses.field",
-        "enum.Enum",
-        "typing.Any"
-      ],
-      "classes": [
-        "Severity",
-        "DiagnosticReport",
-        "RepairSuggestion",
-        "RiskReport",
-        "AffectedTestPlan"
-      ],
-      "functions": [
-        "to_dict",
-        "to_dict",
-        "to_dict",
-        "to_dict"
-      ],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "runtime/foundation/intelligence/risk.py",
-      "language": "python",
-      "node_type": "Artifact Producer",
-      "imports": [
-        "__future__.annotations",
-        "dataclasses.dataclass",
-        "typing.Any",
-        "runtime.foundation.intelligence.models.RiskReport",
-        "runtime.foundation.intelligence.models.Severity",
-        "runtime.foundation.verification.planner.planner.CrossLayerImpactPlanner"
-      ],
-      "classes": [
-        "RiskAnalyzer"
-      ],
-      "functions": [
-        "_planner",
-        "analyze",
-        "_compute_factors",
-        "_compute_score",
-        "_classify_severity",
-        "_build_reasons",
-        "_identify_layers",
-        "_compute_cross_layer_depth"
-      ],
-      "decorators": [
-        "property"
-      ],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
       "path": "runtime/foundation/intelligence/__init__.py",
       "language": "python",
       "node_type": "Utility",
       "imports": [
-        "runtime.foundation.intelligence.diagnostics.DeveloperDiagnostics",
-        "runtime.foundation.intelligence.models.AffectedTestPlan",
-        "runtime.foundation.intelligence.models.DiagnosticReport",
-        "runtime.foundation.intelligence.models.RepairSuggestion",
-        "runtime.foundation.intelligence.models.RiskReport",
-        "runtime.foundation.intelligence.repair.RepairGuidance",
-        "runtime.foundation.intelligence.risk.RiskAnalyzer",
-        "runtime.foundation.intelligence.affected.AffectedTestPlanner"
+        "__future__.annotations",
+        "runtime.foundation.intelligence.platform.api.analyze",
+        "runtime.foundation.intelligence.platform.api.affected_entities",
+        "runtime.foundation.intelligence.platform.api.blast_radius",
+        "runtime.foundation.intelligence.platform.api.engineering_risk",
+        "runtime.foundation.intelligence.platform.api.repair_plan",
+        "runtime.foundation.intelligence.platform.api.resolve_entity",
+        "runtime.foundation.intelligence.platform.api.test_resolution",
+        "runtime.foundation.intelligence.platform.api.verification_plan",
+        "runtime.foundation.intelligence.platform.cli_format.format_affected",
+        "runtime.foundation.intelligence.platform.cli_format.format_diagnostic",
+        "runtime.foundation.intelligence.platform.cli_format.format_repair",
+        "runtime.foundation.intelligence.platform.cli_format.format_risk",
+        "runtime.foundation.intelligence.platform.resolver.EntityRef",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.resolver.reset_resolver"
       ],
       "classes": [],
       "functions": [],
       "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "runtime/foundation/intelligence/affected.py",
-      "language": "python",
-      "node_type": "Artifact Producer",
-      "imports": [
-        "__future__.annotations",
-        "dataclasses.dataclass",
-        "typing.Any",
-        "runtime.foundation.intelligence.models.AffectedTestPlan",
-        "runtime.foundation.verification.planner.planner.CrossLayerImpactPlanner"
-      ],
-      "classes": [
-        "AffectedTestPlanner"
-      ],
-      "functions": [
-        "_planner",
-        "build_test_plan",
-        "_resolve_backend_tests",
-        "_resolve_frontend_tests",
-        "_resolve_runtime_tests",
-        "_resolve_playwright_tests",
-        "_resolve_contract_tests"
-      ],
-      "decorators": [
-        "property"
-      ],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "runtime/foundation/intelligence/formatter.py",
-      "language": "python",
-      "node_type": "Utility",
-      "imports": [
-        "__future__.annotations",
-        "sys",
-        "runtime.foundation.intelligence.models.AffectedTestPlan",
-        "runtime.foundation.intelligence.models.DiagnosticReport",
-        "runtime.foundation.intelligence.models.RepairSuggestion",
-        "runtime.foundation.intelligence.models.RiskReport",
-        "runtime.foundation.intelligence.models.Severity"
-      ],
-      "classes": [],
-      "functions": [
-        "_supports_color",
-        "_color",
-        "_bold",
-        "_red",
-        "_yellow",
-        "_green",
-        "_cyan",
-        "_white",
-        "format_diagnostic_report",
-        "format_repair_suggestions",
-        "format_risk_report",
-        "format_affected_test_plan"
-      ],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "runtime/foundation/intelligence/diagnostics.py",
-      "language": "python",
-      "node_type": "Artifact Producer",
-      "imports": [
-        "__future__.annotations",
-        "dataclasses.dataclass",
-        "pathlib.Path",
-        "typing.Any",
-        "runtime.foundation.intelligence.models.DiagnosticReport",
-        "runtime.foundation.intelligence.models.RepairSuggestion",
-        "runtime.foundation.intelligence.risk.RiskAnalyzer",
-        "runtime.foundation.verification.planner.planner.CrossLayerImpactPlanner",
-        "runtime.foundation.verification.profiles.get_profile",
-        "runtime.foundation.repository.graph.graph_service.RepositoryGraphService"
-      ],
-      "classes": [
-        "DeveloperDiagnostics"
-      ],
-      "functions": [
-        "_planner",
-        "diagnose",
-        "_build_repair_suggestions",
-        "_suggest_profile",
-        "_estimate_verification"
-      ],
-      "decorators": [
-        "property"
-      ],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "runtime/foundation/intelligence/repair.py",
-      "language": "python",
-      "node_type": "Artifact Producer",
-      "imports": [
-        "__future__.annotations",
-        "dataclasses.dataclass",
-        "typing.Any",
-        "runtime.foundation.intelligence.models.RepairSuggestion"
-      ],
-      "classes": [
-        "RepairGuidance"
-      ],
-      "functions": [
-        "build_repair_guidance",
-        "for_capability",
-        "for_endpoint",
-        "for_router",
-        "for_mapper",
-        "for_view_model",
-        "for_workspace",
-        "for_graph_renderer",
-        "for_component",
-        "all_suggestions"
-      ],
-      "decorators": [],
-      "docstring": "",
+      "docstring": "Canonical Engineering Intelligence Layer.\n\nThe only intelligence implementation inside the runtime. The legacy\n``runtime/foundation/intelligence/{affected,diagnostics,risk,repair,\nformatter,models}.py`` modules were eliminated in Program 14.1; every runtime\ncommand now resolves ownership, change, blast radius, verification, risk and\nrepair through this package and its single internal :mod:`api`.",
       "engine_name": ""
     },
     {
@@ -10120,7 +10160,9 @@
         "pathlib.Path",
         "typing.Any",
         "runtime.foundation.integrity.models.ArchitectureLayer",
-        "os"
+        "os",
+        "runtime.foundation.architecture.get_architecture",
+        "runtime.foundation.architecture.chains.get_chain_map"
       ],
       "classes": [
         "ImportRecord",
@@ -10129,6 +10171,8 @@
         "ArchitecturalScanner"
       ],
       "functions": [
+        "_engine_paths",
+        "_is_engine_path",
         "classify_layer",
         "_resolve_ts_import",
         "_resolve_py_import",
@@ -10234,13 +10278,15 @@
         "runtime.foundation.workspace.models.VerificationHistory",
         "runtime.foundation.workspace.models.VerificationProfile",
         "runtime.foundation.workspace.models.VerificationStatusInfo",
-        "runtime.foundation.workspace.models.VerificationWorkspace"
+        "runtime.foundation.workspace.models.VerificationWorkspace",
+        "runtime.foundation.architecture.chains.get_chain_map"
       ],
       "classes": [
         "WorkspaceLoader"
       ],
       "functions": [
         "__init__",
+        "_load_chain_map",
         "_load_json",
         "_load_markdown",
         "_parse_timestamp",
@@ -10779,7 +10825,9 @@
         "runtime.foundation.verification.registry.VerificationRegistry",
         "runtime.foundation.verification.registry.VerificationRequirement",
         "runtime.foundation.verification.registry.get_registry",
-        "runtime.foundation.repository.graph.graph_service.RepositoryGraphService"
+        "runtime.foundation.repository.graph.graph_service.RepositoryGraphService",
+        "runtime.foundation.architecture.chains.get_chain_map",
+        "runtime.foundation.architecture.get_architecture"
       ],
       "classes": [
         "ScopeImpact",
@@ -10807,10 +10855,12 @@
         "_load_map",
         "analyze_cross_layer_impact",
         "_find_chain",
+        "_resolve_via_provider",
         "_service_name_from_path",
         "_add_chain_to_report",
         "_build_minimal_plan",
-        "visit"
+        "visit",
+        "chain_for_engines"
       ],
       "decorators": [],
       "docstring": "Verification Planner \u2014 Phase 4 + Program 7A Cross-Layer Intelligence\n\nProduces deterministic verification plans from:\n- Changed files\n- Changed capabilities\n- Changed endpoints\n- Requested scope\n\nNo execution logic. Pure planning.\n\nProgram 7A adds CrossLayerImpactPlanner for cross-layer dependency intelligence.",
@@ -11680,6 +11730,603 @@
       "engine_name": ""
     },
     {
+      "path": "runtime/foundation/intelligence/platform/ci.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "subprocess",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any"
+      ],
+      "classes": [
+        "GitHubIntelligence"
+      ],
+      "functions": [
+        "_run",
+        "_gh_available",
+        "collect_github_intelligence",
+        "to_dict"
+      ],
+      "decorators": [],
+      "docstring": "Phase 7 \u2014 CI Intelligence.\n\nCollects GitHub Actions failure evidence using *structured metadata first*.\n\nRetrieval policy (enforced, not merely documented)\n--------------------------------------------------\n1. Run metadata via ``gh run list --json`` \u2014 cheap, structured.\n2. Failed jobs and failed steps via the REST API (``gh api``) \u2014 structured.\n3. Annotations via ``gh api .../annotations`` \u2014 these usually contain the\n   entire failure reason.\n4. Job-scoped logs ONLY for failed steps, and ONLY when the caller passes\n   ``allow_logs=True``.\n\nWhole-run log ARCHIVES (run-level log zips fetched via the archive download\nsubcommand) are never retrieved by this module under any flag. Downloading a\n200MB archive to read one assertion failure is exactly the waste this phase\nexists to eliminate.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/api.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.intelligence.platform.blast.compute_blast_radius",
+        "runtime.foundation.intelligence.platform.change.analyze_changes",
+        "runtime.foundation.intelligence.platform.memory.build_memory",
+        "runtime.foundation.intelligence.platform.optimizer.VerificationPlanIntel",
+        "runtime.foundation.intelligence.platform.optimizer.optimize_verification",
+        "runtime.foundation.intelligence.platform.repair.RepairPlan",
+        "runtime.foundation.intelligence.platform.repair.build_repair_intelligence",
+        "runtime.foundation.intelligence.platform.repair.load_defects",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.risk.EngineeringRisk",
+        "runtime.foundation.intelligence.platform.risk.assess_risk",
+        "runtime.foundation.verification.orchestrator._collect_changed_files",
+        "runtime.foundation.verification.orchestrator._is_git_available"
+      ],
+      "classes": [],
+      "functions": [
+        "_collect_default",
+        "_files",
+        "resolve_entity",
+        "affected_entities",
+        "blast_radius",
+        "verification_plan",
+        "engineering_risk",
+        "repair_plan",
+        "test_resolution",
+        "analyze"
+      ],
+      "decorators": [],
+      "docstring": "Unified Intelligence API \u2014 Program 14.1.\n\nA single internal API that every runtime command must communicate through.\n\nBefore 14.0 the runtime had two overlapping \"intelligence\" implementations:\nthe legacy ``runtime/foundation/intelligence/{affected,diagnostics,risk,\nrepair,formatter,models}.py`` modules (filename-based inference, predating the\ncanonical architecture) and the canonical ``platform`` layer built in 14.0.\n\nConstitutional rule (Programs 13.x-14.1): **no command may implement its own\nalgorithm**. Every service here is a thin composition over the canonical\n``platform`` modules, which consume only\n:func:`runtime.foundation.architecture.get_architecture` and the shared\n:class:`EntityResolver`. This module performs no discovery of its own.\n\nServices\n--------\n* ``resolve_entity``        \u2014 ownership lookup\n* ``affected_entities``     \u2014 change analysis\n* ``blast_radius``          \u2014 dependency/graph traversal\n* ``verification_plan``     \u2014 verification planning\n* ``engineering_risk``      \u2014 risk scoring\n* ``repair_plan``           \u2014 repair planning\n* ``test_resolution``       \u2014 provider-only test resolution\n* ``analyze``               \u2014 full bundle (used by commands that want all)",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/migration.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "ast",
+        "json",
+        "re",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.api.analyze",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.api",
+        "time"
+      ],
+      "classes": [],
+      "functions": [
+        "_timestamp",
+        "build_inventory",
+        "build_duplication",
+        "build_consumer_migration",
+        "build_test_resolution",
+        "_verify_py_commands",
+        "build_cli_consistency",
+        "build_api_manifest",
+        "build_retirement_plan",
+        "build_constitution",
+        "build_simplification",
+        "generate_migration_artifacts"
+      ],
+      "decorators": [],
+      "docstring": "Program 14.1 migration reports.\n\nGenerates the eleven deliverable artifacts that document the elimination of the\nlegacy intelligence implementation. The legacy modules themselves are now\ndeleted; this module records their identity, their canonical replacements,\nand the evidence that exactly one implementation remains.\n\nAll deliverables are derived from (a) provider state, (b) the source tree\nitself, or (c) static constitutional knowledge \u2014 never from heavyweight\nverification. They are therefore deterministic and reproducible.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/resolver.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "dataclasses.dataclass",
+        "typing.Any",
+        "typing.Iterable",
+        "runtime.foundation.architecture.Architecture",
+        "runtime.foundation.architecture.get_architecture"
+      ],
+      "classes": [
+        "EntityRef",
+        "EntityResolver"
+      ],
+      "functions": [
+        "get_resolver",
+        "reset_resolver",
+        "to_dict",
+        "ref",
+        "__init__",
+        "_register",
+        "_build",
+        "tests",
+        "by_ref",
+        "resolve_node",
+        "entities_for_path",
+        "owning_engine",
+        "classify_path",
+        "graphs",
+        "node_ids_for"
+      ],
+      "decorators": [
+        "property",
+        "property"
+      ],
+      "docstring": "Canonical entity resolution for the Engineering Intelligence Layer.\n\nEvery intelligence subsystem needs to answer three questions:\n\n1. \"Which architectural entity owns this repository path?\"\n2. \"Which graph nodes represent this entity?\"\n3. \"Which entity does this graph node id refer to?\"\n\nAll three are answered here, once, from provider state. Without this module\neach phase would be tempted to re-derive ownership from filenames, which the\nconstitution forbids.\n\nWhy an ID reconciler is required\n--------------------------------\nThe canonical graphs do not use a single ID form for the same entity. For\nexample a capability appears as ``capability:useAccountsCapability`` in the\nexecution graph but as\n``capability:frontend/lib/capabilities/use-accounts-capability.ts`` in the\ndependency graph. Rather than guessing, this resolver registers *every* ID\nform that provider state itself justifies (provider id, ``kind:key``,\n``kind:path``, ``kind:name``) and maps them all back to one canonical\n:class:`EntityRef`. Any graph node whose id cannot be justified by provider\nstate is reported as unresolved rather than silently invented.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/risk.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.intelligence.platform.change.ChangeIntelligence",
+        "runtime.foundation.intelligence.platform.optimizer.VerificationPlanIntel",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver"
+      ],
+      "classes": [
+        "RiskDimension",
+        "EngineeringRisk"
+      ],
+      "functions": [
+        "_level",
+        "assess_risk",
+        "to_dict",
+        "to_dict"
+      ],
+      "decorators": [],
+      "docstring": "Phase 4 \u2014 Engineering Risk Engine.\n\nScores seven independent risk dimensions, each backed by explicit evidence\ndrawn from provider state, the blast radius and the verification plan.\n\nDesign rule: a dimension may only raise risk when it can cite a concrete\nfact. There are no free-floating \"feels risky\" weights \u2014 every contribution\nappends an evidence string that names the entities responsible.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/memory.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "collections.Counter",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any"
+      ],
+      "classes": [
+        "EngineeringMemory"
+      ],
+      "functions": [
+        "_read_json",
+        "_read_jsonl",
+        "_top",
+        "build_memory",
+        "to_dict",
+        "as_risk_input"
+      ],
+      "decorators": [],
+      "docstring": "Phase 6 \u2014 Runtime Learning (Engineering Memory).\n\nBuilds durable engineering history from evidence the runtime has already\nrecorded: the event store, verification history, flaky-test records and CI\nhealth. The point is to replace heuristics with *observed frequency*.\n\nThis module is intentionally append-only in spirit: it reads recorded history\nand summarises recurring signatures. It never fabricates history, and when\nthere is no history it says so explicitly rather than emitting confident\ndefaults.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/__init__.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "runtime.foundation.intelligence.platform.resolver.EntityRef",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.resolver.reset_resolver"
+      ],
+      "classes": [],
+      "functions": [],
+      "decorators": [],
+      "docstring": "Engineering Intelligence Layer \u2014 Program 14.0.\n\nThis package answers the *active* engineering questions:\n\n    \"What changed?\"  \"What is broken?\"  \"What should be verified?\"\n    \"What is the smallest safe validation?\"  \"What is the engineering risk?\"\n\nConstitutional constraints (Programs 13.1-13.3) that every module here obeys:\n\n* Architecture is NEVER rebuilt. Every architectural fact comes from\n  :func:`runtime.foundation.architecture.get_architecture`.\n* Ownership is NEVER reconstructed. Ownership questions are answered by\n  ``Architecture.engine_for_path`` and the canonical ownership graph.\n* Filenames are NEVER inferred. Tests, routers, capabilities and workspaces\n  are read from provider state, not synthesised from string patterns.\n* Discovery is NEVER duplicated. This package performs zero filesystem\n  scanning of production code.\n\nThe only non-provider inputs are *change* inputs (git diff) and *history*\ninputs (recorded runtime events / CI metadata), which are by definition not\narchitectural facts.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/certification.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "re",
+        "subprocess",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.pipeline.ARTIFACTS",
+        "runtime.foundation.intelligence.platform.pipeline.run_intelligence",
+        "runtime.foundation.audit.artifact_ownership.ARTIFACT_OWNERS",
+        "runtime.foundation.audit.artifact_ownership.RETENTION_POLICIES",
+        "runtime.foundation.intelligence.platform.migration.build_cli_consistency",
+        "runtime.foundation.intelligence.platform.migration.generate_migration_artifacts",
+        "runtime.foundation.intelligence.platform.pipeline.run_intelligence"
+      ],
+      "classes": [
+        "Check",
+        "CertificationResult"
+      ],
+      "functions": [
+        "_strip_volatile",
+        "_git",
+        "_check_no_duplicated_discovery",
+        "_check_canonical_provider",
+        "_check_no_production_modified",
+        "_check_determinism",
+        "_check_verification_not_weakened",
+        "_check_blast_evidence",
+        "_check_ci_structured_first",
+        "_check_artifacts_present",
+        "_check_artifacts_registered",
+        "_load_runtime_audit",
+        "certify",
+        "render_markdown",
+        "_check_legacy_modules_removed",
+        "_check_single_implementation",
+        "_check_cli_consumes_canonical_layer",
+        "_check_single_internal_api",
+        "_check_no_filename_inference",
+        "certify_v5",
+        "_render_markdown_v5",
+        "to_dict",
+        "passed",
+        "to_dict"
+      ],
+      "decorators": [
+        "property"
+      ],
+      "docstring": "Phase 10 \u2014 Production Certification for Program 14.0.\n\nValidates that the Engineering Intelligence Layer obeys the constitution.\n\nThese are real checks against source and artifacts, not assertions:\n\n* **No duplicated discovery** \u2014 intelligence modules must not import the\n  discovery pipeline or walk the filesystem for production code.\n* **Canonical provider only** \u2014 architectural facts must come from\n  ``get_architecture`` / the resolver.\n* **No production code modified** \u2014 verified via git against backend/frontend.\n* **Determinism** \u2014 the pipeline is run twice and the outputs compared with\n  volatile timestamps removed.\n* **No weakened verification** \u2014 the optimizer must justify every skip.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/changeset.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "re",
+        "subprocess",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "pathlib.Path",
+        "typing.Any"
+      ],
+      "classes": [
+        "ChangedFile",
+        "ChangeSet"
+      ],
+      "functions": [
+        "_git",
+        "git_available",
+        "_parse_numstat",
+        "_extract",
+        "_parse_patch",
+        "collect_changeset",
+        "changed_symbols",
+        "changed_imports",
+        "changed_routes",
+        "api_changed",
+        "to_dict",
+        "paths",
+        "to_dict"
+      ],
+      "decorators": [
+        "property",
+        "property",
+        "property",
+        "property",
+        "property"
+      ],
+      "docstring": "Git change collection for the Engineering Intelligence Layer.\n\nThis module is the ONLY place in the intelligence layer allowed to touch git.\nIt answers \"what changed?\" at the *text* level: files, symbols, imports.\n\nIt deliberately does NOT interpret architecture. Turning a changed file into\nan engine/router/capability is the job of :mod:`change`, which uses the\ncanonical provider. Keeping the two apart is what stops diff parsing from\ndegenerating into a second discovery pipeline.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/blast.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "collections.deque",
+        "dataclasses.dataclass",
+        "dataclasses.field",
+        "datetime.datetime",
+        "datetime.timezone",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.change.ChangeIntelligence",
+        "runtime.foundation.intelligence.platform.resolver.EntityRef",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver"
+      ],
+      "classes": [
+        "ImpactNode",
+        "BlastRadius"
+      ],
+      "functions": [
+        "_reverse_index",
+        "_forward_index",
+        "compute_blast_radius",
+        "to_dict",
+        "impacted_engines",
+        "all_impacted",
+        "kinds",
+        "to_dict"
+      ],
+      "decorators": [
+        "property",
+        "property"
+      ],
+      "docstring": "Phase 2 \u2014 Blast Radius Engine.\n\nPropagates a change across the canonical graphs to answer \"what else is\naffected?\".\n\nPropagation direction\n---------------------\nCanonical edges point from *consumer to provider*::\n\n    service -> engine            (service uses engine)\n    capability -> endpoint -> router\n    engine -> module             (ownership)\n\nTherefore impact flows along **reverse** edges: if an engine changed, its\ndependents (services, capabilities, endpoints) are impacted. Forward ownership\nedges are followed separately, but only to collect owned tests, because an\nengine owning a test means the test verifies it.\n\nEvery propagation step records the edge that justified it, so the resulting\nblast radius is evidence-backed and reproducible rather than asserted.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/cost.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.optimizer.VerificationPlanIntel"
+      ],
+      "classes": [
+        "CostModel",
+        "VerificationCost"
+      ],
+      "functions": [
+        "_cost_entry",
+        "estimate_cost",
+        "to_dict",
+        "to_dict",
+        "dimension"
+      ],
+      "decorators": [],
+      "docstring": "Phase 8 \u2014 Verification Cost Optimization.\n\nEstimates the cost of a verification plan *before* execution and recommends\nthe cheapest plan that still covers the blast radius.\n\nCost model\n----------\nPer-second costs are calibrated against the declared\n``estimated_duration_seconds`` of the real verification profiles, so the\nmodel is anchored to the runtime's own numbers rather than invented\nconstants. CI cost assumes a standard hosted runner rate; the rate is stated\nexplicitly in the artifact so it can be re-calibrated without code changes.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/state.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.intelligence.platform.change.ChangeIntelligence",
+        "runtime.foundation.intelligence.platform.ci.GitHubIntelligence",
+        "runtime.foundation.intelligence.platform.cost.VerificationCost",
+        "runtime.foundation.intelligence.platform.memory.EngineeringMemory",
+        "runtime.foundation.intelligence.platform.optimizer.VerificationPlanIntel",
+        "runtime.foundation.intelligence.platform.repair.RepairPlan",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.risk.EngineeringRisk"
+      ],
+      "classes": [
+        "_Certification"
+      ],
+      "functions": [
+        "_read_json",
+        "_certification",
+        "build_platform_state",
+        "to_dict"
+      ],
+      "decorators": [],
+      "docstring": "Phase 9 \u2014 Engineering Dashboard Model.\n\nProduces a single runtime state model WITHOUT rerunning any audit.\n\nCertification status is read from the most recent audit artifact on disk. If\nthat artifact is missing or stale the model says so explicitly instead of\nimplying a fresh pass \u2014 a dashboard that silently reports stale green is worse\nthan one that reports \"unknown\".",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/repair.py",
+      "language": "python",
+      "node_type": "Artifact Producer",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.intelligence.platform.resolver.EntityRef",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver"
+      ],
+      "classes": [
+        "Defect",
+        "RepairPlan"
+      ],
+      "functions": [
+        "_read_json",
+        "load_defects",
+        "_build_dependency_ranks",
+        "build_repair_intelligence",
+        "to_dict",
+        "to_dict",
+        "rank_of"
+      ],
+      "decorators": [],
+      "docstring": "Phase 5 \u2014 Repair Intelligence.\n\nGiven a defect, produce an ordered, evidence-backed repair strategy.\n\nA \"defect\" here is a structured observation: a failing test, a failing CI\nstep, or a runtime-detected issue. Defects are supplied by the caller or read\nfrom artifacts the runtime already produces (``runtime-defects.json``,\n``normalized-issues.json``). This module never invents defects and never\nguesses which file is at fault: the defect's own evidence path is resolved\nthrough the canonical provider to find owners.\n\nRepair order is topological: fix providers before consumers. That ordering is\ntaken from the canonical dependency/ownership graphs, so it is reproducible.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/optimizer.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.verification.profiles.get_profile"
+      ],
+      "classes": [
+        "VerificationUnit",
+        "SkippedSuite",
+        "VerificationPlanIntel"
+      ],
+      "functions": [
+        "_baseline_seconds",
+        "optimize_verification",
+        "to_dict",
+        "to_dict",
+        "estimated_seconds",
+        "savings_seconds",
+        "to_dict",
+        "impacted"
+      ],
+      "decorators": [
+        "property",
+        "property"
+      ],
+      "docstring": "Phase 3 \u2014 Verification Optimizer.\n\nComputes the *minimum* verification that still covers the blast radius.\n\nThe optimizer never invents test paths. Unit test targets come from\n``Engine.tests`` in provider state; suite-level targets come from the real\nverification profiles in :mod:`runtime.foundation.verification.profiles`.\n\nCorrectness rule\n----------------\nA suite may only be skipped when the blast radius contains **no** impacted\nentity of the kind that suite verifies. Skipping is therefore a statement\nabout evidence (\"no frontend entity is impacted\"), not a cost heuristic. Every\nskip records that justification so the decision is auditable.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/change.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.changeset.ChangeSet",
+        "runtime.foundation.intelligence.platform.changeset.collect_changeset",
+        "runtime.foundation.intelligence.platform.resolver.EntityRef",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver"
+      ],
+      "classes": [
+        "ChangeIntelligence"
+      ],
+      "functions": [
+        "_is_platform_path",
+        "_endpoints_for",
+        "analyze_changes",
+        "all_entities",
+        "to_dict"
+      ],
+      "decorators": [
+        "property"
+      ],
+      "docstring": "Phase 1 \u2014 Engineering Change Intelligence.\n\nTurns a raw :class:`ChangeSet` (files/symbols/imports) into *architectural*\nchange facts: which engines, modules, capabilities, routers, endpoints,\nworkspaces, components and tests actually changed.\n\nEvery mapping is provider-resolved. A path becomes an engine because\n``Architecture.engine_for_path`` says so, never because it looks like one.\nPaths the provider does not recognise are reported under ``unmapped`` rather\nthan being force-fitted into a category.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/cli_format.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "sys",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.intelligence.platform.change.ChangeIntelligence",
+        "runtime.foundation.intelligence.platform.optimizer.VerificationPlanIntel",
+        "runtime.foundation.intelligence.platform.repair.RepairPlan",
+        "runtime.foundation.intelligence.platform.risk.EngineeringRisk"
+      ],
+      "classes": [],
+      "functions": [
+        "_color",
+        "_bold",
+        "_cyan",
+        "_yellow",
+        "_green",
+        "_red",
+        "format_affected",
+        "format_diagnostic",
+        "format_repair",
+        "format_risk"
+      ],
+      "decorators": [],
+      "docstring": "Canonical CLI formatter \u2014 Program 14.1.\n\nFormats the canonical intelligence outputs for the ``affected``, ``diagnose``,\n``repair`` and ``risk`` commands. This replaces the legacy\n``runtime/foundation/intelligence/formatter.py`` which formatted the\npre-14.0 dataclasses. Output is produced from canonical ``platform`` objects\nonly; no selection or inference happens here.",
+      "engine_name": ""
+    },
+    {
+      "path": "runtime/foundation/intelligence/platform/pipeline.py",
+      "language": "python",
+      "node_type": "Utility",
+      "imports": [
+        "__future__.annotations",
+        "json",
+        "dataclasses.dataclass",
+        "datetime.datetime",
+        "datetime.timezone",
+        "pathlib.Path",
+        "typing.Any",
+        "runtime.foundation.intelligence.platform.blast.BlastRadius",
+        "runtime.foundation.intelligence.platform.blast.compute_blast_radius",
+        "runtime.foundation.intelligence.platform.change.ChangeIntelligence",
+        "runtime.foundation.intelligence.platform.change.analyze_changes",
+        "runtime.foundation.intelligence.platform.ci.GitHubIntelligence",
+        "runtime.foundation.intelligence.platform.ci.collect_github_intelligence",
+        "runtime.foundation.intelligence.platform.cost.VerificationCost",
+        "runtime.foundation.intelligence.platform.cost.estimate_cost",
+        "runtime.foundation.intelligence.platform.memory.EngineeringMemory",
+        "runtime.foundation.intelligence.platform.memory.build_memory",
+        "runtime.foundation.intelligence.platform.optimizer.VerificationPlanIntel",
+        "runtime.foundation.intelligence.platform.optimizer.optimize_verification",
+        "runtime.foundation.intelligence.platform.repair.RepairPlan",
+        "runtime.foundation.intelligence.platform.repair.build_repair_intelligence",
+        "runtime.foundation.intelligence.platform.resolver.EntityResolver",
+        "runtime.foundation.intelligence.platform.resolver.get_resolver",
+        "runtime.foundation.intelligence.platform.risk.EngineeringRisk",
+        "runtime.foundation.intelligence.platform.risk.assess_risk",
+        "runtime.foundation.intelligence.platform.state.build_platform_state"
+      ],
+      "classes": [
+        "IntelligenceRun"
+      ],
+      "functions": [
+        "_write",
+        "run_intelligence",
+        "documents"
+      ],
+      "decorators": [],
+      "docstring": "Engineering Intelligence pipeline \u2014 Program 14.0.\n\nRuns Phases 1-9 in dependency order and writes the deliverable artifacts.\n\nOrdering matters and is fixed:\n\n    change -> blast -> plan -> memory -> risk -> repair -> ci -> cost -> state\n\nMemory is built before risk because the CI risk dimension consumes observed\nhistory. Everything downstream of ``change`` consumes already-computed\nresults, so the provider is read exactly once per run.",
+      "engine_name": ""
+    },
+    {
       "path": "frontend/playwright.config.ts",
       "language": "typescript",
       "node_type": "Utility",
@@ -11756,20 +12403,6 @@
       "node_type": "Utility",
       "imports": [
         "next"
-      ],
-      "classes": [],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/format.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@/lib/utils/format",
-        "./utils/format"
       ],
       "classes": [],
       "functions": [],
@@ -11865,22 +12498,6 @@
       ],
       "classes": [
         "cn"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/money.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [],
-      "classes": [
-        "Money",
-        "formatMoney",
-        "rupeesToMoney",
-        "moneyToRupees"
       ],
       "functions": [],
       "decorators": [],
@@ -12263,6 +12880,7 @@
       "node_type": "Utility",
       "imports": [
         "@playwright/test",
+        "@playwright/test",
         "child_process",
         "fs",
         "path"
@@ -12522,7 +13140,6 @@
         "./reconciliation-view-model",
         "./behaviour-view-model",
         "./forecast-view-model",
-        "./financial",
         "./api-generated"
       ],
       "classes": [],
@@ -12561,23 +13178,6 @@
         "PrepaymentRequest",
         "PrepaymentSimulation",
         "NetWorth"
-      ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/types/financial.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [],
-      "classes": [
-        "NetWorth",
-        "NetWorthTrendResponse",
-        "MonthlyCashflowResponse",
-        "CashflowBreakdown",
-        "BehaviorScore"
       ],
       "functions": [],
       "decorators": [],
@@ -12747,6 +13347,7 @@
       "node_type": "Utility",
       "imports": [
         "./use-async-query",
+        "./use-async-query",
         "@tanstack/react-query",
         "@/lib/schemas/reconciliation"
       ],
@@ -12804,6 +13405,7 @@
         "react",
         "@/lib/api/client",
         "@/lib/api/client",
+        "./use-async-query",
         "./use-async-query"
       ],
       "classes": [
@@ -12826,6 +13428,7 @@
       "language": "typescript",
       "node_type": "Utility",
       "imports": [
+        "./use-async-query",
         "./use-async-query",
         "@/lib/schemas/cards"
       ],
@@ -13231,20 +13834,6 @@
         "SortState",
         "SortOption"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/sort/index.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@/components/sort/sort-header",
-        "./types"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -13817,7 +14406,6 @@
       "imports": [],
       "classes": [
         "formatINR",
-        "formatPaise",
         "rupeesToPaise",
         "paiseToRupees",
         "formatPercentage",
@@ -13975,8 +14563,7 @@
       "classes": [
         "ICreditCardsMapper",
         "CreditCardsMapper",
-        "creditCardsMapper",
-        "mapCreditCardSummaryDTOToCardSummary"
+        "creditCardsMapper"
       ],
       "functions": [],
       "decorators": [],
@@ -14384,7 +14971,6 @@
       "node_type": "Utility",
       "imports": [],
       "classes": [
-        "spacing",
         "borderRadius",
         "borderWidth",
         "opacity",
@@ -14852,20 +15438,6 @@
         "SearchMatch",
         "SearchState"
       ],
-      "functions": [],
-      "decorators": [],
-      "docstring": "",
-      "engine_name": ""
-    },
-    {
-      "path": "frontend/lib/search/index.ts",
-      "language": "typescript",
-      "node_type": "Utility",
-      "imports": [
-        "@/components/search/transaction-search",
-        "./types"
-      ],
-      "classes": [],
       "functions": [],
       "decorators": [],
       "docstring": "",
@@ -18782,6 +19354,7 @@
       "node_type": "Utility",
       "imports": [
         "react",
+        "react",
         "lucide-react",
         "@/components/ui/button",
         "@/components/ui/card"
@@ -18891,6 +19464,7 @@
       "node_type": "Utility",
       "imports": [
         "react",
+        "react",
         "@/lib/api/client"
       ],
       "classes": [
@@ -18923,6 +19497,7 @@
       "language": "typescript",
       "node_type": "Utility",
       "imports": [
+        "react",
         "react",
         "./workspace-runtime",
         "./selection-runtime",
@@ -19815,7 +20390,13 @@
         "@/components/primitives/layout/scroll-region",
         "@/components/primitives/layout/stack",
         "@/lib/runtime/runtime-types",
-        "@/components/graph/graph-context-panel"
+        "@/components/graph/graph-context-panel",
+        "@/lib/capabilities/use-transaction-capability",
+        "@/lib/capabilities/use-accounts-capability",
+        "@/lib/capabilities/use-loans-capability",
+        "@/lib/capabilities/use-credit-cards-capability",
+        "@/lib/capabilities/use-investments-capability",
+        "@/lib/capabilities/use-reconciliation-capability"
       ],
       "classes": [
         "ContextPanel",
@@ -23375,6 +23956,7 @@
       "imports": [
         "vitest",
         "@testing-library/react",
+        "@tanstack/react-query",
         "../context-panel",
         "@/lib/runtime/selection-runtime",
         "@/lib/intelligence/passive-runtime",
@@ -23590,6 +24172,7 @@
       "language": "typescript",
       "node_type": "Utility",
       "imports": [
+        "react",
         "react",
         "@/components/primitives/surface/surface",
         "@/lib/utils",
@@ -24879,6 +25462,7 @@
         "@/lib/hooks/use-cashflow",
         "@/lib/hooks/use-behavior-score",
         "@/lib/hooks/use-reconciliation",
+        "@/lib/capabilities/use-forecast-capability",
         "@/lib/runtime"
       ],
       "classes": [

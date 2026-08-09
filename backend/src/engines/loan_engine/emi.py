@@ -51,7 +51,7 @@ def compute_emi_fixed(
 
     emi_decimal: Decimal = principal * monthly_rate * factor / (factor - one)
 
-    emi_paise = int(emi_decimal)
+    emi_paise = int(emi_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN))
     return emi_paise
 
 

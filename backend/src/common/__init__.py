@@ -6,7 +6,6 @@ from .calculations import (
     compute_is_large,
     percentage_change,
 )
-from .database import get_db
 from .enrichment import enrich_transaction
 from .formatting import clean_description, format_date_display, format_inr
 from .parsing import get_month_key, get_weekday, parse_date
@@ -21,7 +20,6 @@ __all__ = [
     "percentage_change",
     "compute_is_large",
     "compute_behavioral_insights",
-    "get_db",
     "enrich_transaction",
     "_parse_amount_paise",
 ]

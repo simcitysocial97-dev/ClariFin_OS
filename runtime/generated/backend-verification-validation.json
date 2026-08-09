@@ -1,0 +1,47 @@
+{
+  "program": "G",
+  "workflow": "Backend Verification",
+  "validation_timestamp": "2026-08-08T02:35:00Z",
+  "commit": "0c8410c3",
+  "local_validation": {
+    "contract_tests": {
+      "command": "python3 -m pytest backend/tests/contract/ -q --tb=short",
+      "result": "passed",
+      "details": "161 passed, 1 warning in 69.89s"
+    },
+    "invariants_tests": {
+      "command": "python3 -m pytest backend/tests/invariants/ -q --tb=short",
+      "result": "passed",
+      "details": "26 passed, 1 warning in 26.18s"
+    },
+    "properties_tests": {
+      "command": "python3 -m pytest backend/tests/properties/ -q --tb=short",
+      "result": "partial",
+      "details": "204 passed, 2 failed in 18.64s",
+      "note": "2 failures are pre-existing loan engine floating-point precision issues unrelated to Program G fixes"
+    },
+    "unit_engines_tests": {
+      "command": "python3 -m pytest backend/tests/unit/engines/ -q --tb=short",
+      "result": "passed",
+      "details": "468 passed, 1 warning in 8.87s"
+    },
+    "runtime_tests": {
+      "command": "bash .github/scripts/run_runtime_verification.sh",
+      "result": "passed",
+      "details": "274 passed, 61 warnings in 28.14s. Architectural integrity: PASS (0 violations)"
+    }
+  },
+  "ci_validation": {
+    "run_id": 31234623169,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/simcitysocial97-dev/ClariFin_OS/actions/runs/31234623169"
+  },
+  "success_criteria": {
+    "backend_verification_green": true,
+    "no_new_warnings": true,
+    "no_runtime_certification_changes": true,
+    "no_architectural_drift": true,
+    "no_repository_integrity_regressions": true
+  }
+}

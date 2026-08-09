@@ -14,7 +14,7 @@ const DEFAULT_WORKSPACE: WorkspaceState = {
 };
 
 let _state: WorkspaceState = DEFAULT_WORKSPACE;
-let _configs: Map<WorkspaceName, WorkspaceConfig> = new Map();
+const _configs: Map<WorkspaceName, WorkspaceConfig> = new Map();
 const _listeners: Set<() => void> = new Set();
 
 function notify() {

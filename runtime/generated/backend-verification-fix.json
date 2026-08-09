@@ -1,0 +1,48 @@
+{
+  "program": "G",
+  "workflow": "Backend Verification",
+  "fixes": [
+    {
+      "id": "FIX-1",
+      "root_cause": "RC-1",
+      "category": "repository_issue",
+      "file": "backend/src/routers/accounts.py",
+      "change": "Cast account id to str when constructing AccountDetailDTO",
+      "diff": "-            id=acc[\"id\"],\n+            id=str(acc[\"id\"]),",
+      "rationale": "AccountDetailDTO.id field is typed as str. Database returns int for SQLite AUTOINCREMENT ids. Explicit cast prevents Pydantic validation error."
+    },
+    {
+      "id": "FIX-2",
+      "root_cause": "RC-2",
+      "category": "repository_issue",
+      "file": "backend/src/repositories/account_link_repository.py",
+      "change": "Include id column and alias account_id as primary_account_id in SQL query",
+      "diff": "-                SELECT account_id, linked_account_id, relationship_type, created_at\n+                SELECT id, account_id as primary_account_id, linked_account_id, relationship_type, created_at",
+      "rationale": "AccountLinkDTO requires id and primary_account_id fields. The original query omitted id and used raw account_id column name which doesn't match the DTO field name."
+    },
+    {
+      "id": "FIX-3",
+      "root_cause": "RC-3",
+      "category": "configuration_issue",
+      "file": "runtime/tests/conftest.py",
+      "change": "Update loan engine module path from backend/src/loan_engine to backend/src/engines/loan_engine",
+      "diff": "-                \"modules\": [\"backend/src/loan_engine\"],\n+                \"modules\": [\"backend/src/engines/loan_engine\"],\n-                        \"module\": \"backend/src/loan_engine\",\n+                        \"module\": \"backend/src/engines/loan_engine\",",
+      "rationale": "The isolated_registry test fixture used a stale module path that doesn't match the actual repository structure. This caused verification plan snapshot mismatches."
+    }
+  ],
+  "snapshot_regeneration": {
+    "files": [
+      "runtime/tests/snapshots/verification-plan.json",
+      "runtime/tests/snapshots/verification-report.json"
+    ],
+    "reason": "Snapshots were generated with incorrect module path and stale plan data. Regenerated after fixing config to reflect correct verification targets."
+  },
+  "verification": {
+    "contract_tests": "161 passed, 1 warning",
+    "invariants_tests": "26 passed, 1 warning",
+    "properties_tests": "204 passed, 2 failed (pre-existing loan engine precision issues)",
+    "unit_engines_tests": "468 passed, 1 warning",
+    "runtime_tests": "274 passed, 61 warnings",
+    "architectural_integrity": "PASS (0 violations)"
+  }
+}

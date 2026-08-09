@@ -1,0 +1,64 @@
+{
+  "program": "M",
+  "title": "Controlled Retirement of db.py / common/database.py",
+  "date": "2026-08-08",
+  "baseline_commit": "0c8410c3",
+  "compatibility_files": ["backend/src/db.py", "backend/src/common/database.py"],
+  "canonical_provider": "backend/src/core/db/",
+  "consumers": {
+    "active_executable": [
+      {
+        "consumer": "backend/src/common/database.py",
+        "import": "from src.db import FinanceDB",
+        "usage": "get_db() returns FinanceDB()",
+        "classification": "compatibility-only",
+        "replacement": "DELETE module; remove re-export"
+      },
+      {
+        "consumer": "backend/src/common/__init__.py",
+        "import": "from .database import get_db",
+        "usage": "re-exports deprecated get_db",
+        "classification": "compatibility-only",
+        "replacement": "remove get_db import + __all__ entry"
+      },
+      {
+        "consumer": "tools/generators/generate_synthetic_data.py",
+        "import": "from db import FinanceDB",
+        "usage": "clear_database(): FinanceDB(str(db_path)) to init schema",
+        "classification": "tooling",
+        "replacement": "from src.core.db.schema import create_all, run_migrations, verify_schema; create_all(str(db_path))"
+      },
+      {
+        "consumer": "backend/tests/unit/repositories/test_db.py",
+        "import": "from db import _parse_amount_paise",
+        "usage": "resolves to src.db re-export of _parse_amount_paise",
+        "classification": "test",
+        "replacement": "from src.common.calculations import _parse_amount_paise",
+        "note": "UNDOCUMENTED in Program L counts; discovered during M0"
+      }
+    ],
+    "non_consumers_string_only": [
+      "tests/fixtures/benchmark_fixtures.py",
+      "tests/fixtures/database.py",
+      "tests/fixtures/seed.py",
+      "tests/fixtures/client.py",
+      "routers/accounts.py",
+      "routers/behaviour.py",
+      "routers/credit_cards.py",
+      "routers/financial_intelligence.py",
+      "tools/development/mutation_discovery.py",
+      "backend/scripts/scan_test_anti_patterns.py"
+    ]
+  },
+  "replacement_map": {
+    "FinanceDB(db_path)": "create_all(db_path)  [idempotent: create_all + run_migrations + verify_schema]",
+    "get_db()": "REMOVED (zero production consumers)",
+    "db.py re-export _parse_amount_paise": "src.common.calculations._parse_amount_paise"
+  },
+  "gate_m0": {
+    "result": "PASS",
+    "undocumented_consumer_found": "tests/unit/repositories/test_db.py",
+    "blocked": false,
+    "reason": "Undocumented consumer is migrated to canonical location, not deleted; no missing canonical capability."
+  }
+}

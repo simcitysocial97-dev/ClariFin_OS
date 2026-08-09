@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-07T14:07:41.704835+00:00",
+  "indexed_at": "2026-08-09T00:22:15.199288+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -1055,7 +1055,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1103,7 +1102,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -1298,7 +1300,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1375,7 +1376,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1446,7 +1446,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1518,7 +1517,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1595,7 +1593,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1678,7 +1675,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1757,7 +1753,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1833,7 +1828,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1907,7 +1901,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -1982,7 +1975,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2059,7 +2051,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2139,7 +2130,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2216,7 +2206,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2298,7 +2287,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2357,7 +2345,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2405,7 +2392,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -2467,7 +2457,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -2496,7 +2489,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2536,7 +2528,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -2565,7 +2560,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -2828,7 +2822,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -4215,7 +4208,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -4297,7 +4293,6 @@
           "GET /outlook",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -4345,7 +4340,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -4531,7 +4529,6 @@
           "GET /patterns",
           "GET /priorities",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -4579,7 +4576,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -4622,38 +4622,17 @@
         "path": "/recommendations",
         "method": "GET",
         "references": {
-          "source_file": "backend/src/engines/behaviour_engine",
+          "source_file": "backend/src/engines/financial_intelligence",
           "architecture_provider": "runtime.foundation.architecture.get_architecture",
-          "service:backend/src/services/behaviour_service.py": "service:backend/src/services/behaviour_service.py",
-          "service:backend/src/services/dashboard_service.py": "service:backend/src/services/dashboard_service.py",
-          "service:backend/src/services/import_service.py": "service:backend/src/services/import_service.py",
-          "capability:useBehaviourCapability": "capability:useBehaviourCapability",
-          "router:backend/src/routers/behaviour.py": "router:backend/src/routers/behaviour.py",
-          "router:backend/src/routers/dashboard.py": "router:backend/src/routers/dashboard.py",
-          "router:backend/src/routers/import_router.py": "router:backend/src/routers/import_router.py",
-          "mapper:lib/mappers/behaviour-mapper": "mapper:lib/mappers/behaviour-mapper",
-          "viewModel:types/behaviour-view-model": "viewModel:types/behaviour-view-model",
-          "component:components/behaviour/behaviour-evidence-drawer": "component:components/behaviour/behaviour-evidence-drawer",
-          "component:components/behaviour/behaviour-insights-panel": "component:components/behaviour/behaviour-insights-panel",
-          "component:components/behaviour/behaviour-score": "component:components/behaviour/behaviour-score",
-          "component:components/behaviour/debt-health": "component:components/behaviour/debt-health",
-          "component:components/behaviour/empty-state": "component:components/behaviour/empty-state",
-          "component:components/behaviour/error-state": "component:components/behaviour/error-state",
-          "component:components/behaviour/loading-skeleton": "component:components/behaviour/loading-skeleton",
-          "component:components/behaviour/savings-rate": "component:components/behaviour/savings-rate",
-          "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
-          "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
-          "workspace:behaviour": "workspace:behaviour",
-          "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
-          "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
-          "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
-          "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
-          "test:backend/tests/unit/engines/behaviour/test_patterns.py": "test:backend/tests/unit/engines/behaviour/test_patterns.py"
+          "service:backend/src/services/financial_intelligence_service.py": "service:backend/src/services/financial_intelligence_service.py",
+          "router:backend/src/routers/financial_intelligence.py": "router:backend/src/routers/financial_intelligence.py",
+          "test:backend/tests/properties/forecasting/test_engine_properties.py": "test:backend/tests/properties/forecasting/test_engine_properties.py"
         },
         "tags": [
           "DELETE /accounts/manage/{account_id}",
           "DELETE /accounts/{account_id}",
           "DELETE /accounts/{account_id}/links/{linked_account_id}",
+          "DELETE /credit-cards/{card_id}",
           "GET /accounts",
           "GET /accounts/manage",
           "GET /accounts/{account_id}",
@@ -4666,21 +4645,44 @@
           "GET /accounts/{account_id}/metrics",
           "GET /accounts/{account_id}/running-balance",
           "GET /accounts/{account_id}/status",
+          "GET /cashflow-forecast",
           "GET /cashflow-health",
+          "GET /credit-cards",
+          "GET /credit-cards/{card_id}",
+          "GET /credit-cards/{card_id}/metrics",
+          "GET /credit-cards/{card_id}/next-statement-date",
+          "GET /credit-cards/{card_id}/outstanding",
+          "GET /credit-cards/{card_id}/statements",
+          "GET /credit-cards/{card_id}/utilization",
+          "GET /credit-forecast",
           "GET /debt-health",
           "GET /institutions",
           "GET /institutions/{institution_id}",
+          "GET /liquidity-forecast",
           "GET /monthly-report",
+          "GET /outlook",
           "GET /patterns",
+          "GET /priorities",
           "GET /profile",
           "GET /recommendations",
+          "GET /summary",
+          "GET /wellness-score",
           "POST /accounts",
           "POST /accounts/manage",
           "POST /accounts/{account_id}/balance-history",
           "POST /accounts/{account_id}/links",
+          "POST /credit-cards",
+          "POST /credit-cards/{card_id}/emi-conversion",
+          "POST /credit-cards/{card_id}/foreclosure",
+          "POST /credit-cards/{card_id}/payments",
+          "POST /credit-cards/{card_id}/statements",
+          "POST /import/detect",
+          "POST /import/execute",
           "POST /institutions",
+          "POST /upload",
           "PUT /accounts/manage/{account_id}",
           "PUT /accounts/{account_id}",
+          "PUT /credit-cards/{card_id}",
           "PUT /institutions/{institution_id}"
         ]
       },
@@ -4965,7 +4967,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -4994,7 +4999,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "POST /accounts",
           "POST /accounts/manage",
@@ -5032,7 +5036,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -5061,7 +5068,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -5103,7 +5109,10 @@
           "component:components/behaviour/spending-patterns": "component:components/behaviour/spending-patterns",
           "component:components/behaviour/wellness-radar": "component:components/behaviour/wellness-radar",
           "workspace:behaviour": "workspace:behaviour",
+          "test:backend/tests/capability/pattern_analysis/test_capability.py": "test:backend/tests/capability/pattern_analysis/test_capability.py",
           "test:backend/tests/properties/behaviour/test_engine_properties.py": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+          "test:backend/tests/properties/recommendations/test_engine_properties.py": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+          "test:backend/tests/unit/engines/behavior/test_behavior_engine.py": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
           "test:backend/tests/unit/engines/behaviour/test_core.py": "test:backend/tests/unit/engines/behaviour/test_core.py",
           "test:backend/tests/unit/engines/behaviour/test_integration.py": "test:backend/tests/unit/engines/behaviour/test_integration.py",
           "test:backend/tests/unit/engines/behaviour/test_metrics.py": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -5132,7 +5141,6 @@
           "GET /monthly-report",
           "GET /patterns",
           "GET /profile",
-          "GET /recommendations",
           "GET /summary",
           "GET /wellness-score",
           "POST /accounts",
@@ -5419,7 +5427,6 @@
           "endpoint:GET /monthly-report": "endpoint:GET /monthly-report",
           "endpoint:GET /patterns": "endpoint:GET /patterns",
           "endpoint:GET /profile": "endpoint:GET /profile",
-          "endpoint:GET /recommendations": "endpoint:GET /recommendations",
           "endpoint:GET /summary": "endpoint:GET /summary",
           "endpoint:GET /wellness-score": "endpoint:GET /wellness-score",
           "endpoint:POST /import/detect": "endpoint:POST /import/detect",
@@ -9491,6 +9498,126 @@
         ]
       },
       {
+        "title": "BACKEND_SRC_ARCHITECTURE_BASELINE",
+        "path": "docs/audits/backend-src/BACKEND_SRC_ARCHITECTURE_BASELINE.md",
+        "references": {
+          "path": "docs/audits/backend-src/BACKEND_SRC_ARCHITECTURE_BASELINE.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "BACKEND_SRC_CI_RISKS",
+        "path": "docs/audits/backend-src/BACKEND_SRC_CI_RISKS.md",
+        "references": {
+          "path": "docs/audits/backend-src/BACKEND_SRC_CI_RISKS.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "BACKEND_SRC_DEPENDENCY_MAP",
+        "path": "docs/audits/backend-src/BACKEND_SRC_DEPENDENCY_MAP.md",
+        "references": {
+          "path": "docs/audits/backend-src/BACKEND_SRC_DEPENDENCY_MAP.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "BACKEND_SRC_FILE_CLASSIFICATION",
+        "path": "docs/audits/backend-src/BACKEND_SRC_FILE_CLASSIFICATION.md",
+        "references": {
+          "path": "docs/audits/backend-src/BACKEND_SRC_FILE_CLASSIFICATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "BACKEND_SRC_LEGACY_CANDIDATES",
+        "path": "docs/audits/backend-src/BACKEND_SRC_LEGACY_CANDIDATES.md",
+        "references": {
+          "path": "docs/audits/backend-src/BACKEND_SRC_LEGACY_CANDIDATES.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "PROGRAMS_I_K_FINAL_VALIDATION",
+        "path": "docs/audits/backend-src/PROGRAMS_I_K_FINAL_VALIDATION.md",
+        "references": {
+          "path": "docs/audits/backend-src/PROGRAMS_I_K_FINAL_VALIDATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "PROGRAM_I_HYGIENE_VALIDATION",
+        "path": "docs/audits/backend-src/PROGRAM_I_HYGIENE_VALIDATION.md",
+        "references": {
+          "path": "docs/audits/backend-src/PROGRAM_I_HYGIENE_VALIDATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "PROGRAM_J_REGISTRY_VALIDATION",
+        "path": "docs/audits/backend-src/PROGRAM_J_REGISTRY_VALIDATION.md",
+        "references": {
+          "path": "docs/audits/backend-src/PROGRAM_J_REGISTRY_VALIDATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "PROGRAM_K_FIXTURE_MIGRATION",
+        "path": "docs/audits/backend-src/PROGRAM_K_FIXTURE_MIGRATION.md",
+        "references": {
+          "path": "docs/audits/backend-src/PROGRAM_K_FIXTURE_MIGRATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-l-root-module-ownership",
+        "path": "docs/audits/backend-src/program-l-root-module-ownership.md",
+        "references": {
+          "path": "docs/audits/backend-src/program-l-root-module-ownership.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-m-baseline",
+        "path": "docs/audits/backend-src/program-m-baseline.md",
+        "references": {
+          "path": "docs/audits/backend-src/program-m-baseline.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-m-final",
+        "path": "docs/audits/backend-src/program-m-final.md",
+        "references": {
+          "path": "docs/audits/backend-src/program-m-final.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "INTEGRATION_DECISION_DOCUMENT",
         "path": "docs/decisions/INTEGRATION_DECISION_DOCUMENT.md",
         "references": {
@@ -9545,6 +9672,36 @@
         "path": "docs/program-c-repository-freeze.md",
         "references": {
           "path": "docs/program-c-repository-freeze.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-d-quality-gate",
+        "path": "docs/program-d-quality-gate.md",
+        "references": {
+          "path": "docs/program-d-quality-gate.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-e-root-cause",
+        "path": "docs/program-e-root-cause.md",
+        "references": {
+          "path": "docs/program-e-root-cause.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "program-g-backend-verification",
+        "path": "docs/program-g-backend-verification.md",
+        "references": {
+          "path": "docs/program-g-backend-verification.md"
         },
         "tags": [
           "md"
@@ -9873,6 +10030,6 @@
     "verification_profiles": 10,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 136
+    "documentation": 151
   }
 }

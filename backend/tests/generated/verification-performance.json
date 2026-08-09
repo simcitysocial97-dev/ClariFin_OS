@@ -1,0 +1,240 @@
+{
+  "generated_at": "2026-07-29T14:04:47.487010",
+  "time_period": "sample",
+  "test_performance": [
+    {
+      "timestamp": "2026-07-29T14:04:47.486896",
+      "metric_name": "test_performance_unit",
+      "value": 51.666666666666664,
+      "unit": "ms",
+      "tags": {
+        "test_type": "unit"
+      },
+      "test_type": "unit",
+      "test_count": 3,
+      "avg_execution_time_ms": 51.666666666666664,
+      "max_execution_time_ms": 60,
+      "min_execution_time_ms": 45
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486916",
+      "metric_name": "test_performance_property",
+      "value": 200.0,
+      "unit": "ms",
+      "tags": {
+        "test_type": "property"
+      },
+      "test_type": "property",
+      "test_count": 3,
+      "avg_execution_time_ms": 200.0,
+      "max_execution_time_ms": 210,
+      "min_execution_time_ms": 190
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486922",
+      "metric_name": "test_performance_contract",
+      "value": 150.0,
+      "unit": "ms",
+      "tags": {
+        "test_type": "contract"
+      },
+      "test_type": "contract",
+      "test_count": 3,
+      "avg_execution_time_ms": 150.0,
+      "max_execution_time_ms": 160,
+      "min_execution_time_ms": 140
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486927",
+      "metric_name": "test_performance_capability",
+      "value": 303.3333333333333,
+      "unit": "ms",
+      "tags": {
+        "test_type": "capability"
+      },
+      "test_type": "capability",
+      "test_count": 3,
+      "avg_execution_time_ms": 303.3333333333333,
+      "max_execution_time_ms": 320,
+      "min_execution_time_ms": 290
+    }
+  ],
+  "coverage": [
+    {
+      "timestamp": "2026-07-29T14:04:47.486934",
+      "metric_name": "coverage_line",
+      "value": 85.0,
+      "unit": "%",
+      "tags": {
+        "coverage_type": "line"
+      },
+      "coverage_type": "line",
+      "covered": 850,
+      "total": 1000,
+      "percentage": 85.0
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486940",
+      "metric_name": "coverage_branch",
+      "value": 80.0,
+      "unit": "%",
+      "tags": {
+        "coverage_type": "branch"
+      },
+      "coverage_type": "branch",
+      "covered": 720,
+      "total": 900,
+      "percentage": 80.0
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486944",
+      "metric_name": "coverage_capability",
+      "value": 75.0,
+      "unit": "%",
+      "tags": {
+        "coverage_type": "capability"
+      },
+      "coverage_type": "capability",
+      "covered": 15,
+      "total": 20,
+      "percentage": 75.0
+    }
+  ],
+  "risk_assessment": [
+    {
+      "timestamp": "2026-07-29T14:04:47.486950",
+      "metric_name": "risk_assessment_low",
+      "value": 0.9615384615384616,
+      "unit": "ratio",
+      "tags": {
+        "risk_level": "LOW"
+      },
+      "risk_level": "LOW",
+      "true_positives": 50,
+      "false_positives": 2,
+      "false_negatives": 1,
+      "precision": 0.9615384615384616,
+      "recall": 0.9803921568627451
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486957",
+      "metric_name": "risk_assessment_medium",
+      "value": 0.9090909090909091,
+      "unit": "ratio",
+      "tags": {
+        "risk_level": "MEDIUM"
+      },
+      "risk_level": "MEDIUM",
+      "true_positives": 30,
+      "false_positives": 3,
+      "false_negatives": 2,
+      "precision": 0.9090909090909091,
+      "recall": 0.9375
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486961",
+      "metric_name": "risk_assessment_high",
+      "value": 0.9375,
+      "unit": "ratio",
+      "tags": {
+        "risk_level": "HIGH"
+      },
+      "risk_level": "HIGH",
+      "true_positives": 15,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "precision": 0.9375,
+      "recall": 1.0
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486964",
+      "metric_name": "risk_assessment_critical",
+      "value": 1.0,
+      "unit": "ratio",
+      "tags": {
+        "risk_level": "CRITICAL"
+      },
+      "risk_level": "CRITICAL",
+      "true_positives": 5,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  ],
+  "selective_execution": [
+    {
+      "timestamp": "2026-07-29T14:04:47.486970",
+      "metric_name": "selective_execution_full",
+      "value": 0.0,
+      "unit": "%",
+      "tags": {
+        "strategy": "full"
+      },
+      "strategy": "full",
+      "jobs_executed": 10,
+      "jobs_skipped": 0,
+      "execution_time_saved_seconds": 0,
+      "efficiency_percentage": 0.0
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486975",
+      "metric_name": "selective_execution_selective",
+      "value": 60.0,
+      "unit": "%",
+      "tags": {
+        "strategy": "selective"
+      },
+      "strategy": "selective",
+      "jobs_executed": 4,
+      "jobs_skipped": 6,
+      "execution_time_saved_seconds": 1200,
+      "efficiency_percentage": 60.0
+    }
+  ],
+  "capability_validation": [
+    {
+      "timestamp": "2026-07-29T14:04:47.486980",
+      "metric_name": "capability_validation_financial_events",
+      "value": 850,
+      "unit": "ms",
+      "tags": {
+        "capability_id": "financial_events"
+      },
+      "capability_id": "financial_events",
+      "validation_passed": true,
+      "validation_time_ms": 850,
+      "issues_found": 0,
+      "critical_issues": 0
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486985",
+      "metric_name": "capability_validation_credit_cards",
+      "value": 1200,
+      "unit": "ms",
+      "tags": {
+        "capability_id": "credit_cards"
+      },
+      "capability_id": "credit_cards",
+      "validation_passed": true,
+      "validation_time_ms": 1200,
+      "issues_found": 2,
+      "critical_issues": 0
+    },
+    {
+      "timestamp": "2026-07-29T14:04:47.486988",
+      "metric_name": "capability_validation_debt_management",
+      "value": 950,
+      "unit": "ms",
+      "tags": {
+        "capability_id": "debt_management"
+      },
+      "capability_id": "debt_management",
+      "validation_passed": false,
+      "validation_time_ms": 950,
+      "issues_found": 5,
+      "critical_issues": 1
+    }
+  ],
+  "overall_score": 75.58231351981352
+}

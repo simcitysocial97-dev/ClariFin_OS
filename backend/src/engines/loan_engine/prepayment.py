@@ -278,6 +278,19 @@ def regenerate_schedule(
         new_tenure = _compute_tenure_from_emi(
             new_principal_paise, annual_rate_bps, original_emi
         )
+        # A prepayment reduces the outstanding principal, so the remaining tenure
+        # must never grow beyond the original tail length. Integer EMI/tenure
+        # rounding can otherwise push new_tenure up by one month. We clamp only
+        # when the principal was actually reduced (prepayment case); when the
+        # principal is unchanged (e.g. a floating-rate increase in adjust_tenure
+        # mode) the tenure is legitimately allowed to grow.
+        if previous_schedule:
+            opening_balance = (
+                previous_schedule[0].balance_paise
+                + previous_schedule[0].principal_paise
+            )
+            if new_principal_paise < opening_balance:
+                new_tenure = min(new_tenure, len(previous_schedule))
         new_emi = original_emi
     else:  # reduce_emi
         if original_tenure is None:

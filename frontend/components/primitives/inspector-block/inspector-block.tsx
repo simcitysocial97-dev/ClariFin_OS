@@ -8,7 +8,8 @@
 
 'use client';
 
-import { ReactNode, useState } from 'react';
+import type { ReactNode} from 'react';
+import { useState } from 'react';
 import { Surface } from '@/components/primitives/surface/surface';
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronRight } from 'lucide-react';

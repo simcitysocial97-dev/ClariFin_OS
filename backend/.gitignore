@@ -10,8 +10,10 @@ __pycache__/
 Database
 *.db
 .sqlite
-data/
-uploads/
+# Anchored to backend/data (the runtime DB dir resolved by core/db/config.py).
+# Unanchored "data/" also matched backend/src/data/, masking tracked source.
+/data/
+/uploads/
 test_.db
 
 Environment

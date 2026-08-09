@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { useTransactionCapability } from '../use-transaction-capability';
+import type { useTransactionCapability } from '../use-transaction-capability';
 import type {
   TransactionCapabilityState,
   TransactionCapabilityActions,

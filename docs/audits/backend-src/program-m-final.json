@@ -1,0 +1,96 @@
+{
+  "program": "M",
+  "title": "Controlled Retirement of db.py / common/database.py",
+  "date": "2026-08-08",
+  "final_commit": "ab3046f6",
+  "baseline_commit": "0c8410c3",
+  "canonical_provider": "backend/src/core/db/",
+  "removed_files": [
+    "backend/src/db.py",
+    "backend/src/common/database.py"
+  ],
+  "migrated_consumers": [
+    {
+      "before": "backend/src/common/database.py -> from src.db import FinanceDB (get_db shim)",
+      "after": "DELETED; get_db re-export removed from common/__init__.py",
+      "behavior_preserved": true
+    },
+    {
+      "before": "backend/src/common/__init__.py -> from .database import get_db",
+      "after": "removed get_db import + __all__ entry; package retained",
+      "behavior_preserved": true
+    },
+    {
+      "before": "tools/generators/generate_synthetic_data.py -> from db import FinanceDB; FinanceDB(str(db_path))",
+      "after": "from src.core.db.schema import create_all; create_all(str(db_path))",
+      "behavior_preserved": true,
+      "note": "create_all is idempotent and runs create_all + run_migrations + verify_schema, exactly matching FinanceDB.__init__"
+    },
+    {
+      "before": "backend/tests/unit/repositories/test_db.py -> from db import _parse_amount_paise",
+      "after": "from src.common.calculations import _parse_amount_paise (canonical definition)",
+      "behavior_preserved": true
+    },
+    {
+      "before": "backend/tests/fixtures/database.py (Program K, uncommitted) -> from src.db import FinanceDB",
+      "after": "committed Program K migration: src.core.db.connection/schema; TestDatabase handle",
+      "behavior_preserved": true,
+      "note": "Included in retirement commit so the committed tree does not reference the deleted module"
+    }
+  ],
+  "remaining_compatibility_references_executable": 0,
+  "remaining_compatibility_references_docstring_only": [
+    "tests/fixtures/benchmark_fixtures.py",
+    "tests/fixtures/seed.py",
+    "tests/fixtures/client.py",
+    "routers/accounts.py",
+    "routers/behaviour.py",
+    "routers/credit_cards.py",
+    "routers/financial_intelligence.py",
+    "tools/development/mutation_discovery.py (string literal list)",
+    "backend/scripts/scan_test_anti_patterns.py (AST scanner source)",
+    "backend/src/core/db/schema.py (historical docstring)"
+  ],
+  "canonical_database_ownership": "backend/src/core/db/ is the sole production database implementation (config, connection, schema, transaction, health).",
+  "regression_gates": {
+    "gate1_import_integrity": "PASS (224 src modules import clean)",
+    "gate2_architecture_meta": "PASS (111 passed: architecture 50 + meta 61)",
+    "gate3_fast_checks": "PASS (ruff, black, 760 unit, 50 architecture, 61 meta — all green; exit 0)",
+    "gate4_runtime_quick": "PASS (from repo root: Passed 1/Failed 0, 67.9s)",
+    "gate5_backend_verification": "PRE-EXISTING FAILURES ONLY (5x run_backend_verification.sh). Failures are loan_engine/financial_events Hypothesis property tests in tests/properties/. Confirmed NONE import the deleted compatibility layer. Not caused by Program M.",
+    "gate6_clean_checkout": "PASS (worktree at ab3046f6: db.py/common/database.py absent, core/db + src/data/__init__.py present, 217 src modules import, 116 arch/meta/test_db tests pass)"
+  },
+  "pre_existing_failures": [
+    "tests/properties/loan_engine/test_floating_rate_properties.py (2)",
+    "tests/properties/loan_engine/test_foreclosure_properties.py (1)",
+    "tests/properties/loan_engine/test_metrics_properties.py (2)",
+    "tests/properties/loan_engine/test_prepayment_properties.py (1)",
+    "tests/properties/financial_events/test_lineage_properties.py (1)"
+  ],
+  "git_cleanliness": {
+    "tracked_compat_files": "none (removed)",
+    "ignored_artifacts_committed": "none",
+    "pyc_or_mypy_cache": "none tracked",
+    "unrelated_modifications": "none in Program M commit"
+  },
+  "success_criteria": {
+    "all_consumers_identified": true,
+    "all_legitimate_consumers_migrated": true,
+    "no_active_executable_consumer_depends_on_compat_layer": true,
+    "financedb_retired": true,
+    "get_db_retired": true,
+    "core_db_sole_implementation": true,
+    "no_runtime_verification_rules_changed": true,
+    "no_tests_weakened": true,
+    "no_suppressions_introduced": true,
+    "no_unrelated_reorganization": true,
+    "tests_architecture_pass": true,
+    "tests_meta_pass": true,
+    "run_fast_checks_pass": true,
+    "runtime_quick_pass": true,
+    "backend_verification_no_new_failures": true,
+    "clean_checkout_pass": true,
+    "gitignore_source_integrity_clean": true,
+    "final_artifacts_generated": true
+  }
+}

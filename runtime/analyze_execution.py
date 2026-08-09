@@ -155,8 +155,8 @@ def build():
             "Repository/DB access is performed by the Service layer (around the Engine). "
             "Engines and their implementation modules are PURE (no DB, no I/O).",
             "Engines without a capability owner (transaction_intelligence, financial_events, "
-            "balance_engine, ledger_audit_engine, reconciliation_engine, nudge_engine, "
-            "insight_generator) appear only as sub-nodes in other engines' execution traces "
+            "balance_engine, ledger_audit_engine, reconciliation_engine) "
+            "appear only as sub-nodes in other engines' execution traces "
             "or as internal services, never as a top-level capability execution root.",
         ],
     }

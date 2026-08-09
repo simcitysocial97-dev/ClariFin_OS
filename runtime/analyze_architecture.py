@@ -21,18 +21,21 @@ RUNTIME_DIR = REPO_ROOT / "runtime"
 FRONTEND_DIR = REPO_ROOT / "frontend"
 
 # Single-file engines (real, in backend/src/engines/)
+# NOTE (Program J): nudge_engine.py and insight_generator.py were removed from the
+# tree; their behaviour was absorbed into behaviour_engine/nudges.py and
+# behaviour_engine/insights.py. cashflow_engine.py is live again (un-parked) and
+# backs the household_cashflow capability.
 SINGLE_FILE_ENGINES = {
     "backend/src/engines/balance_engine.py",
+    "backend/src/engines/cashflow_engine.py",
     "backend/src/engines/ledger_audit_engine.py",
-    "backend/src/engines/nudge_engine.py",
     "backend/src/engines/reconciliation_engine.py",
-    "backend/src/engines/insight_generator.py",
 }
 
 # Parked / legacy single-file engines (do NOT import; replaced)
-ENGINE_FACADES = {
-    "backend/src/engines/behavior_engine.py": "PARKED legacy engine replaced by behaviour_engine package",
-}
+# NOTE (Program J): behavior_engine.py no longer exists on disk — the migration to
+# the behaviour_engine/ package is complete, so there is no facade to declare.
+ENGINE_FACADES: dict[str, str] = {}
 
 # Package-based engine roots (directory packages whose __init__.py is the public API)
 ENGINE_PACKAGE_ROOTS = {

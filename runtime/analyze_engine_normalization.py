@@ -24,18 +24,13 @@ from pathlib import Path
 REPO = Path("/home/vasantha/AI-Projects/ClariFin_OS")
 
 # Legacy / parked single-file engines that are NOT canonical packages
-PARKED = {
-    "behavior_engine": {
-        "path": "backend/src/engines/behavior_engine.py",
-        "replaces": "backend/src/engines/behaviour_engine/",
-        "note": "PARKED legacy behaviour engine; fully replaced by behaviour_engine package.",
-    },
-    "cashflow_engine": {
-        "path": "backend/src/engines/cashflow_engine.py.parked",
-        "replaces": None,
-        "note": "PARKED legacy cashflow engine; no canonical successor package exists.",
-    },
-}
+# NOTE (Program J): this map is now empty.
+#  - behavior_engine.py was deleted; the behaviour_engine/ package migration is
+#    complete, so there is no parked legacy file left to report.
+#  - cashflow_engine.py.parked no longer exists; cashflow_engine.py is live and
+#    backs the household_cashflow capability, so it is a canonical single-file
+#    engine (declared in analyze_engine_topology.SINGLE_FILE_ENGINES), not parked.
+PARKED: dict[str, dict] = {}
 # Namespace facade: engines/__init__.py re-exports balance_engine symbols
 FACADE_FILES = {
     "backend/src/engines/__init__.py": "Re-exports balance_engine public API; namespace facade.",
@@ -106,12 +101,17 @@ def build():
         })
 
     # duplicate engines
-    duplicate.append({
-        "domain": "behaviour",
-        "engines": ["backend/src/engines/behaviour_engine/ (package)",
-                    "backend/src/engines/behavior_engine.py (legacy single-file)"],
-        "evidence": "Same domain implemented twice: package engine + legacy single-file facade.",
-    })
+    # NOTE (Program J): the behaviour duplicate was unconditional and asserted that
+    # behavior_engine.py coexists with the behaviour_engine/ package. That file no
+    # longer exists, so the duplicate is only reported if the legacy file is still
+    # declared as parked.
+    if "behavior_engine" in PARKED:
+        duplicate.append({
+            "domain": "behaviour",
+            "engines": ["backend/src/engines/behaviour_engine/ (package)",
+                        "backend/src/engines/behavior_engine.py (legacy single-file)"],
+            "evidence": "Same domain implemented twice: package engine + legacy single-file facade.",
+        })
 
     # parked
     for name, info in PARKED.items():
@@ -151,12 +151,15 @@ def build():
             "implementation_only_module_count": len(impl_only),
         },
         "notes": [
-            "8 of 13 canonical engines are PACKAGES; 5 are single-file.",
-            "Single-file engines kept (balance_engine, ledger_audit_engine, "
-            "reconciliation_engine) are small/cohesive; nudge_engine & insight_generator "
-            "are ORPHAN internal sub-engines (consumed only by behaviour_engine/core.py).",
-            "behaviour_engine is PARTIALLY MIGRATED: canonical package exists but the "
-            "legacy behavior_engine.py is still present (parked, not deleted).",
+            "8 of 12 canonical engines are PACKAGES; 4 are single-file.",
+            "Single-file engines kept (balance_engine, cashflow_engine, "
+            "ledger_audit_engine, reconciliation_engine) are small/cohesive.",
+            "behaviour_engine migration is COMPLETE: the canonical package is the only "
+            "implementation; legacy behavior_engine.py, nudge_engine.py and "
+            "insight_generator.py were removed and their behaviour now lives in "
+            "behaviour_engine/nudges.py and behaviour_engine/insights.py.",
+            "cashflow_engine is a canonical single-file engine backing the "
+            "household_cashflow capability (previously mis-recorded as parked).",
             "transaction_intelligence, financial_events, financial_intelligence have NO "
             "capability owner (internal engines); they are CANONICAL_PACKAGE_INTERNAL.",
         ],

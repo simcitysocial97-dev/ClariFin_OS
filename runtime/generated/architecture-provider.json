@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-06T11:03:40.099632+00:00",
+  "generated_at": "2026-08-08T13:09:31.778668+00:00",
   "schema": "architecture-provider-v1",
   "principle": "An Engine is an architectural UNIT (package root or designated single file). Implementation modules, detectors and facades are children, never engines. '*.py == Engine' is forbidden.",
   "single_discovery_pipeline": "runtime.foundation.architecture.discovery",
@@ -12,21 +12,21 @@
     "runtime/generated/artifact-ownership-v2.json"
   ],
   "counts": {
-    "engines": 13,
-    "engine_modules": 46,
+    "engines": 12,
+    "engine_modules": 48,
     "detectors": 3,
-    "facades": 3,
+    "facades": 1,
     "capabilities": 10,
     "routers": 12,
     "endpoints": 76,
-    "services": 33,
+    "services": 32,
     "repositories": 17,
     "workspaces": 8,
     "components": 82,
     "mappers": 24,
     "dtos": 15,
     "view_models": 106,
-    "artifacts": 131
+    "artifacts": 137
   },
   "id_scheme": [
     "artifact",
@@ -114,9 +114,8 @@
       "migration_status": "CANONICAL_PACKAGE",
       "internal": false,
       "evidence": {
-        "import_references": 2,
+        "import_references": 1,
         "importer_files": [
-          "backend/src/routers/accounts.py",
           "backend/src/services/account_service.py"
         ]
       }
@@ -167,7 +166,9 @@
         "backend/src/engines/behaviour_engine/credit_dependency.py",
         "backend/src/engines/behaviour_engine/debt.py",
         "backend/src/engines/behaviour_engine/income.py",
+        "backend/src/engines/behaviour_engine/insights.py",
         "backend/src/engines/behaviour_engine/lifestyle.py",
+        "backend/src/engines/behaviour_engine/nudges.py",
         "backend/src/engines/behaviour_engine/patterns.py",
         "backend/src/engines/behaviour_engine/profile.py",
         "backend/src/engines/behaviour_engine/resilience.py",
@@ -203,7 +204,6 @@
         "GET /monthly-report",
         "GET /patterns",
         "GET /profile",
-        "GET /recommendations",
         "GET /summary",
         "GET /wellness-score",
         "POST /import/detect",
@@ -214,7 +214,10 @@
         "useBehaviourCapability"
       ],
       "tests": [
+        "backend/tests/capability/pattern_analysis/test_capability.py",
         "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/properties/recommendations/test_engine_properties.py",
+        "backend/tests/unit/engines/behavior/test_behavior_engine.py",
         "backend/tests/unit/engines/behaviour/test_core.py",
         "backend/tests/unit/engines/behaviour/test_integration.py",
         "backend/tests/unit/engines/behaviour/test_metrics.py",
@@ -230,6 +233,31 @@
           "backend/src/services/dashboard_service.py",
           "backend/src/services/import_service.py"
         ]
+      }
+    },
+    "cashflow_engine": {
+      "id": "engine:cashflow_engine",
+      "name": "cashflow_engine",
+      "style": "single_file",
+      "path": "backend/src/engines/cashflow_engine.py",
+      "entry_point": "backend/src/engines/cashflow_engine.py",
+      "implementation_modules": [],
+      "detectors": [],
+      "services": [],
+      "routers": [],
+      "repositories": [],
+      "endpoints": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/household_cashflow/test_capability.py",
+        "backend/tests/properties/cashflow/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "migration_status": "ORPHAN_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 0,
+        "importer_files": []
       }
     },
     "credit_card_engine": {
@@ -371,6 +399,7 @@
         "GET /liquidity-forecast",
         "GET /outlook",
         "GET /priorities",
+        "GET /recommendations",
         "GET /recommendations/{recommendation_id}"
       ],
       "capabilities": [],
@@ -384,30 +413,6 @@
         "import_references": 1,
         "importer_files": [
           "backend/src/services/financial_intelligence_service.py"
-        ]
-      }
-    },
-    "insight_generator": {
-      "id": "engine:insight_generator",
-      "name": "insight_generator",
-      "style": "single_file",
-      "path": "backend/src/engines/insight_generator.py",
-      "entry_point": "backend/src/engines/insight_generator.py",
-      "implementation_modules": [],
-      "detectors": [],
-      "services": [],
-      "routers": [],
-      "repositories": [],
-      "endpoints": [],
-      "capabilities": [],
-      "tests": [],
-      "artifacts": [],
-      "migration_status": "ORPHAN_INTERNAL",
-      "internal": true,
-      "evidence": {
-        "import_references": 1,
-        "importer_files": [
-          "backend/src/engines/behaviour_engine/core.py"
         ]
       }
     },
@@ -524,32 +529,6 @@
           "backend/src/services/loan_service.py",
           "backend/src/services/loan_simulation_service.py",
           "backend/src/services/transaction_intelligence_service.py"
-        ]
-      }
-    },
-    "nudge_engine": {
-      "id": "engine:nudge_engine",
-      "name": "nudge_engine",
-      "style": "single_file",
-      "path": "backend/src/engines/nudge_engine.py",
-      "entry_point": "backend/src/engines/nudge_engine.py",
-      "implementation_modules": [],
-      "detectors": [],
-      "services": [],
-      "routers": [],
-      "repositories": [],
-      "endpoints": [],
-      "capabilities": [],
-      "tests": [
-        "backend/tests/properties/recommendations/test_engine_properties.py"
-      ],
-      "artifacts": [],
-      "migration_status": "ORPHAN_INTERNAL",
-      "internal": true,
-      "evidence": {
-        "import_references": 1,
-        "importer_files": [
-          "backend/src/engines/behaviour_engine/core.py"
         ]
       }
     },
@@ -893,6 +872,18 @@
       ],
       "docstring": "Income source analysis for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nIncome Sources (categories):\n- SALARY: Regular employment income, payroll, wages, salaried\n- BUSINESS: Business income, freelance, consulting, commission\n- INVESTMENT: Investment returns, dividends, interest, capital gains\n- TRANSFER: Internal transfers between own accounts\n- REFUND: Refunds, cashbacks, reversals of previous payments\n- BORROWING: Loans, credit advances (not true income)\n- UNKNOWN: Cannot determine source from description"
     },
+    "backend/src/engines/behaviour_engine/insights.py": {
+      "id": "module:backend/src/engines/behaviour_engine/insights.py",
+      "path": "backend/src/engines/behaviour_engine/insights.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "generate_behavioral_insights",
+        "generate_summary_text"
+      ],
+      "docstring": "Insight Generator\n=================\n\nGenerates deterministic, evidence-based behavioral insights.\nNo motivational fluff. No randomness.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer."
+    },
     "backend/src/engines/behaviour_engine/lifestyle.py": {
       "id": "module:backend/src/engines/behaviour_engine/lifestyle.py",
       "path": "backend/src/engines/behaviour_engine/lifestyle.py",
@@ -904,6 +895,19 @@
         "compute_lifestyle_creep_index"
       ],
       "docstring": "Lifestyle metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/behaviour_engine/nudges.py": {
+      "id": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "path": "backend/src/engines/behaviour_engine/nudges.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "generate_nudges",
+        "get_top_nudge",
+        "get_nudge_summary"
+      ],
+      "docstring": "Nudge Engine\n============\n\nRules-based behavioral suggestion engine.\nNon-intrusive, deterministic nudges based on behavioral profile.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer.\n\nBased on behavioral economics principles:\n- Default bias\n- Friction mechanisms\n- Goal framing\n- Loss aversion messaging"
     },
     "backend/src/engines/behaviour_engine/patterns.py": {
       "id": "module:backend/src/engines/behaviour_engine/patterns.py",
@@ -1483,20 +1487,6 @@
       "status": "FACADE",
       "replaces": null,
       "import_references": 0
-    },
-    "backend/src/engines/behavior_engine.py": {
-      "id": "facade:backend/src/engines/behavior_engine.py",
-      "path": "backend/src/engines/behavior_engine.py",
-      "status": "PARKED_LEGACY",
-      "replaces": "engines/behaviour_engine/",
-      "import_references": 0
-    },
-    "backend/src/engines/cashflow_engine.py.parked": {
-      "id": "facade:backend/src/engines/cashflow_engine.py.parked",
-      "path": "backend/src/engines/cashflow_engine.py.parked",
-      "status": "PARKED",
-      "replaces": null,
-      "import_references": 0
     }
   },
   "capabilities": {
@@ -1740,7 +1730,6 @@
         "GET /monthly-report",
         "GET /patterns",
         "GET /profile",
-        "GET /recommendations",
         "GET /wellness-score"
       ],
       "engines": [
@@ -1811,6 +1800,7 @@
         "GET /liquidity-forecast",
         "GET /outlook",
         "GET /priorities",
+        "GET /recommendations",
         "GET /recommendations/{recommendation_id}"
       ],
       "engines": [
@@ -2436,9 +2426,9 @@
       "method": "GET",
       "path": "/recommendations",
       "signature": "GET /recommendations",
-      "router": "backend/src/routers/behaviour.py",
+      "router": "backend/src/routers/financial_intelligence.py",
       "engines": [
-        "behaviour_engine",
+        "financial_intelligence",
         "recommendation_engine"
       ],
       "capabilities": [
@@ -2932,13 +2922,6 @@
       "id": "service:backend/src/services/base.py",
       "path": "backend/src/services/base.py",
       "name": "base",
-      "engines": [],
-      "routers": []
-    },
-    "backend/src/services/base_service.py": {
-      "id": "service:backend/src/services/base_service.py",
-      "path": "backend/src/services/base_service.py",
-      "name": "base_service",
       "engines": [],
       "routers": []
     },
@@ -4931,21 +4914,21 @@
       "path": "frontend/lib/store/use-app-store.ts"
     }
   },
-  "artifact_count": 131,
+  "artifact_count": 137,
   "graphs": {
     "ownership": {
-      "node_count": 165,
-      "edge_count": 196,
+      "node_count": 169,
+      "edge_count": 201,
       "description": "Ownership graph: who OWNS what. Never traverses implementation modules as roots; engines own their modules."
     },
     "execution": {
-      "node_count": 161,
-      "edge_count": 335,
+      "node_count": 163,
+      "edge_count": 337,
       "description": "Execution graph: the runtime call path. May traverse implementation modules; ownership must not."
     },
     "dependency": {
-      "node_count": 162,
-      "edge_count": 277,
+      "node_count": 160,
+      "edge_count": 275,
       "description": "Dependency graph: static import dependencies between canonical architecture nodes. Distinct from ownership and execution."
     }
   }
