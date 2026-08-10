@@ -75,10 +75,8 @@ jobs:
       - name: Upload golden report
         uses: ./.github/actions/upload-runtime
         with:
-          name: golden-report
-          path: |
-            runtime/generated/verification-report.md
-            runtime/generated/verification/
+          name: golden-report   
+          path: runtime/generated/verification-report.md
           retention-days: 90
 
       - name: Upload golden evidence

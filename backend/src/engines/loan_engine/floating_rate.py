@@ -26,6 +26,14 @@ def apply_floating_rate_change(
     remaining_tenure = len(schedule) - change_month + 1
     current_emi = change_row.emi_paise
 
+    # The loan is already fully repaid at (or before) the change month — integer
+    # paise rounding can close the balance a month or two before the nominal end
+    # of the tenure, leaving trailing zero-payment rows. A rate change has no
+    # effect on a closed loan, so the schedule is returned unchanged instead of
+    # regenerating an empty tail (which would silently truncate the schedule).
+    if opening_balance <= 0:
+        return list(schedule)
+
     # Determine mode for regeneration
 
     # For adjust_emi: keep tenure, change EMI -> reduce_emi mode
