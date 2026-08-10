@@ -8,6 +8,13 @@ from typing import Any
 from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
+from src.engines.financial_intelligence.forecasting import (
+    forecast_cashflow,
+    forecast_credit_utilization,
+    forecast_liquidity,
+)
+from src.engines.financial_intelligence.goal_planner import calculate_goal_projection
+from src.engines.financial_intelligence.utils import project_running_balance
 from tests.invariants import assert_forecast_invariants
 
 
@@ -25,7 +32,6 @@ class TestForecastEngineProperties:
         expense_paise: int,
     ) -> None:
         """Forecast cashflow returns dict with forecast list."""
-        from src.engines.financial_intelligence.forecasting import forecast_cashflow
 
         history = [
             {
@@ -63,7 +69,6 @@ class TestForecastEngineProperties:
         expense_paise: int,
     ) -> None:
         """Forecast confidence must be in [0, 1] range."""
-        from src.engines.financial_intelligence.forecasting import forecast_cashflow
 
         history = [
             {
@@ -99,7 +104,6 @@ class TestForecastEngineProperties:
     @settings(max_examples=20)
     def test_forecast_result_invariants(self, month_data: list[dict[str, Any]]) -> None:
         """Forecast output must satisfy invariants."""
-        from src.engines.financial_intelligence.forecasting import forecast_cashflow
 
         result = forecast_cashflow(month_data, forecast_months=3)
         assert_forecast_invariants(result)
@@ -122,7 +126,6 @@ class TestForecastEngineProperties:
         threshold_paise: int,
     ) -> None:
         """Liquidity forecast with positive starting balance."""
-        from src.engines.financial_intelligence.forecasting import forecast_liquidity
 
         cashflow_forecast = [
             {"month": f"2025-0{m}", "expected_surplus_paise": surplus}
@@ -152,8 +155,6 @@ class TestForecastEngineProperties:
         threshold_paise: int,
     ) -> None:
         """Liquidity projections must be monotonic (no sudden drops without explanation)."""
-        from src.engines.financial_intelligence.forecasting import forecast_liquidity
-        from src.engines.financial_intelligence.utils import project_running_balance
 
         assume(len(surplus_values) >= 2)
         cashflow_forecast = [
@@ -190,7 +191,6 @@ class TestForecastEngineProperties:
         threshold_paise: int,
     ) -> None:
         """Shortfall detection must be monotonic (more expenses → higher shortfall)."""
-        from src.engines.financial_intelligence.forecasting import forecast_liquidity
 
         cashflow_forecast = [
             {"month": f"2025-0{m}", "expected_surplus_paise": surplus}
@@ -253,9 +253,6 @@ class TestForecastEngineProperties:
         allocation_ratio: Decimal,
     ) -> None:
         """Goal achievability must be deterministic (same inputs → same output)."""
-        from src.engines.financial_intelligence.goal_planner import (
-            calculate_goal_projection,
-        )
 
         assume(target_amount_paise > 0)
         result1 = calculate_goal_projection(
@@ -306,9 +303,6 @@ class TestForecastEngineProperties:
         credit_history: list[dict[str, Any]],
     ) -> None:
         """Credit utilization projections must be ≤ 100%."""
-        from src.engines.financial_intelligence.forecasting import (
-            forecast_credit_utilization,
-        )
 
         result = forecast_credit_utilization(
             financial_events=financial_events,
@@ -332,10 +326,6 @@ class TestForecastEngineProperties:
         surplus_values: list[int],
     ) -> None:
         """Invalid inputs (negative cashflow, negative goals) must be rejected or handled."""
-        from src.engines.financial_intelligence.forecasting import forecast_liquidity
-        from src.engines.financial_intelligence.goal_planner import (
-            calculate_goal_projection,
-        )
 
         # Test negative liquidity (should be handled gracefully)
         cashflow_forecast = [
