@@ -94,11 +94,12 @@ interface BottomIntelligenceShelfProps {
 
 export function BottomIntelligenceShelf({ className }: BottomIntelligenceShelfProps) {
   const [expanded, setExpanded] = useState(false);
-  const [insights, setInsights] = useState<PassiveInsight[]>([]);
+  const [insights, setInsights] = useState<PassiveInsight[]>(
+    () => passiveInsightRuntime.getInsights(),
+  );
 
   // Subscribe to passive insight changes
   useEffect(() => {
-    setInsights(passiveInsightRuntime.getInsights());
     const unsubscribe = passiveInsightRuntime.subscribe((updated) => {
       setInsights(updated);
     });

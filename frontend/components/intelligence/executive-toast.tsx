@@ -90,10 +90,11 @@ function ToastItem({ insight, onDismiss }: ToastProps) {
 // ─── Toast Stack ──────────────────────────────────────────────────────────────
 
 export function ExecutiveToast() {
-  const [toasts, setToasts] = useState<ExecutiveInsight[]>([]);
+  const [toasts, setToasts] = useState<ExecutiveInsight[]>(
+    () => executiveInsightRuntime.getToastQueue(),
+  );
 
   useEffect(() => {
-    setToasts(executiveInsightRuntime.getToastQueue());
     const unsubscribe = executiveInsightRuntime.subscribe(() => {
       setToasts(executiveInsightRuntime.getToastQueue());
     });

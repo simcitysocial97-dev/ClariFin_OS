@@ -4,8 +4,8 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store/use-app-store';
+import { useMounted } from '@/lib/hooks/use-mounted';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
@@ -31,10 +31,7 @@ export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { cards, transactions, clearAllData } = useAppStore();
   const { toast } = useToast();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
-
+  const mounted = useMounted();
   const exportData = () => {
     const data = { cards, transactions, exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });

@@ -12,7 +12,7 @@
 
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 import { timelineRuntime } from '@/lib/runtime';
 import { cn } from '@/lib/utils';
 import { Play, Pause, SkipBack, SkipForward, BarChart3, TrendingUp } from 'lucide-react';
@@ -42,34 +42,26 @@ export function TimelineControls({ className, onPlaybackTick }: TimelineControls
     timelineRuntime.setForecastMode(!state.forecastMode);
   }, [state.forecastMode]);
 
-  // Playback state (local, synced from runtime)
-  const [playbackPos, setPlaybackPos] = useState<number | null>(
-    timelineRuntime.state.playbackPosition,
-  );
-  const playRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Playback position is read directly from the runtime store during render
+  // (no local mirror kept in sync via setState-in-effect).
+  const playbackPos = timelineRuntime.state.playbackPosition;
 
-  // Sync local playback position with runtime
-  useEffect(() => {
-    setPlaybackPos(timelineRuntime.state.playbackPosition);
-  }, [timelineRuntime.state.playbackPosition]);
+  const playRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const startPlayback = useCallback(() => {
     if (playbackPos === null) {
-      setPlaybackPos(0);
       timelineRuntime.setPlaybackPosition(0);
     }
     playRef.current = setInterval(() => {
-      setPlaybackPos(prev => {
-        const next = (prev ?? 0) + 0.5;
-        if (next >= 100) {
-          if (playRef.current) clearInterval(playRef.current);
-          playRef.current = null;
-          timelineRuntime.setPlaybackPosition(100);
-          return 100;
-        }
-        timelineRuntime.setPlaybackPosition(next);
-        return next;
-      });
+      const current = timelineRuntime.state.playbackPosition ?? 0;
+      const next = current + 0.5;
+      if (next >= 100) {
+        if (playRef.current) clearInterval(playRef.current);
+        playRef.current = null;
+        timelineRuntime.setPlaybackPosition(100);
+        return;
+      }
+      timelineRuntime.setPlaybackPosition(next);
       onPlaybackTick?.(0);
     }, 100);
   }, [playbackPos, onPlaybackTick]);
@@ -79,21 +71,18 @@ export function TimelineControls({ className, onPlaybackTick }: TimelineControls
       clearInterval(playRef.current);
       playRef.current = null;
     }
-    setPlaybackPos(null);
     timelineRuntime.setPlaybackPosition(null);
   }, []);
 
   const stepBack = useCallback(() => {
-    const next = Math.max(0, (playbackPos ?? 50) - 5);
-    setPlaybackPos(next);
+    const next = Math.max(0, (timelineRuntime.state.playbackPosition ?? 50) - 5);
     timelineRuntime.setPlaybackPosition(next);
-  }, [playbackPos]);
+  }, []);
 
   const stepForward = useCallback(() => {
-    const next = Math.min(100, (playbackPos ?? 50) + 5);
-    setPlaybackPos(next);
+    const next = Math.min(100, (timelineRuntime.state.playbackPosition ?? 50) + 5);
     timelineRuntime.setPlaybackPosition(next);
-  }, [playbackPos]);
+  }, []);
 
   const isPlaying = playbackPos !== null;
 

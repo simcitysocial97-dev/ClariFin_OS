@@ -45,7 +45,9 @@ export function CommandProvider({ children }: CommandProviderProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [filteredCommands, setFilteredCommands] = useState<CommandSearchResult[]>([]);
-  const [recentCommands, setRecentCommands] = useState<CommandHistoryEntry[]>([]);
+  const [recentCommands, setRecentCommands] = useState<CommandHistoryEntry[]>(
+    () => commandRuntime.getRecent(5),
+  );
 
   // Sync with command runtime
   useEffect(() => {
@@ -75,11 +77,6 @@ export function CommandProvider({ children }: CommandProviderProps) {
     };
     window.addEventListener('os-open-command-palette', handleOpen);
     return () => window.removeEventListener('os-open-command-palette', handleOpen);
-  }, []);
-
-  // Load recent commands on mount
-  useEffect(() => {
-    setRecentCommands(commandRuntime.getRecent(5));
   }, []);
 
   const openPalette = useCallback(() => {

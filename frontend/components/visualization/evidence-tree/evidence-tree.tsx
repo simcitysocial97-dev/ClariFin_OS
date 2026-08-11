@@ -33,14 +33,6 @@ export function EvidenceTree({
   className,
 }: EvidenceTreeProps) {
 
-  // Get evidence from runtime
-  const evidenceData = useMemo(() => {
-    if (!nodeId) return [];
-    const payload = financialGraphRuntime.explain(nodeId);
-    if (!payload) return [];
-    return payload.evidence;
-  }, [nodeId]);
-
   // Get trace path
   const tracePath = useMemo(() => {
     if (!nodeId) return null;
@@ -76,7 +68,7 @@ export function EvidenceTree({
     }
 
     return items;
-  }, [nodeId, evidenceData, tracePath]);
+  }, [nodeId, tracePath]);
 
   if (evidenceTree.length === 0) {
     return (

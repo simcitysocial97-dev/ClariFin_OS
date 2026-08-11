@@ -40,10 +40,20 @@ def _load_cross_layer_map() -> dict[str, Any]:
         return {}
 
 
+# ---------------------------------------------------------------------------
+# OBSOLETE — VEA-3 M2. The two functions below are the original E-4 defect
+# (keyword/substring first-entry guessing). They are retained deliberately per
+# VEA-3 §0.3 (no opportunistic deletion) but are NO LONGER CALLED by any
+# production path. `_build_attention` now uses `_resolve_chain_for_failure`,
+# which is unit-keyed and graph-traversed. Deletion is deferred to a separate,
+# explicitly approved cleanup decision.
+# ---------------------------------------------------------------------------
+
+
 def _find_dependency_chain(
     test_name: str, cross_map: dict[str, Any]
 ) -> dict[str, Any] | None:
-    """Find the dependency chain for a failing test.
+    """OBSOLETE (E-4 defect). Retained but unused. Do not call.
 
     Matches test names against cross-layer map entries by related keywords.
     Returns the chain info or None.
@@ -253,6 +263,13 @@ class EvidenceAggregator:
         contract_evidence = self._collect_contract(evidence_dir)
         property_evidence = self._collect_property_tests(evidence_dir)
 
+        # VEA-3 M2: load the M3 run-manifest once so the attention enrichment can
+        # be keyed by the *unit* that produced each failure, never by a guessed
+        # test name. The manifest supplies the unit_id -> provenance (capabilities,
+        # impact_kinds) mapping that the graph traversal consumes.
+        manifest = self._load_run_manifest(evidence_dir)
+        unit_provenance = self._unit_provenance_map(manifest)
+
         backend: dict[str, Any] = {}
 
         backend["unit_tests"] = {
@@ -303,7 +320,7 @@ class EvidenceAggregator:
             }
         }
 
-        attention = self._build_attention(backend, mutation_evidence)
+        attention = self._build_attention(backend, mutation_evidence, unit_provenance)
 
         # --- VEA-2 Phase 2, M5 ------------------------------------------------
         # E-2: represent the frontend structurally, so a red frontend cannot be
@@ -442,6 +459,236 @@ class EvidenceAggregator:
                 except (json.JSONDecodeError, OSError):
                     return {}
         return {}
+
+    def _unit_provenance_map(
+        self, manifest: dict[str, Any]
+    ) -> dict[str, dict[str, Any]]:
+        """Index the M3 manifest's unit provenance by unit_id.
+
+        Each entry carries the C11 provenance (``capabilities``, ``impact_kinds``,
+        ``source``) that justified running the unit. This is the unit-keyed input to
+        the E-4 graph traversal — identity, never inference. ``UNMAPPED`` steps are
+        excluded: a step with no mapping decision has no resolvable unit and must not
+        be borrowed by the traversal.
+        """
+        provenance: dict[str, dict[str, Any]] = {}
+        for entry in manifest.get("steps", []):
+            unit_id = entry.get("unit_id") or ""
+            if not unit_id or unit_id == UNMAPPED_SENTINEL:
+                continue
+            prov = entry.get("provenance", {}) or {}
+            if unit_id in provenance:
+                # Merge capabilities/impact_kinds across contributing steps so a
+                # unit selected for several capabilities is not reduced to one.
+                existing = provenance[unit_id]
+                existing.setdefault("capabilities", [])
+                existing.setdefault("impact_kinds", [])
+                for key in ("capabilities", "impact_kinds"):
+                    for v in prov.get(key, []):
+                        if v not in existing[key]:
+                            existing[key].append(v)
+                existing.setdefault("source", prov.get("source", ""))
+            else:
+                provenance[unit_id] = {
+                    "capabilities": list(prov.get("capabilities", [])),
+                    "impact_kinds": list(prov.get("impact_kinds", [])),
+                    "source": prov.get("source", ""),
+                }
+        return provenance
+
+    def _resolve_chain_for_failure(
+        self,
+        failure_type: str,
+        unit_provenance: dict[str, dict[str, Any]] | None,
+        cross_map: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Unit-keyed chain resolution — VEA-3 M2 replacement for E-4.
+
+        Replaces the E-4 keyword/substring guessers. The dependency chain is derived
+        from the *unit that produced the failure*, resolved through the canonical
+        architecture provider graph — never by matching a test name against a
+        substring, never by returning the first map entry, never by positional
+        fallback.
+
+        Traversal:
+            unit_id -> manifest provenance (capabilities / impact_kinds)
+                    -> provider Capability.engines
+                    -> get_chain_map()[engine.path]
+                    -> explicit edges (engine -> services -> endpoints ->
+                       capabilities -> mappers -> viewModels -> workspace ->
+                       components)
+
+        Missing-edge / unknown handling — every branch returns ``{}`` so the caller
+        treats the enrichment as ``UNKNOWN`` rather than fabricating a guess:
+            * no unit provenance for the failure type,
+            * capability resolves to no engine,
+            * engine has no chain entry (stale module path — see BL-005),
+            * provider artifacts are absent (ArchitectureNotDiscovered).
+        """
+        if not unit_provenance:
+            return {}
+
+        # The failure type maps to the unit_id that owns that verification work.
+        # unit_tests / property_tests are backed by the backend-unit selection;
+        # contract_tests by the contracts-schemathesis selection. We key on the
+        # unit, falling back to whichever mapped unit carries the relevant
+        # capability so unrelated first entries are never borrowed.
+        candidates = self._units_for_failure_type(failure_type, unit_provenance)
+        if not candidates:
+            return {}
+
+        chain_map = self._canonical_chain_map(cross_map)
+        if chain_map is None:
+            # Provider artifacts unavailable: cannot establish causality. UNKNOWN.
+            return {}
+
+        resolved_engines: list[str] = []
+        owning_capabilities: list[str] = []
+        for unit_id in candidates:
+            prov = unit_provenance.get(unit_id, {})
+            caps = list(prov.get("capabilities", []))
+            for cap_name in caps:
+                owning_capabilities.append(cap_name)
+                engines = self._engines_for_capability(cap_name, chain_map)
+                resolved_engines.extend(engines)
+
+        if not resolved_engines:
+            # Impact kinds without a resolvable capability (e.g. runtime changes).
+            # Do not guess — UNKNOWN.
+            return {}
+
+        # Walk explicit provider-derived chain edges for each resolved engine.
+        dep_chain: list[str] = []
+        likely_origin: str | None = None
+        likely_consumer: str | None = None
+        for engine_path in sorted(set(resolved_engines)):
+            chain = chain_map.get(engine_path)
+            if chain is None:
+                # Stale/unknown engine path: cannot traverse. Skip rather than
+                # borrowing an unrelated entry.
+                continue
+            if likely_origin is None:
+                likely_origin = engine_path
+            segment = self._chain_segment(chain)
+            for node in segment:
+                if node and node not in dep_chain:
+                    dep_chain.append(node)
+
+        if not dep_chain:
+            return {}
+
+        if owning_capabilities and chain_map:
+            cap = owning_capabilities[0]
+            first_engine_chain = chain_map.get(resolved_engines[0], {})
+            if cap in first_engine_chain.get("capabilities", []):
+                likely_consumer = cap
+
+        suggested_layer = None
+        if owning_capabilities:
+            cap_name = (
+                owning_capabilities[0]
+                .lower()
+                .replace("use", "")
+                .replace("capability", "")
+                .strip()
+            )
+            if cap_name:
+                suggested_layer = f"frontend/lib/schemas/{cap_name}s.ts"
+
+        return {
+            "dependency_chain": dep_chain,
+            "likely_origin": likely_origin,
+            "likely_consumer": likely_consumer,
+            "suggested_layer": suggested_layer,
+        }
+
+    @staticmethod
+    def _units_for_failure_type(
+        failure_type: str, unit_provenance: dict[str, dict[str, Any]]
+    ) -> list[str]:
+        """Map a backend failure type to the unit_id(s) that own that work.
+
+        Uses the enumerated unit ids from the optimizer (unit-targeted / backend-unit
+        for unit & property suites; contracts-schemathesis for contract suites). No
+        substring or first-entry selection.
+        """
+        mapping = {
+            "unit_tests": ("unit-targeted", "backend-unit"),
+            "property_tests": ("backend-unit", "unit-targeted"),
+            "contract_tests": ("contracts-schemathesis", "backend-integration"),
+        }
+        preferred = mapping.get(failure_type, ())
+        ordered: list[str] = []
+        for uid in preferred:
+            if uid in unit_provenance:
+                ordered.append(uid)
+        if ordered:
+            return ordered
+        # No enumerated unit matched: only then consider any mapped unit that
+        # carries a capability (identity, not first-entry). If none, UNKNOWN.
+        for uid, prov in unit_provenance.items():
+            if prov.get("capabilities"):
+                ordered.append(uid)
+        return ordered
+
+    @staticmethod
+    def _canonical_chain_map(
+        cross_map: dict[str, Any] | None
+    ) -> dict[str, dict[str, Any]] | None:
+        """Return the canonical engine->chain projection, or None if unavailable."""
+        try:
+            from runtime.foundation.architecture.chains import get_chain_map
+
+            return get_chain_map()
+        except Exception:
+            # ArchitectureNotDiscovered or any provider failure: caller treats as
+            # UNKNOWN. We never fall back to substring guessing.
+            return None
+
+    @staticmethod
+    def _engines_for_capability(
+        cap_name: str, chain_map: dict[str, dict[str, Any]]
+    ) -> list[str]:
+        """Resolve the engines that OWN a capability, via provider chain edges.
+
+        Identity resolution only: a capability lists the engines that own it; we
+        never scan substrings of engine names.
+        """
+        engines: list[str] = []
+        for engine_path, chain in chain_map.items():
+            if cap_name in chain.get("capabilities", []):
+                engines.append(engine_path)
+        return engines
+
+    @staticmethod
+    def _chain_segment(chain: dict[str, Any]) -> list[str]:
+        """Walk the explicit provider-derived chain edges for one engine."""
+        segment: list[str] = []
+        engine = chain.get("engine")
+        if engine:
+            segment.append(engine)
+        services = chain.get("services") or []
+        if services:
+            segment.append(services[0])
+        endpoints = chain.get("endpoints") or []
+        if endpoints:
+            segment.append(endpoints[0])
+        capabilities = chain.get("capabilities") or []
+        if capabilities:
+            segment.append(capabilities[0])
+        mappers = chain.get("mappers") or []
+        if mappers:
+            segment.append(mappers[0])
+        view_models = chain.get("viewModels") or []
+        if view_models:
+            segment.append(view_models[0])
+        workspace = chain.get("workspace") or []
+        if workspace:
+            segment.append(workspace[0])
+        components = chain.get("components") or []
+        if components:
+            segment.append(components[0])
+        return segment
 
     def _collect_unit_failures(
         self, evidence_dir: Path, frontend: dict[str, Any]
@@ -637,11 +884,17 @@ class EvidenceAggregator:
         return round(sum(vals) / len(vals), 1) if vals else evidence.overall_pct
 
     def _build_attention(
-        self, backend: dict[str, Any], mutation_evidence: MutationEvidence
+        self,
+        backend: dict[str, Any],
+        mutation_evidence: MutationEvidence,
+        unit_provenance: dict[str, dict[str, Any]] | None = None,
     ) -> list[dict]:
         attention: list[dict] = []
 
-        # Program 7A: Cross-layer dependency chain enrichment
+        # VEA-3 M2: the cross-layer map is still loaded (it routes to the canonical
+        # `get_chain_map()` provider projection) but is NO LONGER used for substring
+        # or first-entry guessing. The E-4 defect functions that consumed it loosely
+        # are replaced by `_resolve_chain_for_failure`, which is unit-keyed.
         cross_map = _load_cross_layer_map()
 
         mut = backend.get("mutation", {})
@@ -662,7 +915,9 @@ class EvidenceAggregator:
 
         ut = backend.get("unit_tests", {})
         if ut.get("failed", 0) > 0:
-            chain = self._find_chain_for_failure("unit_tests", cross_map)
+            chain = self._resolve_chain_for_failure(
+                "unit_tests", unit_provenance, cross_map
+            )
             attention.append(
                 {
                     "type": "unit_test_failures",
@@ -674,7 +929,9 @@ class EvidenceAggregator:
 
         pt = backend.get("property_tests", {})
         if pt.get("status") == "fail":
-            chain = self._find_chain_for_failure("property_tests", cross_map)
+            chain = self._resolve_chain_for_failure(
+                "property_tests", unit_provenance, cross_map
+            )
             attention.append(
                 {
                     "type": "property_test_failures",
@@ -696,7 +953,9 @@ class EvidenceAggregator:
 
         contract = backend.get("contract_tests", {})
         if contract.get("status") == "fail":
-            chain = self._find_chain_for_failure("contract_tests", cross_map)
+            chain = self._resolve_chain_for_failure(
+                "contract_tests", unit_provenance, cross_map
+            )
             attention.append(
                 {
                     "type": "contract_test_failures",
@@ -711,7 +970,7 @@ class EvidenceAggregator:
     def _find_chain_for_failure(
         self, failure_type: str, cross_map: dict[str, Any]
     ) -> dict[str, Any]:
-        """Find dependency chain info for a failing test type.
+        """OBSOLETE (E-4 defect). Retained but unused. Do not call.
 
         Returns dict with dependency_chain, likely_origin, likely_consumer, suggested_layer keys.
         """

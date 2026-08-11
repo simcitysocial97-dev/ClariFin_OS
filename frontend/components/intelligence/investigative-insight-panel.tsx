@@ -172,10 +172,11 @@ interface InvestigativeInsightPanelProps {
 }
 
 export function InvestigativeInsightPanel({ className }: InvestigativeInsightPanelProps) {
-  const [insights, setInsights] = useState<InvestigativeInsight[]>([]);
+  const [insights, setInsights] = useState<InvestigativeInsight[]>(
+    () => investigativeInsightRuntime.getInsights(),
+  );
 
   useEffect(() => {
-    setInsights(investigativeInsightRuntime.getInsights());
     const unsubscribe = investigativeInsightRuntime.subscribe(() => {
       setInsights(investigativeInsightRuntime.getInsights());
     });

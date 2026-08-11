@@ -68,18 +68,6 @@ export function WorkspaceHost({ children, className }: WorkspaceHostProps) {
   const [renderTick, setRenderTick] = useState(0);
   const transitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Subscribe to workspace runtime changes
-  useEffect(() => {
-    const unsub = workspaceRuntime.subscribe(() => {
-      const newState = workspaceRuntime.state.current;
-      if (newState !== activeWorkspace) {
-        handleWorkspaceSwitch(activeWorkspace, newState as WorkspaceName);
-      }
-      setRenderTick(t => t + 1);
-    });
-    return unsub;
-  }, [activeWorkspace]);
-
   // Handle workspace switch with lifecycle management
   const handleWorkspaceSwitch = useCallback((from: WorkspaceName, to: WorkspaceName) => {
     // Start transition
@@ -104,7 +92,19 @@ export function WorkspaceHost({ children, className }: WorkspaceHostProps) {
     requestAnimationFrame(() => {
       setActiveWorkspace(to);
     });
-  }, [activeWorkspace]);
+  }, []);
+
+  // Subscribe to workspace runtime changes
+  useEffect(() => {
+    const unsub = workspaceRuntime.subscribe(() => {
+      const newState = workspaceRuntime.state.current;
+      if (newState !== activeWorkspace) {
+        handleWorkspaceSwitch(activeWorkspace, newState as WorkspaceName);
+      }
+      setRenderTick(t => t + 1);
+    });
+    return unsub;
+  }, [activeWorkspace, handleWorkspaceSwitch]);
 
   // Clean up transition after duration
   useEffect(() => {
@@ -128,8 +128,9 @@ export function WorkspaceHost({ children, className }: WorkspaceHostProps) {
 
   // Push initial path to navigation history on mount
   useEffect(() => {
-    const currentPath = workspaceRegistry.get(activeWorkspace)?.deepLink ?? `/${activeWorkspace}`;
-    navRuntime.pushPath(currentPath, activeWorkspace);
+    const initial = workspaceRuntime.state.current;
+    const currentPath = workspaceRegistry.get(initial as WorkspaceName)?.deepLink ?? `/${initial}`;
+    navRuntime.pushPath(currentPath, initial as WorkspaceName);
   }, []); // Run once on mount
 
   // ARIA live region
@@ -157,10 +158,11 @@ export function WorkspaceHost({ children, className }: WorkspaceHostProps) {
       {/* Active workspace (fading in or fully visible) */}
       <WorkspaceContent
         workspaceId={activeWorkspace}
-        children={children}
         isTransitioning={transitionState.isTransitioning}
         transitionPhase="in"
-      />
+      >
+        {children}
+      </WorkspaceContent>
 
       {/* ARIA live region for screen readers */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">

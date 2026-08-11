@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { ChartContainer } from '@/components/ui/chart-container';
 import { ExplainButton } from '@/components/ui/explain-button';
 import { useOverview } from '@/lib/hooks/use-overview';
@@ -18,12 +17,6 @@ const Tooltip = dynamic(() => import('recharts').then((mod) => mod.Tooltip), { s
 const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.ResponsiveContainer), { ssr: false });
 
 export function CategorySpendChart() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const { data, isLoading, isError, refetch } = useOverview();
 
   const categories = data?.category_chart || [];
@@ -33,12 +26,6 @@ export function CategorySpendChart() {
     .slice(0, 8);
 
   const isEmpty = !data || sortedCategories.length === 0;
-
-  if (!mounted) {
-    return (
-      <ChartContainer isLoading={true} isError={false} isEmpty={false} children={null} />
-    );
-  }
 
   return (
     <div className="w-full">

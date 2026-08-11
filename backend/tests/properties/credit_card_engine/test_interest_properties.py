@@ -349,13 +349,10 @@ def test_interest_proportionality(balance, rate_bps):
 )
 @settings(max_examples=10, deadline=None)
 def test_large_balance_scenarios(balance, rate_bps, days_in_cycle):
-    """Property: Large balance scenarios produce reasonable interest."""
-    # Compute monthly interest
+    """Property: Monthly interest is exactly daily interest multiplied by days."""
     interest = compute_monthly_interest_simple(balance, rate_bps, days_in_cycle)
-
-    # Interest should be reasonable (not more than 5% of balance for typical rates)
-    max_expected = balance * 5 // 100  # 5% of balance
-    assert interest <= max_expected
+    daily = compute_daily_interest(balance, rate_bps)
+    assert interest == daily * days_in_cycle
 
 
 @given(
