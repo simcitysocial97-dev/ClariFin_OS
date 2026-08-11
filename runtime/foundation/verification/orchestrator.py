@@ -14,6 +14,7 @@ It consumes:
 
 from __future__ import annotations
 
+import json
 import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -30,6 +31,7 @@ from runtime.foundation.verification.models import (
 )
 from runtime.foundation.verification.profiles import VerificationProfile, get_profile
 from runtime.foundation.verification.planner import VerificationPlanner, PlanningContext
+from runtime.foundation.verification.registry import UNMAPPED
 from runtime.system.evidence.aggregator import EvidenceAggregator
 
 VERIFICATION_CACHE_PATH = Path("runtime/generated/verification-cache.json")
@@ -215,6 +217,29 @@ def _is_git_available() -> bool:
         return result.returncode == 0
     except Exception:
         return False
+
+
+def _current_branch() -> str:
+    """Current branch name, or ``"unknown"``.
+
+    Mirrors :func:`_get_current_commit`: never raises, never blocks a run. An
+    unavailable branch is recorded as ``"unknown"`` rather than omitted, so the manifest
+    schema stays stable.
+    """
+    repo_root = _find_repo_root()
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except Exception:
+        pass
+    return "unknown"
 
 
 @dataclass(frozen=True, slots=True)
@@ -498,6 +523,10 @@ class VerificationOrchestrator:
                     stdout_path="",
                     stderr_path="",
                     error="No command configured for this step",
+                    # VEA-2 Phase 2 (M3): identity survives even a skipped step, so the
+                    # manifest can still report why the step existed.
+                    unit_id=step.unit_id,
+                    provenance=step.provenance,
                 )
                 self._results.append(result)
                 continue
@@ -512,10 +541,100 @@ class VerificationOrchestrator:
                 stdout_path=exec_result.stdout_path,
                 stderr_path=exec_result.stderr_path,
                 error=exec_result.error,
+                # VEA-2 Phase 2 (M3): copy identity and provenance verbatim from the
+                # step. This is the plan → execution link of the identity spine; it is a
+                # copy, never a re-derivation, so it cannot drift from the plan.
+                unit_id=step.unit_id,
+                provenance=step.provenance,
             )
             self._results.append(model_result)
 
+        self.write_run_manifest()
+
         return self._results
+
+    def write_run_manifest(self, path: Path | None = None) -> Path | None:
+        """Emit the per-run manifest that joins planning to execution.
+
+        VEA-2 Phase 2 (M3). The manifest is the durable join-key artifact consumed by
+        M5/M6 attribution. Before it existed there was no artifact anywhere that
+        connected a planned verification unit to an executed command, which is why
+        Phase 1.5 attribution had to be hand-fed from manually parsed logs.
+
+        Units with no mapping decision are recorded as ``UNMAPPED`` and additionally
+        collected into a top-level ``unmapped`` list — they are reported, never silently
+        dropped.
+
+        Returns the manifest path, or ``None`` if nothing has been executed.
+        """
+        if not self._results:
+            return None
+
+        manifest_path = path or (
+            self._repo_root
+            / "runtime"
+            / "generated"
+            / "evidence"
+            / "run-manifest.json"
+        )
+
+        steps_by_id = {}
+        if self._plan is not None:
+            steps_by_id = {step.id: step for step in self._plan.steps}
+
+        entries: list[dict[str, Any]] = []
+        unmapped: list[dict[str, Any]] = []
+
+        for result in self._results:
+            step = steps_by_id.get(result.task_id)
+            contributing = list(
+                (result.provenance or {}).get("contributing_units") or []
+            )
+            if not contributing and result.unit_id:
+                contributing = [result.unit_id]
+
+            unit_id = result.unit_id or UNMAPPED
+            entry = {
+                "step_id": result.task_id,
+                "unit_id": unit_id,
+                "contributing_units": contributing,
+                "command": result.command,
+                "exit_code": result.exit_code,
+                "status": result.status.value,
+                "duration_seconds": result.duration_seconds,
+                "stdout_path": result.stdout_path,
+                "stderr_path": result.stderr_path,
+                "workflow": step.workflow if step else None,
+                "script": step.script if step else None,
+                "provenance": result.provenance or {},
+            }
+            entries.append(entry)
+
+            if unit_id == UNMAPPED:
+                unmapped.append(
+                    {
+                        "step_id": result.task_id,
+                        "command": result.command,
+                        "reason": (
+                            "no UNIT_TO_WORKFLOW mapping decision resolved for the "
+                            "owning registry workflow"
+                        ),
+                    }
+                )
+
+        manifest = {
+            "schema": "run-manifest/v1",
+            "commit": _get_current_commit(),
+            "branch": _current_branch(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "profile": self._profile.name if self._profile else None,
+            "steps": entries,
+            "unmapped": unmapped,
+        }
+
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+        return manifest_path
 
     def aggregate_evidence(self) -> Any:
         """Aggregate evidence using EvidenceAggregator."""

@@ -33,6 +33,7 @@ from runtime.foundation.verification.registry import (
     VerificationRegistry,
     VerificationRequirement,
     get_registry,
+    units_for_workflow,
 )
 from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
 
@@ -629,6 +630,16 @@ class VerificationPlanner:
                 dep_step_ids.append(f"step-{dep.target_id.split('-')[-1]}")
 
             step_id += 1
+            # VEA-2 Phase 2 (M3): stamp verification-unit identity onto the step.
+            # The planner already knows the owning workflow, which is the *target* of
+            # the M2 UNIT_TO_WORKFLOW table, so identity is resolved by explicit
+            # reverse lookup — never inferred from the command or target name.
+            # `contributing_units` is a tuple because the mapping is legitimately
+            # many-to-one; an empty tuple means "no unit identity", surfaced downstream
+            # as UNMAPPED rather than guessed.
+            contributing_units = (
+                units_for_workflow(workflow.id) if workflow else ()
+            )
             step = VerificationStep(
                 id=f"step-{step_id:04d}",
                 target=target,
@@ -644,16 +655,48 @@ class VerificationPlanner:
                 required_evidence=required_evidence,
                 dependencies=dep_step_ids,
                 status=target.metadata.get("status", VerificationStatus.PENDING),
+                unit_id=contributing_units[0] if contributing_units else None,
+                provenance=(
+                    {
+                        "capabilities": (
+                            [target.capability] if target.capability else []
+                        ),
+                        "impact_kinds": [target.category.value],
+                        "source": "registry-workflow-mapping",
+                        "contributing_units": list(contributing_units),
+                        "workflow": workflow.id if workflow else None,
+                    }
+                    if contributing_units
+                    else {}
+                ),
             )
             steps.append(step)
 
         # Deduplicate steps by command, preserving first occurrence and
         # remapping dependencies to kept steps.
+        #
+        # VEA-2 Phase 2 (M3): dedup must not lose unit identity. When two steps collapse
+        # onto one command, the surviving step must record **all** contributing unit IDs
+        # — dropping the second would make its failures unattributable, which is exactly
+        # the evidence gap Phase 2 exists to close.
         seen_commands: dict[str, str] = {}
         old_to_new_id: dict[str, str] = {}
         unique_steps: list[VerificationStep] = []
+        # command -> ordered, de-duplicated list of contributing unit IDs
+        merged_units: dict[str, list[str]] = {}
+
+        def _record_units(command: str | None, step: VerificationStep) -> None:
+            """Accumulate contributing unit IDs for a command, preserving order."""
+            bucket = merged_units.setdefault(command, [])
+            declared = step.provenance.get("contributing_units") or (
+                [step.unit_id] if step.unit_id else []
+            )
+            for unit_id in declared:
+                if unit_id not in bucket:
+                    bucket.append(unit_id)
 
         for step in steps:
+            _record_units(step.command, step)
             if step.command in seen_commands:
                 old_to_new_id[step.id] = seen_commands[step.command]
                 continue
@@ -671,6 +714,12 @@ class VerificationPlanner:
                 if mapped and mapped != new_id:
                     remapped_deps.append(mapped)
 
+            # Carry the full contributing-unit set through the rebuild.
+            all_units = merged_units.get(step.command, [])
+            provenance = dict(step.provenance)
+            if all_units:
+                provenance["contributing_units"] = list(all_units)
+
             final_steps.append(
                 VerificationStep(
                     id=new_id,
@@ -683,6 +732,8 @@ class VerificationPlanner:
                     required_evidence=step.required_evidence,
                     dependencies=remapped_deps,
                     status=step.status,
+                    unit_id=all_units[0] if all_units else step.unit_id,
+                    provenance=provenance,
                 )
             )
 

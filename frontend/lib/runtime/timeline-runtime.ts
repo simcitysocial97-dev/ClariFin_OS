@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Timeline Runtime - Owns current timeline position and comparison period.
  */

@@ -10,8 +10,14 @@ const eslintConfig = defineConfig([
   // Override default ignores of eslint-config-next.
   globalIgnores([
     ".next/**",
+    // `distDir: 'dist'` in next.config.ts, so build output lands in dist/.
+    // It is generated, third-party-bundled and must never be linted as source.
+    "dist/**",
     "out/**",
     "build/**",
+    // Vendored browser bundles (e.g. public/pdf.worker.mjs from pdfjs-dist).
+    // Static assets are not first-party source.
+    "public/**",
     "next-env.d.ts",
     "node_modules/**",
     "scripts/**",

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import sys
 
+from runtime.foundation.intelligence.platform.attribution import AttributionReport
 from runtime.foundation.intelligence.platform.blast import BlastRadius
 from runtime.foundation.intelligence.platform.change import ChangeIntelligence
 from runtime.foundation.intelligence.platform.optimizer import VerificationPlanIntel
@@ -22,6 +23,7 @@ __all__ = [
     "format_diagnostic",
     "format_repair",
     "format_risk",
+    "format_cross_layer_failure",
 ]
 
 
@@ -154,4 +156,106 @@ def format_risk(risk: EngineeringRisk) -> str:
         for ev in dim.evidence[:2]:
             lines.append(f"    - {ev}")
     lines.append("")
+    return "\n".join(lines)
+
+
+def format_cross_layer_failure(
+    change: ChangeIntelligence,
+    blast: BlastRadius,
+    plan: VerificationPlanIntel,
+    report: AttributionReport,
+) -> str:
+    """Render the CROSS-LAYER FAILURE diagnostic (VEA-2 Phase 1.5 §18).
+
+    Compresses cascades into clusters and states explicitly which areas the
+    change does **not** explain, so an agent knows what not to touch.
+    """
+    lines: list[str] = [_bold("CROSS-LAYER FAILURE"), ""]
+
+    lines.append(_cyan("Change:"))
+    for f in change.changeset.files:
+        lines.append(f"  {f.path} ({f.status})")
+    lines.append("")
+
+    lines.append(_cyan("Capability:"))
+    caps = sorted(
+        {
+            n.ref.ref
+            for n in blast.all_impacted
+            if n.ref.kind == "capability"
+        }
+    )
+    for cap in caps or ["(none resolved)"]:
+        lines.append(f"  {cap}")
+    lines.append("")
+
+    lines.append(_cyan("Impact (predicted downstream files):"))
+    for path in report.blast_radius_paths:
+        lines.append(f"  {path}")
+    lines.append("")
+
+    lines.append(_cyan("Verification:"))
+    for unit in plan.selected:
+        lines.append(f"  {_yellow(unit.id)} — source={unit.source} kinds={list(unit.impact_kinds)}")
+    lines.append("")
+
+    implicated = report.in_blast_radius
+    lines.append(_cyan("Failure attribution:"))
+    lines.append(
+        f"  observed={len(report.attributions)}  "
+        f"in-blast-radius={len(implicated)}  "
+        f"outside={len(report.outside_blast_radius)}  "
+        f"unknown={len(report.unknown)}"
+    )
+    lines.append("")
+
+    if implicated:
+        lines.append(_red("PRIMARY CAUSE — failures the change explains:"))
+        for item in implicated:
+            lines.append(
+                f"  {item.failure.phase}: {item.failure.path} "
+                f"({item.matched_entity})"
+            )
+            if item.failure.diagnostic:
+                lines.append(f"      {item.failure.diagnostic}")
+        lines.append("")
+        lines.append(_cyan("Recommended inspection order:"))
+        step = 1
+        for f in change.changeset.files:
+            lines.append(f"  {step}. {f.path} (source of change)")
+            step += 1
+        for item in implicated:
+            lines.append(f"  {step}. {item.failure.path} (failing consumer)")
+            step += 1
+        lines.append("")
+    else:
+        lines.append(_green("NO FAILURE IS ATTRIBUTABLE TO THIS CHANGE."))
+        lines.append(
+            "  Every observed failure lies outside the blast radius that "
+            "justified running these units."
+        )
+        lines.append(
+            "  Do NOT modify the changed files to make this verification green."
+        )
+        lines.append("")
+
+    outside = report.outside_blast_radius
+    if outside:
+        lines.append(_yellow("Unrelated / pre-existing (excluded from this change):"))
+        by_phase: dict[str, list[str]] = {}
+        for item in outside:
+            by_phase.setdefault(item.failure.phase, []).append(item.failure.path)
+        for phase, paths in sorted(by_phase.items()):
+            unique = sorted(set(paths))
+            lines.append(f"  {phase}: {len(paths)} diagnostic(s) across {len(unique)} file(s)")
+            for path in unique:
+                lines.append(f"      {path}")
+        lines.append("")
+
+    if report.unknown:
+        lines.append(_yellow("Unattributed (insufficient evidence):"))
+        for item in report.unknown:
+            lines.append(f"  {item.failure.phase}: {item.reason}")
+        lines.append("")
+
     return "\n".join(lines)

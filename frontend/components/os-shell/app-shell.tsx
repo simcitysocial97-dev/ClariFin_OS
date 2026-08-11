@@ -9,6 +9,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import { Suspense } from 'react';
 import { ShellProvider } from './shell-provider';
 import { LeftRail } from './left-rail';
 import { TopCommandBar } from './top-command-bar';
@@ -27,8 +28,13 @@ import { DeepLinkSync } from './deep-link-sync';
 export function AppShell({ children }: { children: ReactNode }) {
   return (
     <ShellProvider>
-      {/* Deep link sync — wires Next.js router to NavigationRuntime */}
-      <DeepLinkSync />
+      {/* Deep link sync — wires Next.js router to NavigationRuntime.
+          DeepLinkSync calls useSearchParams(), which forces client-side
+          bailout during prerendering, so it must sit inside a Suspense
+          boundary. It renders nothing, hence the null fallback. */}
+      <Suspense fallback={null}>
+        <DeepLinkSync />
+      </Suspense>
 
       <ResizableLayout>
         {/* Left Rail - Navigation (180px) */}

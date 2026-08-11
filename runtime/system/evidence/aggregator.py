@@ -20,6 +20,12 @@ from .collectors.contract import ContractCollector, ContractEvidence
 # test-injection seam only; it is ``None`` at runtime.
 CROSS_LAYER_MAP_PATH: Path | None = None
 
+# VEA-2 Phase 2, M5. Mirrors the verification registry's UNMAPPED sentinel.
+# Defined locally rather than imported so the evidence system stays decoupled from
+# the verification package. Kept identical in value so the two are joinable, and
+# asserted equal by test.
+UNMAPPED_SENTINEL = "UNMAPPED"
+
 
 def _load_cross_layer_map() -> dict[str, Any]:
     """Provider-derived chain map used for dependency chain enrichment."""
@@ -82,6 +88,19 @@ class EvidenceSummary:
     verification_plan: str = "selective"
     overall_status: str = "pass"
     backend: dict[str, Any] = field(default_factory=dict)
+    # --- VEA-2 Phase 2, M5 -------------------------------------------------------
+    # E-2: the frontend was previously structurally unrepresentable here. The sole
+    # occurrence of "frontend" in this module was a synthesized `suggested_layer`
+    # string, so a red frontend build could not be expressed at all — and therefore
+    # could not force a non-pass overall status.
+    #
+    # Populated from the M4 `frontend-verification/v1` evidence. Empty dict means
+    # "no frontend evidence was found", which resolves to `not_run` — never `pass`.
+    frontend: dict[str, Any] = field(default_factory=dict)
+    # E-3: failures keyed by verification unit, joined via the M3 run manifest.
+    # Each entry carries unit_id, phase, path, diagnostic and provenance, so a
+    # failure can be traced back to the impact analysis that selected the unit.
+    unit_failures: list[dict[str, Any]] = field(default_factory=list)
     attention_needed: list[dict] = field(default_factory=list)
     ai_context: dict[str, Any] = field(default_factory=dict)
 
@@ -156,6 +175,38 @@ class EvidenceSummary:
             delta = cov.get("delta_from_last", "")
             if delta:
                 lines.append(f"- Delta: {delta}")
+            lines.append("")
+
+        # VEA-2 Phase 2, M5 (E-2): the frontend is now representable, so it is
+        # reported. Previously a red frontend build left no trace in this report.
+        frontend = self.frontend
+        if frontend:
+            lines.append("### Frontend")
+            lines.append("")
+            lines.append(f"**Status:** {frontend.get('overall_status', 'unknown')}")
+            lines.append("")
+            lines.append("| Phase | Status | Exit | Duration |")
+            lines.append("|-------|--------|------|----------|")
+            for name, phase in frontend.get("phases", {}).items():
+                lines.append(
+                    f"| {name} | {phase.get('status', 'unknown')} | "
+                    f"{phase.get('exit_code')} | {phase.get('duration_seconds')}s |"
+                )
+            lines.append("")
+
+        # VEA-2 Phase 2, M5 (E-3): failures joined to the unit that selected them.
+        if self.unit_failures:
+            lines.append("### Failures by Verification Unit")
+            lines.append("")
+            lines.append("| Unit | Layer | Phase | Diagnostic |")
+            lines.append("|------|-------|-------|------------|")
+            for failure in self.unit_failures:
+                lines.append(
+                    f"| {failure.get('unit_id', UNMAPPED_SENTINEL)} "
+                    f"| {failure.get('layer', '')} "
+                    f"| {failure.get('phase', '')} "
+                    f"| {failure.get('diagnostic', '')} |"
+                )
             lines.append("")
 
         attention = self.attention_needed
@@ -254,12 +305,39 @@ class EvidenceAggregator:
 
         attention = self._build_attention(backend, mutation_evidence)
 
+        # --- VEA-2 Phase 2, M5 ------------------------------------------------
+        # E-2: represent the frontend structurally, so a red frontend cannot be
+        # reported as an overall pass.
+        frontend = self._collect_frontend(evidence_dir)
+        # E-3: join failures to the units that justified running them.
+        unit_failures = self._collect_unit_failures(evidence_dir, frontend)
+
+        frontend_failed = frontend.get("overall_status") == "fail"
+        if frontend_failed:
+            failing_phases = ", ".join(
+                name
+                for name, phase in frontend.get("phases", {}).items()
+                if phase.get("status") == "fail"
+            )
+            attention = attention + [
+                {
+                    "type": "frontend_verification_failed",
+                    "details": f"failing frontend phase(s): {failing_phases}",
+                    "action": (
+                        "inspect runtime/generated/evidence/frontend/<phase>.log; "
+                        "run `python runtime/verify.py diagnose-failures` to check "
+                        "whether the failure lies inside this change's blast radius"
+                    ),
+                }
+            ]
+
         evidence_collected = (
             coverage_collected
             or (mutation_evidence.killed + mutation_evidence.survived > 0)
             or (test_evidence.passed + test_evidence.failed + test_evidence.error + test_evidence.skipped > 0)
             or (contract_evidence.status != "not_run")
             or (property_evidence.passed + property_evidence.failed + property_evidence.error + property_evidence.skipped > 0)
+            or bool(frontend)
         )
 
         if not evidence_collected:
@@ -276,6 +354,8 @@ class EvidenceAggregator:
             branch=self._get_branch(),
             overall_status=overall_status,
             backend=backend,
+            frontend=frontend,
+            unit_failures=unit_failures,
             attention_needed=attention,
             ai_context={
                 "ready": True,
@@ -285,6 +365,174 @@ class EvidenceAggregator:
         )
 
         return summary
+
+    # ------------------------------------------------------------------
+    # VEA-2 Phase 2, M5 — frontend representation (E-2) and unit keying (E-3)
+    #
+    # NOTE: `_find_chain_for_failure()` / `_find_dependency_chain()` below are the
+    # known E-4 keyword-attribution defect. They are deliberately left in place and
+    # untouched, and nothing added here calls or extends them. Replacing them with
+    # graph traversal is owned by Phase 3 (see VEA_BACKLOG.md BL-003).
+    # ------------------------------------------------------------------
+
+    def _frontend_evidence_path(self, evidence_dir: Path) -> Path | None:
+        """Locate `frontend-verification.json`, or return None.
+
+        Probes the evidence directory being aggregated and the canonical location
+        the M4 script writes to. Returns ``None`` rather than fabricating a result
+        when nothing is found.
+        """
+        candidates = [
+            evidence_dir / "frontend" / "frontend-verification.json",
+            evidence_dir / "frontend-verification.json",
+            self.workspace_root
+            / "runtime/generated/evidence/frontend/frontend-verification.json",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return candidate
+        return None
+
+    def _collect_frontend(self, evidence_dir: Path) -> dict[str, Any]:
+        """Build the frontend section from `frontend-verification/v1` evidence.
+
+        Returns an empty dict when no evidence exists. The caller maps that to
+        `not_run`; it is never silently upgraded to `pass`.
+        """
+        path = self._frontend_evidence_path(evidence_dir)
+        if path is None:
+            return {}
+
+        try:
+            data = json.loads(path.read_text())
+        except (json.JSONDecodeError, OSError):
+            return {}
+
+        phases: dict[str, Any] = {}
+        for phase in data.get("phases", []):
+            name = phase.get("phase")
+            if not name:
+                continue
+            phases[name] = {
+                "status": phase.get("status", "unknown"),
+                "exit_code": phase.get("exit_code"),
+                "duration_seconds": phase.get("duration_seconds"),
+                "log": phase.get("log", ""),
+            }
+
+        return {
+            "schema": data.get("schema", ""),
+            "overall_status": data.get("overall_status", "unknown"),
+            "unit_id": data.get("unit_id") or "",
+            "phases": phases,
+            "evidence_path": str(path),
+        }
+
+    def _load_run_manifest(self, evidence_dir: Path) -> dict[str, Any]:
+        """Load the M3 run manifest, which supplies the unit_id join key."""
+        candidates = [
+            evidence_dir / "run-manifest.json",
+            evidence_dir.parent / "run-manifest.json",
+            self.workspace_root / "runtime/generated/evidence/run-manifest.json",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                try:
+                    return json.loads(candidate.read_text())
+                except (json.JSONDecodeError, OSError):
+                    return {}
+        return {}
+
+    def _collect_unit_failures(
+        self, evidence_dir: Path, frontend: dict[str, Any]
+    ) -> list[dict[str, Any]]:
+        """Build the unit-keyed failure list (E-3).
+
+        The join key is `unit_id`, taken from the M3 manifest — never from string
+        matching against a command or a test name. A failure that cannot be joined
+        to a unit is recorded with ``unit_id: "UNMAPPED"`` and is reported, not
+        dropped.
+        """
+        manifest = self._load_run_manifest(evidence_dir)
+        entries_by_workflow: dict[str, dict[str, Any]] = {}
+        for entry in manifest.get("steps", []):
+            workflow = entry.get("workflow")
+            if workflow:
+                entries_by_workflow[workflow] = entry
+
+        failures: list[dict[str, Any]] = []
+
+        # Frontend: one failure record per failing phase.
+        frontend_entry = entries_by_workflow.get("frontend", {})
+        for name, phase in frontend.get("phases", {}).items():
+            if phase.get("status") != "fail":
+                continue
+            failures.append(
+                {
+                    "unit_id": (
+                        frontend.get("unit_id")
+                        or frontend_entry.get("unit_id")
+                        or UNMAPPED_SENTINEL
+                    ),
+                    "layer": "frontend",
+                    "phase": name,
+                    "path": phase.get("log", ""),
+                    "diagnostic": (
+                        f"frontend phase '{name}' failed "
+                        f"(exit={phase.get('exit_code')})"
+                    ),
+                    "provenance": frontend_entry.get("provenance", {}),
+                    "contributing_units": frontend_entry.get(
+                        "contributing_units", []
+                    ),
+                }
+            )
+
+        # Backend: one failure record per failing suite phase.
+        backend_summary_path = self._backend_evidence_path(evidence_dir)
+        if backend_summary_path is not None:
+            try:
+                backend_data = json.loads(backend_summary_path.read_text())
+            except (json.JSONDecodeError, OSError):
+                backend_data = {}
+            backend_entry = entries_by_workflow.get("backend", {})
+            for phase in backend_data.get("phases", []):
+                if phase.get("status") != "fail":
+                    continue
+                failures.append(
+                    {
+                        "unit_id": (
+                            backend_data.get("unit_id")
+                            or backend_entry.get("unit_id")
+                            or UNMAPPED_SENTINEL
+                        ),
+                        "layer": "backend",
+                        "phase": phase.get("phase", ""),
+                        "path": phase.get("log", ""),
+                        "diagnostic": (
+                            f"backend suite '{phase.get('phase')}' failed "
+                            f"(exit={phase.get('exit_code')})"
+                        ),
+                        "provenance": backend_entry.get("provenance", {}),
+                        "contributing_units": backend_entry.get(
+                            "contributing_units", []
+                        ),
+                    }
+                )
+
+        return failures
+
+    def _backend_evidence_path(self, evidence_dir: Path) -> Path | None:
+        candidates = [
+            evidence_dir / "backend" / "backend-verification.json",
+            evidence_dir / "backend-verification.json",
+            self.workspace_root
+            / "runtime/generated/evidence/backend/backend-verification.json",
+        ]
+        for candidate in candidates:
+            if candidate.exists():
+                return candidate
+        return None
 
     def _collect_coverage(
         self, evidence_dir: Path

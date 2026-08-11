@@ -121,7 +121,18 @@ class VerificationTarget:
 
 @dataclass(frozen=True, slots=True)
 class VerificationStep:
-    """A single step in a verification plan."""
+    """A single step in a verification plan.
+
+    Identity note (VEA-2 Phase 2, M1):
+        ``id`` is positional (``step-0001``) and is *reassigned* during command
+        deduplication in the planner. It is therefore unstable across runs and MUST NOT
+        be used as a join key between planning, execution and evidence. It remains valid
+        only as an internal ordering handle.
+
+        ``unit_id`` is the stable join key. It names the owning ``VerificationUnit`` from
+        the intelligence pipeline and is what carries through to ``ExecutionResult`` and
+        on into evidence.
+    """
 
     id: str
     target: VerificationTarget
@@ -134,6 +145,14 @@ class VerificationStep:
     dependencies: list[str] = field(default_factory=list)
     status: VerificationStatus = VerificationStatus.PENDING
     metadata: dict[str, Any] = field(default_factory=dict)
+    # --- VEA-2 Phase 2 identity spine -------------------------------------------------
+    # Optional and defaulted so every pre-existing construction site keeps working
+    # unchanged. ``None`` is a legitimate, visible outcome meaning "no unit mapped"
+    # (surfaced as UNMAPPED in the run manifest) — it is never inferred away.
+    unit_id: str | None = None
+    # Mirrors the C11 provenance shape emitted by VerificationUnit.to_dict()["provenance"]:
+    # {"capabilities": [...], "impact_kinds": [...], "source": "..."}
+    provenance: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -179,7 +198,14 @@ class VerificationTask:
 
 @dataclass(frozen=True, slots=True)
 class ExecutionResult:
-    """Result of executing a single verification command."""
+    """Result of executing a single verification command.
+
+    Identity note (VEA-2 Phase 2, M1):
+        ``unit_id`` and ``provenance`` are copied verbatim from the originating
+        ``VerificationStep`` by the orchestrator. They are what allow a failure observed
+        at execution time to be joined back to the impact analysis that justified running
+        the command in the first place.
+    """
 
     task_id: str
     command: str
@@ -189,6 +215,10 @@ class ExecutionResult:
     stdout_path: str
     stderr_path: str
     error: str | None = None
+    # --- VEA-2 Phase 2 identity spine -------------------------------------------------
+    # Optional and defaulted; all 5 pre-existing construction sites keep working unchanged.
+    unit_id: str | None = None
+    provenance: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
