@@ -19,8 +19,19 @@ from runtime.foundation.intelligence.platform.api import (  # noqa: F401
     test_resolution,
     verification_plan,
 )
+from runtime.foundation.intelligence.platform.attribution import (  # noqa: F401
+    ATTRIBUTION_UNKNOWN,
+    IN_BLAST_RADIUS,
+    OUTSIDE_BLAST_RADIUS,
+    PRE_EXISTING,
+    AttributionReport,
+    FailureAttribution,
+    ObservedFailure,
+    attribute_failures,
+)
 from runtime.foundation.intelligence.platform.cli_format import (  # noqa: F401
     format_affected,
+    format_cross_layer_failure,
     format_diagnostic,
     format_repair,
     format_risk,
@@ -46,7 +57,16 @@ __all__ = [
     "test_resolution",
     "analyze",
     "format_affected",
+    "format_cross_layer_failure",
     "format_diagnostic",
     "format_repair",
     "format_risk",
+    "ObservedFailure",
+    "FailureAttribution",
+    "AttributionReport",
+    "attribute_failures",
+    "IN_BLAST_RADIUS",
+    "OUTSIDE_BLAST_RADIUS",
+    "PRE_EXISTING",
+    "ATTRIBUTION_UNKNOWN",
 ]

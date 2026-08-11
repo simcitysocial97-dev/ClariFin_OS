@@ -72,6 +72,124 @@ class VerificationCapability:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
+# ---------------------------------------------------------------------------
+# VEA-2 Phase 2, M2 — Unit ↔ registry mapping
+# ---------------------------------------------------------------------------
+#
+# The repository contains two disjoint verification pipelines:
+#
+#   * the **intelligence pipeline** produces ``VerificationUnit`` objects with C11
+#     provenance, but never executes a subprocess;
+#   * the **orchestrator pipeline** executes ``bash .github/scripts/run_*.sh`` via the
+#     ``Executor``, but carries no provenance.
+#
+# This table is the explicit join between them. It is deliberately an **enumerated
+# table**, never a heuristic. Inference by keyword, substring, category or
+# "first match wins" is prohibited: that is precisely the defect class that produced
+# E-4 (``_find_chain_for_failure()`` returning the first chain-map entry regardless of
+# which test failed).
+#
+# The sets are intentionally **not 1:1**. Several units legitimately resolve to the same
+# registry workflow, because one script executes work that the optimizer models as
+# several independently-justified units. Many-to-one is permitted, and must be explicit.
+
+#: Sentinel returned when a unit has no mapping decision recorded.
+#: This is a **reportable outcome**, surfaced in the M3 run manifest — never silently
+#: dropped and never guessed. UNKNOWN over GUESSED.
+UNMAPPED = "UNMAPPED"
+
+
+#: Explicit, enumerated mapping from optimizer ``VerificationUnit.id`` to the registry
+#: workflow ID that actually executes it. Every row carries its justification.
+#:
+#: A value of ``UNMAPPED`` is an *intentional* mapping decision, not an omission: it
+#: records that the unit has no executed counterpart in the orchestrator pipeline.
+UNIT_TO_WORKFLOW: dict[str, str] = {
+    # -- Backend --------------------------------------------------------------------
+    # `unit-targeted` runs provider-recorded pytest files for impacted engines
+    # (`python3 -m pytest <exact files> -q`). The orchestrator has no per-file script;
+    # that work is executed as part of the backend verification script, which runs the
+    # full backend unit/invariant suite. Many-to-one with `backend-unit` is therefore
+    # correct and deliberate: both are covered by one executed script.
+    "unit-targeted": "backend",
+    # `backend-unit` runs `backend/tests/unit/`, executed by run_backend_verification.sh.
+    "backend-unit": "backend",
+    # `backend-integration` runs `backend/tests/integration/`. The registry has a
+    # dedicated `integration` workflow (run_integration_tests.sh) for exactly this.
+    "backend-integration": "integration",
+    # `contracts-schemathesis` runs `backend/tests/contract/`. The registry `contracts`
+    # workflow (run_contract_tests.sh) is the contract-test entry point.
+    "contracts-schemathesis": "contracts",
+    # -- Frontend -------------------------------------------------------------------
+    # Both frontend units resolve to the single `frontend` workflow, because
+    # run_frontend_verification.sh executes lint, typecheck, build *and* vitest as four
+    # phases behind one exit code. The optimizer models the vitest work
+    # (`frontend-unit`) and the tsc+build work (`frontend-typecheck-build`) as separate
+    # units because they are justified by different impact kinds, but one script runs
+    # both. Many-to-one is explicit here; M4 per-phase evidence is what lets a failure be
+    # attributed back to the correct phase despite the collapse.
+    "frontend-unit": "frontend",
+    "frontend-typecheck-build": "frontend",
+    # -- End-to-end -----------------------------------------------------------------
+    "playwright-e2e": "playwright",
+    # -- Runtime --------------------------------------------------------------------
+    "runtime-self-test": "runtime",
+    # -- Cost-gated heavy suites ------------------------------------------------------
+    # These two are never *selected* by the optimizer — they appear only in the skipped
+    # list, requiring an explicit request (cost >= 600s). They nevertheless map to real
+    # registry workflows, so that an explicitly-requested run can still be joined to its
+    # unit identity. Resolving them must not raise.
+    "mutation-run": "mutation",
+    "golden-regression": "golden",
+}
+
+
+def resolve_unit_workflow(unit_id: str) -> str:
+    """Resolve an optimizer unit ID to its registry workflow ID.
+
+    Returns the registry workflow ID, or the :data:`UNMAPPED` sentinel when no mapping
+    decision has been recorded for ``unit_id``.
+
+    This lookup **never guesses**. It performs no keyword matching, no substring
+    matching, no category inference and no "first match wins" fallback. An unknown unit
+    resolves to :data:`UNMAPPED`, which is a legitimate, reportable outcome that the M3
+    run manifest surfaces explicitly.
+
+    Args:
+        unit_id: The ``VerificationUnit.id`` from the intelligence pipeline.
+
+    Returns:
+        A registry workflow ID, or :data:`UNMAPPED`.
+    """
+    return UNIT_TO_WORKFLOW.get(unit_id, UNMAPPED)
+
+
+def units_for_workflow(workflow_id: str) -> tuple[str, ...]:
+    """Reverse lookup: every optimizer unit that resolves to ``workflow_id``.
+
+    The planner builds steps from registry *workflows*, so this is the direction needed
+    to stamp identity onto a planned step. It returns a **tuple, not a single ID**,
+    because the mapping is legitimately many-to-one:
+
+        {unit-targeted, backend-unit}              → backend
+        {frontend-unit, frontend-typecheck-build}  → frontend
+
+    Returning all contributing units is what prevents the M3 dedup step from silently
+    dropping the second unit when two units collapse onto one command.
+
+    Returns an empty tuple when no unit maps to the workflow. Empty is an explicit
+    "no unit identity" answer, surfaced downstream as UNMAPPED — it is never
+    substituted with a guess.
+    """
+    return tuple(
+        sorted(
+            unit_id
+            for unit_id, mapped in UNIT_TO_WORKFLOW.items()
+            if mapped == workflow_id
+        )
+    )
+
+
 class VerificationRegistry:
     """
     Verification Registry - deterministic registry for verification artifacts.
@@ -878,6 +996,27 @@ class VerificationRegistry:
         """Get workflow by ID."""
         self.load()
         return self._workflows.get(workflow_id)
+
+    def resolve_unit(self, unit_id: str) -> str:
+        """Resolve an optimizer unit ID to a registry workflow ID, or ``UNMAPPED``.
+
+        Thin instance-level accessor over :func:`resolve_unit_workflow`, provided so
+        callers holding a registry do not need to import the module-level function.
+        Never guesses; see :func:`resolve_unit_workflow`.
+        """
+        return resolve_unit_workflow(unit_id)
+
+    def get_workflow_for_unit(self, unit_id: str) -> VerificationWorkflow | None:
+        """Get the registry workflow that executes ``unit_id``.
+
+        Returns ``None`` when the unit is :data:`UNMAPPED`, or when the mapped workflow
+        ID is not registered. ``None`` is an explicit "no executed counterpart" answer,
+        not a fallback to an arbitrary workflow.
+        """
+        workflow_id = resolve_unit_workflow(unit_id)
+        if workflow_id == UNMAPPED:
+            return None
+        return self.get_workflow(workflow_id)
 
     def get_workflows_by_scope(
         self, scope: VerificationScope

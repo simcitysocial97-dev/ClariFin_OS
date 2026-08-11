@@ -201,8 +201,14 @@ function initKeyboardShortcut() {
 
 // ===== Init ──────────────────────────────────────────────────────────────────
 
-initCommandEventHandlers();
-initKeyboardShortcut();
+// These installers attach `window` event listeners, so they must not run during
+// server-side rendering / static prerendering, where `window` is undefined.
+// Guarding at the single module-level call site keeps the browser behaviour
+// identical while making the module safe to import from a server context.
+if (typeof window !== 'undefined') {
+  initCommandEventHandlers();
+  initKeyboardShortcut();
+}
 
 export function resetIntelligenceInvocation() {
   investigativeInsightRuntime.clearDismissed();

@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Selection Runtime - Owns selected entity across all workspaces.
  */

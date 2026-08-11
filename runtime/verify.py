@@ -235,6 +235,65 @@ def cmd_diagnose() -> int:
     return 0
 
 
+def cmd_diagnose_failures() -> int:
+    """VEA-2 Phase 2, M6 — attribute real pipeline failures to the blast radius.
+
+    Replaces the Phase 1.5 hand-fed-log diagnostic. Failures are read from the
+    M5 evidence (``unit_id`` already joined to the M3 manifest), never parsed out
+    of raw logs. Zero manual log parsing.
+    """
+    from runtime.foundation.intelligence.platform.blast import compute_blast_radius
+    from runtime.foundation.intelligence.platform.change import analyze_changes
+    from runtime.foundation.intelligence.platform.optimizer import optimize_verification
+    from runtime.foundation.intelligence.platform.attribution import (
+        attribute_failures,
+        build_observed_failures,
+    )
+    from runtime.foundation.intelligence.platform.cli_format import (
+        format_cross_layer_failure,
+    )
+    from runtime.system.evidence.aggregator import EvidenceAggregator
+
+    changed_files = _collect_changed_files() if _is_git_available() else []
+    if not changed_files:
+        print("No changed files detected.", file=sys.stderr)
+        return 1
+
+    change = analyze_changes(paths=changed_files)
+    blast = compute_blast_radius(change)
+    plan = optimize_verification(blast)
+
+    evidence_dir = REPO_ROOT / "runtime" / "generated" / "evidence"
+    if not evidence_dir.exists():
+        # Explicit "no evidence" state. We do NOT fabricate a green verdict or
+        # claim the change is clean — there is simply nothing to diagnose.
+        print(
+            "No verification evidence was collected for this run "
+            f"({evidence_dir.relative_to(REPO_ROOT)} does not exist)."
+        )
+        print("Run a verification profile first, then re-run diagnose-failures.")
+        return 0
+
+    summary = EvidenceAggregator(REPO_ROOT).aggregate(evidence_dir)
+    failures = build_observed_failures(summary.unit_failures)
+
+    if not failures:
+        print(
+            "No observed failures in this run's evidence. "
+            "Verification is green for this change, or no failure evidence "
+            "was captured."
+        )
+        return 0
+
+    report = attribute_failures(blast, failures, plan.selected)
+    print(format_cross_layer_failure(change, blast, plan, report))
+
+    # Exit non-zero only when the change is actually implicated in a failure,
+    # mirroring the Phase 1.5 intent: an unrelated red pipeline is not a failure
+    # of this command's diagnostic.
+    return 1 if report.change_is_implicated else 0
+
+
 def cmd_affected() -> int:
     from runtime.foundation.intelligence import (
         blast_radius,
@@ -582,7 +641,7 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit",
+            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit",
             file=sys.stderr,
         )
         return 1
@@ -609,6 +668,8 @@ def main() -> int:
         return cmd_ci_doctor()
     if command == "diagnose":
         return cmd_diagnose()
+    if command == "diagnose-failures":
+        return cmd_diagnose_failures()
     if command == "affected":
         return cmd_affected()
     if command == "repair":

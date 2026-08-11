@@ -261,10 +261,14 @@ function initKeyboardShortcut() {
 }
 
 // ===== Init =====
-initSelectionSync();
-initWorkspaceSync();
-initCommandEventHandlers();
-initKeyboardShortcut();
+// These installers attach `window` event listeners, so they must not run during
+// server-side rendering / static prerendering, where `window` is undefined.
+if (typeof window !== 'undefined') {
+  initSelectionSync();
+  initWorkspaceSync();
+  initCommandEventHandlers();
+  initKeyboardShortcut();
+}
 
 // Export for module-level cleanup in tests
 export function resetGraphInvocation() {

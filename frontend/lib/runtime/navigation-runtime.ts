@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Navigation Runtime - Owns navigation history, back/forward, deep link support.
  */

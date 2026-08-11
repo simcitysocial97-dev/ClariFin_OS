@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Workspace Runtime - Owns current workspace, breadcrumbs, title, filters.
  */

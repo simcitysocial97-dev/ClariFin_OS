@@ -1205,6 +1205,32 @@
       "evidence_count": 0,
       "cache_hit": false,
       "metadata": {}
+    },
+    {
+      "run_id": "a71d670a-2dbf-4ac8-a480-d2ed91171aeb",
+      "timestamp": "2026-08-11T04:30:17.852548+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "unknown",
+      "branch": "unknown",
+      "profile": "runtime",
+      "status": "passed",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 18.809730499999205,
+      "blast_radius": {
+        "affected_engines": [],
+        "affected_services": [],
+        "affected_capabilities": [],
+        "affected_tests": []
+      },
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {}
     }
   ],
   "ci": [
@@ -2453,6 +2479,32 @@
           "backend/tests/properties/forecasting/test_engine_properties.py",
           "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
         ]
+      },
+      "evidence_count": 0,
+      "cache_hit": false,
+      "metadata": {}
+    },
+    {
+      "run_id": "a71d670a-2dbf-4ac8-a480-d2ed91171aeb",
+      "timestamp": "2026-08-11T04:30:17.852548+00:00",
+      "environment": "local",
+      "runner": "developer-workstation",
+      "verification_depth": "fast",
+      "intent": "developer-feedback",
+      "trigger": "manual",
+      "commit_sha": "unknown",
+      "branch": "unknown",
+      "profile": "runtime",
+      "status": "passed",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "duration_seconds": 18.809730499999205,
+      "blast_radius": {
+        "affected_engines": [],
+        "affected_services": [],
+        "affected_capabilities": [],
+        "affected_tests": []
       },
       "evidence_count": 0,
       "cache_hit": false,
