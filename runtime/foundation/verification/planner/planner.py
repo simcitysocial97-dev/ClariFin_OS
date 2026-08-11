@@ -541,7 +541,12 @@ class VerificationPlanner:
             if target.capability:
                 capabilities.add(target.capability)
 
-        for cap_id in capabilities:
+        # Iterate capabilities in sorted order (BL-009): building the workflow/
+        # script sets from an unordered set made their *insertion* order
+        # hash-seed dependent, which `_build_steps` then relies on when it
+        # selects the first matching workflow/script for a target. Determinism
+        # here makes the resulting step order independent of PYTHONHASHSEED.
+        for cap_id in sorted(capabilities):
             cap = self._registry.get_capability(cap_id)
             if cap:
                 workflows.update(cap.workflows)
@@ -549,7 +554,7 @@ class VerificationPlanner:
 
         # From target categories
         categories = {t.category for t in targets}
-        for cat in categories:
+        for cat in sorted(categories):
             for wf in self._registry.get_workflows_by_category(cat):
                 workflows.add(wf.id)
             for script in self._registry.get_scripts_by_category(cat):

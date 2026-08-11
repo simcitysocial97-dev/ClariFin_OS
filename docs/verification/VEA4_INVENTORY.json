@@ -1,0 +1,230 @@
+{
+  "schema": "vea4-verification-inventory/v1",
+  "generated_at": "2026-08-11T16:06:00+05:30",
+  "commit": "d9638e4f3c3f6bd73538c172b8396982b64bc05b",
+  "branch": "recovery/program-r-forensic-reconstruction",
+  "ci_topology": {
+    "total_workflows": 9,
+    "profile_invoking_workflows": 7,
+    "non_invoking_workflows": ["dependency-update.yml", "release.yml"],
+    "workflows": [
+      {
+        "file": ".github/workflows/backend-verify.yml",
+        "name": "Backend Verification",
+        "command": "python runtime/verify.py backend",
+        "profile": "backend",
+        "trigger": "push/PR on backend/** runtime/**",
+        "path_filter": ["backend/**", "runtime/**"],
+        "concurrency": "backend-verify-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "backend-report", "backend-evidence"]
+      },
+      {
+        "file": ".github/workflows/frontend-verify.yml",
+        "name": "Frontend Verification",
+        "command": "python runtime/verify.py frontend",
+        "profile": "frontend",
+        "trigger": "push/PR on frontend/** backend/src/routers/** backend/src/mappers/** runtime/**",
+        "path_filter": ["frontend/**", "backend/src/routers/**", "backend/src/mappers/**", "runtime/**"],
+        "concurrency": "frontend-verify-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "frontend-report", "frontend-evidence"]
+      },
+      {
+        "file": ".github/workflows/verification-runtime.yml",
+        "name": "Verification Runtime",
+        "command": "python runtime/verify.py runtime",
+        "profile": "runtime",
+        "trigger": "push/PR on runtime/**",
+        "path_filter": ["runtime/**"],
+        "concurrency": "verification-runtime-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history"]
+      },
+      {
+        "file": ".github/workflows/quality.yml",
+        "name": "Quality Gate",
+        "command": "python runtime/verify.py quick",
+        "profile": "quick",
+        "trigger": "push on **, PR on main/develop",
+        "path_filter": null,
+        "concurrency": "quality-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "quality-report", "fast-checks-evidence"]
+      },
+      {
+        "file": ".github/workflows/golden.yml",
+        "name": "Golden Regression",
+        "command": "python runtime/verify.py golden",
+        "profile": "golden",
+        "trigger": "cron 03:00 daily + workflow_dispatch",
+        "path_filter": null,
+        "concurrency": "golden-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "golden-report"]
+      },
+      {
+        "file": ".github/workflows/mutation.yml",
+        "name": "Mutation Testing",
+        "command": "python runtime/verify.py mutation",
+        "profile": "mutation",
+        "trigger": "cron 02:00 daily + workflow_dispatch",
+        "path_filter": null,
+        "concurrency": "mutation-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "mutation-report"]
+      },
+      {
+        "file": ".github/workflows/playwright.yml",
+        "name": "Playwright E2E",
+        "command": "python runtime/verify.py playwright",
+        "profile": "playwright",
+        "trigger": "push/PR on main/master/develop only",
+        "path_filter": ["frontend/**"],
+        "concurrency": "playwright-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history"]
+      },
+      {
+        "file": ".github/workflows/dependency-update.yml",
+        "name": "Dependency Update",
+        "command": "python runtime/verify.py status (summary only)",
+        "profile": null,
+        "trigger": "scheduled",
+        "path_filter": null,
+        "concurrency": "dependency-update-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": []
+      },
+      {
+        "file": ".github/workflows/release.yml",
+        "name": "Release",
+        "command": null,
+        "profile": null,
+        "trigger": "release",
+        "path_filter": null,
+        "concurrency": "release-${{ github.ref }}",
+        "cancel_in_progress": true,
+        "artifacts": []
+      }
+    ]
+  },
+  "profiles": {
+    "quick": {
+      "tasks": [
+        {"id": "quick-ruff", "command": "python3 -m ruff check backend/src/", "category": "capability", "scope": "quick", "estimated_seconds": 30},
+        {"id": "quick-mypy", "command": "python3 -m mypy backend/src/ --ignore-missing-imports", "category": "capability", "scope": "quick", "estimated_seconds": 60},
+        {"id": "quick-unit", "command": "python3 -m pytest backend/tests/unit/ -x --tb=short -q", "category": "capability", "scope": "quick", "estimated_seconds": 120}
+      ]
+    },
+    "backend": {
+      "tasks": [
+        {"id": "backend-ruff", "command": "python3 -m ruff check backend/src/", "category": "capability", "scope": "backend", "estimated_seconds": 30},
+        {"id": "backend-mypy", "command": "python3 -m mypy backend/src/ --ignore-missing-imports", "category": "capability", "scope": "backend", "estimated_seconds": 60},
+        {"id": "backend-unit", "command": "python3 -m pytest backend/tests/unit/ -x --tb=short -q", "category": "capability", "scope": "backend", "estimated_seconds": 120},
+        {"id": "backend-integration", "command": "python3 -m pytest backend/tests/integration/ -x --tb=short -q", "category": "integration", "scope": "backend", "estimated_seconds": 180},
+        {"id": "backend-schemathesis", "command": "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/", "category": "contract", "scope": "backend", "estimated_seconds": 180},
+        {"id": "backend-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "capability", "scope": "backend", "estimated_seconds": 30}
+      ]
+    },
+    "frontend": {
+      "tasks": [
+        {"id": "frontend-lint", "command": "npx eslint frontend/src/ --ext .ts,.tsx", "category": "capability", "scope": "frontend", "estimated_seconds": 30},
+        {"id": "frontend-typecheck", "command": "cd frontend && npx tsc --noEmit", "category": "capability", "scope": "frontend", "estimated_seconds": 60},
+        {"id": "frontend-unit", "command": "cd frontend && npx vitest run", "category": "capability", "scope": "frontend", "estimated_seconds": 120},
+        {"id": "frontend-build", "command": "cd frontend && npm run build", "category": "capability", "scope": "frontend", "estimated_seconds": 60},
+        {"id": "frontend-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "capability", "scope": "frontend", "estimated_seconds": 30}
+      ]
+    },
+    "contracts": {
+      "tasks": [
+        {"id": "contracts-schemathesis", "command": "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/", "category": "contract", "scope": "contracts", "estimated_seconds": 180},
+        {"id": "contracts-backend-unit", "command": "python3 -m pytest backend/tests/unit/ -x --tb=short -q -k contract", "category": "contract", "scope": "contracts", "estimated_seconds": 120},
+        {"id": "contracts-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "capability", "scope": "contracts", "estimated_seconds": 30}
+      ]
+    },
+    "runtime": {
+      "tasks": [
+        {"id": "runtime-self-test", "command": "bash .github/scripts/run_runtime_verification.sh", "category": "architectural", "scope": "runtime", "estimated_seconds": 120},
+        {"id": "runtime-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "architectural", "scope": "runtime", "estimated_seconds": 30}
+      ]
+    },
+    "full": {
+      "tasks": [
+        {"id": "full-ruff", "command": "python3 -m ruff check backend/src/", "category": "capability", "scope": "full", "estimated_seconds": 30},
+        {"id": "full-mypy", "command": "python3 -m mypy backend/src/ --ignore-missing-imports", "category": "capability", "scope": "full", "estimated_seconds": 60},
+        {"id": "full-backend-unit", "command": "python3 -m pytest backend/tests/unit/ -x --tb=short -q", "category": "capability", "scope": "full", "estimated_seconds": 120},
+        {"id": "full-backend-integration", "command": "python3 -m pytest backend/tests/integration/ -x --tb=short -q", "category": "integration", "scope": "full", "estimated_seconds": 180},
+        {"id": "full-schemathesis", "command": "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/", "category": "contract", "scope": "full", "estimated_seconds": 180},
+        {"id": "full-frontend-lint", "command": "npx eslint frontend/src/ --ext .ts,.tsx", "category": "capability", "scope": "full", "estimated_seconds": 30},
+        {"id": "full-frontend-typecheck", "command": "cd frontend && npx tsc --noEmit", "category": "capability", "scope": "full", "estimated_seconds": 60},
+        {"id": "full-frontend-unit", "command": "cd frontend && npx vitest run", "category": "capability", "scope": "full", "estimated_seconds": 120},
+        {"id": "full-frontend-build", "command": "cd frontend && npm run build", "category": "capability", "scope": "full", "estimated_seconds": 60},
+        {"id": "full-graph", "command": "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'", "category": "architectural", "scope": "full", "estimated_seconds": 30},
+        {"id": "full-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "capability", "scope": "full", "estimated_seconds": 30}
+      ]
+    },
+    "mutation": {
+      "tasks": [
+        {"id": "mutation-run", "command": "bash .github/scripts/run_mutation_selective.sh", "category": "mutation", "scope": "mutation", "estimated_seconds": 600},
+        {"id": "mutation-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "mutation", "scope": "mutation", "estimated_seconds": 30}
+      ]
+    },
+    "golden": {
+      "tasks": [
+        {"id": "golden-regression", "command": "bash .github/scripts/run_golden_tests.sh", "category": "capability", "scope": "golden", "estimated_seconds": 600},
+        {"id": "golden-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "capability", "scope": "golden", "estimated_seconds": 30}
+      ]
+    },
+    "playwright": {
+      "tasks": [
+        {"id": "playwright-e2e", "command": "cd frontend && npx playwright test", "category": "integration", "scope": "playwright", "estimated_seconds": 1800},
+        {"id": "playwright-aggregate", "command": "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'", "category": "integration", "scope": "playwright", "estimated_seconds": 30}
+      ]
+    },
+    "integration": {
+      "tasks": [
+        {"id": "integration-api", "command": "bash .github/scripts/run_integration_tests.sh", "category": "integration", "scope": "integration", "estimated_seconds": 600}
+      ]
+    }
+  },
+  "unit_to_workflow_mapping": {
+    "unit-targeted": "backend",
+    "backend-unit": "backend",
+    "backend-integration": "integration",
+    "contracts-schemathesis": "contracts",
+    "frontend-unit": "frontend",
+    "frontend-typecheck-build": "frontend",
+    "playwright-e2e": "playwright",
+    "runtime-self-test": "runtime",
+    "mutation-run": "mutation",
+    "golden-regression": "golden"
+  },
+  "scripts": [
+    {"id": "run_fast_checks", "path": ".github/scripts/run_fast_checks.sh", "workflow": "quick"},
+    {"id": "run_backend_verification", "path": ".github/scripts/run_backend_verification.sh", "workflow": "backend"},
+    {"id": "run_frontend_verification", "path": ".github/scripts/run_frontend_verification.sh", "workflow": "frontend"},
+    {"id": "run_contract_tests", "path": ".github/scripts/run_contract_tests.sh", "workflow": "contracts"},
+    {"id": "run_property_tests", "path": ".github/scripts/run_property_tests.sh", "workflow": "property"},
+    {"id": "run_mutation_selective", "path": ".github/scripts/run_mutation_selective.sh", "workflow": "mutation"},
+    {"id": "run_migration_verification", "path": ".github/scripts/run_migration_verification.sh", "workflow": "migration"},
+    {"id": "run_integration_tests", "path": ".github/scripts/run_integration_tests.sh", "workflow": "integration"},
+    {"id": "run_full_verification", "path": ".github/scripts/run_full_verification.sh", "workflow": "full"},
+    {"id": "run_runtime_verification", "path": ".github/scripts/run_runtime_verification.sh", "workflow": "runtime"},
+    {"id": "run_golden_tests", "path": ".github/scripts/run_golden_tests.sh", "workflow": "golden"},
+    {"id": "run_playwright_tests", "path": ".github/scripts/run_playwright_tests.sh", "workflow": "playwright"}
+  ],
+  "evidence_system": {
+    "aggregator": "runtime/system/evidence/aggregator.py",
+    "collectors": ["coverage", "mutation", "test_results", "contract"],
+    "evidence_artifacts": [
+      "runtime/generated/evidence/backend/backend-verification.json",
+      "runtime/generated/evidence/frontend/frontend-verification.json",
+      "runtime/generated/evidence/run-manifest.json",
+      "runtime/generated/verification-report.md",
+      "runtime/generated/verification-cache.json"
+    ],
+    "exit_contract": "0 = all phases pass; 1 = any phase fails",
+    "identity_spine": "VerificationUnit.id -> step.unit_id -> ExecutionResult.unit_id -> run-manifest/v1 -> EvidenceSummary.unit_failures"
+  }
+}

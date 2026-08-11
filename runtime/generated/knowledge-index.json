@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-11T06:18:10.199551+00:00",
+  "indexed_at": "2026-08-11T14:55:04.175871+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -10107,6 +10107,126 @@
         ]
       },
       {
+        "title": "VEA3_BASELINE",
+        "path": "docs/verification/VEA3_BASELINE.md",
+        "references": {
+          "path": "docs/verification/VEA3_BASELINE.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA3_BL004_AUDIT",
+        "path": "docs/verification/VEA3_BL004_AUDIT.md",
+        "references": {
+          "path": "docs/verification/VEA3_BL004_AUDIT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA3_CERTIFICATION",
+        "path": "docs/verification/VEA3_CERTIFICATION.md",
+        "references": {
+          "path": "docs/verification/VEA3_CERTIFICATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA3_E4_DESIGN",
+        "path": "docs/verification/VEA3_E4_DESIGN.md",
+        "references": {
+          "path": "docs/verification/VEA3_E4_DESIGN.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_ATTRIBUTION_VALIDATION",
+        "path": "docs/verification/VEA4_ATTRIBUTION_VALIDATION.md",
+        "references": {
+          "path": "docs/verification/VEA4_ATTRIBUTION_VALIDATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_BASELINE",
+        "path": "docs/verification/VEA4_BASELINE.md",
+        "references": {
+          "path": "docs/verification/VEA4_BASELINE.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_BRANCH_PROTECTION",
+        "path": "docs/verification/VEA4_BRANCH_PROTECTION.md",
+        "references": {
+          "path": "docs/verification/VEA4_BRANCH_PROTECTION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_CI_DECISION",
+        "path": "docs/verification/VEA4_CI_DECISION.md",
+        "references": {
+          "path": "docs/verification/VEA4_CI_DECISION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_EVIDENCE_AUDIT",
+        "path": "docs/verification/VEA4_EVIDENCE_AUDIT.md",
+        "references": {
+          "path": "docs/verification/VEA4_EVIDENCE_AUDIT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_EXECUTION_EQUIVALENCE",
+        "path": "docs/verification/VEA4_EXECUTION_EQUIVALENCE.md",
+        "references": {
+          "path": "docs/verification/VEA4_EXECUTION_EQUIVALENCE.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_QUALITY_DECISION",
+        "path": "docs/verification/VEA4_QUALITY_DECISION.md",
+        "references": {
+          "path": "docs/verification/VEA4_QUALITY_DECISION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA4_UNMAPPED_CLOSURE",
+        "path": "docs/verification/VEA4_UNMAPPED_CLOSURE.md",
+        "references": {
+          "path": "docs/verification/VEA4_UNMAPPED_CLOSURE.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "VEA_BACKLOG",
         "path": "docs/verification/VEA_BACKLOG.md",
         "references": {
@@ -10129,6 +10249,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 160
+    "documentation": 172
   }
 }

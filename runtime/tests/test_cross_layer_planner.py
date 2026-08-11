@@ -7,6 +7,7 @@ produce deterministic, accurate blast-radius results.
 from __future__ import annotations
 
 import json
+import os
 
 
 from runtime.foundation.verification.models import (
@@ -16,6 +17,8 @@ from runtime.foundation.verification.planner import (
     VerificationPlanner,
     plan_verification,
 )
+
+from runtime.foundation.verification.planner.planner import CrossLayerImpactPlanner
 
 
 class TestCrossLayerImpactPlanner:
@@ -417,3 +420,81 @@ class TestVerificationPlanner:
         )
         assert plan.scope == VerificationScope.BACKEND
         assert len(plan.targets) > 0
+
+
+class TestPlannerDeterminismBL009:
+    """BL-009 — planner step-ordering non-determinism (set iteration).
+
+    The fix makes ``_resolve_workflows_and_scripts`` iterate capabilities and
+    categories in sorted order, so the workflow/script *insertion* order (which
+    ``_build_steps`` relies on when it selects the first matching workflow for a
+    target) no longer depends on ``PYTHONHASHSEED``.
+
+    These tests run the planner in separate subprocesses under several hash seeds
+    and assert byte-identical step ordering — the only valid proof, because the
+    defect was seed-dependent. A fixed ``PYTHONHASHSEED`` is explicitly NOT used
+    as the solution.
+    """
+
+    def _plan_step_order(self, seed: int) -> list[str]:
+        import subprocess
+
+        code = (
+            "from runtime.foundation.verification.planner import plan_verification\n"
+            "from runtime.foundation.verification.models import VerificationScope\n"
+            "plan = plan_verification(\n"
+            "    changed_files=['backend/src/engines/loan_engine/amortization.py'],\n"
+            "    scope=VerificationScope.BACKEND,\n"
+            ")\n"
+            "print('|'.join(s.id for s in plan.steps))\n"
+        )
+        result = subprocess.run(
+            ["python3", "-c", code],
+            capture_output=True,
+            text=True,
+            env={**os.environ, "PYTHONHASHSEED": str(seed)},
+        )
+        assert result.returncode == 0, result.stderr
+        return result.stdout.strip().split("|")
+
+    def test_step_order_is_seed_independent(self):
+        orders = [self._plan_step_order(seed) for seed in (0, 1, 7, 42, 1234)]
+        # Every run must produce the same ordered step-id sequence.
+        assert all(order == orders[0] for order in orders)
+        # And the ordering must be deterministic + non-empty.
+        assert orders[0]
+        assert orders[0] == sorted(orders[0])
+
+    def test_step_order_matches_single_run(self):
+        # Two separate subprocess runs (different seeds) must agree, confirming the
+        # in-process run above is not a fluke of a lucky seed.
+        assert self._plan_step_order(0) == self._plan_step_order(7)
+
+
+class TestBlastRadiusPrecisionBL002:
+    """BL-002 — credit-card over-prediction hop.
+
+    The VEA-2 backlog described a loan-engine change pulling credit-card entities
+    into the blast radius through a shared ``GET /report`` / ``credit_card_engine``
+    hop. Against the *current* canonical graph (normalised: phantom engine keys
+    removed, implementation modules demoted), that hop no longer exists — a
+    loan-engine change resolves to loan_engine / useLoansCapability / loans-view-model
+    only. This test locks that precision so a future regression cannot silently
+    re-introduce the wide hop.
+    """
+
+    def test_loan_change_does_not_reach_credit_card(self):
+        planner = CrossLayerImpactPlanner()  # live architecture provider
+        report = planner.analyze_cross_layer_impact(
+            ["backend/src/engines/loan_engine/amortization.py"]
+        )
+        data = report.to_dict()
+
+        # The blast radius must be confined to the loan engine and its capability.
+        assert data["affected_engines"] == ["backend/src/engines/loan_engine"]
+        assert data["affected_capabilities"] == ["useLoansCapability"]
+
+        # No credit-card contamination (the BL-002 over-prediction signature).
+        blob = json.dumps(data).lower()
+        assert "credit_card" not in blob
+        assert "usecreditcardscapability" not in blob.lower()

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, FileText, BarChart3, CreditCard, X, ChevronRight, ChevronLeft } from 'lucide-react';
@@ -42,15 +42,12 @@ interface TutorialProps {
 
 export function Tutorial({ onComplete, onSkip }: TutorialProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Check if user has seen tutorial before
-    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-    if (!hasSeenTutorial) {
-      setIsVisible(true);
-    }
-  }, []);
+  // Initialise visibility during render (not in an effect) so we never call
+  // setState synchronously inside useEffect. localStorage is only read on the
+  // client; the lazy initializer guards SSR where `window` is undefined.
+  const [isVisible, setIsVisible] = useState(() =>
+    typeof window !== 'undefined' && !localStorage.getItem('hasSeenTutorial'),
+  );
 
   const handleNext = () => {
     if (currentStep < tutorialSteps.length - 1) {

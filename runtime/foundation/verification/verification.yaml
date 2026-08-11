@@ -280,7 +280,7 @@ capabilities:
     scopes: ["backend", "property", "contracts", "integration", "repository"]
     workflows: ["property", "contracts", "backend"]
     scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
-    modules: ["backend/src/loan_engine"]
+    modules: ["backend/src/engines/loan_engine"]
 
   reconciliation:
     name: "Reconciliation Engine"
@@ -289,7 +289,7 @@ capabilities:
     scopes: ["backend", "property", "contracts", "integration", "repository"]
     workflows: ["property", "contracts", "backend"]
     scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
-    modules: ["backend/src/reconciliation"]
+    modules: ["backend/src/engines/reconciliation_engine.py"]
 
   ledger:
     name: "Ledger Service"
@@ -298,7 +298,7 @@ capabilities:
     scopes: ["backend", "contracts", "integration", "repository"]
     workflows: ["contracts", "backend", "integration"]
     scripts: ["run_contract_tests", "run_backend_verification", "run_fast_checks"]
-    modules: ["backend/src/ledger"]
+    modules: ["backend/src/engines/ledger_audit_engine.py"]
 
   api-contracts:
     name: "API Contracts"

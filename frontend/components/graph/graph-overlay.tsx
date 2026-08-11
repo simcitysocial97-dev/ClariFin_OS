@@ -43,8 +43,9 @@ export function GraphOverlay({ scope, initialResult, onDismiss, className }: Gra
   const [layout, setLayout] = useState<'force' | 'tree' | 'radial' | 'timeline' | 'grid'>('force');
   const [showEvidence, setShowEvidence] = useState(false);
   const [result, setResult] = useState<GraphResult | null>(initialResult ?? null);
-  const [nodeCount, setNodeCount] = useState(0);
-  const [edgeCount, setEdgeCount] = useState(0);
+  // Initialise counts during render from the initial result (no setState-in-effect).
+  const [nodeCount, setNodeCount] = useState(() => initialResult?.nodes.length ?? 0);
+  const [edgeCount, setEdgeCount] = useState(() => initialResult?.edges.length ?? 0);
 
   // Build graph model
   const model = useMemo(() => {
@@ -66,14 +67,6 @@ export function GraphOverlay({ scope, initialResult, onDismiss, className }: Gra
     });
     return unsubscribe;
   }, [scope.trigger]);
-
-  // Update node/edge count from initial result
-  useEffect(() => {
-    if (initialResult) {
-      setNodeCount(initialResult.nodes.length);
-      setEdgeCount(initialResult.edges.length);
-    }
-  }, [initialResult]);
 
   // Handle node selection
   const handleNodeSelect = useCallback((node: RenderNode) => {

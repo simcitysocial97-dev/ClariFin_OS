@@ -46,9 +46,9 @@ class ScopeResolver:
 
     # Module to capability mapping
     MODULE_CAPABILITIES = {
-        "backend/src/loan_engine": ["loan-engine"],
-        "backend/src/reconciliation": ["reconciliation"],
-        "backend/src/ledger": ["ledger"],
+        "backend/src/engines/loan_engine": ["loan-engine"],
+        "backend/src/engines/reconciliation_engine.py": ["reconciliation"],
+        "backend/src/engines/ledger_audit_engine.py": ["ledger"],
         "backend/src/accounting": ["accounting"],
         "backend/src/reporting": ["reporting"],
         "backend/src/instruments": ["instruments"],

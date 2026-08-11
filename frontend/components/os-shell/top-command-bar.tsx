@@ -30,7 +30,7 @@ interface BreadcrumbEntry {
   label: string;
   workspaceId?: WorkspaceName;
   route?: string;
-  timestamp: number;
+  timestamp?: number;
 }
 
 // ===== Top Command Bar =====
@@ -77,7 +77,7 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
 
   // Build breadcrumb trail from navigation history
   const breadcrumbs = useMemo(() => {
-    const crumbs: BreadcrumbEntry[] = [{ label: 'ClariFin', timestamp: Date.now() }];
+    const crumbs: BreadcrumbEntry[] = [{ label: 'ClariFin' }];
 
     // Add current workspace
     const currentEntry = navHistory.entries[navHistory.currentIndex];
@@ -88,7 +88,6 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
         label: workspaceRegistration?.label ?? state.currentWorkspace,
         workspaceId: state.currentWorkspace,
         route: `/${state.currentWorkspace}`,
-        timestamp: Date.now(),
       });
     }
 

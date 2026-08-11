@@ -173,9 +173,11 @@ class TestRunManifest:
         assert manifest["generated_at"]
         assert manifest["profile"] == "runtime"
 
-        entry = manifest["steps"][0]
-        assert entry["unit_id"] == "runtime-self-test"
-        assert entry["provenance"]["source"] == "registry-workflow-mapping"
+        runtime_entry = next(
+            e for e in manifest["steps"] if e["unit_id"] == "runtime-self-test"
+        )
+        assert runtime_entry["unit_id"] == "runtime-self-test"
+        assert runtime_entry["provenance"]["source"] == "registry-workflow-mapping"
 
     def test_manifest_entry_has_every_required_field(self, tmp_path: Path):
         orchestrator = _planned("backend")
@@ -213,7 +215,9 @@ class TestRunManifest:
         orchestrator = _planned("runtime")
         _execute(orchestrator, exit_code=1)
         manifest = self._manifest(orchestrator, tmp_path)
-        entry = manifest["steps"][0]
+        entry = next(
+            e for e in manifest["steps"] if e["unit_id"] == "runtime-self-test"
+        )
         assert entry["exit_code"] == 1
         assert entry["status"] == "failed"
         assert entry["unit_id"] == "runtime-self-test"

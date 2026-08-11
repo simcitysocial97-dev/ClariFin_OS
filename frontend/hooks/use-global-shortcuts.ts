@@ -5,7 +5,7 @@
  * Uses the Keyboard Engine for all keyboard handling.
  */
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { keyboardEngine, registerKeyboardHandler } from '@/lib/interaction/keyboard-engine';
 import { keyboardDispatcher } from '@/lib/interaction/keyboard-dispatcher';
 import type { KeyboardShortcut, KeyboardHandler } from '@/lib/interaction/interaction-types';
@@ -17,10 +17,13 @@ export function useGlobalShortcuts(
   priority = 0,
   workspace?: WorkspaceName,
 ) {
-  const handler: KeyboardHandler = {
-    shortcuts,
-    priority,
-  };
+  const handler = useMemo<KeyboardHandler>(
+    () => ({
+      shortcuts,
+      priority,
+    }),
+    [shortcuts, priority],
+  );
 
   useEffect(() => {
     const handlerId = `custom:${workspace || 'global'}:${Date.now()}`;
@@ -29,7 +32,7 @@ export function useGlobalShortcuts(
     return () => {
       keyboardEngine.unregisterHandler(handlerId);
     };
-  }, [shortcuts, priority, workspace]);
+  }, [shortcuts, priority, workspace, handler]);
 
   // Convenience methods
   const openCommandPalette = useCallback(() => {

@@ -39,59 +39,48 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
   const [uploadMode, setUploadMode] = useState<UploadMode>('server'); // Default to server for better experience
   const { member: contextMember } = useMember();
   const selectedMember = contextMember === 'All' ? 'Self' : contextMember;
-  const [processingLog, setProcessingLog] = useState<string[]>([]);
-  const [uploadResult, setUploadResult] = useState<{
-    bank: string;
-    transactionCount: number;
-    validationStatus: string;
-  } | null>(null);
-  
+
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [totalFiles, setTotalFiles] = useState(0);
   const [parsedFiles, setParsedFiles] = useState(0);
-  
+
   const { toast } = useToast();
   const { addCard, addTransactions } = useAppStore();
-  const { upload, result: serverResult, error: serverError } = useUploadQuery();
+  const { upload, result: serverResult } = useUploadQuery();
   const { refetch: refetchStatements } = useStatementsQuery();
   const { refetch: refetchTransactions } = useTransactionsQuery();
   const { refetch: refetchOverview } = useOverviewQuery();
 
-  // Reset state when modal opens/closes
-  useEffect(() => {
-    if (!open) {
-      setProcessingLog([]);
-      setUploadResult(null);
-      setProgress(0);
-      setParsedFiles(0);
-      setTotalFiles(0);
-      setIsUploading(false);
-    }
-  }, [open]);
-
-  // Handle server upload result
-  useEffect(() => {
-    if (serverResult && isUploading && uploadMode === 'server') {
-      setProcessingLog(serverResult.log || []);
-      setUploadResult({
+  // Derive the server-result display fields during render instead of copying
+  // them into local state inside an effect.
+  const processingLog: string[] = serverResult?.log ?? [];
+  const uploadResult: {
+    bank: string;
+    transactionCount: number;
+    validationStatus: string;
+  } | null = serverResult
+    ? {
         bank: serverResult.bank,
         transactionCount: serverResult.transaction_count,
         validationStatus: serverResult.validation_status,
-      });
-      setProgress(100);
-      
+      }
+    : null;
+
+  // Handle server upload result (side effects only — no setState-in-effect)
+  useEffect(() => {
+    if (serverResult && isUploading && uploadMode === 'server') {
       // Show success toast
       toast({
         title: 'Upload successful!',
         description: `Extracted ${serverResult.transaction_count} transactions from ${serverResult.bank}. Validation: ${serverResult.validation_status}`,
       });
-      
+
       // Refetch all data
       refetchOverview();
       refetchStatements();
       refetchTransactions();
-      
+
       // Close modal after delay
       setTimeout(() => {
         setIsUploading(false);
@@ -99,18 +88,6 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
       }, 2000);
     }
   }, [serverResult, isUploading, uploadMode, toast, refetchOverview, refetchStatements, refetchTransactions, onOpenChange]);
-
-  // Handle server upload error
-  useEffect(() => {
-    if (serverError && isUploading && uploadMode === 'server') {
-      toast({
-        title: 'Upload failed',
-        description: serverError.message,
-        variant: 'destructive',
-      });
-      setIsUploading(false);
-    }
-  }, [serverError, isUploading, uploadMode, toast]);
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -133,23 +110,27 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
       setProgress(0);
       setTotalFiles(acceptedFiles.length);
       setParsedFiles(0);
-      setProcessingLog([]);
-      setUploadResult(null);
 
       if (uploadMode === 'server') {
         // Server-side upload - process files one by one
         for (let i = 0; i < acceptedFiles.length; i++) {
           const file = acceptedFiles[i];
           setProgress(Math.round((i / acceptedFiles.length) * 50)); // First 50% for upload
-          
+
           try {
             await upload(file, selectedMember);
             setParsedFiles((prev) => prev + 1);
           } catch (error) {
-            // Error handled by useEffect
             setParsedFiles((prev) => prev + 1);
+            setIsUploading(false);
+            toast({
+              title: 'Upload failed',
+              description: error instanceof Error ? error.message : 'Upload failed',
+              variant: 'destructive',
+            });
           }
         }
+        setProgress(100);
       } else {
         // Browser-side upload (original implementation)
         // Initialize debug panel if debug mode is enabled

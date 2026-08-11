@@ -142,9 +142,7 @@ export function LeftRail({ className }: LeftRailProps) {
   }, [pathname]);
 
   // Navigation history depth indicator
-  const navDepth = useMemo(() => {
-    return navigationRuntime.state.currentIndex + 1;
-  }, [pathname]);
+  const navDepth = navigationRuntime.state.currentIndex + 1;
 
   // Handle workspace navigation — push to history
   const handleWorkspaceNav = useCallback((workspace: WorkspaceName, deepLink: string) => {

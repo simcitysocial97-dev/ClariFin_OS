@@ -132,10 +132,11 @@ function ExecutiveModalContent({ insight }: ExecutiveModalProps) {
 // ─── Panel Component ─────────────────────────────────────────────────────────
 
 export function ExecutiveModal() {
-  const [insight, setInsight] = useState<ExecutiveInsight | null>(null);
+  const [insight, setInsight] = useState<ExecutiveInsight | null>(
+    () => executiveInsightRuntime.getActiveInsight(),
+  );
 
   useEffect(() => {
-    setInsight(executiveInsightRuntime.getActiveInsight());
     const unsubscribe = executiveInsightRuntime.subscribe(() => {
       setInsight(executiveInsightRuntime.getActiveInsight());
     });

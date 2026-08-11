@@ -30,16 +30,14 @@ export function WaterfallEngine({
   className,
 }: WaterfallEngineProps) {
   const cumulativeValues = useMemo(() => {
-    let runningTotal = 0;
-    return items.map((item) => {
-      const start = runningTotal;
-      runningTotal += item.valuePaise;
-      return {
-        ...item,
-        start,
-        end: runningTotal,
-      };
-    });
+    return items.reduce<Array<typeof items[number] & { start: number; end: number }>>(
+      (acc, item) => {
+        const start = acc.length === 0 ? 0 : acc[acc.length - 1].end;
+        acc.push({ ...item, start, end: start + item.valuePaise });
+        return acc;
+      },
+      [],
+    );
   }, [items]);
 
   if (cumulativeValues.length === 0) {

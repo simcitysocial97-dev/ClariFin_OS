@@ -370,8 +370,8 @@ def test_detect_rollover_target_after_source(events):
         target = event_map.get(link["event_id"])
         if source and target:
             assert (
-                target["id"] > source["id"]
-            ), f"Rollover target {link['event_id']} has id <= source {link['linked_event_id']}"
+                target["date_iso"] > source["date_iso"]
+            ), f"Rollover target {link['event_id']} date {target.get('date_iso')} is not after source {link['linked_event_id']} date {source.get('date_iso')}"
 
 
 # ============================================================================

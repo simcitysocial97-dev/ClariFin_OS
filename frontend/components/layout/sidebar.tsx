@@ -44,7 +44,7 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
 
   const { data: netWorthData } = useNetWorth();
 
-  const SidebarContent = () => (
+  const renderSidebarContent = () => (
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex h-14 items-center border-b px-4">
@@ -160,7 +160,7 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
           <VisuallyHidden>
             <SheetTitle>Navigation</SheetTitle>
           </VisuallyHidden>
-          <SidebarContent />
+          {renderSidebarContent()}
         </SheetContent>
       </Sheet>
 
@@ -171,7 +171,7 @@ export function Sidebar({ sidebarCollapsed = false, toggleSidebar }: SidebarProp
           sidebarCollapsed ? 'w-14' : 'w-56'
         )}
       >
-        <SidebarContent />
+        {renderSidebarContent()}
       </aside>
     </>
   );
