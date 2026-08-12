@@ -1,0 +1,136 @@
+# .github/workflows/verification-reconcile.yml
+#
+# PURPOSE: VEA-5 M5/M8 — CI reconciliation gate (required PR check).
+# RESPONSIBILITY: Make CI consume and enforce the verification framework's
+#   plan/reconciliation semantics WITHOUT redesigning the existing 9-workflow
+#   topology. This workflow does NOT replace backend-verify / frontend-verify /
+#   quality / verification-runtime / golden / mutation / dependency-update /
+#   playwright / release. It runs the runtime verification through the same
+#   `runtime/verify.py` contract and adds the M5 reconciliation gate on top.
+# M8: path filters broadened (backend/** + runtime/**) so a backend/verification
+#   PR cannot skip this gate via its own path filters (branch-protection
+#   enforcement reality). Operator action: mark the `reconcile-gate` job a
+#   REQUIRED status check in branch protection.
+#
+# Rule 1: no engineering logic in YAML. Rule 2: delegate to runtime/verify.py.
+# Rule 8: every workflow ends with `verify.py status` summary. Rule 9: path
+# filtering so unrelated changes do not trigger this gate.
+#
+# Exit contract (M5-E):
+#   same-plan                -> 0
+#   expected-tier-difference -> 0
+#   environment-divergence   -> 1  (execution/evidence differed; NOT a defect)
+#   planning-divergence      -> 2  (architectural failure)
+
+name: Verification Reconcile
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "runtime/**"
+      - "backend/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "runtime/**"
+      - "backend/**"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile-gate:
+    name: Plan / Execute / Reconcile
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      # M5-A — PR base correctness. For a PR the base is GITHUB_BASE_REF (or an
+      # explicit equivalent); it must never silently fall back to origin/main.
+      - name: Emit PR TierPlan manifest (M5-B)
+        id: plan
+        run: |
+          python runtime/verify.py plan \
+            --tier pr \
+            --base "${GITHUB_BASE_REF:-main}" \
+            --head "$GITHUB_SHA" \
+            --no-write \
+            > runtime/generated/vea5-tier-plan.pr.json
+        shell: bash
+
+      # Execute the verification runtime profile (the existing contract).
+      - name: Run runtime verification (profile)
+        id: verify
+        continue-on-error: true
+        run: |
+          python runtime/verify.py runtime
+        shell: bash
+
+      # M5-C / M6-A — persist the execution-evidence artifact (M6-A v2 schema:
+      # vea5-execution-evidence/v2). Reconciliation consumes THIS persisted
+      # artifact, never the live job state.
+      - name: Emit execution-evidence artifact (M5-C / M6-A)
+        run: |
+          python runtime/verify.py exec-evidence \
+            --plan runtime/generated/vea5-tier-plan.pr.json \
+            --profile runtime \
+            --report runtime/generated/verification-report.md \
+            --status "${{ steps.verify.outcome == 'success' && 'pass' || 'fail' }}" \
+            --exit "${{ steps.verify.outcome == 'success' && '0' || '1' }}" \
+            --duration 0.0 \
+            --commit "$GITHUB_SHA" \
+            --out runtime/generated/vea5-execution.pr.json
+        shell: bash
+
+      # M5-D — reconcile from persisted artifacts. The command applies the M5-E
+      # exit contract itself (same-plan/expected-tier-difference -> 0;
+      # environment-divergence -> 1; planning-divergence -> 2). The numeric exit
+      # code IS the gate: this step fails the job on 1 or 2. The distinction
+      # between environment (1, not a defect) and planning (2, architectural
+      # failure) is preserved in the persisted report regardless.
+      - name: Reconcile (M5-D / M5-E)
+        id: reconcile
+        run: |
+          python runtime/verify.py reconcile \
+            --plan runtime/generated/vea5-tier-plan.pr.json \
+            --evidence runtime/generated/vea5-execution.pr.json \
+            --report runtime/generated/vea5-reconciliation.pr.json \
+            --commit "$GITHUB_SHA"
+        shell: bash
+
+      - name: Upload reconciliation artifacts
+        if: always()
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: reconciliation-report
+          path: |
+            runtime/generated/vea5-tier-plan.pr.json
+            runtime/generated/vea5-execution.pr.json
+            runtime/generated/vea5-reconciliation.pr.json
+          retention-days: 14
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+        shell: bash
