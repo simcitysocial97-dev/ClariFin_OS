@@ -1119,14 +1119,25 @@ def main() -> int:
     changed_files = _collect_changed_files() if _is_git_available() else []
 
     if not changed_files and profile_name not in ("full", "graph"):
-        print(
-            "No changed files detected and git is unavailable. "
-            "Cannot run selective verification without a git working tree. "
-            "Use 'full' or 'graph' profile for comprehensive verification, "
-            "or run from a git repository.",
-            file=sys.stderr,
-        )
-        return 1
+        import os
+        in_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+        if in_ci:
+            print(
+                "No changed files detected and git is unavailable in CI. "
+                "Falling back to full verification profile.",
+                file=sys.stderr,
+            )
+            profile_name = "full"
+            profile = get_profile(profile_name)
+        else:
+            print(
+                "No changed files detected and git is unavailable. "
+                "Cannot run selective verification without a git working tree. "
+                "Use 'full' or 'graph' profile for comprehensive verification, "
+                "or run from a git repository.",
+                file=sys.stderr,
+            )
+            return 1
 
     from runtime.foundation.verification.cache import (
         CachedVerdict,

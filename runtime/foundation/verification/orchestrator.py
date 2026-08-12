@@ -165,8 +165,32 @@ def _collect_changed_files() -> list[str]:
             return result.stdout
         return ""
 
+    def _resolve_remote_ref(ref: str) -> str:
+        """Resolve a ref to a form usable by git diff, fetching from origin if needed."""
+        for candidate in (ref, f"origin/{ref}"):
+            check = subprocess.run(
+                ["git", "rev-parse", "--verify", "--quiet", candidate],
+                capture_output=True,
+                text=True,
+                cwd=str(repo_root),
+                timeout=5,
+            )
+            if check.returncode == 0 and check.stdout.strip():
+                return candidate
+        fetch_attempt = subprocess.run(
+            ["git", "fetch", "origin", ref],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=30,
+        )
+        if fetch_attempt.returncode == 0:
+            return f"origin/{ref}"
+        return ref
+
     if base_ref is not None:
-        combined = _run_diff([base_ref])
+        resolved = _resolve_remote_ref(base_ref)
+        combined = _run_diff([resolved])
         diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
     else:
         combined = _run_diff(["HEAD"])
