@@ -1222,10 +1222,16 @@ def main() -> int:
     if failed_results:
         print("\nFailed tasks:")
         for r in failed_results:
-            reason = (r.error or "no error captured").replace("\n", " ").strip()
-            if len(reason) > 300:
-                reason = reason[:297] + "..."
-            print(f"  - {r.task_id}: exit={r.exit_code} reason={reason}")
+            raw_error = r.error
+            if raw_error is None:
+                reason_str = "(none)"
+            elif raw_error == "":
+                reason_str = "[empty stderr]"
+            else:
+                reason_str = raw_error.replace("\n", " ").strip()
+                if len(reason_str) > 300:
+                    reason_str = reason_str[:297] + "..."
+            print(f"  - {r.task_id}: exit={r.exit_code} reason={reason_str}")
             if r.stderr_path:
                 print(f"      stderr: {r.stderr_path}")
 
