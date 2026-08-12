@@ -85,11 +85,23 @@ def _default_branch() -> str | None:
 
 
 def _merge_base_with_default() -> str | None:
-    """Return the merge-base SHA of HEAD and the default branch, if resolvable."""
+    """Return the merge-base SHA of HEAD and the default branch, if resolvable.
+
+    The default branch ref is fetched first to ensure it is not stale, so the
+    merge-base is computed against the true remote tip (P0-1).
+    """
     default = _default_branch()
     if not default:
         return None
     repo_root = _find_repo_root()
+    # Refresh the default branch to avoid a stale cached ref (P0-1).
+    subprocess.run(
+        ["git", "fetch", "origin", default],
+        capture_output=True,
+        text=True,
+        cwd=str(repo_root),
+        timeout=30,
+    )
     try:
         r = subprocess.run(
             ["git", "merge-base", "HEAD", default],
