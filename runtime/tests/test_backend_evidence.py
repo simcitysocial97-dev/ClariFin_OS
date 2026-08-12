@@ -315,6 +315,7 @@ class TestNoWorkflowFilesTouched:
             "playwright.yml",
             "quality.yml",
             "release.yml",
+            "security-codeql.yml",
             "verification-reconcile.yml",
             "verification-runtime.yml",
         }

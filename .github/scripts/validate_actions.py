@@ -145,14 +145,19 @@ def validate_workflow(path: Path) -> None:
                 if prof == "status":
                     found_status = True
                     continue
-                expected = VERIFICATION_PROFILES[name]
-                if prof == expected:
-                    found_verify_profile = True
-                else:
-                    err(
-                        f"{name}/{job_id}: runs `verify.py {prof}` but should be "
-                        f"`verify.py {expected}` (Rule 8)"
-                    )
+                # Only verification-profile workflows are bound to a single profile
+                # command. Non-profile workflows (reconcile, security/CodeQL,
+                # release, dependency health) may invoke other verify.py subcommands
+                # (plan, reconcile, exec-evidence, ...) or none at all.
+                if name in VERIFICATION_PROFILES:
+                    expected = VERIFICATION_PROFILES[name]
+                    if prof == expected:
+                        found_verify_profile = True
+                    else:
+                        err(
+                            f"{name}/{job_id}: runs `verify.py {prof}` but should be "
+                            f"`verify.py {expected}` (Rule 8)"
+                        )
             # artifact names via upload-runtime
             name_in = step.get("with", {}).get("name")
             if uses.endswith("upload-runtime") and name_in:
