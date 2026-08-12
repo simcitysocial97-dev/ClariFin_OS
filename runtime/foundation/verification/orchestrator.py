@@ -105,6 +105,36 @@ def _merge_base_with_default() -> str | None:
     return None
 
 
+def _github_pr_base_sha() -> str | None:
+    """Return the authoritative PR base SHA from the GitHub Actions event payload.
+
+    For ``pull_request`` events GitHub provides ``GITHUB_EVENT_PATH`` (a JSON file)
+    whose ``pull_request.base.sha`` is the exact base commit of the PR. This is the
+    preferred base for PR verification (P0-1) because, unlike a locally cached
+    ``origin/main``, it can never be stale: it is the SHA the PR was actually opened
+    against, supplied by GitHub itself.
+
+    Returns ``None`` when not in a ``pull_request`` event or the payload is absent.
+    """
+    import json
+    import os
+
+    if os.environ.get("GITHUB_EVENT_NAME") != "pull_request":
+        return None
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if not event_path or not os.path.isfile(event_path):
+        return None
+    try:
+        with open(event_path, "r", encoding="utf-8") as fh:
+            payload = json.load(fh)
+    except Exception:
+        return None
+    base = payload.get("pull_request", {}).get("base", {}).get("sha")
+    if isinstance(base, str) and base:
+        return base
+    return None
+
+
 def _resolve_base_ref() -> str | None:
     """Determine the git reference to diff against.
 
@@ -122,6 +152,11 @@ def _resolve_base_ref() -> str | None:
     base_ref = os.environ.get("VERIFICATION_BASE_REF")
     if base_ref:
         return base_ref
+
+    # Authoritative PR base SHA (never stale) for pull_request events (P0-1).
+    pr_base = _github_pr_base_sha()
+    if pr_base:
+        return pr_base
 
     gh_base = os.environ.get("GITHUB_BASE_REF")
     if gh_base:
@@ -179,8 +214,25 @@ def _collect_changed_files() -> list[str]:
         return ""
 
     def _resolve_remote_ref(ref: str) -> str:
-        """Resolve a ref to a form usable by git diff, fetching from origin if needed."""
-        for candidate in (ref, f"origin/{ref}"):
+        """Resolve a ref to a form usable by git diff.
+
+        A full 40-character SHA is returned as-is (no network). For a branch name
+        we refresh ``origin/<ref>`` with a fetch first, so a stale cached
+        ``origin/main`` cannot produce an inflated changed-file diff (P0-1); then we
+        return the first resolvable candidate.
+        """
+        # A full commit SHA needs no resolution or network access.
+        if len(ref) == 40 and all(c in "0123456789abcdef" for c in ref):
+            return ref
+        # Refresh the remote branch so a cached ref cannot be stale.
+        subprocess.run(
+            ["git", "fetch", "origin", ref],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=30,
+        )
+        for candidate in (f"origin/{ref}", ref):
             check = subprocess.run(
                 ["git", "rev-parse", "--verify", "--quiet", candidate],
                 capture_output=True,
@@ -190,15 +242,6 @@ def _collect_changed_files() -> list[str]:
             )
             if check.returncode == 0 and check.stdout.strip():
                 return candidate
-        fetch_attempt = subprocess.run(
-            ["git", "fetch", "origin", ref],
-            capture_output=True,
-            text=True,
-            cwd=str(repo_root),
-            timeout=30,
-        )
-        if fetch_attempt.returncode == 0:
-            return f"origin/{ref}"
         return ref
 
     if base_ref is not None:
@@ -206,7 +249,15 @@ def _collect_changed_files() -> list[str]:
         combined = _run_diff_three_dot(resolved)
         diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
     else:
-        combined = _run_diff(["HEAD"])
+        # P0-2: use the canonical three-dot semantics with a resolved local base
+        # (merge-base of HEAD and the default branch) so the local path agrees with
+        # the CI path instead of relying on two-dot `git diff HEAD` (which is
+        # sensitive to uncommitted working-tree state and therefore not parity-safe).
+        local_base = _merge_base_with_default()
+        if local_base:
+            combined = _run_diff_three_dot(local_base)
+        else:
+            combined = _run_diff(["HEAD"])
         diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
 
     untracked_result = subprocess.run(
@@ -330,11 +381,24 @@ class VerificationReport:
 
         lines.append("## Tasks Executed")
         lines.append("")
-        lines.append("| Task ID | Name | Status | Duration |")
-        lines.append("|---------|------|--------|----------|")
+        lines.append(
+            "| Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |"
+        )
+        lines.append(
+            "|---------|---------|--------|------|----------|-------|--------|--------|"
+        )
         for result in self.results:
+            error = (getattr(result, "error", None) or "").replace("\n", " ").strip()
+            if len(error) > 200:
+                error = error[:197] + "..."
             lines.append(
-                f"| {result.task_id} | {result.command[:60]} | {result.status.value} | {result.duration_seconds:.1f}s |"
+                f"| {getattr(result, 'task_id', '?')} | "
+                f"{getattr(result, 'command', '')[:50]} | "
+                f"{getattr(result, 'status', '?')} | "
+                f"{getattr(result, 'exit_code', '')} | "
+                f"{getattr(result, 'duration_seconds', 0.0):.1f}s | {error} | "
+                f"{getattr(result, 'stdout_path', '')} | "
+                f"{getattr(result, 'stderr_path', '')} |"
             )
         lines.append("")
 
@@ -344,6 +408,31 @@ class VerificationReport:
         lines.append(f"- **Failed:** {self.summary.failed}")
         lines.append(f"- **Skipped:** {self.summary.skipped}")
         lines.append(f"- **Total Duration:** {self.summary.duration_seconds:.1f}s")
+        lines.append("")
+
+        # P2-1: per-task failure diagnostics so the exact failing task + reason are
+        # visible without opening the Python source or the raw artifact files.
+        failed_results = [
+            r for r in self.results if getattr(r, "status", None) == "failed"
+        ]
+        if failed_results:
+            lines.append("## Failure Details")
+            lines.append("")
+            for r in failed_results:
+                lines.append(f"### {getattr(r, 'task_id', '?')}")
+                lines.append(f"- Command: `{getattr(r, 'command', '')}`")
+                lines.append(f"- Exit code: {getattr(r, 'exit_code', '')}")
+                err = (getattr(r, "error", None) or "no error captured").replace(
+                    "\n", " "
+                ).strip()
+                if len(err) > 500:
+                    err = err[:497] + "..."
+                lines.append(f"- Reason: {err}")
+                if getattr(r, "stdout_path", None):
+                    lines.append(f"- Stdout artifact: `{r.stdout_path}`")
+                if getattr(r, "stderr_path", None):
+                    lines.append(f"- Stderr artifact: `{r.stderr_path}`")
+                lines.append("")
         lines.append("")
 
         lines.append("## Dependency Chains (Program 7A)")

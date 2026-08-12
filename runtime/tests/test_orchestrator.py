@@ -17,6 +17,7 @@ from runtime.foundation.verification.models import (
 from runtime.foundation.verification.orchestrator import (
     VerificationOrchestrator,
     VerificationReport,
+    _resolve_base_ref,
 )
 
 
@@ -384,25 +385,30 @@ class TestVerificationOrchestrator:
             assert report.summary.overall_status == VerificationStatus.PASSED
 
 
-def test_ci_and_local_changed_file_parity(monkeypatch):
-    """C10 — CI (GITHUB_BASE_REF) and local override (VERIFICATION_BASE_REF)
-    must derive the identical changed-file set: same resolver, same diff
-    command, same filtering. This is the semantic parity CI certifies.
-
-    The default local path (no base ref) diffs HEAD; the CI/env paths route
-    the same base ref through the identical normalization + filtering, so all
-    three must agree on the same working tree.
-    """
-    from runtime.foundation.verification.orchestrator import _collect_changed_files
-
+def _clear_ci_env(monkeypatch):
     for var in (
+        "VERIFICATION_BASE_REF",
         "GITHUB_BASE_REF",
         "GITHUB_SHA",
         "GITHUB_REF",
         "GITHUB_EVENT_NAME",
-        "VERIFICATION_BASE_REF",
+        "GITHUB_EVENT_PATH",
     ):
         monkeypatch.delenv(var, raising=False)
+
+
+def test_ci_and_local_changed_file_parity(monkeypatch):
+    """C10 — CI and local changed-file collection must be parity-safe.
+
+    The canonical comparison model is three-dot ``BASE...HEAD``. The local path
+    (no base ref) and the CI path (same base ref) must use the *identical*
+    resolver + diff command + filtering, so they agree on the same working tree.
+
+    Regression for P0-2 (two-dot vs three-dot parity defect).
+    """
+    from runtime.foundation.verification.orchestrator import _collect_changed_files
+
+    _clear_ci_env(monkeypatch)
 
     # Local override routing.
     monkeypatch.setenv("VERIFICATION_BASE_REF", "HEAD")
@@ -415,10 +421,61 @@ def test_ci_and_local_changed_file_parity(monkeypatch):
 
     assert ci == override, "CI GITHUB_BASE_REF must equal local VERIFICATION_BASE_REF"
 
-    # Default local path (no base ref) also diffs HEAD; identical working tree.
+    # Default local path (no base ref) must use the SAME canonical three-dot
+    # semantics as the CI path with no explicit base ref: both resolve the
+    # merge-base of HEAD and the default branch, so they agree (P0-2).
     monkeypatch.delenv("GITHUB_BASE_REF", raising=False)
     local = set(_collect_changed_files())
-    assert local == ci, "default local diff(HEAD) must equal CI-derived set"
+
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    ci_no_base = set(_collect_changed_files())
+    assert local == ci_no_base, "default local must equal CI path with no explicit base ref"
+
+
+def test_pr_base_resolution_priority_and_sha(monkeypatch, tmp_path):
+    """M1 — base resolution priority + authoritative PR base SHA (A-F)."""
+    import inspect
+
+    import runtime.foundation.verification.orchestrator as O
+
+    # A. PR base resolution with explicit base SHA via event payload.
+    _clear_ci_env(monkeypatch)
+    event = tmp_path / "event.json"
+    event.write_text(json.dumps({"pull_request": {"base": {"sha": "abc123" * 6 + "0" * 16}}}))
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    assert _resolve_base_ref() == "abc123" * 6 + "0" * 16
+
+    # B. PR base resolution with GITHUB_BASE_REF (branch name).
+    _clear_ci_env(monkeypatch)
+    monkeypatch.setenv("GITHUB_BASE_REF", "main")
+    assert _resolve_base_ref() == "main"
+
+    # C. Stale origin/main must NOT override the authoritative PR base SHA.
+    _clear_ci_env(monkeypatch)
+    event.write_text(json.dumps({"pull_request": {"base": {"sha": "deadbeef" * 8}}}))
+    monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    # GITHUB_BASE_REF differs; the PR base SHA still wins (P0-1).
+    monkeypatch.setenv("GITHUB_BASE_REF", "some-other-branch")
+    assert _resolve_base_ref() == "deadbeef" * 8
+
+    # D. Local invocation (no CI env) remains functional and non-raising.
+    from runtime.foundation.verification.orchestrator import _collect_changed_files
+
+    _clear_ci_env(monkeypatch)
+    result = _resolve_base_ref()
+    assert result is None or isinstance(result, str)
+    assert isinstance(_collect_changed_files(), list)
+
+    # E. Arbitrary branch names work through GITHUB_BASE_REF.
+    _clear_ci_env(monkeypatch)
+    monkeypatch.setenv("GITHUB_BASE_REF", "feature/vea5-m9-fix")
+    assert _resolve_base_ref() == "feature/vea5-m9-fix"
+
+    # F. No repository-specific SHA is hardcoded in the resolver.
+    src = inspect.getsource(O._resolve_base_ref)
+    assert "0c8410c" not in src and "e00d42d" not in src
 
 
 def test_changed_file_filter_excludes_generated_and_node_modules(monkeypatch):
@@ -440,3 +497,79 @@ def test_changed_file_filter_excludes_generated_and_node_modules(monkeypatch):
     assert all(not f.startswith("runtime/generated/") for f in filtered)
     assert all(not f.startswith("frontend/node_modules/") for f in filtered)
     assert all(not f.endswith(".pyc") for f in filtered)
+
+
+class TestVerificationReportDiagnostics:
+    """M4 / P2-1 — observability of task-level failure diagnostics."""
+
+    def test_report_identifies_failing_task_exit_reason_artifact(self, tmp_path):
+        from runtime.foundation.verification.models import (
+            ExecutionResult as ExecutionResultModel,
+            VerificationStatus,
+            VerificationSummary,
+        )
+        from runtime.foundation.verification.orchestrator import (
+            VerificationPlan,
+            VerificationReport,
+        )
+        from runtime.foundation.verification.models import VerificationScope
+
+        failed = ExecutionResultModel(
+            task_id="step-0002",
+            command="bash .github/scripts/run_runtime_verification.sh",
+            status=VerificationStatus.FAILED,
+            exit_code=1,
+            duration_seconds=12.3,
+            stdout_path=str(tmp_path / "verify-stdout-abc.txt"),
+            stderr_path=str(tmp_path / "verify-stderr-abc.txt"),
+            error="pytest runtime/tests/ exited with code 1: 1 failed, 554 passed",
+        )
+        passed = ExecutionResultModel(
+            task_id="step-0001",
+            command="bash .github/scripts/run_backend_verification.sh",
+            status=VerificationStatus.PASSED,
+            exit_code=0,
+            duration_seconds=65.0,
+            stdout_path=str(tmp_path / "verify-stdout-def.txt"),
+            stderr_path=str(tmp_path / "verify-stderr-def.txt"),
+            error=None,
+        )
+        summary = VerificationSummary(
+            profile="quick",
+            total_tasks=2,
+            passed=1,
+            failed=1,
+            skipped=0,
+            duration_seconds=77.3,
+            report_path=str(tmp_path / "verification-report.md"),
+            cache_path=str(tmp_path / "verification-cache.json"),
+            overall_status=VerificationStatus.FAILED,
+        )
+        plan = VerificationPlan(
+            name="quick", id="plan-x", scope=VerificationScope.QUICK,
+            targets=[], steps=[], estimated_duration_seconds=0,
+        )
+        report = VerificationReport(
+            profile="quick",
+            changed_files=["backend/src/x.py"],
+            blast_radius={},
+            plan=plan,
+            results=[passed, failed],
+            summary=summary,
+            dependency_chains=[],
+            evidence_files=[],
+            recommendations=["Investigate failing task: bash .github/scripts/run_runtime_verification.sh"],
+        )
+
+        md = report.to_markdown()
+        # Exact failing task identified.
+        assert "step-0002" in md
+        # Exit code surfaced.
+        assert "Exit code: 1" in md
+        # Failure reason surfaced (concise, not the raw 500+ char dump).
+        assert "1 failed, 554 passed" in md
+        # Artifact paths surfaced so the raw logs are reachable.
+        assert str(tmp_path / "verify-stderr-abc.txt") in md
+        # Aggregate counts preserved.
+        assert "**Failed:** 1" in md
+        assert "**Passed:** 1" in md
