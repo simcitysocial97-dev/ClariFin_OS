@@ -25,11 +25,11 @@
 
 ## Tasks Executed
 
-| Task ID | Name | Status | Duration |
-|---------|------|--------|----------|
-| step-0001 | no-op | skipped | 0.0s |
-| step-0002 | no-op | skipped | 0.0s |
-| step-0003 | no-op | skipped | 0.0s |
+| Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
+|---------|---------|--------|------|----------|-------|--------|--------|
+| step-0001 | no-op | VerificationStatus.SKIPPED |  | 0.0s |  |  |  |
+| step-0002 | no-op | VerificationStatus.SKIPPED |  | 0.0s |  |  |  |
+| step-0003 | no-op | VerificationStatus.SKIPPED |  | 0.0s |  |  |  |
 
 ## Results Summary
 
@@ -37,6 +37,7 @@
 - **Failed:** 0
 - **Skipped:** 3
 - **Total Duration:** 0.0s
+
 
 ## Dependency Chains (Program 7A)
 

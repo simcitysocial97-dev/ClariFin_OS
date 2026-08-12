@@ -1215,6 +1215,20 @@ def main() -> int:
     print(f"Skipped: {report.summary.skipped}")
     print(f"Duration: {elapsed:.1f}s")
 
+    # P2-1: surface per-task failure diagnostics on the console (in addition to the
+    # markdown report) so the exact failing task + reason are visible without opening
+    # the artifact files. Aggregate counts are preserved above.
+    failed_results = [r for r in report.results if r.status.value == "failed"]
+    if failed_results:
+        print("\nFailed tasks:")
+        for r in failed_results:
+            reason = (r.error or "no error captured").replace("\n", " ").strip()
+            if len(reason) > 300:
+                reason = reason[:297] + "..."
+            print(f"  - {r.task_id}: exit={r.exit_code} reason={reason}")
+            if r.stderr_path:
+                print(f"      stderr: {r.stderr_path}")
+
     if report.summary.overall_status == VerificationStatus.FAILED:
         print("\nVerification FAILED", file=sys.stderr)
         return 1
