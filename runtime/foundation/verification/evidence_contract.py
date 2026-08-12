@@ -408,6 +408,7 @@ class DeepVerificationSurface:
     catalog_units: tuple[str, ...]
     trigger: tuple[str, ...]  # "schedule" | "manual" | "release" | "merge"
     evidence_kinds: tuple[str, ...]
+    workflow: str | None = None  # GitHub workflow file (for GitHub-native surfaces)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -418,6 +419,7 @@ class DeepVerificationSurface:
             "catalog_units": list(self.catalog_units),
             "trigger": list(self.trigger),
             "evidence_kinds": list(self.evidence_kinds),
+            "workflow": self.workflow,
         }
 
 
@@ -536,8 +538,14 @@ DEEP_VERIFICATION_SURFACES: tuple[DeepVerificationSurface, ...] = (
     DeepVerificationSurface(
         surface_id="deep-codeql",
         domain=DeepVerificationDomain.SECURITY.value,
-        description="CodeQL security analysis (default setup, PR-visible)",
-        command="github-codeql/codeql",
+        description=(
+            "CodeQL security analysis — GitHub-native via github/codeql-action. "
+            "PR-visible findings (pull_request) plus scheduled default-branch "
+            "scans (push to main == 'merge' cadence, schedule, manual re-scan). "
+            "Languages: python (backend/runtime) + javascript/TypeScript (frontend)."
+        ),
+        command="github/codeql-action/analyze",
+        workflow=".github/workflows/security-codeql.yml",
         catalog_units=(),
         trigger=("schedule", "manual", "release", "merge"),
         evidence_kinds=("codeql", "security"),
