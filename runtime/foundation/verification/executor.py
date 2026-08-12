@@ -113,8 +113,8 @@ class Executor:
                 status=VerificationStatus.FAILED,
                 exit_code=-1,
                 duration_seconds=duration,
-                stdout_path=stdout_file.name,
-                stderr_path=stderr_file.name,
+                stdout_path="",
+                stderr_path="",
                 error="Command timed out after 3600 seconds",
             )
         except Exception as exc:
@@ -125,8 +125,8 @@ class Executor:
                 status=VerificationStatus.FAILED,
                 exit_code=-1,
                 duration_seconds=duration,
-                stdout_path=stdout_file.name,
-                stderr_path=stderr_file.name,
+                stdout_path="",
+                stderr_path="",
                 error=str(exc),
             )
         finally:
@@ -241,8 +241,17 @@ class Executor:
         )
 
     def _write_output(self, temp_path: str, content: str) -> str:
-        """Write command output to a persistent file and return its path."""
-        persistent_path = self._results_dir / Path(temp_path).name
+        """Write command output to a durable persistent file and return its path.
+
+        The durable path uses a timestamped name distinct from the temporary file
+        name so that ``_cleanup_temp_file`` cannot accidentally delete the persisted
+        evidence.
+        """
+        import time
+
+        temp_name = Path(temp_path).name
+        durable_name = f"{time.monotonic_ns()}_{temp_name}"
+        persistent_path = self._results_dir / durable_name
         self._results_dir.mkdir(parents=True, exist_ok=True)
         persistent_path.write_text(content, encoding="utf-8")
         return str(persistent_path)

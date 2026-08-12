@@ -573,3 +573,78 @@ class TestVerificationReportDiagnostics:
         # Aggregate counts preserved.
         assert "**Failed:** 1" in md
         assert "**Passed:** 1" in md
+
+    def test_report_distinguishes_error_none_empty_and_actual(self, tmp_path):
+        """M9 — error=None vs error='' vs error='actual' must be distinct in report."""
+        from runtime.foundation.verification.models import (
+            ExecutionResult as ExecutionResultModel,
+            VerificationStatus,
+            VerificationSummary,
+        )
+        from runtime.foundation.verification.orchestrator import (
+            VerificationPlan,
+            VerificationReport,
+        )
+        from runtime.foundation.verification.models import VerificationScope
+
+        passed_none = ExecutionResultModel(
+            task_id="t-passed",
+            command="echo ok",
+            status=VerificationStatus.PASSED,
+            exit_code=0,
+            duration_seconds=0.1,
+            stdout_path="",
+            stderr_path="",
+            error=None,
+        )
+        failed_empty = ExecutionResultModel(
+            task_id="t-empty",
+            command="exit 1",
+            status=VerificationStatus.FAILED,
+            exit_code=1,
+            duration_seconds=0.1,
+            stdout_path=str(tmp_path / "out.txt"),
+            stderr_path=str(tmp_path / "err.txt"),
+            error="",
+        )
+        failed_actual = ExecutionResultModel(
+            task_id="t-actual",
+            command="fail-cmd",
+            status=VerificationStatus.FAILED,
+            exit_code=2,
+            duration_seconds=0.1,
+            stdout_path=str(tmp_path / "out2.txt"),
+            stderr_path=str(tmp_path / "err2.txt"),
+            error="some actual error message",
+        )
+        summary = VerificationSummary(
+            profile="test", total_tasks=3, passed=1, failed=2, skipped=0,
+            duration_seconds=0.3, report_path=str(tmp_path / "r.md"),
+            cache_path=str(tmp_path / "c.json"),
+            overall_status=VerificationStatus.FAILED,
+        )
+        plan = VerificationPlan(
+            name="test", id="p1", scope=VerificationScope.QUICK,
+            targets=[], steps=[], estimated_duration_seconds=0,
+        )
+        report = VerificationReport(
+            profile="test", changed_files=[], blast_radius={}, plan=plan,
+            results=[passed_none, failed_empty, failed_actual], summary=summary,
+            dependency_chains=[], evidence_files=[], recommendations=[],
+        )
+
+        md = report.to_markdown()
+        # State 2: empty stderr must show [empty stderr], not "no error captured"
+        assert "[empty stderr]" in md
+        assert "no error captured" not in md
+        # State 3: actual error must be shown verbatim
+        assert "some actual error message" in md
+        # Exit codes visible for every failed task
+        assert "Exit code: 1" in md
+        assert "Exit code: 2" in md
+        # Passed task with error=None does NOT contain the old fallback text
+        for line in md.splitlines():
+            if "t-passed" in line and "Error" not in line:
+                continue
+            if "| t-passed |" in line:
+                assert "no error captured" not in line

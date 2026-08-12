@@ -439,12 +439,17 @@ class VerificationReport:
                 lines.append(f"### {getattr(r, 'task_id', '?')}")
                 lines.append(f"- Command: `{getattr(r, 'command', '')}`")
                 lines.append(f"- Exit code: {getattr(r, 'exit_code', '')}")
-                err = (getattr(r, "error", None) or "no error captured").replace(
-                    "\n", " "
-                ).strip()
-                if len(err) > 500:
-                    err = err[:497] + "..."
-                lines.append(f"- Reason: {err}")
+                raw_error = getattr(r, "error", None)
+                if raw_error is None:
+                    err_line = "- Reason: (none)"
+                elif raw_error == "":
+                    err_line = "- Reason: [empty stderr]"
+                else:
+                    err = raw_error.replace("\n", " ").strip()
+                    if len(err) > 500:
+                        err = err[:497] + "..."
+                    err_line = f"- Reason: {err}"
+                lines.append(err_line)
                 if getattr(r, "stdout_path", None):
                     lines.append(f"- Stdout artifact: `{r.stdout_path}`")
                 if getattr(r, "stderr_path", None):
