@@ -1,0 +1,130 @@
+{
+  "schema": "vea5-tier-plan/v1",
+  "tier": "deep",
+  "base_ref": null,
+  "head_ref": "8d8e92bab1c54389ee8f30360266939f14b90ea8",
+  "changed_files": [],
+  "selected": [
+    {
+      "unit_id": "unit-targeted",
+      "category": "unit",
+      "command": "verify-unit:unit-targeted",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 30,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "backend-unit",
+      "category": "unit",
+      "command": "verify-unit:backend-unit",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 120,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "backend-integration",
+      "category": "integration",
+      "command": "verify-unit:backend-integration",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 180,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "contracts-schemathesis",
+      "category": "contract",
+      "command": "verify-unit:contracts-schemathesis",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 180,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "frontend-unit",
+      "category": "frontend",
+      "command": "verify-unit:frontend-unit",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 120,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "frontend-typecheck-build",
+      "category": "frontend",
+      "command": "verify-unit:frontend-typecheck-build",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 90,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "playwright-e2e",
+      "category": "e2e",
+      "command": "verify-unit:playwright-e2e",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 1800,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "runtime-self-test",
+      "category": "runtime",
+      "command": "verify-unit:runtime-self-test",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 120,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "mutation-run",
+      "category": "mutation",
+      "command": "verify-unit:mutation-run",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 600,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    },
+    {
+      "unit_id": "golden-regression",
+      "category": "golden",
+      "command": "verify-unit:golden-regression",
+      "reason": "deep tier: full-system verification (not change-scoped)",
+      "estimated_seconds": 600,
+      "capabilities": [],
+      "impact_kinds": [],
+      "source": "deep-full-system",
+      "evidence": []
+    }
+  ],
+  "excluded": [],
+  "estimated_seconds": 3840,
+  "planner_version": "vea5-m2-tier-planner/1.0",
+  "framework_version": "clari-fin-os/verify-runtime",
+  "generated_at": "2026-08-11T20:40:38.310000+00:00",
+  "invariant": "every catalog unit is selected or excluded",
+  "unit_coverage": {
+    "catalog_size": 10,
+    "covered": 10,
+    "complete": true
+  }
+}
