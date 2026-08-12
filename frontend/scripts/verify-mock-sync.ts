@@ -108,7 +108,9 @@ async function main() {
     const handlerContent = fs.readFileSync(handlerPath, 'utf-8');
 
     // Check if handler file imports from the schema file
-    const schemaImportPattern = new RegExp(`from.*${schemaInfo.file.replace('../', '')}`);
+    // Use global replacement to handle all occurrences of '../'
+    const normalizedFile = schemaInfo.file.replace(/\.\.\//g, '');
+    const schemaImportPattern = new RegExp(`from.*${normalizedFile}`);
     const hasSchemaImport = schemaImportPattern.test(handlerContent);
 
     totalChecked++;

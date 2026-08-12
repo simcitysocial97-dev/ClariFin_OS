@@ -41,7 +41,13 @@ class DragManager {
   private sessions: Map<string, DragSession> = new Map();
 
   startDrag(data: DragData, sourceWorkspace: string | null = null): string {
-    const sessionId = `drag-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const randomSuffix = crypto
+      .getRandomValues(new Uint32Array(1))[0]
+      .toString(36)
+      .padStart(6, '0')
+      .slice(0, 6);
+    const sessionId = `drag-${Date.now()}-${randomSuffix}`;
+    
     const session: DragSession = {
       id: sessionId,
       state: {
