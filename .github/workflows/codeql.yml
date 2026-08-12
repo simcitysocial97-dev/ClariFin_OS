@@ -1,0 +1,94 @@
+# .github/workflows/security-codeql.yml
+#
+# PURPOSE: GitHub CodeQL security analysis surface (VEA-5 M9).
+# RESPONSIBILITY: Run github/codeql-action to analyze the repository's
+#   security-relevant languages (Python backend/runtime + JavaScript/TypeScript
+#   frontend) and upload results to GitHub code scanning. This is the
+#   SOURCE-CONTROLLED successor to the GitHub-managed dynamic CodeQL workflow
+#   (dynamic/github-code-scanning/codeql); the source-controlled workflow is the
+#   authoritative, auditable, versioned analysis surface.
+#
+# ARCHITECTURE POSITION: Security analysis is a DISTINCT VEA-5 category (see
+#   runtime/foundation/verification/evidence_contract.py DeepVerificationDomain.
+#   SECURITY). It does NOT delegate to `runtime/verify.py` (CodeQL is GitHub-
+#   native and cannot run inside the local execution budget); it does NOT replace
+#   any existing verification owner (unit/integration/contract/frontend/mutation/
+#   golden/playwright/dependency). It is the `deep-codeql` DEEP surface made real.
+#
+# TRIGGERS (M9 §8):
+#   - pull_request  : PR security feedback (PR-visible findings)
+#   - push (main)   : "merge" cadence — default-branch security analysis
+#   - workflow_disp : manual re-scan
+#   - schedule      : weekly deep scan (off-peak)
+# PATH FILTER: intentionally ABSENT. A security workflow must not silently skip
+#   security-sensitive changes (M9 §9); it scans every change. (quality.yml uses
+#   the same no-filter pattern for its fast gate.)
+#
+# PERMISSIONS (M9 §7 — least privilege, each justified):
+#   - security-events: write  REQUIRED to upload the SARIF to GitHub code scanning.
+#   - contents: read          REQUIRED to check out repository contents for analysis.
+#   - actions: read           REQUIRED by github/codeql-action to read run metadata.
+#   - pull-requests: write    Enables CodeQL PR annotations that surface findings
+#                             inline on the PR (the PR-feedback objective).
+#
+# FAILURE SEMANTICS (M9 §6/§14): the analysis step has NO continue-on-error, so a
+#   failed analysis fails the job. Security-analysis failure is NEVER silently
+#   converted to success.
+#
+# Rule 1: no engineering logic inlined. Rule 8: delegate to github/codeql-action.
+# Rule 9: workflow summary records outcomes (security surface, not verify.py).
+
+name: CodeQL Security Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "27 4 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  security-events: write
+  contents: read
+  actions: read
+  pull-requests: write
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python, javascript
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Security analysis complete. Results are available under the repository" >> $GITHUB_STEP_SUMMARY
+          echo "**Security** tab (code scanning) and as PR check annotations." >> $GITHUB_STEP_SUMMARY
+        shell: bash
