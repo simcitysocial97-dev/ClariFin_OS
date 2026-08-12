@@ -1,0 +1,118 @@
+{
+  "schema": "vea5-tier-plan/v1",
+  "tier": "local",
+  "base_ref": null,
+  "head_ref": "8d8e92bab1c54389ee8f30360266939f14b90ea8",
+  "changed_files": [
+    ".github/scripts/run_mutation_selective.sh",
+    "docs/progress.md",
+    "runtime/tests/test_backend_evidence.py",
+    "runtime/verify.py",
+    ".github/workflows/verification-reconcile.yml",
+    "docs/verification/VEA5_BASELINE.md",
+    "docs/verification/VEA5_CI_FAILURE_FORENSICS.md",
+    "docs/verification/VEA5_EXECUTION_MODEL.md",
+    "docs/verification/VEA5_M2_TIER_PLANNING.md",
+    "docs/verification/VEA5_M3_VERIFICATION_RUNTIME_INTEGRITY.md",
+    "docs/verification/VEA5_M4_PLAN_RECONCILIATION.md",
+    "docs/verification/VEA5_M5_CI_INTEGRATION.md",
+    "docs/verification/VEA5_M6_DEEP_VERIFICATION_EVIDENCE_CONTRACT.md",
+    "docs/verification/VEA5_M7_CI_TOPOLOGY_AUDIT.md",
+    "docs/verification/VEA5_M8_MERGE_ENFORCEMENT.md",
+    "runtime/foundation/verification/cache.py",
+    "runtime/foundation/verification/evidence_contract.py",
+    "runtime/foundation/verification/reconciliation.py",
+    "runtime/foundation/verification/tier.py",
+    "runtime/tests/test_vea5_m5_ci_integration.py",
+    "runtime/tests/test_vea5_m6_evidence_contract.py",
+    "runtime/tests/test_vea5_m8_merge_enforcement.py",
+    "runtime/tests/test_vea5_m8r_cache_observability.py",
+    "runtime/tests/test_vea5_m8r_cli_reconcile.py",
+    "runtime/tests/test_vea5_plan_reconciliation.py",
+    "runtime/tests/test_vea5_tier_plan.py",
+    "runtime/tests/test_vea5_verification_cache.py"
+  ],
+  "selected": [],
+  "excluded": [
+    {
+      "unit_id": "unit-targeted",
+      "category": "unit",
+      "reason": "no impacted engine has provider-recorded tests",
+      "justification": "blast radius contains no engine with tests",
+      "estimated_seconds": 30
+    },
+    {
+      "unit_id": "backend-unit",
+      "category": "unit",
+      "reason": "no backend entity impacted",
+      "justification": "blast radius contains no entity with a backend/ path",
+      "estimated_seconds": 120
+    },
+    {
+      "unit_id": "backend-integration",
+      "category": "integration",
+      "reason": "no router, service or repository impacted",
+      "justification": "blast radius contains no backend wiring entities",
+      "estimated_seconds": 180
+    },
+    {
+      "unit_id": "contracts-schemathesis",
+      "category": "contract",
+      "reason": "no endpoint impacted",
+      "justification": "blast radius contains 0 entities of kind 'endpoint'",
+      "estimated_seconds": 180
+    },
+    {
+      "unit_id": "frontend-unit",
+      "category": "frontend",
+      "reason": "no frontend file impacted",
+      "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files",
+      "estimated_seconds": 120
+    },
+    {
+      "unit_id": "frontend-typecheck-build",
+      "category": "frontend",
+      "reason": "no frontend entity impacted",
+      "justification": "blast radius contains no entity with a frontend/ path",
+      "estimated_seconds": 90
+    },
+    {
+      "unit_id": "playwright-e2e",
+      "category": "e2e",
+      "reason": "no workspace impacted",
+      "justification": "blast radius contains 0 entities of kind 'workspace'",
+      "estimated_seconds": 1800
+    },
+    {
+      "unit_id": "runtime-self-test",
+      "category": "runtime",
+      "reason": "runtime unchanged",
+      "justification": "no directly changed entity has a runtime/ path",
+      "estimated_seconds": 120
+    },
+    {
+      "unit_id": "mutation-run",
+      "category": "mutation",
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it",
+      "estimated_seconds": 600
+    },
+    {
+      "unit_id": "golden-regression",
+      "category": "golden",
+      "reason": "requires explicit request (cost >= 600s)",
+      "justification": "heavyweight suite; blast radius does not by itself justify it",
+      "estimated_seconds": 600
+    }
+  ],
+  "estimated_seconds": 0,
+  "planner_version": "vea5-m2-tier-planner/1.0",
+  "framework_version": "clari-fin-os/verify-runtime",
+  "generated_at": "2026-08-12T01:49:31.878581+00:00",
+  "invariant": "every catalog unit is selected or excluded",
+  "unit_coverage": {
+    "catalog_size": 10,
+    "covered": 10,
+    "complete": true
+  }
+}

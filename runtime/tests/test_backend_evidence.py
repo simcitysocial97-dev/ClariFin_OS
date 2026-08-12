@@ -303,9 +303,22 @@ class TestFrontendEvidenceUnchangedInShape:
 class TestNoWorkflowFilesTouched:
     """Phase 2 STOP condition: .github/workflows/ must remain unmodified."""
 
-    def test_workflow_directory_still_has_nine_files(self):
+    def test_workflow_directory_contains_expected_files(self):
         workflows = sorted((REPO_ROOT / ".github/workflows").glob("*.yml"))
-        assert len(workflows) == 9
+        names = {p.name for p in workflows}
+        expected = {
+            "backend-verify.yml",
+            "dependency-update.yml",
+            "frontend-verify.yml",
+            "golden.yml",
+            "mutation.yml",
+            "playwright.yml",
+            "quality.yml",
+            "release.yml",
+            "verification-reconcile.yml",
+            "verification-runtime.yml",
+        }
+        assert names == expected, f"unexpected workflow files: {names ^ expected}"
 
     def test_no_workflow_file_is_modified(self):
         result = subprocess.run(

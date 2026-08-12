@@ -37,7 +37,7 @@ echo ""
 mutmut run \
   --paths-to-mutate "$TARGET_PATH" \
   --tests-dir "tests/" \
-  --runner "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30" \
+  --runner "python3 -m pytest tests/unit/ tests/properties/ -x -q --timeout=30" \
   2>&1 | tee "$MUTATION_OUTPUT_DIR/mutation-run.log"
 
 # Generate results

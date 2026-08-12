@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-11T14:55:04.175871+00:00",
+  "indexed_at": "2026-08-12T02:38:21.789304+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -10177,6 +10177,16 @@
         ]
       },
       {
+        "title": "VEA4_CERTIFICATION",
+        "path": "docs/verification/VEA4_CERTIFICATION.md",
+        "references": {
+          "path": "docs/verification/VEA4_CERTIFICATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "VEA4_CI_DECISION",
         "path": "docs/verification/VEA4_CI_DECISION.md",
         "references": {
@@ -10227,6 +10237,106 @@
         ]
       },
       {
+        "title": "VEA5_BASELINE",
+        "path": "docs/verification/VEA5_BASELINE.md",
+        "references": {
+          "path": "docs/verification/VEA5_BASELINE.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_CI_FAILURE_FORENSICS",
+        "path": "docs/verification/VEA5_CI_FAILURE_FORENSICS.md",
+        "references": {
+          "path": "docs/verification/VEA5_CI_FAILURE_FORENSICS.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_EXECUTION_MODEL",
+        "path": "docs/verification/VEA5_EXECUTION_MODEL.md",
+        "references": {
+          "path": "docs/verification/VEA5_EXECUTION_MODEL.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M2_TIER_PLANNING",
+        "path": "docs/verification/VEA5_M2_TIER_PLANNING.md",
+        "references": {
+          "path": "docs/verification/VEA5_M2_TIER_PLANNING.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M3_VERIFICATION_RUNTIME_INTEGRITY",
+        "path": "docs/verification/VEA5_M3_VERIFICATION_RUNTIME_INTEGRITY.md",
+        "references": {
+          "path": "docs/verification/VEA5_M3_VERIFICATION_RUNTIME_INTEGRITY.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M4_PLAN_RECONCILIATION",
+        "path": "docs/verification/VEA5_M4_PLAN_RECONCILIATION.md",
+        "references": {
+          "path": "docs/verification/VEA5_M4_PLAN_RECONCILIATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M5_CI_INTEGRATION",
+        "path": "docs/verification/VEA5_M5_CI_INTEGRATION.md",
+        "references": {
+          "path": "docs/verification/VEA5_M5_CI_INTEGRATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M6_DEEP_VERIFICATION_EVIDENCE_CONTRACT",
+        "path": "docs/verification/VEA5_M6_DEEP_VERIFICATION_EVIDENCE_CONTRACT.md",
+        "references": {
+          "path": "docs/verification/VEA5_M6_DEEP_VERIFICATION_EVIDENCE_CONTRACT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M7_CI_TOPOLOGY_AUDIT",
+        "path": "docs/verification/VEA5_M7_CI_TOPOLOGY_AUDIT.md",
+        "references": {
+          "path": "docs/verification/VEA5_M7_CI_TOPOLOGY_AUDIT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
+        "title": "VEA5_M8_MERGE_ENFORCEMENT",
+        "path": "docs/verification/VEA5_M8_MERGE_ENFORCEMENT.md",
+        "references": {
+          "path": "docs/verification/VEA5_M8_MERGE_ENFORCEMENT.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "VEA_BACKLOG",
         "path": "docs/verification/VEA_BACKLOG.md",
         "references": {
@@ -10249,6 +10359,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 172
+    "documentation": 183
   }
 }

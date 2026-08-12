@@ -1,8 +1,262 @@
 # Verification Ecosystem Integration Audit — Execution Progress
 
-**Phase:** VEA-1 complete → VEA-2 Phase 1 complete → VEA-2 Phase 1.5 complete → **VEA-2 Phase 2 CERTIFIED** → **VEA-3 CERTIFIED**
+**Phase:** VEA-1 complete → VEA-2 Phase 1 complete → VEA-2 Phase 1.5 complete → **VEA-2 Phase 2 CERTIFIED** → **VEA-3 CERTIFIED** → **VEA-4 CERTIFIED** → **VEA-5 M0/M1/M2/M3/M4/M5/M6/M7/M8 CERTIFIED**
 **Execution mode:** Autonomous, milestone-driven
-**Current status:** VEA-3 — Evidence-integrity foundation hardened; E-4 keyword attribution replaced by unit-keyed graph traversal; deferred backlog BL-001/002/003/004/005/009 resolved/audited
+**Current status:** VEA-5 — M0..M5 CERTIFIED. M0 explained local-green/CI-red (967-file branch divergence → maximal blast radius). M1 defined the 3-tier execution model. M2 made the tier decide base/scope (LOCAL never consults origin/main). M3 closed cache integrity (W3/W4/W6). M4 added plan reconciliation (same-plan / expected-tier-difference / environment-divergence / planning-divergence). M5 integrated the reconciliation gate into CI via a new `verification-reconcile.yml` workflow — consuming persisted plan + execution-evidence artifacts, with the M5-A..E hard gates — **without** consolidating the nine existing workflows.
+
+---
+
+## VEA-5 — CI Integration, Dynamic Verification & Operational Verification
+
+**Objective:** Turn the verification runtime into an operational, dynamically scoped
+verification control plane (local / PR / deep tiers) while preserving the evidence-integrity
+foundation. Authority: VEA-2/3/4 baselines. Constraints: preserve identity spine, graph
+attribution, UNKNOWN/UNMAPPED semantics; no speculative frameworks; evidence-before-DONE.
+
+### M0 — Baseline + CI Failure Forensics (CERTIFIED)
+
+**Status:** DONE — 2026-08-11
+**No `.github/workflows/` file modified.**
+
+#### Baseline (measured in M0)
+
+| Layer | Command | Exit | Result |
+|-------|---------|------|--------|
+| Backend (full) | `run_backend_verification.sh` | 0 | GREEN — 468 passed (all 4 phases pass) |
+| Runtime (framework) | `pytest runtime/tests/ -q --timeout=30` | 1 | **RED — 1 failed, 457 passed** (regression from VEA-4 "458 passed") |
+| Frontend lint | `run_frontend_verification.sh` | 1 | RED — 34 pre-existing errors (BL-001) |
+| Frontend typecheck | `tsc --noEmit` | 0 | GREEN |
+| Frontend build | `npm run build` | 0 | GREEN (17/17 pages) |
+| Frontend Vitest | `vitest run` | 0 | GREEN — 1237 passed |
+| `verify.py status` | — | — | Commit 8d8e92bab1c5, Changed Files 967, Last Status failed |
+
+#### Local-green / CI-red answer (structural, not hand-waved)
+
+Three behaviors: (A) raw full-suite scripts = green; (B) `verify.py <profile>` in CI
+(`GITHUB_EVENT_NAME=push` → merge-base → **967 changed files**) = maximal blast radius →
+runs `run_runtime_verification.sh` + `run_mutation_selective.sh` + `run_frontend_verification.sh`
+which fail; (C) `verify.py` locally without `GITHUB_*` env → `base_ref=None` → 0 changed
+files → refuses to run. Root cause of CI red = **branch-vs-`origin/main` divergence (967
+files, unmerged) → planner over-selection** + 2 genuine CI-tooling defects + pre-existing
+frontend lint.
+
+#### CI failure matrix (8/9 failing; release.yml N/A — no runs)
+
+| Workflow | Run | Failing step | Classification |
+|----------|-----|--------------|---------------|
+| backend-verify | 31505903356 | runtime self-test + mutation | planner divergence + timing + dependency(`python`) |
+| frontend-verify | 31505903357 | mutation + runtime self-test + frontend lint | planner divergence + timing + dependency + frontend toolchain |
+| quality | 31505903313 | runtime self-test + mutation (+ cache exit-0 anomaly) | planner divergence + timing + dependency + exit-code contract |
+| verification-runtime | 31505903348 | runtime self-test (30s timeout) | timing/concurrency (genuine) |
+| golden (main) | 31457734672 | Download golden results | workflow command divergence (stale main) + artifact |
+| mutation (main) | 31455335382 | Aggregate Report | workflow command divergence (stale main) + dependency(`python`) |
+| dependency-update (main) | 31358599796 | Bootstrap Engineering Runtime | environment/filesystem (transient checkout) |
+| playwright (main) | 31014121494 | Run Playwright Tests | workflow command divergence (missing `next build`) / VEA4-3 |
+| release | — | no runs | N/A |
+
+Two genuine, reproducible CI-tooling defects:
+- **W4:** `test_backend_exit_contract_holds_both_directions` wraps `run_backend_verification.sh`
+  (now ~66–140s) in a 30s `pytest-timeout` → timeout. Runtime suite = 457 passed / 1 failed.
+- **W6:** `run_mutation_selective.sh` mutmut runner hardcodes `python` (not `python3`) →
+  `FileNotFoundError: 'python'` on `ubuntu-latest`.
+
+Cache anomaly (W3): local `verify.py quick` printed `Verification FAILED / Failed: 3` but
+exited **0** under a matching verification-cache fingerprint; CI exited 1. Cache must not
+mask failure exit codes.
+
+Branch divergence: `golden.yml`/`mutation.yml`/`playwright.yml`/`quality.yml` differ from
+`origin/main` (129/218/164/265 lines); the `main` schedule failures are from the stale
+`main` versions. `dependency-update.yml`/`verification-runtime.yml`/`backend-verify.yml`/
+`frontend-verify.yml`/`release.yml` are identical to `main`.
+
+Deferred VEA-4 items: VEA4-1 (quality duplication) OPEN & confirmed relevant; VEA4-2
+(branch protection) UNKNOWN (repo setting, not observable from logs); VEA4-3 (Playwright)
+root cause confirmed, partially addressed in branch, not merged to `main`.
+
+**Evidence:** `docs/verification/VEA5_BASELINE.md`, `docs/verification/VEA5_CI_FAILURE_FORENSICS.md`.
+**Files changed:** `docs/verification/VEA5_BASELINE.md` (new), `docs/verification/VEA5_CI_FAILURE_FORENSICS.md` (new), `docs/progress.md` (this entry). No source/workflow changes.
+
+**M0 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M1 — Execution Model Specification (CERTIFIED)
+
+**Status:** DONE
+**Deliverable:** `docs/verification/VEA5_EXECUTION_MODEL.md` (26 sections), `docs/verification/VEA5_M1_EXECUTION_MODEL.md` summary.
+**CodeQL audit:** AUDITED — NO CHANGE REQUIRED (languages: actions, javascript, javascript-typescript, python, typescript; weekly schedule).
+Defines the three-tier verification architecture (Local/PR/Deep) with formal contracts for planning, evidence, exit codes, cache semantics, failure classification, and attribution. Establishes scope semantics that decouple branch divergence from blast radius.
+
+**Files changed:** docs only. No source/workflow changes.
+
+**M1 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M2 — Tier-Aware Planning (CERTIFIED)
+
+**Status:** DONE
+**Module:** `runtime/foundation/verification/tier.py` (new) — `VerificationTier`, `UNIT_CATALOG`, `resolve_base_ref_for_tier`, `collect_*_changes`, `plan_for_tier`, `TierPlan`/`SelectedUnit`/`ExcludedUnit`.
+**CLI:** `verify.py plan --tier {local,pr,deep}`.
+**Tests:** `runtime/tests/test_vea5_tier_plan.py` — 17 passed.
+**Critical invariant:** every catalog unit is present in a plan as selected OR excluded-with-reason (no silent absence). Tier 1 LOCAL never consults `origin/main`/merge-base, so the 967-file branch divergence cannot inflate the plan. Tier 2 PR uses the explicit PR base only. Tier 3 DEEP is not change-scoped (full system).
+
+**Files changed:** `runtime/foundation/verification/tier.py` (new), `runtime/tests/test_vea5_tier_plan.py` (new), `runtime/verify.py` (`cmd_plan`), `docs/progress.md`, `docs/verification/VEA5_M2_TIER_PLANNING.md`.
+
+**M2 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M3 — Verification Runtime Integrity (CERTIFIED)
+
+**Status:** DONE
+**Module:** `runtime/foundation/verification/cache.py` (new) — `VerificationCache` with explicit integrity contract (cached PASS → exit 0; cached FAIL → exit != 0; missing/corrupt → re-execute; fingerprint mismatch → do not reuse).
+**Tests:** `runtime/tests/test_vea5_verification_cache.py` — 9 passed; `runtime/tests/test_backend_evidence.py` (+timeout marker + 2 test classes).
+**Defects closed (from M0 forensics):** W4 (`python -m pytest --timeout=30` vs backend ~66–140s → raised to 300s), W6 (`run_mutation_selective.sh` `python` → `python3`), W3 (cache replay integrity — never transforms recorded failure into success).
+
+**Runtime suite:** 488 passed / 0 failed (post-M3). Planner/attribution/diagnostics: 127 passed. Backend evidence: 35 passed.
+
+**Files changed:** `runtime/foundation/verification/cache.py` (new), `runtime/verify.py` (cache wiring), `.github/scripts/run_mutation_selective.sh` (python→python3), `runtime/tests/test_backend_evidence.py`, `runtime/tests/test_vea5_verification_cache.py` (new), `docs/verification/VEA5_M3_VERIFICATION_RUNTIME_INTEGRITY.md`, `docs/progress.md`.
+
+**M3 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M4 — Plan Reconciliation (CERTIFIED)
+
+**Status:** DONE
+**Module:** `runtime/foundation/verification/reconciliation.py` (new) — `normalize_change_set`, `change_set_fingerprint`, `change_set_diff`, `PlanFingerprint`/`plan_fingerprint`, `UnitExecution`, `ReconciliationClassification`, `ReconciliationStatus`, `ReconciliationReport`, `build_evidence_identity`, `reconcile`, `ci_fingerprint_from`. `POLICY_VERSION = "vea5-tier-policy-v1"`.
+**CLI:** `verify.py reconcile --tier local --pr-tier pr --base main --changed <files>` (or load from plan manifests).
+**Tests:** `runtime/tests/test_vea5_plan_reconciliation.py` — 14 passed.
+
+### M4 invariant (deliberately NOT "local == PR plan always")
+
+Equivalent normalized inputs + equivalent tier policy → deterministic equivalent plans (fingerprint-stable). Any divergence between two plans must be **explainable** by exactly one classified cause:
+
+| Status | Meaning |
+|--------|---------|
+| `same-plan` | identical normalized plan fingerprints |
+| `expected-tier-difference` | only tier-eligible units (mutation/golden) differ; both plans individually complete and valid |
+| `environment-divergence` | same plan, but recorded execution/evidence diverged (never assumes PASS) |
+| `planning-divergence` | an unexplained change in selected/excluded units — a real defect to investigate (CLI exits 2) |
+
+### Acceptance gates
+
+- [x] Change-set normalization is order/dup-insensitive; fingerprint deterministic (12 chars).
+- [x] Plan fingerprint ignores irrelevant `base_ref` (M2 LOCAL guarantee carried forward).
+- [x] Local vs PR for engine change → `EXPECTED_TIER_DIFFERENCE` (PR selects `mutation-run`, local keeps it excluded) — NOT planning divergence.
+- [x] Same plan, diverged execution → `ENVIRONMENT_DIVERGENCE`.
+- [x] Different change sets / unexplained unit drop → `PLANNING_DIVERGENCE`.
+- [x] Repository A (10 relevant files) reconciles as `SAME_PLAN` against Repository B (same HEAD, origin/main diverged 967 files) — branch topology excluded.
+- [x] Evidence identity spine: `commit → change-set → tier → plan fingerprint → unit → provenance → execution → evidence → failure → attribution → verdict`.
+
+**Full runtime suite:** 502 passed / 0 failed (up from 488; +14 M4).
+
+**Files changed:** `runtime/foundation/verification/reconciliation.py` (new), `runtime/tests/test_vea5_*.py` (+14), `runtime/verify.py` (`cmd_reconcile` + dispatch + usage list), `docs/verification/VEA5_M4_PLAN_RECONCILIATION.md` (this entry), `docs/progress.md`. No `.github/workflows/` modified; no backend/frontend production changes.
+
+**M4 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M5 — CI Integration & Reconciliation Gate (CERTIFIED)
+
+**Status:** DONE — 2026-08-12
+**Workflow:** `.github/workflows/verification-reconcile.yml` (new; does **not** consolidate the 9 existing workflows).
+**Module extensions:** `runtime/foundation/verification/reconciliation.py` (persisted-artifact helpers: `ExecutionEvidence`, `save/load_execution_evidence`, `reconcile_from_artifacts`, `save_reconciliation_report`), `runtime/verify.py` (`cmd_plan` M5-A guard, `cmd_exec_evidence` [M5-C], `cmd_reconcile` M5 persisted path + exit contract).
+**Tests:** `runtime/tests/test_vea5_m5_ci_integration.py` — 8 passed. All VEA-5 tests: 48 passed.
+
+### Narrow objective
+Make CI **consume and enforce** the framework's plan/reconciliation semantics **without** redesigning workflow topology. Path: checkout → bootstrap → `verify.py plan --tier pr` → PR TierPlan manifest → `verify.py <profile>` → execution evidence → `verify.py reconcile` → verdict.
+
+### Hard gates (all met)
+- **M5-A** PR base = `GITHUB_BASE_REF` (or explicit); never silently falls back to `origin/main`. Enforced in `cmd_plan` (fails loudly when no base).
+- **M5-B** Plan artifact carries tier / base_ref / changed_files / selected (unit_id + provenance) / excluded (reason + justification) / fingerprint / catalog completeness. (M2 `TierPlan.to_dict`.)
+- **M5-C** `verify.py exec-evidence` writes `vea5-execution-evidence/v1`: per selected unit unit_id / provenance / status / exit_code / evidence_ref. Persisted, deterministic input to reconciliation. *(Documented limitation: per-unit granularity derived from profile outcome; shape satisfied.)*
+- **M5-D** `verify.py reconcile --plan --evidence --report` reconciles **only** from persisted artifacts → one of same-plan / expected-tier-difference / environment-divergence / planning-divergence.
+- **M5-E** Exit contract: same-plan & expected-tier-difference → 0; environment-divergence → 1; planning-divergence → 2. Environment-vs-planning distinction preserved in the persisted report even though both fail.
+
+### Key constraint honored
+Reconciliation consumes **persisted evidence artifacts**, not "whatever exists at end of a job" — `reconcile_from_artifacts` reads explicit files; no reconstruction from live job state. Deterministic: identical inputs → identical report.
+
+### Deliberately out of scope
+No consolidation of the nine workflows (`backend-verify`, `frontend-verify`, `quality`, `verification-runtime`, `golden`, `mutation`, `dependency-update`, `playwright`, `release`). VEA-4 showed deletion needs evidence; M5 integrates the runtime, it does not redesign CI topology.
+
+**Files changed:** `.github/workflows/verification-reconcile.yml` (new), `runtime/foundation/verification/reconciliation.py`, `runtime/verify.py`, `runtime/tests/test_vea5_m5_ci_integration.py` (new), `docs/verification/VEA5_M5_CI_INTEGRATION.md`, `docs/progress.md`. No backend/frontend production changes.
+
+**M5 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M6 — Deep Verification & Evidence Contract (CERTIFIED)
+
+**Status:** DONE — 2026-08-12
+**Module:** `runtime/foundation/verification/evidence_contract.py` (new). Extensions: `reconciliation.py` (v2-aware loader), `verify.py` (`exec-evidence`→v2 default, `deep-contract`).
+**Tests:** `runtime/tests/test_vea5_m6_evidence_contract.py` — 11 passed; all VEA-5 tests: 59 passed.
+
+### Workstreams (A/B implemented; C/D/E as versioned interfaces)
+- **M6-A** Finer per-unit evidence correlation via `vea5-execution-evidence/v2`: `unit_id -> attempts[] -> artifacts[]` (command, start/end, duration, exit, stdout/stderr, evidence refs). Hard invariant: unambiguous path for every selected unit; missing record → explicit `no-evidence`, never silent. v1→v2 backward-compatible; `reconcile` consumes both.
+- **M6-B** Deep tier contract: Tier 3 is now an explicit, categorized ownership profile. `DEEP_VERIFICATION_SURFACES` = 13 surfaces across 6 domains (functional / regression / test-effectiveness / ui / performance / security). PR asks "what does this change require?"; DEEP asks "is the entire system still healthy?". Heavy surfaces excluded from per-PR triggers. `vea5-deep-contract/v1` manifest via `verify.py deep-contract`.
+- **M6-C/D/E** Defined as pluggable evidence interfaces: `TestQualitySignal` (TEST→COVERAGE→PROPERTY/CONTRACT→MUTATION→GOLDEN→LARGE-DATASET, no imposed thresholds), D realized as DEEP surfaces, `FailureNormalizationNode` (failure→unit_id→provenance→capability→impact→dependency→affected→evidence→signature) for the later attribution layer.
+
+### Deliberately out of scope
+No workflow fixes, no arbitrary coverage/mutation thresholds, no completion of mutation/golden/Playwright/UI/perf implementations (Track B / M10 parallel work), no nine-workflow consolidation. The M5 CI path remains valid (now emits v2).
+
+**Files changed:** `runtime/foundation/verification/evidence_contract.py` (new), `runtime/foundation/verification/reconciliation.py`, `runtime/verify.py`, `runtime/tests/test_vea5_m6_evidence_contract.py` (new), `.github/workflows/verification-reconcile.yml` (comment), `docs/verification/VEA5_M6_DEEP_VERIFICATION_EVIDENCE_CONTRACT.md`, `docs/progress.md`. No backend/frontend production changes.
+
+**M6 VERDICT: CERTIFIED.**
+
+---
+
+## VEA-5 M7 — CI Topology, Trigger & Ownership Audit (AUDIT COMPLETE)
+
+**Status:** DONE — 2026-08-12. **Read-only audit; no workflow modified.**
+All 9 + M5 `verification-reconcile` workflows audited against the three-tier model (M1), plan/reconcile gate (M4/M5) and evidence contract (M6).
+
+### Evidence matrix (summary)
+- **PR tier:** backend-verify, frontend-verify, quality, verification-runtime, playwright, verification-reconcile.
+- **DEEP tier:** golden, mutation (schedule/manual, correctly excluded from PR).
+- **Operational:** dependency-update (weekly health), release (release published).
+- **Staleness vs origin/main:** quality 263 / mutation 216 / playwright 162 / golden 127 lines diverge (branch-only evolutions); backend-verify, frontend-verify, dependency-update, release, verification-runtime match main exactly.
+
+### M7 rule honored
+No workflow removed on apparent duplication. "If removed, what becomes uncovered?" answered per workflow: every verification responsibility has a **unique owner** — no true redundancy on responsibility. The only real duplication is *shared-artifact re-publishing* (cosmetic; fixable by a shared publish composite, not deletion). quality's overlap with backend/frontend-verify is **apparent, not true** (fast fail-fast gate + architecture/meta; 10m vs 25–30m).
+
+### Three-tier + Track B/C mapping
+LOCAL has **no CI artifact yet** (gap for M8). Track B/C ownership map shows B2/B4/B5/C2 already produce evidence via existing workflows; B1-explicit, B3, B6, C1, C3 are absent and must be built.
+
+### M8 handoff
+No consolidation evidence-justified today. Converge the 4 stale workflows to main before topology decisions. Make `verification-reconcile` a required PR check. Close the LOCAL-tier CI gap.
+
+**Files changed:** `docs/verification/VEA5_M7_CI_TOPOLOGY_AUDIT.md` (new), `docs/progress.md`. No `.github/workflows/` modified.
+
+**M7 VERDICT: AUDIT COMPLETE — evidence matrix produced; no consolidation without M8 ownership decision.**
+
+---
+
+## VEA-5 M8 — Merge Enforcement, Staleness Convergence & LOCAL/PR Closure (CERTIFIED)
+
+**Status:** DONE — 2026-08-12. Operationalization, **not** consolidation. No verification-workflow ownership changed; none deleted.
+**Changes:** `verification-reconcile.yml` PR/push path filters broadened to `backend/**` + `runtime/**`; new `verify.py local-gate` (developer-side LOCAL plan artifact, no origin/main); 8 new M8 tests.
+**Tests:** `runtime/tests/test_vea5_m8_merge_enforcement.py` — 8 passed; all VEA-5: 67 passed.
+
+### M8.1 — stale convergence (preserve, don't reset)
+quality/mutation/playwright/golden divergences from origin/main (263/216/162/127 lines) are **legitimate VEA-5 evolutions**: the branch versions refactor stale multi-job scripts into the canonical single-command `verify.py <profile>` pattern. Convergence direction is **branch → main**; resetting would discard VEA-5. M8.1 tests lock this (delegate to verify.py, append status, bootstrap-runtime, concurrency policy). Merge-to-main is an operator action outside this edit scope.
+
+### M8.2 — required PR check
+Job identity `reconcile-gate` (single, deterministic). PR paths now cover backend/** + runtime/** so it runs on relevant PRs. planning-divergence → exit 2 → blocks merge. Operator: mark `reconcile-gate` required in branch protection.
+
+### M8.3 — LOCAL gap closed
+`verify.py local-gate` emits the LOCAL TierPlan from the working-tree delta, forces `base_ref=None` (asserts never origin/main), runs no verification, adds no CI cost. LOCAL stays cheap and uncontaminated.
+
+### M8.4 — branch-protection reality
+Required check maps to a real job; path filters cannot skip enforcement; job names are identifier-safe.
+
+### M8.5 — consolidation deferred
+No deletion evidence (M7). Shared-artifact re-publish duplication is cosmetic → dedupe via shared composite (deferred, safe). `quality` stays (apparent not true overlap). Unique owners (golden/mutation/playwright/...) remain.
+
+**Files changed:** `verification-reconcile.yml`, `runtime/verify.py`, `runtime/tests/test_vea5_m8_merge_enforcement.py` (new), `docs/verification/VEA5_M8_MERGE_ENFORCEMENT.md`, `docs/progress.md`. No backend/frontend production changes; the 4 stale workflows unmodified.
+
+**M8 VERDICT: CERTIFIED.**
 
 ---
 
@@ -2334,3 +2588,239 @@ Playwright tests require a running dev server (`npm run dev`) which is not avail
 3. M11: Document mutation testing scope — no production verification logic modified
 4. M12: Final full sweep with exact counts
 5. M13: Create `docs/verification/VEA4_CERTIFICATION.md` and finalize `docs/progress.md`
+
+---
+
+## VEA-5 — Execution Model (M1)
+
+**Status:** CERTIFIED (specification milestone; no code/workflow/production changes)
+**Date:** 2026-08-12
+**Deliverable:** `docs/verification/VEA5_EXECUTION_MODEL.md`
+**Prerequisite:** `VEA5_BASELINE.md` + `VEA5_CI_FAILURE_FORENSICS.md` (M0, CERTIFIED)
+
+### M1 Objective
+
+Define the three-tier execution model (Local / PR / Deep) that prevents the
+967-file branch divergence from becoming the blast radius, without weakening
+tests, hiding failures, or editing workflows.
+
+### M1 Key Decisions
+
+* **Tier 1 (Local):** scope to the developer's working-tree delta — NOT
+  `git merge-base HEAD origin/main`. This fixes M0 "behavior C / C'" (0 files →
+  refuse, vs 967 files → maximal plan).
+* **Tier 2 (PR):** scope to the PR diff vs the PR base; independently justify
+  every excluded unit.
+* **Tier 3 (Deep):** explicitly full-system, not accidentally over-selected.
+* **Reused existing architecture** (no duplicate abstractions):
+  * `SkippedSuite` (`optimizer.py`) = mandatory exclusion-with-reason contract.
+  * `VerificationUnit.estimated_seconds` = execution cost; `mutation-run` /
+    `golden-regression` already `explicit request (cost >= 600s)` = deep-tier by default.
+  * `unit_id` + `provenance` identity spine joins plan → execution → evidence.
+  * `VerificationStatus` enum reused; `PRE_EXISTING` / `ENVIRONMENT_FAILURE` /
+    `INFRASTRUCTURE_FAILURE` layered as classifications, not replacements.
+  * `attribution.py` (`IN_BLAST_RADIUS`, `OUTSIDE_BLAST_RADIUS`, `PRE_EXISTING`,
+    `ATTRIBUTION_UNKNOWN`, `UNMAPPED_UNIT`) = attribution integration.
+  * M0 forensic classification vocabulary (`planner divergence`,
+    `verification-runtime failure`, `dependency/environment`, `frontend
+    toolchain`, `timing/concurrency`, `workflow command divergence`,
+    `generated artifact`) reused in §15.
+* **Cache contract (§13):** cached `FAILED` MUST replay as `FAILED` + exit != 0
+  (closes M0 W3 anomaly).
+* **Exit-code contract (§12):** PASS→0, FAIL→!=0, BLOCKED→!=0 unless non-gating.
+* **CodeQL (§23):** default setup active (Python + JS/TS + actions, weekly).
+  Audited — `AUDITED — NO CHANGE REQUIRED`.
+
+### M1 Safety Record
+
+No `.github/workflows/` file modified. No production application code modified.
+No test weakened or deleted. No speculative planner implementation introduced.
+
+### M1 Next Steps (deferred)
+
+* M2: planner tier-eligibility + explained exclusions (addresses W1–W3 over-selection).
+* M3/M5: fix W4 (30s timeout) and W6 (`python`→`python3`).
+* M3: enforce cache exit-code integrity.
+* M4/M6: local/CI plan equivalence + reconciliation (Case A/B/C).
+* M7/M8: workflow topology re-audit; branch-protection record.
+* M9: CodeQL PR-eligibility wiring (config unchanged).
+* M10: deep profile contract (golden/mutation/E2E home).
+
+---
+
+## VEA-5 — Tier Planning (M2)
+
+**Status:** CERTIFIED (evidence-producing implementation milestone)
+**Date:** 2026-08-12
+**Deliverable:** `docs/verification/VEA5_M2_TIER_PLANNING.md`
+**Code:** `runtime/foundation/verification/tier.py` (new), `runtime/verify.py plan` subcommand, `runtime/tests/test_vea5_tier_plan.py` (new)
+**Prerequisite:** `VEA5_EXECUTION_MODEL.md` (M1, CERTIFIED)
+
+### M2 Objective
+
+Implement and prove the three-tier planning model from M1, attacking the M0
+architectural defect: the change-scoped planner treated the 967-file
+`origin/main` branch divergence as the developer's change. Establish the
+invariant: *a unit is never silently absent — it is selected or excluded with a
+machine-readable reason.*
+
+### M2 Implementation
+
+* New module `runtime/foundation/verification/tier.py`:
+  * `VerificationTier` (LOCAL / PR / DEEP) enum.
+  * `resolve_base_ref_for_tier` — LOCAL/DEEP return `None` (never consult
+    `origin/main`/merge-base); PR returns the PR base (`GITHUB_BASE_REF` /
+    explicit override).
+  * `collect_working_tree_changes` — Tier 1 change set = staged + unstaged +
+    untracked vs `HEAD` only; proven via test to never run `git merge-base` or
+    diff `origin/main`.
+  * Canonical `UNIT_CATALOG` (10 well-known units) as the single source of
+    truth for the completeness invariant.
+  * `plan_for_tier` — LOCAL/PR reuse the existing intelligence planner
+    (`analyze_changes` → `compute_blast_radius` → `optimize_verification`,
+    which already emits `SkippedSuite` reason+justification); DEEP selects the
+    full unit set (not change-scoped). Every catalog unit is reconciled into
+    `selected` or `excluded`.
+  * `TierPlan` manifest with `tier`, `base_ref`, `head_ref`, `changed_files`,
+    `selected`, `excluded` (reason+justification), `estimated_seconds`,
+    `planner_version`, `framework_version`, plus `fingerprint()` (deterministic,
+    excludes timestamp) and `unit_coverage.complete`.
+  * Tier-2 selective mutation eligibility (M1 §8): a backend-engine change makes
+    `mutation-run` SELECTED (targeted) for PR only; LOCAL keeps the cost gate.
+* `verify.py plan --tier {local|pr|deep}` subcommand emits and writes the
+  manifest (`runtime/generated/vea5-tier-plan.json`) for inspectable evidence.
+  No workflow, no production code, no execution changed.
+
+### M2 Acceptance Evidence (17 new tests, all passing)
+
+* `test_repository_a_equals_repository_b_for_tier1` — the critical regression
+  test: Repository A (10 relevant files) == Repository B (same HEAD, `origin/main`
+  diverged 967 unrelated files). Tier 1 plan identical; `base_ref is None`.
+* `test_local_never_invokes_merge_base_with_origin_main` — LOCAL collection
+  monkeypatched to assert no `merge-base` / `origin/main` call.
+* Tier 1: non-zero accurate set; clean tree defined (all excluded w/ reasons);
+  heavy units not selected merely because branch is long-lived.
+* Tier 2: PR base explicitly resolved; deterministic; affected/required selected;
+  non-selected carry `SkippedSuite` reason+justification; differs from Tier 1
+  for an engine change (mutation-run selected).
+* Tier 3: genuinely full-system; mutation/golden/E2E/performance selected; ignores
+  changed_files; nothing filtered by change scope.
+* Identity: every selected/excluded unit retains `unit_id` + provenance; no
+  positional (`step-*`) ids; no duplicate unit ids.
+* Determinism: identical state → identical plan; changing only `origin/main`
+  divergence does not alter Tier 1.
+* Evidence: manifest records all required fields; `unit_coverage.complete == True`;
+  round-trips through write/read.
+* Regression: existing planner/attribution/diagnostics tests **139 passed**
+  (no weakening). W4/W6/cache fixes intentionally deferred per M2 scope.
+
+### M2 Safety Record
+
+No `.github/workflows/` file modified. No production application code modified.
+No test weakened or deleted. New code only adds tier semantics; planner logic
+reused, not reimplemented.
+
+### M2 Next Steps (deferred)
+
+* M3/M5: W4 (30s runtime timeout) and W6 (`python`→`python3`) — out of M2 scope.
+* M3: enforce cache exit-code integrity (M1 §13).
+* M4/M6: local/CI plan equivalence + reconciliation (M1 §14 Case A/B/C).
+* M7/M8: workflow topology re-audit; branch-protection record.
+* M9: CodeQL PR-eligibility wiring (config unchanged).
+* M10: deep profile contract (golden/mutation/E2E home).
+
+---
+
+## VEA-5 — Verification Runtime Integrity (M3)
+
+**Status:** CERTIFIED (evidence-producing implementation milestone)
+**Date:** 2026-08-12
+**Deliverable:** `docs/verification/VEA5_M3_VERIFICATION_RUNTIME_INTEGRITY.md`
+**Code:** `runtime/foundation/verification/cache.py` (new), `runtime/verify.py` (cache wiring), `.github/scripts/run_mutation_selective.sh` (interpreter fix), `runtime/tests/test_backend_evidence.py` (timeout marker + lightweight probe + mutation portability), `runtime/tests/test_vea5_verification_cache.py` (new)
+**Prerequisite:** `VEA5_M2_TIER_PLANNING.md` (M2, CERTIFIED)
+
+### M3 Objective
+
+Fix the three verification-runtime integrity defects discovered in M0, prove each
+with tests, and certify the runtime itself before touching CI topology. W4/W6/cache
+are explicitly IN scope; M4/M5/M6 deferred.
+
+### M3-A — Runtime Timeout Defect (W4)
+
+* **Root cause:** `test_backend_exit_contract_holds_both_directions` runs the real
+  `run_backend_verification.sh` (~66–140s) as a subprocess. The runtime test suite
+  is invoked via `run_runtime_verification.sh` with `pytest --timeout=30`, so the
+  outer 30s per-test timeout kills the heavy test before it can exercise the
+  exit-contract probe.
+* **Fix:** add `@pytest.mark.timeout(300)` (measured from observed 66–140s with CI
+  margin; not arbitrary) so the per-test marker overrides the global 30s. The
+  heavy test now completes and proves the failure-attribution direction of the
+  exit-code contract with the real backend script.
+* **Lightweight probe:** added `TestExitCodeContractLightweight` using a controlled
+  inline pytest (pass → exit 0, fail → exit != 0). This is the hierarchy step-1
+  proof that the exit-code contract holds independently of the full backend
+  runtime.
+
+### M3-B — Mutation Runner Portability (W6)
+
+* **Root cause:** `.github/scripts/run_mutation_selective.sh:40` used bare `python`
+  in the mutmut runner string. `ubuntu-latest` only ships `python3`.
+* **Fix:** `python` → `python3` in the runner string. This aligns with the
+  repository's existing convention: all other `.github/scripts/run_*.sh` use
+  `python3`, and the bootstrap-runtime action provisions `python3` explicitly.
+  No new interpreter-selection mechanism introduced; reuse of existing convention.
+* **Static proof:** `TestMutationRunnerPortability` asserts the script contains
+  `python3 -m pytest` and does NOT contain bare `python -m pytest`.
+
+### M3-C — Cache Integrity Defect (W3)
+
+* **Root cause:** the verification cache could replay a recorded FAIL as a
+  successful verification (exit 0), violating the integrity invariant.
+* **Fix:** new `runtime/foundation/verification/cache.py` implements the explicit
+  replay contract:
+  * `VerificationCache.replay()` derives the exit code from the **stored**
+    `overall_status` — never from a default of 0.
+  * Stored `"fail"` → `exit_code == 1`.
+  * Stored `"pass"` → `exit_code == 0`.
+  * Missing / corrupt / mismatched fingerprint → `reusable=False` (caller
+    re-executes; never silently assumes PASS).
+* **Wired into `verify.py`:** on a valid cache hit, `main()` replays the stored
+  verdict with the correct exit code and skips re-execution. On invalid/missing
+  cache, it runs the full verification and saves the new verdict.
+* **Per-profile isolation:** `changed_files` is stored per profile, so different
+  profiles don't invalidate each other's fingerprints.
+
+### M3 Acceptance Evidence
+
+* **Runtime test suite:** **488 passed, 0 failed** (up from 457/1 at M0). The
+  exit-contract test now runs with a measured 300s override and passes.
+* **Cache integrity tests:** 9 new tests in `test_vea5_verification_cache.py`:
+  * missing cache → not reusable
+  * corrupt cache → not reusable
+  * fingerprint mismatch → not reusable
+  * profile mismatch → not reusable
+  * cached PASS → exit 0
+  * cached FAIL → exit != 0 (critical invariant)
+  * stale failure never silently becomes PASS
+  * save/reload round-trip preserves FAIL status
+  * multiple profiles do not interfere
+* **Lightweight probe test:** both pass/fail directions proven without the heavy
+  backend script.
+* **Mutation interpreter test:** static proof `python3` is used, bare `python` absent.
+* **Regression:** existing planner/attribution/diagnostics suites **127 passed**
+  (no weakening/deletion).
+
+### M3 Safety Record
+
+No `.github/workflows/` file modified. No production application code modified.
+No test weakened or deleted. Script `.github/scripts/run_mutation_selective.sh`
+modified (allowed; M3-B in scope). Cache module is new; verify.py wiring is
+minimal and does not alter execution for fresh runs.
+
+### M3 Next Steps (deferred)
+
+* M4/M6: local/CI plan equivalence + reconciliation (Case A/B/C).
+* M5: CI topology integration (wire tiers into GitHub Actions).
+* M7/M8: workflow topology re-audit; branch-protection record.
+* M9: CodeQL PR-eligibility wiring (config unchanged).
+* M10: deep profile contract (golden/mutation/E2E home).
