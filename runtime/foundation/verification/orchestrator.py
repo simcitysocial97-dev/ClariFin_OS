@@ -94,14 +94,19 @@ def _merge_base_with_default() -> str | None:
     if not default:
         return None
     repo_root = _find_repo_root()
+    # Extract branch name from ref (e.g., "origin/main" -> "main") for fetch.
+    branch_name = default.replace("origin/", "")
     # Refresh the default branch to avoid a stale cached ref (P0-1).
-    subprocess.run(
-        ["git", "fetch", "origin", default],
+    fetch_result = subprocess.run(
+        ["git", "fetch", "origin", branch_name],
         capture_output=True,
         text=True,
         cwd=str(repo_root),
         timeout=30,
     )
+    if fetch_result.returncode != 0:
+        # Fetch failed; continue with potentially stale ref rather than failing.
+        pass
     try:
         r = subprocess.run(
             ["git", "merge-base", "HEAD", default],
