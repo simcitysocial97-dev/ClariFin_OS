@@ -40,7 +40,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
         "%d %b %Y",
         "%d %b %y",
         "%d-%b-%Y",
-        "XX%d-%b-%yXX",
+        "%d-%b-%y",
         "%Y-%m-%d",
     ]
     s = date_str.strip()
