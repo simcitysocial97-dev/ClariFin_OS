@@ -165,6 +165,19 @@ def _collect_changed_files() -> list[str]:
             return result.stdout
         return ""
 
+    def _run_diff_three_dot(base: str) -> str:
+        """Three-dot diff: changes on HEAD side since merge-base with base."""
+        result = subprocess.run(
+            ["git", "diff", "--name-only", f"{base}...HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout
+        return ""
+
     def _resolve_remote_ref(ref: str) -> str:
         """Resolve a ref to a form usable by git diff, fetching from origin if needed."""
         for candidate in (ref, f"origin/{ref}"):
@@ -190,7 +203,7 @@ def _collect_changed_files() -> list[str]:
 
     if base_ref is not None:
         resolved = _resolve_remote_ref(base_ref)
-        combined = _run_diff([resolved])
+        combined = _run_diff_three_dot(resolved)
         diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
     else:
         combined = _run_diff(["HEAD"])
