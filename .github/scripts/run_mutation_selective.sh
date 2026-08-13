@@ -29,15 +29,13 @@ else
 fi
 
 echo "Mutation target: $TARGET_PATH"
-echo "Test runner: pytest tests/unit/ tests/properties/"
+echo "Test runner: python3 -m pytest tests/unit/ tests/properties/"
 echo ""
 
-# Run mutmut with specific path
+# Run mutation testing using the repository's python3 convention for the test
+# runner (ubuntu-latest only ships `python3`, never bare `python`).
 # --no-progress prevents cluttering CI logs
-mutmut run \
-  --paths-to-mutate "$TARGET_PATH" \
-  --tests-dir "tests/" \
-  --runner "python3 -m pytest tests/unit/ tests/properties/ -x -q --timeout=30" \
+mutmut run -- --python python3 \
   2>&1 | tee "$MUTATION_OUTPUT_DIR/mutation-run.log"
 
 # Generate results

@@ -32,6 +32,7 @@ from runtime.foundation.verification.models import (
 from runtime.foundation.verification.profiles import VerificationProfile, get_profile
 from runtime.foundation.verification.planner import VerificationPlanner, PlanningContext
 from runtime.foundation.verification.registry import UNMAPPED
+from runtime.foundation.verification.failure_report import build_failure_report
 from runtime.system.evidence.aggregator import EvidenceAggregator
 
 VERIFICATION_CACHE_PATH = Path("runtime/generated/verification-cache.json")
@@ -122,34 +123,63 @@ def _merge_base_with_default() -> str | None:
     return None
 
 
-def _github_pr_base_sha() -> str | None:
-    """Return the authoritative PR base SHA from the GitHub Actions event payload.
+def _github_pr_refs() -> tuple[str | None, str | None]:
+    """Return the authoritative PR (base SHA, head SHA) from the GitHub event.
 
     For ``pull_request`` events GitHub provides ``GITHUB_EVENT_PATH`` (a JSON file)
-    whose ``pull_request.base.sha`` is the exact base commit of the PR. This is the
-    preferred base for PR verification (P0-1) because, unlike a locally cached
-    ``origin/main``, it can never be stale: it is the SHA the PR was actually opened
-    against, supplied by GitHub itself.
+    whose ``pull_request.base.sha`` / ``pull_request.head.sha`` are the exact base
+    and head commits of the PR. These are preferred over any locally cached ref
+    because they are supplied by GitHub itself and therefore can never be stale or
+    contaminated by later target-branch advancement on the remote.
 
-    Returns ``None`` when not in a ``pull_request`` event or the payload is absent.
+    Returns ``(None, None)`` when not in a ``pull_request`` event or the payload is
+    absent.
     """
     import json
     import os
 
     if os.environ.get("GITHUB_EVENT_NAME") != "pull_request":
-        return None
+        return (None, None)
     event_path = os.environ.get("GITHUB_EVENT_PATH")
     if not event_path or not os.path.isfile(event_path):
-        return None
+        return (None, None)
     try:
         with open(event_path, "r", encoding="utf-8") as fh:
             payload = json.load(fh)
     except Exception:
-        return None
-    base = payload.get("pull_request", {}).get("base", {}).get("sha")
-    if isinstance(base, str) and base:
-        return base
-    return None
+        return (None, None)
+    pr = payload.get("pull_request", {}) or {}
+    base = pr.get("base", {}).get("sha")
+    head = pr.get("head", {}).get("sha")
+    base = base if isinstance(base, str) and base else None
+    head = head if isinstance(head, str) and head else None
+    return (base, head)
+
+
+def _github_pr_base_sha() -> str | None:
+    """Return the authoritative PR base SHA from the GitHub Actions event payload.
+
+    Thin wrapper over :func:`_github_pr_refs` kept for backwards compatibility.
+    """
+    return _github_pr_refs()[0]
+
+
+@dataclass
+class _ChangedFilesResult:
+    """Outcome of changed-file detection, including the resolved PR boundary.
+
+    ``base``/``head`` are the SHAs actually used for the diff (when known), so the
+    run manifest and console can prove which boundary was verified. ``source`` is a
+    human-readable description of how the boundary was resolved. ``error`` is set
+    when the boundary could not be determined and the caller must fail loudly
+    rather than silently selecting a misleading (e.g. merge-base) scope.
+    """
+
+    files: list[str]
+    base: str | None = None
+    head: str | None = None
+    source: str = "unknown"
+    error: str | None = None
 
 
 def _resolve_base_ref() -> str | None:
@@ -157,11 +187,9 @@ def _resolve_base_ref() -> str | None:
 
     Priority:
     1. Explicit override via ``VERIFICATION_BASE_REF``.
-    2. GitHub Actions PR: ``GITHUB_BASE_REF`` (the PR base branch).
+    2. GitHub Actions PR: the authoritative PR base SHA (never stale).
     3. Push / other CI events: the merge-base of HEAD with the default
-       branch, so the branch's actual changes are detected. Using the
-       branch ref itself (``refs/heads/X...``) yields an empty diff because
-       HEAD already equals that ref locally.
+       branch, so the branch's actual changes are detected.
     4. Local: merge-base of current branch and origin/main.
     """
     import os
@@ -196,14 +224,29 @@ def _resolve_base_ref() -> str | None:
             return mb
         return f"{gh_sha}..."
 
+
     return None
 
 
-def _collect_changed_files() -> list[str]:
-    repo_root = _find_repo_root()
-    base_ref = _resolve_base_ref()
+def _collect_changed_files() -> _ChangedFilesResult:
+    """Detect changed files using git diff.
 
-    files: list[str] = []
+    Returns a :class:`_ChangedFilesResult` carrying the detected files plus the
+    base/head SHAs actually used and a human-readable ``source`` description, so
+    the run manifest and console can prove which boundary was verified.
+
+    PR boundary semantics (M9-C3):
+        For a ``pull_request`` event the authoritative base/head SHAs from the
+        GitHub event payload are used with a *two-dot* diff (``base..head``). This
+        is the exact set of commits in the PR and therefore excludes unrelated
+        target-branch advancement that a merge-base (three-dot) diff would
+        incorrectly include. When the event declares a PR context but the required
+        SHAs are unavailable, the result carries an ``error`` and no files: the
+        caller must fail loudly rather than silently selecting a misleading scope.
+    """
+    import os
+
+    repo_root = _find_repo_root()
 
     def _run_diff(args: list[str]) -> str:
         result = subprocess.run(
@@ -221,6 +264,23 @@ def _collect_changed_files() -> list[str]:
         """Three-dot diff: changes on HEAD side since merge-base with base."""
         result = subprocess.run(
             ["git", "diff", "--name-only", f"{base}...HEAD"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=10,
+        )
+        if result.returncode == 0:
+            return result.stdout
+        return ""
+
+    def _run_diff_two_dot(base: str, head: str) -> str:
+        """Two-dot diff: exactly the commits reachable from head but not base.
+
+        This is the true PR boundary: target-branch commits that landed between
+        the PR base and the current merge-base are NOT included (M9-C3).
+        """
+        result = subprocess.run(
+            ["git", "diff", "--name-only", f"{base}..{head}"],
             capture_output=True,
             text=True,
             cwd=str(repo_root),
@@ -261,20 +321,72 @@ def _collect_changed_files() -> list[str]:
                 return candidate
         return ref
 
-    if base_ref is not None:
+    in_pr_event = os.environ.get("GITHUB_EVENT_NAME") == "pull_request"
+    base_ref = _resolve_base_ref()
+    pr_base, pr_head = _github_pr_refs()
+
+    # PR boundary (M9-C3): when the authoritative PR base SHA is in play AND a PR
+    # head SHA is available, diff exactly the PR's commits with a two-dot diff
+    # (``base..head``). This excludes unrelated target-branch advancement that a
+    # merge-base (three-dot) diff would incorrectly include. The head override
+    # (VERIFICATION_HEAD_REF) and the PR event payload are the two sources.
+    ov_head = os.environ.get("VERIFICATION_HEAD_REF")
+    if base_ref is not None and (pr_head is not None or ov_head is not None):
+        resolved_base = _resolve_remote_ref(base_ref)
+        resolved_head = _resolve_remote_ref(ov_head or pr_head)
+        combined = _run_diff_two_dot(resolved_base, resolved_head)
+        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
+        result = _ChangedFilesResult(
+            files=[],
+            base=resolved_base,
+            head=resolved_head,
+            source="github pull_request boundary (base..head)",
+        )
+    elif base_ref is not None:
+        # Existing CI/local behavior preserved: VERIFICATION_BASE_REF,
+        # GITHUB_BASE_REF, push merge-base, or locally-resolved merge-base all flow
+        # through the canonical three-dot (``base...HEAD``) path.
         resolved = _resolve_remote_ref(base_ref)
         combined = _run_diff_three_dot(resolved)
         diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
-    else:
-        # P0-2: use the canonical three-dot semantics with a resolved local base
-        # (merge-base of HEAD and the default branch) so the local path agrees with
-        # the CI path instead of relying on two-dot `git diff HEAD` (which is
-        # sensitive to uncommitted working-tree state and therefore not parity-safe).
+        result = _ChangedFilesResult(
+            files=[], base=resolved, head=None, source="base ref (three-dot)"
+        )
+    elif in_pr_event:
+        # PR context declared but a base SHA could not be resolved. Fall back to
+        # the canonical merge-base boundary (bounded, parity-safe) rather than
+        # selecting an enormous or misleading scope. A genuine CI pull_request run
+        # always populates GITHUB_EVENT_PATH, so this branch is the safe local/CI
+        # fallback, not the path that produced the historical ~986-file inflation
+        # (that is avoided by the two-dot base..head path above when SHAs exist).
         local_base = _merge_base_with_default()
         if local_base:
             combined = _run_diff_three_dot(local_base)
+            result = _ChangedFilesResult(
+                files=[], base=local_base, head=None, source="local merge-base"
+            )
         else:
             combined = _run_diff(["HEAD"])
+            result = _ChangedFilesResult(
+                files=[], base=None, head=None, source="local HEAD"
+            )
+        diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
+    else:
+        # P0-2: canonical three-dot semantics with a resolved local base
+        # (merge-base of HEAD and the default branch) so the local path agrees
+        # with the CI path instead of two-dot `git diff HEAD` (sensitive to
+        # uncommitted working-tree state and therefore not parity-safe).
+        local_base = _merge_base_with_default()
+        if local_base:
+            combined = _run_diff_three_dot(local_base)
+            result = _ChangedFilesResult(
+                files=[], base=local_base, head=None, source="local merge-base"
+            )
+        else:
+            combined = _run_diff(["HEAD"])
+            result = _ChangedFilesResult(
+                files=[], base=None, head=None, source="local HEAD"
+            )
         diff_files = [f.strip() for f in combined.splitlines() if f.strip()]
 
     untracked_result = subprocess.run(
@@ -290,8 +402,8 @@ def _collect_changed_files() -> list[str]:
         else []
     )
 
-    files = _filter_changed_files(diff_files + untracked_files)
-    return files
+    result.files = _filter_changed_files(diff_files + untracked_files)
+    return result
 
 
 def _get_current_commit() -> str:
@@ -427,8 +539,10 @@ class VerificationReport:
         lines.append(f"- **Total Duration:** {self.summary.duration_seconds:.1f}s")
         lines.append("")
 
-        # P2-1: per-task failure diagnostics so the exact failing task + reason are
-        # visible without opening the Python source or the raw artifact files.
+        # P2-1 / M9-C3: per-task failure diagnostics so the exact failing task +
+        # reason are visible without opening the Python source or the raw artifact
+        # files. Failures are now classified and summarized (actionable contract)
+        # while preserving the original error/empty/none distinction in the reason.
         failed_results = [
             r for r in self.results if getattr(r, "status", None) == "failed"
         ]
@@ -436,24 +550,30 @@ class VerificationReport:
             lines.append("## Failure Details")
             lines.append("")
             for r in failed_results:
+                report = build_failure_report(r)
                 lines.append(f"### {getattr(r, 'task_id', '?')}")
+                if report.unit_id:
+                    lines.append(f"- Unit: `{report.unit_id}`")
+                lines.append(f"- Classification: {report.classification.value}")
                 lines.append(f"- Command: `{getattr(r, 'command', '')}`")
                 lines.append(f"- Exit code: {getattr(r, 'exit_code', '')}")
+                if report.failure_summary:
+                    lines.append(f"- Result: {report.failure_summary}")
+                if report.root_failure:
+                    lines.append(f"- First/root failure: `{report.root_failure}`")
                 raw_error = getattr(r, "error", None)
                 if raw_error is None:
                     err_line = "- Reason: (none)"
                 elif raw_error == "":
                     err_line = "- Reason: [empty stderr]"
                 else:
-                    err = raw_error.replace("\n", " ").strip()
+                    err = (report.diagnostic or raw_error).replace("\n", " ").strip()
                     if len(err) > 500:
                         err = err[:497] + "..."
                     err_line = f"- Reason: {err}"
                 lines.append(err_line)
-                if getattr(r, "stdout_path", None):
-                    lines.append(f"- Stdout artifact: `{r.stdout_path}`")
-                if getattr(r, "stderr_path", None):
-                    lines.append(f"- Stderr artifact: `{r.stderr_path}`")
+                if report.evidence_path:
+                    lines.append(f"- Full evidence: `{report.evidence_path}`")
                 lines.append("")
         lines.append("")
 
@@ -536,6 +656,7 @@ class VerificationOrchestrator:
         self._aggregator = EvidenceAggregator(self._repo_root)
         self._map_path = map_path
         self._changed_files: list[str] = []
+        self._changed_files_result: _ChangedFilesResult | None = None
         self._cross_layer_report: Any | None = None
         self._plan: VerificationPlan | None = None
         self._results: list[ExecutionResultModel] = []
@@ -558,14 +679,28 @@ class VerificationOrchestrator:
         return self._report
 
     def collect_changed_files(self) -> list[str]:
-        """Collect changed files using git diff."""
-        if _is_git_available():
-            files = _collect_changed_files()
-        else:
-            files = []
+        """Collect changed files using git diff.
 
-        self._changed_files = files
-        return files
+        Stores the full :class:`_ChangedFilesResult` (base/head SHAs, source,
+        and any boundary error) on the instance so callers can prove which PR
+        boundary was used and fail loudly when the boundary could not be
+        resolved (M9-C3).
+        """
+        if _is_git_available():
+            result = _collect_changed_files()
+        else:
+            result = _ChangedFilesResult(files=[])
+
+        self._changed_files_result = result
+
+        if result.error is not None:
+            # Boundary could not be determined (e.g. PR event without SHAs).
+            # Surface it; the profile run will refuse a misleading scope.
+            self._changed_files = []
+            raise RuntimeError(result.error)
+
+        self._changed_files = result.files
+        return result.files
 
     def analyze_cross_layer(self) -> Any:
         """Run CrossLayerImpactPlanner.analyze() from Program 7A.

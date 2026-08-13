@@ -53,6 +53,26 @@ class VerificationStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
+class FailureClassification(str, Enum):
+    """Actionable classification of a failed verification unit.
+
+    The set of classifications is intentionally limited to the categories the
+    verification runtime can actually establish from the execution evidence it
+    holds. Anything the framework cannot attribute is reported as UNKNOWN_FAILURE
+    with the raw diagnostic preserved (never silently mapped to success).
+    """
+
+    TEST_FAILURE = "TEST_FAILURE"
+    COMMAND_FAILURE = "COMMAND_FAILURE"
+    IMPORT_FAILURE = "IMPORT_FAILURE"
+    TIMEOUT = "TIMEOUT"
+    ENVIRONMENT_FAILURE = "ENVIRONMENT_FAILURE"
+    PLANNING_FAILURE = "PLANNING_FAILURE"
+    RECONCILIATION_FAILURE = "RECONCILIATION_FAILURE"
+    ARTIFACT_FAILURE = "ARTIFACT_FAILURE"
+    UNKNOWN_FAILURE = "UNKNOWN_FAILURE"
+
+
 class VerificationScope(str, Enum):
     """Verification scope levels."""
 
@@ -215,6 +235,19 @@ class ExecutionResult:
     stdout_path: str
     stderr_path: str
     error: str | None = None
+    # --- M9-C3 failure-report contract ----------------------------------------------
+    # ``classification`` names *why* the unit failed using the FailureClassification
+    # vocabulary, so a red pipeline is self-describing without opening raw logs.
+    # ``UNKNOWN_FAILURE`` is used whenever the runtime cannot establish a more
+    # specific cause, and the raw diagnostic is preserved in ``error``/artifacts.
+    classification: "FailureClassification" = field(
+        default=FailureClassification.UNKNOWN_FAILURE
+    )
+    # Structured failure summary, when the executor can derive one (e.g. pytest
+    # short summary "1 failed, 65 passed" and the first/root failing node id).
+    failure_summary: str | None = None
+    test_failure_count: int | None = None
+    root_failure: str | None = None
     # --- VEA-2 Phase 2 identity spine -------------------------------------------------
     # Optional and defaulted; all 5 pre-existing construction sites keep working unchanged.
     unit_id: str | None = None

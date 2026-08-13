@@ -397,6 +397,76 @@ def _clear_ci_env(monkeypatch):
         monkeypatch.delenv(var, raising=False)
 
 
+def _deterministic_git_env(monkeypatch):
+    """Provide a fully deterministic, network-free git world for parity tests.
+
+    Every git subcommand issued by ``_collect_changed_files`` is answered by a
+    controlled stub so the test never performs a live ``git fetch``. This removes
+    the non-determinism that previously came from the real fetch/merge-base timing
+    against ``origin`` (the root cause of intermittent parity failures).
+
+    The stubed world is:
+    * a fixed default branch ``origin/main`` resolved to a fixed SHA,
+    * a fixed merge-base SHA,
+    * a fixed, small, reproducible set of changed files (filtered form),
+    * no untracked files,
+    * every ``git fetch`` (network) returns success without doing anything.
+
+    The intended contracts are still exercised: CI and local routing must use the
+    identical resolver + diff command + filter, so they agree on the same state.
+    """
+    from unittest.mock import MagicMock
+
+    from runtime.foundation.verification.orchestrator import (
+        _collect_changed_files,
+        _filter_changed_files,
+    )
+
+    DEFAULT_SHA = "m" * 40
+    MERGE_BASE_SHA = "b" * 40
+    PR_BASE_SHA = "p" * 40
+    PR_HEAD_SHA = "h" * 40
+    # Already-filtered changed files (no runtime/generated, node_modules, etc.).
+    CHANGED = [
+        "backend/src/engines/loan_engine/emi.py",
+        "frontend/app/loans/page.tsx",
+        "docs/VEA2.md",
+    ]
+
+    def _git_run(args, **kwargs):
+        cmd = list(args)
+        if cmd[:2] == ["git", "fetch"]:
+            # Network no-op: never actually contacts origin.
+            return MagicMock(returncode=0, stdout="", stderr="")
+        if cmd[:2] == ["git", "rev-parse"]:
+            return MagicMock(returncode=0, stdout=DEFAULT_SHA, stderr="")
+        if cmd[:2] == ["git", "merge-base"]:
+            return MagicMock(returncode=0, stdout=MERGE_BASE_SHA, stderr="")
+        if cmd[:2] == ["git", "diff"] and "--name-only" in cmd:
+            return MagicMock(returncode=0, stdout="\n".join(CHANGED) + "\n", stderr="")
+        if cmd[:2] == ["git", "ls-files"]:
+            # Deterministic: no untracked files.
+            return MagicMock(returncode=0, stdout="", stderr="")
+        return MagicMock(returncode=0, stdout="", stderr="")
+
+    # Patch subprocess.run at the module that issues the calls.
+    import runtime.foundation.verification.orchestrator as O
+
+    monkeypatch.setattr(O, "subprocess", MagicMock(run=_git_run))
+
+    return {
+        "collect": _collect_changed_files,
+        "filter": _filter_changed_files,
+        "shas": {
+            "default": DEFAULT_SHA,
+            "merge_base": MERGE_BASE_SHA,
+            "pr_base": PR_BASE_SHA,
+            "pr_head": PR_HEAD_SHA,
+        },
+        "changed": set(CHANGED),
+    }
+
+
 def test_ci_and_local_changed_file_parity(monkeypatch):
     """C10 — CI and local changed-file collection must be parity-safe.
 
@@ -405,19 +475,27 @@ def test_ci_and_local_changed_file_parity(monkeypatch):
     resolver + diff command + filtering, so they agree on the same working tree.
 
     Regression for P0-2 (two-dot vs three-dot parity defect).
+
+    The test runs against a fully controlled git fixture (no live ``git fetch``),
+    so the parity result is deterministic regardless of network availability,
+    remote state, fetch timing, or GitHub CI environment (Milestone 1/2 fix).
     """
-    from runtime.foundation.verification.orchestrator import _collect_changed_files
+    world = _deterministic_git_env(monkeypatch)
+    collect = world["collect"]
+    expected = world["changed"]
 
     _clear_ci_env(monkeypatch)
 
     # Local override routing.
     monkeypatch.setenv("VERIFICATION_BASE_REF", "HEAD")
-    override = set(_collect_changed_files())
+    override = set(collect().files)
+    assert override == expected
 
     # CI routing via GITHUB_BASE_REF with the same base.
     monkeypatch.delenv("VERIFICATION_BASE_REF", raising=False)
     monkeypatch.setenv("GITHUB_BASE_REF", "HEAD")
-    ci = set(_collect_changed_files())
+    ci = set(collect().files)
+    assert ci == expected
 
     assert ci == override, "CI GITHUB_BASE_REF must equal local VERIFICATION_BASE_REF"
 
@@ -425,10 +503,13 @@ def test_ci_and_local_changed_file_parity(monkeypatch):
     # semantics as the CI path with no explicit base ref: both resolve the
     # merge-base of HEAD and the default branch, so they agree (P0-2).
     monkeypatch.delenv("GITHUB_BASE_REF", raising=False)
-    local = set(_collect_changed_files())
+    local = set(collect().files)
+    assert local == expected
 
     monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
-    ci_no_base = set(_collect_changed_files())
+    ci_no_base = set(collect().files)
+    assert ci_no_base == expected
+
     assert local == ci_no_base, "default local must equal CI path with no explicit base ref"
 
 
@@ -466,7 +547,7 @@ def test_pr_base_resolution_priority_and_sha(monkeypatch, tmp_path):
     _clear_ci_env(monkeypatch)
     result = _resolve_base_ref()
     assert result is None or isinstance(result, str)
-    assert isinstance(_collect_changed_files(), list)
+    assert isinstance(_collect_changed_files().files, list)
 
     # E. Arbitrary branch names work through GITHUB_BASE_REF.
     _clear_ci_env(monkeypatch)

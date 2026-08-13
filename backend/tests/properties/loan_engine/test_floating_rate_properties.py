@@ -201,9 +201,10 @@ def test_apply_floating_rate_change_modes(schedule_params):
         schedule, change_month, new_rate, "adjust_tenure", start_date
     )
 
-    # INVARIANT: Schedules should be different when rate changes, schedule has enough months,
-    # and the change happens before the last month (otherwise both modes produce identical results).
-    if new_rate != initial_rate and len(schedule) > 2 and change_month < len(schedule):
+    # INVARIANT: Schedules should be different when rate changes significantly,
+    # schedule has enough months, and the change happens before the last month.
+    # (Threshold of >= 5 basis points prevents integer-paise rounding collisions)
+    if abs(new_rate - initial_rate) >= 5 and len(schedule) > 2 and change_month < len(schedule):
         assert adjust_emi_schedule != adjust_tenure_schedule
 
     # INVARIANT: Completed portion should be identical
@@ -214,7 +215,7 @@ def test_apply_floating_rate_change_modes(schedule_params):
     if change_month < len(adjust_emi_schedule):
         original_emi = schedule[change_month].emi_paise
         adjust_emi_new_emi = adjust_emi_schedule[change_month].emi_paise
-        if new_rate != initial_rate:
+        if abs(new_rate - initial_rate) >= 5:
             assert adjust_emi_new_emi != original_emi
 
         # Tenure should be preserved in adjust_emi mode
