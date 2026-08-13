@@ -263,7 +263,7 @@ jobs:
             python -c 'import black,sys; print(black.__file__); print(sys.version)'
             echo
             echo "=== BLACK CONFIG (pyproject.toml [tool.black]) ==="
-            python -c "
+            python - <<'PY'
             import tomllib
             from pathlib import Path
             p = Path('backend/pyproject.toml')
@@ -276,7 +276,7 @@ jobs:
                     print('No [tool.black] section found')
             else:
                 print('backend/pyproject.toml not found')
-            "
+          PY
             echo
             echo "=== REPO ROOT ==="
             pwd
