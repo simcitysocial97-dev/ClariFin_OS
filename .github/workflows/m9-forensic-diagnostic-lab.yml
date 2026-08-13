@@ -209,6 +209,8 @@ jobs:
             echo "No bootstrap mechanism found"
           fi
 
+          python -m pip install black ruff mypy
+
       - name: Verify runtime dependency health
         run: |
           set +e
