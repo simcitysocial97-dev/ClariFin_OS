@@ -234,7 +234,7 @@ jobs:
                     print(f"{name}: FAIL {type(exc).__name__}: {exc}")
 
             print(f"python: {sys.version}")
-            PY
+          PY
 
             echo
             echo "=== EXECUTABLES ==="
