@@ -299,7 +299,6 @@ class VerificationPlanner:
                 VerificationScope.FRONTEND,
                 VerificationScope.CONTRACTS,
                 VerificationScope.PROPERTY,
-                VerificationScope.MUTATION,
                 VerificationScope.INTEGRATION,
                 VerificationScope.MIGRATION,
                 VerificationScope.REPOSITORY,
@@ -317,6 +316,15 @@ class VerificationPlanner:
         # If repository or full requested, include everything
         if requested in (VerificationScope.REPOSITORY, VerificationScope.FULL):
             result = set(VerificationScope)
+
+        # Mutation is an INDEPENDENT, cost-gated verification gate (run by the
+        # dedicated `mutation` profile / `mutation.yml` nightly+dispatch workflow
+        # and the PR-tier eligibility in tier.py). It must NOT be dragged into the
+        # normal Quality Gate (quick/backend/frontend/runtime/...) merely because a
+        # changed file's path contains "mutation" or a config file changed. Mutation
+        # participates in a profile only when explicitly requested (MUTATION/FULL).
+        if requested not in (VerificationScope.MUTATION, VerificationScope.FULL):
+            result.discard(VerificationScope.MUTATION)
 
         return list(result)
 

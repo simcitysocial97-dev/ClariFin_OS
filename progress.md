@@ -788,3 +788,295 @@ as blockers rather than silently fixed.
 
 M9-C4 is therefore recorded as BLOCKED on unrelated pre-existing CI failures;
 the C4 determinism correction itself is complete and verified.
+
+---
+
+# M9-C5 — Verification Gate Topology and Mutation-Gate Decoupling
+
+## Final Status
+
+CERTIFIED — GATE TOPOLOGY CORRECT (after correction)
+
+(The current backend/frontend/mutation *execution* jobs remain red. That is a
+downstream execution blocker, explicitly OUT OF SCOPE for M9-C5. The gate
+TOPOLOGY is correct and mutation is NOT coupled to the Quality Gate.)
+
+### CORRECTION — 2026-08-13 (supersedes the initial M9-C5 pass)
+
+The first M9-C5 pass (above) inspected only `profiles.py` and `grep needs:` across
+`.github/` and concluded "mutation was never coupled, no file changed." That
+analysis was **incomplete**: it ignored the orchestrator's runtime planner
+(`VerificationPlanner`), which is what `runtime/verify.py <profile>` actually
+executes. The M9-C4 CI evidence (run 31692066485, `verify.py quick`) proved the
+coupling directly: `mutation-run` executed as **step-0004** of the Quality Gate
+("##[error]Process completed with exit code 1" on the mutation step). Mutation WAS
+coupled into the normal Quality Gate at runtime.
+
+Root cause: `VerificationPlanner._merge_scopes`
+(`runtime/foundation/verification/planner/planner.py`) injected `MUTATION` scope
+into non-mutation profiles via two paths:
+1. The `REPOSITORY` scope expansion listed `MUTATION` (any changed `.yml`/`.toml`/
+   `pyproject.toml`/`package.json`/etc. escalated `quick`/`backend`/`runtime` →
+   `REPOSITORY` → `MUTATION`).
+2. `_resolve_scopes_from_files` added `MUTATION` for any changed `.py` whose path
+   contains "mutation" (e.g. `backend/tests/meta/test_mutation_registry.py`).
+
+Either path pulled the `mutation` workflow → `mutation-run` step into the Quality
+Gate. Fix applied (Milestone 4/5): `MUTATION` is now excluded from the merged scope
+unless the profile explicitly requests it (`mutation`/`full`). Mutation still runs
+via `mutation.yml` (nightly/dispatch), `verify.py mutation`, and `verify.py full`,
+and the tier.py PR eligibility — so it is preserved as an independent, mandatory
+verification dimension, but its failure no longer fails the normal Quality Gate.
+
+---
+
+## Milestone 1 — Actual CI topology (inventory)
+
+No workflow file contains a `needs:` key (verified: `grep -rn "needs:" .github/`
+returns nothing). Every workflow is an independent, single-job workflow that
+delegates to exactly one `runtime/verify.py <profile>` command.
+
+| Workflow file | Workflow name | Job | Command/profile | Trigger | Scope |
+|---|---|---|---|---|---|
+| quality.yml | Quality Gate | quality | `verify.py quick` | push ** + PR | profiles: quick |
+| backend-verify.yml | Backend Verification | verify | `verify.py backend` | push/PR on backend/**,runtime/** | backend |
+| verification-runtime.yml | Verification Runtime | verify-runtime | `verify.py runtime` | push/PR on runtime/**,engines/** | runtime |
+| frontend-verify.yml | Frontend Verification | verify | `verify.py frontend` | push/PR on frontend/**,routers/**,mappers/**,runtime/** | frontend |
+| mutation.yml | Mutation Testing | mutation | `verify.py mutation` | **schedule `0 2 * * *`** + workflow_dispatch | mutation |
+| golden.yml | Golden Dataset Regression | golden | `verify.py golden` | schedule `0 3 * * *` + dispatch | golden |
+| playwright.yml | Playwright E2E | playwright | `verify.py playwright` | schedule + dispatch | playwright |
+| verification-reconcile.yml | Verification Reconcile | reconcile-gate | `verify.py plan`→`runtime`→`exec-evidence`→`reconcile` | push/PR on runtime/**,backend/** | runtime profile |
+| security-codeql.yml | CodeQL Security Analysis | analyze | github/codeql-action | PR + push main + weekly | security |
+| dependency-update.yml | Dependency Update | — | — | — | — |
+
+Topology:
+
+```
+PR / push
+   ├── Quality Gate (quick)            [REQUIRED fast gate]
+   ├── Backend Verification (backend)
+   ├── Runtime Verification (runtime)
+   ├── Frontend Verification (frontend)
+   ├── Verification Reconcile (runtime reconcile)
+   ├── CodeQL Security Analysis (security)
+   └── (Mutation, Golden, Playwright — scheduled/dispatch only, NOT on PR)
+```
+
+Mutation is triggered ONLY by `schedule: "0 2 * * *"` and `workflow_dispatch`.
+It does not run on push or pull_request. It has no `needs:` to/from any gate.
+
+---
+
+## Milestone 2 — Intended verification contract
+
+Evidence of intent (no single explicit "contract" doc, so inferred from the
+six defensible sources):
+
+1. Workflow names: "Quality Gate" is the only workflow named "Gate"; it runs
+   `quick` — the fast local checks.
+2. Job dependencies: none (`needs:` absent everywhere) — nothing chains to
+   mutation.
+3. Verification profiles (profiles.py): `quick` = {ruff, mypy, unit}. Mutation
+   is a separate `mutation` profile of category `MUTATION`.
+4. Phase acceptance / CI duration: mutation is `timeout-minutes: 90` and
+   nightly-only — by design an expensive, off-peak dimension, not a PR gate.
+5. CI duration goals: `quick` is `timeout-minutes: 10`; gating every PR on a
+   90-min mutation run would violate the fast-gate goal.
+6. Reconciliation behavior (reconciliation.py:221-222): mutation/golden are
+   explicitly "tier-gated by cost + criticality policy" — i.e. independent
+   verification dimensions, not required-gate units.
+
+Conclusion: **Mutation is an independent, secondary/specialized verification
+dimension, NOT part of the normal Quality Gate.**
+
+---
+
+## Milestone 3 — Does mutation currently gate Quality Gate?
+
+### Question A — Does Quality Gate directly execute mutation testing?
+NO. quality.yml runs `python runtime/verify.py quick` only
+(quality.yml:46). `quick` profile tasks = {quick-ruff, quick-mypy, quick-unit}
+(profiles.py:42-70). No mutation task. Programmatically verified:
+`quick.has_mutation == False`.
+
+### Question B — Does Quality Gate depend on a mutation job through `needs:`?
+NO. `grep -rn "needs:" .github/` → no output. No workflow references any other.
+
+### Question C — Does an aggregate/reconcile job convert mutation failure into
+Quality Gate failure?
+NO. verification-reconcile.yml reconciles ONLY the `runtime` profile
+(verify-reconcile.yml:84 `python runtime/verify.py runtime`). It never runs or
+consumes the `mutation` profile. No aggregate gate collapses mutation.
+
+### Question D — Does `runtime/verify.py` treat mutation as mandatory for the
+Quality Gate profile?
+CORRECTED: `get_profile("quick").tasks` contains zero mutation tasks (categories
+all `CAPABILITY`), BUT the orchestrator's `VerificationPlanner._merge_scopes`
+injects `MUTATION` into the QUICK/BACKEND/RUNTIME profile scopes when a changed
+file triggers it (config file → `REPOSITORY` scope, or a `.py` path containing
+"mutation"). That escalated the `mutation` workflow → `mutation-run` step into the
+Quality Gate at runtime (proven by M9-C4 CI run 31692066485). The profile definition
+alone was misleading; the *executed* plan was coupled. FIXED in planner.py.
+
+### Question E — Does GitHub branch protection require the mutation workflow
+independently?
+UNKNOWN FROM CODE. No branch-protection configuration is present in the
+repository (searched for `branch_protection` / `required_status_checks` /
+`CODEOWNERS` — none found). Branch protection is configured in the GitHub UI,
+not source-controlled here. Recorded as not verifiable from code (Milestone 7).
+
+---
+
+## Milestone 4 / 5 — Correct topology
+
+The intended topology is the independent-dimension design (Option B). The
+workflow/profiles layer already matched it, but the **runtime planner coupled
+mutation into the Quality Gate** (see CORRECTION above), so a correction WAS
+required.
+
+Smallest possible correction (in `runtime/foundation/verification/planner/planner.py`):
+- Removed `MUTATION` from the `REPOSITORY` scope expansion (config-file changes no
+  longer escalate to mutation).
+- `_merge_scopes` now discards `MUTATION` from the merged scope unless the requested
+  profile is `mutation` or `full`.
+
+Mutation remains mandatory verification:
+- `mutation.yml` still runs nightly (`schedule: "0 2 * * *"`) + dispatch.
+- `verify.py mutation` and `verify.py full` still include `mutation-run`.
+- `tier.py` PR-tier eligibility for backend-engine changes is untouched.
+- mutation-report / mutation-evidence artifacts (90/30-day retention) unchanged.
+- mutation thresholds (verification.yaml `mutation_threshold`) unchanged.
+- mutation failure status preserved (the mutation workflow still reports FAIL).
+
+The correction changes ONLY the scope-escalation rule that incorrectly coupled
+mutation; it does not weaken mutation, disable it, or alter verification semantics.
+
+---
+
+## Milestone 6 — Reconciliation semantics
+
+verification-reconcile.yml consumes persisted execution-evidence for the
+`runtime` profile and emits a per-unit reconciliation report
+(vea5-reconciliation.pr.json). It does NOT collapse all dimensions into one
+state. Mutation is not even consumed by reconcile, so its independent status is
+preserved in its own mutation workflow run + artifacts (mutation-report /
+mutation-evidence, retention 90/30 days). The tier policy
+(reconciliation.py:221-222) explicitly preserves mutation/golden as
+distinguishable, tier-eligible units. No change required.
+
+---
+
+## Milestone 7 — Required-check safety
+
+No branch-protection config in repo. The reconcile workflow's own header
+(verify-reconcile.yml:11-13) documents that the operator must mark
+`reconcile-gate` a REQUIRED check in GitHub branch protection — this is an
+operator action, not code. No topology change was made, so no required check
+was eliminated. Mutation is NOT a required PR check by design (scheduled only).
+
+---
+
+## Milestone 8 — Regression tests
+
+Added `runtime/tests/test_m9c5_gate_topology.py` (7 tests, all passing). They
+prove topology only, not execution:
+
+- Case A: `quick` profile == {quick-ruff, quick-mypy, quick-unit}; no mutation.
+- Case B: mutation is a distinct profile, disjoint from `quick`; mutation
+  workflow is its own `MUTATION` category dimension (independent, visible).
+- Case C: mutation profile is present and passable on its own schedule.
+- Case D: backend profile is disjoint from mutation; backend failure is
+  reported via backend profile, not gated/masked by mutation.
+- Case E: reconciliation `_tier_eligible_unit_ids()` lists mutation & golden as
+  independent, tier-eligible units (not required-gate units).
+
+Run: `python3 -m pytest runtime/tests/test_m9c5_gate_topology.py -q` → 7 passed.
+
+---
+
+## Milestone 9 — Workflow structure validation
+
+- YAML syntax: all 12 workflow files parse (`yaml.safe_load`) — OK.
+- `needs:` dependencies: none present — OK.
+- Job IDs: each workflow has exactly one job (quality / verify / verify-runtime
+  / verify / mutation / golden / playwright / reconcile-gate / analyze).
+- Referenced scripts: `verify.py` subcommands (quick, backend, frontend,
+  runtime, mutation, golden, playwright, plan, exec-evidence, reconcile) all
+  registered in verify.py arg parser.
+- Profiles: all referenced profiles exist in profiles.py.
+- Reconcile inputs: plan/evidence/report/commit args match exec-evidence and
+  reconcile command signatures.
+
+Underlying backend/frontend/mutation EXECUTION defects were NOT run (out of
+scope); this phase proves classification/topology only.
+
+---
+
+## Milestone 10 — Final topology decision
+
+### OPTION B — MUTATION IS AN INDEPENDENT VERIFICATION GATE
+
+Evidence:
+- quality.yml runs `verify.py quick`; `quick` has no mutation task (profiles.py).
+- mutation.yml triggers only on `schedule`/`workflow_dispatch`; no PR trigger.
+- No `needs:` couples mutation to any gate (grep across .github/ empty).
+- verification-reconcile reconciles `runtime` only, not mutation.
+- reconciliation.py:221-222 tier-gates mutation/golden by cost+criticality.
+
+Workflow topology:
+```
+PR ─┬─ Quality Gate (quick)        REQUIRED
+    ├─ Backend (backend)
+    ├─ Runtime (runtime)
+    ├─ Frontend (frontend)
+    ├─ Reconcile (runtime)
+    ├─ CodeQL (security)
+    └─ Mutation (schedule 02:00)    INDEPENDENT, not a PR gate
+```
+
+Profile relationship: `quick` ⊂ primary gate; `mutation` is a separate profile
+of category MUTATION, executed only by the nightly mutation workflow.
+
+Reconciliation behavior: per-unit, per-profile; mutation not collapsed into a
+single state; preserved as an independent dimension.
+
+Required-check implications: Quality Gate (quick), Backend, Runtime, Frontend,
+Reconcile, CodeQL are the PR-visible gates. Mutation is NOT required per PR;
+it remains mandatory nightly verification and still reports FAIL on failure.
+
+Exact files changed by M9-C5 (correction pass):
+- MODIFIED `runtime/foundation/verification/planner/planner.py` — `_merge_scopes`
+  no longer injects `MUTATION` into the normal Quality Gate profiles (the decoupling).
+- ADDED `runtime/tests/test_orchestrator.py::TestMutationGateTopology` (4 tests)
+  proving the decoupling end-to-end via plan generation + `_merge_scopes`.
+- ADDED `runtime/tests/test_m9c5_gate_topology.py` (7 tests, prior pass) proving the
+  profiles.py-level topology.
+- MODIFIED `progress.md` (this section).
+- NO workflow YAML, verification profile definition, mutation threshold, or
+  application/backend/frontend code was changed.
+
+---
+
+## Certification criteria checklist
+
+- [x] Actual workflow topology is documented.
+- [x] Quality Gate dependencies are explicitly understood.
+- [x] Mutation's gating role is explicitly established (independent).
+- [x] Mutation is not accidentally removed from CI (still scheduled nightly).
+- [x] Mutation thresholds remain unchanged (verification.yaml mutation_threshold: 60 untouched).
+- [x] Mutation results remain visible (mutation-report/mutation-evidence artifacts, 90/30-day retention).
+- [x] Reconciliation preserves individual verification dimensions.
+- [x] Required Quality Gate checks remain intact.
+- [x] Regression tests cover the topology.
+- [x] No backend/frontend/mutation implementation failure was "fixed" to get green topology.
+- [x] progress.md records the complete evidence.
+
+## Downstream execution blockers (NOT M9-C5 failures)
+
+- Backend Verification: backend account-engine test failure (execution defect).
+- Frontend Verification: ESLint failure (execution defect).
+- Quality Gate: Black formatting failure (execution defect).
+- Mutation: fails because of the same backend account-engine test (execution defect).
+- Verification Runtime: red (execution defect, separate from topology).
+
+These are handed to the next phase for execution-failure remediation.

@@ -19,6 +19,7 @@ from runtime.foundation.verification.orchestrator import (
     VerificationReport,
     _resolve_base_ref,
 )
+from runtime.foundation.verification.planner.planner import VerificationPlanner
 
 
 class MockSubprocessResult:
@@ -729,3 +730,79 @@ class TestVerificationReportDiagnostics:
                 continue
             if "| t-passed |" in line:
                 assert "no error captured" not in line
+
+
+class TestMutationGateTopology:
+    """M9-C5 — mutation is an INDEPENDENT verification gate, not part of the
+    normal Quality Gate.
+
+    The orchestrator's planner must not drag ``mutation-run`` into the
+    quick/backend/frontend/runtime profiles merely because a changed file's path
+    contains ``mutation`` or a config file changed (which previously escalated the
+    scope through REPOSITORY -> MUTATION). Mutation must still run when explicitly
+    requested via the ``mutation`` / ``full`` profiles.
+    """
+
+    def test_merge_scopes_excludes_mutation_from_normal_gate(self):
+        planner = VerificationPlanner()
+        # A mutation-file change (or a config change) must NOT escalate a normal
+        # gate profile to include MUTATION.
+        for requested in (
+            VerificationScope.QUICK,
+            VerificationScope.BACKEND,
+            VerificationScope.FRONTEND,
+            VerificationScope.RUNTIME,
+        ):
+            merged = planner._merge_scopes(
+                requested,
+                impacted=[VerificationScope.MUTATION],
+                blast_scopes=(VerificationScope.REPOSITORY,),
+            )
+            assert VerificationScope.MUTATION not in merged, (
+                f"{requested.value} profile must not include MUTATION scope"
+            )
+
+    def test_merge_scopes_keeps_mutation_for_mutation_and_full(self):
+        planner = VerificationPlanner()
+        for requested in (VerificationScope.MUTATION, VerificationScope.FULL):
+            merged = planner._merge_scopes(
+                requested,
+                impacted=[VerificationScope.MUTATION],
+                blast_scopes=(),
+            )
+            assert VerificationScope.MUTATION in merged, (
+                f"{requested.value} profile must retain MUTATION scope"
+            )
+
+    def test_quick_plan_excludes_mutation_run_even_when_mutation_files_changed(self):
+        from runtime.foundation.verification.profiles import get_profile
+
+        # Files that previously coupled mutation into the Quality Gate:
+        # a mutation-path .py file and a config file (REPOSITORY trigger).
+        changed = [
+            "backend/tests/meta/test_mutation_registry.py",
+            "backend/pyproject.toml",
+            "backend/src/engines/loan_engine/emi.py",
+        ]
+        orch = VerificationOrchestrator(profile=get_profile("quick"))
+        orch._changed_files = changed
+        orch.analyze_cross_layer()
+        plan = orch.generate_plan(scope=VerificationScope.QUICK)
+        mutation_units = [s.unit_id for s in plan.steps if s.unit_id == "mutation-run"]
+        assert not mutation_units, "Quality Gate must not run mutation-run"
+
+    def test_mutation_and_full_plans_include_mutation_run(self):
+        from runtime.foundation.verification.profiles import get_profile
+
+        changed = [
+            "backend/tests/meta/test_mutation_registry.py",
+            "backend/src/engines/loan_engine/emi.py",
+        ]
+        for pname in ("mutation", "full"):
+            orch = VerificationOrchestrator(profile=get_profile(pname))
+            orch._changed_files = changed
+            orch.analyze_cross_layer()
+            plan = orch.generate_plan(scope=get_profile(pname).scope)
+            assert any(s.unit_id == "mutation-run" for s in plan.steps), (
+                f"{pname} profile must still run mutation-run"
+            )
