@@ -263,19 +263,19 @@ jobs:
             python -c 'import black,sys; print(black.__file__); print(sys.version)'
             echo
             echo "=== BLACK CONFIG (pyproject.toml [tool.black]) ==="
-            python - <<'PY'
-            import tomllib
-            from pathlib import Path
-            p = Path('backend/pyproject.toml')
-            if p.exists():
-                data = tomllib.loads(p.read_text())
-                if 'tool' in data and 'black' in data['tool']:
-                    import json
-                    print(json.dumps(data['tool']['black'], indent=2))
-                else:
-                    print('No [tool.black] section found')
-            else:
-                print('backend/pyproject.toml not found')
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+          p = Path('backend/pyproject.toml')
+          if p.exists():
+              data = tomllib.loads(p.read_text())
+              if 'tool' in data and 'black' in data['tool']:
+                  import json
+                  print(json.dumps(data['tool']['black'], indent=2))
+              else:
+                  print('No [tool.black] section found')
+          else:
+              print('backend/pyproject.toml not found')
           PY
             echo
             echo "=== REPO ROOT ==="
