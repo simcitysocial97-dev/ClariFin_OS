@@ -59,17 +59,13 @@ runs:
       shell: bash
       run: |
         pip install --timeout 300 --retries 10 \
-          pyyaml \
           ruff \
           black \
           mypy \
           coverage \
-          pytest \
-          pytest-cov \
           pytest-xdist \
           pytest-timeout \
-          hypothesis \
-          mutmut
+          hypothesis
 
     - name: Verify environment
       shell: bash
