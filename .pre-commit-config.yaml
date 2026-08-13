@@ -1,0 +1,22 @@
+# Pre-commit configuration for ClariFin OS
+# Enforces shell script conventions (python3, no bashisms, SC2086, etc.)
+# Run locally: pre-commit run --all-files
+# CI installs shellcheck and pre-commit via the setup scripts.
+
+repos:
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: ["--severity=warning"]
+        # Fail on use of bare `python` and other portability issues.
+        # Repository convention: always invoke `python3`.
+        files: ^\.github/scripts/.*\.sh$
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace

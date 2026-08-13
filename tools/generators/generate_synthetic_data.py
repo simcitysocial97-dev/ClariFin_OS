@@ -29,7 +29,7 @@ from typing import Any
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from src.core.db.schema import create_all, run_migrations, verify_schema
+from src.core.db.schema import create_all
 
 # ============================================================
 # Configuration

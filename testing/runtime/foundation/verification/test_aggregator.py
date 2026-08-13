@@ -13,10 +13,7 @@ from runtime.system.evidence.aggregator import (
     EvidenceAggregator,
     EvidenceSummary,
 )
-from runtime.system.evidence.collectors.coverage import CoverageEvidence
 from runtime.system.evidence.collectors.mutation import MutationEvidence
-from runtime.system.evidence.collectors.test_results import TestResultEvidence
-from runtime.system.evidence.collectors.contract import ContractEvidence
 
 
 class TestAggregateProducesSummary:

@@ -86,11 +86,11 @@ ignore_missing_imports = true
 
 [tool.mutmut]
 # Directories to mutate
-paths_to_mutate = "src/engines/"
-# Test runner command
-runner = "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30"
-# Tests directory
-tests_dir = "tests/"
+source_paths = ["src/engines/"]
+# Also copy the full src tree so tests can import non-mutated modules
+also_copy = ["src"]
+# Test selection for pytest
+pytest_add_cli_args_test_selection = ["tests/unit/", "tests/properties/"]
 # Disable progress bar (cleaner CI output)
 no_progress = true
 

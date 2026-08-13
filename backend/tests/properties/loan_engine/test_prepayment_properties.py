@@ -278,16 +278,19 @@ def test_apply_prepayment_at_month_reduce_emi_mode(schedule_params):
         mode=PrepaymentMode.REDUCE_EMI,
     )
 
-    # Tenure should remain the same
+    # Tenure should remain the same unless the loan is closed
     original_remaining_months = len(schedule) - prepayment_month + 1
-    assert result.new_remaining_months == original_remaining_months
+    if result.loan_closed:
+        assert result.new_remaining_months == 0
+    else:
+        assert result.new_remaining_months == original_remaining_months
 
     # EMI should be reduced (allow small increase due to rounding).
     # When prepayment lands on the final month, the remaining tail is a single
     # period and the recomputed EMI (balance + one month's interest) can
     # legitimately exceed the original amortized EMI; the reduction property
     # only holds when a meaningful remaining tenure exists.
-    if original_remaining_months > 1:
+    if original_remaining_months > 1 and not result.loan_closed:
         assert result.new_emi_paise <= result.original_emi_paise + 10
 
     # Total payments should be less (allow small increase due to rounding).

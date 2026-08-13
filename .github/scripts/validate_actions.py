@@ -68,7 +68,6 @@ def validate_composite_action(action_dir: Path) -> None:
 def validate_workflow(path: Path) -> None:
     name = path.name
     doc = load_yml(path)
-    wf_name = doc.get("name", name)
 
     # concurrency
     conc = doc.get("concurrency")
@@ -101,13 +100,20 @@ def validate_workflow(path: Path) -> None:
     ):
         warn(f"{name}: non-verification workflow has no schedule/manual trigger")
 
-    # path filters for verification workflows with push triggers
-    if name in VERIFICATION_PROFILES and has_push:
-        paths = push.get("paths") or (push.get("branches") and push.get("paths"))
-        # quality.yml intentionally runs on all paths (fast gate) -> warn only
-        if name != "quality.yml" and not paths:
-            warn(f"{name}: push trigger has no `paths` filter (Rule 7)")
-
+    # path filters for verification workflows with push/PR triggers
+    if name in VERIFICATION_PROFILES and (has_push or has_pr):
+        # Check push paths if push is configured
+        if has_push and name != "quality.yml":
+            push_paths = push.get("paths") or (push.get("branches") and push.get("paths"))
+            if not push_paths:
+                warn(f"{name}: push trigger has no `paths` filter (Rule 7)")
+                
+        # Check PR paths if PR is configured
+        if has_pr and name != "quality.yml":
+            pr_paths = pr.get("paths") or (pr.get("branches") and pr.get("paths"))
+            if not pr_paths:
+                warn(f"{name}: pull_request trigger has no `paths` filter (Rule 7)")
+        
     jobs = doc.get("jobs", {})
     if not jobs:
         err(f"{name}: no jobs defined")

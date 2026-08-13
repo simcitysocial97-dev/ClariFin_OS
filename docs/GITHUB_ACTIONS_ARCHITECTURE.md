@@ -151,6 +151,24 @@ This document describes the consolidated CI/CD architecture for the ClariFin OS 
 - `npm-dependencies` - npm dependency reports
 - `dependency-health` - Health summary
 
+### m9-forensic-diagnostic-lab.yml
+**Purpose:** Forensic diagnostic lab for verification failure attribution (M9).
+Used to reproduce and diagnose CI verification failures (black/flaky/forensic
+classifications) without touching production verification workflows.
+
+**Triggers:**
+- Manual dispatch only (diagnostic, never automatic)
+
+**Jobs:**
+- `forensic-diagnostic` - Runs targeted diagnostic probes against a failing run
+
+**Artifacts:**
+- `forensic-diagnostic-{run_id}` - Diagnostic evidence bundle
+
+**Note:** This workflow is intentionally excluded from branch-protection
+auto-trigger rules. It is retained for future critical diagnosis and must not
+be removed without explicit review.
+
 ## Artifact Flow
 
 The canonical artifact pipeline:
@@ -186,6 +204,7 @@ Each workflow generates its required artifacts independently for maximum resilie
 | playwright.yml | ✅ (main/master/develop) | ✅ (main/master/develop) | - | ✅ |
 | release.yml | - | - | - | ✅ |
 | dependency-update.yml | - | - | ✅ (weekly) | ✅ |
+| m9-forensic-diagnostic-lab.yml | - | - | - | ✅ (diagnostic) |
 
 ## Branch Strategy
 

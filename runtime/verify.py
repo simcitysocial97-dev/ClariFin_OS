@@ -50,9 +50,34 @@ from runtime.foundation.verification.orchestrator import (  # noqa: E402
     _is_git_available,
 )
 from runtime.foundation.verification.profiles import get_profile  # noqa: E402
+from runtime.foundation.verification.failure_report import (  # noqa: E402
+    build_failure_report,
+)
 
 VERIFICATION_CACHE_PATH = REPO_ROOT / "runtime" / "generated" / "verification-cache.json"
 VERIFICATION_REPORT_PATH = REPO_ROOT / "runtime" / "generated" / "verification-report.md"
+
+
+def _log_changed_files_boundary(cf_result: Any) -> None:
+    """Log the resolved changed-file boundary and the resulting scope count.
+
+    M9-C3: proving *which* PR base/head boundary drove the verification scope is
+    part of trustworthy CI. When the boundary could not be resolved, this prints
+    the actionable error so a misleading scope is never silently selected.
+    """
+    base = getattr(cf_result, "base", None)
+    head = getattr(cf_result, "head", None)
+    source = getattr(cf_result, "source", "unknown")
+    error = getattr(cf_result, "error", None)
+    count = len(getattr(cf_result, "files", []) or [])
+    if error:
+        print(f"Changed-file boundary ERROR: {error}", file=sys.stderr)
+        return
+    scope = f"{base}..{head}" if head else (f"merge-base({base})" if base else "local")
+    print(
+        f"Changed files: {count} (boundary: {scope}, source: {source})",
+        file=sys.stderr,
+    )
 
 
 def _record_verification_event(
@@ -1116,7 +1141,12 @@ def main() -> int:
         return 1
 
     commit = _get_current_commit()
-    changed_files = _collect_changed_files() if _is_git_available() else []
+    if _is_git_available():
+        _cf_result = _collect_changed_files()
+        changed_files = _cf_result.files
+        _log_changed_files_boundary(_cf_result)
+    else:
+        changed_files = []
 
     if not changed_files and profile_name not in ("full", "graph"):
         import os
@@ -1182,7 +1212,13 @@ def main() -> int:
     import time
 
     start_time = time.monotonic()
-    report = orchestrator.run(scope=profile.scope)
+    try:
+        report = orchestrator.run(scope=profile.scope)
+    except RuntimeError as exc:
+        # M9-C3: a boundary that could not be resolved (e.g. PR event without
+        # SHAs) must fail loudly, never fall back to a misleading scope.
+        print(f"\nVerification ABORTED: {exc}", file=sys.stderr)
+        return 2
     elapsed = time.monotonic() - start_time
 
     report_path = VERIFICATION_REPORT_PATH
@@ -1215,25 +1251,45 @@ def main() -> int:
     print(f"Skipped: {report.summary.skipped}")
     print(f"Duration: {elapsed:.1f}s")
 
-    # P2-1: surface per-task failure diagnostics on the console (in addition to the
-    # markdown report) so the exact failing task + reason are visible without opening
-    # the artifact files. Aggregate counts are preserved above.
+    # P2-1 / M9-C3: surface an actionable failure summary on the console (in
+    # addition to the markdown report) so the failed unit, classification, exit
+    # code, test result, root failure and evidence location are visible without
+    # opening the artifact files. Aggregate counts are preserved above.
     failed_results = [r for r in report.results if r.status.value == "failed"]
     if failed_results:
         print("\nFailed tasks:")
         for r in failed_results:
-            raw_error = r.error
-            if raw_error is None:
-                reason_str = "(none)"
-            elif raw_error == "":
-                reason_str = "[empty stderr]"
-            else:
-                reason_str = raw_error.replace("\n", " ").strip()
-                if len(reason_str) > 300:
-                    reason_str = reason_str[:297] + "..."
-            print(f"  - {r.task_id}: exit={r.exit_code} reason={reason_str}")
-            if r.stderr_path:
-                print(f"      stderr: {r.stderr_path}")
+            try:
+                fr = build_failure_report(r)
+            except Exception:
+                # Reporting must never convert a verification failure into a pass.
+                fr = None
+            if fr is None:
+                raw_error = r.error
+                reason_str = (
+                    "(none)"
+                    if raw_error is None
+                    else ("[empty stderr]" if raw_error == "" else raw_error.replace("\n", " ").strip()[:300])
+                )
+                print(f"  - {r.task_id}: exit={r.exit_code} reason={reason_str}")
+                if r.stderr_path:
+                    print(f"      stderr: {r.stderr_path}")
+                continue
+            print(f"  - {r.task_id}")
+            if fr.unit_id:
+                print(f"      unit:   {fr.unit_id}")
+            print(f"      classification: {fr.classification.value}")
+            print(f"      exit:   {fr.exit_code}")
+            if fr.failure_summary:
+                print(f"      result: {fr.failure_summary}")
+            if fr.root_failure:
+                print(f"      failure:{fr.root_failure}")
+            if fr.diagnostic:
+                diag = fr.diagnostic.replace("\n", " ").strip()
+                if len(diag) > 300:
+                    diag = diag[:297] + "..."
+                print(f"      reason: {diag}")
+            print(f"      evidence: {fr.evidence_path}")
 
     if report.summary.overall_status == VerificationStatus.FAILED:
         print("\nVerification FAILED", file=sys.stderr)

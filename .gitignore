@@ -87,6 +87,11 @@ runtime/generated/timeline/
 runtime/generated/graph/
 runtime/generated/command/
 runtime/generated/intelligence/
+runtime/generated/execution/
+
+# Mutation testing build artifacts
+backend/mutants/
+backend/run_mutmut_patched.sh
 
 # Root-level stale directories
 /src/

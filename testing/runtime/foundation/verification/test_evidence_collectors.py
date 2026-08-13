@@ -8,21 +8,17 @@ import json
 import tempfile
 from pathlib import Path
 
+from runtime.system.evidence.collectors.contract import (
+    ContractCollector,
+)
 from runtime.system.evidence.collectors.coverage import (
     CoverageCollector,
-    CoverageEvidence,
 )
 from runtime.system.evidence.collectors.mutation import (
     MutationCollector,
-    MutationEvidence,
 )
 from runtime.system.evidence.collectors.test_results import (
     TestResultCollector,
-    TestResultEvidence,
-)
-from runtime.system.evidence.collectors.contract import (
-    ContractCollector,
-    ContractEvidence,
 )
 
 

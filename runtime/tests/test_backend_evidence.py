@@ -311,6 +311,7 @@ class TestNoWorkflowFilesTouched:
             "dependency-update.yml",
             "frontend-verify.yml",
             "golden.yml",
+            "m9-forensic-diagnostic-lab.yml",
             "mutation.yml",
             "playwright.yml",
             "quality.yml",

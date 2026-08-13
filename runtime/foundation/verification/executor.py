@@ -10,6 +10,7 @@ from pathlib import Path
 
 from runtime.foundation.verification.models import (
     ExecutionResult,
+    FailureClassification,
     VerificationStatus,
 )
 
@@ -95,6 +96,22 @@ class Executor:
                 else VerificationStatus.FAILED
             )
 
+            if result.returncode == 0:
+                error = None
+                classification = FailureClassification.UNKNOWN_FAILURE
+            else:
+                # ``error`` preserves the stderr diagnostic exactly as before so
+                # that stdout/stderr remain distinguishable (stdout is still
+                # persisted verbatim to its artifact and surfaced by the failure
+                # report). A negative return code indicates abnormal termination
+                # (e.g. killed by a timeout signal).
+                error = result.stderr if result.stderr else ""
+                classification = (
+                    FailureClassification.TIMEOUT
+                    if result.returncode < 0
+                    else FailureClassification.UNKNOWN_FAILURE
+                )
+
             return ExecutionResult(
                 task_id=task_id,
                 command=command,
@@ -103,7 +120,8 @@ class Executor:
                 duration_seconds=duration,
                 stdout_path=stdout_path,
                 stderr_path=stderr_path,
-                error=result.stderr if result.returncode != 0 else None,
+                error=error,
+                classification=classification,
             )
         except subprocess.TimeoutExpired:
             duration = (datetime.now(timezone.utc) - start_time).total_seconds()
@@ -116,6 +134,7 @@ class Executor:
                 stdout_path="",
                 stderr_path="",
                 error="Command timed out after 3600 seconds",
+                classification=FailureClassification.TIMEOUT,
             )
         except Exception as exc:
             duration = (datetime.now(timezone.utc) - start_time).total_seconds()
@@ -128,6 +147,7 @@ class Executor:
                 stdout_path="",
                 stderr_path="",
                 error=str(exc),
+                classification=FailureClassification.ENVIRONMENT_FAILURE,
             )
         finally:
             self._cleanup_temp_file(stdout_file.name)

@@ -360,9 +360,9 @@ def _normalize_registry(registry: dict[str, Any]) -> None:
     for cap in registry.get("capabilities", []):
         if not isinstance(cap, dict):
             continue
-        for field in list_fields:
+        for list_field in list_fields:
             if cap.get(field) is None:
-                cap[field] = []
+                cap[list_field] = []
 
 
 def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
