@@ -702,6 +702,89 @@ Record every run ID + conclusion. Final CI result is the authority for M9.
 - parity test deterministic (10/10),
 - workflows reach intended verification commands (CI).
 
+## Milestones 9-11 — Push and real CI result classification
+
+Pushed commit `eeca27d60b305829a1f32bf94cb2e5870742a873` to
+`verification-framework-codeql-integration`. The push triggered a `pull_request`
+event (PR #3) on this branch. Required workflows and conclusions:
+
+| Workflow | Run ID | Commit | Conclusion | Changed-file count / boundary |
+|----------|--------|--------|------------|------------------------------|
+| Quality Gate | 31692066485 | eeca27d6 | FAILURE | 990 / github pull_request boundary (base..head) |
+| Backend Verification | 31692066449 | eeca27d6 | FAILURE | 990 / github pull_request boundary (base..head) |
+| Verification Runtime | 31692066470 | eeca27d6 | FAILURE | 990 / github pull_request boundary (base..head) |
+| Frontend Verification | 31692066465 | eeca27d6 | FAILURE | 990 / github pull_request boundary (base..head) |
+| Verification Reconcile | 31692066501 | eeca27d6 | SUCCESS | — |
+| CodeQL Security Analysis | 31692066473 | eeca27d6 | SUCCESS | — |
+| M9 Forensic Diagnostic Lab | 31692066484 | eeca27d6 | SUCCESS | — |
+| Playwright Tests | 31692066475 | eeca27d6 | (in progress) | — |
+
+No standalone "Mutation" workflow exists; mutation is exercised as the
+`mutation-run` task inside the above profiles.
+
+### Failure classification (Milestone 10)
+
+Every failing workflow used the **correct** changed-file boundary
+(`github pull_request boundary (base..head)`, NOT merge-base), so the M9-C3
+scope fix and the C4 determinism fix are intact in CI. The parity test
+`test_ci_and_local_changed_file_parity` does **not** appear in any failure
+list. The failures are genuine, pre-existing, and **not caused by C4**:
+
+1. `frontend-typecheck-build` (COMMAND_FAILURE, exit 1):
+   `npx eslint .` → `Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint'`.
+   → **Frontend toolchain/dependency issue** (eslint not installed in the CI
+   frontend environment). Unrelated to C4.
+2. `tests/meta/test_change_intelligence.py::test_cif_generates_reports`
+   (COMMAND_FAILURE via black): `1 file would be reformatted:
+   backend/tests/properties/loan_engine/test_floating_rate_properties.py`.
+   → **Formatting/lint issue** (black). The file is M9-C2 work, not C4's
+   parity-test logic. Unrelated to C4.
+3. `tests/unit/engines/account/test_account_engine.py::TestComputeAccountStatus::
+   test_compute_account_status_active_account` (TEST_FAILURE in backend/runtime/
+   frontend + mutation-run): a **genuine backend unit-test failure**.
+   Unrelated to C4 (C4 touched only `runtime/tests/test_orchestrator.py`).
+4. `mutation-run` (TEST_FAILURE): mutation execution failure on the account
+   engine test above. Unrelated to C4.
+
+Per Milestone 10, none of these are demonstrably caused by C4. The C4 change
+is narrowly scoped to the parity-test determinism correction; correcting the
+eslint/black/account-engine/mutation failures would expand scope beyond C4 and
+is therefore not performed here. These genuine failures were already part of the
+documented M9-C1/C2/C3 genuine-failure state.
+
+### Determinism confirmation (Milestone 11)
+
+- Dependencies install correctly: YES (pytest 9.1.1, mutmut 3.7.0, etc. in CI).
+- Frontend dependencies install correctly: bootstrap succeeded (the eslint
+  runtime error is a missing-tool-in-image issue, not an install failure).
+- PR scope correct: YES — every run uses `github pull_request boundary
+  (base..head)`; the historical ~986-997 merge-base inflation did NOT return.
+- Verification executes: YES — profiles ran to completion and reported failures
+  diagnostically.
+- Failure reporting works: YES — each failure surfaced unit, classification,
+  exit code, result summary, root failure, and evidence path.
+- Parity test deterministic: YES — 10/10 local runs; no CI failure references it.
+- Workflows reach intended verification commands: YES.
+
 ## Closure
 
-CERTIFIED — M9 CLOSED (subject to real CI confirmation in Milestones 9-11)
+BLOCKED — SPECIFIC CI/VERIFICATION FAILURE REMAINS
+
+M9-C4's specific objective (parity-test determinism) is PROVEN:
+- the parity test is now network-free and passes 10/10 deterministically,
+- the PR changed-file boundary in CI is correctly `base..head` (no ~986-997
+  inflation),
+- failure reporting is diagnostic and non-zero,
+- the commit is pushed and CI executed the intended verification commands.
+
+However, the closure criteria require all relevant GitHub workflows to complete
+successfully, and four workflows (Quality Gate, Backend Verification,
+Verification Runtime, Frontend Verification) FAIL due to genuine, pre-existing,
+C4-unrelated failures (missing eslint tool in CI image, a black formatting
+failure on `test_floating_rate_properties.py`, a genuine account-engine unit-test
+failure, and the resulting mutation-run failure). These are outside the C4
+scope restriction and were not introduced by the C4 change, so they are reported
+as blockers rather than silently fixed.
+
+M9-C4 is therefore recorded as BLOCKED on unrelated pre-existing CI failures;
+the C4 determinism correction itself is complete and verified.
