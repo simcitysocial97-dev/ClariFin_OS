@@ -1080,3 +1080,32 @@ Exact files changed by M9-C5 (correction pass):
 - Verification Runtime: red (execution defect, separate from topology).
 
 These are handed to the next phase for execution-failure remediation.
+
+---
+
+## Milestone 9-11 — CI validation (correction pass, commit 5397f3d3)
+
+Pushed commit `5397f3d3869f387cc7f1871d77a5f07f687126ff`. PR-triggered runs:
+
+| Workflow | Run ID | Conclusion | Mutation-run in plan? |
+|----------|--------|------------|----------------------|
+| Quality Gate | 31694778076 | failure (eslint + black) | **NO** (was YES in C4 run 31692066485) |
+| Backend Verification | 31694778039 | failure | NO (local repro) |
+| Verification Runtime | 31694777992 | failure | NO (local repro) |
+| Frontend Verification | 31694778050 | failure | NO (local repro) |
+| Verification Reconcile | 31694778054 | (see run) | n/a |
+| Mutation Testing | — | not triggered (schedule/dispatch only) | independent |
+
+Proof of decoupling (Quality Gate run 31694778076): `grep -i "mutation-run|Selective Mutation|running mutation"` over the full run log returns **nothing**. The Failed tasks are now only `frontend-typecheck-build` (eslint) and `cif` (black) — exactly the downstream execution defects, never the mutation step. In the C4 run (31692066485) `mutation-run` was step-0004 and its failure failed the gate; post-fix it is absent.
+
+Changed-file boundary in every run: `github pull_request boundary (base..head)`, 991 files — the correct PR scope, no ~986-997 inflation (consistent with M9-C3/M9-C4).
+
+The Quality Gate / Backend / Runtime / Frontend still FAIL, but **only** because of
+downstream execution defects (ESLint missing in CI image, Black formatting on
+`test_floating_rate_properties.py`, backend account-engine test) — all explicitly
+OUT OF SCOPE for M9-C5. The gate TOPOLOGY is correct and mutation is no longer coupled
+to the Quality Gate. Mutation remains an independent, mandatory, nightly verification
+dimension.
+
+Final status: **CERTIFIED — GATE TOPOLOGY CORRECT** (corrected; mutation decoupled
+from the normal Quality Gate via planner.py scope fix).
