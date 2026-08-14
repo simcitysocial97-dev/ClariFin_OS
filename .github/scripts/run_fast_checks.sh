@@ -22,6 +22,23 @@ echo "================================================"
 
 cd "$BACKEND_DIR"
 
+# ── Seed 0: Regenerate verification seed artifacts ──────────────────
+# backend/tests/generated/ is gitignored, so fresh CI and dev checkouts lack
+# the seed files (capability-registry.yaml) that CIF (change_intelligence.py)
+# and the meta test-suite read. Regenerate them deterministically via
+# check_coverage.py — all of its inputs (verification.yaml, engine-topology.json,
+# backend/tests/capability/*, raw-coverage.json) are tracked, so this is
+# reproducible from a clean checkout. No-op when the registry already exists.
+if [ ! -f tests/generated/capability-registry.yaml ]; then
+  echo -e "\n${YELLOW}[0/6] Generating verification seed artifacts...${NC}"
+  if python3 ../tools/development/check_coverage.py; then
+    echo -e "${GREEN}✓ Verification artifacts generated${NC}\n"
+  else
+    echo -e "${RED}✗ Failed to generate verification artifacts${NC}\n"
+    FAILED_CHECKS+=("seed-generation")
+  fi
+fi
+
 # ── Check 1: Ruff linting ─────────────────────────
 echo -e "\n${YELLOW}[1/5] Ruff lint check...${NC}"
 if ruff check . --output-format=github; then
