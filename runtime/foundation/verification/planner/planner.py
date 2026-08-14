@@ -62,6 +62,12 @@ class PlanningContext:
     include_dependents: bool = False
     max_depth: int = 3
     blast_radius_scopes: tuple[VerificationScope, ...] = field(default_factory=tuple)
+    # C5.1: when True the planner honours the requested scope as the sole
+    # execution authority and does NOT merge ``impacted`` / ``blast_radius``
+    # scopes into the plan.  Used by bounded profiles (playwright, golden,
+    # mutation, integration) so a large PR boundary cannot escalate a narrow
+    # profile invocation into a full-suite multi-hour run.
+    respect_requested_scope: bool = False
 
 
 class VerificationPlanner:
@@ -99,9 +105,16 @@ class VerificationPlanner:
         # Determine impacted scopes from changed files
         impacted_scopes = self._resolve_scopes_from_files(context.changed_files)
 
-        # Merge with requested scope and blast-radius scopes (GAP-002)
+        # Merge with requested scope and blast-radius scopes (GAP-002).
+        # For bounded profiles (playwright/golden/mutation/integration) the
+        # ``respect_requested_scope`` flag suppresses blast-radius expansion so
+        # that a named profile runs only its declared tasks regardless of PR
+        # boundary size (M9-C5 C5.1 correction).
         all_scopes = self._merge_scopes(
-            scope, impacted_scopes, context.blast_radius_scopes
+            scope,
+            impacted_scopes,
+            context.blast_radius_scopes,
+            respect_requested_scope=context.respect_requested_scope,
         )
 
         # Determine impacted capabilities
@@ -252,12 +265,21 @@ class VerificationPlanner:
         requested: VerificationScope,
         impacted: list[VerificationScope],
         blast_scopes: tuple[VerificationScope, ...] = (),
+        respect_requested_scope: bool = False,
     ) -> list[VerificationScope]:
         """Merge requested scope with impacted scopes and blast-radius scopes.
 
         GAP-002 fix: blast-radius scopes allow a backend-triggered profile
         to escalate to frontend or contract verification when the cross-layer
         impact planner identifies downstream consequences.
+
+        When ``respect_requested_scope`` is True (used by bounded profiles such
+        as ``playwright``, ``golden``, ``mutation``, ``integration``), the merged
+        result is the requested scope alone — blast-radius impacts are recorded
+        in the report but MUST NOT expand execution beyond what the profile
+        explicitly declares.  This prevents a 1000-file PR from turning a
+        ``verify.py playwright`` invocation into a full backend+frontend+runtime
+        + e2e multi-hour run.
         """
         scope_hierarchy = {
             VerificationScope.QUICK: [VerificationScope.QUICK],
@@ -310,8 +332,13 @@ class VerificationPlanner:
         }
 
         result = set(scope_hierarchy.get(requested, [requested]))
-        result.update(impacted)
-        result.update(blast_scopes)
+
+        # Bounded profiles (playwright, golden, mutation, integration) must NOT
+        # have their execution expanded by blast-radius impacts.  The requested
+        # scope is the authority; impacted/blast scopes are informational only.
+        if not respect_requested_scope:
+            result.update(impacted)
+            result.update(blast_scopes)
 
         # If repository or full requested, include everything
         if requested in (VerificationScope.REPOSITORY, VerificationScope.FULL):

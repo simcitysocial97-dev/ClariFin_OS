@@ -122,9 +122,10 @@ export default defineConfig({
   ],
   
   // Production server (avoids CSS corruption in dev mode)
+  // CI uses python3 (guaranteed on ubuntu-latest); local uses npm start.
   webServer: {
     command: process.env.CI
-      ? 'python -m http.server 3000 --directory dist'
+      ? 'python3 -m http.server 3000 --directory dist'
       : 'npm start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,

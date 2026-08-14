@@ -24,6 +24,7 @@ from typing import Any
 from runtime.foundation.verification.executor import Executor
 from runtime.foundation.verification.models import (
     ExecutionResult as ExecutionResultModel,
+    FailureClassification,
     VerificationPlan,
     VerificationScope,
     VerificationStatus,
@@ -648,11 +649,25 @@ class VerificationOrchestrator:
         profile: VerificationProfile | None = None,
         repo_root: Path | None = None,
         map_path: Path | None = None,
+        overall_timeout: int = 7200,
+        log_callback: Any | None = None,
     ):
+        """Initialise the orchestrator.
+
+        C5.2: ``overall_timeout`` is a wall-clock ceiling for the entire
+        verification run (default 2 h).  ``log_callback`` is invoked with each
+        line of subprocess output so the caller can stream progress to stdout /
+        CI log instead of waiting for the subprocess to exit (the original
+        ``capture_output=True`` behaviour that caused the M9-C5 hang to appear
+        as a hard stall).
+        """
         self._profile = profile or get_profile("quick")
         self._repo_root = repo_root or _find_repo_root()
         self._planner = VerificationPlanner()
-        self._executor = Executor(repo_root=self._repo_root)
+        self._executor = Executor(
+            repo_root=self._repo_root,
+            log_callback=log_callback,
+        )
         self._aggregator = EvidenceAggregator(self._repo_root)
         self._map_path = map_path
         self._changed_files: list[str] = []
@@ -661,6 +676,9 @@ class VerificationOrchestrator:
         self._plan: VerificationPlan | None = None
         self._results: list[ExecutionResultModel] = []
         self._report: VerificationReport | None = None
+        # C5.2: overall wall-clock timeout for the full orchestration run.
+        self._overall_timeout = overall_timeout
+        self._run_start: datetime | None = None
 
     @property
     def changed_files(self) -> list[str]:
@@ -729,7 +747,22 @@ class VerificationOrchestrator:
         contracts, runtime) are fed into the planning context so that
         verification selection is driven by actual cross-layer impact
         rather than path-prefix heuristics alone.
+
+        C5.1 correction: for bounded profiles (playwright, golden, mutation,
+        integration) the planner's blast-radius expansion MUST NOT replace the
+        profile's declared task set.  ``respect_requested_scope`` tells the
+        planner to honour the requested scope as the sole execution authority;
+        cross-layer impact data remains available in the report for audit but
+        does not drive additional step selection.
         """
+        # Bounded profiles run ONLY their declared tasks regardless of how many
+        # files changed elsewhere in the repo.  A 1011-file PR must not turn
+        # ``verify.py playwright`` into a full backend+frontend+runtime+e2e run.
+        _BOUNDED_PROFILES: frozenset[str] = frozenset(
+            ("playwright", "golden", "mutation", "integration")
+        )
+        respect_profile_scope = self._profile.name in _BOUNDED_PROFILES
+
         target_scope = scope or self._profile.scope
 
         changed_capabilities: list[str] = []
@@ -752,6 +785,7 @@ class VerificationOrchestrator:
             include_dependents=False,
             max_depth=3,
             blast_radius_scopes=tuple(blast_scopes),
+            respect_requested_scope=respect_profile_scope,
         )
 
         self._plan = self._planner.plan(context)
@@ -790,12 +824,42 @@ class VerificationOrchestrator:
         return scopes
 
     def execute(self) -> list[ExecutionResultModel]:
-        """Execute all tasks from the verification plan."""
+        """Execute all tasks from the verification plan.
+
+        C5.2: emits a progress line before each step and enforces the overall
+        wall-clock timeout.
+        """
         if self._plan is None:
             raise RuntimeError("No plan generated. Call generate_plan() first.")
 
+        self._run_start = datetime.now(timezone.utc)
+        total_steps = len(self._plan.steps)
         self._results = []
-        for step in self._plan.steps:
+
+        for idx, step in enumerate(self._plan.steps, start=1):
+            elapsed = (datetime.now(timezone.utc) - self._run_start).total_seconds()
+            if elapsed > self._overall_timeout:
+                # C5.2: hard ceiling — abort remaining steps rather than running
+                # forever when the per-step timeout misfires.
+                remaining = self._plan.steps[idx - 1 :]
+                for rstep in remaining:
+                    self._results.append(
+                        ExecutionResultModel(
+                            task_id=rstep.id,
+                            command=rstep.command or "no-op",
+                            status=VerificationStatus.FAILED,
+                            exit_code=-1,
+                            duration_seconds=0.0,
+                            stdout_path="",
+                            stderr_path="",
+                            error=f"Overall orchestrator timeout ({self._overall_timeout}s) exceeded after {elapsed:.0f}s",
+                            classification=FailureClassification.TIMEOUT,
+                            unit_id=rstep.unit_id,
+                            provenance=rstep.provenance,
+                        )
+                    )
+                break
+
             if step.command is None:
                 result = ExecutionResultModel(
                     task_id=step.id,
@@ -814,7 +878,14 @@ class VerificationOrchestrator:
                 self._results.append(result)
                 continue
 
-            exec_result = self._executor.execute(step.command)
+            # C5.2: per-step progress line.
+            print(
+                f"[{idx}/{total_steps}] Running step {step.id}: "
+                f"{step.command[:120]}",
+                flush=True,
+            )
+
+            exec_result = self._executor.execute(step.command, task_id=step.id)
             model_result = ExecutionResultModel(
                 task_id=step.id,
                 command=step.command,

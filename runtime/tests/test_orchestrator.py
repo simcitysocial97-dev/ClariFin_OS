@@ -806,3 +806,166 @@ class TestMutationGateTopology:
             assert any(s.unit_id == "mutation-run" for s in plan.steps), (
                 f"{pname} profile must still run mutation-run"
             )
+
+
+class TestBoundedProfileScopeHonor:
+    """C5.1 — bounded profiles must NOT expand beyond their declared scope
+    regardless of PR boundary size.
+
+    A 1000+ file PR previously turned ``verify.py playwright`` into a
+    multi-hour full backend+frontend+runtime+e2e run.  The bounded-profile
+    correction ensures each bounded profile runs only its declared tasks.
+    """
+
+    # Simulate the exact boundary that triggered the original hang:
+    # ~400 runtime + ~230 backend + ~200 frontend + config files.
+    _LARGE_BOUNDARY = (
+        [f"runtime/foundation/verification/orchestrator{i}.py" for i in range(400)]
+        + [f"backend/src/engines/loan_engine/foo{i}.py" for i in range(230)]
+        + [f"frontend/src/page{i}.tsx" for i in range(200)]
+        + ["playwright.yml", "package.json", "pyproject.toml", "tsconfig.json"]
+    )
+
+    def test_playwright_runs_only_playwright_on_large_boundary(self):
+        from runtime.foundation.verification.profiles import get_profile
+
+        orch = VerificationOrchestrator(profile=get_profile("playwright"))
+        orch._changed_files = self._LARGE_BOUNDARY
+        orch.analyze_cross_layer()
+        plan = orch.generate_plan(scope=VerificationScope.PLAYWRIGHT)
+
+        commands = [s.command for s in plan.steps]
+        assert len(plan.steps) == 1, (
+            f"playwright must run exactly 1 step on large boundary, got {len(plan.steps)}"
+        )
+        assert ".github/scripts/run_playwright_tests.sh" in commands[0]
+        assert all("backend_verification" not in c for c in commands)
+        assert all("frontend_verification" not in c for c in commands)
+        assert all("runtime_verification" not in c for c in commands)
+
+    def test_golden_runs_only_golden_on_large_boundary(self):
+        from runtime.foundation.verification.profiles import get_profile
+
+        orch = VerificationOrchestrator(profile=get_profile("golden"))
+        orch._changed_files = self._LARGE_BOUNDARY
+        orch.analyze_cross_layer()
+        plan = orch.generate_plan(scope=VerificationScope.GOLDEN)
+
+        commands = [s.command for s in plan.steps]
+        assert len(plan.steps) == 1, (
+            f"golden must run exactly 1 step on large boundary, got {len(plan.steps)}"
+        )
+        assert ".github/scripts/run_golden_tests.sh" in commands[0]
+
+    def test_unbounded_profiles_still_expand(self):
+        """quick/backend/frontend/runtime must retain blast-radius expansion."""
+        from runtime.foundation.verification.profiles import get_profile
+
+        for pname in ("quick", "backend", "frontend", "runtime"):
+            orch = VerificationOrchestrator(profile=get_profile(pname))
+            orch._changed_files = self._LARGE_BOUNDARY
+            orch.analyze_cross_layer()
+            plan = orch.generate_plan(scope=get_profile(pname).scope)
+            # Unbounded profiles expand to multiple steps on a large boundary.
+            assert len(plan.steps) >= 2, (
+                f"{pname} must expand on large boundary, got {len(plan.steps)} steps"
+            )
+
+    def test_merge_scopes_respects_requested_for_bounded(self):
+        """Direct unit test of the _merge_scopes flag."""
+        planner = VerificationPlanner()
+        merged = planner._merge_scopes(
+            VerificationScope.PLAYWRIGHT,
+            impacted=[VerificationScope.BACKEND, VerificationScope.FRONTEND, VerificationScope.RUNTIME],
+            blast_scopes=(VerificationScope.BACKEND,),
+            respect_requested_scope=True,
+        )
+        assert merged == [VerificationScope.PLAYWRIGHT], (
+            f"bounded profile scope must not expand, got {merged}"
+        )
+
+    def test_merge_scopes_respects_requested_flag(self):
+        """The flag suppresses impacted/blast merge regardless of profile.
+        The orchestrator controls when to set it (bounded profiles only).
+        """
+        planner = VerificationPlanner()
+        merged = planner._merge_scopes(
+            VerificationScope.QUICK,
+            impacted=[VerificationScope.BACKEND, VerificationScope.FRONTEND],
+            blast_scopes=(VerificationScope.RUNTIME,),
+            respect_requested_scope=True,
+        )
+        # With the flag, only the QUICK hierarchy remains — no expansion.
+        assert merged == [VerificationScope.QUICK]
+
+    def test_merge_scopes_expands_without_flag(self):
+        """Without the flag, impacted and blast scopes are merged normally."""
+        planner = VerificationPlanner()
+        merged = planner._merge_scopes(
+            VerificationScope.QUICK,
+            impacted=[VerificationScope.BACKEND, VerificationScope.FRONTEND],
+            blast_scopes=(VerificationScope.RUNTIME,),
+            respect_requested_scope=False,
+        )
+        assert VerificationScope.BACKEND in merged
+        assert VerificationScope.FRONTEND in merged
+        assert VerificationScope.RUNTIME in merged
+
+
+class TestC5Observability:
+    """C5.2 — executor streaming output and orchestrator timeouts."""
+
+    def test_executor_streams_to_callback(self, tmp_path: Path, monkeypatch):
+        """Lines emitted by the subprocess reach the log_callback in real time."""
+        from runtime.foundation.verification.executor import Executor
+
+        captured: list[str] = []
+
+        def collect(line: str) -> None:
+            captured.append(line)
+
+        ex = Executor(repo_root=tmp_path, log_callback=collect)
+        # Echo a known sequence; each line should arrive via the callback.
+        result = ex.execute("printf 'line-a\\nline-b\\n'", task_id="test-stream")
+        assert result.status.value == "passed"
+        assert any("line-a" in c for c in captured), f"callback did not receive line-a; got {captured}"
+        assert any("line-b" in c for c in captured), f"callback did not receive line-b; got {captured}"
+
+    def test_orchestrator_emits_per_step_progress(self, tmp_path: Path, monkeypatch):
+        """The orchestrator prints a '[N/M] Running step ...' line before each run."""
+        from runtime.foundation.verification.profiles import get_profile
+        from runtime.foundation.verification.orchestrator import VerificationOrchestrator
+        from runtime.foundation.verification.models import VerificationScope
+
+        orch = VerificationOrchestrator(profile=get_profile("quick"), repo_root=tmp_path)
+        orch._changed_files = []
+        orch.analyze_cross_layer()
+        orch.generate_plan(scope=VerificationScope.QUICK)
+        # Capture stdout from execute().
+        import io
+        import contextlib
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            orch.execute()
+        out = buf.getvalue()
+        # At least one 'Running step' line must appear.
+        assert "Running step" in out, f"No per-step progress emitted; output was:\n{out}"
+
+    def test_orchestrator_respects_overall_timeout(self, tmp_path: Path):
+        """When total wall-clock exceeds ``overall_timeout``, remaining steps abort."""
+        from runtime.foundation.verification.profiles import get_profile
+        from runtime.foundation.verification.orchestrator import VerificationOrchestrator
+        from runtime.foundation.verification.models import VerificationScope
+
+        orch = VerificationOrchestrator(
+            profile=get_profile("quick"),
+            repo_root=tmp_path,
+            overall_timeout=0,  # immediate timeout
+        )
+        orch._changed_files = []
+        orch.analyze_cross_layer()
+        orch.generate_plan(scope=VerificationScope.QUICK)
+        results = orch.execute()
+        # At least one result must carry the timeout error.
+        timed_out = [r for r in results if r.error and "timeout" in r.error.lower()]
+        assert timed_out, "Expected at least one TIMEOUT-result when overall_timeout=0"
