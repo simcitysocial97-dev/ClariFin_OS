@@ -39,7 +39,7 @@ if __import__("os").environ.get("MUTANT_UNDER_TEST"):
     @_functools.wraps(_orig_record)
     def _safe_record_trampoline_hit(name: str, caller=None):
         if name.startswith("src."):
-            name = name[len("src."):]
+            name = name[len("src.") :]
         _orig_record(name, caller=caller)
 
     _mm_main.record_trampoline_hit = _safe_record_trampoline_hit
@@ -48,6 +48,7 @@ if __import__("os").environ.get("MUTANT_UNDER_TEST"):
     # `differing_executors` health check. Suppress it so mutation runs complete.
     try:
         from hypothesis import settings, HealthCheck  # noqa: PLC0415
+
         _cur = settings.current_profile().suppress_health_check
         if HealthCheck.differing_executors not in _cur:
             settings.register_profile(
