@@ -31,8 +31,9 @@ from __future__ import annotations
 # sets MUTANT_UNDER_TEST (normal pytest runs are unaffected).
 # ============================================================
 if __import__("os").environ.get("MUTANT_UNDER_TEST"):
-    import mutmut.__main__ as _mm_main
     import functools as _functools
+
+    import mutmut.__main__ as _mm_main
 
     _orig_record = _mm_main.record_trampoline_hit
 
@@ -47,7 +48,7 @@ if __import__("os").environ.get("MUTANT_UNDER_TEST"):
     # mutmut's trampoline changes call context, which triggers hypothesis's
     # `differing_executors` health check. Suppress it so mutation runs complete.
     try:
-        from hypothesis import settings, HealthCheck  # noqa: PLC0415
+        from hypothesis import HealthCheck, settings  # noqa: PLC0415
 
         _cur = settings.current_profile().suppress_health_check
         if HealthCheck.differing_executors not in _cur:
