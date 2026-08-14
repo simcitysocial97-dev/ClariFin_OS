@@ -221,25 +221,40 @@ class MetadataScanner(BaseScanner):
             )
 
     def _scan_requirements(self, result: ScanResult) -> None:
-        """Load backend requirements files."""
+        """Load the canonical Python dependency declaration.
+
+        M10: the single dependency authority is the ROOT pyproject.toml
+        ([project] dependencies + [project.optional-dependencies]). The legacy
+        backend/requirements.txt and backend/requirements-frozen.txt were
+        removed as OBSOLETE. This method reads the root pyproject.toml when the
+        backend req files are absent, preserving the graph's requirements node.
+        """
+        candidates = []
         for req_file in ("requirements.txt", "requirements-frozen.txt"):
             req_path = self.backend_dir / req_file
-            if not req_path.exists():
-                continue
+            if req_path.exists():
+                candidates.append(req_path)
 
-            content = self.safe_read(req_path)
-            if content is None:
-                continue
+        root_pyproject = self.repo_root / "pyproject.toml"
+        if not candidates and root_pyproject.exists():
+            candidates.append(root_pyproject)
 
+        for req_path in candidates:
             rel = self.rel_path(req_path, self.repo_root)
-            deps = [
-                line.strip()
-                for line in content.splitlines()
-                if line.strip() and not line.strip().startswith("#")
-            ]
+            if req_path.name == "pyproject.toml":
+                deps = self._extract_pyproject_deps(req_path)
+            else:
+                content = self.safe_read(req_path)
+                if content is None:
+                    continue
+                deps = [
+                    line.strip()
+                    for line in content.splitlines()
+                    if line.strip() and not line.strip().startswith("#")
+                ]
             result.add_node(
                 node_type="requirements",
-                name=req_file,
+                name=req_path.name,
                 path=rel,
                 source="filesystem:backend",
                 properties={
@@ -247,6 +262,38 @@ class MetadataScanner(BaseScanner):
                     "dependency_count": len(deps),
                 },
             )
+
+    def _extract_pyproject_deps(self, path: Path) -> list[str]:
+        """Extract [project] dependencies + verification extras from pyproject.toml."""
+        try:
+            data = self.safe_read_json(path)
+            if data is None:
+                # Fall back to raw text scan for the [project] block.
+                text = self.safe_read(path)
+                return self._extract_pyproject_deps_text(text or "")
+            deps: list[str] = []
+            project = data.get("project", {})
+            deps.extend(project.get("dependencies", []))
+            for extras in project.get("optional-dependencies", {}).values():
+                deps.extend(extras)
+            return sorted({d.split(";")[0].strip() for d in deps if d})
+        except Exception:
+            return []
+
+    @staticmethod
+    def _extract_pyproject_deps_text(text: str) -> list[str]:
+        """Regex fallback for [project] dependencies when TOML parsing is unavailable."""
+        import re
+
+        block = re.search(r"\[project\]\s*dependencies\s*=\s*\[(.*?)\]", text, re.S)
+        if not block:
+            return []
+        return [
+            ln.strip().strip('"').strip("'")
+            for ln in block.group(1).splitlines()
+            if ln.strip().lstrip().startswith(('"', "'"))
+        ]
+
 
     def _scan_package_json(self, result: ScanResult) -> None:
         """Load frontend package.json for dependency metadata."""

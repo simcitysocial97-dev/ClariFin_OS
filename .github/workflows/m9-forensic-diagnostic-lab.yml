@@ -203,13 +203,14 @@ jobs:
             bash runtime/bootstrap.sh
           elif [ -f scripts/bootstrap.sh ]; then
             bash scripts/bootstrap.sh
-          elif [ -f requirements.txt ]; then
-            python -m pip install -r requirements.txt
+          elif [ -f pyproject.toml ]; then
+            # M10: single dependency authority (root pyproject.toml).
+            python -m pip install -e ".[all]"
           else
             echo "No bootstrap mechanism found"
           fi
 
-          python -m pip install black ruff mypy
+          # Tooling is installed via [all] extras in the single authority.
 
       - name: Verify runtime dependency health
         run: |

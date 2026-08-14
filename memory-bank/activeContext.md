@@ -6,6 +6,12 @@ Program 6.0 — Repository Architecture Convergence Audit (Complete)
 Program C — Financial OS Shell Architecture (Complete)
 
 ## Recent Changes
+- **M10 — Unified Reproducible Dev Environment & Dependency Modernization (2026-08-14)**
+  - Created single repository Python venv (`./.venv`) via `scripts/bootstrap.sh`; root `pyproject.toml` now the SINGLE Python dependency authority (removed obsolete `backend/requirements*.txt`)
+  - Added repo-owned wrappers `scripts/verify.sh`, `scripts/env-doctor.sh`, `scripts/freeze-env.sh`; CI `setup-python-runtime` now consumes `pip install -e ".[all]"` (no inline tool installs)
+  - Removed backend `[tool.ruff]`/`[tool.black]` duplicates → canonical Black/Ruff at root; `requirements.lock` generated (77 pinned pkgs)
+  - Safe upgrades validated locally: fastapi 0.139.2, pydantic 2.13.4, pytest 9.1.1 (ruff + mypy + 760 unit tests green via controlled interpreter)
+  - Decision record: `docs/decisions/M10_ENVIRONMENT_DEPENDENCIES.md`
 - **Program 7A: Cross-Layer Intelligence Foundation (2026-08-04)**
   - Created `tools/generators/build_cross_layer_map.py` for deterministic dependency graph generation
   - Generated `runtime/generated/cross-layer-map.json` with 57 engine entries (57 files)

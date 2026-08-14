@@ -27,7 +27,10 @@ def test_api_map_exists() -> None:
     # Run discovery first if not exists
     if not api_map_path.exists():
         subprocess.run(
-            [sys.executable, str(BACKEND_DIR / "tools" / "coVF_discover.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "tools" / "development" / "coVF_discover.py"),
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
@@ -43,7 +46,10 @@ def test_api_map_valid_schema() -> None:
     if not api_map_path.exists():
         # Run discovery
         subprocess.run(
-            [sys.executable, str(BACKEND_DIR / "tools" / "coVF_discover.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "tools" / "development" / "coVF_discover.py"),
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
         )
@@ -67,7 +73,10 @@ def test_contract_registry_exists() -> None:
 
     if not registry_path.exists():
         subprocess.run(
-            [sys.executable, str(BACKEND_DIR / "tools" / "coVF_discover.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "tools" / "development" / "coVF_discover.py"),
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
         )
@@ -81,7 +90,10 @@ def test_contract_coverage_exists() -> None:
 
     if not coverage_path.exists():
         subprocess.run(
-            [sys.executable, str(BACKEND_DIR / "tools" / "coVF_discover.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "tools" / "development" / "coVF_discover.py"),
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
         )
@@ -95,7 +107,10 @@ def test_all_routers_discovered() -> None:
 
     if not registry_path.exists():
         subprocess.run(
-            [sys.executable, str(BACKEND_DIR / "tools" / "coVF_discover.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "tools" / "development" / "coVF_discover.py"),
+            ],
             cwd=PROJECT_ROOT,
             capture_output=True,
         )

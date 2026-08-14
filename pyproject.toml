@@ -1,27 +1,110 @@
-[project]
-name = "clarinfin-verification"
-version = "1.0.0"
-description = "ClariFin OS Verification Runtime CLI"
-requires-python = ">=3.12"
-dependencies = [
-    "click>=8.0",
-]
-
-[project.scripts]
-verify = "runtime.foundation.verification.cli.cli:cli"
-
 [build-system]
 requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
+
+# =============================================================================
+# ClariFin_OS — SINGLE Python Dependency Authority (M10)
+#
+# Every Python dependency for the repository — runtime, backend, development
+# tooling, verification tooling — is declared HERE and nowhere else.
+#
+#   Declaration  (this file, exact pins = version policy)
+#       |
+#       +--> resolution  (pip resolves transitives deterministically)
+#       |
+#       +--> lock        (requirements.lock — regenerable snapshot, NOT a
+#                         second authority; produced by scripts/freeze-env.sh)
+#       |
+#       +--> local env   (./.venv via scripts/bootstrap.sh)
+#       +--> CI env      (.github/actions/setup-python-runtime — consumes the
+#                         SAME `pip install -e ".[all]"` contract)
+#
+# The previous independent authorities were:
+#   * backend/requirements.txt          -> OBSOLETE  (folded into [project])
+#   * backend/requirements-frozen.txt   -> OBSOLETE  (stale, contained poisoned
+#                                        entries httpcore2/httpx2/truststore,
+#                                        pytest 8.3.0 vs declared 9.x)
+#   * setup-python-runtime inline tools -> OBSOLETE  (now [all] optional deps)
+#
+# NOTE: the root repository is a single-venv architecture (./.venv). The
+# backend is source-only (installed via backend/src on sys.path at test time),
+# so all backend runtime dependencies are declared here at root.
+# =============================================================================
+
+[project]
+name = "clarinfin-verification"
+version = "1.0.0"
+description = "ClariFin OS — Unified Verification Runtime & single Python environment"
+requires-python = ">=3.12"
+dependencies = [
+    # ── Runtime / verification CLI ────────────────────────────────────────────
+    "click==8.4.2",
+    # ── Backend runtime ──────────────────────────────────────────────────────
+    "fastapi==0.139.2",
+    "pydantic==2.13.4",
+    "python-multipart==0.0.22",
+    "pdfplumber==0.11.9",
+    "camelot-py[cv]==0.11.0",
+    "ghostscript==0.8.1",
+    "pandas==3.0.1",
+    "python-dateutil==2.9.0",
+    "cachetools==7.1.4",
+    "httpx==0.28.1",
+    "jsonschema==4.26.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Verification / development tooling. Installed via `pip install -e ".[all]"`.
+verification = [
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+    "pytest-cov==7.1.0",
+    "pytest-xdist==3.8.0",
+    "pytest-timeout==2.4.0",
+    "hypothesis==6.161.4",
+    "coverage==7.15.2",
+    "ruff==0.15.20",
+    "black==26.5.1",
+    "mypy==2.1.0",
+    "mutmut==3.7.0",
+]
+all = ["clarinfin-verification[verification]"]
+
+[project.scripts]
+verify = "runtime.foundation.verification.cli.cli:cli"
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["runtime*"]
 
-[tool.mypy]
-python_version = "3.12"
-exclude = ['servers/src/fetch/tests/']
+# ── Canonical lint / format / type-check configuration (repo-wide) ───────────
+# Ruff, Black and (repo-scope) Mypy are defined here. Backend stays source-only;
+# backend-specific Mypy strictness, pytest, Mutmut and Hypothesis configuration
+# remain in backend/pyproject.toml (their scoped authority — backend rootdir).
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.git
+  | \.venv
+  | venv
+  | __pycache__
+  | backend/mutants
+  | backend/tests/generated
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.12"
+exclude = ['servers/src/fetch/tests/']
+

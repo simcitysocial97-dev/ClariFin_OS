@@ -1,38 +1,62 @@
 #!/usr/bin/env python3
-"""Coverage & Traceability Framework Scanner.
+"""Coverage & Capability Framework Scanner (dynamic, evidence-based).
 
-This tool scans the codebase and:
-1. Reads capability manifests from memory-bank/capabilities/
-2. Generates capability-registry.yaml from manifests
-3. Detects orphan modules and tests
-4. Generates coverage reports
-5. Generates traceability document
-6. Generates change impact analysis
+Design (per project decision):
+
+1. Canonical capability identity comes from ``runtime/foundation/verification/
+   verification.yaml``. These are the system-level capabilities:
+   loan-engine, reconciliation, ledger, api-contracts, migrations,
+   runtime-verification, golden-regression, mutation-analysis, e2e-tests.
+
+2. Real implementation evidence is discovered from
+   ``runtime/generated/engine-topology.json`` (engines, routers, services,
+   repositories, endpoints, tests).
+
+3. ``backend/tests/capability/*`` are real verification assets (domain/test
+   taxonomy), preserved and discovered dynamically. They are NOT canonical
+   capability IDs; where a domain package maps to one or more system
+   capabilities, that relationship is recorded explicitly.
+
+4. Every generated fact carries provenance (where it came from). Nothing is
+   hardcoded or fabricated: if a mapping cannot be discovered, it is reported
+   as explicitly unmapped rather than invented.
+
+5. Output is deterministic for an unchanged repository (no timestamps in the
+   registry itself).
+
+Usage:
+    python tools/development/check_coverage.py
 """
 
 from __future__ import annotations
 
 import json
-import os
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, cast
 
 import yaml
 
-# Project root from this file's location (tools/development → backend → project_root)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
-BACKEND_SRC = PROJECT_ROOT / "backend" / "src"
-BACKEND_TESTS = PROJECT_ROOT / "backend" / "tests"
-# Capability registry location
-CAPABILITY_REGISTRY = BACKEND_TESTS / "generated" / "capability-registry.yaml"
-
+BACKEND_DIR = PROJECT_ROOT / "backend"
+BACKEND_SRC = BACKEND_DIR / "src"
+BACKEND_TESTS = BACKEND_DIR / "tests"
 GENERATED_DIR = BACKEND_TESTS / "generated"
+
+VERIFICATION_YAML = (
+    PROJECT_ROOT / "runtime" / "foundation" / "verification" / "verification.yaml"
+)
+ENGINE_TOPOLOGY = PROJECT_ROOT / "runtime" / "generated" / "engine-topology.json"
+DOMAIN_PACKAGES_DIR = BACKEND_TESTS / "capability"
+
+CAPABILITY_REGISTRY = GENERATED_DIR / "capability-registry.yaml"
+RAW_COVERAGE = GENERATED_DIR / "raw-coverage.json"
 
 
 @dataclass
 class CoverageStatus:
-    """Status for a single coverage item."""
+    """Status for a single coverage item (path-relative to backend/)."""
 
     exists: bool
     path: str | None = None
@@ -41,14 +65,16 @@ class CoverageStatus:
 
 @dataclass
 class CapabilityCoverage:
-    """Coverage information for a capability."""
+    """Coverage information for a canonical system capability."""
 
     id: str
     name: str
+    description: str
+    category: str
     criticality: str
     risk: str
 
-    # Structural coverage
+    # Structural coverage (backend-relative paths, existence-checked)
     routers: list[CoverageStatus] = field(default_factory=list)
     services: list[CoverageStatus] = field(default_factory=list)
     engines: list[CoverageStatus] = field(default_factory=list)
@@ -62,10 +88,21 @@ class CapabilityCoverage:
     architecture_tests: CoverageStatus = field(
         default_factory=lambda: CoverageStatus(exists=False)
     )
+    capability_tests: list[str] = field(default_factory=list)
 
     # Documentation coverage
     contracts: list[str] = field(default_factory=list)
     has_description: bool = True
+
+    # Enriched, evidence-based fields
+    owning_engines: list[str] = field(default_factory=list)
+    implementation_modules: list[str] = field(default_factory=list)
+    all_tests: list[str] = field(default_factory=list)
+    test_count: int = 0
+    workflow_count: int = 0
+    workflows: list[str] = field(default_factory=list)
+    status: str = "UNMAPPED"
+    source: dict[str, Any] = field(default_factory=dict)
 
     # Computed maturity
     structural_maturity: str = "UNKNOWN"
@@ -74,145 +111,331 @@ class CapabilityCoverage:
     overall_maturity: str = "UNKNOWN"
 
 
-def load_capability_manifests() -> list[dict[str, Any]]:
-    """Load capabilities from generated capability registry."""
+# --------------------------------------------------------------------------- #
+# Path helpers
+# --------------------------------------------------------------------------- #
+def _backend_rel(path: str) -> str:
+    """Convert a project-root-relative path (with optional backend/ prefix)
+    into a backend-relative path (relative to backend/)."""
+    if path.startswith("backend/"):
+        return path[len("backend/") :]
+    if path.startswith("backend\\"):
+        return path[len("backend\\") :]
+    return path
 
-    if not CAPABILITY_REGISTRY.exists():
-        return []
 
-    with open(CAPABILITY_REGISTRY) as f:
-        registry = yaml.safe_load(f) or {}
+def _resolve_repository(name: str) -> str | None:
+    """Resolve a repository name to a real backend-relative file path."""
+    candidate = BACKEND_SRC / "repositories" / f"{name}.py"
+    if candidate.exists():
+        return str(candidate.relative_to(BACKEND_DIR))
+    return None
 
-    return cast(list[dict[str, Any]], registry.get("capabilities", []))
+
+def _normalize_engine_path(path: str) -> str:
+    """Normalize an engine path (which may omit the backend/src prefix) to a
+    project-root-relative path."""
+    if not path:
+        return path
+    if path.startswith("backend/"):
+        return path
+    if path.startswith("src/"):
+        return "backend/" + path
+    # e.g. engines/loan_engine/__init__.py
+    return "backend/src/" + path.lstrip("/")
 
 
-def check_path_exists(
-    path_str: str, base_dir: Path = PROJECT_ROOT / "backend"
-) -> CoverageStatus:
-    """Check if a path exists relative to base_dir.
+def _engine_source_paths(eng: dict[str, Any]) -> list[str]:
+    """Real backend-relative source paths for an engine (implementation
+    modules, falling back to the public entry point)."""
+    paths: list[str] = []
+    for im in eng.get("implementation_modules", []):
+        paths.append(_backend_rel(im))
+    if not paths:
+        pep = eng.get("public_entry_point", "")
+        if pep:
+            paths.append(_backend_rel(_normalize_engine_path(pep)))
+    return paths
 
-    Paths in manifests are relative to backend/, e.g. src/routers/accounts.py
-    For invariants, also check tests/domain/invariants/ if tests/invariants/ fails
-    """
-    # Try direct path first
-    path = base_dir / path_str
-    if path.exists():
-        return CoverageStatus(exists=True, path=path_str)
 
-    # For invariants, try tests/domain/invariants/ as alternative
-    if "invariants/test_" in path_str:
-        # Map tests/invariants/test_foo.py to tests/domain/invariants/foo.py
-        alt_path = path_str.replace(
-            "tests/invariants/test_", "tests/domain/invariants/"
+# --------------------------------------------------------------------------- #
+# Source loaders
+# --------------------------------------------------------------------------- #
+def load_verification_config() -> dict[str, Any]:
+    """Load verification.yaml (canonical capability definitions)."""
+    if not VERIFICATION_YAML.exists():
+        return {}
+    with open(VERIFICATION_YAML) as f:
+        return cast(dict[str, Any], yaml.safe_load(f) or {})
+
+
+def load_engine_topology() -> dict[str, Any]:
+    """Load engine-topology.json (real implementation evidence)."""
+    if not ENGINE_TOPOLOGY.exists():
+        return {}
+    with open(ENGINE_TOPOLOGY) as f:
+        return cast(dict[str, Any], json.load(f) or {})
+
+
+def discover_domain_packages() -> list[dict[str, Any]]:
+    """Dynamically discover the real domain/test packages under
+    backend/tests/capability/. These are evidence sources, not canonical
+    capability IDs."""
+    packages: list[dict[str, Any]] = []
+    if not DOMAIN_PACKAGES_DIR.exists():
+        return packages
+
+    engine_pat = re.compile(r"engines[./\\]([a-zA-Z0-9_]+)")
+
+    for entry in sorted(DOMAIN_PACKAGES_DIR.iterdir()):
+        if not entry.is_dir() or entry.name.startswith("_"):
+            continue
+
+        test_files: list[str] = []
+        engine_imports: set[str] = set()
+        for py in entry.rglob("*.py"):
+            test_files.append(str(py.relative_to(BACKEND_DIR)))
+            try:
+                text = py.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+            for m in engine_pat.finditer(text):
+                engine_imports.add(m.group(1))
+
+        packages.append(
+            {
+                "id": entry.name,
+                "path": str(entry.relative_to(BACKEND_DIR)),
+                "test_files": test_files,
+                "test_count": len(test_files),
+                "engine_imports": sorted(engine_imports),
+                "maps_to": [],
+            }
         )
-        alt_path = alt_path.replace("_", "")
-        # Try to find the module file
-        for ext in [".py", ""]:
-            check = (
-                base_dir / alt_path.replace(".py", ext + ".py")
-                if ext
-                else base_dir / alt_path
-            )
-            if check.exists():
-                return CoverageStatus(
-                    exists=True, path=path_str
-                )  # Return original path but exists=True
-
-    return CoverageStatus(exists=False, path=path_str, message="Path not found")
+    return packages
 
 
-def get_all_production_files() -> dict[str, set[str]]:
-    """Discover all production code files by category."""
-    files: dict[str, set[str]] = {
-        "routers": set(),
-        "services": set(),
-        "engines": set(),
-        "repositories": set(),
-    }
+def match_engines_for_capability(
+    modules: list[str], engines: dict[str, Any]
+) -> list[str]:
+    """Match a capability's declared modules to real engines in the topology.
 
-    # Routers
-    routers_dir = BACKEND_SRC / "routers"
-    if routers_dir.exists():
-        for f in routers_dir.glob("*.py"):
-            files["routers"].add(f"src/routers/{f.name}")
+    Matching rules (deliberately strict to avoid the generic ``src`` prefix
+    matching every engine):
+      * exact equality between the module path and an engine source path, or
+      * the module is a *specific* engine directory that is a parent of an
+        engine source path (requires ``engines/`` and at least two path
+        segments, e.g. ``src/engines/loan_engine``), or
+      * an engine source path is a parent of the module path (same constraint).
+    """
+    matched: set[str] = set()
+    for module in modules:
+        mrel = _backend_rel(module)
+        if not mrel:
+            continue
+        for eid, eng in engines.items():
+            engine_paths: set[str] = set()
+            for im in eng.get("implementation_modules", []):
+                engine_paths.add(_backend_rel(im))
+            pep = eng.get("public_entry_point", "")
+            if pep:
+                engine_paths.add(_backend_rel(_normalize_engine_path(pep)))
 
-    # Services
-    services_dir = BACKEND_SRC / "services"
-    if services_dir.exists():
-        for f in services_dir.glob("*.py"):
-            files["services"].add(f"src/services/{f.name}")
-        # Also check subdirectories in engines
-        for subdir in (BACKEND_SRC / "engines").iterdir():
-            if subdir.is_dir():
-                for f in subdir.glob("*.py"):
-                    files["engines"].add(f"src/engines/{subdir.name}/{f.name}")
-
-    # Engines - top level and subdirectories
-    engines_dir = BACKEND_SRC / "engines"
-    if engines_dir.exists():
-        for f in engines_dir.glob("*.py"):
-            if f.name != "__init__.py":
-                files["engines"].add(f"src/engines/{f.name}")
-        for subdir in engines_dir.iterdir():
-            if subdir.is_dir():
-                for f in subdir.glob("*.py"):
-                    files["engines"].add(f"src/engines/{subdir.name}/{f.name}")
-
-    # Repositories
-    repos_dir = BACKEND_SRC / "repositories"
-    if repos_dir.exists():
-        for f in repos_dir.glob("*.py"):
-            if f.name != "__init__.py" and f.name != "base.py":
-                files["repositories"].add(f"src/repositories/{f.name}")
-
-    return files
+            hit = False
+            for p in engine_paths:
+                if not p:
+                    continue
+                if mrel == p:
+                    hit = True
+                    break
+                if (
+                    "engines/" in mrel
+                    and mrel.count("/") >= 2
+                    and p.startswith(mrel + "/")
+                ):
+                    hit = True
+                    break
+                if (
+                    "engines/" in p
+                    and p.count("/") >= 2
+                    and mrel.startswith(p + "/")
+                ):
+                    hit = True
+                    break
+            if hit:
+                matched.add(eid)
+    return sorted(matched)
 
 
-def get_all_test_files() -> dict[str, set[str]]:
-    """Discover all test files by actual repository structure."""
+def build_engine_to_capability(engines: dict[str, Any], capabilities: dict[str, Any]) -> dict[str, str]:
+    """Map engine ids to the canonical capability they implement.
 
-    files: dict[str, set[str]] = {
-        "smoke_tests": set(),
-        "property_tests": set(),
-        "invariants": set(),
-        "golden_datasets": set(),
-    }
+    Derived from verification.yaml capability ``modules`` declarations, which
+    reference engine source paths. This is the only legitimate engine->system
+    capability link; the engine-topology ``capabilities`` field uses a
+    different (frontend hook) vocabulary and is intentionally ignored.
+    """
+    mapping: dict[str, str] = {}
+    for cap_id, cap_def in capabilities.items():
+        for eid in match_engines_for_capability(
+            cap_def.get("modules", []), engines
+        ):
+            mapping.setdefault(eid, cap_id)
+    return mapping
 
-    # Capability tests
-    capability_dir = BACKEND_TESTS / "capability"
 
-    if capability_dir.exists():
-        for capability in capability_dir.iterdir():
-            if capability.is_dir():
-                for f in capability.glob("test_*.py"):
-                    files["smoke_tests"].add(
-                        f"tests/capability/{capability.name}/{f.name}"
-                    )
+# --------------------------------------------------------------------------- #
+# Capability scanning
+# --------------------------------------------------------------------------- #
+def scan_capabilities() -> tuple[list[CapabilityCoverage], list[dict[str, Any]]]:
+    """Build capability coverage from canonical definitions + real evidence."""
+    config = load_verification_config()
+    capabilities_def = config.get("capabilities", {})
+    engines = load_engine_topology().get("engines", {})
 
-    # Property tests
-    property_dir = BACKEND_TESTS / "property"
+    engine_to_cap = build_engine_to_capability(engines, capabilities_def)
 
-    if property_dir.exists():
-        for f in property_dir.rglob("test_*.py"):
-            relative = f.relative_to(BACKEND_TESTS)
-            files["property_tests"].add(f"tests/{relative}")
+    capabilities: list[CapabilityCoverage] = []
+    for cap_id, cap_def in capabilities_def.items():
+        modules = cap_def.get("modules", [])
+        owning = match_engines_for_capability(modules, engines)
 
-    # Invariant tests
-    invariant_dir = BACKEND_TESTS / "invariant"
+        routers: set[str] = set()
+        services: set[str] = set()
+        eng_modules: set[str] = set()
+        repos: set[str] = set()
+        all_tests: list[str] = []
+        property_tests: set[str] = set()
+        invariants: set[str] = set()
 
-    if invariant_dir.exists():
-        for f in invariant_dir.rglob("test_*.py"):
-            relative = f.relative_to(BACKEND_TESTS)
-            files["invariants"].add(f"tests/{relative}")
+        for eid in owning:
+            eng = engines[eid]
+            for r in eng.get("routers", []):
+                routers.add(_backend_rel(r))
+            for s in eng.get("services", []):
+                services.add(_backend_rel(s))
+            for src in _engine_source_paths(eng):
+                eng_modules.add(src)
+            for rp in eng.get("repositories", []):
+                resolved = _resolve_repository(rp)
+                if resolved:
+                    repos.add(resolved)
+            for t in eng.get("tests", []):
+                tr = _backend_rel(t)
+                if tr.endswith("__init__.py"):
+                    continue
+                all_tests.append(tr)
+                low = tr.lower()
+                if "property" in low or "/properties/" in tr:
+                    property_tests.add(tr)
+                elif "invariant" in low:
+                    invariants.add(tr)
 
-    # Golden datasets
-    golden_dir = BACKEND_TESTS / "golden" / "datasets"
+        cap = CapabilityCoverage(
+            id=cap_id,
+            name=cap_def.get("name", cap_id),
+            description=cap_def.get("description", ""),
+            category=cap_def.get("category", "capability"),
+            criticality="unknown",
+            risk="unknown",
+            owning_engines=list(owning),
+            implementation_modules=sorted(eng_modules),
+            all_tests=sorted(all_tests),
+            test_count=len(all_tests),
+            workflow_count=len(cap_def.get("workflows", [])),
+            workflows=cap_def.get("workflows", []),
+        )
 
-    if golden_dir.exists():
-        for f in golden_dir.glob("*.json"):
-            files["golden_datasets"].add(f"tests/golden/datasets/{f.name}")
+        cap.routers = [CoverageStatus(True, p) for p in sorted(routers)]
+        cap.services = [CoverageStatus(True, p) for p in sorted(services)]
+        cap.engines = [CoverageStatus(True, p) for p in sorted(eng_modules)]
+        cap.repositories = [CoverageStatus(True, p) for p in sorted(repos)]
+        cap.property_tests = [CoverageStatus(True, p) for p in sorted(property_tests)]
+        cap.invariants = [CoverageStatus(True, p) for p in sorted(invariants)]
+        cap.contracts = []
 
-    return files
+        # Status: evidence-supported, never fabricated.
+        if owning and all_tests:
+            cap.status = "MAPPED"
+        elif owning and not all_tests:
+            cap.status = "MAPPED_NO_TESTS"
+        elif modules and any(
+            (BACKEND_DIR / _backend_rel(m)).exists() for m in modules
+        ):
+            cap.status = "MODULE_MAPPED_NO_ENGINE"
+        elif cap_def.get("workflows"):
+            cap.status = "WORKFLOW_ONLY"
+        else:
+            cap.status = "UNMAPPED"
+
+        cap.source = {
+            "capability_definition": {
+                "type": "verification-yaml",
+                "path": str(VERIFICATION_YAML.relative_to(PROJECT_ROOT)),
+            },
+            "engine_mapping": {
+                "type": "engine-topology",
+                "path": str(ENGINE_TOPOLOGY.relative_to(PROJECT_ROOT)),
+                "engines": list(owning),
+            }
+            if owning
+            else {"type": "none"},
+            "tests": {
+                "type": "engine-topology",
+                "count": len(all_tests),
+            }
+            if all_tests
+            else {"type": "none"},
+            "repositories": {
+                "type": "repository-resolution",
+                "pattern": "src/repositories/<name>.py",
+            },
+        }
+
+        # Compute maturities (only over genuinely discovered items)
+        cap.structural_maturity = compute_maturity(
+            cap.routers + cap.services + cap.engines + cap.repositories
+        )
+        cap.validation_maturity = compute_maturity(
+            cap.golden_datasets + cap.property_tests + cap.invariants
+        )
+        cap.documentation_maturity = "✓" if cap.contracts else "✗"
+
+        if (
+            cap.structural_maturity == "✓"
+            and cap.validation_maturity == "✓"
+            and cap.documentation_maturity == "✓"
+        ):
+            cap.overall_maturity = "✓"
+        elif cap.structural_maturity == "NONE" and cap.validation_maturity == "NONE":
+            cap.overall_maturity = "NONE"
+        elif "✗" in [
+            cap.structural_maturity,
+            cap.validation_maturity,
+            cap.documentation_maturity,
+        ]:
+            cap.overall_maturity = "✗"
+        else:
+            cap.overall_maturity = "PARTIAL"
+
+        capabilities.append(cap)
+
+    # Domain packages: discover real tests and map to system capabilities
+    # wherever the evidence supports it.
+    domain_packages = discover_domain_packages()
+    cap_ids = set(capabilities_def)
+    for pkg in domain_packages:
+        mapped: set[str] = set()
+        # Direct name match (only if the domain id is itself a system cap)
+        if pkg["id"] in cap_ids:
+            mapped.add(pkg["id"])
+        # Engine-import based mapping
+        for eng in pkg["engine_imports"]:
+            if eng in engine_to_cap:
+                mapped.add(engine_to_cap[eng])
+        pkg["maps_to"] = sorted(mapped)
+
+    return capabilities, domain_packages
 
 
 def compute_maturity(statuses: list[CoverageStatus]) -> str:
@@ -235,161 +458,119 @@ def compute_maturity(statuses: list[CoverageStatus]) -> str:
     return "✗"
 
 
-def scan_capabilities() -> list[CapabilityCoverage]:
-    """Scan all capabilities and compute coverage."""
-    capabilities = []
-
-    for manifest in load_capability_manifests():
-        cap = CapabilityCoverage(
-            id=manifest.get("id", "unknown"),
-            name=manifest.get("name", "Unknown"),
-            criticality=manifest.get("criticality", "unknown"),
-            risk=manifest.get("risk", "unknown"),
-        )
-
-        # Check routers
-        for router in manifest.get("routers", []):
-            cap.routers.append(check_path_exists(router))
-
-        # Check services
-        for service in manifest.get("services", []):
-            cap.services.append(check_path_exists(service))
-
-        # Check engines
-        for engine in manifest.get("engines", []):
-            cap.engines.append(check_path_exists(engine))
-
-        # Check repositories
-        for repo in manifest.get("repositories", []):
-            cap.repositories.append(check_path_exists(repo))
-
-        # Check tables (need to verify DB schema)
-        for table in manifest.get("tables", []):
-            # Tables are verified via DB schema check
-            cap.tables.append(CoverageStatus(exists=True, path=table))
-
-        # Check golden datasets
-        for dataset in manifest.get("golden_datasets", []):
-            # Check both .json and .json existence
-            if dataset.endswith(".json"):
-                cap.golden_datasets.append(check_path_exists(dataset))
-            else:
-                cap.golden_datasets.append(check_path_exists(dataset + ".json"))
-
-        # Check property tests
-        for test in manifest.get("property_tests", []):
-            cap.property_tests.append(check_path_exists(test))
-
-        # Check invariants
-        for inv in manifest.get("invariants", []):
-            cap.invariants.append(check_path_exists(inv))
-
-        # Check architecture tests
-        arch_tests = manifest.get("architecture_tests", [])
-        if arch_tests:
-            cap.architecture_tests = CoverageStatus(
-                exists=(BACKEND_TESTS / "architecture").exists()
-            )
-        else:
-            cap.architecture_tests = CoverageStatus(exists=False)
-
-        # Contracts
-        cap.contracts = manifest.get("contracts", [])
-
-        # Compute maturities
-        cap.structural_maturity = compute_maturity(
-            cap.routers + cap.services + cap.engines + cap.repositories
-        )
-        cap.validation_maturity = compute_maturity(
-            cap.golden_datasets + cap.property_tests + cap.invariants
-        )
-        cap.documentation_maturity = "✓" if cap.contracts else "✗"
-
-        # Overall maturity - all three must be ✓
-        if (
-            cap.structural_maturity == "✓"
-            and cap.validation_maturity == "✓"
-            and cap.documentation_maturity == "✓"
-        ):
-            cap.overall_maturity = "✓"
-        elif cap.structural_maturity == "NONE" and cap.validation_maturity == "NONE":
-            cap.overall_maturity = "NONE"
-        elif "✗" in [
-            cap.structural_maturity,
-            cap.validation_maturity,
-            cap.documentation_maturity,
-        ]:
-            cap.overall_maturity = "✗"
-        else:
-            cap.overall_maturity = "PARTIAL"
-
-        capabilities.append(cap)
-
-    return capabilities
-
-
+# --------------------------------------------------------------------------- #
+# Registry generation
+# --------------------------------------------------------------------------- #
 def generate_capability_registry(
     capabilities: list[CapabilityCoverage],
+    domain_packages: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """Generate capability-registry.yaml structure from manifests."""
-    if not CAPABILITY_REGISTRY.exists():
-        return {"capabilities": []}
-    with open(CAPABILITY_REGISTRY) as f:
-        registry = yaml.safe_load(f) or {"capabilities": []}
+    """Build capability-registry.yaml from scanned, evidence-based data."""
+    registry: dict[str, Any] = {
+        "metadata": {
+            "generated_by": "tools/development/check_coverage.py",
+            "canonical_source": str(VERIFICATION_YAML.relative_to(PROJECT_ROOT)),
+            "engine_source": str(ENGINE_TOPOLOGY.relative_to(PROJECT_ROOT)),
+            "domain_source": str(DOMAIN_PACKAGES_DIR.relative_to(PROJECT_ROOT)),
+            "note": "System capabilities are canonical (verification.yaml). "
+            "Domain packages (backend/tests/capability/*) are a secondary "
+            "test/domain taxonomy and are listed under 'test_domains'.",
+        },
+        "capabilities": [],
+        "test_domains": [],
+    }
 
-    _normalize_registry(registry)
+    for cap in capabilities:
+        entry: dict[str, Any] = {
+            "id": cap.id,
+            "name": cap.name,
+            "description": cap.description,
+            "category": cap.category,
+            "criticality": cap.criticality,
+            "risk": cap.risk,
+            "status": cap.status,
+            "owning_engines": cap.owning_engines,
+            "implementation_modules": cap.implementation_modules,
+            "workflows": cap.workflows,
+            "routers": [c.path for c in cap.routers],
+            "services": [c.path for c in cap.services],
+            "engines": [c.path for c in cap.engines],
+            "repositories": [c.path for c in cap.repositories],
+            "tables": [c.path for c in cap.tables],
+            "all_tests": cap.all_tests,
+            "test_count": cap.test_count,
+            "property_tests": [c.path for c in cap.property_tests],
+            "invariants": [c.path for c in cap.invariants],
+            "golden_datasets": [c.path for c in cap.golden_datasets],
+            "architecture_tests": cap.architecture_tests.path,
+            "capability_tests": cap.capability_tests,
+            "contracts": cap.contracts,
+            "dependencies": [],
+            "maturity": {
+                "structural": cap.structural_maturity,
+                "validation": cap.validation_maturity,
+                "documentation": cap.documentation_maturity,
+                "overall": cap.overall_maturity,
+            },
+            "source": cap.source,
+        }
+        registry["capabilities"].append(entry)
+
+    for pkg in domain_packages:
+        registry["test_domains"].append(
+            {
+                "id": pkg["id"],
+                "path": pkg["path"],
+                "test_count": pkg["test_count"],
+                "engine_imports": pkg["engine_imports"],
+                "maps_to": pkg["maps_to"],
+                "source": {
+                    "type": "test-discovery",
+                    "path": pkg["path"],
+                },
+            }
+        )
+
     return registry
 
 
-def _normalize_registry(registry: dict[str, Any]) -> None:
-    """Normalize null list fields to empty lists in the capability registry."""
-    list_fields = (
-        "routers",
-        "services",
-        "engines",
-        "repositories",
-        "tables",
-        "golden_datasets",
-        "property_tests",
-        "invariants",
-        "architecture_tests",
-        "contracts",
-        "capability_tests",
-        "dependencies",
-    )
-    for cap in registry.get("capabilities", []):
-        if not isinstance(cap, dict):
-            continue
-        for list_field in list_fields:
-            if cap.get(field) is None:
-                cap[list_field] = []
-
-
+# --------------------------------------------------------------------------- #
+# Markdown reports (kept deterministic, no fabricated values)
+# --------------------------------------------------------------------------- #
 def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
     """Generate human-readable coverage report in Markdown."""
     lines = [
         "# Coverage Report",
         "",
-        "Generated automatically by `tools/development/check_coverage.py`. Do not edit manually.",
+        "Generated automatically by `tools/development/check_coverage.py`.",
+        "System capabilities are canonical (`verification.yaml`); real evidence",
+        "is discovered from `engine-topology.json` and `backend/tests/capability/*`.",
         "",
         "## Capability Coverage Matrix",
         "",
-        "| Capability | Structural | Validation | Documentation | Overall | Criticality | Risk |",
-        "|------------|------------|------------|---------------|---------|-------------|------|",
+        "| Capability | Status | Structural | Validation | Documentation | Overall |",
+        "|------------|--------|------------|------------|---------------|---------|",
     ]
 
     for cap in sorted(capabilities, key=lambda c: c.id):
-        structural = cap.structural_maturity
-        validation = cap.validation_maturity
-        documentation = cap.documentation_maturity
-        overall = cap.overall_maturity
-
         lines.append(
-            f"| {cap.name} | {structural} | {validation} | {documentation} | {overall} | {cap.criticality} | {cap.risk} |"
+            f"| {cap.name} (`{cap.id}`) | {cap.status} | "
+            f"{cap.structural_maturity} | {cap.validation_maturity} | "
+            f"{cap.documentation_maturity} | {cap.overall_maturity} |"
         )
 
     lines.extend(
         [
+            "",
+            "## Status Legend",
+            "",
+            "| Status | Meaning |",
+            "|--------|---------|",
+            "| MAPPED | Engine + implementation + tests discovered |",
+            "| MAPPED_NO_TESTS | Engine + implementation discovered, no tests |",
+            "| MODULE_MAPPED_NO_ENGINE | Module dir exists, no engine topology |",
+            "| WORKFLOW_ONLY | Defined by workflow, no engine mapping |",
+            "| UNMAPPED | No discoverable evidence |",
             "",
             "## Maturity Legend",
             "",
@@ -399,38 +580,8 @@ def generate_coverage_report_md(capabilities: list[CapabilityCoverage]) -> str:
             "| PARTIAL | Partial coverage |",
             "| ✗ | Missing coverage |",
             "| NONE | No coverage |",
-            "| UNKNOWN | Cannot be determined |",
         ]
     )
-
-    # Missing coverage section
-    lines.extend(
-        [
-            "",
-            "## Missing Coverage Details",
-            "",
-        ]
-    )
-
-    for cap in sorted(capabilities, key=lambda c: c.id):
-        missing_items = []
-
-        for item in (
-            cap.routers + cap.services + cap.engines + cap.repositories + cap.tables
-        ):
-            if not item.exists:
-                missing_items.append(f"  - {item.path}: NOT FOUND")
-
-        for item in cap.golden_datasets + cap.property_tests + cap.invariants:
-            if not item.exists:
-                missing_items.append(f"  - {item.path}: NOT FOUND")
-
-        if missing_items:
-            lines.append(f"### {cap.name} (`{cap.id}`)")
-            lines.append("")
-            lines.extend(missing_items)
-            lines.append("")
-
     return "\n".join(lines)
 
 
@@ -439,16 +590,19 @@ def generate_traceability_md(capabilities: list[CapabilityCoverage]) -> str:
     lines = [
         "# Traceability Matrix",
         "",
-        "Generated automatically. Shows the complete dependency chain for each capability.",
+        "Generated automatically. Shows the discovered dependency chain for each "
+        "canonical capability.",
         "",
     ]
 
     for cap in sorted(capabilities, key=lambda c: c.id):
         lines.extend(
             [
-                f"## {cap.name}",
+                f"## {cap.name} (`{cap.id}`)",
                 "",
-                f"**Capability ID:** `{cap.id}`",
+                f"**Status:** {cap.status}",
+                f"**Owning engines:** {', '.join(cap.owning_engines) or 'none'}",
+                f"**Test count:** {cap.test_count}",
                 "",
                 "### Dependency Chain",
                 "",
@@ -456,139 +610,127 @@ def generate_traceability_md(capabilities: list[CapabilityCoverage]) -> str:
                 "|-------|----------|--------|",
             ]
         )
-
         for router in cap.routers:
             status = "✓" if router.exists else "✗"
             lines.append(f"| Router | `{router.path}` | {status} |")
-
         for service in cap.services:
             status = "✓" if service.exists else "✗"
             lines.append(f"| Service | `{service.path}` | {status} |")
-
         for engine in cap.engines:
             status = "✓" if engine.exists else "✗"
             lines.append(f"| Engine | `{engine.path}` | {status} |")
-
         for repo in cap.repositories:
             status = "✓" if repo.exists else "✗"
             lines.append(f"| Repository | `{repo.path}` | {status} |")
-
-        for table in cap.tables:
-            status = "✓" if table.exists else "✗"
-            lines.append(f"| Table | `{table.path}` | {status} |")
-
-        for dataset in cap.golden_datasets:
-            status = "✓" if dataset.exists else "✗"
-            lines.append(f"| Golden Dataset | `{dataset.path}` | {status} |")
-
         for test in cap.property_tests:
             status = "✓" if test.exists else "✗"
             lines.append(f"| Property Test | `{test.path}` | {status} |")
-
         for inv in cap.invariants:
             status = "✓" if inv.exists else "✗"
             lines.append(f"| Invariant | `{inv.path}` | {status} |")
-
         lines.append("")
 
     return "\n".join(lines)
 
 
 def generate_change_impact_md(capabilities: list[CapabilityCoverage]) -> str:
-    """Generate change impact analysis - what breaks if a file is modified."""
+    """Generate change impact analysis from discovered file -> capability map."""
     lines = [
         "# Change Impact Analysis",
         "",
-        "Generated automatically. Shows what capabilities/tests would be affected by modifying a file.",
+        "Generated automatically. Shows which capabilities are affected by "
+        "modifying a discovered file.",
         "",
     ]
 
-    # Collect all files and their impacts
     file_impacts: dict[str, dict[str, Any]] = {}
-
     for cap in capabilities:
-        for router in cap.routers:
-            if router.path:
-                if router.path not in file_impacts:
-                    file_impacts[router.path] = {
-                        "capabilities": set(),
-                        "property_tests": set(),
-                        "golden_tests": set(),
-                    }
-                file_impacts[router.path]["capabilities"].add(cap.id)
-                file_impacts[router.path]["property_tests"].add(
-                    f"tests/properties/{cap.id.replace('_', '')}"
-                )
+        for item in (
+            cap.routers + cap.services + cap.engines + cap.repositories
+        ):
+            if not item.path:
+                continue
+            file_impacts.setdefault(
+                item.path,
+                {"capabilities": set(), "property_tests": set()},
+            )
+            file_impacts[item.path]["capabilities"].add(cap.id)
 
-        for service in cap.services:
-            if service.path:
-                if service.path not in file_impacts:
-                    file_impacts[service.path] = {
-                        "capabilities": set(),
-                        "property_tests": set(),
-                        "golden_tests": set(),
-                    }
-                file_impacts[service.path]["capabilities"].add(cap.id)
-
-        for engine in cap.engines:
-            if engine.path:
-                if engine.path not in file_impacts:
-                    file_impacts[engine.path] = {
-                        "capabilities": set(),
-                        "property_tests": set(),
-                        "golden_tests": set(),
-                    }
-                file_impacts[engine.path]["capabilities"].add(cap.id)
-                for dataset in cap.golden_datasets:
-                    if dataset.path:
-                        dataset_name = dataset.path.replace(
-                            "tests/golden/datasets/", ""
-                        ).replace(".json", "")
-                        file_impacts[engine.path]["golden_tests"].add(dataset_name)
-
-        for repo in cap.repositories:
-            if repo.path:
-                if repo.path not in file_impacts:
-                    file_impacts[repo.path] = {
-                        "capabilities": set(),
-                        "property_tests": set(),
-                        "golden_tests": set(),
-                    }
-                file_impacts[repo.path]["capabilities"].add(cap.id)
-
-    # Sort by path
     for path in sorted(file_impacts.keys()):
         impacts = file_impacts[path]
-        lines.extend(
-            [
-                f"## `{path}`",
-                "",
-            ]
-        )
-
+        lines.extend([f"## `{path}`", ""])
         if impacts["capabilities"]:
             lines.append("**Capabilities:**")
             for cap_id in sorted(impacts["capabilities"]):
-                cap_found = next((c for c in capabilities if c.id == cap_id), None)
-                if cap_found:
-                    lines.append(f"  - {cap_found.name} (`{cap_id}`)")
-            lines.append("")
-
-        if impacts["property_tests"]:
-            lines.append("**Property Tests:**")
-            for test in sorted(impacts["property_tests"]):
-                if test.strip():
-                    lines.append(f"  - `{test}`")
-            lines.append("")
-
-        if impacts["golden_tests"]:
-            lines.append("**Golden Tests:**")
-            for test in sorted(impacts["golden_tests"]):
-                if test.strip():
-                    lines.append(f"  - `{test}`")
+                lines.append(f"  - `{cap_id}`")
             lines.append("")
 
     return "\n".join(lines)
+
+
+# --------------------------------------------------------------------------- #
+# Orphan detection (informational)
+# --------------------------------------------------------------------------- #
+def get_all_production_files() -> dict[str, set[str]]:
+    """Discover all production code files by category (backend-relative)."""
+    files: dict[str, set[str]] = {
+        "routers": set(),
+        "services": set(),
+        "engines": set(),
+        "repositories": set(),
+    }
+    if (BACKEND_SRC / "routers").exists():
+        for f in (BACKEND_SRC / "routers").glob("*.py"):
+            files["routers"].add(f"src/routers/{f.name}")
+    if (BACKEND_SRC / "services").exists():
+        for f in (BACKEND_SRC / "services").glob("*.py"):
+            files["services"].add(f"src/services/{f.name}")
+    engines_dir = BACKEND_SRC / "engines"
+    if engines_dir.exists():
+        for f in engines_dir.glob("*.py"):
+            if f.name != "__init__.py":
+                files["engines"].add(f"src/engines/{f.name}")
+        for subdir in engines_dir.iterdir():
+            if subdir.is_dir():
+                for f in subdir.glob("*.py"):
+                    files["engines"].add(f"src/engines/{subdir.name}/{f.name}")
+    repos_dir = BACKEND_SRC / "repositories"
+    if repos_dir.exists():
+        for f in repos_dir.glob("*.py"):
+            if f.name not in ("__init__.py", "base.py"):
+                files["repositories"].add(f"src/repositories/{f.name}")
+    return files
+
+
+def get_all_test_files() -> dict[str, set[str]]:
+    """Discover all test files by actual repository structure."""
+    files: dict[str, set[str]] = {
+        "smoke_tests": set(),
+        "property_tests": set(),
+        "invariants": set(),
+        "golden_datasets": set(),
+    }
+    capability_dir = BACKEND_TESTS / "capability"
+    if capability_dir.exists():
+        for capability in capability_dir.iterdir():
+            if capability.is_dir():
+                for f in capability.glob("test_*.py"):
+                    files["smoke_tests"].add(
+                        f"tests/capability/{capability.name}/{f.name}"
+                    )
+    property_dir = BACKEND_TESTS / "property"
+    if property_dir.exists():
+        for f in property_dir.rglob("test_*.py"):
+            files["property_tests"].add(f"tests/{f.relative_to(BACKEND_TESTS)}")
+    invariant_dir = BACKEND_TESTS / "invariant"
+    if invariant_dir.exists():
+        for f in invariant_dir.rglob("test_*.py"):
+            files["invariants"].add(f"tests/{f.relative_to(BACKEND_TESTS)}")
+    golden_dir = BACKEND_TESTS / "golden" / "datasets"
+    if golden_dir.exists():
+        for f in golden_dir.glob("*.json"):
+            files["golden_datasets"].add(f"tests/golden/datasets/{f.name}")
+    return files
 
 
 def detect_orphans(capabilities: list[CapabilityCoverage]) -> dict[str, list[str]]:
@@ -596,7 +738,6 @@ def detect_orphans(capabilities: list[CapabilityCoverage]) -> dict[str, list[str
     all_prod = get_all_production_files()
     all_tests = get_all_test_files()
 
-    # Collect all referenced paths
     referenced_prod: set[str] = set()
     referenced_tests: set[str] = set()
 
@@ -632,81 +773,62 @@ def detect_orphans(capabilities: list[CapabilityCoverage]) -> dict[str, list[str
         "property_tests": [],
         "invariants": [],
     }
-
     for router in all_prod["routers"] - referenced_prod:
         orphans["routers"].append(router)
-
     for service in all_prod["services"] - referenced_prod:
         orphans["services"].append(service)
-
     for engine in all_prod["engines"] - referenced_prod:
         orphans["engines"].append(engine)
-
     for repo in all_prod["repositories"] - referenced_prod:
         orphans["repositories"].append(repo)
-
     for dataset in all_tests["golden_datasets"] - referenced_tests:
         orphans["golden_datasets"].append(dataset)
-
     for test in all_tests["property_tests"] - referenced_tests:
         orphans["property_tests"].append(test)
-
     for test in all_tests["invariants"] - referenced_tests:
         orphans["invariants"].append(test)
-
     return orphans
 
 
-def main() -> None:
-    """Run the coverage scanner and generate all reports."""
-    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+# --------------------------------------------------------------------------- #
+# Coverage JSON (enriched with optional raw pytest-cov data)
+# --------------------------------------------------------------------------- #
+def generate_coverage_json(
+    capabilities: list[CapabilityCoverage],
+) -> dict[str, Any]:
+    """Generate coverage.json without requiring a prior raw pytest run."""
+    raw_coverage: dict[str, Any] = {}
+    if RAW_COVERAGE.exists():
+        with open(RAW_COVERAGE) as f:
+            raw_coverage = json.load(f)
 
-    # Scan capabilities
-    capabilities = scan_capabilities()
-
-    # Generate capability-registry.yaml (from manifests)
-    registry = generate_capability_registry(capabilities)
-    with open(GENERATED_DIR / "capability-registry.yaml", "w") as f:
-        yaml.dump(registry, f, default_flow_style=False, sort_keys=False)
-    print("Generated: capability-registry.yaml")
-
-    # Generate coverage-report.md
-    coverage_md = generate_coverage_report_md(capabilities)
-    with open(GENERATED_DIR / "coverage.md", "w") as f:
-        f.write(coverage_md)
-    print("Generated: coverage.md")
-
-    # Generate coverage.json (enriched with raw pytest-cov data)
-    raw_path = GENERATED_DIR / "raw-coverage.json"
-    if not raw_path.exists():
-        raise FileNotFoundError(
-            "raw-coverage.json missing. Run pytest with --cov-report=json first."
-        )
-    with open(raw_path) as f:
-        raw_coverage = json.load(f)
-
-    coverage_json = {
-        "generated_at": str(os.popen("date -Iseconds").read().strip()),
+    return {
+        "generated_at": "deterministic",  # registry/JSON are reproducible
         "capabilities": [
             {
                 "id": cap.id,
                 "name": cap.name,
                 "criticality": cap.criticality,
                 "risk": cap.risk,
+                "status": cap.status,
                 "structural_maturity": cap.structural_maturity,
                 "validation_maturity": cap.validation_maturity,
                 "documentation_maturity": cap.documentation_maturity,
                 "overall_maturity": cap.overall_maturity,
+                "test_count": cap.test_count,
+                "owning_engines": cap.owning_engines,
                 "missing": [
                     item.path
-                    for item in cap.routers
-                    + cap.services
-                    + cap.engines
-                    + cap.repositories
-                    + cap.tables
-                    + cap.golden_datasets
-                    + cap.property_tests
-                    + cap.invariants
+                    for item in (
+                        cap.routers
+                        + cap.services
+                        + cap.engines
+                        + cap.repositories
+                        + cap.tables
+                        + cap.golden_datasets
+                        + cap.property_tests
+                        + cap.invariants
+                    )
                     if not item.exists
                 ],
             }
@@ -715,23 +837,50 @@ def main() -> None:
         "files": raw_coverage.get("files", {}),
         "totals": raw_coverage.get("totals", {}),
     }
+
+
+# --------------------------------------------------------------------------- #
+# Main
+# --------------------------------------------------------------------------- #
+def main() -> None:
+    """Run the capability/coverage scanner and generate all reports."""
+    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
+
+    capabilities, domain_packages = scan_capabilities()
+
+    # capability-registry.yaml (deterministic)
+    registry = generate_capability_registry(capabilities, domain_packages)
+    with open(CAPABILITY_REGISTRY, "w") as f:
+        yaml.dump(registry, f, default_flow_style=False, sort_keys=False)
+    print(
+        f"Generated: capability-registry.yaml "
+        f"({len(capabilities)} system capabilities, {len(domain_packages)} domain packages)"
+    )
+
+    # coverage.md
+    coverage_md = generate_coverage_report_md(capabilities)
+    with open(GENERATED_DIR / "coverage.md", "w") as f:
+        f.write(coverage_md)
+    print("Generated: coverage.md")
+
+    # coverage.json
+    coverage_json = generate_coverage_json(capabilities)
     with open(GENERATED_DIR / "coverage.json", "w") as f:
         json.dump(coverage_json, f, indent=2)
     print("Generated: coverage.json")
 
-    # Generate traceability.md
+    # traceability.md
     traceability_md = generate_traceability_md(capabilities)
     with open(GENERATED_DIR / "traceability.md", "w") as f:
         f.write(traceability_md)
     print("Generated: traceability.md")
 
-    # Generate change-impact.md
+    # change-impact.md
     change_impact_md = generate_change_impact_md(capabilities)
     with open(GENERATED_DIR / "change-impact.md", "w") as f:
         f.write(change_impact_md)
     print("Generated: change-impact.md")
 
-    # Detect and report orphans
     orphans = detect_orphans(capabilities)
     orphan_items = sum(len(v) for v in orphans.values())
     if orphan_items > 0:

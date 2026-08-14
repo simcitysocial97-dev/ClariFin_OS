@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # This script is automatically run by Cline after every change. All failures must be fixed before commit.
+#
+# M10: routes ALL tooling through the single repository venv (./.venv) so no
+# project verification depends on globally installed Python packages. Falls back
+# to PATH only if the venv has not been bootstrapped yet (loudly).
 
 START=$(date +%s)
 
@@ -10,29 +14,32 @@ BACKEND_DIR="$ROOT_DIR/backend"
 echo "=== Running verify-fast ==="
 echo "Backend dir: $BACKEND_DIR"
 
-# Activate venv if available
-if [ -d "$BACKEND_DIR/venv" ]; then
-    source "$BACKEND_DIR/venv/bin/activate"
-elif [ -d "$BACKEND_DIR/.venv" ]; then
-    source "$BACKEND_DIR/.venv/bin/activate"
-elif [ -d "$ROOT_DIR/.venv" ]; then
-    source "$ROOT_DIR/.venv/bin/activate"
+# Resolve the controlled interpreter: ./venv/bin/python (single repo venv).
+if [ -x "$ROOT_DIR/.venv/bin/python" ]; then
+    PY="$ROOT_DIR/.venv/bin/python"
+    export PATH="$ROOT_DIR/.venv/bin:$PATH"
+elif [ -x "$BACKEND_DIR/.venv/bin/python" ]; then
+    # Legacy backend venv — tolerated but NOT the M10 target. Bootstrap rebuilds.
+    PY="$BACKEND_DIR/.venv/bin/python"
+    export PATH="$BACKEND_DIR/.venv/bin:$PATH"
+else
+    echo "WARNING: no ./.venv found — run scripts/bootstrap.sh. Using PATH fallback." >&2
+    PY="$(command -v python3 || command -v python)"
 fi
+
+echo "Controlled interpreter: $PY"
+"$PY" --version
 
 cd "$BACKEND_DIR"
 
 echo "[Stage] ruff check --fix"
-ruff check src/ --fix
+"$PY" -m ruff check src/ --fix
 
 echo "[Stage] ruff format --check"
-ruff format --check src/
+"$PY" -m ruff format --check src/
 
-echo "[Stage] pyright"
-if command -v pyright >/dev/null 2>&1; then
-    pyright src/
-else
-    echo "[Fallback] mypy"
-    mypy src/
-fi
+echo "[Stage] mypy (backend strict)"
+"$PY" -m mypy src/
 
 echo "Completed in $(( $(date +%s)-START )) seconds"
+

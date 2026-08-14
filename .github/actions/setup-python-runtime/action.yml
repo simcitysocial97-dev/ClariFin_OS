@@ -29,7 +29,7 @@ runs:
       with:
         path: ~/.cache/pip
         key: |
-          pip-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles('pyproject.toml', 'backend/requirements*.txt', 'backend/pyproject.toml') }}
+          pip-${{ runner.os }}-py${{ inputs.python-version }}-${{ hashFiles('pyproject.toml') }}
         restore-keys: |
           pip-${{ runner.os }}-py${{ inputs.python-version }}-
           pip-${{ runner.os }}-
@@ -41,36 +41,19 @@ runs:
         pip config set global.timeout 300
         pip config set global.retries 10
 
-    - name: Install runtime package (editable)
+    # M10: single dependency authority. The root pyproject.toml declares ALL
+    # repository dependencies (runtime + backend + verification tooling).
+    # LOCAL bootstrap (scripts/bootstrap.sh) and CI consume the SAME contract,
+    # so CI can never silently define a different project.
+    - name: Install ClariFin_OS (canonical dependency authority)
       shell: bash
       run: |
-        pip install --timeout 300 --retries 10 -e . 2>/dev/null || pip install --timeout 300 --retries 10 -e .
-
-    - name: Install backend dependencies
-      shell: bash
-      run: |
-        if [ -f backend/requirements.txt ]; then
-          pip install --timeout 300 --retries 10 -r backend/requirements.txt
-        elif [ -f backend/pyproject.toml ]; then
-          pip install --timeout 300 --retries 10 -e backend/ 2>/dev/null || true
-        fi
-
-    - name: Install verification tooling
-      shell: bash
-      run: |
-        pip install --timeout 300 --retries 10 \
-          ruff \
-          black \
-          mypy \
-          coverage \
-          pytest-xdist \
-          pytest-timeout \
-          hypothesis
+        python -m pip install --timeout 300 --retries 10 -e ".[all]"
 
     - name: Verify environment
       shell: bash
       run: |
         python --version
-        pytest --version
+        python -m pytest --version
         python runtime/verify.py 2>/dev/null || true
         echo "Environment ready"

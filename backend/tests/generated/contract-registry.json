@@ -44,8 +44,7 @@
           "request_schema": {},
           "response_schema": {
             "items": {
-              "additionalProperties": true,
-              "type": "object"
+              "$ref": "#/components/schemas/AccountDetailDTO"
             },
             "type": "array",
             "title": "Response List Accounts Api V1 Accounts Get"
@@ -75,9 +74,7 @@
           "path": "/api/v1/accounts/{account_id}",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Account Api V1 Accounts  Account Id  Get"
+            "$ref": "#/components/schemas/AccountDetailDTO"
           },
           "status_codes": [
             "200",
@@ -137,8 +134,7 @@
           "response_schema": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "$ref": "#/components/schemas/BalanceSnapshotDTO"
             },
             "title": "Response Get Balance History Api V1 Accounts  Account Id  Balance History Get"
           },
@@ -152,9 +148,7 @@
           "path": "/api/v1/accounts/{account_id}/balance-history/latest",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Latest Balance Api V1 Accounts  Account Id  Balance History Latest Get"
+            "$ref": "#/components/schemas/BalanceSnapshotDTO"
           },
           "status_codes": [
             "200",
@@ -166,9 +160,7 @@
           "path": "/api/v1/accounts/{account_id}/analytics",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Account Analytics Api V1 Accounts  Account Id  Analytics Get"
+            "$ref": "#/components/schemas/AccountAnalyticsDTO"
           },
           "status_codes": [
             "200",
@@ -225,8 +217,7 @@
           "request_schema": {},
           "response_schema": {
             "items": {
-              "additionalProperties": true,
-              "type": "object"
+              "$ref": "#/components/schemas/InstitutionDTO"
             },
             "type": "array",
             "title": "Response List Institutions Api V1 Institutions Get"
@@ -256,9 +247,7 @@
           "path": "/api/v1/institutions/{institution_id}",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Institution Api V1 Institutions  Institution Id  Get"
+            "$ref": "#/components/schemas/InstitutionDTO"
           },
           "status_codes": [
             "200",
@@ -304,8 +293,7 @@
           "response_schema": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "$ref": "#/components/schemas/AccountLinkDTO"
             },
             "title": "Response Get Linked Accounts Api V1 Accounts  Account Id  Links Get"
           },
@@ -466,9 +454,7 @@
           "path": "/api/v1/behaviour/profile",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Financial Profile Api V1 Behaviour Profile Get"
+            "$ref": "#/components/schemas/FinancialProfileResponse"
           },
           "status_codes": [
             "200",
@@ -480,9 +466,7 @@
           "path": "/api/v1/behaviour/wellness-score",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Wellness Score Api V1 Behaviour Wellness Score Get"
+            "$ref": "#/components/schemas/WellnessScoreResponse"
           },
           "status_codes": [
             "200",
@@ -494,9 +478,7 @@
           "path": "/api/v1/behaviour/debt-health",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Debt Health Api V1 Behaviour Debt Health Get"
+            "$ref": "#/components/schemas/DebtHealthResponse"
           },
           "status_codes": [
             "200",
@@ -508,9 +490,7 @@
           "path": "/api/v1/behaviour/cashflow-health",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Cashflow Health Api V1 Behaviour Cashflow Health Get"
+            "$ref": "#/components/schemas/CashflowHealthResponse"
           },
           "status_codes": [
             "200",
@@ -539,9 +519,7 @@
           "path": "/api/v1/behaviour/recommendations",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Recommendations Api V1 Behaviour Recommendations Get"
+            "$ref": "#/components/schemas/RecommendationsResponse"
           },
           "status_codes": [
             "200",
@@ -553,9 +531,7 @@
           "path": "/api/v1/behaviour/monthly-report",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Monthly Report Api V1 Behaviour Monthly Report Get"
+            "$ref": "#/components/schemas/MonthlySummaryResponse"
           },
           "status_codes": [
             "200",
@@ -674,9 +650,7 @@
           "path": "/api/v1/credit-cards/{card_id}",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Card Api V1 Credit Cards  Card Id  Get"
+            "$ref": "#/components/schemas/CreditCardSummaryDTO"
           },
           "status_codes": [
             "200",
@@ -720,8 +694,7 @@
           "response_schema": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true
+              "$ref": "#/components/schemas/StatementDTO"
             },
             "title": "Response List Statements Api V1 Credit Cards  Card Id  Statements Get"
           },
@@ -737,9 +710,7 @@
             "$ref": "#/components/schemas/StatementGenerateRequest"
           },
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Generate Statement Api V1 Credit Cards  Card Id  Statements Post"
+            "$ref": "#/components/schemas/StatementDTO"
           },
           "status_codes": [
             "200",
@@ -817,9 +788,7 @@
             "$ref": "#/components/schemas/PaymentRecordRequest"
           },
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Record Payment Api V1 Credit Cards  Card Id  Payments Post"
+            "$ref": "#/components/schemas/StatementDTO"
           },
           "status_codes": [
             "200",
@@ -833,11 +802,7 @@
             "$ref": "#/components/schemas/EmiConversionRequest"
           },
           "response_schema": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "title": "Response Convert To Emi Api V1 Credit Cards  Card Id  Emi Conversion Post"
+            "$ref": "#/components/schemas/EmiConversionDTO"
           },
           "status_codes": [
             "200",
@@ -851,11 +816,7 @@
             "$ref": "#/components/schemas/ForeclosureRequest"
           },
           "response_schema": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "integer"
-            },
-            "title": "Response Quote Foreclosure Api V1 Credit Cards  Card Id  Foreclosure Post"
+            "$ref": "#/components/schemas/ForeclosureDTO"
           },
           "status_codes": [
             "200",
@@ -958,7 +919,8 @@
           "path": "/api/export/csv",
           "request_schema": {},
           "response_schema": {
-            "$ref": "#/components/schemas/HTTPValidationError"
+            "type": "string",
+            "title": "Response Export Csv Api Export Csv Get"
           },
           "status_codes": [
             "200",
@@ -1020,6 +982,123 @@
       ],
       "capability": "unknown"
     },
+    "financial_intelligence": {
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/cashflow-forecast",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Cashflow Forecast Api V1 Financial Intelligence Cashflow Forecast Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/liquidity-forecast",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Liquidity Forecast Api V1 Financial Intelligence Liquidity Forecast Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/credit-forecast",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Credit Forecast Api V1 Financial Intelligence Credit Forecast Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/outlook",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Financial Outlook Api V1 Financial Intelligence Outlook Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/report",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Financial Intelligence Report Api V1 Financial Intelligence Report Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/priorities",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Financial Intelligence Priorities Api V1 Financial Intelligence Priorities Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/recommendations",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Financial Recommendations Api V1 Financial Intelligence Recommendations Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/financial-intelligence/recommendations/{recommendation_id}",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Recommendation Details Api V1 Financial Intelligence Recommendations  Recommendation Id  Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        }
+      ],
+      "capability": "unknown"
+    },
     "forecast": {
       "endpoints": [
         {
@@ -1027,9 +1106,7 @@
           "path": "/api/v1/forecast",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Get Forecast Api V1 Forecast Get"
+            "$ref": "#/components/schemas/ForecastDTO"
           },
           "status_codes": [
             "200",
@@ -1095,9 +1172,7 @@
           "path": "/api/investments",
           "request_schema": {},
           "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Get Investments Api Investments Get"
+            "$ref": "#/components/schemas/InvestmentsDTO"
           },
           "status_codes": [
             "200"
@@ -1425,6 +1500,50 @@
             "200",
             "422"
           ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/members/{member_id}",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Get Member By Id Api Members  Member Id  Get"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/api/members/{member_id}",
+          "request_schema": {
+            "$ref": "#/components/schemas/MemberUpdate"
+          },
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Update Member Api Members  Member Id  Put"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/members/{member_id}",
+          "request_schema": {},
+          "response_schema": {
+            "type": "object",
+            "additionalProperties": true,
+            "title": "Response Delete Member Api Members  Member Id  Delete"
+          },
+          "status_codes": [
+            "200",
+            "422"
+          ]
         }
       ],
       "capability": "unknown"
@@ -1436,9 +1555,7 @@
           "path": "/api/networth",
           "request_schema": {},
           "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Get Networth Api Networth Get"
+            "$ref": "#/components/schemas/NetWorthDTO"
           },
           "status_codes": [
             "200"
@@ -1473,9 +1590,7 @@
           "path": "/api/reconciliations",
           "request_schema": {},
           "response_schema": {
-            "type": "object",
-            "additionalProperties": true,
-            "title": "Response Api Get Reconciliations Api Reconciliations Get"
+            "$ref": "#/components/schemas/ReconciliationDTO"
           },
           "status_codes": [
             "200",
@@ -1487,9 +1602,7 @@
           "path": "/api/reconciliations/pending",
           "request_schema": {},
           "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Api Get Pending Reconciliations Api Reconciliations Pending Get"
+            "$ref": "#/components/schemas/ReconciliationDTO"
           },
           "status_codes": [
             "200"
@@ -1500,9 +1613,7 @@
           "path": "/api/reconciliations/scan",
           "request_schema": {},
           "response_schema": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Response Api Scan Reconciliations Api Reconciliations Scan Get"
+            "$ref": "#/components/schemas/ReconciliationDTO"
           },
           "status_codes": [
             "200"
@@ -1650,5 +1761,5 @@
       "capability": "unknown"
     }
   },
-  "generated_at": "ae0e7a00848455e9"
+  "generated_at": "c73d5d16d121f580"
 }
