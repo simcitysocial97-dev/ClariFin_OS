@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-14T02:16:08.713745+00:00",
+  "indexed_at": "2026-08-14T11:37:36.374274+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -9667,6 +9667,16 @@
         ]
       },
       {
+        "title": "M10_ENVIRONMENT_DEPENDENCIES",
+        "path": "docs/decisions/M10_ENVIRONMENT_DEPENDENCIES.md",
+        "references": {
+          "path": "docs/decisions/M10_ENVIRONMENT_DEPENDENCIES.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "frontend-capability-report",
         "path": "docs/frontend-capability-report.md",
         "references": {
@@ -10359,6 +10369,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 183
+    "documentation": 184
   }
 }
