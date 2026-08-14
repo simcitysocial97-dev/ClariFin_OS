@@ -15,8 +15,8 @@ import sys
 from pathlib import Path
 from typing import Any, cast
 
-BACKEND_DIR = Path(__file__).parent.parent  # backend/
-PROJECT_ROOT = BACKEND_DIR.parent  # project root
+PROJECT_ROOT = Path(__file__).parent.parent.parent  # repository root
+BACKEND_DIR = PROJECT_ROOT / "backend"
 GENERATED_DIR = PROJECT_ROOT / "backend" / "tests" / "generated"
 
 sys.path.insert(0, str(BACKEND_DIR))

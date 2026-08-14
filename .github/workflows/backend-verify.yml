@@ -47,6 +47,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "20"
+          working-directory: "frontend"
+
       - name: Run backend verification
         run: python runtime/verify.py backend
 

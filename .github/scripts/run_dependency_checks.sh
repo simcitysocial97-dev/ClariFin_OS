@@ -18,10 +18,14 @@ mkdir -p dependency-reports
 # ── Python dependency audit ───────────────────────
 echo -e "\n[1/2] Python dependency security audit..."
 pip install --quiet pip-audit 2>/dev/null || true
-if [ -f backend/requirements.txt ]; then
-  pip-audit -r backend/requirements.txt 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
+# M10: the single dependency authority is root pyproject.toml (no more
+# backend/requirements.txt). Audit the resolved environment lock/deps directly.
+if [ -f requirements.lock ]; then
+  pip-audit -r requirements.lock 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
+elif [ -f pyproject.toml ]; then
+  pip-audit 2>&1 | tee dependency-reports/python-audit.txt || echo "python audit completed with findings"
 else
-  echo "No backend/requirements.txt — skipping pip-audit" > dependency-reports/python-audit.txt
+  echo "No dependency authority found — skipping pip-audit" > dependency-reports/python-audit.txt
 fi
 
 # ── Node dependency audit ─────────────────────────
