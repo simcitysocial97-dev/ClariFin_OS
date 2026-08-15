@@ -651,6 +651,7 @@ class VerificationOrchestrator:
         map_path: Path | None = None,
         overall_timeout: int = 7200,
         log_callback: Any | None = None,
+        per_step_timeout: int = 3600,
     ):
         """Initialise the orchestrator.
 
@@ -659,7 +660,10 @@ class VerificationOrchestrator:
         line of subprocess output so the caller can stream progress to stdout /
         CI log instead of waiting for the subprocess to exit (the original
         ``capture_output=True`` behaviour that caused the M9-C5 hang to appear
-        as a hard stall).
+        as a hard stall).  ``per_step_timeout`` is the hard ceiling applied to
+        each individual subprocess (default 1 h); M9-C8 raises it so the
+        bounded per-project Playwright matrix job is not killed before the
+        GitHub job window elapses.
         """
         self._profile = profile or get_profile("quick")
         self._repo_root = repo_root or _find_repo_root()
@@ -667,6 +671,7 @@ class VerificationOrchestrator:
         self._executor = Executor(
             repo_root=self._repo_root,
             log_callback=log_callback,
+            per_step_timeout=per_step_timeout,
         )
         self._aggregator = EvidenceAggregator(self._repo_root)
         self._map_path = map_path

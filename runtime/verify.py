@@ -1207,7 +1207,21 @@ def main() -> int:
     )
     print(f"Changed files: {len(changed_files)}", file=sys.stderr)
 
-    orchestrator = VerificationOrchestrator(profile=profile)
+    # M9-C8 (observable logs): stream every subprocess output line to stdout so
+    # the CI log shows Playwright progress in real time instead of appearing
+    # hung. The Executor tees each line through this callback as it is produced.
+    def _stream_log(line: str) -> None:
+        print(line, end="", flush=True)
+
+    # M9-C8 (bounded runtime): the per-project Playwright job is sharded across a
+    # matrix, so each bash step may run one full project (232 tests). Give the
+    # step a 90-minute ceiling that matches the GitHub job window so a long but
+    # legitimate run is never killed prematurely by the executor.
+    orchestrator = VerificationOrchestrator(
+        profile=profile,
+        log_callback=_stream_log,
+        per_step_timeout=5400,
+    )
 
     import time
 

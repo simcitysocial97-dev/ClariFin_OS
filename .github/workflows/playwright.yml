@@ -41,9 +41,23 @@ permissions:
 
 jobs:
   test:
-    name: E2E Tests
+    name: E2E Tests (${{ matrix.project }})
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # M9-C8: each matrix job runs exactly one Playwright project (a bounded,
+    # full-coverage slice of the six-project matrix) in parallel, so the runtime
+    # of any single job stays well inside this window instead of serialising the
+    # entire 1,392-test matrix.
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - chromium
+          - firefox
+          - webkit
+          - mobile-chrome
+          - mobile-safari
+          - tablet
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -68,54 +82,56 @@ jobs:
           browsers: chromium firefox webkit
 
       - name: Run playwright verification
+        env:
+          PLAYWRIGHT_PROJECT: ${{ matrix.project }}
         run: python runtime/verify.py playwright
 
       - name: Upload shared artifact — cross-layer-map
         uses: ./.github/actions/upload-runtime
         with:
-          name: cross-layer-map
+          name: cross-layer-map-${{ matrix.project }}
           path: runtime/generated/cross-layer-map.json
           retention-days: 14
 
       - name: Upload shared artifact — knowledge-index
         uses: ./.github/actions/upload-runtime
         with:
-          name: knowledge-index
+          name: knowledge-index-${{ matrix.project }}
           path: runtime/generated/knowledge-index.json
           retention-days: 14
 
       - name: Upload shared artifact — verification-cache
         uses: ./.github/actions/upload-runtime
         with:
-          name: verification-cache
+          name: verification-cache-${{ matrix.project }}
           path: runtime/generated/verification-cache.json
           retention-days: 14
 
       - name: Upload shared artifact — engineering-history
         uses: ./.github/actions/upload-runtime
         with:
-          name: engineering-history
+          name: engineering-history-${{ matrix.project }}
           path: runtime/generated/engineering-history.json
           retention-days: 14
 
       - name: Upload playwright report
         uses: ./.github/actions/upload-runtime
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.project }}
           path: frontend/playwright-report/
           retention-days: 30
 
       - name: Upload playwright evidence
         uses: ./.github/actions/upload-runtime
         with:
-          name: playwright-evidence
+          name: playwright-evidence-${{ matrix.project }}
           path: frontend/test-results/
           retention-days: 30
 
       - name: Job Summary
         if: always()
         run: |
-          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
         shell: bash

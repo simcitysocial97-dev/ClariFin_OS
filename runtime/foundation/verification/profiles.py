@@ -416,7 +416,16 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         id="playwright-e2e",
         name="Playwright end-to-end tests",
         profile="playwright",
-        commands=["cd frontend && npx playwright test"],
+        # M9-C8: (1) build the frontend first so the Playwright webServer can
+        # serve dist/ (the profile path previously skipped the build, leaving the
+        # webServer unable to start in CI); (2) when PLAYWRIGHT_PROJECT is set
+        # (CI matrix shard) run only that project so each job is a bounded,
+        # full-coverage slice of the matrix rather than the entire 1,392-test
+        # serialised run.
+        commands=[
+            "cd frontend && npm run build && npx playwright test "
+            "${PLAYWRIGHT_PROJECT:+--project=\"$PLAYWRIGHT_PROJECT\"}"
+        ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,
         estimated_duration_seconds=1800,
