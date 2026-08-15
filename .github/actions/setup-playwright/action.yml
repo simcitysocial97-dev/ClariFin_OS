@@ -22,7 +22,9 @@ runs:
       # identity for the installed browser set.
       run: |
         SANITIZED="${{ inputs.browsers }}"
-        SANITIZED="${SANITIZED//,/-}"
+        # Replace commas AND spaces with hyphens so the cache key is valid
+        # for either "chromium,firefox,webkit" or "chromium firefox webkit".
+        SANITIZED="${SANITIZED//[, ]/-}"
         echo "key=${SANITIZED}" >> "$GITHUB_OUTPUT"
 
     - name: Cache Playwright browsers
