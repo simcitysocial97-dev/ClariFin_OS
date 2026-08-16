@@ -1,0 +1,561 @@
+{
+  "schema": "engineering-platform-audit/v5",
+  "program": "14.1 \u2014 Eliminate Legacy Intelligence & Complete Constitutional Migration",
+  "generated_at": "2026-08-06T15:11:32.447623+00:00",
+  "certification_status": "CERTIFIED",
+  "intelligence_checks": [
+    {
+      "id": "P14-001",
+      "name": "No duplicated discovery",
+      "status": "pass",
+      "detail": "no intelligence module imports the discovery pipeline or walks the filesystem for production code",
+      "evidence": {
+        "modules_scanned": [
+          "resolver.py",
+          "change.py",
+          "blast.py",
+          "optimizer.py",
+          "risk.py",
+          "repair.py",
+          "state.py",
+          "cost.py"
+        ],
+        "forbidden_imports": [
+          "architecture.discovery",
+          "architecture.sources",
+          "repository.scanner",
+          "build_cross_layer_map"
+        ],
+        "forbidden_scans": [
+          "os.walk",
+          "rglob(",
+          "iglob(",
+          "glob.glob"
+        ],
+        "violations": []
+      }
+    },
+    {
+      "id": "P14-002",
+      "name": "All intelligence consumes the canonical provider",
+      "status": "pass",
+      "detail": "6 intelligence modules resolve architecture through the canonical provider via the shared resolver",
+      "evidence": {
+        "provider_consumers": [
+          "change.py",
+          "blast.py",
+          "optimizer.py",
+          "risk.py",
+          "repair.py",
+          "state.py"
+        ],
+        "non_consumers": [],
+        "resolver_imports_provider": true
+      }
+    },
+    {
+      "id": "P14-003",
+      "name": "No backend/frontend production code modified",
+      "status": "pass",
+      "detail": "no file under backend/src/ or frontend/ was modified",
+      "evidence": {
+        "changed_file_count": 42,
+        "production_files_changed": [],
+        "scopes_checked": [
+          "backend/src/",
+          "frontend/"
+        ]
+      }
+    },
+    {
+      "id": "P14-004",
+      "name": "Runtime remains deterministic",
+      "status": "pass",
+      "detail": "two consecutive intelligence runs produced byte-identical output (excluding timestamps)",
+      "evidence": {
+        "artifacts_compared": [
+          "change-intelligence.json",
+          "blast-radius.json",
+          "verification-plan.json",
+          "engineering-risk.json",
+          "repair-intelligence.json",
+          "engineering-memory.json",
+          "github-intelligence.json",
+          "verification-cost.json",
+          "platform-state.json"
+        ],
+        "volatile_keys_excluded": [
+          "as_of",
+          "generated_at",
+          "indexed_at",
+          "timestamp"
+        ],
+        "differing_artifacts": []
+      }
+    },
+    {
+      "id": "P14-005",
+      "name": "No verification logic weakened",
+      "status": "pass",
+      "detail": "all 7 skipped suites carry an explicit evidence-based justification; no existing suite definition changed",
+      "evidence": {
+        "skipped": [
+          {
+            "id": "unit-targeted",
+            "category": "unit",
+            "reason": "no impacted engine has provider-recorded tests",
+            "justification": "blast radius contains no engine with tests"
+          },
+          {
+            "id": "contracts-schemathesis",
+            "category": "contract",
+            "reason": "no endpoint impacted",
+            "justification": "blast radius contains 0 entities of kind 'endpoint'"
+          },
+          {
+            "id": "backend-integration",
+            "category": "integration",
+            "reason": "no router, service or repository impacted",
+            "justification": "blast radius contains no backend wiring entities"
+          },
+          {
+            "id": "frontend-unit",
+            "category": "frontend",
+            "reason": "no frontend file impacted",
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=0 but none map to files"
+          },
+          {
+            "id": "playwright-e2e",
+            "category": "e2e",
+            "reason": "no workspace impacted",
+            "justification": "blast radius contains 0 entities of kind 'workspace'"
+          },
+          {
+            "id": "mutation-run",
+            "category": "mutation",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          },
+          {
+            "id": "golden-regression",
+            "category": "golden",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          }
+        ],
+        "selected": [
+          "runtime-self-test"
+        ],
+        "unjustified": []
+      }
+    },
+    {
+      "id": "P14-006",
+      "name": "Blast radius is evidence-backed",
+      "status": "pass",
+      "detail": "all 0 indirectly impacted entities record the graph, source node and relation that justified them",
+      "evidence": {
+        "indirect_count": 0,
+        "graphs": [
+          "dependency",
+          "execution",
+          "ownership"
+        ],
+        "missing_evidence": []
+      }
+    },
+    {
+      "id": "P14-007",
+      "name": "GitHub integration retrieves structured evidence before logs",
+      "status": "pass",
+      "detail": "CI intelligence collects run metadata, failed jobs, failed steps and annotations first; failed-step logs are opt-in and full log archives are never downloaded",
+      "evidence": {
+        "downloads_full_archive": false,
+        "logs_gated_by_flag": true,
+        "structured_metadata_first": true
+      }
+    },
+    {
+      "id": "P14-008",
+      "name": "All Program 14 deliverables generated",
+      "status": "pass",
+      "detail": "all 9 intelligence artifacts exist",
+      "evidence": {
+        "expected": [
+          "change-intelligence.json",
+          "blast-radius.json",
+          "verification-plan.json",
+          "engineering-risk.json",
+          "repair-intelligence.json",
+          "engineering-memory.json",
+          "github-intelligence.json",
+          "verification-cost.json",
+          "platform-state.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "P14-009",
+      "name": "Intelligence artifacts have registered ownership",
+      "status": "pass",
+      "detail": "every Program 14 artifact has a registered owner and retention policy",
+      "evidence": {
+        "unowned": [],
+        "unretained": []
+      }
+    },
+    {
+      "id": "P14.1-001",
+      "name": "Legacy intelligence modules eliminated",
+      "status": "pass",
+      "detail": "no legacy module (affected.py, diagnostics.py, risk.py, repair.py, formatter.py, models.py) remains in the intelligence package",
+      "evidence": {
+        "legacy_modules": [
+          "affected.py",
+          "diagnostics.py",
+          "risk.py",
+          "repair.py",
+          "formatter.py",
+          "models.py"
+        ],
+        "still_present": []
+      }
+    },
+    {
+      "id": "P14.1-002",
+      "name": "Exactly one implementation of each capability",
+      "status": "pass",
+      "detail": "no filename-inferred test target construction remains in the canonical intelligence builders",
+      "evidence": {
+        "scanned_modules": [
+          "change.py",
+          "blast.py",
+          "optimizer.py",
+          "repair.py",
+          "state.py",
+          "api.py"
+        ],
+        "hits": []
+      }
+    },
+    {
+      "id": "P14.1-005",
+      "name": "No filename-based test inference",
+      "status": "pass",
+      "detail": "test targets come from provider-recorded Engine.tests only",
+      "evidence": {
+        "scanned": [
+          "change.py",
+          "blast.py",
+          "optimizer.py",
+          "repair.py",
+          "state.py",
+          "api.py"
+        ],
+        "hits": []
+      }
+    },
+    {
+      "id": "P14.1-004",
+      "name": "Single internal Intelligence API",
+      "status": "pass",
+      "detail": "verify.py imports the unified Intelligence API; no per-command algorithm and no legacy module",
+      "evidence": {
+        "canonical_api_used": true,
+        "legacy_direct_import": false
+      }
+    },
+    {
+      "id": "P14.1-003",
+      "name": "All runtime commands consume the canonical layer",
+      "status": "pass",
+      "detail": "every verify.py intelligence command imports through runtime.foundation.intelligence (the canonical layer)",
+      "evidence": {
+        "commands": [
+          {
+            "command": "cmd_affected",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_analytics",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_audit",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_certify_v4",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence.platform"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_certify_v5",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence.platform"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_ci_doctor",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_dashboard",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_deps",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_diagnose",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_doctor",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_health",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_history",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_integrity",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_intelligence",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence.platform.pipeline"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_intelligence_audit",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence.platform.migration"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_knowledge",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_knowledge_capability",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_knowledge_component",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_knowledge_endpoint",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_knowledge_rule",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_knowledge_workspace",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_metrics",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_repair",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_risk",
+            "intelligence_imports": [
+              "runtime.foundation.intelligence"
+            ],
+            "legacy_imports": [],
+            "consumes_canonical_layer": true
+          },
+          {
+            "command": "cmd_status",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          },
+          {
+            "command": "cmd_verify_status",
+            "intelligence_imports": [],
+            "legacy_imports": [],
+            "consumes_canonical_layer": false
+          }
+        ]
+      }
+    }
+  ],
+  "counts": {
+    "checks": 14,
+    "passed": 14,
+    "failed": 0
+  },
+  "runtime_audit": {
+    "certification_status": "CERTIFIED",
+    "section_count": 19,
+    "sections": [
+      {
+        "name": "Repository Index Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Cross-Layer Map Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Dependency Graph Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Verification Planner Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Executor Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Evidence Aggregator Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Observability Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Knowledge Base Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Workspace Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Integrity Engine Audit",
+        "status": "pass"
+      },
+      {
+        "name": "GitHub Actions Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Runtime CLI Audit",
+        "status": "pass"
+      },
+      {
+        "name": "GitHub Runtime Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Verification Profiles Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Artifact Ownership Audit",
+        "status": "fail"
+      },
+      {
+        "name": "Runtime Performance Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Failure Injection Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Pipeline Validation Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Engineering ROI Audit",
+        "status": "pass"
+      }
+    ],
+    "note": "audits were NOT rerun by v5 certification; status read from artifact"
+  },
+  "deliverables": [
+    "change-intelligence.json",
+    "blast-radius.json",
+    "verification-plan.json",
+    "engineering-risk.json",
+    "repair-intelligence.json",
+    "engineering-memory.json",
+    "github-intelligence.json",
+    "verification-cost.json",
+    "platform-state.json",
+    "intelligence-inventory.json",
+    "intelligence-duplication.json",
+    "test-resolution.json",
+    "cli-consistency.json",
+    "intelligence-api.json",
+    "intelligence-retirement-plan.json",
+    "intelligence-constitution.json",
+    "runtime-simplification.json",
+    "engineering-platform-audit-v5.json",
+    "program14.1-certification.md"
+  ]
+}

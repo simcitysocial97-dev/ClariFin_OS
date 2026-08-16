@@ -1,0 +1,1210 @@
+{
+  "generated_at": "2026-08-06T11:03:54.547081+00:00",
+  "phase": "Program 13.2 \u2014 Phase 1: Locate Every Legacy Architecture Builder",
+  "rule": "Exactly one architecture discovery pipeline may exist. Every other runtime subsystem must consume runtime.foundation.architecture.get_architecture().",
+  "canonical_pipeline": {
+    "pipeline": "runtime.foundation.architecture.discovery",
+    "rule": "Exactly one architecture discovery pipeline exists. Every other runtime subsystem is a consumer of runtime.foundation.architecture.get_architecture().",
+    "phases": [
+      {
+        "order": 1,
+        "name": "inventory",
+        "implementation": "runtime/analyze_architecture.py::main",
+        "output": "runtime/generated/architecture-inventory.json",
+        "purpose": "Classify every module into exactly one canonical node type using imports, registrations, decorators and execution flow."
+      },
+      {
+        "order": 2,
+        "name": "topology",
+        "implementation": "runtime/analyze_engine_topology.py::main",
+        "output": "runtime/generated/engine-topology.json",
+        "purpose": "Discover canonical engines (package roots + designated single files) and their implementation modules, services, routers, repositories, tests."
+      },
+      {
+        "order": 3,
+        "name": "ownership",
+        "implementation": "runtime/analyze_ownership.py::build",
+        "output": "runtime/generated/ownership-graph.json",
+        "purpose": "Build the evidence-backed ownership hierarchy. Engines own modules; modules are never ownership roots."
+      },
+      {
+        "order": 4,
+        "name": "execution",
+        "implementation": "runtime/analyze_execution.py::build",
+        "output": "runtime/generated/execution-graph.json",
+        "purpose": "Build the runtime call path. Execution may traverse implementation modules; ownership must not."
+      },
+      {
+        "order": 5,
+        "name": "normalization",
+        "implementation": "runtime/analyze_engine_normalization.py::build",
+        "output": "runtime/generated/engine-normalization.json",
+        "purpose": "Classify engine migration status (canonical / partial / parked / fa\u00e7ade / orphan / implementation-only)."
+      },
+      {
+        "order": 6,
+        "name": "knowledge",
+        "implementation": "runtime/analyze_knowledge.py::build",
+        "output": "runtime/generated/knowledge-reconstruction.json",
+        "purpose": "Reconstruct knowledge entities from the ownership graph (architecture based, not filesystem based)."
+      },
+      {
+        "order": 7,
+        "name": "artifacts",
+        "implementation": "runtime/analyze_artifacts.py::build",
+        "output": "runtime/generated/artifact-ownership-v2.json",
+        "purpose": "Assign Producer/Owner/Consumers/Stage/Pipeline/Lifecycle/Retention to every generated artifact."
+      },
+      {
+        "order": 8,
+        "name": "gap",
+        "implementation": "runtime/analyze_gap.py::build",
+        "output": "runtime/generated/certification-gap-analysis.json",
+        "purpose": "Compare legacy certification results against the canonical model and classify each finding."
+      }
+    ]
+  },
+  "canonical_provider": "runtime.foundation.architecture.get_architecture()",
+  "concerns": [
+    "engine_discovery",
+    "package_discovery",
+    "ownership_discovery",
+    "capability_mapping",
+    "router_mapping",
+    "component_mapping",
+    "knowledge_reconstruction",
+    "artifact_ownership",
+    "dependency_graph_generation",
+    "execution_graph_generation",
+    "cross_layer_map_generation",
+    "verification_planning",
+    "affected_analysis",
+    "repair_suggestions",
+    "certification_graph",
+    "integrity_graph",
+    "pipeline_graph"
+  ],
+  "source_count": 45,
+  "status_counts": {
+    "CANONICAL_PIPELINE": 8,
+    "REPLACED": 1,
+    "MIGRATED_CONSUMER": 17,
+    "CONSUMER_ONLY": 19
+  },
+  "sources": [
+    {
+      "file": "runtime/analyze_architecture.py",
+      "exists": true,
+      "purpose": "Phase 1 of the single discovery pipeline: classify every module into one canonical node type.",
+      "concerns": [
+        "engine_discovery",
+        "package_discovery"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/architecture-inventory.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage. Registered in runtime.foundation.architecture.discovery.PHASES."
+    },
+    {
+      "file": "runtime/analyze_engine_topology.py",
+      "exists": true,
+      "purpose": "Phase 2: discover canonical engines (package roots + designated single files).",
+      "concerns": [
+        "engine_discovery",
+        "package_discovery",
+        "router_mapping",
+        "capability_mapping"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/engine-topology.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "runtime/analyze_ownership.py",
+      "exists": true,
+      "purpose": "Phase 3: build the evidence-backed ownership graph.",
+      "concerns": [
+        "ownership_discovery"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/ownership-graph.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "runtime/analyze_execution.py",
+      "exists": true,
+      "purpose": "Phase 4: build the runtime execution graph.",
+      "concerns": [
+        "execution_graph_generation"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/execution-graph.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "runtime/analyze_engine_normalization.py",
+      "exists": true,
+      "purpose": "Phase 5: classify engine migration status.",
+      "concerns": [
+        "engine_discovery"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/engine-normalization.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "runtime/analyze_knowledge.py",
+      "exists": true,
+      "purpose": "Phase 6: reconstruct knowledge entities from the ownership graph.",
+      "concerns": [
+        "knowledge_reconstruction"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/knowledge-reconstruction.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "runtime/analyze_artifacts.py",
+      "exists": true,
+      "purpose": "Phase 7: assign full ownership metadata to every generated artifact.",
+      "concerns": [
+        "artifact_ownership"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/artifact-ownership-v2.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "runtime/analyze_gap.py",
+      "exists": true,
+      "purpose": "Phase 8: certification gap analysis (old model vs canonical model).",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime/generated/certification-gap-analysis.json",
+      "status": "CANONICAL_PIPELINE",
+      "notes": "Pipeline stage."
+    },
+    {
+      "file": "tools/generators/build_cross_layer_map.py",
+      "exists": true,
+      "purpose": "Legacy cross-layer map generator (Program 7A).",
+      "concerns": [
+        "cross_layer_map_generation",
+        "engine_discovery",
+        "capability_mapping",
+        "router_mapping",
+        "component_mapping"
+      ],
+      "legacy_assumptions": [
+        "Python file == Engine: emitted `backend/src/engines/<pkg>.py` for package engines, creating 7 phantom engine keys for files that do not exist.",
+        "Registered every engine submodule (`loan_engine/emi.py`, `behaviour_engine/core.py`, ...) as a separate engine chain, duplicating 33 endpoints.",
+        "Capability hook names derived from the filename (`_hook_name`) instead of the declared symbol.",
+        "Engine tests discovered by substring match on the engine short name.",
+        "Regex/substring ownership between endpoints and capability API paths."
+      ],
+      "replacement_source": "runtime.foundation.architecture.cross_layer.build_cross_layer_map_v2()",
+      "status": "REPLACED",
+      "notes": "Now a deprecation shim that delegates to the canonical generator."
+    },
+    {
+      "file": "runtime/foundation/audit/cross_layer.py",
+      "exists": true,
+      "purpose": "Cross-layer map certification audit.",
+      "concerns": [
+        "cross_layer_map_generation",
+        "capability_mapping",
+        "router_mapping"
+      ],
+      "legacy_assumptions": [
+        "Treated every map key as an engine FILE and asserted it exists on disk.",
+        "`_check_file_exists` special-cased `.py` -> package to hide phantom engines.",
+        "Flagged 'duplicate endpoints' when the same endpoint appeared under sibling submodule chains.",
+        "Flagged 'missing capability' / 'missing router' for internal engines that legitimately have neither.",
+        "Test-coverage denominator inflated by phantom + submodule chains."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture() via runtime/generated/cross-layer-map-v2.json",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Audits canonical chains only; endpoint uniqueness is now checked at the Router (the real owner)."
+    },
+    {
+      "file": "runtime/foundation/knowledge/indexer.py",
+      "exists": true,
+      "purpose": "Knowledge index builder.",
+      "concerns": [
+        "knowledge_reconstruction",
+        "capability_mapping",
+        "component_mapping"
+      ],
+      "legacy_assumptions": [
+        "Rebuilt capabilities/endpoints/components from the defective cross-layer map (rebuilt=4 vs saved=10 capabilities).",
+        "Entity ownership expressed as `source_file: <phantom engine .py>`.",
+        "Runtime artifact list hardcoded to nine filenames."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Entities now derive from the ownership graph; artifacts from artifact-ownership-v3.json."
+    },
+    {
+      "file": "runtime/foundation/audit/knowledge.py",
+      "exists": true,
+      "purpose": "Knowledge base certification audit.",
+      "concerns": [
+        "knowledge_reconstruction"
+      ],
+      "legacy_assumptions": [
+        "Re-ran the indexer and compared counts, so a defective map produced a self-inconsistency failure."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Also asserts every knowledge entity resolves to a canonical owner."
+    },
+    {
+      "file": "runtime/foundation/knowledge/query.py",
+      "exists": true,
+      "purpose": "Knowledge query engine.",
+      "concerns": [
+        "knowledge_reconstruction"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": "Reads the catalog produced by the migrated indexer."
+    },
+    {
+      "file": "runtime/foundation/knowledge/references.py",
+      "exists": true,
+      "purpose": "Knowledge reference resolution.",
+      "concerns": [
+        "knowledge_reconstruction"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/artifact_ownership.py",
+      "exists": true,
+      "purpose": "Artifact ownership certification audit.",
+      "concerns": [
+        "artifact_ownership"
+      ],
+      "legacy_assumptions": [
+        "Ownership resolved by matching the artifact FILENAME against two hardcoded allowlists (ARTIFACT_OWNERS / RETENTION_POLICIES); anything new was 'unowned'.",
+        "No producer evidence, no pipeline/lifecycle, no engine or capability linkage."
+      ],
+      "replacement_source": "runtime/generated/artifact-ownership-v3.json via runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Ownership now comes from producer evidence + ownership/execution graphs."
+    },
+    {
+      "file": "runtime/foundation/audit/dependency_graph.py",
+      "exists": true,
+      "purpose": "Dependency graph certification audit.",
+      "concerns": [
+        "dependency_graph_generation",
+        "ownership_discovery"
+      ],
+      "legacy_assumptions": [
+        "Audited a single repository index graph that mixed ownership, execution and dependency edges.",
+        "'ownership' was a node attribute string, not an ownership relation."
+      ],
+      "replacement_source": "runtime/generated/dependency-graph-v2.json via runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Ownership, execution and dependency are now three distinct, separately audited graphs."
+    },
+    {
+      "file": "runtime/foundation/repository/builder/builder.py",
+      "exists": true,
+      "purpose": "Repository index/graph builder.",
+      "concerns": [
+        "dependency_graph_generation",
+        "engine_discovery",
+        "ownership_discovery"
+      ],
+      "legacy_assumptions": [
+        "Classified nodes by directory segment ('/engines/' -> engine), so package engines and their submodules were indistinguishable."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": "Retained as a file-level index; architectural node identity now comes from the provider."
+    },
+    {
+      "file": "runtime/foundation/repository/scanner/backend_scanner.py",
+      "exists": true,
+      "purpose": "Backend file scanner for the repository index.",
+      "concerns": [
+        "engine_discovery",
+        "router_mapping",
+        "ownership_discovery"
+      ],
+      "legacy_assumptions": [
+        "`{'engines': 'engine'}` directory->type map (file == engine).",
+        "Relationship inference by substring test on module names ('services' in source and 'engines' in target)."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": "File inventory only; not an architecture authority."
+    },
+    {
+      "file": "runtime/foundation/repository/scanner/metadata_scanner.py",
+      "exists": true,
+      "purpose": "Capability registry metadata scanner.",
+      "concerns": [
+        "capability_mapping"
+      ],
+      "legacy_assumptions": [
+        "Capability -> engine edges read from a hand-maintained registry file."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/repository/graph/graph_service.py",
+      "exists": true,
+      "purpose": "Repository graph query service.",
+      "concerns": [
+        "dependency_graph_generation"
+      ],
+      "legacy_assumptions": [
+        "Single graph conflated ownership/execution/dependency semantics."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "exists": true,
+      "purpose": "Cross-layer impact planner (blast radius, verification plan).",
+      "concerns": [
+        "verification_planning",
+        "affected_analysis",
+        "cross_layer_map_generation"
+      ],
+      "legacy_assumptions": [
+        "Planned against phantom engine keys from the legacy cross-layer map.",
+        "`_service_name_from_path` guessed the service class by PascalCasing the filename.",
+        "Capability file path guessed as `frontend/lib/capabilities/{cap.lower()}.ts`.",
+        "Property tests triggered by `'loan' in engine_name`."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture() + runtime/generated/cross-layer-map-v2.json",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Resolves changed files to canonical engines; legacy flat maps still accepted for tests."
+    },
+    {
+      "file": "runtime/foundation/verification/planner/plan_models.py",
+      "exists": true,
+      "purpose": "Verification plan construction from impact.",
+      "concerns": [
+        "verification_planning"
+      ],
+      "legacy_assumptions": [
+        "Engine name taken from a path segment; unit test path guessed as `tests/unit/engines/{engine_name}/`."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Test paths now come from the engine's recorded tests when available."
+    },
+    {
+      "file": "runtime/foundation/verification/planner/impact_rules.py",
+      "exists": true,
+      "purpose": "Impact rules (which layer a changed file belongs to).",
+      "concerns": [
+        "verification_planning"
+      ],
+      "legacy_assumptions": [
+        "`file_path.startswith('backend/src/engines/')` as the engine test."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Rule now asks the provider whether the path resolves to a canonical engine."
+    },
+    {
+      "file": "runtime/foundation/verification/orchestrator.py",
+      "exists": true,
+      "purpose": "Verification orchestrator.",
+      "concerns": [
+        "verification_planning"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/planner.py",
+      "exists": true,
+      "purpose": "Verification planner certification audit.",
+      "concerns": [
+        "verification_planning",
+        "certification_graph"
+      ],
+      "legacy_assumptions": [
+        "Probed the planner with the phantom path `backend/src/engines/loan_engine.py`."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Probes now use a canonical engine implementation module."
+    },
+    {
+      "file": "runtime/foundation/intelligence/affected.py",
+      "exists": true,
+      "purpose": "Affected test planner.",
+      "concerns": [
+        "affected_analysis"
+      ],
+      "legacy_assumptions": [
+        "Engine name = basename minus `.py`; unit tests guessed as `backend/tests/unit/engines/{name}/` (wrong for every package engine)."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Uses the engine's evidence-backed test list."
+    },
+    {
+      "file": "runtime/foundation/intelligence/diagnostics.py",
+      "exists": true,
+      "purpose": "Developer diagnostics (blast radius + repair).",
+      "concerns": [
+        "affected_analysis",
+        "repair_suggestions"
+      ],
+      "legacy_assumptions": [
+        "Consumed affected_engines containing phantom engine paths."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/intelligence/repair.py",
+      "exists": true,
+      "purpose": "Repair suggestion guidance.",
+      "concerns": [
+        "repair_suggestions"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/intelligence/risk.py",
+      "exists": true,
+      "purpose": "Change risk analysis.",
+      "concerns": [
+        "affected_analysis"
+      ],
+      "legacy_assumptions": [
+        "Risk weighted by count of 'changed engines' that included submodules and phantoms."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/integrity/scanner.py",
+      "exists": true,
+      "purpose": "Architecture layer classifier for integrity rules.",
+      "concerns": [
+        "integrity_graph",
+        "engine_discovery"
+      ],
+      "legacy_assumptions": [
+        "`_ENGINE_DIRS` was a hardcoded set of engine FILENAMES (ledger_audit_engine.py, insight_generator.py, ...)."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Layer classification asks the provider first, then falls back to directory rules."
+    },
+    {
+      "file": "runtime/foundation/integrity/registry.py",
+      "exists": true,
+      "purpose": "Integrity rule constitution.",
+      "concerns": [
+        "integrity_graph"
+      ],
+      "legacy_assumptions": [
+        "Rule examples referenced engine paths as illustrative strings only."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/integrity.py",
+      "exists": true,
+      "purpose": "Integrity engine certification audit.",
+      "concerns": [
+        "integrity_graph",
+        "certification_graph"
+      ],
+      "legacy_assumptions": [
+        "Probe used the phantom module `backend/src/engines/loan_engine.py`."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/runner.py",
+      "exists": true,
+      "purpose": "Certification audit runner.",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": "Runs registered audit sections; performs no discovery."
+    },
+    {
+      "file": "runtime/foundation/audit/certification.py",
+      "exists": true,
+      "purpose": "Certification progress/dashboard tracker.",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/evidence.py",
+      "exists": true,
+      "purpose": "Evidence aggregator certification audit.",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [
+        "Sample cross-layer map used the phantom key `backend/src/engines/account_engine.py`."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/failure_injection.py",
+      "exists": true,
+      "purpose": "Failure injection certification audit.",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [
+        "Synthetic capability registry referenced `backend/src/engines/transfer_engine` (non-existent)."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": "Synthetic fixtures are now labelled as fixtures, not architecture."
+    },
+    {
+      "file": "runtime/foundation/audit/pipeline.py",
+      "exists": true,
+      "purpose": "Pipeline validation audit (pipeline graph).",
+      "concerns": [
+        "pipeline_graph",
+        "certification_graph"
+      ],
+      "legacy_assumptions": [
+        "Stage list hardcoded; knowledge/artifact stages validated against legacy artifacts."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/normalize.py",
+      "exists": true,
+      "purpose": "Audit finding normalisation.",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/cluster.py",
+      "exists": true,
+      "purpose": "Root-cause clustering.",
+      "concerns": [
+        "certification_graph"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/repair_order.py",
+      "exists": true,
+      "purpose": "Repair ordering.",
+      "concerns": [
+        "certification_graph",
+        "repair_suggestions"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/audit/remediation.py",
+      "exists": true,
+      "purpose": "Platform remediation plan.",
+      "concerns": [
+        "certification_graph",
+        "repair_suggestions"
+      ],
+      "legacy_assumptions": [],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": ""
+    },
+    {
+      "file": "runtime/system/observability/dependency_growth.py",
+      "exists": true,
+      "purpose": "Cross-layer dependency growth metrics.",
+      "concerns": [
+        "dependency_graph_generation"
+      ],
+      "legacy_assumptions": [
+        "Counted 'engines' as `engine_file.count('/')` over legacy map keys \u2014 a path-shape heuristic, not an engine count."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": ""
+    },
+    {
+      "file": "runtime/foundation/workspace/workspace.py",
+      "exists": true,
+      "purpose": "Workspace cross-layer status panel.",
+      "concerns": [
+        "engine_discovery"
+      ],
+      "legacy_assumptions": [
+        "Counted one engine per legacy map key, so phantoms and submodules inflated the total."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": ""
+    },
+    {
+      "file": "runtime/system/evidence/collectors/coverage.py",
+      "exists": true,
+      "purpose": "Engine coverage evidence collector.",
+      "concerns": [
+        "engine_discovery"
+      ],
+      "legacy_assumptions": [
+        "Engine files identified by the substring '/engines/'."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "MIGRATED_CONSUMER",
+      "notes": ""
+    },
+    {
+      "file": "tools/development/mutation_discovery.py",
+      "exists": true,
+      "purpose": "Mutation target discovery.",
+      "concerns": [
+        "engine_discovery"
+      ],
+      "legacy_assumptions": [
+        "Walks `backend/src/engines` and treats each `.py` as a mutation engine target."
+      ],
+      "replacement_source": "runtime.foundation.architecture.get_architecture()",
+      "status": "CONSUMER_ONLY",
+      "notes": "Operates on files for mutation purposes; makes no architectural claim."
+    }
+  ],
+  "sources_by_concern": {
+    "affected_analysis": [
+      "runtime/foundation/intelligence/affected.py",
+      "runtime/foundation/intelligence/diagnostics.py",
+      "runtime/foundation/intelligence/risk.py",
+      "runtime/foundation/verification/planner/planner.py"
+    ],
+    "artifact_ownership": [
+      "runtime/analyze_artifacts.py",
+      "runtime/foundation/audit/artifact_ownership.py"
+    ],
+    "capability_mapping": [
+      "runtime/analyze_engine_topology.py",
+      "runtime/foundation/audit/cross_layer.py",
+      "runtime/foundation/knowledge/indexer.py",
+      "runtime/foundation/repository/scanner/metadata_scanner.py",
+      "tools/generators/build_cross_layer_map.py"
+    ],
+    "certification_graph": [
+      "runtime/analyze_gap.py",
+      "runtime/foundation/audit/certification.py",
+      "runtime/foundation/audit/cluster.py",
+      "runtime/foundation/audit/evidence.py",
+      "runtime/foundation/audit/failure_injection.py",
+      "runtime/foundation/audit/integrity.py",
+      "runtime/foundation/audit/normalize.py",
+      "runtime/foundation/audit/pipeline.py",
+      "runtime/foundation/audit/planner.py",
+      "runtime/foundation/audit/remediation.py",
+      "runtime/foundation/audit/repair_order.py",
+      "runtime/foundation/audit/runner.py"
+    ],
+    "component_mapping": [
+      "runtime/foundation/knowledge/indexer.py",
+      "tools/generators/build_cross_layer_map.py"
+    ],
+    "cross_layer_map_generation": [
+      "runtime/foundation/audit/cross_layer.py",
+      "runtime/foundation/verification/planner/planner.py",
+      "tools/generators/build_cross_layer_map.py"
+    ],
+    "dependency_graph_generation": [
+      "runtime/foundation/audit/dependency_graph.py",
+      "runtime/foundation/repository/builder/builder.py",
+      "runtime/foundation/repository/graph/graph_service.py",
+      "runtime/system/observability/dependency_growth.py"
+    ],
+    "engine_discovery": [
+      "runtime/analyze_architecture.py",
+      "runtime/analyze_engine_normalization.py",
+      "runtime/analyze_engine_topology.py",
+      "runtime/foundation/integrity/scanner.py",
+      "runtime/foundation/repository/builder/builder.py",
+      "runtime/foundation/repository/scanner/backend_scanner.py",
+      "runtime/foundation/workspace/workspace.py",
+      "runtime/system/evidence/collectors/coverage.py",
+      "tools/development/mutation_discovery.py",
+      "tools/generators/build_cross_layer_map.py"
+    ],
+    "execution_graph_generation": [
+      "runtime/analyze_execution.py"
+    ],
+    "integrity_graph": [
+      "runtime/foundation/audit/integrity.py",
+      "runtime/foundation/integrity/registry.py",
+      "runtime/foundation/integrity/scanner.py"
+    ],
+    "knowledge_reconstruction": [
+      "runtime/analyze_knowledge.py",
+      "runtime/foundation/audit/knowledge.py",
+      "runtime/foundation/knowledge/indexer.py",
+      "runtime/foundation/knowledge/query.py",
+      "runtime/foundation/knowledge/references.py"
+    ],
+    "ownership_discovery": [
+      "runtime/analyze_ownership.py",
+      "runtime/foundation/audit/dependency_graph.py",
+      "runtime/foundation/repository/builder/builder.py",
+      "runtime/foundation/repository/scanner/backend_scanner.py"
+    ],
+    "package_discovery": [
+      "runtime/analyze_architecture.py",
+      "runtime/analyze_engine_topology.py"
+    ],
+    "pipeline_graph": [
+      "runtime/foundation/audit/pipeline.py"
+    ],
+    "repair_suggestions": [
+      "runtime/foundation/audit/remediation.py",
+      "runtime/foundation/audit/repair_order.py",
+      "runtime/foundation/intelligence/diagnostics.py",
+      "runtime/foundation/intelligence/repair.py"
+    ],
+    "router_mapping": [
+      "runtime/analyze_engine_topology.py",
+      "runtime/foundation/audit/cross_layer.py",
+      "runtime/foundation/repository/scanner/backend_scanner.py",
+      "tools/generators/build_cross_layer_map.py"
+    ],
+    "verification_planning": [
+      "runtime/foundation/audit/planner.py",
+      "runtime/foundation/verification/orchestrator.py",
+      "runtime/foundation/verification/planner/impact_rules.py",
+      "runtime/foundation/verification/planner/plan_models.py",
+      "runtime/foundation/verification/planner/planner.py"
+    ]
+  },
+  "residual_legacy_signals": [
+    {
+      "file": "runtime/foundation/audit/artifact_ownership.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/cross_layer.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 4,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/evidence.py",
+      "signal": "phantom_engine_path",
+      "description": "References a `<engine>.py` path; package engines have no such file.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/failure_injection.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/integrity.py",
+      "signal": "phantom_engine_path",
+      "description": "References a `<engine>.py` path; package engines have no such file.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/normalize.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/planner.py",
+      "signal": "phantom_engine_path",
+      "description": "References a `<engine>.py` path; package engines have no such file.",
+      "occurrences": 3,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/remediation.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/audit/verification_profiles.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/integrity/scanner.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/integrity/scanner.py",
+      "signal": "engines_dir_heuristic",
+      "description": "Uses a directory prefix as the engine test.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/intelligence/affected.py",
+      "signal": "engine_name_from_path",
+      "description": "Derives an engine identity from a path basename.",
+      "occurrences": 3,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/intelligence/diagnostics.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/knowledge/indexer.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 10,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/verification/orchestrator.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/impact_rules.py",
+      "signal": "engines_dir_heuristic",
+      "description": "Uses a directory prefix as the engine test.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/verification/planner/planner.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/verification/profiles.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/workspace/dependencies.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/workspace/workspace.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 4,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/system/evidence/aggregator.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/system/evidence/collectors/coverage.py",
+      "signal": "engines_dir_heuristic",
+      "description": "Uses a directory prefix as the engine test.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/system/observability/dependency_growth.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/tests/conftest.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_affected.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_dependencies.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 3,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_diagnostics.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_evidence_aggregator.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_false_negative_rate.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 6,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_false_positive_rate.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_metrics.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_orchestrator.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 7,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_risk.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_runtime_performance.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_snapshots.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_status.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "runtime/tests/test_workspace.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 6,
+      "catalogued": false,
+      "kind": "test_fixture"
+    },
+    {
+      "file": "tools/development/change_intelligence.py",
+      "signal": "engines_dir_heuristic",
+      "description": "Uses a directory prefix as the engine test.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "tools/generators/build_cross_layer_map.py",
+      "signal": "engine_py_composition",
+      "description": "Composes an engine path by appending `.py` to a name.",
+      "occurrences": 4,
+      "catalogued": true,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "tools/generators/build_cross_layer_map.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": true,
+      "kind": "runtime_code"
+    }
+  ],
+  "uncatalogued_runtime_signals": [
+    {
+      "file": "runtime/foundation/audit/verification_profiles.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/verification/profiles.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/foundation/workspace/dependencies.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "runtime/system/evidence/aggregator.py",
+      "signal": "legacy_map_load",
+      "description": "Loads the legacy cross-layer map directly instead of the provider.",
+      "occurrences": 1,
+      "catalogued": false,
+      "kind": "runtime_code"
+    },
+    {
+      "file": "tools/development/change_intelligence.py",
+      "signal": "engines_dir_heuristic",
+      "description": "Uses a directory prefix as the engine test.",
+      "occurrences": 2,
+      "catalogued": false,
+      "kind": "runtime_code"
+    }
+  ],
+  "notes": [
+    "Files marked CANONICAL_PIPELINE are the phases of the single discovery pipeline.",
+    "Files marked REPLACED no longer perform discovery; they delegate to the canonical generator.",
+    "Files marked MIGRATED_CONSUMER previously performed discovery and now read the provider.",
+    "Files marked CONSUMER_ONLY never claimed architectural authority; they are listed for completeness.",
+    "residual_legacy_signals includes test fixtures, which intentionally hard-code legacy paths to prove backward compatibility; only uncatalogued_runtime_signals is a defect."
+  ]
+}

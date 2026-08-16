@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { DashboardMetricsSchema, type DashboardMetrics } from '@/lib/schemas/dashboard-metrics'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -41,9 +41,9 @@ export function useDashboardMetrics(): HookState<DashboardMetrics> {
     staleTime: 30_000,
   })
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: ['dashboard', 'summary'] })
-  }
+  }, [queryClient])
 
   return useMemo(() => ({
     data: result.data ?? null,

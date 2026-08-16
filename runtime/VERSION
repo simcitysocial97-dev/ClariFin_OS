@@ -1,0 +1,16 @@
+Engineering Platform v1.0.0
+
+Version: 1.0.0
+Release Date: 2026-08-05
+Status: STABLE
+
+VERSION SEMVER POLICY:
+- v1.0.x: Bug fixes only (validation, documentation)
+- v1.1: Backwards-compatible additions (new profiles, rules, entities)
+- v2.0: Breaking architectural changes only
+
+DEVELOPMENT DIRECTIONS:
+- All future development occurs in Financial OS Shell, not Engineering Platform
+- Bug fixes may be applied to Runtime
+- Verification improvements follow constitutional process
+- Artifact schema additions require architecture review

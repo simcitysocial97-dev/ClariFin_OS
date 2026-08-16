@@ -1,0 +1,4935 @@
+{
+  "generated_at": "2026-08-08T13:09:31.778668+00:00",
+  "schema": "architecture-provider-v1",
+  "principle": "An Engine is an architectural UNIT (package root or designated single file). Implementation modules, detectors and facades are children, never engines. '*.py == Engine' is forbidden.",
+  "single_discovery_pipeline": "runtime.foundation.architecture.discovery",
+  "source_artifacts": [
+    "runtime/generated/architecture-inventory.json",
+    "runtime/generated/engine-topology.json",
+    "runtime/generated/ownership-graph.json",
+    "runtime/generated/execution-graph.json",
+    "runtime/generated/engine-normalization.json",
+    "runtime/generated/artifact-ownership-v2.json"
+  ],
+  "counts": {
+    "engines": 12,
+    "engine_modules": 48,
+    "detectors": 3,
+    "facades": 1,
+    "capabilities": 10,
+    "routers": 12,
+    "endpoints": 76,
+    "services": 32,
+    "repositories": 17,
+    "workspaces": 8,
+    "components": 82,
+    "mappers": 24,
+    "dtos": 15,
+    "view_models": 106,
+    "artifacts": 137
+  },
+  "id_scheme": [
+    "artifact",
+    "capability",
+    "component",
+    "database",
+    "detector",
+    "dto",
+    "endpoint",
+    "engine",
+    "facade",
+    "mapper",
+    "module",
+    "repository",
+    "router",
+    "service",
+    "test",
+    "viewmodel",
+    "workspace"
+  ],
+  "engines": {
+    "account_engine": {
+      "id": "engine:account_engine",
+      "name": "account_engine",
+      "style": "package",
+      "path": "backend/src/engines/account_engine",
+      "entry_point": "backend/src/engines/account_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/account_engine/balance.py",
+        "backend/src/engines/account_engine/cashflow.py",
+        "backend/src/engines/account_engine/dormant.py",
+        "backend/src/engines/account_engine/history.py",
+        "backend/src/engines/account_engine/lifecycle.py",
+        "backend/src/engines/account_engine/metrics.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/account_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/accounts.py",
+        "backend/src/routers/managed_accounts.py"
+      ],
+      "repositories": [
+        "account_balance_repository",
+        "account_link_repository",
+        "account_repository",
+        "institution_repository"
+      ],
+      "endpoints": [
+        "DELETE /accounts/manage/{account_id}",
+        "DELETE /accounts/{account_id}",
+        "DELETE /accounts/{account_id}/links/{linked_account_id}",
+        "GET /accounts",
+        "GET /accounts/manage",
+        "GET /accounts/{account_id}",
+        "GET /accounts/{account_id}/analytics",
+        "GET /accounts/{account_id}/balance",
+        "GET /accounts/{account_id}/balance-history",
+        "GET /accounts/{account_id}/balance-history/latest",
+        "GET /accounts/{account_id}/dormancy",
+        "GET /accounts/{account_id}/links",
+        "GET /accounts/{account_id}/metrics",
+        "GET /accounts/{account_id}/running-balance",
+        "GET /accounts/{account_id}/status",
+        "GET /institutions",
+        "GET /institutions/{institution_id}",
+        "POST /accounts",
+        "POST /accounts/manage",
+        "POST /accounts/{account_id}/balance-history",
+        "POST /accounts/{account_id}/links",
+        "POST /institutions",
+        "PUT /accounts/manage/{account_id}",
+        "PUT /accounts/{account_id}",
+        "PUT /institutions/{institution_id}"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/account/test_account_engine.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE",
+      "internal": false,
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/account_service.py"
+        ]
+      }
+    },
+    "balance_engine": {
+      "id": "engine:balance_engine",
+      "name": "balance_engine",
+      "style": "single_file",
+      "path": "backend/src/engines/balance_engine.py",
+      "entry_point": "backend/src/engines/balance_engine.py",
+      "implementation_modules": [],
+      "detectors": [],
+      "services": [
+        "backend/src/services/statement_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/cards_statements.py"
+      ],
+      "repositories": [
+        "statement_repository"
+      ],
+      "endpoints": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/invariants/test_determinism.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/engines/balance_engine.py",
+          "backend/src/services/statement_service.py"
+        ]
+      }
+    },
+    "behaviour_engine": {
+      "id": "engine:behaviour_engine",
+      "name": "behaviour_engine",
+      "style": "package",
+      "path": "backend/src/engines/behaviour_engine",
+      "entry_point": "backend/src/engines/behaviour_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/behaviour_engine/account.py",
+        "backend/src/engines/behaviour_engine/cashflow.py",
+        "backend/src/engines/behaviour_engine/core.py",
+        "backend/src/engines/behaviour_engine/credit_dependency.py",
+        "backend/src/engines/behaviour_engine/debt.py",
+        "backend/src/engines/behaviour_engine/income.py",
+        "backend/src/engines/behaviour_engine/insights.py",
+        "backend/src/engines/behaviour_engine/lifestyle.py",
+        "backend/src/engines/behaviour_engine/nudges.py",
+        "backend/src/engines/behaviour_engine/patterns.py",
+        "backend/src/engines/behaviour_engine/profile.py",
+        "backend/src/engines/behaviour_engine/resilience.py",
+        "backend/src/engines/behaviour_engine/savings.py",
+        "backend/src/engines/behaviour_engine/stress.py",
+        "backend/src/engines/behaviour_engine/temporal.py",
+        "backend/src/engines/behaviour_engine/utils.py",
+        "backend/src/engines/behaviour_engine/wellness.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/dashboard_service.py",
+        "backend/src/services/import_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/dashboard.py",
+        "backend/src/routers/import_router.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "reconciliation_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [
+        "GET /cashflow-health",
+        "GET /debt-health",
+        "GET /monthly-report",
+        "GET /patterns",
+        "GET /profile",
+        "GET /summary",
+        "GET /wellness-score",
+        "POST /import/detect",
+        "POST /import/execute",
+        "POST /upload"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "tests": [
+        "backend/tests/capability/pattern_analysis/test_capability.py",
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/properties/recommendations/test_engine_properties.py",
+        "backend/tests/unit/engines/behavior/test_behavior_engine.py",
+        "backend/tests/unit/engines/behaviour/test_core.py",
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/behaviour/test_metrics.py",
+        "backend/tests/unit/engines/behaviour/test_patterns.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE",
+      "internal": false,
+      "evidence": {
+        "import_references": 3,
+        "importer_files": [
+          "backend/src/services/behaviour_service.py",
+          "backend/src/services/dashboard_service.py",
+          "backend/src/services/import_service.py"
+        ]
+      }
+    },
+    "cashflow_engine": {
+      "id": "engine:cashflow_engine",
+      "name": "cashflow_engine",
+      "style": "single_file",
+      "path": "backend/src/engines/cashflow_engine.py",
+      "entry_point": "backend/src/engines/cashflow_engine.py",
+      "implementation_modules": [],
+      "detectors": [],
+      "services": [],
+      "routers": [],
+      "repositories": [],
+      "endpoints": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/household_cashflow/test_capability.py",
+        "backend/tests/properties/cashflow/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "migration_status": "ORPHAN_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 0,
+        "importer_files": []
+      }
+    },
+    "credit_card_engine": {
+      "id": "engine:credit_card_engine",
+      "name": "credit_card_engine",
+      "style": "package",
+      "path": "backend/src/engines/credit_card_engine",
+      "entry_point": "backend/src/engines/credit_card_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/credit_card_engine/billing.py",
+        "backend/src/engines/credit_card_engine/emi.py",
+        "backend/src/engines/credit_card_engine/foreclosure.py",
+        "backend/src/engines/credit_card_engine/interest.py",
+        "backend/src/engines/credit_card_engine/metrics.py",
+        "backend/src/engines/credit_card_engine/outstanding.py",
+        "backend/src/engines/credit_card_engine/utilization.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/credit_card_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/credit_cards.py"
+      ],
+      "repositories": [
+        "credit_card_repository",
+        "credit_card_statement_repository"
+      ],
+      "endpoints": [
+        "DELETE /credit-cards/{card_id}",
+        "GET /credit-cards",
+        "GET /credit-cards/{card_id}",
+        "GET /credit-cards/{card_id}/metrics",
+        "GET /credit-cards/{card_id}/next-statement-date",
+        "GET /credit-cards/{card_id}/outstanding",
+        "GET /credit-cards/{card_id}/statements",
+        "GET /credit-cards/{card_id}/utilization",
+        "POST /credit-cards",
+        "POST /credit-cards/{card_id}/emi-conversion",
+        "POST /credit-cards/{card_id}/foreclosure",
+        "POST /credit-cards/{card_id}/payments",
+        "POST /credit-cards/{card_id}/statements",
+        "PUT /credit-cards/{card_id}"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "tests": [
+        "backend/tests/properties/credit_card_engine/__init__.py",
+        "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+        "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+        "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE",
+      "internal": false,
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/credit_card_service.py"
+        ]
+      }
+    },
+    "financial_events": {
+      "id": "engine:financial_events",
+      "name": "financial_events",
+      "style": "package",
+      "path": "backend/src/engines/financial_events",
+      "entry_point": "backend/src/engines/financial_events/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/financial_events/lineage_walker.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/financial_events_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/financial_events.py"
+      ],
+      "repositories": [
+        "financial_event_repository"
+      ],
+      "endpoints": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/financial_events/__init__.py",
+        "backend/tests/capability/financial_events/test_capability.py",
+        "backend/tests/capability/financial_events/test_revocation.py",
+        "backend/tests/contract/generated/test_financial_events.py",
+        "backend/tests/invariants/financial_events.py",
+        "backend/tests/properties/financial_events/__init__.py",
+        "backend/tests/properties/financial_events/test_engine_properties.py",
+        "backend/tests/properties/financial_events/test_lineage_properties.py",
+        "backend/tests/unit/engines/financial_events/__init__.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/financial_events_service.py"
+        ]
+      }
+    },
+    "financial_intelligence": {
+      "id": "engine:financial_intelligence",
+      "name": "financial_intelligence",
+      "style": "package",
+      "path": "backend/src/engines/financial_intelligence",
+      "entry_point": "backend/src/engines/financial_intelligence/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/financial_intelligence/forecasting.py",
+        "backend/src/engines/financial_intelligence/goal_planner.py",
+        "backend/src/engines/financial_intelligence/intelligence.py",
+        "backend/src/engines/financial_intelligence/models.py",
+        "backend/src/engines/financial_intelligence/optimization.py",
+        "backend/src/engines/financial_intelligence/scenario.py",
+        "backend/src/engines/financial_intelligence/utils.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/financial_intelligence_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "repositories": [
+        "financial_event_repository",
+        "financial_goal_repository"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /credit-forecast",
+        "GET /liquidity-forecast",
+        "GET /outlook",
+        "GET /priorities",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}"
+      ],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/properties/forecasting/test_engine_properties.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/financial_intelligence_service.py"
+        ]
+      }
+    },
+    "ledger_audit_engine": {
+      "id": "engine:ledger_audit_engine",
+      "name": "ledger_audit_engine",
+      "style": "single_file",
+      "path": "backend/src/engines/ledger_audit_engine.py",
+      "entry_point": "backend/src/engines/ledger_audit_engine.py",
+      "implementation_modules": [],
+      "detectors": [],
+      "services": [
+        "backend/src/services/audit_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/audit.py"
+      ],
+      "repositories": [],
+      "endpoints": [
+        "GET /report"
+      ],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/audits/test_audit_minimal.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/audit_service.py"
+        ]
+      }
+    },
+    "loan_engine": {
+      "id": "engine:loan_engine",
+      "name": "loan_engine",
+      "style": "package",
+      "path": "backend/src/engines/loan_engine",
+      "entry_point": "backend/src/engines/loan_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/loan_engine/amortization.py",
+        "backend/src/engines/loan_engine/emi.py",
+        "backend/src/engines/loan_engine/floating_rate.py",
+        "backend/src/engines/loan_engine/foreclosure.py",
+        "backend/src/engines/loan_engine/metrics.py",
+        "backend/src/engines/loan_engine/models.py",
+        "backend/src/engines/loan_engine/prepayment.py",
+        "backend/src/engines/loan_engine/utils.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/loan_analysis_service.py",
+        "backend/src/services/loan_service.py",
+        "backend/src/services/loan_simulation_service.py",
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_payment_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [
+        "DELETE /loans/{loan_id}",
+        "GET /loans",
+        "GET /loans/analysis/priority",
+        "GET /loans/{loan_id}",
+        "GET /loans/{loan_id}/schedule",
+        "POST /loans",
+        "POST /loans/analysis/surplus-allocation",
+        "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+        "POST /loans/{loan_id}/foreclosure-simulation",
+        "POST /loans/{loan_id}/payments",
+        "POST /loans/{loan_id}/prepayment-simulation",
+        "POST /loans/{loan_id}/rate-change-simulation",
+        "PUT /loans/{loan_id}"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "tests": [
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/properties/loan_engine/__init__.py",
+        "backend/tests/properties/loan_engine/test_amortization_properties.py",
+        "backend/tests/properties/loan_engine/test_emi_properties.py",
+        "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+        "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+        "backend/tests/properties/loan_engine/test_metrics_properties.py",
+        "backend/tests/properties/loan_engine/test_prepayment_properties.py",
+        "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/unit/engines/loan/test_loan_engine.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE",
+      "internal": false,
+      "evidence": {
+        "import_references": 8,
+        "importer_files": [
+          "backend/src/engines/credit_card_engine/billing.py",
+          "backend/src/engines/credit_card_engine/foreclosure.py",
+          "backend/src/engines/financial_intelligence/scenario.py",
+          "backend/src/models/loan_simulation.py",
+          "backend/src/services/loan_analysis_service.py",
+          "backend/src/services/loan_service.py",
+          "backend/src/services/loan_simulation_service.py",
+          "backend/src/services/transaction_intelligence_service.py"
+        ]
+      }
+    },
+    "recommendation_engine": {
+      "id": "engine:recommendation_engine",
+      "name": "recommendation_engine",
+      "style": "package",
+      "path": "backend/src/engines/recommendation_engine",
+      "entry_point": "backend/src/engines/recommendation_engine/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/recommendation_engine/recommendations.py"
+      ],
+      "detectors": [],
+      "services": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/recommendation_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /cashflow-health",
+        "GET /credit-forecast",
+        "GET /debt-health",
+        "GET /liquidity-forecast",
+        "GET /monthly-report",
+        "GET /outlook",
+        "GET /patterns",
+        "GET /priorities",
+        "GET /profile",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}",
+        "GET /wellness-score"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "tests": [
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE",
+      "internal": false,
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/services/behaviour_service.py",
+          "backend/src/services/recommendation_service.py"
+        ]
+      }
+    },
+    "reconciliation_engine": {
+      "id": "engine:reconciliation_engine",
+      "name": "reconciliation_engine",
+      "style": "single_file",
+      "path": "backend/src/engines/reconciliation_engine.py",
+      "entry_point": "backend/src/engines/reconciliation_engine.py",
+      "implementation_modules": [],
+      "detectors": [],
+      "services": [
+        "backend/src/services/reconciliation_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/reconciliation.py"
+      ],
+      "repositories": [
+        "reconciliation_repository"
+      ],
+      "endpoints": [
+        "GET /pending",
+        "GET /scan",
+        "POST /batch-insert",
+        "POST /create",
+        "POST /{reconciliation_id}/confirm",
+        "POST /{reconciliation_id}/reject"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "tests": [
+        "backend/tests/invariants/test_reconciliation_determinism.py",
+        "backend/tests/invariants/test_reconciliation_properties.py",
+        "backend/tests/properties/reconciliation/test_engine_properties.py",
+        "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_SINGLE_FILE",
+      "internal": false,
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/engines/reconciliation_engine.py",
+          "backend/src/services/reconciliation_service.py"
+        ]
+      }
+    },
+    "transaction_intelligence": {
+      "id": "engine:transaction_intelligence",
+      "name": "transaction_intelligence",
+      "style": "package",
+      "path": "backend/src/engines/transaction_intelligence",
+      "entry_point": "backend/src/engines/transaction_intelligence/__init__.py",
+      "implementation_modules": [
+        "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+        "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+        "backend/src/engines/transaction_intelligence/detector_result.py",
+        "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
+      ],
+      "detectors": [
+        "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+        "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+        "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
+      ],
+      "services": [
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "routers": [],
+      "repositories": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "endpoints": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/transaction_intelligence/__init__.py",
+        "backend/tests/capability/transaction_intelligence/test_capability.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/transaction_intelligence/__init__.py",
+        "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+        "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+      ],
+      "artifacts": [],
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
+      "internal": true,
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/transaction_intelligence_service.py"
+        ]
+      }
+    }
+  },
+  "engine_modules": {
+    "backend/src/engines/account_engine/balance.py": {
+      "id": "module:backend/src/engines/account_engine/balance.py",
+      "path": "backend/src/engines/account_engine/balance.py",
+      "engine": "account_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_average_balance",
+        "compute_balance_change",
+        "compute_balance_growth_percentage"
+      ],
+      "docstring": "Balance Engine - Pure calculation module\n========================================\nBalance calculations for accounts.\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer).\n\nProvides factual balance metrics only \u2014 no recommendations."
+    },
+    "backend/src/engines/account_engine/cashflow.py": {
+      "id": "module:backend/src/engines/account_engine/cashflow.py",
+      "path": "backend/src/engines/account_engine/cashflow.py",
+      "engine": "account_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_net_cash_flow",
+        "compute_cash_flow_rate",
+        "compute_income_expense_ratio"
+      ],
+      "docstring": "Cashflow Engine - Pure calculation module\n=========================================\nDeterministic cash flow calculations.\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer).\n\nProvides factual cash flow metrics only \u2014 no recommendations."
+    },
+    "backend/src/engines/account_engine/dormant.py": {
+      "id": "module:backend/src/engines/account_engine/dormant.py",
+      "path": "backend/src/engines/account_engine/dormant.py",
+      "engine": "account_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_days_since_activity",
+        "is_account_dormant"
+      ],
+      "docstring": "Dormant Detection Engine - Pure calculation module\n===================================================\nDetects account dormancy based on activity patterns.\n\nAll monetary values in paise (integer).\nAll dates in ISO-8601 format.\n\nProvides factual dormancy detection only \u2014 no recommendations."
+    },
+    "backend/src/engines/account_engine/history.py": {
+      "id": "module:backend/src/engines/account_engine/history.py",
+      "path": "backend/src/engines/account_engine/history.py",
+      "engine": "account_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_balance_trend",
+        "compute_balance_velocity"
+      ],
+      "docstring": "Balance History Engine - Pure calculation module\n===============================================\nBalance history analysis.\n\nAll monetary values in paise (integer).\n\nProvides factual trend analysis only \u2014 no forecasting."
+    },
+    "backend/src/engines/account_engine/lifecycle.py": {
+      "id": "module:backend/src/engines/account_engine/lifecycle.py",
+      "path": "backend/src/engines/account_engine/lifecycle.py",
+      "engine": "account_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_account_status",
+        "is_account_closed"
+      ],
+      "docstring": "Account Lifecycle Engine - Pure calculation module\n=================================================\nAccount state transitions.\n\nAll monetary values in paise (integer).\nAll dates in ISO-8601 format.\n\nProvides factual state transitions only \u2014 no recommendations or heuristics."
+    },
+    "backend/src/engines/account_engine/metrics.py": {
+      "id": "module:backend/src/engines/account_engine/metrics.py",
+      "path": "backend/src/engines/account_engine/metrics.py",
+      "engine": "account_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_account_metrics"
+      ],
+      "docstring": "Account Metrics Engine - Pure calculation module\n=================================================\nAggregate deterministic account metrics.\n\nAll monetary values in paise (integer).\nAll days are integer counts.\n\nComposes existing engine functions \u2014 no duplicate calculations."
+    },
+    "backend/src/engines/behaviour_engine/account.py": {
+      "id": "module:backend/src/engines/behaviour_engine/account.py",
+      "path": "backend/src/engines/behaviour_engine/account.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_account_concentration",
+        "compute_idle_cash_amount",
+        "detect_balance_volatility",
+        "detect_low_balance_risk"
+      ],
+      "docstring": "Account intelligence metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nFunctions analyze account-level behaviour including concentration,\nidle cash detection, volatility, and low balance risk."
+    },
+    "backend/src/engines/behaviour_engine/cashflow.py": {
+      "id": "module:backend/src/engines/behaviour_engine/cashflow.py",
+      "path": "backend/src/engines/behaviour_engine/cashflow.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_income_stability",
+        "compute_expense_stability",
+        "compute_cashflow_stability_index"
+      ],
+      "docstring": "Cashflow stability metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/behaviour_engine/core.py": {
+      "id": "module:backend/src/engines/behaviour_engine/core.py",
+      "path": "backend/src/engines/behaviour_engine/core.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "invalidate_behavior_cache",
+        "get_cached_behavior_profile",
+        "set_cached_behavior_profile",
+        "_parse_date",
+        "_normalize_score",
+        "_coefficient_of_variation",
+        "_moving_average",
+        "_get_daily_spending_data",
+        "_get_monthly_category_spending_data",
+        "_get_monthly_income_expenses_data",
+        "_get_transaction_stats_data",
+        "_get_transactions_90_days",
+        "_get_recent_transactions",
+        "_compute_temporal_patterns",
+        "_compute_loss_aversion_index",
+        "_compute_impulsivity_score",
+        "_compute_habit_stability_score",
+        "_compute_financial_stress_index",
+        "_compute_savings_discipline_score",
+        "detect_india_risk_patterns",
+        "compute_behavior_profile"
+      ],
+      "docstring": "Behaviour Engine Core \u2014 Comprehensive behavioral intelligence.\n\nDeterministic behavioral metrics for financial analysis based on Prospect Theory,\nPresent Bias, Habit Loop Theory, and Loss Aversion.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise)."
+    },
+    "backend/src/engines/behaviour_engine/credit_dependency.py": {
+      "id": "module:backend/src/engines/behaviour_engine/credit_dependency.py",
+      "path": "backend/src/engines/behaviour_engine/credit_dependency.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "artificial_income_flag",
+        "credit_dependency_ratio",
+        "transactor_vs_revolver",
+        "revolver_ratio",
+        "debt_rolling_flag",
+        "liquidity_extraction_frequency",
+        "_normalize_score",
+        "financial_stress_index",
+        "household_divergence"
+      ],
+      "docstring": "India-specific credit dependency signals for Behaviour Engine.\n\nAll functions are pure - no database access.\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nConsumes financial_events (Phase 6) and cashflow_results (Phase 7)."
+    },
+    "backend/src/engines/behaviour_engine/debt.py": {
+      "id": "module:backend/src/engines/behaviour_engine/debt.py",
+      "path": "backend/src/engines/behaviour_engine/debt.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_credit_dependency_ratio",
+        "_score_credit_advances",
+        "_score_revolving_months",
+        "_score_debt_trend",
+        "compute_debt_cycle_score",
+        "compute_foir",
+        "compute_credit_revolver_ratio"
+      ],
+      "docstring": "Debt intelligence metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/behaviour_engine/income.py": {
+      "id": "module:backend/src/engines/behaviour_engine/income.py",
+      "path": "backend/src/engines/behaviour_engine/income.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "classify_income_source",
+        "_compute_match_confidence",
+        "compute_salary_dependence_ratio",
+        "compute_income_diversification_score",
+        "filter_true_income",
+        "compute_true_income_total"
+      ],
+      "docstring": "Income source analysis for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nIncome Sources (categories):\n- SALARY: Regular employment income, payroll, wages, salaried\n- BUSINESS: Business income, freelance, consulting, commission\n- INVESTMENT: Investment returns, dividends, interest, capital gains\n- TRANSFER: Internal transfers between own accounts\n- REFUND: Refunds, cashbacks, reversals of previous payments\n- BORROWING: Loans, credit advances (not true income)\n- UNKNOWN: Cannot determine source from description"
+    },
+    "backend/src/engines/behaviour_engine/insights.py": {
+      "id": "module:backend/src/engines/behaviour_engine/insights.py",
+      "path": "backend/src/engines/behaviour_engine/insights.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "generate_behavioral_insights",
+        "generate_summary_text"
+      ],
+      "docstring": "Insight Generator\n=================\n\nGenerates deterministic, evidence-based behavioral insights.\nNo motivational fluff. No randomness.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer."
+    },
+    "backend/src/engines/behaviour_engine/lifestyle.py": {
+      "id": "module:backend/src/engines/behaviour_engine/lifestyle.py",
+      "path": "backend/src/engines/behaviour_engine/lifestyle.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_lifestyle_inflation",
+        "compute_lifestyle_creep_index"
+      ],
+      "docstring": "Lifestyle metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/behaviour_engine/nudges.py": {
+      "id": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "path": "backend/src/engines/behaviour_engine/nudges.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "generate_nudges",
+        "get_top_nudge",
+        "get_nudge_summary"
+      ],
+      "docstring": "Nudge Engine\n============\n\nRules-based behavioral suggestion engine.\nNon-intrusive, deterministic nudges based on behavioral profile.\n\nPhase 3: Part of the Advanced Behavioral Intelligence Layer.\n\nBased on behavioral economics principles:\n- Default bias\n- Friction mechanisms\n- Goal framing\n- Loss aversion messaging"
+    },
+    "backend/src/engines/behaviour_engine/patterns.py": {
+      "id": "module:backend/src/engines/behaviour_engine/patterns.py",
+      "path": "backend/src/engines/behaviour_engine/patterns.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "_parse_hour",
+        "_is_weekend",
+        "_is_night_time",
+        "detect_impulse_transactions",
+        "compute_weekend_spend_ratio",
+        "compute_night_spend_ratio",
+        "_get_month_year",
+        "detect_recurring_merchants",
+        "detect_subscription_patterns"
+      ],
+      "docstring": "Pattern detection for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nTransactions are expected as dicts with optional keys:\n- date_iso: str (required) - YYYY-MM-DD format\n- time_iso: str (optional) - HH:MM format\n- description: str - merchant/description\n- amount_paise: int - transaction amount\n- category: str - transaction category"
+    },
+    "backend/src/engines/behaviour_engine/profile.py": {
+      "id": "module:backend/src/engines/behaviour_engine/profile.py",
+      "path": "backend/src/engines/behaviour_engine/profile.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "classify_financial_personality",
+        "_is_debt_dependent",
+        "_is_saver",
+        "_is_debt_optimizer",
+        "_is_spender",
+        "_build_result",
+        "_calculate_confidence",
+        "_build_explanation"
+      ],
+      "docstring": "Financial personality classification for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nClassifies users into one of five financial personality profiles based on\ntheir spending and saving behaviors.\n\nProfiles:\n- SAVER: High savings rate, low credit dependency\n- BALANCED: Moderate savings, balanced spending\n- SPENDER: High discretionary spending, impulse purchases\n- DEBT_OPTIMIZER: Uses credit responsibly with positive savings\n- DEBT_DEPENDENT: High credit lifestyle, recurring debt"
+    },
+    "backend/src/engines/behaviour_engine/resilience.py": {
+      "id": "module:backend/src/engines/behaviour_engine/resilience.py",
+      "path": "backend/src/engines/behaviour_engine/resilience.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_liquidity_months",
+        "compute_resilience_index"
+      ],
+      "docstring": "Resilience metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/behaviour_engine/savings.py": {
+      "id": "module:backend/src/engines/behaviour_engine/savings.py",
+      "path": "backend/src/engines/behaviour_engine/savings.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_true_savings_rate",
+        "compute_borrowed_lifestyle_ratio",
+        "compute_monthly_surplus"
+      ],
+      "docstring": "Savings metrics for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/behaviour_engine/stress.py": {
+      "id": "module:backend/src/engines/behaviour_engine/stress.py",
+      "path": "backend/src/engines/behaviour_engine/stress.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "_parse_date",
+        "_normalize_score",
+        "_coefficient_of_variation",
+        "loss_aversion_index",
+        "impulsivity_score",
+        "habit_stability_score",
+        "financial_stress_index",
+        "savings_discipline_score",
+        "detect_risk_patterns"
+      ],
+      "docstring": "Stress and behavioural indices for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nTransactions are expected as dicts with keys:\n- date_iso: str - YYYY-MM-DD format\n- time_iso: str (optional) - HH:MM format\n- description: str - merchant/description\n- amount_paise: int - transaction amount\n- type: str - \"debit\" or \"credit\"\n- category: str - transaction category"
+    },
+    "backend/src/engines/behaviour_engine/temporal.py": {
+      "id": "module:backend/src/engines/behaviour_engine/temporal.py",
+      "path": "backend/src/engines/behaviour_engine/temporal.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "_coefficient_of_variation",
+        "_moving_average",
+        "compute_daily_spending",
+        "compute_weekly_pattern",
+        "compute_trend",
+        "compute_seasonality",
+        "compute_residual_volatility",
+        "compute_temporal_patterns"
+      ],
+      "docstring": "Temporal pattern analysis for behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nTransactions are expected as dicts with keys:\n- date_iso: str - YYYY-MM-DD format\n- amount_paise: int - transaction amount\n- type: str - \"debit\" or \"credit\""
+    },
+    "backend/src/engines/behaviour_engine/utils.py": {
+      "id": "module:backend/src/engines/behaviour_engine/utils.py",
+      "path": "backend/src/engines/behaviour_engine/utils.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "_median",
+        "_variance",
+        "_coefficient_of_variation",
+        "_percentage_change",
+        "to_basis_points",
+        "from_basis_points",
+        "round_decimal"
+      ],
+      "docstring": "Utility functions for behaviour engine calculations.\n\nAll functions use integer arithmetic with paise values and ROUND_HALF_UP rounding\nwhere Decimal is needed. No database access - pure functions only."
+    },
+    "backend/src/engines/behaviour_engine/wellness.py": {
+      "id": "module:backend/src/engines/behaviour_engine/wellness.py",
+      "path": "backend/src/engines/behaviour_engine/wellness.py",
+      "engine": "behaviour_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_wellness_score",
+        "classify_wellness_band"
+      ],
+      "docstring": "Financial Wellness Scoring for Behaviour Engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access.\n\nComputes composite financial wellness score based on multiple behavioral dimensions."
+    },
+    "backend/src/engines/credit_card_engine/billing.py": {
+      "id": "module:backend/src/engines/credit_card_engine/billing.py",
+      "path": "backend/src/engines/credit_card_engine/billing.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_due_date",
+        "compute_next_statement_date",
+        "_next_billing_day_after",
+        "compute_statement_dates",
+        "compute_minimum_due"
+      ],
+      "docstring": "Billing Engine - Pure calculation module\n========================================\nStatement date generation, due date calculation, minimum due computation.\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer).\n\nReuses _add_months from loan_engine for month-end-safe date arithmetic."
+    },
+    "backend/src/engines/credit_card_engine/emi.py": {
+      "id": "module:backend/src/engines/credit_card_engine/emi.py",
+      "path": "backend/src/engines/credit_card_engine/emi.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_monthly_interest",
+        "compute_emi_fixed",
+        "compute_emi_conversion"
+      ],
+      "docstring": "EMI Engine - Standalone credit card conversion calculation\n==========================================================\nIndependent EMI calculations using high-precision Decimal arithmetic\nto ensure exact rounding consistency without loan_engine delegation.\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer)."
+    },
+    "backend/src/engines/credit_card_engine/foreclosure.py": {
+      "id": "module:backend/src/engines/credit_card_engine/foreclosure.py",
+      "path": "backend/src/engines/credit_card_engine/foreclosure.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_card_foreclosure"
+      ],
+      "docstring": "Foreclosure Engine - Thin wrapper that delegates to loan_engine\n================================================================\nNo foreclosure calculation duplication. Delegates to\nloan_engine.foreclosure.compute_foreclosure_amount().\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer)."
+    },
+    "backend/src/engines/credit_card_engine/interest.py": {
+      "id": "module:backend/src/engines/credit_card_engine/interest.py",
+      "path": "backend/src/engines/credit_card_engine/interest.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "bps_to_daily_rate",
+        "compute_daily_interest",
+        "compute_monthly_interest_charge",
+        "compute_monthly_interest_simple"
+      ],
+      "docstring": "Interest Engine - Pure calculation module\n=========================================\nDaily interest accrual and monthly interest charge computation.\n\nAll monetary values in paise (integer).\nAll interest rates in basis points (integer).\n\nUses Decimal with ROUND_HALF_EVEN for all intermediate calculations.\nReuses bps_to_monthly_rate from loan_engine for rate conversion.\n\nINVARIANT: Indian credit cards charge interest on daily balances\nbut bill monthly. This module calculates per-day accrual and\naggregates across a billing cycle."
+    },
+    "backend/src/engines/credit_card_engine/metrics.py": {
+      "id": "module:backend/src/engines/credit_card_engine/metrics.py",
+      "path": "backend/src/engines/credit_card_engine/metrics.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_financial_metrics"
+      ],
+      "docstring": "Metrics Engine - Pure calculation module\n=========================================\nComputes financial metrics for credit cards.\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer).\n\nProvides factual metrics only \u2014 no recommendations or heuristics."
+    },
+    "backend/src/engines/credit_card_engine/outstanding.py": {
+      "id": "module:backend/src/engines/credit_card_engine/outstanding.py",
+      "path": "backend/src/engines/credit_card_engine/outstanding.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_outstanding"
+      ],
+      "docstring": "Outstanding Engine - Pure calculation module\n=============================================\nComputes outstanding balance for credit cards.\n\nAll monetary values in paise (integer).\n\nFormula:\n    Outstanding = \u03a3(spend) + \u03a3(EMI_conversions) + \u03a3(fees) - \u03a3(payments)"
+    },
+    "backend/src/engines/credit_card_engine/utilization.py": {
+      "id": "module:backend/src/engines/credit_card_engine/utilization.py",
+      "path": "backend/src/engines/credit_card_engine/utilization.py",
+      "engine": "credit_card_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_utilization",
+        "compute_available_credit"
+      ],
+      "docstring": "Utilization Engine - Pure calculation module\n=============================================\nComputes credit utilization and available credit.\n\nAll monetary values in paise (integer).\nAll rates in basis points (integer).\n\nUtilization = outstanding / credit_limit \u00d7 10000 (returns basis points)"
+    },
+    "backend/src/engines/financial_events/lineage_walker.py": {
+      "id": "module:backend/src/engines/financial_events/lineage_walker.py",
+      "path": "backend/src/engines/financial_events/lineage_walker.py",
+      "engine": "financial_events",
+      "node_type": "EngineModule",
+      "classes": [
+        "LineageProposal"
+      ],
+      "functions": [
+        "_parse_date_iso",
+        "_date_difference_days",
+        "_is_liability_event",
+        "_is_repayment_event",
+        "_is_transfer_event",
+        "_is_revocable_event",
+        "walk_lineage",
+        "detect_revocations",
+        "detect_rollover_scenarios"
+      ],
+      "docstring": "Financial Events Lineage Walker - Pure function for linking events.\n\nDetects relationships between financial events:\n- 'settles': Repayment \u2192 Cash advance (same liability account, temporal ordering)\n- 'funds': Repayment \u2192 Cash advance (funding source detection)\n- 'rolls_over': Debt-rolling scenario (repayment's funding traces to another advance)\n\nDEFAULT_ROLLOVER_LOOKBACK_DAYS: Window to search for funding sources."
+    },
+    "backend/src/engines/financial_intelligence/forecasting.py": {
+      "id": "module:backend/src/engines/financial_intelligence/forecasting.py",
+      "path": "backend/src/engines/financial_intelligence/forecasting.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "forecast_cashflow",
+        "_next_month",
+        "_weighted_average",
+        "forecast_liquidity",
+        "forecast_credit_utilization",
+        "_compute_current_credit_dependency",
+        "detect_future_cash_shortfall"
+      ],
+      "docstring": "Financial Intelligence Engine - Forecasting Functions.\n\nPure forecasting functions for cashflow, liquidity, and credit predictions.\nNo database access. All monetary values are integers in paise (\u20b91.00 = 100 paise).\n\nConsumes outputs from:\n- Cashflow Engine (monthly surplus data)\n- Financial Events (credit events)\n- Behaviour Engine (credit dependency patterns)\n- Loan Engine (EMI obligations)\n- Credit Card Engine (utilization data)"
+    },
+    "backend/src/engines/financial_intelligence/goal_planner.py": {
+      "id": "module:backend/src/engines/financial_intelligence/goal_planner.py",
+      "path": "backend/src/engines/financial_intelligence/goal_planner.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "calculate_goal_projection",
+        "calculate_emergency_fund_target",
+        "_months_to_payoff",
+        "calculate_debt_payoff_projection",
+        "calculate_goal_health",
+        "calculate_household_goal_summary"
+      ],
+      "docstring": "Goal Planning Engine - Pure calculation library.\n\nDeterministic goal projection and health scoring functions.\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\n\nConsumes outputs from:\n- Financial Forecasting (monthly surplus forecasts)\n- Cashflow Engine (monthly surplus data)\n- Behaviour Engine (credit dependency patterns)\n- Loan Engine (EMI obligations - via existing outputs, no direct calls)\n\nUses configurable allocation percentage to determine available funds.\nDoes NOT recalculate income, expenses, debt schedules, or interest."
+    },
+    "backend/src/engines/financial_intelligence/intelligence.py": {
+      "id": "module:backend/src/engines/financial_intelligence/intelligence.py",
+      "path": "backend/src/engines/financial_intelligence/intelligence.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "build_financial_snapshot",
+        "generate_financial_priorities",
+        "_get_action_reason",
+        "_extract_liquidity_months",
+        "calculate_intelligence_confidence",
+        "generate_financial_intelligence_report",
+        "_aggregate_risks",
+        "_identify_opportunities",
+        "_compute_health_score"
+      ],
+      "docstring": "Financial Intelligence Aggregator Engine.\n\nPure composition functions that combine outputs from:\n- Behaviour Engine (wellness, credit dependency)\n- Cashflow Engine (monthly analysis)\n- Forecasting Engine (cashflow, liquidity, credit forecasts)\n- Optimization Engine (allocation, action scores)\n- Goal Planner (projections, health)\n\nNo database access. No LLM calls. No prompt generation.\nAll monetary values are integers in paise (\u20b91.00 = 100 paise)."
+    },
+    "backend/src/engines/financial_intelligence/models.py": {
+      "id": "module:backend/src/engines/financial_intelligence/models.py",
+      "path": "backend/src/engines/financial_intelligence/models.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [
+        "ScenarioResult",
+        "ScenarioComparison",
+        "LoanScenario",
+        "DebtScenario",
+        "FinancialSnapshot",
+        "IntelligenceReport",
+        "PriorityAction",
+        "ConfidenceMetadata",
+        "RiskFlag",
+        "Opportunity"
+      ],
+      "functions": [],
+      "docstring": "Financial Intelligence Engine Models.\n\nTypedDict contracts for scenario simulation and comparison.\nNo database access. All monetary values are integers in paise."
+    },
+    "backend/src/engines/financial_intelligence/optimization.py": {
+      "id": "module:backend/src/engines/financial_intelligence/optimization.py",
+      "path": "backend/src/engines/financial_intelligence/optimization.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "derive_cash_advance_debt_entry",
+        "optimize_surplus_allocation",
+        "rank_debt_payoff_strategy",
+        "optimize_goal_prioritization",
+        "calculate_financial_action_score",
+        "generate_optimization_plan",
+        "_sum_high_interest_debt",
+        "goal_priority_score",
+        "deadline_score",
+        "balanced_score"
+      ],
+      "docstring": "Financial Optimization Engine - Pure decision engine for surplus allocation.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll interest rates are in basis points (1% = 100 bps).\nNo database access. No services. Pure calculation only."
+    },
+    "backend/src/engines/financial_intelligence/scenario.py": {
+      "id": "module:backend/src/engines/financial_intelligence/scenario.py",
+      "path": "backend/src/engines/financial_intelligence/scenario.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "simulate_expense_reduction",
+        "simulate_income_change",
+        "simulate_debt_prepayment",
+        "simulate_new_loan",
+        "simulate_credit_behaviour_change",
+        "compare_scenario"
+      ],
+      "docstring": "Financial Scenario Simulation Engine.\n\nPure calculation library for \"What if I...\" scenarios.\nNever modifies financial records, never creates transactions, never persists simulations.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll interest rates are in basis points (1% = 100 bps)."
+    },
+    "backend/src/engines/financial_intelligence/utils.py": {
+      "id": "module:backend/src/engines/financial_intelligence/utils.py",
+      "path": "backend/src/engines/financial_intelligence/utils.py",
+      "engine": "financial_intelligence",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "next_month",
+        "generate_month_sequence",
+        "compute_variance",
+        "compute_weighted_average",
+        "compute_confidence_from_variance",
+        "compute_utilization_ratio",
+        "compute_trend_direction",
+        "project_running_balance",
+        "find_stress_month"
+      ],
+      "docstring": "Financial Intelligence Engine Utilities.\n\nPure helper functions for forecasting calculations.\nNo database access. All monetary values are integers in paise."
+    },
+    "backend/src/engines/loan_engine/amortization.py": {
+      "id": "module:backend/src/engines/loan_engine/amortization.py",
+      "path": "backend/src/engines/loan_engine/amortization.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "_add_months",
+        "generate_schedule",
+        "find_schedule_row",
+        "total_interest_paise",
+        "total_payment_paise",
+        "total_principal_paise",
+        "validate_schedule_invariants",
+        "validate_schedule"
+      ],
+      "docstring": "Generates immutable amortization schedules for loans.\n\nINVARIANT 3: Once generated, schedule is never modified in-place.\nINVARIANT 4: All dates are ISO 8601 strings."
+    },
+    "backend/src/engines/loan_engine/emi.py": {
+      "id": "module:backend/src/engines/loan_engine/emi.py",
+      "path": "backend/src/engines/loan_engine/emi.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_emi_fixed",
+        "compute_emi_floating",
+        "compute_monthly_interest",
+        "compute_principal_component",
+        "compute_principal_from_emi",
+        "compute_tenure_from_emi"
+      ],
+      "docstring": "EMI Calculator - Deterministic and precise\n=========================================\nAll monetary values in paise (integer).\nAll interest rates in basis points (integer).\n\nUses Decimal with banker's rounding (ROUND_HALF_EVEN) for all intermediate calculations."
+    },
+    "backend/src/engines/loan_engine/floating_rate.py": {
+      "id": "module:backend/src/engines/loan_engine/floating_rate.py",
+      "path": "backend/src/engines/loan_engine/floating_rate.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "apply_floating_rate_change",
+        "simulate_floating_rate_schedule",
+        "get_change_month",
+        "get_new_rate",
+        "get_mode"
+      ],
+      "docstring": "Floating Rate Engine - Pure calculation module"
+    },
+    "backend/src/engines/loan_engine/foreclosure.py": {
+      "id": "module:backend/src/engines/loan_engine/foreclosure.py",
+      "path": "backend/src/engines/loan_engine/foreclosure.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_foreclosure_amount",
+        "compute_prepayment_breakup"
+      ],
+      "docstring": "Foreclosure Engine - Pure calculation module"
+    },
+    "backend/src/engines/loan_engine/metrics.py": {
+      "id": "module:backend/src/engines/loan_engine/metrics.py",
+      "path": "backend/src/engines/loan_engine/metrics.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "compute_loan_metrics",
+        "calculate_interest_saved",
+        "calculate_tenure_saved",
+        "get_interest_component",
+        "get_emi_component"
+      ],
+      "docstring": "Loan Metrics - Pure calculation module"
+    },
+    "backend/src/engines/loan_engine/models.py": {
+      "id": "module:backend/src/engines/loan_engine/models.py",
+      "path": "backend/src/engines/loan_engine/models.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [
+        "InterestType",
+        "PrepaymentMode",
+        "AmortizationRow",
+        "PrepaymentResult",
+        "FloatingRateChange",
+        "ForeclosureResult",
+        "LoanMetrics"
+      ],
+      "functions": [],
+      "docstring": "Domain models for Loan Engine - Pure calculation types only.\nAll monetary values in paise (integer).\nAll interest rates in basis points (integer)."
+    },
+    "backend/src/engines/loan_engine/prepayment.py": {
+      "id": "module:backend/src/engines/loan_engine/prepayment.py",
+      "path": "backend/src/engines/loan_engine/prepayment.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "_compute_tenure_from_emi",
+        "compute_remaining_months",
+        "apply_prepayment",
+        "apply_prepayment_at_month",
+        "apply_multiple_prepayments",
+        "regenerate_schedule"
+      ],
+      "docstring": "Prepayment Engine - Pure calculation module\nSupports single/multiple prepayments, both reduce-tenure and reduce-EMI modes,\nprepayment penalties, dynamic schedule regeneration."
+    },
+    "backend/src/engines/loan_engine/utils.py": {
+      "id": "module:backend/src/engines/loan_engine/utils.py",
+      "path": "backend/src/engines/loan_engine/utils.py",
+      "engine": "loan_engine",
+      "node_type": "EngineModule",
+      "classes": [],
+      "functions": [
+        "bps_to_decimal_rate",
+        "bps_to_monthly_rate"
+      ],
+      "docstring": "Utility functions for loan engine calculations."
+    },
+    "backend/src/engines/recommendation_engine/recommendations.py": {
+      "id": "module:backend/src/engines/recommendation_engine/recommendations.py",
+      "path": "backend/src/engines/recommendation_engine/recommendations.py",
+      "engine": "recommendation_engine",
+      "node_type": "EngineModule",
+      "classes": [
+        "Recommendation"
+      ],
+      "functions": [
+        "check_debt_dependency",
+        "check_foir",
+        "check_liquidity",
+        "detect_subscription_growth",
+        "compute_recommendations",
+        "__init__",
+        "to_dict"
+      ],
+      "docstring": "Core recommendation logic for financial behaviour engine.\n\nAll monetary values are integers in paise (\u20b91.00 = 100 paise).\nAll functions are pure - no database access."
+    },
+    "backend/src/engines/transaction_intelligence/detector_result.py": {
+      "id": "module:backend/src/engines/transaction_intelligence/detector_result.py",
+      "path": "backend/src/engines/transaction_intelligence/detector_result.py",
+      "engine": "transaction_intelligence",
+      "node_type": "EngineModule",
+      "classes": [
+        "DetectionResult",
+        "EMIDetectionResult"
+      ],
+      "functions": [],
+      "docstring": "Transaction Intelligence Detector Result Types.\n\nCommon result types for all transaction detectors."
+    }
+  },
+  "detectors": {
+    "backend/src/engines/transaction_intelligence/cash_conversion_detector.py": {
+      "id": "detector:backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+      "path": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+      "engine": "transaction_intelligence",
+      "node_type": "Detector",
+      "classes": [
+        "CashConversionResult"
+      ],
+      "functions": [
+        "_parse_date_iso",
+        "_date_difference_days",
+        "_match_description_pattern",
+        "_match_purpose",
+        "_is_savings_or_current",
+        "_calculate_fee_bps",
+        "_determine_zone",
+        "_hungarian_inline",
+        "detect"
+      ],
+      "docstring": "Cash Conversion Detector - Pure function for detecting liquidity extraction.\n\nDetects when a debit transaction represents cash extracted via a provider\n(CRED/Cheq/Spaid/NoBroker) into a savings/current account, with fee calculation.\n\nNo database access - all data is passed as parameters."
+    },
+    "backend/src/engines/transaction_intelligence/cc_payment_detector.py": {
+      "id": "detector:backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+      "path": "backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+      "engine": "transaction_intelligence",
+      "node_type": "Detector",
+      "classes": [
+        "CCPaymentDetectionResult"
+      ],
+      "functions": [
+        "extract_card_last4",
+        "determine_payment_channel",
+        "_convert_to_paise",
+        "classify_cc_payment",
+        "detect_cc_payment"
+      ],
+      "docstring": "Credit Card Payment Detector - Pure function for detecting CC payment lifecycle states.\n\nDetects credit card payments from debit transactions and classifies them into\nlifecycle states based on statement matching and payment amounts.\n\nNo database access - all data is passed as parameters."
+    },
+    "backend/src/engines/transaction_intelligence/loan_emi_detector.py": {
+      "id": "detector:backend/src/engines/transaction_intelligence/loan_emi_detector.py",
+      "path": "backend/src/engines/transaction_intelligence/loan_emi_detector.py",
+      "engine": "transaction_intelligence",
+      "node_type": "Detector",
+      "classes": [],
+      "functions": [
+        "_is_emi_description",
+        "_amount_within_tolerance",
+        "_date_near_expected",
+        "detect_emi_payment",
+        "find_loan_candidates_for_account"
+      ],
+      "docstring": "Loan EMI Payment Detector.\n\nPure function: accepts plain data, returns classification result.\nNo database access - schedule and loan data are passed in as parameters."
+    }
+  },
+  "facades": {
+    "backend/src/engines/__init__.py": {
+      "id": "facade:backend/src/engines/__init__.py",
+      "path": "backend/src/engines/__init__.py",
+      "status": "FACADE",
+      "replaces": null,
+      "import_references": 0
+    }
+  },
+  "capabilities": {
+    "useAccountsCapability": {
+      "id": "capability:useAccountsCapability",
+      "name": "useAccountsCapability",
+      "path": "frontend/lib/capabilities/use-accounts-capability.ts",
+      "engines": [
+        "account_engine"
+      ],
+      "endpoints": [
+        "DELETE /accounts/manage/{account_id}",
+        "DELETE /accounts/{account_id}",
+        "DELETE /accounts/{account_id}/links/{linked_account_id}",
+        "GET /accounts",
+        "GET /accounts/manage",
+        "GET /accounts/{account_id}",
+        "GET /accounts/{account_id}/analytics",
+        "GET /accounts/{account_id}/balance",
+        "GET /accounts/{account_id}/balance-history",
+        "GET /accounts/{account_id}/balance-history/latest",
+        "GET /accounts/{account_id}/dormancy",
+        "GET /accounts/{account_id}/links",
+        "GET /accounts/{account_id}/metrics",
+        "GET /accounts/{account_id}/running-balance",
+        "GET /accounts/{account_id}/status",
+        "GET /institutions",
+        "GET /institutions/{institution_id}",
+        "POST /accounts",
+        "POST /accounts/manage",
+        "POST /accounts/{account_id}/balance-history",
+        "POST /accounts/{account_id}/links",
+        "POST /institutions",
+        "PUT /accounts/manage/{account_id}",
+        "PUT /accounts/{account_id}",
+        "PUT /institutions/{institution_id}"
+      ],
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "useBehaviourCapability": {
+      "id": "capability:useBehaviourCapability",
+      "name": "useBehaviourCapability",
+      "path": "frontend/lib/capabilities/use-behaviour-capability.ts",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /cashflow-health",
+        "GET /credit-forecast",
+        "GET /debt-health",
+        "GET /liquidity-forecast",
+        "GET /monthly-report",
+        "GET /outlook",
+        "GET /patterns",
+        "GET /priorities",
+        "GET /profile",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}",
+        "GET /report",
+        "GET /summary",
+        "GET /wellness-score",
+        "POST /import/detect",
+        "POST /import/execute",
+        "POST /upload"
+      ],
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "useCashflowCapability": {
+      "id": "capability:useCashflowCapability",
+      "name": "useCashflowCapability",
+      "path": "frontend/lib/capabilities/use-cashflow-capability.ts",
+      "engines": [],
+      "endpoints": [],
+      "workspaces": []
+    },
+    "useCreditCardsCapability": {
+      "id": "capability:useCreditCardsCapability",
+      "name": "useCreditCardsCapability",
+      "path": "frontend/lib/capabilities/use-credit-cards-capability.ts",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "endpoints": [
+        "DELETE /credit-cards/{card_id}",
+        "GET /credit-cards",
+        "GET /credit-cards/{card_id}",
+        "GET /credit-cards/{card_id}/metrics",
+        "GET /credit-cards/{card_id}/next-statement-date",
+        "GET /credit-cards/{card_id}/outstanding",
+        "GET /credit-cards/{card_id}/statements",
+        "GET /credit-cards/{card_id}/utilization",
+        "POST /credit-cards",
+        "POST /credit-cards/{card_id}/emi-conversion",
+        "POST /credit-cards/{card_id}/foreclosure",
+        "POST /credit-cards/{card_id}/payments",
+        "POST /credit-cards/{card_id}/statements",
+        "PUT /credit-cards/{card_id}"
+      ],
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "useForecastCapability": {
+      "id": "capability:useForecastCapability",
+      "name": "useForecastCapability",
+      "path": "frontend/lib/capabilities/use-forecast-capability.ts",
+      "engines": [],
+      "endpoints": [],
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "useInvestmentsCapability": {
+      "id": "capability:useInvestmentsCapability",
+      "name": "useInvestmentsCapability",
+      "path": "frontend/lib/capabilities/use-investments-capability.ts",
+      "engines": [],
+      "endpoints": [],
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "useLoansCapability": {
+      "id": "capability:useLoansCapability",
+      "name": "useLoansCapability",
+      "path": "frontend/lib/capabilities/use-loans-capability.ts",
+      "engines": [
+        "loan_engine"
+      ],
+      "endpoints": [
+        "DELETE /loans/{loan_id}",
+        "GET /loans",
+        "GET /loans/analysis/priority",
+        "GET /loans/{loan_id}",
+        "GET /loans/{loan_id}/schedule",
+        "POST /loans",
+        "POST /loans/analysis/surplus-allocation",
+        "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+        "POST /loans/{loan_id}/foreclosure-simulation",
+        "POST /loans/{loan_id}/payments",
+        "POST /loans/{loan_id}/prepayment-simulation",
+        "POST /loans/{loan_id}/rate-change-simulation",
+        "PUT /loans/{loan_id}"
+      ],
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "useNetWorthCapability": {
+      "id": "capability:useNetWorthCapability",
+      "name": "useNetWorthCapability",
+      "path": "frontend/lib/capabilities/use-net-worth-capability.ts",
+      "engines": [],
+      "endpoints": [],
+      "workspaces": []
+    },
+    "useReconciliationCapability": {
+      "id": "capability:useReconciliationCapability",
+      "name": "useReconciliationCapability",
+      "path": "frontend/lib/capabilities/use-reconciliation-capability.ts",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "endpoints": [
+        "GET /pending",
+        "GET /scan",
+        "POST /batch-insert",
+        "POST /create",
+        "POST /{reconciliation_id}/confirm",
+        "POST /{reconciliation_id}/reject"
+      ],
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "useTransactionCapability": {
+      "id": "capability:useTransactionCapability",
+      "name": "useTransactionCapability",
+      "path": "frontend/lib/capabilities/use-transaction-capability.ts",
+      "engines": [],
+      "endpoints": [],
+      "workspaces": [
+        "transactions"
+      ]
+    }
+  },
+  "routers": {
+    "backend/src/routers/accounts.py": {
+      "id": "router:backend/src/routers/accounts.py",
+      "path": "backend/src/routers/accounts.py",
+      "name": "accounts",
+      "endpoints": [
+        "DELETE /accounts/{account_id}",
+        "DELETE /accounts/{account_id}/links/{linked_account_id}",
+        "GET /accounts",
+        "GET /accounts/{account_id}",
+        "GET /accounts/{account_id}/analytics",
+        "GET /accounts/{account_id}/balance-history",
+        "GET /accounts/{account_id}/balance-history/latest",
+        "GET /accounts/{account_id}/dormancy",
+        "GET /accounts/{account_id}/links",
+        "GET /accounts/{account_id}/metrics",
+        "GET /accounts/{account_id}/status",
+        "GET /institutions",
+        "GET /institutions/{institution_id}",
+        "POST /accounts",
+        "POST /accounts/{account_id}/balance-history",
+        "POST /accounts/{account_id}/links",
+        "POST /institutions",
+        "PUT /accounts/{account_id}",
+        "PUT /institutions/{institution_id}"
+      ],
+      "engines": [
+        "account_engine"
+      ]
+    },
+    "backend/src/routers/audit.py": {
+      "id": "router:backend/src/routers/audit.py",
+      "path": "backend/src/routers/audit.py",
+      "name": "audit",
+      "endpoints": [
+        "GET /report"
+      ],
+      "engines": [
+        "ledger_audit_engine"
+      ]
+    },
+    "backend/src/routers/behaviour.py": {
+      "id": "router:backend/src/routers/behaviour.py",
+      "path": "backend/src/routers/behaviour.py",
+      "name": "behaviour",
+      "endpoints": [
+        "GET /cashflow-health",
+        "GET /debt-health",
+        "GET /monthly-report",
+        "GET /patterns",
+        "GET /profile",
+        "GET /wellness-score"
+      ],
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ]
+    },
+    "backend/src/routers/cards_statements.py": {
+      "id": "router:backend/src/routers/cards_statements.py",
+      "path": "backend/src/routers/cards_statements.py",
+      "name": "cards_statements",
+      "endpoints": [],
+      "engines": [
+        "balance_engine"
+      ]
+    },
+    "backend/src/routers/credit_cards.py": {
+      "id": "router:backend/src/routers/credit_cards.py",
+      "path": "backend/src/routers/credit_cards.py",
+      "name": "credit_cards",
+      "endpoints": [
+        "DELETE /credit-cards/{card_id}",
+        "GET /credit-cards",
+        "GET /credit-cards/{card_id}",
+        "GET /credit-cards/{card_id}/metrics",
+        "GET /credit-cards/{card_id}/next-statement-date",
+        "GET /credit-cards/{card_id}/outstanding",
+        "GET /credit-cards/{card_id}/statements",
+        "GET /credit-cards/{card_id}/utilization",
+        "POST /credit-cards",
+        "POST /credit-cards/{card_id}/emi-conversion",
+        "POST /credit-cards/{card_id}/foreclosure",
+        "POST /credit-cards/{card_id}/payments",
+        "POST /credit-cards/{card_id}/statements",
+        "PUT /credit-cards/{card_id}"
+      ],
+      "engines": [
+        "credit_card_engine"
+      ]
+    },
+    "backend/src/routers/dashboard.py": {
+      "id": "router:backend/src/routers/dashboard.py",
+      "path": "backend/src/routers/dashboard.py",
+      "name": "dashboard",
+      "endpoints": [
+        "GET /summary"
+      ],
+      "engines": [
+        "behaviour_engine"
+      ]
+    },
+    "backend/src/routers/financial_events.py": {
+      "id": "router:backend/src/routers/financial_events.py",
+      "path": "backend/src/routers/financial_events.py",
+      "name": "financial_events",
+      "endpoints": [],
+      "engines": [
+        "financial_events"
+      ]
+    },
+    "backend/src/routers/financial_intelligence.py": {
+      "id": "router:backend/src/routers/financial_intelligence.py",
+      "path": "backend/src/routers/financial_intelligence.py",
+      "name": "financial_intelligence",
+      "endpoints": [
+        "GET /cashflow-forecast",
+        "GET /credit-forecast",
+        "GET /liquidity-forecast",
+        "GET /outlook",
+        "GET /priorities",
+        "GET /recommendations",
+        "GET /recommendations/{recommendation_id}"
+      ],
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ]
+    },
+    "backend/src/routers/import_router.py": {
+      "id": "router:backend/src/routers/import_router.py",
+      "path": "backend/src/routers/import_router.py",
+      "name": "import_router",
+      "endpoints": [
+        "POST /import/detect",
+        "POST /import/execute",
+        "POST /upload"
+      ],
+      "engines": [
+        "behaviour_engine"
+      ]
+    },
+    "backend/src/routers/loans.py": {
+      "id": "router:backend/src/routers/loans.py",
+      "path": "backend/src/routers/loans.py",
+      "name": "loans",
+      "endpoints": [
+        "DELETE /loans/{loan_id}",
+        "GET /loans",
+        "GET /loans/analysis/priority",
+        "GET /loans/{loan_id}",
+        "GET /loans/{loan_id}/schedule",
+        "POST /loans",
+        "POST /loans/analysis/surplus-allocation",
+        "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+        "POST /loans/{loan_id}/foreclosure-simulation",
+        "POST /loans/{loan_id}/payments",
+        "POST /loans/{loan_id}/prepayment-simulation",
+        "POST /loans/{loan_id}/rate-change-simulation",
+        "PUT /loans/{loan_id}"
+      ],
+      "engines": [
+        "loan_engine"
+      ]
+    },
+    "backend/src/routers/managed_accounts.py": {
+      "id": "router:backend/src/routers/managed_accounts.py",
+      "path": "backend/src/routers/managed_accounts.py",
+      "name": "managed_accounts",
+      "endpoints": [
+        "DELETE /accounts/manage/{account_id}",
+        "GET /accounts/manage",
+        "GET /accounts/{account_id}/balance",
+        "GET /accounts/{account_id}/running-balance",
+        "POST /accounts/manage",
+        "PUT /accounts/manage/{account_id}"
+      ],
+      "engines": [
+        "account_engine"
+      ]
+    },
+    "backend/src/routers/reconciliation.py": {
+      "id": "router:backend/src/routers/reconciliation.py",
+      "path": "backend/src/routers/reconciliation.py",
+      "name": "reconciliation",
+      "endpoints": [
+        "GET /pending",
+        "GET /scan",
+        "POST /batch-insert",
+        "POST /create",
+        "POST /{reconciliation_id}/confirm",
+        "POST /{reconciliation_id}/reject"
+      ],
+      "engines": [
+        "reconciliation_engine"
+      ]
+    }
+  },
+  "endpoints": {
+    "DELETE /accounts/manage/{account_id}": {
+      "id": "endpoint:DELETE /accounts/manage/{account_id}",
+      "method": "DELETE",
+      "path": "/accounts/manage/{account_id}",
+      "signature": "DELETE /accounts/manage/{account_id}",
+      "router": "backend/src/routers/managed_accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "DELETE /accounts/{account_id}": {
+      "id": "endpoint:DELETE /accounts/{account_id}",
+      "method": "DELETE",
+      "path": "/accounts/{account_id}",
+      "signature": "DELETE /accounts/{account_id}",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "DELETE /accounts/{account_id}/links/{linked_account_id}": {
+      "id": "endpoint:DELETE /accounts/{account_id}/links/{linked_account_id}",
+      "method": "DELETE",
+      "path": "/accounts/{account_id}/links/{linked_account_id}",
+      "signature": "DELETE /accounts/{account_id}/links/{linked_account_id}",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "DELETE /credit-cards/{card_id}": {
+      "id": "endpoint:DELETE /credit-cards/{card_id}",
+      "method": "DELETE",
+      "path": "/credit-cards/{card_id}",
+      "signature": "DELETE /credit-cards/{card_id}",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "DELETE /loans/{loan_id}": {
+      "id": "endpoint:DELETE /loans/{loan_id}",
+      "method": "DELETE",
+      "path": "/loans/{loan_id}",
+      "signature": "DELETE /loans/{loan_id}",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "GET /accounts": {
+      "id": "endpoint:GET /accounts",
+      "method": "GET",
+      "path": "/accounts",
+      "signature": "GET /accounts",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/manage": {
+      "id": "endpoint:GET /accounts/manage",
+      "method": "GET",
+      "path": "/accounts/manage",
+      "signature": "GET /accounts/manage",
+      "router": "backend/src/routers/managed_accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}": {
+      "id": "endpoint:GET /accounts/{account_id}",
+      "method": "GET",
+      "path": "/accounts/{account_id}",
+      "signature": "GET /accounts/{account_id}",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/analytics": {
+      "id": "endpoint:GET /accounts/{account_id}/analytics",
+      "method": "GET",
+      "path": "/accounts/{account_id}/analytics",
+      "signature": "GET /accounts/{account_id}/analytics",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/balance": {
+      "id": "endpoint:GET /accounts/{account_id}/balance",
+      "method": "GET",
+      "path": "/accounts/{account_id}/balance",
+      "signature": "GET /accounts/{account_id}/balance",
+      "router": "backend/src/routers/managed_accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/balance-history": {
+      "id": "endpoint:GET /accounts/{account_id}/balance-history",
+      "method": "GET",
+      "path": "/accounts/{account_id}/balance-history",
+      "signature": "GET /accounts/{account_id}/balance-history",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/balance-history/latest": {
+      "id": "endpoint:GET /accounts/{account_id}/balance-history/latest",
+      "method": "GET",
+      "path": "/accounts/{account_id}/balance-history/latest",
+      "signature": "GET /accounts/{account_id}/balance-history/latest",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/dormancy": {
+      "id": "endpoint:GET /accounts/{account_id}/dormancy",
+      "method": "GET",
+      "path": "/accounts/{account_id}/dormancy",
+      "signature": "GET /accounts/{account_id}/dormancy",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/links": {
+      "id": "endpoint:GET /accounts/{account_id}/links",
+      "method": "GET",
+      "path": "/accounts/{account_id}/links",
+      "signature": "GET /accounts/{account_id}/links",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/metrics": {
+      "id": "endpoint:GET /accounts/{account_id}/metrics",
+      "method": "GET",
+      "path": "/accounts/{account_id}/metrics",
+      "signature": "GET /accounts/{account_id}/metrics",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/running-balance": {
+      "id": "endpoint:GET /accounts/{account_id}/running-balance",
+      "method": "GET",
+      "path": "/accounts/{account_id}/running-balance",
+      "signature": "GET /accounts/{account_id}/running-balance",
+      "router": "backend/src/routers/managed_accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /accounts/{account_id}/status": {
+      "id": "endpoint:GET /accounts/{account_id}/status",
+      "method": "GET",
+      "path": "/accounts/{account_id}/status",
+      "signature": "GET /accounts/{account_id}/status",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /cashflow-forecast": {
+      "id": "endpoint:GET /cashflow-forecast",
+      "method": "GET",
+      "path": "/cashflow-forecast",
+      "signature": "GET /cashflow-forecast",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /cashflow-health": {
+      "id": "endpoint:GET /cashflow-health",
+      "method": "GET",
+      "path": "/cashflow-health",
+      "signature": "GET /cashflow-health",
+      "router": "backend/src/routers/behaviour.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /credit-cards": {
+      "id": "endpoint:GET /credit-cards",
+      "method": "GET",
+      "path": "/credit-cards",
+      "signature": "GET /credit-cards",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-cards/{card_id}": {
+      "id": "endpoint:GET /credit-cards/{card_id}",
+      "method": "GET",
+      "path": "/credit-cards/{card_id}",
+      "signature": "GET /credit-cards/{card_id}",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-cards/{card_id}/metrics": {
+      "id": "endpoint:GET /credit-cards/{card_id}/metrics",
+      "method": "GET",
+      "path": "/credit-cards/{card_id}/metrics",
+      "signature": "GET /credit-cards/{card_id}/metrics",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-cards/{card_id}/next-statement-date": {
+      "id": "endpoint:GET /credit-cards/{card_id}/next-statement-date",
+      "method": "GET",
+      "path": "/credit-cards/{card_id}/next-statement-date",
+      "signature": "GET /credit-cards/{card_id}/next-statement-date",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-cards/{card_id}/outstanding": {
+      "id": "endpoint:GET /credit-cards/{card_id}/outstanding",
+      "method": "GET",
+      "path": "/credit-cards/{card_id}/outstanding",
+      "signature": "GET /credit-cards/{card_id}/outstanding",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-cards/{card_id}/statements": {
+      "id": "endpoint:GET /credit-cards/{card_id}/statements",
+      "method": "GET",
+      "path": "/credit-cards/{card_id}/statements",
+      "signature": "GET /credit-cards/{card_id}/statements",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-cards/{card_id}/utilization": {
+      "id": "endpoint:GET /credit-cards/{card_id}/utilization",
+      "method": "GET",
+      "path": "/credit-cards/{card_id}/utilization",
+      "signature": "GET /credit-cards/{card_id}/utilization",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "GET /credit-forecast": {
+      "id": "endpoint:GET /credit-forecast",
+      "method": "GET",
+      "path": "/credit-forecast",
+      "signature": "GET /credit-forecast",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /debt-health": {
+      "id": "endpoint:GET /debt-health",
+      "method": "GET",
+      "path": "/debt-health",
+      "signature": "GET /debt-health",
+      "router": "backend/src/routers/behaviour.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /institutions": {
+      "id": "endpoint:GET /institutions",
+      "method": "GET",
+      "path": "/institutions",
+      "signature": "GET /institutions",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /institutions/{institution_id}": {
+      "id": "endpoint:GET /institutions/{institution_id}",
+      "method": "GET",
+      "path": "/institutions/{institution_id}",
+      "signature": "GET /institutions/{institution_id}",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "GET /liquidity-forecast": {
+      "id": "endpoint:GET /liquidity-forecast",
+      "method": "GET",
+      "path": "/liquidity-forecast",
+      "signature": "GET /liquidity-forecast",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /loans": {
+      "id": "endpoint:GET /loans",
+      "method": "GET",
+      "path": "/loans",
+      "signature": "GET /loans",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "GET /loans/analysis/priority": {
+      "id": "endpoint:GET /loans/analysis/priority",
+      "method": "GET",
+      "path": "/loans/analysis/priority",
+      "signature": "GET /loans/analysis/priority",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "GET /loans/{loan_id}": {
+      "id": "endpoint:GET /loans/{loan_id}",
+      "method": "GET",
+      "path": "/loans/{loan_id}",
+      "signature": "GET /loans/{loan_id}",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "GET /loans/{loan_id}/schedule": {
+      "id": "endpoint:GET /loans/{loan_id}/schedule",
+      "method": "GET",
+      "path": "/loans/{loan_id}/schedule",
+      "signature": "GET /loans/{loan_id}/schedule",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "GET /monthly-report": {
+      "id": "endpoint:GET /monthly-report",
+      "method": "GET",
+      "path": "/monthly-report",
+      "signature": "GET /monthly-report",
+      "router": "backend/src/routers/behaviour.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /outlook": {
+      "id": "endpoint:GET /outlook",
+      "method": "GET",
+      "path": "/outlook",
+      "signature": "GET /outlook",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /patterns": {
+      "id": "endpoint:GET /patterns",
+      "method": "GET",
+      "path": "/patterns",
+      "signature": "GET /patterns",
+      "router": "backend/src/routers/behaviour.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /pending": {
+      "id": "endpoint:GET /pending",
+      "method": "GET",
+      "path": "/pending",
+      "signature": "GET /pending",
+      "router": "backend/src/routers/reconciliation.py",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "GET /priorities": {
+      "id": "endpoint:GET /priorities",
+      "method": "GET",
+      "path": "/priorities",
+      "signature": "GET /priorities",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /profile": {
+      "id": "endpoint:GET /profile",
+      "method": "GET",
+      "path": "/profile",
+      "signature": "GET /profile",
+      "router": "backend/src/routers/behaviour.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /recommendations": {
+      "id": "endpoint:GET /recommendations",
+      "method": "GET",
+      "path": "/recommendations",
+      "signature": "GET /recommendations",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /recommendations/{recommendation_id}": {
+      "id": "endpoint:GET /recommendations/{recommendation_id}",
+      "method": "GET",
+      "path": "/recommendations/{recommendation_id}",
+      "signature": "GET /recommendations/{recommendation_id}",
+      "router": "backend/src/routers/financial_intelligence.py",
+      "engines": [
+        "financial_intelligence",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /report": {
+      "id": "endpoint:GET /report",
+      "method": "GET",
+      "path": "/report",
+      "signature": "GET /report",
+      "router": "backend/src/routers/audit.py",
+      "engines": [
+        "ledger_audit_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /scan": {
+      "id": "endpoint:GET /scan",
+      "method": "GET",
+      "path": "/scan",
+      "signature": "GET /scan",
+      "router": "backend/src/routers/reconciliation.py",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "GET /summary": {
+      "id": "endpoint:GET /summary",
+      "method": "GET",
+      "path": "/summary",
+      "signature": "GET /summary",
+      "router": "backend/src/routers/dashboard.py",
+      "engines": [
+        "behaviour_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "GET /wellness-score": {
+      "id": "endpoint:GET /wellness-score",
+      "method": "GET",
+      "path": "/wellness-score",
+      "signature": "GET /wellness-score",
+      "router": "backend/src/routers/behaviour.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "POST /accounts": {
+      "id": "endpoint:POST /accounts",
+      "method": "POST",
+      "path": "/accounts",
+      "signature": "POST /accounts",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "POST /accounts/manage": {
+      "id": "endpoint:POST /accounts/manage",
+      "method": "POST",
+      "path": "/accounts/manage",
+      "signature": "POST /accounts/manage",
+      "router": "backend/src/routers/managed_accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "POST /accounts/{account_id}/balance-history": {
+      "id": "endpoint:POST /accounts/{account_id}/balance-history",
+      "method": "POST",
+      "path": "/accounts/{account_id}/balance-history",
+      "signature": "POST /accounts/{account_id}/balance-history",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "POST /accounts/{account_id}/links": {
+      "id": "endpoint:POST /accounts/{account_id}/links",
+      "method": "POST",
+      "path": "/accounts/{account_id}/links",
+      "signature": "POST /accounts/{account_id}/links",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "POST /batch-insert": {
+      "id": "endpoint:POST /batch-insert",
+      "method": "POST",
+      "path": "/batch-insert",
+      "signature": "POST /batch-insert",
+      "router": "backend/src/routers/reconciliation.py",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "POST /create": {
+      "id": "endpoint:POST /create",
+      "method": "POST",
+      "path": "/create",
+      "signature": "POST /create",
+      "router": "backend/src/routers/reconciliation.py",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "POST /credit-cards": {
+      "id": "endpoint:POST /credit-cards",
+      "method": "POST",
+      "path": "/credit-cards",
+      "signature": "POST /credit-cards",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "POST /credit-cards/{card_id}/emi-conversion": {
+      "id": "endpoint:POST /credit-cards/{card_id}/emi-conversion",
+      "method": "POST",
+      "path": "/credit-cards/{card_id}/emi-conversion",
+      "signature": "POST /credit-cards/{card_id}/emi-conversion",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "POST /credit-cards/{card_id}/foreclosure": {
+      "id": "endpoint:POST /credit-cards/{card_id}/foreclosure",
+      "method": "POST",
+      "path": "/credit-cards/{card_id}/foreclosure",
+      "signature": "POST /credit-cards/{card_id}/foreclosure",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "POST /credit-cards/{card_id}/payments": {
+      "id": "endpoint:POST /credit-cards/{card_id}/payments",
+      "method": "POST",
+      "path": "/credit-cards/{card_id}/payments",
+      "signature": "POST /credit-cards/{card_id}/payments",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "POST /credit-cards/{card_id}/statements": {
+      "id": "endpoint:POST /credit-cards/{card_id}/statements",
+      "method": "POST",
+      "path": "/credit-cards/{card_id}/statements",
+      "signature": "POST /credit-cards/{card_id}/statements",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "POST /import/detect": {
+      "id": "endpoint:POST /import/detect",
+      "method": "POST",
+      "path": "/import/detect",
+      "signature": "POST /import/detect",
+      "router": "backend/src/routers/import_router.py",
+      "engines": [
+        "behaviour_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "POST /import/execute": {
+      "id": "endpoint:POST /import/execute",
+      "method": "POST",
+      "path": "/import/execute",
+      "signature": "POST /import/execute",
+      "router": "backend/src/routers/import_router.py",
+      "engines": [
+        "behaviour_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "POST /institutions": {
+      "id": "endpoint:POST /institutions",
+      "method": "POST",
+      "path": "/institutions",
+      "signature": "POST /institutions",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "POST /loans": {
+      "id": "endpoint:POST /loans",
+      "method": "POST",
+      "path": "/loans",
+      "signature": "POST /loans",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /loans/analysis/surplus-allocation": {
+      "id": "endpoint:POST /loans/analysis/surplus-allocation",
+      "method": "POST",
+      "path": "/loans/analysis/surplus-allocation",
+      "signature": "POST /loans/analysis/surplus-allocation",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure": {
+      "id": "endpoint:POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "method": "POST",
+      "path": "/loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "signature": "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /loans/{loan_id}/foreclosure-simulation": {
+      "id": "endpoint:POST /loans/{loan_id}/foreclosure-simulation",
+      "method": "POST",
+      "path": "/loans/{loan_id}/foreclosure-simulation",
+      "signature": "POST /loans/{loan_id}/foreclosure-simulation",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /loans/{loan_id}/payments": {
+      "id": "endpoint:POST /loans/{loan_id}/payments",
+      "method": "POST",
+      "path": "/loans/{loan_id}/payments",
+      "signature": "POST /loans/{loan_id}/payments",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /loans/{loan_id}/prepayment-simulation": {
+      "id": "endpoint:POST /loans/{loan_id}/prepayment-simulation",
+      "method": "POST",
+      "path": "/loans/{loan_id}/prepayment-simulation",
+      "signature": "POST /loans/{loan_id}/prepayment-simulation",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /loans/{loan_id}/rate-change-simulation": {
+      "id": "endpoint:POST /loans/{loan_id}/rate-change-simulation",
+      "method": "POST",
+      "path": "/loans/{loan_id}/rate-change-simulation",
+      "signature": "POST /loans/{loan_id}/rate-change-simulation",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    },
+    "POST /upload": {
+      "id": "endpoint:POST /upload",
+      "method": "POST",
+      "path": "/upload",
+      "signature": "POST /upload",
+      "router": "backend/src/routers/import_router.py",
+      "engines": [
+        "behaviour_engine"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ]
+    },
+    "POST /{reconciliation_id}/confirm": {
+      "id": "endpoint:POST /{reconciliation_id}/confirm",
+      "method": "POST",
+      "path": "/{reconciliation_id}/confirm",
+      "signature": "POST /{reconciliation_id}/confirm",
+      "router": "backend/src/routers/reconciliation.py",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "POST /{reconciliation_id}/reject": {
+      "id": "endpoint:POST /{reconciliation_id}/reject",
+      "method": "POST",
+      "path": "/{reconciliation_id}/reject",
+      "signature": "POST /{reconciliation_id}/reject",
+      "router": "backend/src/routers/reconciliation.py",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ]
+    },
+    "PUT /accounts/manage/{account_id}": {
+      "id": "endpoint:PUT /accounts/manage/{account_id}",
+      "method": "PUT",
+      "path": "/accounts/manage/{account_id}",
+      "signature": "PUT /accounts/manage/{account_id}",
+      "router": "backend/src/routers/managed_accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "PUT /accounts/{account_id}": {
+      "id": "endpoint:PUT /accounts/{account_id}",
+      "method": "PUT",
+      "path": "/accounts/{account_id}",
+      "signature": "PUT /accounts/{account_id}",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "PUT /credit-cards/{card_id}": {
+      "id": "endpoint:PUT /credit-cards/{card_id}",
+      "method": "PUT",
+      "path": "/credit-cards/{card_id}",
+      "signature": "PUT /credit-cards/{card_id}",
+      "router": "backend/src/routers/credit_cards.py",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ]
+    },
+    "PUT /institutions/{institution_id}": {
+      "id": "endpoint:PUT /institutions/{institution_id}",
+      "method": "PUT",
+      "path": "/institutions/{institution_id}",
+      "signature": "PUT /institutions/{institution_id}",
+      "router": "backend/src/routers/accounts.py",
+      "engines": [
+        "account_engine"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ]
+    },
+    "PUT /loans/{loan_id}": {
+      "id": "endpoint:PUT /loans/{loan_id}",
+      "method": "PUT",
+      "path": "/loans/{loan_id}",
+      "signature": "PUT /loans/{loan_id}",
+      "router": "backend/src/routers/loans.py",
+      "engines": [
+        "loan_engine"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ]
+    }
+  },
+  "services": {
+    "backend/src/services/__init__.py": {
+      "id": "service:backend/src/services/__init__.py",
+      "path": "backend/src/services/__init__.py",
+      "name": "__init__",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/account_service.py": {
+      "id": "service:backend/src/services/account_service.py",
+      "path": "backend/src/services/account_service.py",
+      "name": "account_service",
+      "engines": [
+        "account_engine"
+      ],
+      "routers": [
+        "backend/src/routers/accounts.py",
+        "backend/src/routers/managed_accounts.py"
+      ]
+    },
+    "backend/src/services/audit_service.py": {
+      "id": "service:backend/src/services/audit_service.py",
+      "path": "backend/src/services/audit_service.py",
+      "name": "audit_service",
+      "engines": [
+        "ledger_audit_engine"
+      ],
+      "routers": [
+        "backend/src/routers/audit.py"
+      ]
+    },
+    "backend/src/services/bank_service.py": {
+      "id": "service:backend/src/services/bank_service.py",
+      "path": "backend/src/services/bank_service.py",
+      "name": "bank_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/base.py": {
+      "id": "service:backend/src/services/base.py",
+      "path": "backend/src/services/base.py",
+      "name": "base",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/behaviour_service.py": {
+      "id": "service:backend/src/services/behaviour_service.py",
+      "path": "backend/src/services/behaviour_service.py",
+      "name": "behaviour_service",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py"
+      ]
+    },
+    "backend/src/services/behaviour_workspace_service.py": {
+      "id": "service:backend/src/services/behaviour_workspace_service.py",
+      "path": "backend/src/services/behaviour_workspace_service.py",
+      "name": "behaviour_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/cashflow_service.py": {
+      "id": "service:backend/src/services/cashflow_service.py",
+      "path": "backend/src/services/cashflow_service.py",
+      "name": "cashflow_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/cashflow_workspace_service.py": {
+      "id": "service:backend/src/services/cashflow_workspace_service.py",
+      "path": "backend/src/services/cashflow_workspace_service.py",
+      "name": "cashflow_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/credit_card_service.py": {
+      "id": "service:backend/src/services/credit_card_service.py",
+      "path": "backend/src/services/credit_card_service.py",
+      "name": "credit_card_service",
+      "engines": [
+        "credit_card_engine"
+      ],
+      "routers": [
+        "backend/src/routers/credit_cards.py"
+      ]
+    },
+    "backend/src/services/credit_cards_workspace_service.py": {
+      "id": "service:backend/src/services/credit_cards_workspace_service.py",
+      "path": "backend/src/services/credit_cards_workspace_service.py",
+      "name": "credit_cards_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/dashboard_service.py": {
+      "id": "service:backend/src/services/dashboard_service.py",
+      "path": "backend/src/services/dashboard_service.py",
+      "name": "dashboard_service",
+      "engines": [
+        "behaviour_engine"
+      ],
+      "routers": [
+        "backend/src/routers/dashboard.py"
+      ]
+    },
+    "backend/src/services/export_service.py": {
+      "id": "service:backend/src/services/export_service.py",
+      "path": "backend/src/services/export_service.py",
+      "name": "export_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/financial_events_service.py": {
+      "id": "service:backend/src/services/financial_events_service.py",
+      "path": "backend/src/services/financial_events_service.py",
+      "name": "financial_events_service",
+      "engines": [
+        "financial_events"
+      ],
+      "routers": [
+        "backend/src/routers/financial_events.py"
+      ]
+    },
+    "backend/src/services/financial_intelligence_service.py": {
+      "id": "service:backend/src/services/financial_intelligence_service.py",
+      "path": "backend/src/services/financial_intelligence_service.py",
+      "name": "financial_intelligence_service",
+      "engines": [
+        "financial_intelligence"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ]
+    },
+    "backend/src/services/forecast_service.py": {
+      "id": "service:backend/src/services/forecast_service.py",
+      "path": "backend/src/services/forecast_service.py",
+      "name": "forecast_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/import_service.py": {
+      "id": "service:backend/src/services/import_service.py",
+      "path": "backend/src/services/import_service.py",
+      "name": "import_service",
+      "engines": [
+        "behaviour_engine"
+      ],
+      "routers": [
+        "backend/src/routers/import_router.py"
+      ]
+    },
+    "backend/src/services/investment_service.py": {
+      "id": "service:backend/src/services/investment_service.py",
+      "path": "backend/src/services/investment_service.py",
+      "name": "investment_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/investments_workspace_service.py": {
+      "id": "service:backend/src/services/investments_workspace_service.py",
+      "path": "backend/src/services/investments_workspace_service.py",
+      "name": "investments_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/loan_analysis_service.py": {
+      "id": "service:backend/src/services/loan_analysis_service.py",
+      "path": "backend/src/services/loan_analysis_service.py",
+      "name": "loan_analysis_service",
+      "engines": [
+        "loan_engine"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    "backend/src/services/loan_service.py": {
+      "id": "service:backend/src/services/loan_service.py",
+      "path": "backend/src/services/loan_service.py",
+      "name": "loan_service",
+      "engines": [
+        "loan_engine"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    "backend/src/services/loan_simulation_service.py": {
+      "id": "service:backend/src/services/loan_simulation_service.py",
+      "path": "backend/src/services/loan_simulation_service.py",
+      "name": "loan_simulation_service",
+      "engines": [
+        "loan_engine"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ]
+    },
+    "backend/src/services/loans_workspace_service.py": {
+      "id": "service:backend/src/services/loans_workspace_service.py",
+      "path": "backend/src/services/loans_workspace_service.py",
+      "name": "loans_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/member_service.py": {
+      "id": "service:backend/src/services/member_service.py",
+      "path": "backend/src/services/member_service.py",
+      "name": "member_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/networth_service.py": {
+      "id": "service:backend/src/services/networth_service.py",
+      "path": "backend/src/services/networth_service.py",
+      "name": "networth_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/networth_workspace_service.py": {
+      "id": "service:backend/src/services/networth_workspace_service.py",
+      "path": "backend/src/services/networth_workspace_service.py",
+      "name": "networth_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/recommendation_service.py": {
+      "id": "service:backend/src/services/recommendation_service.py",
+      "path": "backend/src/services/recommendation_service.py",
+      "name": "recommendation_service",
+      "engines": [
+        "recommendation_engine"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ]
+    },
+    "backend/src/services/reconciliation_service.py": {
+      "id": "service:backend/src/services/reconciliation_service.py",
+      "path": "backend/src/services/reconciliation_service.py",
+      "name": "reconciliation_service",
+      "engines": [
+        "reconciliation_engine"
+      ],
+      "routers": [
+        "backend/src/routers/reconciliation.py"
+      ]
+    },
+    "backend/src/services/reconciliation_workspace_service.py": {
+      "id": "service:backend/src/services/reconciliation_workspace_service.py",
+      "path": "backend/src/services/reconciliation_workspace_service.py",
+      "name": "reconciliation_workspace_service",
+      "engines": [],
+      "routers": []
+    },
+    "backend/src/services/statement_service.py": {
+      "id": "service:backend/src/services/statement_service.py",
+      "path": "backend/src/services/statement_service.py",
+      "name": "statement_service",
+      "engines": [
+        "balance_engine"
+      ],
+      "routers": [
+        "backend/src/routers/cards_statements.py"
+      ]
+    },
+    "backend/src/services/transaction_intelligence_service.py": {
+      "id": "service:backend/src/services/transaction_intelligence_service.py",
+      "path": "backend/src/services/transaction_intelligence_service.py",
+      "name": "transaction_intelligence_service",
+      "engines": [
+        "loan_engine",
+        "transaction_intelligence"
+      ],
+      "routers": []
+    },
+    "backend/src/services/transaction_service.py": {
+      "id": "service:backend/src/services/transaction_service.py",
+      "path": "backend/src/services/transaction_service.py",
+      "name": "transaction_service",
+      "engines": [],
+      "routers": []
+    }
+  },
+  "repositories": {
+    "account_balance_repository": {
+      "id": "repository:account_balance_repository",
+      "name": "account_balance_repository",
+      "path": "backend/src/repositories/account_balance_repository.py",
+      "engines": [
+        "account_engine"
+      ]
+    },
+    "account_link_repository": {
+      "id": "repository:account_link_repository",
+      "name": "account_link_repository",
+      "path": "backend/src/repositories/account_link_repository.py",
+      "engines": [
+        "account_engine"
+      ]
+    },
+    "account_repository": {
+      "id": "repository:account_repository",
+      "name": "account_repository",
+      "path": "backend/src/repositories/account_repository.py",
+      "engines": [
+        "account_engine",
+        "behaviour_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "behaviour_repository": {
+      "id": "repository:behaviour_repository",
+      "name": "behaviour_repository",
+      "path": "backend/src/repositories/behaviour_repository.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ]
+    },
+    "credit_card_repository": {
+      "id": "repository:credit_card_repository",
+      "name": "credit_card_repository",
+      "path": "backend/src/repositories/credit_card_repository.py",
+      "engines": [
+        "behaviour_engine",
+        "credit_card_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "credit_card_statement_repository": {
+      "id": "repository:credit_card_statement_repository",
+      "name": "credit_card_statement_repository",
+      "path": "backend/src/repositories/credit_card_statement_repository.py",
+      "engines": [
+        "credit_card_engine"
+      ]
+    },
+    "financial_event_repository": {
+      "id": "repository:financial_event_repository",
+      "name": "financial_event_repository",
+      "path": "backend/src/repositories/financial_event_repository.py",
+      "engines": [
+        "financial_events",
+        "financial_intelligence",
+        "loan_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "financial_goal_repository": {
+      "id": "repository:financial_goal_repository",
+      "name": "financial_goal_repository",
+      "path": "backend/src/repositories/financial_goal_repository.py",
+      "engines": [
+        "financial_intelligence"
+      ]
+    },
+    "institution_repository": {
+      "id": "repository:institution_repository",
+      "name": "institution_repository",
+      "path": "backend/src/repositories/institution_repository.py",
+      "engines": [
+        "account_engine"
+      ]
+    },
+    "liquidity_pattern_repository": {
+      "id": "repository:liquidity_pattern_repository",
+      "name": "liquidity_pattern_repository",
+      "path": "backend/src/repositories/liquidity_pattern_repository.py",
+      "engines": [
+        "loan_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "loan_payment_repository": {
+      "id": "repository:loan_payment_repository",
+      "name": "loan_payment_repository",
+      "path": "backend/src/repositories/loan_payment_repository.py",
+      "engines": [
+        "loan_engine"
+      ]
+    },
+    "loan_repository": {
+      "id": "repository:loan_repository",
+      "name": "loan_repository",
+      "path": "backend/src/repositories/loan_repository.py",
+      "engines": [
+        "behaviour_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "pattern_repository": {
+      "id": "repository:pattern_repository",
+      "name": "pattern_repository",
+      "path": "backend/src/repositories/pattern_repository.py",
+      "engines": [
+        "behaviour_engine",
+        "recommendation_engine"
+      ]
+    },
+    "reconciliation_repository": {
+      "id": "repository:reconciliation_repository",
+      "name": "reconciliation_repository",
+      "path": "backend/src/repositories/reconciliation_repository.py",
+      "engines": [
+        "behaviour_engine",
+        "reconciliation_engine"
+      ]
+    },
+    "statement_repository": {
+      "id": "repository:statement_repository",
+      "name": "statement_repository",
+      "path": "backend/src/repositories/statement_repository.py",
+      "engines": [
+        "balance_engine",
+        "loan_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "transaction_classification_repository": {
+      "id": "repository:transaction_classification_repository",
+      "name": "transaction_classification_repository",
+      "path": "backend/src/repositories/transaction_classification_repository.py",
+      "engines": [
+        "loan_engine",
+        "transaction_intelligence"
+      ]
+    },
+    "transaction_repository": {
+      "id": "repository:transaction_repository",
+      "name": "transaction_repository",
+      "path": "backend/src/repositories/transaction_repository.py",
+      "engines": [
+        "behaviour_engine",
+        "loan_engine",
+        "recommendation_engine",
+        "transaction_intelligence"
+      ]
+    }
+  },
+  "workspaces": {
+    "accounts": {
+      "id": "workspace:accounts",
+      "name": "accounts",
+      "path": "frontend/app/accounts/workspace-page.tsx",
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "components": [
+        "components/accounts/accounts-summary",
+        "components/accounts/balance-trend",
+        "components/accounts/evidence-drawer",
+        "components/accounts/insights-panel",
+        "components/accounts/transaction-list",
+        "components/accounts/type-breakdown",
+        "components/loading/empty-state",
+        "components/loading/loading-spinner",
+        "components/primitives/layout/grid",
+        "components/primitives/layout/stack",
+        "components/primitives/panel/panel",
+        "components/primitives/surface/surface"
+      ]
+    },
+    "behaviour": {
+      "id": "workspace:behaviour",
+      "name": "behaviour",
+      "path": "frontend/app/behaviour/workspace-page.tsx",
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "components": [
+        "components/behaviour/behaviour-evidence-drawer",
+        "components/behaviour/behaviour-insights-panel",
+        "components/behaviour/behaviour-score",
+        "components/behaviour/debt-health",
+        "components/behaviour/empty-state",
+        "components/behaviour/error-state",
+        "components/behaviour/loading-skeleton",
+        "components/behaviour/savings-rate",
+        "components/behaviour/spending-patterns",
+        "components/behaviour/wellness-radar"
+      ]
+    },
+    "cards": {
+      "id": "workspace:cards",
+      "name": "cards",
+      "path": "frontend/app/cards/workspace-page.tsx",
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "components": [
+        "components/cards/cards-evidence-drawer",
+        "components/cards/cards-insights-panel",
+        "components/cards/cards-toolbar",
+        "components/cards/credit-cards-summary",
+        "components/cards/cross-navigation",
+        "components/cards/empty-state",
+        "components/cards/error-state",
+        "components/cards/loading-skeleton",
+        "components/cards/spending-by-category",
+        "components/cards/utilization-chart"
+      ]
+    },
+    "forecast": {
+      "id": "workspace:forecast",
+      "name": "forecast",
+      "path": "frontend/app/forecast/workspace-page.tsx",
+      "capabilities": [
+        "useForecastCapability"
+      ],
+      "components": [
+        "components/forecast/cashflow-projection",
+        "components/forecast/empty-state",
+        "components/forecast/error-state",
+        "components/forecast/forecast-evidence-drawer",
+        "components/forecast/forecast-insights-panel",
+        "components/forecast/forecast-summary",
+        "components/forecast/loading-skeleton",
+        "components/forecast/net-worth-projection",
+        "components/forecast/scenario-comparison"
+      ]
+    },
+    "investments": {
+      "id": "workspace:investments",
+      "name": "investments",
+      "path": "frontend/app/investments/workspace-page.tsx",
+      "capabilities": [
+        "useInvestmentsCapability"
+      ],
+      "components": [
+        "components/investments/asset-allocation",
+        "components/investments/cross-navigation",
+        "components/investments/empty-state",
+        "components/investments/error-state",
+        "components/investments/holdings-table",
+        "components/investments/investments-evidence-drawer",
+        "components/investments/investments-insights-panel",
+        "components/investments/investments-summary",
+        "components/investments/investments-toolbar",
+        "components/investments/loading-skeleton",
+        "components/investments/performance-chart"
+      ]
+    },
+    "loans": {
+      "id": "workspace:loans",
+      "name": "loans",
+      "path": "frontend/app/loans/workspace-page.tsx",
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "components": [
+        "components/loans/amortization-schedule",
+        "components/loans/cross-navigation",
+        "components/loans/empty-state",
+        "components/loans/error-state",
+        "components/loans/interest-analysis",
+        "components/loans/loading-skeleton",
+        "components/loans/loans-evidence-drawer",
+        "components/loans/loans-insights-panel",
+        "components/loans/loans-summary",
+        "components/loans/loans-toolbar",
+        "components/loans/payment-progress"
+      ]
+    },
+    "reconciliation": {
+      "id": "workspace:reconciliation",
+      "name": "reconciliation",
+      "path": "frontend/app/reconciliation/workspace-page.tsx",
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "components": [
+        "components/reconciliation/audit-trail",
+        "components/reconciliation/cross-navigation",
+        "components/reconciliation/discrepancy-list",
+        "components/reconciliation/empty-state",
+        "components/reconciliation/error-state",
+        "components/reconciliation/loading-skeleton",
+        "components/reconciliation/reconciliation-evidence-drawer",
+        "components/reconciliation/reconciliation-insights-panel",
+        "components/reconciliation/reconciliation-summary",
+        "components/reconciliation/reconciliation-toolbar",
+        "components/reconciliation/status-overview"
+      ]
+    },
+    "transactions": {
+      "id": "workspace:transactions",
+      "name": "transactions",
+      "path": "frontend/app/transactions/workspace-page.tsx",
+      "capabilities": [
+        "useTransactionCapability"
+      ],
+      "components": [
+        "components/evidence/evidence-drawer",
+        "components/filters/filter-panel",
+        "components/loading/empty-state",
+        "components/loading/error-message",
+        "components/loading/loading-spinner",
+        "components/primitives/panel/panel",
+        "components/primitives/surface/surface",
+        "components/selection/selection-summary",
+        "components/toolbar/workspace-toolbar",
+        "components/transaction-table/pagination-controls",
+        "components/transaction-table/transaction-table",
+        "components/workspace/insight-panel"
+      ]
+    }
+  },
+  "components": {
+    "components/accounts/accounts-summary": {
+      "id": "component:components/accounts/accounts-summary",
+      "name": "accounts-summary",
+      "path": "frontend/components/accounts/accounts-summary.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/accounts/balance-trend": {
+      "id": "component:components/accounts/balance-trend",
+      "name": "balance-trend",
+      "path": "frontend/components/accounts/balance-trend.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/accounts/evidence-drawer": {
+      "id": "component:components/accounts/evidence-drawer",
+      "name": "evidence-drawer",
+      "path": "frontend/components/accounts/evidence-drawer.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/accounts/insights-panel": {
+      "id": "component:components/accounts/insights-panel",
+      "name": "insights-panel",
+      "path": "frontend/components/accounts/insights-panel.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/accounts/transaction-list": {
+      "id": "component:components/accounts/transaction-list",
+      "name": "transaction-list",
+      "path": "frontend/components/accounts/transaction-list.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/accounts/type-breakdown": {
+      "id": "component:components/accounts/type-breakdown",
+      "name": "type-breakdown",
+      "path": "frontend/components/accounts/type-breakdown.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/behaviour/behaviour-evidence-drawer": {
+      "id": "component:components/behaviour/behaviour-evidence-drawer",
+      "name": "behaviour-evidence-drawer",
+      "path": "frontend/components/behaviour/behaviour-evidence-drawer.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/behaviour-insights-panel": {
+      "id": "component:components/behaviour/behaviour-insights-panel",
+      "name": "behaviour-insights-panel",
+      "path": "frontend/components/behaviour/behaviour-insights-panel.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/behaviour-score": {
+      "id": "component:components/behaviour/behaviour-score",
+      "name": "behaviour-score",
+      "path": "frontend/components/behaviour/behaviour-score.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/debt-health": {
+      "id": "component:components/behaviour/debt-health",
+      "name": "debt-health",
+      "path": "frontend/components/behaviour/debt-health.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/empty-state": {
+      "id": "component:components/behaviour/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/behaviour/empty-state.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/error-state": {
+      "id": "component:components/behaviour/error-state",
+      "name": "error-state",
+      "path": "frontend/components/behaviour/error-state.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/loading-skeleton": {
+      "id": "component:components/behaviour/loading-skeleton",
+      "name": "loading-skeleton",
+      "path": "frontend/components/behaviour/loading-skeleton.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/savings-rate": {
+      "id": "component:components/behaviour/savings-rate",
+      "name": "savings-rate",
+      "path": "frontend/components/behaviour/savings-rate.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/spending-patterns": {
+      "id": "component:components/behaviour/spending-patterns",
+      "name": "spending-patterns",
+      "path": "frontend/components/behaviour/spending-patterns.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/behaviour/wellness-radar": {
+      "id": "component:components/behaviour/wellness-radar",
+      "name": "wellness-radar",
+      "path": "frontend/components/behaviour/wellness-radar.tsx",
+      "workspaces": [
+        "behaviour"
+      ]
+    },
+    "components/cards/cards-evidence-drawer": {
+      "id": "component:components/cards/cards-evidence-drawer",
+      "name": "cards-evidence-drawer",
+      "path": "frontend/components/cards/cards-evidence-drawer.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/cards-insights-panel": {
+      "id": "component:components/cards/cards-insights-panel",
+      "name": "cards-insights-panel",
+      "path": "frontend/components/cards/cards-insights-panel.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/cards-toolbar": {
+      "id": "component:components/cards/cards-toolbar",
+      "name": "cards-toolbar",
+      "path": "frontend/components/cards/cards-toolbar.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/credit-cards-summary": {
+      "id": "component:components/cards/credit-cards-summary",
+      "name": "credit-cards-summary",
+      "path": "frontend/components/cards/credit-cards-summary.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/cross-navigation": {
+      "id": "component:components/cards/cross-navigation",
+      "name": "cross-navigation",
+      "path": "frontend/components/cards/cross-navigation.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/empty-state": {
+      "id": "component:components/cards/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/cards/empty-state.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/error-state": {
+      "id": "component:components/cards/error-state",
+      "name": "error-state",
+      "path": "frontend/components/cards/error-state.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/loading-skeleton": {
+      "id": "component:components/cards/loading-skeleton",
+      "name": "loading-skeleton",
+      "path": "frontend/components/cards/loading-skeleton.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/spending-by-category": {
+      "id": "component:components/cards/spending-by-category",
+      "name": "spending-by-category",
+      "path": "frontend/components/cards/spending-by-category.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/cards/utilization-chart": {
+      "id": "component:components/cards/utilization-chart",
+      "name": "utilization-chart",
+      "path": "frontend/components/cards/utilization-chart.tsx",
+      "workspaces": [
+        "cards"
+      ]
+    },
+    "components/evidence/evidence-drawer": {
+      "id": "component:components/evidence/evidence-drawer",
+      "name": "evidence-drawer",
+      "path": "frontend/components/evidence/evidence-drawer.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/filters/filter-panel": {
+      "id": "component:components/filters/filter-panel",
+      "name": "filter-panel",
+      "path": "frontend/components/filters/filter-panel.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/forecast/cashflow-projection": {
+      "id": "component:components/forecast/cashflow-projection",
+      "name": "cashflow-projection",
+      "path": "frontend/components/forecast/cashflow-projection.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/empty-state": {
+      "id": "component:components/forecast/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/forecast/empty-state.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/error-state": {
+      "id": "component:components/forecast/error-state",
+      "name": "error-state",
+      "path": "frontend/components/forecast/error-state.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/forecast-evidence-drawer": {
+      "id": "component:components/forecast/forecast-evidence-drawer",
+      "name": "forecast-evidence-drawer",
+      "path": "frontend/components/forecast/forecast-evidence-drawer.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/forecast-insights-panel": {
+      "id": "component:components/forecast/forecast-insights-panel",
+      "name": "forecast-insights-panel",
+      "path": "frontend/components/forecast/forecast-insights-panel.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/forecast-summary": {
+      "id": "component:components/forecast/forecast-summary",
+      "name": "forecast-summary",
+      "path": "frontend/components/forecast/forecast-summary.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/loading-skeleton": {
+      "id": "component:components/forecast/loading-skeleton",
+      "name": "loading-skeleton",
+      "path": "frontend/components/forecast/loading-skeleton.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/net-worth-projection": {
+      "id": "component:components/forecast/net-worth-projection",
+      "name": "net-worth-projection",
+      "path": "frontend/components/forecast/net-worth-projection.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/forecast/scenario-comparison": {
+      "id": "component:components/forecast/scenario-comparison",
+      "name": "scenario-comparison",
+      "path": "frontend/components/forecast/scenario-comparison.tsx",
+      "workspaces": [
+        "forecast"
+      ]
+    },
+    "components/investments/asset-allocation": {
+      "id": "component:components/investments/asset-allocation",
+      "name": "asset-allocation",
+      "path": "frontend/components/investments/asset-allocation.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/cross-navigation": {
+      "id": "component:components/investments/cross-navigation",
+      "name": "cross-navigation",
+      "path": "frontend/components/investments/cross-navigation.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/empty-state": {
+      "id": "component:components/investments/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/investments/empty-state.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/error-state": {
+      "id": "component:components/investments/error-state",
+      "name": "error-state",
+      "path": "frontend/components/investments/error-state.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/holdings-table": {
+      "id": "component:components/investments/holdings-table",
+      "name": "holdings-table",
+      "path": "frontend/components/investments/holdings-table.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/investments-evidence-drawer": {
+      "id": "component:components/investments/investments-evidence-drawer",
+      "name": "investments-evidence-drawer",
+      "path": "frontend/components/investments/investments-evidence-drawer.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/investments-insights-panel": {
+      "id": "component:components/investments/investments-insights-panel",
+      "name": "investments-insights-panel",
+      "path": "frontend/components/investments/investments-insights-panel.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/investments-summary": {
+      "id": "component:components/investments/investments-summary",
+      "name": "investments-summary",
+      "path": "frontend/components/investments/investments-summary.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/investments-toolbar": {
+      "id": "component:components/investments/investments-toolbar",
+      "name": "investments-toolbar",
+      "path": "frontend/components/investments/investments-toolbar.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/loading-skeleton": {
+      "id": "component:components/investments/loading-skeleton",
+      "name": "loading-skeleton",
+      "path": "frontend/components/investments/loading-skeleton.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/investments/performance-chart": {
+      "id": "component:components/investments/performance-chart",
+      "name": "performance-chart",
+      "path": "frontend/components/investments/performance-chart.tsx",
+      "workspaces": [
+        "investments"
+      ]
+    },
+    "components/loading/empty-state": {
+      "id": "component:components/loading/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/loading/empty-state.tsx",
+      "workspaces": [
+        "accounts",
+        "transactions"
+      ]
+    },
+    "components/loading/error-message": {
+      "id": "component:components/loading/error-message",
+      "name": "error-message",
+      "path": "frontend/components/loading/error-message.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/loading/loading-spinner": {
+      "id": "component:components/loading/loading-spinner",
+      "name": "loading-spinner",
+      "path": "frontend/components/loading/loading-spinner.tsx",
+      "workspaces": [
+        "accounts",
+        "transactions"
+      ]
+    },
+    "components/loans/amortization-schedule": {
+      "id": "component:components/loans/amortization-schedule",
+      "name": "amortization-schedule",
+      "path": "frontend/components/loans/amortization-schedule.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/cross-navigation": {
+      "id": "component:components/loans/cross-navigation",
+      "name": "cross-navigation",
+      "path": "frontend/components/loans/cross-navigation.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/empty-state": {
+      "id": "component:components/loans/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/loans/empty-state.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/error-state": {
+      "id": "component:components/loans/error-state",
+      "name": "error-state",
+      "path": "frontend/components/loans/error-state.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/interest-analysis": {
+      "id": "component:components/loans/interest-analysis",
+      "name": "interest-analysis",
+      "path": "frontend/components/loans/interest-analysis.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/loading-skeleton": {
+      "id": "component:components/loans/loading-skeleton",
+      "name": "loading-skeleton",
+      "path": "frontend/components/loans/loading-skeleton.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/loans-evidence-drawer": {
+      "id": "component:components/loans/loans-evidence-drawer",
+      "name": "loans-evidence-drawer",
+      "path": "frontend/components/loans/loans-evidence-drawer.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/loans-insights-panel": {
+      "id": "component:components/loans/loans-insights-panel",
+      "name": "loans-insights-panel",
+      "path": "frontend/components/loans/loans-insights-panel.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/loans-summary": {
+      "id": "component:components/loans/loans-summary",
+      "name": "loans-summary",
+      "path": "frontend/components/loans/loans-summary.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/loans-toolbar": {
+      "id": "component:components/loans/loans-toolbar",
+      "name": "loans-toolbar",
+      "path": "frontend/components/loans/loans-toolbar.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/loans/payment-progress": {
+      "id": "component:components/loans/payment-progress",
+      "name": "payment-progress",
+      "path": "frontend/components/loans/payment-progress.tsx",
+      "workspaces": [
+        "loans"
+      ]
+    },
+    "components/primitives/layout/grid": {
+      "id": "component:components/primitives/layout/grid",
+      "name": "grid",
+      "path": "frontend/components/primitives/layout/grid.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/primitives/layout/stack": {
+      "id": "component:components/primitives/layout/stack",
+      "name": "stack",
+      "path": "frontend/components/primitives/layout/stack.tsx",
+      "workspaces": [
+        "accounts"
+      ]
+    },
+    "components/primitives/panel/panel": {
+      "id": "component:components/primitives/panel/panel",
+      "name": "panel",
+      "path": "frontend/components/primitives/panel/panel.tsx",
+      "workspaces": [
+        "accounts",
+        "transactions"
+      ]
+    },
+    "components/primitives/surface/surface": {
+      "id": "component:components/primitives/surface/surface",
+      "name": "surface",
+      "path": "frontend/components/primitives/surface/surface.tsx",
+      "workspaces": [
+        "accounts",
+        "transactions"
+      ]
+    },
+    "components/reconciliation/audit-trail": {
+      "id": "component:components/reconciliation/audit-trail",
+      "name": "audit-trail",
+      "path": "frontend/components/reconciliation/audit-trail.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/cross-navigation": {
+      "id": "component:components/reconciliation/cross-navigation",
+      "name": "cross-navigation",
+      "path": "frontend/components/reconciliation/cross-navigation.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/discrepancy-list": {
+      "id": "component:components/reconciliation/discrepancy-list",
+      "name": "discrepancy-list",
+      "path": "frontend/components/reconciliation/discrepancy-list.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/empty-state": {
+      "id": "component:components/reconciliation/empty-state",
+      "name": "empty-state",
+      "path": "frontend/components/reconciliation/empty-state.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/error-state": {
+      "id": "component:components/reconciliation/error-state",
+      "name": "error-state",
+      "path": "frontend/components/reconciliation/error-state.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/loading-skeleton": {
+      "id": "component:components/reconciliation/loading-skeleton",
+      "name": "loading-skeleton",
+      "path": "frontend/components/reconciliation/loading-skeleton.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/reconciliation-evidence-drawer": {
+      "id": "component:components/reconciliation/reconciliation-evidence-drawer",
+      "name": "reconciliation-evidence-drawer",
+      "path": "frontend/components/reconciliation/reconciliation-evidence-drawer.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/reconciliation-insights-panel": {
+      "id": "component:components/reconciliation/reconciliation-insights-panel",
+      "name": "reconciliation-insights-panel",
+      "path": "frontend/components/reconciliation/reconciliation-insights-panel.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/reconciliation-summary": {
+      "id": "component:components/reconciliation/reconciliation-summary",
+      "name": "reconciliation-summary",
+      "path": "frontend/components/reconciliation/reconciliation-summary.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/reconciliation-toolbar": {
+      "id": "component:components/reconciliation/reconciliation-toolbar",
+      "name": "reconciliation-toolbar",
+      "path": "frontend/components/reconciliation/reconciliation-toolbar.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/reconciliation/status-overview": {
+      "id": "component:components/reconciliation/status-overview",
+      "name": "status-overview",
+      "path": "frontend/components/reconciliation/status-overview.tsx",
+      "workspaces": [
+        "reconciliation"
+      ]
+    },
+    "components/selection/selection-summary": {
+      "id": "component:components/selection/selection-summary",
+      "name": "selection-summary",
+      "path": "frontend/components/selection/selection-summary.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/toolbar/workspace-toolbar": {
+      "id": "component:components/toolbar/workspace-toolbar",
+      "name": "workspace-toolbar",
+      "path": "frontend/components/toolbar/workspace-toolbar.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/transaction-table/pagination-controls": {
+      "id": "component:components/transaction-table/pagination-controls",
+      "name": "pagination-controls",
+      "path": "frontend/components/transaction-table/pagination-controls.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/transaction-table/transaction-table": {
+      "id": "component:components/transaction-table/transaction-table",
+      "name": "transaction-table",
+      "path": "frontend/components/transaction-table/transaction-table.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    },
+    "components/workspace/insight-panel": {
+      "id": "component:components/workspace/insight-panel",
+      "name": "insight-panel",
+      "path": "frontend/components/workspace/insight-panel.tsx",
+      "workspaces": [
+        "transactions"
+      ]
+    }
+  },
+  "mappers": {
+    "backend/src/core/mappers/__init__.py": {
+      "id": "mapper:backend/src/core/mappers/__init__.py",
+      "name": "__init__",
+      "path": "backend/src/core/mappers/__init__.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/account_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/account_mapper.py",
+      "name": "account_mapper",
+      "path": "backend/src/core/mappers/account_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/analytics_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/analytics_mapper.py",
+      "name": "analytics_mapper",
+      "path": "backend/src/core/mappers/analytics_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/behaviour_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/behaviour_mapper.py",
+      "name": "behaviour_mapper",
+      "path": "backend/src/core/mappers/behaviour_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/cashflow_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/cashflow_mapper.py",
+      "name": "cashflow_mapper",
+      "path": "backend/src/core/mappers/cashflow_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/credit_card_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/credit_card_mapper.py",
+      "name": "credit_card_mapper",
+      "path": "backend/src/core/mappers/credit_card_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/dashboard_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/dashboard_mapper.py",
+      "name": "dashboard_mapper",
+      "path": "backend/src/core/mappers/dashboard_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/forecast_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/forecast_mapper.py",
+      "name": "forecast_mapper",
+      "path": "backend/src/core/mappers/forecast_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/investment_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/investment_mapper.py",
+      "name": "investment_mapper",
+      "path": "backend/src/core/mappers/investment_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/loan_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/loan_mapper.py",
+      "name": "loan_mapper",
+      "path": "backend/src/core/mappers/loan_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/networth_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/networth_mapper.py",
+      "name": "networth_mapper",
+      "path": "backend/src/core/mappers/networth_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/reconciliation_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/reconciliation_mapper.py",
+      "name": "reconciliation_mapper",
+      "path": "backend/src/core/mappers/reconciliation_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/statement_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/statement_mapper.py",
+      "name": "statement_mapper",
+      "path": "backend/src/core/mappers/statement_mapper.py",
+      "layer": "backend"
+    },
+    "backend/src/core/mappers/transaction_mapper.py": {
+      "id": "mapper:backend/src/core/mappers/transaction_mapper.py",
+      "name": "transaction_mapper",
+      "path": "backend/src/core/mappers/transaction_mapper.py",
+      "layer": "backend"
+    },
+    "frontend/lib/mappers/accounts-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/accounts-mapper.ts",
+      "name": "accounts-mapper",
+      "path": "frontend/lib/mappers/accounts-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/behaviour-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/behaviour-mapper.ts",
+      "name": "behaviour-mapper",
+      "path": "frontend/lib/mappers/behaviour-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/cashflow-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/cashflow-mapper.ts",
+      "name": "cashflow-mapper",
+      "path": "frontend/lib/mappers/cashflow-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/credit-cards-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/credit-cards-mapper.ts",
+      "name": "credit-cards-mapper",
+      "path": "frontend/lib/mappers/credit-cards-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/forecast-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/forecast-mapper.ts",
+      "name": "forecast-mapper",
+      "path": "frontend/lib/mappers/forecast-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/investments-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/investments-mapper.ts",
+      "name": "investments-mapper",
+      "path": "frontend/lib/mappers/investments-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/loans-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/loans-mapper.ts",
+      "name": "loans-mapper",
+      "path": "frontend/lib/mappers/loans-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/net-worth-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/net-worth-mapper.ts",
+      "name": "net-worth-mapper",
+      "path": "frontend/lib/mappers/net-worth-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/reconciliation-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/reconciliation-mapper.ts",
+      "name": "reconciliation-mapper",
+      "path": "frontend/lib/mappers/reconciliation-mapper.ts",
+      "layer": "frontend"
+    },
+    "frontend/lib/mappers/transaction-mapper.ts": {
+      "id": "mapper:frontend/lib/mappers/transaction-mapper.ts",
+      "name": "transaction-mapper",
+      "path": "frontend/lib/mappers/transaction-mapper.ts",
+      "layer": "frontend"
+    }
+  },
+  "dtos": {
+    "backend/src/core/dtos/__init__.py": {
+      "id": "dto:backend/src/core/dtos/__init__.py",
+      "name": "__init__",
+      "path": "backend/src/core/dtos/__init__.py"
+    },
+    "backend/src/core/dtos/account_dto.py": {
+      "id": "dto:backend/src/core/dtos/account_dto.py",
+      "name": "account_dto",
+      "path": "backend/src/core/dtos/account_dto.py"
+    },
+    "backend/src/core/dtos/accounts_dto.py": {
+      "id": "dto:backend/src/core/dtos/accounts_dto.py",
+      "name": "accounts_dto",
+      "path": "backend/src/core/dtos/accounts_dto.py"
+    },
+    "backend/src/core/dtos/analytics_dto.py": {
+      "id": "dto:backend/src/core/dtos/analytics_dto.py",
+      "name": "analytics_dto",
+      "path": "backend/src/core/dtos/analytics_dto.py"
+    },
+    "backend/src/core/dtos/behaviour_dto.py": {
+      "id": "dto:backend/src/core/dtos/behaviour_dto.py",
+      "name": "behaviour_dto",
+      "path": "backend/src/core/dtos/behaviour_dto.py"
+    },
+    "backend/src/core/dtos/cashflow_dto.py": {
+      "id": "dto:backend/src/core/dtos/cashflow_dto.py",
+      "name": "cashflow_dto",
+      "path": "backend/src/core/dtos/cashflow_dto.py"
+    },
+    "backend/src/core/dtos/credit_cards_dto.py": {
+      "id": "dto:backend/src/core/dtos/credit_cards_dto.py",
+      "name": "credit_cards_dto",
+      "path": "backend/src/core/dtos/credit_cards_dto.py"
+    },
+    "backend/src/core/dtos/dashboard_dto.py": {
+      "id": "dto:backend/src/core/dtos/dashboard_dto.py",
+      "name": "dashboard_dto",
+      "path": "backend/src/core/dtos/dashboard_dto.py"
+    },
+    "backend/src/core/dtos/forecast_dto.py": {
+      "id": "dto:backend/src/core/dtos/forecast_dto.py",
+      "name": "forecast_dto",
+      "path": "backend/src/core/dtos/forecast_dto.py"
+    },
+    "backend/src/core/dtos/investments_dto.py": {
+      "id": "dto:backend/src/core/dtos/investments_dto.py",
+      "name": "investments_dto",
+      "path": "backend/src/core/dtos/investments_dto.py"
+    },
+    "backend/src/core/dtos/loans_dto.py": {
+      "id": "dto:backend/src/core/dtos/loans_dto.py",
+      "name": "loans_dto",
+      "path": "backend/src/core/dtos/loans_dto.py"
+    },
+    "backend/src/core/dtos/net_worth_dto.py": {
+      "id": "dto:backend/src/core/dtos/net_worth_dto.py",
+      "name": "net_worth_dto",
+      "path": "backend/src/core/dtos/net_worth_dto.py"
+    },
+    "backend/src/core/dtos/reconciliation_dto.py": {
+      "id": "dto:backend/src/core/dtos/reconciliation_dto.py",
+      "name": "reconciliation_dto",
+      "path": "backend/src/core/dtos/reconciliation_dto.py"
+    },
+    "backend/src/core/dtos/statement_dto.py": {
+      "id": "dto:backend/src/core/dtos/statement_dto.py",
+      "name": "statement_dto",
+      "path": "backend/src/core/dtos/statement_dto.py"
+    },
+    "backend/src/core/dtos/transaction_dto.py": {
+      "id": "dto:backend/src/core/dtos/transaction_dto.py",
+      "name": "transaction_dto",
+      "path": "backend/src/core/dtos/transaction_dto.py"
+    }
+  },
+  "view_models": {
+    "AccountCalculationStepViewModel": {
+      "id": "viewmodel:AccountCalculationStepViewModel",
+      "name": "AccountCalculationStepViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountDetailViewModel": {
+      "id": "viewmodel:AccountDetailViewModel",
+      "name": "AccountDetailViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountEvidenceChainViewModel": {
+      "id": "viewmodel:AccountEvidenceChainViewModel",
+      "name": "AccountEvidenceChainViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountEvidenceItemViewModel": {
+      "id": "viewmodel:AccountEvidenceItemViewModel",
+      "name": "AccountEvidenceItemViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountFiltersViewModel": {
+      "id": "viewmodel:AccountFiltersViewModel",
+      "name": "AccountFiltersViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountInsightViewModel": {
+      "id": "viewmodel:AccountInsightViewModel",
+      "name": "AccountInsightViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountNavigationViewModel": {
+      "id": "viewmodel:AccountNavigationViewModel",
+      "name": "AccountNavigationViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountTransactionViewModel": {
+      "id": "viewmodel:AccountTransactionViewModel",
+      "name": "AccountTransactionViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountTypeBreakdownViewModel": {
+      "id": "viewmodel:AccountTypeBreakdownViewModel",
+      "name": "AccountTypeBreakdownViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AccountsViewModel": {
+      "id": "viewmodel:AccountsViewModel",
+      "name": "AccountsViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "AmortizationEntryViewModel": {
+      "id": "viewmodel:AmortizationEntryViewModel",
+      "name": "AmortizationEntryViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "AssetAllocationViewModel": {
+      "id": "viewmodel:AssetAllocationViewModel",
+      "name": "AssetAllocationViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "AuditTrailEntryViewModel": {
+      "id": "viewmodel:AuditTrailEntryViewModel",
+      "name": "AuditTrailEntryViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "BalanceHistoryViewModel": {
+      "id": "viewmodel:BalanceHistoryViewModel",
+      "name": "BalanceHistoryViewModel",
+      "path": "frontend/types/accounts-view-model.ts"
+    },
+    "BehaviourCalculationStepViewModel": {
+      "id": "viewmodel:BehaviourCalculationStepViewModel",
+      "name": "BehaviourCalculationStepViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourEvidenceChainViewModel": {
+      "id": "viewmodel:BehaviourEvidenceChainViewModel",
+      "name": "BehaviourEvidenceChainViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourEvidenceItemViewModel": {
+      "id": "viewmodel:BehaviourEvidenceItemViewModel",
+      "name": "BehaviourEvidenceItemViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourFiltersViewModel": {
+      "id": "viewmodel:BehaviourFiltersViewModel",
+      "name": "BehaviourFiltersViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourInsightViewModel": {
+      "id": "viewmodel:BehaviourInsightViewModel",
+      "name": "BehaviourInsightViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourNavigationViewModel": {
+      "id": "viewmodel:BehaviourNavigationViewModel",
+      "name": "BehaviourNavigationViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourScoreViewModel": {
+      "id": "viewmodel:BehaviourScoreViewModel",
+      "name": "BehaviourScoreViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "BehaviourViewModel": {
+      "id": "viewmodel:BehaviourViewModel",
+      "name": "BehaviourViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "CashflowCalculationStepViewModel": {
+      "id": "viewmodel:CashflowCalculationStepViewModel",
+      "name": "CashflowCalculationStepViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowCategoryViewModel": {
+      "id": "viewmodel:CashflowCategoryViewModel",
+      "name": "CashflowCategoryViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowEvidenceChainViewModel": {
+      "id": "viewmodel:CashflowEvidenceChainViewModel",
+      "name": "CashflowEvidenceChainViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowEvidenceItemViewModel": {
+      "id": "viewmodel:CashflowEvidenceItemViewModel",
+      "name": "CashflowEvidenceItemViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowFiltersViewModel": {
+      "id": "viewmodel:CashflowFiltersViewModel",
+      "name": "CashflowFiltersViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowInsightViewModel": {
+      "id": "viewmodel:CashflowInsightViewModel",
+      "name": "CashflowInsightViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowMonthlyViewModel": {
+      "id": "viewmodel:CashflowMonthlyViewModel",
+      "name": "CashflowMonthlyViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowNavigationViewModel": {
+      "id": "viewmodel:CashflowNavigationViewModel",
+      "name": "CashflowNavigationViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowProjectionViewModel": {
+      "id": "viewmodel:CashflowProjectionViewModel",
+      "name": "CashflowProjectionViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "CashflowTransactionViewModel": {
+      "id": "viewmodel:CashflowTransactionViewModel",
+      "name": "CashflowTransactionViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowTrendViewModel": {
+      "id": "viewmodel:CashflowTrendViewModel",
+      "name": "CashflowTrendViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "CashflowViewModel": {
+      "id": "viewmodel:CashflowViewModel",
+      "name": "CashflowViewModel",
+      "path": "frontend/types/cashflow-view-model.ts"
+    },
+    "ConfidenceIntervalViewModel": {
+      "id": "viewmodel:ConfidenceIntervalViewModel",
+      "name": "ConfidenceIntervalViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "CreditCardCalculationStepViewModel": {
+      "id": "viewmodel:CreditCardCalculationStepViewModel",
+      "name": "CreditCardCalculationStepViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardEvidenceChainViewModel": {
+      "id": "viewmodel:CreditCardEvidenceChainViewModel",
+      "name": "CreditCardEvidenceChainViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardEvidenceItemViewModel": {
+      "id": "viewmodel:CreditCardEvidenceItemViewModel",
+      "name": "CreditCardEvidenceItemViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardFiltersViewModel": {
+      "id": "viewmodel:CreditCardFiltersViewModel",
+      "name": "CreditCardFiltersViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardInsightViewModel": {
+      "id": "viewmodel:CreditCardInsightViewModel",
+      "name": "CreditCardInsightViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardNavigationViewModel": {
+      "id": "viewmodel:CreditCardNavigationViewModel",
+      "name": "CreditCardNavigationViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardSummaryViewModel": {
+      "id": "viewmodel:CreditCardSummaryViewModel",
+      "name": "CreditCardSummaryViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "CreditCardsViewModel": {
+      "id": "viewmodel:CreditCardsViewModel",
+      "name": "CreditCardsViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "DebtHealthViewModel": {
+      "id": "viewmodel:DebtHealthViewModel",
+      "name": "DebtHealthViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "DiscrepancyViewModel": {
+      "id": "viewmodel:DiscrepancyViewModel",
+      "name": "DiscrepancyViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ForecastCalculationStepViewModel": {
+      "id": "viewmodel:ForecastCalculationStepViewModel",
+      "name": "ForecastCalculationStepViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastEvidenceChainViewModel": {
+      "id": "viewmodel:ForecastEvidenceChainViewModel",
+      "name": "ForecastEvidenceChainViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastEvidenceItemViewModel": {
+      "id": "viewmodel:ForecastEvidenceItemViewModel",
+      "name": "ForecastEvidenceItemViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastFiltersViewModel": {
+      "id": "viewmodel:ForecastFiltersViewModel",
+      "name": "ForecastFiltersViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastInsightViewModel": {
+      "id": "viewmodel:ForecastInsightViewModel",
+      "name": "ForecastInsightViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastNavigationViewModel": {
+      "id": "viewmodel:ForecastNavigationViewModel",
+      "name": "ForecastNavigationViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastScenarioViewModel": {
+      "id": "viewmodel:ForecastScenarioViewModel",
+      "name": "ForecastScenarioViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastSummaryViewModel": {
+      "id": "viewmodel:ForecastSummaryViewModel",
+      "name": "ForecastSummaryViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "ForecastViewModel": {
+      "id": "viewmodel:ForecastViewModel",
+      "name": "ForecastViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "HoldingViewModel": {
+      "id": "viewmodel:HoldingViewModel",
+      "name": "HoldingViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InterestAnalysisViewModel": {
+      "id": "viewmodel:InterestAnalysisViewModel",
+      "name": "InterestAnalysisViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "InvestmentCalculationStepViewModel": {
+      "id": "viewmodel:InvestmentCalculationStepViewModel",
+      "name": "InvestmentCalculationStepViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentEvidenceChainViewModel": {
+      "id": "viewmodel:InvestmentEvidenceChainViewModel",
+      "name": "InvestmentEvidenceChainViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentEvidenceItemViewModel": {
+      "id": "viewmodel:InvestmentEvidenceItemViewModel",
+      "name": "InvestmentEvidenceItemViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentFiltersViewModel": {
+      "id": "viewmodel:InvestmentFiltersViewModel",
+      "name": "InvestmentFiltersViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentInsightViewModel": {
+      "id": "viewmodel:InvestmentInsightViewModel",
+      "name": "InvestmentInsightViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentNavigationViewModel": {
+      "id": "viewmodel:InvestmentNavigationViewModel",
+      "name": "InvestmentNavigationViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentSummaryViewModel": {
+      "id": "viewmodel:InvestmentSummaryViewModel",
+      "name": "InvestmentSummaryViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "InvestmentsViewModel": {
+      "id": "viewmodel:InvestmentsViewModel",
+      "name": "InvestmentsViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "LoanCalculationStepViewModel": {
+      "id": "viewmodel:LoanCalculationStepViewModel",
+      "name": "LoanCalculationStepViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoanEvidenceChainViewModel": {
+      "id": "viewmodel:LoanEvidenceChainViewModel",
+      "name": "LoanEvidenceChainViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoanEvidenceItemViewModel": {
+      "id": "viewmodel:LoanEvidenceItemViewModel",
+      "name": "LoanEvidenceItemViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoanFiltersViewModel": {
+      "id": "viewmodel:LoanFiltersViewModel",
+      "name": "LoanFiltersViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoanInsightViewModel": {
+      "id": "viewmodel:LoanInsightViewModel",
+      "name": "LoanInsightViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoanNavigationViewModel": {
+      "id": "viewmodel:LoanNavigationViewModel",
+      "name": "LoanNavigationViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoanSummaryViewModel": {
+      "id": "viewmodel:LoanSummaryViewModel",
+      "name": "LoanSummaryViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "LoansViewModel": {
+      "id": "viewmodel:LoansViewModel",
+      "name": "LoansViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "MoneyViewModel": {
+      "id": "viewmodel:MoneyViewModel",
+      "name": "MoneyViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthBreakdownItemViewModel": {
+      "id": "viewmodel:NetWorthBreakdownItemViewModel",
+      "name": "NetWorthBreakdownItemViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthCalculationStepViewModel": {
+      "id": "viewmodel:NetWorthCalculationStepViewModel",
+      "name": "NetWorthCalculationStepViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthCompositionViewModel": {
+      "id": "viewmodel:NetWorthCompositionViewModel",
+      "name": "NetWorthCompositionViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthEvidenceChainViewModel": {
+      "id": "viewmodel:NetWorthEvidenceChainViewModel",
+      "name": "NetWorthEvidenceChainViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthEvidenceItemViewModel": {
+      "id": "viewmodel:NetWorthEvidenceItemViewModel",
+      "name": "NetWorthEvidenceItemViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthFiltersViewModel": {
+      "id": "viewmodel:NetWorthFiltersViewModel",
+      "name": "NetWorthFiltersViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthHistoricalSnapshotViewModel": {
+      "id": "viewmodel:NetWorthHistoricalSnapshotViewModel",
+      "name": "NetWorthHistoricalSnapshotViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthInsightViewModel": {
+      "id": "viewmodel:NetWorthInsightViewModel",
+      "name": "NetWorthInsightViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthNavigationViewModel": {
+      "id": "viewmodel:NetWorthNavigationViewModel",
+      "name": "NetWorthNavigationViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthProjectionViewModel": {
+      "id": "viewmodel:NetWorthProjectionViewModel",
+      "name": "NetWorthProjectionViewModel",
+      "path": "frontend/types/forecast-view-model.ts"
+    },
+    "NetWorthTrendViewModel": {
+      "id": "viewmodel:NetWorthTrendViewModel",
+      "name": "NetWorthTrendViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "NetWorthViewModel": {
+      "id": "viewmodel:NetWorthViewModel",
+      "name": "NetWorthViewModel",
+      "path": "frontend/types/net-worth-view-model.ts"
+    },
+    "PaymentProgressViewModel": {
+      "id": "viewmodel:PaymentProgressViewModel",
+      "name": "PaymentProgressViewModel",
+      "path": "frontend/types/loans-view-model.ts"
+    },
+    "PerformanceViewModel": {
+      "id": "viewmodel:PerformanceViewModel",
+      "name": "PerformanceViewModel",
+      "path": "frontend/types/investments-view-model.ts"
+    },
+    "ReconciliationCalculationStepViewModel": {
+      "id": "viewmodel:ReconciliationCalculationStepViewModel",
+      "name": "ReconciliationCalculationStepViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationEvidenceChainViewModel": {
+      "id": "viewmodel:ReconciliationEvidenceChainViewModel",
+      "name": "ReconciliationEvidenceChainViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationEvidenceItemViewModel": {
+      "id": "viewmodel:ReconciliationEvidenceItemViewModel",
+      "name": "ReconciliationEvidenceItemViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationFiltersViewModel": {
+      "id": "viewmodel:ReconciliationFiltersViewModel",
+      "name": "ReconciliationFiltersViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationInsightViewModel": {
+      "id": "viewmodel:ReconciliationInsightViewModel",
+      "name": "ReconciliationInsightViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationNavigationViewModel": {
+      "id": "viewmodel:ReconciliationNavigationViewModel",
+      "name": "ReconciliationNavigationViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationSummaryViewModel": {
+      "id": "viewmodel:ReconciliationSummaryViewModel",
+      "name": "ReconciliationSummaryViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "ReconciliationViewModel": {
+      "id": "viewmodel:ReconciliationViewModel",
+      "name": "ReconciliationViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "RenderableViewModel": {
+      "id": "viewmodel:RenderableViewModel",
+      "name": "RenderableViewModel",
+      "path": "frontend/lib/renderers/types.ts"
+    },
+    "SavingsRateViewModel": {
+      "id": "viewmodel:SavingsRateViewModel",
+      "name": "SavingsRateViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "SpendingByCategoryViewModel": {
+      "id": "viewmodel:SpendingByCategoryViewModel",
+      "name": "SpendingByCategoryViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "SpendingPatternViewModel": {
+      "id": "viewmodel:SpendingPatternViewModel",
+      "name": "SpendingPatternViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "StatementHistoryViewModel": {
+      "id": "viewmodel:StatementHistoryViewModel",
+      "name": "StatementHistoryViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "StatusOverviewViewModel": {
+      "id": "viewmodel:StatusOverviewViewModel",
+      "name": "StatusOverviewViewModel",
+      "path": "frontend/types/reconciliation-view-model.ts"
+    },
+    "TransactionViewModel": {
+      "id": "viewmodel:TransactionViewModel",
+      "name": "TransactionViewModel",
+      "path": "frontend/types/transaction-view-model.ts"
+    },
+    "UtilizationViewModel": {
+      "id": "viewmodel:UtilizationViewModel",
+      "name": "UtilizationViewModel",
+      "path": "frontend/types/credit-cards-view-model.ts"
+    },
+    "ViewModel": {
+      "id": "viewmodel:ViewModel",
+      "name": "ViewModel",
+      "path": "runtime/foundation/architecture/models.py"
+    },
+    "WellnessRadarViewModel": {
+      "id": "viewmodel:WellnessRadarViewModel",
+      "name": "WellnessRadarViewModel",
+      "path": "frontend/types/behaviour-view-model.ts"
+    },
+    "frontend/lib/store/use-app-store.ts": {
+      "id": "viewmodel:use-app-store",
+      "name": "use-app-store",
+      "path": "frontend/lib/store/use-app-store.ts"
+    }
+  },
+  "artifact_count": 137,
+  "graphs": {
+    "ownership": {
+      "node_count": 169,
+      "edge_count": 201,
+      "description": "Ownership graph: who OWNS what. Never traverses implementation modules as roots; engines own their modules."
+    },
+    "execution": {
+      "node_count": 163,
+      "edge_count": 337,
+      "description": "Execution graph: the runtime call path. May traverse implementation modules; ownership must not."
+    },
+    "dependency": {
+      "node_count": 160,
+      "edge_count": 275,
+      "description": "Dependency graph: static import dependencies between canonical architecture nodes. Distinct from ownership and execution."
+    }
+  }
+}

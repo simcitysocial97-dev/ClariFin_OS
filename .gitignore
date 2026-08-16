@@ -67,6 +67,9 @@ Database
 *.sqlite3
 data/
 uploads/
+# "data/" above is unanchored and matched backend/src/data/, masking backend
+# source from clean checkouts. backend/src is source, never local data.
+!backend/src/data/
 
 Misc
 .vercel
@@ -74,3 +77,33 @@ Misc
 .temp/
 temp/
 tmp/
+
+# Generated artifacts
+runtime/generated/*/cache/
+runtime/generated/verification/
+runtime/generated/evidence/
+runtime/generated/financial/
+runtime/generated/timeline/
+runtime/generated/graph/
+runtime/generated/command/
+runtime/generated/intelligence/
+runtime/generated/execution/
+
+# Mutation testing build artifacts
+backend/mutants/
+backend/run_mutmut_patched.sh
+
+# Root-level stale directories
+/src/
+
+# Python build artifacts
+*.egg-info/
+
+# Verification pipeline generated files
+evidence-download/
+target/
+
+# Coverage data
+.coverage
+.venv
+.memory-cache/

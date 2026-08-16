@@ -1,0 +1,309 @@
+{
+  "schema": "engineering-platform-audit/v4",
+  "program": "14.0 \u2014 Engineering Platform Production Hardening & Self-Evolution",
+  "generated_at": "2026-08-06T14:13:03.664449+00:00",
+  "certification_status": "CERTIFIED",
+  "intelligence_checks": [
+    {
+      "id": "P14-001",
+      "name": "No duplicated discovery",
+      "status": "pass",
+      "detail": "no intelligence module imports the discovery pipeline or walks the filesystem for production code",
+      "evidence": {
+        "modules_scanned": [
+          "resolver.py",
+          "change.py",
+          "blast.py",
+          "optimizer.py",
+          "risk.py",
+          "repair.py",
+          "state.py",
+          "cost.py"
+        ],
+        "forbidden_imports": [
+          "architecture.discovery",
+          "architecture.sources",
+          "repository.scanner",
+          "build_cross_layer_map"
+        ],
+        "forbidden_scans": [
+          "os.walk",
+          "rglob(",
+          "iglob(",
+          "glob.glob"
+        ],
+        "violations": []
+      }
+    },
+    {
+      "id": "P14-002",
+      "name": "All intelligence consumes the canonical provider",
+      "status": "pass",
+      "detail": "6 intelligence modules resolve architecture through the canonical provider via the shared resolver",
+      "evidence": {
+        "provider_consumers": [
+          "change.py",
+          "blast.py",
+          "optimizer.py",
+          "risk.py",
+          "repair.py",
+          "state.py"
+        ],
+        "non_consumers": [],
+        "resolver_imports_provider": true
+      }
+    },
+    {
+      "id": "P14-003",
+      "name": "No backend/frontend production code modified",
+      "status": "pass",
+      "detail": "no file under backend/src/ or frontend/ was modified",
+      "evidence": {
+        "changed_file_count": 119,
+        "production_files_changed": [],
+        "scopes_checked": [
+          "backend/src/",
+          "frontend/"
+        ]
+      }
+    },
+    {
+      "id": "P14-004",
+      "name": "Runtime remains deterministic",
+      "status": "pass",
+      "detail": "two consecutive intelligence runs produced byte-identical output (excluding timestamps)",
+      "evidence": {
+        "artifacts_compared": [
+          "change-intelligence.json",
+          "blast-radius.json",
+          "verification-plan.json",
+          "engineering-risk.json",
+          "repair-intelligence.json",
+          "engineering-memory.json",
+          "github-intelligence.json",
+          "verification-cost.json",
+          "platform-state.json"
+        ],
+        "volatile_keys_excluded": [
+          "as_of",
+          "generated_at",
+          "indexed_at",
+          "timestamp"
+        ],
+        "differing_artifacts": []
+      }
+    },
+    {
+      "id": "P14-005",
+      "name": "No verification logic weakened",
+      "status": "pass",
+      "detail": "all 7 skipped suites carry an explicit evidence-based justification; no existing suite definition changed",
+      "evidence": {
+        "skipped": [
+          {
+            "id": "unit-targeted",
+            "category": "unit",
+            "reason": "no impacted engine has provider-recorded tests",
+            "justification": "blast radius contains no engine with tests"
+          },
+          {
+            "id": "contracts-schemathesis",
+            "category": "contract",
+            "reason": "no endpoint impacted",
+            "justification": "blast radius contains 0 entities of kind 'endpoint'"
+          },
+          {
+            "id": "backend-integration",
+            "category": "integration",
+            "reason": "no router, service or repository impacted",
+            "justification": "blast radius contains no backend wiring entities"
+          },
+          {
+            "id": "frontend-unit",
+            "category": "frontend",
+            "reason": "no frontend file impacted",
+            "justification": "no impacted entity has a path under frontend/; capability/workspace impact=1 but none map to files"
+          },
+          {
+            "id": "playwright-e2e",
+            "category": "e2e",
+            "reason": "no workspace impacted",
+            "justification": "blast radius contains 0 entities of kind 'workspace'"
+          },
+          {
+            "id": "mutation-run",
+            "category": "mutation",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          },
+          {
+            "id": "golden-regression",
+            "category": "golden",
+            "reason": "requires explicit request (cost >= 600s)",
+            "justification": "heavyweight suite; blast radius does not by itself justify it"
+          }
+        ],
+        "selected": [
+          "runtime-self-test"
+        ],
+        "unjustified": []
+      }
+    },
+    {
+      "id": "P14-006",
+      "name": "Blast radius is evidence-backed",
+      "status": "pass",
+      "detail": "all 0 indirectly impacted entities record the graph, source node and relation that justified them",
+      "evidence": {
+        "indirect_count": 0,
+        "graphs": [
+          "dependency",
+          "execution",
+          "ownership"
+        ],
+        "missing_evidence": []
+      }
+    },
+    {
+      "id": "P14-007",
+      "name": "GitHub integration retrieves structured evidence before logs",
+      "status": "pass",
+      "detail": "CI intelligence collects run metadata, failed jobs, failed steps and annotations first; failed-step logs are opt-in and full log archives are never downloaded",
+      "evidence": {
+        "downloads_full_archive": false,
+        "logs_gated_by_flag": true,
+        "structured_metadata_first": true
+      }
+    },
+    {
+      "id": "P14-008",
+      "name": "All Program 14 deliverables generated",
+      "status": "pass",
+      "detail": "all 9 intelligence artifacts exist",
+      "evidence": {
+        "expected": [
+          "change-intelligence.json",
+          "blast-radius.json",
+          "verification-plan.json",
+          "engineering-risk.json",
+          "repair-intelligence.json",
+          "engineering-memory.json",
+          "github-intelligence.json",
+          "verification-cost.json",
+          "platform-state.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "id": "P14-009",
+      "name": "Intelligence artifacts have registered ownership",
+      "status": "pass",
+      "detail": "every Program 14 artifact has a registered owner and retention policy",
+      "evidence": {
+        "unowned": [],
+        "unretained": []
+      }
+    }
+  ],
+  "counts": {
+    "checks": 9,
+    "passed": 9,
+    "failed": 0
+  },
+  "runtime_audit": {
+    "certification_status": "CERTIFIED",
+    "section_count": 19,
+    "sections": [
+      {
+        "name": "Repository Index Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Cross-Layer Map Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Dependency Graph Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Verification Planner Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Executor Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Evidence Aggregator Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Observability Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Knowledge Base Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Workspace Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Integrity Engine Audit",
+        "status": "pass"
+      },
+      {
+        "name": "GitHub Actions Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Runtime CLI Audit",
+        "status": "fail"
+      },
+      {
+        "name": "GitHub Runtime Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Verification Profiles Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Artifact Ownership Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Runtime Performance Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Failure Injection Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Pipeline Validation Audit",
+        "status": "pass"
+      },
+      {
+        "name": "Engineering ROI Audit",
+        "status": "pass"
+      }
+    ]
+  },
+  "deliverables": [
+    "change-intelligence.json",
+    "blast-radius.json",
+    "verification-plan.json",
+    "engineering-risk.json",
+    "repair-intelligence.json",
+    "engineering-memory.json",
+    "github-intelligence.json",
+    "verification-cost.json",
+    "platform-state.json",
+    "engineering-platform-audit-v4.json",
+    "program14-certification.md"
+  ]
+}

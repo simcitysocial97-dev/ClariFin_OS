@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-08-06T11:40:05.708576+00:00",
+  "schema": "runtime-consistency",
+  "single_source": "runtime.foundation.architecture.get_architecture",
+  "checks_total": 6,
+  "checks_passed": 6,
+  "checks_failed": 0,
+  "all_passed": true,
+  "checks": [
+    {
+      "check": "no_phantom_engine_keys",
+      "passed": true,
+      "detail": "All package engines resolve to a real __init__.py; single-file engines resolve to a real .py file. No phantom <engine>.py keys exist."
+    },
+    {
+      "check": "endpoints_single_router",
+      "passed": true,
+      "detail": "Every endpoint is owned by exactly one router."
+    },
+    {
+      "check": "routers_have_engine",
+      "passed": true,
+      "detail": "All routers resolve to an owning engine."
+    },
+    {
+      "check": "modules_not_engines",
+      "passed": true,
+      "detail": "No implementation module is treated as an engine root."
+    },
+    {
+      "check": "capability_alias_folded",
+      "passed": true,
+      "detail": "Capability hook names are unique after case-insensitive folding."
+    },
+    {
+      "check": "reconciliation_capability_linked",
+      "passed": true,
+      "detail": "useReconciliationCapability is linked to reconciliation_engine."
+    }
+  ]
+}

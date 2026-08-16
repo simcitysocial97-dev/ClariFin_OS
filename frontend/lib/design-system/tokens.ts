@@ -5,33 +5,6 @@
  * All values are in paise (₹1.00 = 100 paise) for financial determinism.
  */
 
-// ===== Spacing Scale =====
-export const spacing = {
-  0: '0px',
-  0.5: '2px',
-  1: '4px',
-  1.5: '6px',
-  2: '8px',
-  2.5: '10px',
-  3: '12px',
-  3.5: '14px',
-  4: '16px',
-  5: '20px',
-  6: '24px',
-  7: '28px',
-  8: '32px',
-  9: '36px',
-  10: '40px',
-  11: '44px',
-  12: '48px',
-  14: '56px',
-  16: '64px',
-  20: '80px',
-  24: '96px',
-  28: '112px',
-  32: '128px',
-} as const;
-
 // ===== Border Radius =====
 export const borderRadius = {
   none: '0px',
@@ -100,6 +73,7 @@ export const easing = {
 export const fontFamily = {
   sans: 'var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)',
   mono: 'var(--font-mono, "SF Mono", "Fira Code", "Roboto Mono", monospace)',
+  display: 'var(--font-display, "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)',
 } as const;
 
 // ===== Font Size =====

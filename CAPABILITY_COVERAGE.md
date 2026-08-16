@@ -12,7 +12,7 @@ test categories.
 | Account Management | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Credit Cards | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Debt Management | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
-| Financial Events | PASS | FAIL | PASS | PASS | PASS | PASS | PASS | PARTIAL |
+| Financial Events | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Financial Health | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Forecasting | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Household Cashflow | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
@@ -20,6 +20,7 @@ test categories.
 | Recommendations | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Reconciliation | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
 | Transaction Intelligence | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
+| Verification | FAIL | FAIL | PASS | PASS | FAIL | FAIL | FAIL | PARTIAL |
 
 ## Legend
 
@@ -31,8 +32,8 @@ test categories.
 
 ## Summary
 
-- Total capabilities: 11
-- Fully covered: 10
+- Total capabilities: 12
+- Fully covered: 11
 - Partially covered: 1
 - Not covered: 0
 
@@ -84,10 +85,10 @@ Coverage: 7/7 categories
 
 Criticality: medium | Risk: low
 
-Coverage: 6/7 categories
+Coverage: 7/7 categories
 
 - ✓ PASS — Unit Tests
-- ✗ FAIL — Property Tests
+- ✓ PASS — Property Tests
 - ✓ PASS — Contract Tests
 - ✓ PASS — Capability Tests
 - ✓ PASS — Regression Tests
@@ -191,3 +192,17 @@ Coverage: 7/7 categories
 - ✓ PASS — Regression Tests
 - ✓ PASS — Invariant Tests
 - ✓ PASS — Golden Datasets
+
+### Verification (`verification`)
+
+Criticality: high | Risk: high
+
+Coverage: 2/7 categories
+
+- ✗ FAIL — Unit Tests
+- ✗ FAIL — Property Tests
+- ✓ PASS — Contract Tests
+- ✓ PASS — Capability Tests
+- ✗ FAIL — Regression Tests
+- ✗ FAIL — Invariant Tests
+- ✗ FAIL — Golden Datasets

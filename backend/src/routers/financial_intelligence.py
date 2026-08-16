@@ -16,9 +16,7 @@ from fastapi import APIRouter, Query
 from src.services.financial_intelligence_service import FinancialIntelligenceService
 
 logger = logging.getLogger(__name__)
-router = APIRouter(
-    prefix="/api/v1/financial-intelligence", tags=["financial-intelligence"]
-)
+router = APIRouter(prefix="/financial-intelligence", tags=["financial-intelligence"])
 
 
 def _timed_log(
@@ -361,34 +359,80 @@ def get_financial_intelligence_priorities(
 # ============================================================
 
 
-@router.get("/confidence")
-def get_financial_intelligence_confidence(
+@router.get("/recommendations")
+def get_financial_recommendations(
     household_id: str = Query(default="primary", description="Household identifier"),
 ) -> dict[str, Any]:
-    """Get intelligence data quality and confidence.
+    """Get personalized financial recommendations.
 
-    Returns only the confidence metadata from the intelligence report.
+    Returns a list of actionable recommendations based on financial behavior,
+    spending patterns, and goals.
 
     Args:
         household_id: Household identifier (default: "primary")
 
     Returns:
-        Confidence metadata with confidence score and data quality label
+        Dict with recommendations, profile, and model version
     """
     start = time.monotonic()
-    service = FinancialIntelligenceService()
+    FinancialIntelligenceService()
+
+    # Use RecommendationService for this endpoint
+    from src.services.recommendation_service import RecommendationService
+
+    rec_service = RecommendationService()
 
     try:
-        result = service.get_financial_intelligence_report(household_id=household_id)
+        result = rec_service.get_recommendations(household_id=household_id)
         _timed_log(
-            "GET /financial-intelligence/confidence",
+            "GET /financial-intelligence/recommendations",
             household_id,
             (time.monotonic() - start) * 1000,
         )
-        return {"confidence": result.get("confidence", {})}
+        return result
     except Exception as e:
         _timed_log(
-            "GET /financial-intelligence/confidence",
+            "GET /financial-intelligence/recommendations",
+            household_id,
+            (time.monotonic() - start) * 1000,
+            success=False,
+            error=str(e),
+        )
+        raise
+
+
+@router.get("/recommendations/{recommendation_id}")
+def get_recommendation_details(
+    recommendation_id: str,
+    household_id: str = Query(default="primary", description="Household identifier"),
+) -> dict[str, Any]:
+    """Get detailed information about a specific recommendation.
+
+    Args:
+        recommendation_id: Recommendation identifier
+        household_id: Household identifier (default: "primary")
+
+    Returns:
+        Dict with detailed recommendation information
+    """
+    start = time.monotonic()
+
+    # Use RecommendationService for this endpoint
+    from src.services.recommendation_service import RecommendationService
+
+    rec_service = RecommendationService()
+
+    try:
+        result = rec_service.get_recommendation_details(recommendation_id)
+        _timed_log(
+            "GET /financial-intelligence/recommendations/{id}",
+            household_id,
+            (time.monotonic() - start) * 1000,
+        )
+        return result
+    except Exception as e:
+        _timed_log(
+            "GET /financial-intelligence/recommendations/{id}",
             household_id,
             (time.monotonic() - start) * 1000,
             success=False,

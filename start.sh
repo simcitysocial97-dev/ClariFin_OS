@@ -55,20 +55,21 @@ trap cleanup INT TERM EXIT
 echo -e "${YELLOW}Starting Backend Server...${NC}"
 cd backend
 
-# Check if virtual environment exists, create if not
-if [ ! -d "venv" ]; then
-    echo "Creating Python virtual environment..."
-    python3 -m venv venv
+# M10: single repository Python environment at ../.venv (no per-backend venv).
+VENV_DIR="../.venv"
+if [ ! -d "$VENV_DIR/bin" ]; then
+    echo "Creating repository Python virtual environment..."
+    python3 -m venv "$VENV_DIR"
 fi
 
-# Activate virtual environment
-source venv/bin/activate
+# Activate repository virtual environment
+source "$VENV_DIR/bin/activate"
 
 # Install dependencies if needed
-if [ ! -f "venv/installed" ] || [ requirements.txt -nt "venv/installed" ]; then
-    echo "Installing Python dependencies..."
-    pip install -q -r requirements.txt
-    touch venv/installed
+if [ ! -f "$VENV_DIR/.installed-editable" ] || [ ../pyproject.toml -nt "$VENV_DIR/.installed-editable" ]; then
+    echo "Installing Python dependencies from root pyproject.toml (single authority)..."
+    pip install -q -e ".[all]"
+    touch "$VENV_DIR/.installed-editable"
 fi
 
 # Start backend in background

@@ -1,20 +1,15 @@
-[tool.ruff]
-target-version = "py312"
-line-length = 100
-
-[tool.ruff.lint]
-select = ["E", "W", "F", "I", "B", "C4", "UP", "N"]
-ignore = [
-    "E501",  # line too long
-    "B008",  # do not perform function calls in argument defaults (FastAPI compatibility)
-    "B904",  # raise from err
-    "E722",  # bare except
-    "N806",  # variable in function should be lowercase
-    "E402",  # module level import not at top
-]
-
-[tool.ruff.lint.per-file-ignores]
-"backend/tests/**" = ["S101"]
+# backend/pyproject.toml
+# Scoped configuration authority for the backend source tree.
+#
+# M10 note:
+#   * Dependencies are NOT declared here — root pyproject.toml is the SINGLE
+#     Python dependency authority (`.venv` single-venv architecture).
+#   * Ruff / Black configuration are canonicalized at repo root
+#     (root pyproject.toml [tool.ruff] / [tool.black]); backend/ruff.toml is the
+#     backend-scoped lint selection. No `[tool.ruff]` / `[tool.black]` here (the
+#     previous duplicate in this file conflicted with backend/ruff.toml).
+#   * This file remains the authority for pytest / Mypy-strict / Mutmut /
+#     Hypothesis because backend tests resolve their rootdir here.
 
 [tool.mypy]
 python_version = "3.12"
@@ -32,7 +27,6 @@ warn_unused_ignores = true
 
 exclude = [
     "tests/",
-    "scripts/",
 ]
 
 # Test configuration
@@ -59,6 +53,8 @@ markers = [
 filterwarnings = [
     "ignore::DeprecationWarning:src.core.dtos.*",
     "ignore::pytest.PytestDeprecationWarning",
+    "ignore::_pytest.warning_types.PytestAssertRewriteWarning",
+    "ignore:Please use `import python_multipart` instead:PendingDeprecationWarning",
 ]
 addopts = [
     "--strict-markers",
@@ -84,24 +80,25 @@ ignore_missing_imports = true
 # This is a third-party dependency limitation, not a code issue.
 
 [tool.mutmut]
-# Directories to mutate
-paths_to_mutate = "src/engines/"
-# Test runner command
-runner = "python -m pytest tests/unit/ tests/properties/ -x -q --timeout=30"
-# Tests directory
-tests_dir = "tests/"
-# Disable progress bar (cleaner CI output)
-no_progress = true
+# ── Canonical mutation configuration (single source of truth) ───────────────
+# Consumed by BOTH the bounded local smoke test and the authoritative CI run.
+# CI mutates the full `source_paths` scope; local smoke bounds the target via
+# `mutmut run "module.function*"` selection. The configuration itself is shared.
+#
+# Mutation is authoritative in CI. Do NOT reduce `source_paths` to the smoke
+# target. Do NOT report the local smoke result as a mutation score.
 
-[tool.black]
-line-length = 88
-target-version = ["py312"]
-exclude = '''
-/(
-    \.git
-  | \.venv
-  | venv
-  | __pycache__
-  | tests/generated
-)/
-'''
+# Directories to mutate (full authoritative scope for CI).
+source_paths = ["src/engines/"]
+# Also copy the full src tree so tests can import non-mutated modules.
+also_copy = ["src"]
+# Test runner — `python3` per repository convention (ubuntu-latest ships
+# `python3`, never bare `python`).
+runner = "python3 -m pytest"
+# Which tests to run per mutant. Both local smoke and CI share this selection.
+pytest_add_cli_args_test_selection = ["tests/unit/", "tests/properties/"]
+# Disable progress bar (cleaner CI output).
+no_progress = true
+# Note: mutmut only mutates `*.py` files, so stray artifacts such as
+# `*.bak` and `__pycache__/` are excluded automatically.
+

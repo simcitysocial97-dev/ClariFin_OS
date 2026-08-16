@@ -242,7 +242,7 @@ export class FinancialGraphModel {
     }
 
     // Layout each workspace group
-    let yOffset = this.layoutOptions.padding;
+    const yOffset = this.layoutOptions.padding;
     const workspaces = Array.from(workspaceGroups.keys());
 
     workspaces.forEach((workspace, workspaceIndex) => {

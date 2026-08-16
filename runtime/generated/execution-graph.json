@@ -1,0 +1,3189 @@
+{
+  "generated_at": "2026-08-08T18:38:20.156167",
+  "description": "Execution graph: runtime call path. Traverses implementation modules. Distinct from ownership graph.",
+  "node_count": 163,
+  "edge_count": 337,
+  "nodes": [
+    {
+      "id": "capability:useAccountsCapability",
+      "type": "Capability",
+      "label": "useAccountsCapability"
+    },
+    {
+      "id": "endpoint:DELETE /accounts/manage/{account_id}",
+      "type": "Endpoint",
+      "label": "DELETE /accounts/manage/{account_id}"
+    },
+    {
+      "id": "router:backend/src/routers/managed_accounts.py",
+      "type": "Router",
+      "label": "backend/src/routers/managed_accounts.py"
+    },
+    {
+      "id": "endpoint:DELETE /accounts/{account_id}",
+      "type": "Endpoint",
+      "label": "DELETE /accounts/{account_id}"
+    },
+    {
+      "id": "router:backend/src/routers/accounts.py",
+      "type": "Router",
+      "label": "backend/src/routers/accounts.py"
+    },
+    {
+      "id": "endpoint:DELETE /accounts/{account_id}/links/{linked_account_id}",
+      "type": "Endpoint",
+      "label": "DELETE /accounts/{account_id}/links/{linked_account_id}"
+    },
+    {
+      "id": "endpoint:GET /accounts",
+      "type": "Endpoint",
+      "label": "GET /accounts"
+    },
+    {
+      "id": "endpoint:GET /accounts/manage",
+      "type": "Endpoint",
+      "label": "GET /accounts/manage"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/analytics",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/analytics"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/balance",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/balance"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/balance-history",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/balance-history"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/balance-history/latest",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/balance-history/latest"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/dormancy",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/dormancy"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/links",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/links"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/metrics",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/metrics"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/running-balance",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/running-balance"
+    },
+    {
+      "id": "endpoint:GET /accounts/{account_id}/status",
+      "type": "Endpoint",
+      "label": "GET /accounts/{account_id}/status"
+    },
+    {
+      "id": "endpoint:GET /institutions",
+      "type": "Endpoint",
+      "label": "GET /institutions"
+    },
+    {
+      "id": "endpoint:GET /institutions/{institution_id}",
+      "type": "Endpoint",
+      "label": "GET /institutions/{institution_id}"
+    },
+    {
+      "id": "endpoint:POST /accounts",
+      "type": "Endpoint",
+      "label": "POST /accounts"
+    },
+    {
+      "id": "endpoint:POST /accounts/manage",
+      "type": "Endpoint",
+      "label": "POST /accounts/manage"
+    },
+    {
+      "id": "endpoint:POST /accounts/{account_id}/balance-history",
+      "type": "Endpoint",
+      "label": "POST /accounts/{account_id}/balance-history"
+    },
+    {
+      "id": "endpoint:POST /accounts/{account_id}/links",
+      "type": "Endpoint",
+      "label": "POST /accounts/{account_id}/links"
+    },
+    {
+      "id": "endpoint:POST /institutions",
+      "type": "Endpoint",
+      "label": "POST /institutions"
+    },
+    {
+      "id": "endpoint:PUT /accounts/manage/{account_id}",
+      "type": "Endpoint",
+      "label": "PUT /accounts/manage/{account_id}"
+    },
+    {
+      "id": "endpoint:PUT /accounts/{account_id}",
+      "type": "Endpoint",
+      "label": "PUT /accounts/{account_id}"
+    },
+    {
+      "id": "endpoint:PUT /institutions/{institution_id}",
+      "type": "Endpoint",
+      "label": "PUT /institutions/{institution_id}"
+    },
+    {
+      "id": "service:backend/src/services/account_service.py",
+      "type": "Service",
+      "label": "backend/src/services/account_service.py"
+    },
+    {
+      "id": "engine:account_engine",
+      "type": "Engine",
+      "label": "account_engine"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/balance.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/balance.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/cashflow.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/cashflow.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/dormant.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/dormant.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/history.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/history.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/lifecycle.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/lifecycle.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/metrics.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/metrics.py"
+    },
+    {
+      "id": "database:finance.db",
+      "type": "Database",
+      "label": "SQLite finance.db"
+    },
+    {
+      "id": "repository:account_balance_repository",
+      "type": "Repository",
+      "label": "account_balance_repository"
+    },
+    {
+      "id": "repository:account_link_repository",
+      "type": "Repository",
+      "label": "account_link_repository"
+    },
+    {
+      "id": "repository:account_repository",
+      "type": "Repository",
+      "label": "account_repository"
+    },
+    {
+      "id": "repository:institution_repository",
+      "type": "Repository",
+      "label": "institution_repository"
+    },
+    {
+      "id": "capability:useBehaviourCapability",
+      "type": "Capability",
+      "label": "useBehaviourCapability"
+    },
+    {
+      "id": "endpoint:GET /cashflow-forecast",
+      "type": "Endpoint",
+      "label": "GET /cashflow-forecast"
+    },
+    {
+      "id": "router:backend/src/routers/financial_intelligence.py",
+      "type": "Router",
+      "label": "backend/src/routers/financial_intelligence.py"
+    },
+    {
+      "id": "endpoint:GET /cashflow-health",
+      "type": "Endpoint",
+      "label": "GET /cashflow-health"
+    },
+    {
+      "id": "router:backend/src/routers/behaviour.py",
+      "type": "Router",
+      "label": "backend/src/routers/behaviour.py"
+    },
+    {
+      "id": "endpoint:GET /credit-forecast",
+      "type": "Endpoint",
+      "label": "GET /credit-forecast"
+    },
+    {
+      "id": "endpoint:GET /debt-health",
+      "type": "Endpoint",
+      "label": "GET /debt-health"
+    },
+    {
+      "id": "endpoint:GET /liquidity-forecast",
+      "type": "Endpoint",
+      "label": "GET /liquidity-forecast"
+    },
+    {
+      "id": "endpoint:GET /monthly-report",
+      "type": "Endpoint",
+      "label": "GET /monthly-report"
+    },
+    {
+      "id": "endpoint:GET /outlook",
+      "type": "Endpoint",
+      "label": "GET /outlook"
+    },
+    {
+      "id": "endpoint:GET /patterns",
+      "type": "Endpoint",
+      "label": "GET /patterns"
+    },
+    {
+      "id": "endpoint:GET /priorities",
+      "type": "Endpoint",
+      "label": "GET /priorities"
+    },
+    {
+      "id": "endpoint:GET /profile",
+      "type": "Endpoint",
+      "label": "GET /profile"
+    },
+    {
+      "id": "endpoint:GET /recommendations",
+      "type": "Endpoint",
+      "label": "GET /recommendations"
+    },
+    {
+      "id": "endpoint:GET /recommendations/{recommendation_id}",
+      "type": "Endpoint",
+      "label": "GET /recommendations/{recommendation_id}"
+    },
+    {
+      "id": "endpoint:GET /report",
+      "type": "Endpoint",
+      "label": "GET /report"
+    },
+    {
+      "id": "router:backend/src/routers/audit.py",
+      "type": "Router",
+      "label": "backend/src/routers/audit.py"
+    },
+    {
+      "id": "endpoint:GET /summary",
+      "type": "Endpoint",
+      "label": "GET /summary"
+    },
+    {
+      "id": "router:backend/src/routers/dashboard.py",
+      "type": "Router",
+      "label": "backend/src/routers/dashboard.py"
+    },
+    {
+      "id": "endpoint:GET /wellness-score",
+      "type": "Endpoint",
+      "label": "GET /wellness-score"
+    },
+    {
+      "id": "endpoint:POST /import/detect",
+      "type": "Endpoint",
+      "label": "POST /import/detect"
+    },
+    {
+      "id": "router:backend/src/routers/import_router.py",
+      "type": "Router",
+      "label": "backend/src/routers/import_router.py"
+    },
+    {
+      "id": "endpoint:POST /import/execute",
+      "type": "Endpoint",
+      "label": "POST /import/execute"
+    },
+    {
+      "id": "endpoint:POST /upload",
+      "type": "Endpoint",
+      "label": "POST /upload"
+    },
+    {
+      "id": "service:backend/src/services/behaviour_service.py",
+      "type": "Service",
+      "label": "backend/src/services/behaviour_service.py"
+    },
+    {
+      "id": "service:backend/src/services/dashboard_service.py",
+      "type": "Service",
+      "label": "backend/src/services/dashboard_service.py"
+    },
+    {
+      "id": "service:backend/src/services/recommendation_service.py",
+      "type": "Service",
+      "label": "backend/src/services/recommendation_service.py"
+    },
+    {
+      "id": "service:backend/src/services/import_service.py",
+      "type": "Service",
+      "label": "backend/src/services/import_service.py"
+    },
+    {
+      "id": "engine:behaviour_engine",
+      "type": "Engine",
+      "label": "behaviour_engine"
+    },
+    {
+      "id": "engine:recommendation_engine",
+      "type": "Engine",
+      "label": "recommendation_engine"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/account.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/account.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/cashflow.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/cashflow.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/core.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/core.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/credit_dependency.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/credit_dependency.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/debt.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/debt.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/income.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/income.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/insights.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/insights.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/lifestyle.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/lifestyle.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/nudges.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/patterns.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/patterns.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/profile.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/profile.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/resilience.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/resilience.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/savings.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/savings.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/stress.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/stress.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/temporal.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/temporal.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/utils.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/utils.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/wellness.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/wellness.py"
+    },
+    {
+      "id": "module:backend/src/engines/recommendation_engine/recommendations.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/recommendation_engine/recommendations.py"
+    },
+    {
+      "id": "repository:behaviour_repository",
+      "type": "Repository",
+      "label": "behaviour_repository"
+    },
+    {
+      "id": "repository:credit_card_repository",
+      "type": "Repository",
+      "label": "credit_card_repository"
+    },
+    {
+      "id": "repository:loan_repository",
+      "type": "Repository",
+      "label": "loan_repository"
+    },
+    {
+      "id": "repository:pattern_repository",
+      "type": "Repository",
+      "label": "pattern_repository"
+    },
+    {
+      "id": "repository:reconciliation_repository",
+      "type": "Repository",
+      "label": "reconciliation_repository"
+    },
+    {
+      "id": "repository:transaction_repository",
+      "type": "Repository",
+      "label": "transaction_repository"
+    },
+    {
+      "id": "capability:useCreditCardsCapability",
+      "type": "Capability",
+      "label": "useCreditCardsCapability"
+    },
+    {
+      "id": "endpoint:DELETE /credit-cards/{card_id}",
+      "type": "Endpoint",
+      "label": "DELETE /credit-cards/{card_id}"
+    },
+    {
+      "id": "router:backend/src/routers/credit_cards.py",
+      "type": "Router",
+      "label": "backend/src/routers/credit_cards.py"
+    },
+    {
+      "id": "endpoint:GET /credit-cards",
+      "type": "Endpoint",
+      "label": "GET /credit-cards"
+    },
+    {
+      "id": "endpoint:GET /credit-cards/{card_id}",
+      "type": "Endpoint",
+      "label": "GET /credit-cards/{card_id}"
+    },
+    {
+      "id": "endpoint:GET /credit-cards/{card_id}/metrics",
+      "type": "Endpoint",
+      "label": "GET /credit-cards/{card_id}/metrics"
+    },
+    {
+      "id": "endpoint:GET /credit-cards/{card_id}/next-statement-date",
+      "type": "Endpoint",
+      "label": "GET /credit-cards/{card_id}/next-statement-date"
+    },
+    {
+      "id": "endpoint:GET /credit-cards/{card_id}/outstanding",
+      "type": "Endpoint",
+      "label": "GET /credit-cards/{card_id}/outstanding"
+    },
+    {
+      "id": "endpoint:GET /credit-cards/{card_id}/statements",
+      "type": "Endpoint",
+      "label": "GET /credit-cards/{card_id}/statements"
+    },
+    {
+      "id": "endpoint:GET /credit-cards/{card_id}/utilization",
+      "type": "Endpoint",
+      "label": "GET /credit-cards/{card_id}/utilization"
+    },
+    {
+      "id": "endpoint:POST /credit-cards",
+      "type": "Endpoint",
+      "label": "POST /credit-cards"
+    },
+    {
+      "id": "endpoint:POST /credit-cards/{card_id}/emi-conversion",
+      "type": "Endpoint",
+      "label": "POST /credit-cards/{card_id}/emi-conversion"
+    },
+    {
+      "id": "endpoint:POST /credit-cards/{card_id}/foreclosure",
+      "type": "Endpoint",
+      "label": "POST /credit-cards/{card_id}/foreclosure"
+    },
+    {
+      "id": "endpoint:POST /credit-cards/{card_id}/payments",
+      "type": "Endpoint",
+      "label": "POST /credit-cards/{card_id}/payments"
+    },
+    {
+      "id": "endpoint:POST /credit-cards/{card_id}/statements",
+      "type": "Endpoint",
+      "label": "POST /credit-cards/{card_id}/statements"
+    },
+    {
+      "id": "endpoint:PUT /credit-cards/{card_id}",
+      "type": "Endpoint",
+      "label": "PUT /credit-cards/{card_id}"
+    },
+    {
+      "id": "service:backend/src/services/credit_card_service.py",
+      "type": "Service",
+      "label": "backend/src/services/credit_card_service.py"
+    },
+    {
+      "id": "engine:credit_card_engine",
+      "type": "Engine",
+      "label": "credit_card_engine"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/billing.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/billing.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/emi.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/emi.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/foreclosure.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/foreclosure.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/interest.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/interest.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/metrics.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/metrics.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/outstanding.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/outstanding.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/utilization.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/utilization.py"
+    },
+    {
+      "id": "repository:credit_card_statement_repository",
+      "type": "Repository",
+      "label": "credit_card_statement_repository"
+    },
+    {
+      "id": "capability:useLoansCapability",
+      "type": "Capability",
+      "label": "useLoansCapability"
+    },
+    {
+      "id": "endpoint:DELETE /loans/{loan_id}",
+      "type": "Endpoint",
+      "label": "DELETE /loans/{loan_id}"
+    },
+    {
+      "id": "router:backend/src/routers/loans.py",
+      "type": "Router",
+      "label": "backend/src/routers/loans.py"
+    },
+    {
+      "id": "endpoint:GET /loans",
+      "type": "Endpoint",
+      "label": "GET /loans"
+    },
+    {
+      "id": "endpoint:GET /loans/analysis/priority",
+      "type": "Endpoint",
+      "label": "GET /loans/analysis/priority"
+    },
+    {
+      "id": "endpoint:GET /loans/{loan_id}",
+      "type": "Endpoint",
+      "label": "GET /loans/{loan_id}"
+    },
+    {
+      "id": "endpoint:GET /loans/{loan_id}/schedule",
+      "type": "Endpoint",
+      "label": "GET /loans/{loan_id}/schedule"
+    },
+    {
+      "id": "endpoint:POST /loans",
+      "type": "Endpoint",
+      "label": "POST /loans"
+    },
+    {
+      "id": "endpoint:POST /loans/analysis/surplus-allocation",
+      "type": "Endpoint",
+      "label": "POST /loans/analysis/surplus-allocation"
+    },
+    {
+      "id": "endpoint:POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "type": "Endpoint",
+      "label": "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure"
+    },
+    {
+      "id": "endpoint:POST /loans/{loan_id}/foreclosure-simulation",
+      "type": "Endpoint",
+      "label": "POST /loans/{loan_id}/foreclosure-simulation"
+    },
+    {
+      "id": "endpoint:POST /loans/{loan_id}/payments",
+      "type": "Endpoint",
+      "label": "POST /loans/{loan_id}/payments"
+    },
+    {
+      "id": "endpoint:POST /loans/{loan_id}/prepayment-simulation",
+      "type": "Endpoint",
+      "label": "POST /loans/{loan_id}/prepayment-simulation"
+    },
+    {
+      "id": "endpoint:POST /loans/{loan_id}/rate-change-simulation",
+      "type": "Endpoint",
+      "label": "POST /loans/{loan_id}/rate-change-simulation"
+    },
+    {
+      "id": "endpoint:PUT /loans/{loan_id}",
+      "type": "Endpoint",
+      "label": "PUT /loans/{loan_id}"
+    },
+    {
+      "id": "service:backend/src/services/loan_analysis_service.py",
+      "type": "Service",
+      "label": "backend/src/services/loan_analysis_service.py"
+    },
+    {
+      "id": "service:backend/src/services/loan_service.py",
+      "type": "Service",
+      "label": "backend/src/services/loan_service.py"
+    },
+    {
+      "id": "service:backend/src/services/loan_simulation_service.py",
+      "type": "Service",
+      "label": "backend/src/services/loan_simulation_service.py"
+    },
+    {
+      "id": "engine:loan_engine",
+      "type": "Engine",
+      "label": "loan_engine"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/amortization.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/amortization.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/emi.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/emi.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/floating_rate.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/floating_rate.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/foreclosure.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/foreclosure.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/metrics.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/metrics.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/models.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/models.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/prepayment.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/prepayment.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/utils.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/utils.py"
+    },
+    {
+      "id": "repository:financial_event_repository",
+      "type": "Repository",
+      "label": "financial_event_repository"
+    },
+    {
+      "id": "repository:liquidity_pattern_repository",
+      "type": "Repository",
+      "label": "liquidity_pattern_repository"
+    },
+    {
+      "id": "repository:loan_payment_repository",
+      "type": "Repository",
+      "label": "loan_payment_repository"
+    },
+    {
+      "id": "repository:statement_repository",
+      "type": "Repository",
+      "label": "statement_repository"
+    },
+    {
+      "id": "repository:transaction_classification_repository",
+      "type": "Repository",
+      "label": "transaction_classification_repository"
+    },
+    {
+      "id": "capability:useReconciliationCapability",
+      "type": "Capability",
+      "label": "useReconciliationCapability"
+    },
+    {
+      "id": "endpoint:GET /pending",
+      "type": "Endpoint",
+      "label": "GET /pending"
+    },
+    {
+      "id": "router:backend/src/routers/reconciliation.py",
+      "type": "Router",
+      "label": "backend/src/routers/reconciliation.py"
+    },
+    {
+      "id": "endpoint:GET /scan",
+      "type": "Endpoint",
+      "label": "GET /scan"
+    },
+    {
+      "id": "endpoint:POST /batch-insert",
+      "type": "Endpoint",
+      "label": "POST /batch-insert"
+    },
+    {
+      "id": "endpoint:POST /create",
+      "type": "Endpoint",
+      "label": "POST /create"
+    },
+    {
+      "id": "endpoint:POST /{reconciliation_id}/confirm",
+      "type": "Endpoint",
+      "label": "POST /{reconciliation_id}/confirm"
+    },
+    {
+      "id": "endpoint:POST /{reconciliation_id}/reject",
+      "type": "Endpoint",
+      "label": "POST /{reconciliation_id}/reject"
+    },
+    {
+      "id": "service:backend/src/services/reconciliation_service.py",
+      "type": "Service",
+      "label": "backend/src/services/reconciliation_service.py"
+    },
+    {
+      "id": "engine:reconciliation_engine",
+      "type": "Engine",
+      "label": "reconciliation_engine"
+    }
+  ],
+  "edges": [
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:DELETE /accounts/manage/{account_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP DELETE /accounts/manage/{account_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:DELETE /accounts/manage/{account_id}",
+      "to": "router:backend/src/routers/managed_accounts.py",
+      "relation": "executes",
+      "evidence": "DELETE /accounts/manage/{account_id} is defined by @router decorator in backend/src/routers/managed_accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:DELETE /accounts/{account_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP DELETE /accounts/{account_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:DELETE /accounts/{account_id}",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "DELETE /accounts/{account_id} is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:DELETE /accounts/{account_id}/links/{linked_account_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP DELETE /accounts/{account_id}/links/{linked_account_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:DELETE /accounts/{account_id}/links/{linked_account_id}",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "DELETE /accounts/{account_id}/links/{linked_account_id} is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/manage",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/manage",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/manage",
+      "to": "router:backend/src/routers/managed_accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/manage is defined by @router decorator in backend/src/routers/managed_accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id} is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/analytics",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/analytics",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/analytics",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/analytics is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/balance",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/balance",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/balance",
+      "to": "router:backend/src/routers/managed_accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/balance is defined by @router decorator in backend/src/routers/managed_accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/balance-history",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/balance-history",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/balance-history",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/balance-history is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/balance-history/latest",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/balance-history/latest",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/balance-history/latest",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/balance-history/latest is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/dormancy",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/dormancy",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/dormancy",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/dormancy is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/links",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/links",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/links",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/links is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/metrics",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/metrics",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/metrics",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/metrics is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/running-balance",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/running-balance",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/running-balance",
+      "to": "router:backend/src/routers/managed_accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/running-balance is defined by @router decorator in backend/src/routers/managed_accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /accounts/{account_id}/status",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /accounts/{account_id}/status",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /accounts/{account_id}/status",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /accounts/{account_id}/status is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /institutions",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /institutions",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /institutions",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /institutions is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:GET /institutions/{institution_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP GET /institutions/{institution_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /institutions/{institution_id}",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "GET /institutions/{institution_id} is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:POST /accounts",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP POST /accounts",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /accounts",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "POST /accounts is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:POST /accounts/manage",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP POST /accounts/manage",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /accounts/manage",
+      "to": "router:backend/src/routers/managed_accounts.py",
+      "relation": "executes",
+      "evidence": "POST /accounts/manage is defined by @router decorator in backend/src/routers/managed_accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:POST /accounts/{account_id}/balance-history",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP POST /accounts/{account_id}/balance-history",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /accounts/{account_id}/balance-history",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "POST /accounts/{account_id}/balance-history is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:POST /accounts/{account_id}/links",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP POST /accounts/{account_id}/links",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /accounts/{account_id}/links",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "POST /accounts/{account_id}/links is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:POST /institutions",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP POST /institutions",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /institutions",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "POST /institutions is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:PUT /accounts/manage/{account_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP PUT /accounts/manage/{account_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:PUT /accounts/manage/{account_id}",
+      "to": "router:backend/src/routers/managed_accounts.py",
+      "relation": "executes",
+      "evidence": "PUT /accounts/manage/{account_id} is defined by @router decorator in backend/src/routers/managed_accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:PUT /accounts/{account_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP PUT /accounts/{account_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:PUT /accounts/{account_id}",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "PUT /accounts/{account_id} is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "endpoint:PUT /institutions/{institution_id}",
+      "relation": "executes",
+      "evidence": "capability useAccountsCapability invokes HTTP PUT /institutions/{institution_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:PUT /institutions/{institution_id}",
+      "to": "router:backend/src/routers/accounts.py",
+      "relation": "executes",
+      "evidence": "PUT /institutions/{institution_id} is defined by @router decorator in backend/src/routers/accounts.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "router:backend/src/routers/accounts.py",
+      "to": "service:backend/src/services/account_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/accounts.py instantiates/calls backend/src/services/account_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/managed_accounts.py",
+      "to": "service:backend/src/services/account_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/managed_accounts.py instantiates/calls backend/src/services/account_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "engine:account_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/account_service.py calls engines.account_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/balance.py",
+      "relation": "executes",
+      "evidence": "account_engine entry delegates computation to backend/src/engines/account_engine/balance.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/cashflow.py",
+      "relation": "executes",
+      "evidence": "account_engine entry delegates computation to backend/src/engines/account_engine/cashflow.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/dormant.py",
+      "relation": "executes",
+      "evidence": "account_engine entry delegates computation to backend/src/engines/account_engine/dormant.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/history.py",
+      "relation": "executes",
+      "evidence": "account_engine entry delegates computation to backend/src/engines/account_engine/history.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/lifecycle.py",
+      "relation": "executes",
+      "evidence": "account_engine entry delegates computation to backend/src/engines/account_engine/lifecycle.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/metrics.py",
+      "relation": "executes",
+      "evidence": "account_engine entry delegates computation to backend/src/engines/account_engine/metrics.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:account_balance_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/account_service.py reads/writes via repositories.account_balance_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_balance_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_balance_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:account_link_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/account_service.py reads/writes via repositories.account_link_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_link_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_link_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/account_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:institution_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/account_service.py reads/writes via repositories.institution_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:institution_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "institution_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /cashflow-forecast",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /cashflow-forecast",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /cashflow-forecast",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /cashflow-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /cashflow-health",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /cashflow-health",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /cashflow-health",
+      "to": "router:backend/src/routers/behaviour.py",
+      "relation": "executes",
+      "evidence": "GET /cashflow-health is defined by @router decorator in backend/src/routers/behaviour.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /credit-forecast",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /credit-forecast",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-forecast",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /credit-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /debt-health",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /debt-health",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /debt-health",
+      "to": "router:backend/src/routers/behaviour.py",
+      "relation": "executes",
+      "evidence": "GET /debt-health is defined by @router decorator in backend/src/routers/behaviour.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /liquidity-forecast",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /liquidity-forecast",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /liquidity-forecast",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /liquidity-forecast is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /monthly-report",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /monthly-report",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /monthly-report",
+      "to": "router:backend/src/routers/behaviour.py",
+      "relation": "executes",
+      "evidence": "GET /monthly-report is defined by @router decorator in backend/src/routers/behaviour.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /outlook",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /outlook",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /outlook",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /outlook is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /patterns",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /patterns",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /patterns",
+      "to": "router:backend/src/routers/behaviour.py",
+      "relation": "executes",
+      "evidence": "GET /patterns is defined by @router decorator in backend/src/routers/behaviour.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /priorities",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /priorities",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /priorities",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /priorities is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /profile",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /profile",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /profile",
+      "to": "router:backend/src/routers/behaviour.py",
+      "relation": "executes",
+      "evidence": "GET /profile is defined by @router decorator in backend/src/routers/behaviour.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /recommendations",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /recommendations",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /recommendations",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /recommendations is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /recommendations/{recommendation_id}",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /recommendations/{recommendation_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /recommendations/{recommendation_id}",
+      "to": "router:backend/src/routers/financial_intelligence.py",
+      "relation": "executes",
+      "evidence": "GET /recommendations/{recommendation_id} is defined by @router decorator in backend/src/routers/financial_intelligence.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /report",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /report",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /report",
+      "to": "router:backend/src/routers/audit.py",
+      "relation": "executes",
+      "evidence": "GET /report is defined by @router decorator in backend/src/routers/audit.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /summary",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /summary",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /summary",
+      "to": "router:backend/src/routers/dashboard.py",
+      "relation": "executes",
+      "evidence": "GET /summary is defined by @router decorator in backend/src/routers/dashboard.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:GET /wellness-score",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP GET /wellness-score",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /wellness-score",
+      "to": "router:backend/src/routers/behaviour.py",
+      "relation": "executes",
+      "evidence": "GET /wellness-score is defined by @router decorator in backend/src/routers/behaviour.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:POST /import/detect",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP POST /import/detect",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /import/detect",
+      "to": "router:backend/src/routers/import_router.py",
+      "relation": "executes",
+      "evidence": "POST /import/detect is defined by @router decorator in backend/src/routers/import_router.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:POST /import/execute",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP POST /import/execute",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /import/execute",
+      "to": "router:backend/src/routers/import_router.py",
+      "relation": "executes",
+      "evidence": "POST /import/execute is defined by @router decorator in backend/src/routers/import_router.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "endpoint:POST /upload",
+      "relation": "executes",
+      "evidence": "capability useBehaviourCapability invokes HTTP POST /upload",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /upload",
+      "to": "router:backend/src/routers/import_router.py",
+      "relation": "executes",
+      "evidence": "POST /upload is defined by @router decorator in backend/src/routers/import_router.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "router:backend/src/routers/behaviour.py",
+      "to": "service:backend/src/services/behaviour_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/behaviour.py instantiates/calls backend/src/services/behaviour_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/dashboard.py",
+      "to": "service:backend/src/services/dashboard_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/dashboard.py instantiates/calls backend/src/services/dashboard_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/financial_intelligence.py",
+      "to": "service:backend/src/services/recommendation_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/financial_intelligence.py instantiates/calls backend/src/services/recommendation_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/import_router.py",
+      "to": "service:backend/src/services/import_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/import_router.py instantiates/calls backend/src/services/import_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "engine:behaviour_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py calls engines.behaviour_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "engine:recommendation_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py calls engines.recommendation_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "engine:behaviour_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py calls engines.behaviour_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "engine:behaviour_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py calls engines.behaviour_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "engine:recommendation_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py calls engines.recommendation_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/account.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/account.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/cashflow.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/cashflow.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/core.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/core.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/credit_dependency.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/credit_dependency.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/debt.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/debt.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/income.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/income.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/insights.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/insights.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/lifestyle.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/lifestyle.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/nudges.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/patterns.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/patterns.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/profile.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/profile.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/resilience.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/resilience.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/savings.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/savings.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/stress.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/stress.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/temporal.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/temporal.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/utils.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/utils.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/wellness.py",
+      "relation": "executes",
+      "evidence": "behaviour_engine entry delegates computation to backend/src/engines/behaviour_engine/wellness.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:recommendation_engine",
+      "to": "module:backend/src/engines/recommendation_engine/recommendations.py",
+      "relation": "executes",
+      "evidence": "recommendation_engine entry delegates computation to backend/src/engines/recommendation_engine/recommendations.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:behaviour_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.behaviour_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:behaviour_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "behaviour_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.reconciliation_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:reconciliation_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "reconciliation_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/behaviour_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:behaviour_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.behaviour_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:behaviour_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "behaviour_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.reconciliation_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:reconciliation_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "reconciliation_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/dashboard_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:behaviour_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.behaviour_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:behaviour_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "behaviour_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.reconciliation_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:reconciliation_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "reconciliation_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/import_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:behaviour_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.behaviour_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:behaviour_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "behaviour_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.reconciliation_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:reconciliation_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "reconciliation_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/recommendation_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:DELETE /credit-cards/{card_id}",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP DELETE /credit-cards/{card_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:DELETE /credit-cards/{card_id}",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "DELETE /credit-cards/{card_id} is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards/{card_id}",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards/{card_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards/{card_id}",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards/{card_id} is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards/{card_id}/metrics",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards/{card_id}/metrics",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards/{card_id}/metrics",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards/{card_id}/metrics is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards/{card_id}/next-statement-date",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards/{card_id}/next-statement-date",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards/{card_id}/next-statement-date",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards/{card_id}/next-statement-date is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards/{card_id}/outstanding",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards/{card_id}/outstanding",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards/{card_id}/outstanding",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards/{card_id}/outstanding is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards/{card_id}/statements",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards/{card_id}/statements",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards/{card_id}/statements",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards/{card_id}/statements is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:GET /credit-cards/{card_id}/utilization",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP GET /credit-cards/{card_id}/utilization",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /credit-cards/{card_id}/utilization",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "GET /credit-cards/{card_id}/utilization is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:POST /credit-cards",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP POST /credit-cards",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /credit-cards",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "POST /credit-cards is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:POST /credit-cards/{card_id}/emi-conversion",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP POST /credit-cards/{card_id}/emi-conversion",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /credit-cards/{card_id}/emi-conversion",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "POST /credit-cards/{card_id}/emi-conversion is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:POST /credit-cards/{card_id}/foreclosure",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP POST /credit-cards/{card_id}/foreclosure",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /credit-cards/{card_id}/foreclosure",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "POST /credit-cards/{card_id}/foreclosure is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:POST /credit-cards/{card_id}/payments",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP POST /credit-cards/{card_id}/payments",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /credit-cards/{card_id}/payments",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "POST /credit-cards/{card_id}/payments is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:POST /credit-cards/{card_id}/statements",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP POST /credit-cards/{card_id}/statements",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /credit-cards/{card_id}/statements",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "POST /credit-cards/{card_id}/statements is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "endpoint:PUT /credit-cards/{card_id}",
+      "relation": "executes",
+      "evidence": "capability useCreditCardsCapability invokes HTTP PUT /credit-cards/{card_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:PUT /credit-cards/{card_id}",
+      "to": "router:backend/src/routers/credit_cards.py",
+      "relation": "executes",
+      "evidence": "PUT /credit-cards/{card_id} is defined by @router decorator in backend/src/routers/credit_cards.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "router:backend/src/routers/credit_cards.py",
+      "to": "service:backend/src/services/credit_card_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/credit_cards.py instantiates/calls backend/src/services/credit_card_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "service:backend/src/services/credit_card_service.py",
+      "to": "engine:credit_card_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/credit_card_service.py calls engines.credit_card_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/billing.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/billing.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/emi.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/emi.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/foreclosure.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/foreclosure.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/interest.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/interest.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/metrics.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/metrics.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/outstanding.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/outstanding.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/utilization.py",
+      "relation": "executes",
+      "evidence": "credit_card_engine entry delegates computation to backend/src/engines/credit_card_engine/utilization.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/credit_card_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/credit_card_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/credit_card_service.py",
+      "to": "repository:credit_card_statement_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/credit_card_service.py reads/writes via repositories.credit_card_statement_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_statement_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_statement_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:DELETE /loans/{loan_id}",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP DELETE /loans/{loan_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:DELETE /loans/{loan_id}",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "DELETE /loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:GET /loans",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP GET /loans",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /loans",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "GET /loans is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:GET /loans/analysis/priority",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP GET /loans/analysis/priority",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /loans/analysis/priority",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "GET /loans/analysis/priority is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:GET /loans/{loan_id}",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP GET /loans/{loan_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /loans/{loan_id}",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "GET /loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:GET /loans/{loan_id}/schedule",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP GET /loans/{loan_id}/schedule",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /loans/{loan_id}/schedule",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "GET /loans/{loan_id}/schedule is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans/analysis/surplus-allocation",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans/analysis/surplus-allocation",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans/analysis/surplus-allocation",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans/analysis/surplus-allocation is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans/{loan_id}/analysis/prepayment-vs-foreclosure is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans/{loan_id}/foreclosure-simulation",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans/{loan_id}/foreclosure-simulation",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans/{loan_id}/foreclosure-simulation",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans/{loan_id}/foreclosure-simulation is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans/{loan_id}/payments",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans/{loan_id}/payments",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans/{loan_id}/payments",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans/{loan_id}/payments is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans/{loan_id}/prepayment-simulation",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans/{loan_id}/prepayment-simulation",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans/{loan_id}/prepayment-simulation",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans/{loan_id}/prepayment-simulation is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:POST /loans/{loan_id}/rate-change-simulation",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP POST /loans/{loan_id}/rate-change-simulation",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /loans/{loan_id}/rate-change-simulation",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "POST /loans/{loan_id}/rate-change-simulation is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "endpoint:PUT /loans/{loan_id}",
+      "relation": "executes",
+      "evidence": "capability useLoansCapability invokes HTTP PUT /loans/{loan_id}",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:PUT /loans/{loan_id}",
+      "to": "router:backend/src/routers/loans.py",
+      "relation": "executes",
+      "evidence": "PUT /loans/{loan_id} is defined by @router decorator in backend/src/routers/loans.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "router:backend/src/routers/loans.py",
+      "to": "service:backend/src/services/loan_analysis_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/loans.py instantiates/calls backend/src/services/loan_analysis_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/loans.py",
+      "to": "service:backend/src/services/loan_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/loans.py instantiates/calls backend/src/services/loan_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "router:backend/src/routers/loans.py",
+      "to": "service:backend/src/services/loan_simulation_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/loans.py instantiates/calls backend/src/services/loan_simulation_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "engine:loan_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py calls engines.loan_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "engine:loan_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py calls engines.loan_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "engine:loan_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py calls engines.loan_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/amortization.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/amortization.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/emi.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/emi.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/floating_rate.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/floating_rate.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/foreclosure.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/foreclosure.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/metrics.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/metrics.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/models.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/models.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/prepayment.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/prepayment.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/utils.py",
+      "relation": "executes",
+      "evidence": "loan_engine entry delegates computation to backend/src/engines/loan_engine/utils.py (module is on the execution path)",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.financial_event_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:financial_event_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "financial_event_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:liquidity_pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.liquidity_pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:liquidity_pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "liquidity_pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:loan_payment_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.loan_payment_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_payment_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_payment_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:statement_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.statement_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:statement_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "statement_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:transaction_classification_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.transaction_classification_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_classification_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_classification_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_analysis_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.financial_event_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:financial_event_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "financial_event_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:liquidity_pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.liquidity_pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:liquidity_pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "liquidity_pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:loan_payment_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.loan_payment_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_payment_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_payment_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:statement_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.statement_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:statement_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "statement_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:transaction_classification_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.transaction_classification_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_classification_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_classification_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:account_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.account_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:account_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "account_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.credit_card_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:credit_card_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "credit_card_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.financial_event_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:financial_event_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "financial_event_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:liquidity_pattern_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.liquidity_pattern_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:liquidity_pattern_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "liquidity_pattern_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:loan_payment_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.loan_payment_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_payment_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_payment_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:loan_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.loan_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:loan_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "loan_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:statement_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.statement_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:statement_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "statement_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:transaction_classification_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.transaction_classification_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_classification_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_classification_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/loan_simulation_service.py reads/writes via repositories.transaction_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:transaction_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "transaction_repository opens connection to finance.db",
+      "stage": "persistence"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "endpoint:GET /pending",
+      "relation": "executes",
+      "evidence": "capability useReconciliationCapability invokes HTTP GET /pending",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /pending",
+      "to": "router:backend/src/routers/reconciliation.py",
+      "relation": "executes",
+      "evidence": "GET /pending is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "endpoint:GET /scan",
+      "relation": "executes",
+      "evidence": "capability useReconciliationCapability invokes HTTP GET /scan",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:GET /scan",
+      "to": "router:backend/src/routers/reconciliation.py",
+      "relation": "executes",
+      "evidence": "GET /scan is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "endpoint:POST /batch-insert",
+      "relation": "executes",
+      "evidence": "capability useReconciliationCapability invokes HTTP POST /batch-insert",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /batch-insert",
+      "to": "router:backend/src/routers/reconciliation.py",
+      "relation": "executes",
+      "evidence": "POST /batch-insert is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "endpoint:POST /create",
+      "relation": "executes",
+      "evidence": "capability useReconciliationCapability invokes HTTP POST /create",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /create",
+      "to": "router:backend/src/routers/reconciliation.py",
+      "relation": "executes",
+      "evidence": "POST /create is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "endpoint:POST /{reconciliation_id}/confirm",
+      "relation": "executes",
+      "evidence": "capability useReconciliationCapability invokes HTTP POST /{reconciliation_id}/confirm",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /{reconciliation_id}/confirm",
+      "to": "router:backend/src/routers/reconciliation.py",
+      "relation": "executes",
+      "evidence": "POST /{reconciliation_id}/confirm is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "endpoint:POST /{reconciliation_id}/reject",
+      "relation": "executes",
+      "evidence": "capability useReconciliationCapability invokes HTTP POST /{reconciliation_id}/reject",
+      "stage": "request"
+    },
+    {
+      "from": "endpoint:POST /{reconciliation_id}/reject",
+      "to": "router:backend/src/routers/reconciliation.py",
+      "relation": "executes",
+      "evidence": "POST /{reconciliation_id}/reject is defined by @router decorator in backend/src/routers/reconciliation.py",
+      "stage": "dispatch"
+    },
+    {
+      "from": "router:backend/src/routers/reconciliation.py",
+      "to": "service:backend/src/services/reconciliation_service.py",
+      "relation": "executes",
+      "evidence": "backend/src/routers/reconciliation.py instantiates/calls backend/src/services/reconciliation_service.py service",
+      "stage": "business"
+    },
+    {
+      "from": "service:backend/src/services/reconciliation_service.py",
+      "to": "engine:reconciliation_engine",
+      "relation": "executes",
+      "evidence": "backend/src/services/reconciliation_service.py calls engines.reconciliation_engine functions",
+      "stage": "compute"
+    },
+    {
+      "from": "service:backend/src/services/reconciliation_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "executes",
+      "evidence": "backend/src/services/reconciliation_service.py reads/writes via repositories.reconciliation_repository",
+      "stage": "persistence"
+    },
+    {
+      "from": "repository:reconciliation_repository",
+      "to": "database:finance.db",
+      "relation": "executes",
+      "evidence": "reconciliation_repository opens connection to finance.db",
+      "stage": "persistence"
+    }
+  ],
+  "notes": [
+    "Execution traverses Engine -> ImplementationModule (the called compute function lives in a submodule). Ownership MUST NOT do this: modules are owned BY the engine.",
+    "Repository/DB access is performed by the Service layer (around the Engine). Engines and their implementation modules are PURE (no DB, no I/O).",
+    "Engines without a capability owner (transaction_intelligence, financial_events, balance_engine, ledger_audit_engine, reconciliation_engine) appear only as sub-nodes in other engines' execution traces or as internal services, never as a top-level capability execution root."
+  ]
+}

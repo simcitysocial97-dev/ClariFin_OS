@@ -252,27 +252,27 @@ describe('Navigation Error Handling', () => {
 
 describe('Navigation Keyboard Shortcuts', () => {
   it('detects Alt+ArrowLeft as navigation shortcut', () => {
-    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowLeft' });
+    const event = { altKey: true, key: 'ArrowLeft' } as unknown as KeyboardEvent;
     expect(isNavigationShortcut(event)).toBe(true);
   });
 
   it('detects Alt+ArrowRight as navigation shortcut', () => {
-    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowRight' });
+    const event = { altKey: true, key: 'ArrowRight' } as unknown as KeyboardEvent;
     expect(isNavigationShortcut(event)).toBe(true);
   });
 
   it('detects Alt+ArrowUp as navigation shortcut', () => {
-    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowUp' });
+    const event = { altKey: true, key: 'ArrowUp' } as unknown as KeyboardEvent;
     expect(isNavigationShortcut(event)).toBe(true);
   });
 
   it('detects Alt+ArrowDown as navigation shortcut', () => {
-    const event = new KeyboardEvent('keydown', { altKey: true, key: 'ArrowDown' });
+    const event = { altKey: true, key: 'ArrowDown' } as unknown as KeyboardEvent;
     expect(isNavigationShortcut(event)).toBe(true);
   });
 
   it('returns false for non-navigation shortcuts', () => {
-    const event = new KeyboardEvent('keydown', { altKey: false, key: 'ArrowLeft' });
+    const event = { altKey: false, key: 'ArrowLeft' } as unknown as KeyboardEvent;
     expect(isNavigationShortcut(event)).toBe(false);
   });
 });

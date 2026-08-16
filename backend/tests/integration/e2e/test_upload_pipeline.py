@@ -13,20 +13,20 @@ class TestCSVImporter:
 
     def test_import_csv_module_exists(self) -> None:
         """Test csv_importer module can be imported."""
-        from src import csv_importer
+        from src.extraction import csv_importer
 
         assert hasattr(csv_importer, "CSVImporter")
 
     def test_csv_importer_instantiation(self) -> None:
         """Test CSVImporter can be instantiated."""
-        from src.csv_importer import CSVImporter
+        from src.extraction.csv_importer import CSVImporter
 
         importer = CSVImporter("dummy.csv")
         assert importer is not None
 
     def test_detect_format_returns_dict(self, tmp_path: Path) -> None:
         """Test detect_format returns a dict with expected keys."""
-        from src.csv_importer import CSVImporter
+        from src.extraction.csv_importer import CSVImporter
 
         csv_file = tmp_path / "test.csv"
         csv_file.write_text("Date,Description,Amount\n2025-01-01,Test,1000\n")
@@ -37,7 +37,7 @@ class TestCSVImporter:
 
     def test_date_format_detection(self) -> None:
         """Test date format constants exist and are valid."""
-        from src.csv_importer import DATE_FORMATS
+        from src.extraction.csv_importer import DATE_FORMATS
 
         assert isinstance(DATE_FORMATS, list)
         assert len(DATE_FORMATS) > 0
@@ -51,13 +51,13 @@ class TestStatementExtractor:
 
     def test_import_extractor_module_exists(self) -> None:
         """Test statement_extractor module can be imported."""
-        from src import statement_extractor
+        from src.extraction import statement_extractor
 
         assert hasattr(statement_extractor, "StatementExtractor")
 
     def test_bank_keywords_defined(self) -> None:
         """Test BANK_KEYWORDS constant is defined."""
-        from src.statement_extractor import BANK_KEYWORDS
+        from src.extraction.statement_extractor import BANK_KEYWORDS
 
         assert isinstance(BANK_KEYWORDS, dict)
         assert len(BANK_KEYWORDS) > 0
@@ -68,14 +68,14 @@ class TestStatementExtractor:
 
     def test_score_threshold_defined(self) -> None:
         """Test SCORE_THRESHOLD constant is defined."""
-        from src.statement_extractor import SCORE_THRESHOLD
+        from src.extraction.statement_extractor import SCORE_THRESHOLD
 
         assert isinstance(SCORE_THRESHOLD, (int, float))
         assert SCORE_THRESHOLD > 0
 
     def test_header_phrases_defined(self) -> None:
         """Test HEADER_PHRASES constant is defined."""
-        from src.statement_extractor import HEADER_PHRASES
+        from src.extraction.statement_extractor import HEADER_PHRASES
 
         assert isinstance(HEADER_PHRASES, list)
         assert len(HEADER_PHRASES) > 0
@@ -86,13 +86,13 @@ class TestColumnMapper:
 
     def test_import_column_mapper(self) -> None:
         """Test ColumnMapper can be imported."""
-        from src.column_mapper import ColumnMapper
+        from src.extraction.column_mapper import ColumnMapper
 
         assert ColumnMapper is not None
 
     def test_standard_fields_defined(self) -> None:
         """Test STANDARD_FIELDS constant is defined."""
-        from src.column_mapper import ColumnMapper
+        from src.extraction.column_mapper import ColumnMapper
 
         assert hasattr(ColumnMapper, "STANDARD_FIELDS")
         assert isinstance(ColumnMapper.STANDARD_FIELDS, list)
@@ -100,7 +100,7 @@ class TestColumnMapper:
 
     def test_column_aliases_defined(self) -> None:
         """Test COLUMN_ALIASES constant is defined."""
-        from src.column_mapper import ColumnMapper
+        from src.extraction.column_mapper import ColumnMapper
 
         assert hasattr(ColumnMapper, "COLUMN_ALIASES")
         assert isinstance(ColumnMapper.COLUMN_ALIASES, dict)
@@ -108,7 +108,7 @@ class TestColumnMapper:
 
     def test_map_columns_returns_dict(self) -> None:
         """Test map_columns returns a dict."""
-        from src.column_mapper import ColumnMapper
+        from src.extraction.column_mapper import ColumnMapper
 
         mapper = ColumnMapper()
         result = mapper.map_columns(["Date", "Description", "Amount"])
@@ -116,7 +116,7 @@ class TestColumnMapper:
 
     def test_map_columns_fuzzy_matching(self) -> None:
         """Test map_columns uses fuzzy matching for column names."""
-        from src.column_mapper import ColumnMapper
+        from src.extraction.column_mapper import ColumnMapper
 
         mapper = ColumnMapper()
         result = mapper.map_columns(["Transaction Date", "Narration", "Amount (INR)"])

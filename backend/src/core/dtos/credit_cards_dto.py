@@ -66,6 +66,47 @@ class SpendingByCategoryDTO(BaseModel):
 # ===== Credit Card Summary Types =====
 
 
+class StatementDTO(BaseModel):
+    """Credit card statement DTO."""
+
+    id: str = Field(description="Statement identifier")
+    card_id: str = Field(description="Credit card identifier")
+    statement_date: str = Field(description="Statement date (ISO format)")
+    start_date: str = Field(description="Statement period start date (ISO format)")
+    end_date: str = Field(description="Statement period end date (ISO format)")
+    due_date: str = Field(description="Payment due date (ISO format)")
+    opening_balance_paise: int = Field(description="Opening balance in paise")
+    closing_balance_paise: int = Field(description="Closing balance in paise")
+    total_charges_paise: int = Field(description="Total charges in paise")
+    total_payments_paise: int = Field(description="Total payments in paise")
+    total_credits_paise: int = Field(description="Total credits in paise")
+    min_due_paise: int = Field(description="Minimum due in paise")
+    total_due_paise: int = Field(description="Total due in paise")
+    interest_charged_paise: int = Field(description="Interest charged in paise")
+    late_fee_paise: int = Field(description="Late fee in paise")
+    is_paid: bool = Field(description="Whether the statement is paid")
+
+
+class EmiConversionDTO(BaseModel):
+    """EMI conversion response DTO."""
+
+    emi_paise: int = Field(description="Monthly EMI in paise")
+    total_interest_paise: int = Field(description="Total interest in paise")
+    total_repayment_paise: int = Field(description="Total repayment amount in paise")
+    monthly_interest_paise: int = Field(description="Monthly interest in paise")
+
+
+class ForeclosureDTO(BaseModel):
+    """Foreclosure quote response DTO."""
+
+    foreclosure_amount_paise: int = Field(
+        description="Total foreclosure amount in paise"
+    )
+    outstanding_paise: int = Field(description="Outstanding balance in paise")
+    accrued_interest_paise: int = Field(description="Accrued interest in paise")
+    penalty_paise: int = Field(description="Foreclosure penalty in paise")
+
+
 class CreditCardSummaryDTO(BaseModel):
     """Credit card summary information."""
 

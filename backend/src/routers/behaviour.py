@@ -14,6 +14,14 @@ from typing import Any
 from fastapi import APIRouter, Query
 
 from src.errors import NotFoundError
+from src.models.behaviour import (
+    CashflowHealthResponse,
+    DebtHealthResponse,
+    FinancialProfileResponse,
+    MonthlySummaryResponse,
+    RecommendationsResponse,
+    WellnessScoreResponse,
+)
 from src.services.behaviour_service import BehaviourService
 
 logger = logging.getLogger(__name__)
@@ -58,10 +66,10 @@ def _timed_log(
 # ============================================================
 
 
-@router.get("/profile")
+@router.get("/profile", response_model=FinancialProfileResponse)
 def get_financial_profile(
     household_id: str = Query("default", description="Household identifier"),
-) -> dict[str, Any]:
+) -> FinancialProfileResponse:
     """Get comprehensive financial behaviour profile.
 
     Returns financial personality classification based on transaction and account data.
@@ -80,7 +88,7 @@ def get_financial_profile(
         _timed_log(
             "GET /behaviour/profile", household_id, (time.monotonic() - start) * 1000
         )
-        return result.model_dump()
+        return result
     except Exception as e:
         _timed_log(
             "GET /behaviour/profile",
@@ -92,10 +100,10 @@ def get_financial_profile(
         raise
 
 
-@router.get("/wellness-score")
+@router.get("/wellness-score", response_model=WellnessScoreResponse)
 def get_wellness_score(
     household_id: str = Query("default", description="Household identifier"),
-) -> dict[str, Any]:
+) -> WellnessScoreResponse:
     """Get the latest financial wellness score.
 
     Returns wellness score with band classification and component breakdown.
@@ -116,7 +124,7 @@ def get_wellness_score(
             household_id,
             (time.monotonic() - start) * 1000,
         )
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/wellness-score",
@@ -137,10 +145,10 @@ def get_wellness_score(
         raise
 
 
-@router.get("/debt-health")
+@router.get("/debt-health", response_model=DebtHealthResponse)
 def get_debt_health(
     household_id: str = Query("default", description="Household identifier"),
-) -> dict[str, Any]:
+) -> DebtHealthResponse:
     """Get the latest debt health metrics.
 
     Returns FOIR, credit dependency ratio, debt cycle score, and revolver ratio.
@@ -161,7 +169,7 @@ def get_debt_health(
             household_id,
             (time.monotonic() - start) * 1000,
         )
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/debt-health",
@@ -182,10 +190,10 @@ def get_debt_health(
         raise
 
 
-@router.get("/cashflow-health")
+@router.get("/cashflow-health", response_model=CashflowHealthResponse)
 def get_cashflow_health(
     household_id: str = Query("default", description="Household identifier"),
-) -> dict[str, Any]:
+) -> CashflowHealthResponse:
     """Get the latest cashflow health metrics.
 
     Returns cashflow stability index, income/expense stability, and monthly surplus.
@@ -206,7 +214,7 @@ def get_cashflow_health(
             household_id,
             (time.monotonic() - start) * 1000,
         )
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/cashflow-health",
@@ -275,7 +283,7 @@ def get_patterns(
         raise
 
 
-@router.get("/recommendations")
+@router.get("/recommendations", response_model=RecommendationsResponse)
 def get_recommendations(
     household_id: str = Query("default", description="Household identifier"),
     limit: int = Query(
@@ -284,7 +292,7 @@ def get_recommendations(
     severity: str | None = Query(
         None, description="Filter by severity (LOW, MEDIUM, HIGH, CRITICAL)"
     ),
-) -> dict[str, Any]:
+) -> RecommendationsResponse:
     """Get financial recommendations based on behaviour metrics.
 
     Returns actionable recommendations sorted by severity.
@@ -311,7 +319,7 @@ def get_recommendations(
             household_id,
             (time.monotonic() - start) * 1000,
         )
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/recommendations",
@@ -332,13 +340,13 @@ def get_recommendations(
         raise
 
 
-@router.get("/monthly-report")
+@router.get("/monthly-report", response_model=MonthlySummaryResponse)
 def get_monthly_report(
     period: str | None = Query(
         None, description="Period in YYYY-MM format (default: current month)"
     ),
     household_id: str = Query("default", description="Household identifier"),
-) -> dict[str, Any]:
+) -> MonthlySummaryResponse:
     """Generate a monthly financial summary report.
 
     Returns comprehensive summary including wellness, debt, cashflow, patterns, and alerts.
@@ -368,7 +376,7 @@ def get_monthly_report(
             household_id,
             (time.monotonic() - start) * 1000,
         )
-        return result.model_dump()
+        return result
     except NotFoundError:
         _timed_log(
             "GET /behaviour/monthly-report",

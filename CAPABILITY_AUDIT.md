@@ -7,7 +7,7 @@ on disk and no stale mappings exist.
 
 ## Summary
 
-- Total capabilities: 11
+- Total capabilities: 12
 - Capabilities with missing components: 0
 - Capabilities with stale mappings: 1
 
@@ -226,7 +226,10 @@ on disk and no stale mappings exist.
 - ✓ `tests/golden/datasets/cc_statement_scenario.json`
 - ✓ `tests/golden/datasets/salary_plus_loan.json`
 
-**Property Tests**: None declared
+**Property Tests**:
+
+- ✓ `tests/properties/financial_events/test_engine_properties.py`
+- ✓ `tests/properties/financial_events/test_lineage_properties.py`
 
 **Invariants**:
 
@@ -559,6 +562,7 @@ on disk and no stale mappings exist.
 **Invariants**:
 
 - ✓ `tests/invariants/test_transaction.py`
+- ✓ `tests/invariants/test_reconciliation_properties.py`
 
 **Architecture Tests**:
 
@@ -627,5 +631,44 @@ on disk and no stale mappings exist.
 - ✓ `POST /api/transactions/detect-patterns`
 - ✓ `GET /api/patterns/credit-card-payments`
 - ✓ `GET /api/patterns/loan-emis`
+
+**Status**: ✓ All components verified, no stale mappings
+
+### Verification (`verification`)
+
+**Routers**: None declared
+
+**Services**: None declared
+
+**Engines**:
+
+- ✓ `src/verification/intelligence/verification_matrix.py`
+- ✓ `src/verification/intelligence/regression_engine.py`
+- ✓ `src/verification/intelligence/metrics_engine.py`
+- ✓ `src/verification/intelligence/evidence_engine.py`
+- ✓ `src/verification/intelligence/risk_engine.py`
+- ✓ `src/verification/intelligence/dependency_engine.py`
+- ✓ `src/verification/intelligence/coverage_engine.py`
+- ✓ `src/verification/intelligence/selective_engine.py`
+- ✓ `src/verification/intelligence/impact_engine.py`
+- ✓ `src/verification/intelligence/qa_report.py`
+- ✓ `src/verification/intelligence/report_engine.py`
+- ✓ `src/verification/intelligence/self_validation.py`
+
+**Repositories**: None declared
+
+**Tables**: None declared
+
+**Golden Datasets**: None declared
+
+**Property Tests**: None declared
+
+**Invariants**: None declared
+
+**Architecture Tests**:
+
+- ✓ `tests/architecture`
+
+**Contracts**: None declared
 
 **Status**: ✓ All components verified, no stale mappings

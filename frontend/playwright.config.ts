@@ -24,8 +24,12 @@ export default defineConfig({
   // Retry failed tests on CI
   retries: process.env.CI ? 2 : 0,
   
-  // Limit workers on CI for stability
-  workers: process.env.CI ? 1 : undefined,
+  // M9-C8: run with bounded parallelism on CI. The matrix is sharded per
+  // project (see .github/workflows/playwright.yml), so each CI job owns exactly
+  // one project; parallelising the tests within that project keeps the per-job
+  // runtime bounded well inside the job window instead of serialising all 232
+  // tests (which previously blew past the timeout).
+  workers: process.env.CI ? 4 : undefined,
   
   // Global timeout per test
   timeout: 30000,
@@ -122,8 +126,11 @@ export default defineConfig({
   ],
   
   // Production server (avoids CSS corruption in dev mode)
+  // CI uses python3 (guaranteed on ubuntu-latest); local uses npm start.
   webServer: {
-    command: 'npm start',
+    command: process.env.CI
+      ? 'python3 -m http.server 3000 --directory dist'
+      : 'npm start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

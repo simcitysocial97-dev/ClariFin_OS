@@ -1,5 +1,5 @@
 /**
- * OS Shell - Stage 8A Financial Operating System Shell
+ * OS Shell - Stage 8B Navigation Experience
  *
  * Permanent application shell that every workspace lives inside.
  * No business logic. No financial calculations. No API changes.
@@ -20,6 +20,13 @@ export { RightInspector } from './right-inspector';
 export { BottomTimeline } from './bottom-timeline';
 export { BottomStatusBar } from './bottom-status-bar';
 export { ResizableLayout } from './resizable-layout';
+
+// Navigation experience components
+export { DeepLinkSync } from './deep-link-sync';
+export { WorkspaceHost, useWorkspaceHost } from './workspace-host';
+
+// Context Panel (Milestone 4)
+export { ContextPanel, useContextPanel } from './context-panel';
 
 // Re-export runtime types for convenience
 export type { WorkspaceName, WorkspaceState, WorkspaceContextValue } from '@/lib/workspace';

@@ -1,0 +1,2260 @@
+{
+  "generated_at": "2026-08-06T11:40:05.708576+00:00",
+  "schema": "artifact-ownership-v3",
+  "principle": "Artifacts are owned by their Producer. Ownership is recorded with Producer/Owner/Consumers/Stage/Pipeline/Lifecycle/Retention/Regeneration Source. No artifact is left unknown.",
+  "single_source": "runtime.foundation.architecture.get_architecture",
+  "artifact_count": 137,
+  "unknown_ownership_count": 0,
+  "artifacts": [
+    {
+      "artifact": "backend/tests/generated/api-map.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/architectural-coverage.json",
+      "producer": "pytest|coverage",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|coverage",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/change-impact.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/change-impact.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/change-report.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/change-report.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/contract-coverage.json",
+      "producer": "tools/generators/generate_contract_tests.py",
+      "owner": "platform",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "tools/generators/generate_contract_tests.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/contract-registry.json",
+      "producer": "tools/generators/generate_contract_tests.py",
+      "owner": "platform",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "tools/generators/generate_contract_tests.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/coverage.json",
+      "producer": "pytest|coverage",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|coverage",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/coverage.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/coverage.xml",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/dependency-map.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation-gaps.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation-map.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation-readiness.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation-readiness.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation-registry.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/__init__.py",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/mutation-gaps.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/mutation-map.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/mutation-readiness.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/mutation-registry.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/mutation-report.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/mutation/mutation-summary.json",
+      "producer": "mutation runner",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "mutation runner",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/openapi-current.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/qa-report.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/quality-report.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/raw-coverage.json",
+      "producer": "pytest|coverage",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|coverage",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/regression-matrix.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/reports/__init__.py",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/reports/change-report.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/reports/mutation-readiness.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/reports/test-plan.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/reports/test-strength.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/risk-map.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/selective-history.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/selective-plan.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/selective-plan.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/selective-summary.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/test-plan.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/test-strength.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/test-strength.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/traceability.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/validation-history.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/validation-manifest.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/validation-metrics.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/verification-evidence.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/verification-matrix.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/verification-matrix.md",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/verification-performance.json",
+      "producer": "runtime/foundation/verification/executor.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/executor.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "backend/tests/generated/verification-summary.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "evidence-download/test-results/junit.xml",
+      "producer": "pytest|schemathesis",
+      "owner": "runtime",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "backend-verify|frontend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|schemathesis",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "evidence-download/test-results/results.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "frontend/test-results/.setup-status.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "frontend/test-results/junit.xml",
+      "producer": "pytest|schemathesis",
+      "owner": "runtime",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "backend-verify|frontend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|schemathesis",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "frontend/test-results/results.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/architecture-inventory-summary.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/architecture-inventory.json",
+      "producer": "runtime/analyze_architecture.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_architecture.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/architecture-provider.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/artifact-ownership-v2.json",
+      "producer": "runtime/analyze_artifacts.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_artifacts.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/artifact-ownership-v3.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/artifact-ownership.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/certification-dashboard.json",
+      "producer": "runtime/system/observability/dashboard.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/dashboard.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/certification-gap-analysis.json",
+      "producer": "runtime/analyze_gap.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_gap.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/certification-history.json",
+      "producer": "runtime/foundation/audit/certification.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/foundation/audit/certification.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/certification-progress.json",
+      "producer": "runtime/foundation/audit/certification.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/certification.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/cost-analysis.json",
+      "producer": "runtime/system/observability/cost_analysis.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/cost_analysis.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/cross-layer-map-v2.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/cross-layer-map.json",
+      "producer": "tools/generators/build_cross_layer_map.py",
+      "owner": "platform",
+      "consumers": [
+        "knowledge-index.json",
+        "certification-dashboard.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "cross-layer",
+      "pipeline": "backend-verify|frontend-verify|golden|mutation|quality|verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "90_days",
+      "regeneration_source": "tools/generators/build_cross_layer_map.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/dashboard.json",
+      "producer": "runtime/system/observability/dashboard.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/dashboard.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/dependency-graph-v2.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/dependency-growth.json",
+      "producer": "runtime/system/observability/dependency_growth.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/dependency_growth.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/dependency-health.json",
+      "producer": "tools/development/check_paths.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "dependency-health",
+      "pipeline": "dependency-update",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "tools/development/check_paths.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engine-normalization.json",
+      "producer": "runtime/analyze_engine_normalization.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_engine_normalization.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engine-topology.json",
+      "producer": "runtime/analyze_engine_topology.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_engine_topology.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engineering-analytics.json",
+      "producer": "runtime/system/observability/analytics.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/analytics.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engineering-events.jsonl",
+      "producer": "runtime/system/observability/event_store.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "90_days",
+      "regeneration_source": "runtime/system/observability/event_store.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engineering-health.md",
+      "producer": "runtime/system/observability/health_report.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/health_report.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engineering-history.json",
+      "producer": "runtime/system/observability/repository.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "90_days",
+      "regeneration_source": "runtime/system/observability/repository.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engineering-platform-audit.json",
+      "producer": "runtime/foundation/audit/certification.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/certification.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/engineering-platform-audit.md",
+      "producer": "runtime/foundation/audit/certification.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/certification.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/execution-graph.json",
+      "producer": "runtime/analyze_execution.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_execution.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/flaky-tests.json",
+      "producer": "runtime/system/observability/flaky_tests.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "runtime/system/observability/flaky_tests.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/github-actions-health.json",
+      "producer": "runtime/foundation/audit/github_actions.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "github-actions",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/github_actions.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/github-workflow-inventory.json",
+      "producer": "runtime/foundation/repository/scanner/workflow_scanner.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "github-actions",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/repository/scanner/workflow_scanner.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/knowledge-index.json",
+      "producer": "runtime/foundation/knowledge/indexer.py",
+      "owner": "platform",
+      "consumers": [
+        "certification-dashboard.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "knowledge",
+      "pipeline": "backend-verify|frontend-verify|golden|mutation|quality|verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "90_days",
+      "regeneration_source": "runtime/foundation/knowledge/indexer.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/knowledge-migration-report.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/knowledge-reconstruction.json",
+      "producer": "runtime/analyze_knowledge.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_knowledge.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/normalized-issues.json",
+      "producer": "runtime/foundation/audit/normalize.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/normalize.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/ownership-graph.json",
+      "producer": "runtime/analyze_ownership.py (Program 13)",
+      "owner": "certification",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/analyze_ownership.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/pipeline-certification.md",
+      "producer": "runtime/foundation/audit/pipeline.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/foundation/audit/pipeline.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/pipeline-validation.json",
+      "producer": "runtime/foundation/audit/pipeline.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/pipeline.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/platform-remediation.md",
+      "producer": "runtime/foundation/audit/remediation.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "runtime/foundation/audit/remediation.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/program8-completion-report.md",
+      "producer": "program8",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "release",
+      "lifecycle": "persistent",
+      "retention": "permanent",
+      "regeneration_source": "program8",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/repair-order.json",
+      "producer": "runtime/foundation/audit/repair_order.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "90_days",
+      "regeneration_source": "runtime/foundation/audit/repair_order.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/repository/index.json",
+      "producer": "runtime/foundation/repository/builder/builder.py",
+      "owner": "platform",
+      "consumers": [
+        "cross-layer-map.json"
+      ],
+      "verification_stage": "repository",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "90_days",
+      "regeneration_source": "runtime/foundation/repository/builder/builder.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/root-cause-clusters.json",
+      "producer": "runtime/foundation/audit/cluster.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "90_days",
+      "regeneration_source": "runtime/foundation/audit/cluster.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/runtime-consistency.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/runtime-defects.json",
+      "producer": "runtime/foundation/audit/artifact_ownership.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/audit/artifact_ownership.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/runtime-discovery-sources.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/system-health-score.json",
+      "producer": "runtime/system/observability/health_report.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json",
+        "certification-dashboard.json"
+      ],
+      "verification_stage": "certification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/system/observability/health_report.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/validation-summary.md",
+      "producer": "runtime/foundation/verification/validation/validator.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/validation/validator.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification-cache.json",
+      "producer": "runtime/foundation/verification/runtime.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime|backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "runtime/foundation/verification/runtime.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification-performance.json",
+      "producer": "runtime/foundation/verification/executor.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/executor.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification-pipeline.md",
+      "producer": "runtime/foundation/verification/planner/planner.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/planner/planner.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification-profile-matrix.md",
+      "producer": "runtime/foundation/verification/profiles.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/profiles.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification-quality.md",
+      "producer": "runtime/foundation/verification/validation/validator.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/validation/validator.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification-report.md",
+      "producer": "runtime/foundation/verification/orchestrator.py",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "runtime/foundation/verification/orchestrator.py",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/acceptance_planner.py",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/plan.json",
+      "producer": "engineering-runtime",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "engineering-runtime",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/contract_empty.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/contract_invalid.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/contract_partial.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/contract_valid.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/coverage_empty.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/coverage_invalid.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/coverage_partial.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/coverage_valid.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/evidence_dir/backend/tests/generated/junit-property.xml",
+      "producer": "pytest property tests",
+      "owner": "runtime",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest property tests",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/evidence_dir/contract/contract.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/evidence_dir/coverage/coverage.json",
+      "producer": "pytest|coverage",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "backend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|coverage",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/evidence_dir/mutation/loan-results.txt",
+      "producer": "loan_engine (mutation runner)",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "loan_engine",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/evidence_dir/mutation/mutation-summary.json",
+      "producer": "mutation runner",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "mutation runner",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/evidence_dir/test-results/junit.xml",
+      "producer": "pytest|schemathesis",
+      "owner": "runtime",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "backend-verify|frontend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|schemathesis",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/junit_empty.xml",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/junit_invalid.xml",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/junit_partial.xml",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/junit_valid.xml",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/mutation_invalid/loan-results.txt",
+      "producer": "loan_engine (mutation runner)",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "loan_engine",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/mutation_invalid/mutation-summary.json",
+      "producer": "mutation runner",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "mutation runner",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/mutation_valid/loan-results.txt",
+      "producer": "loan_engine (mutation runner)",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "loan_engine",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/mutation_valid/mutation-summary.json",
+      "producer": "mutation runner",
+      "owner": "runtime",
+      "consumers": [
+        "cross-layer-map.json",
+        "knowledge-index.json",
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "backend",
+      "pipeline": "mutation",
+      "lifecycle": "ephemeral",
+      "retention": "30_days",
+      "regeneration_source": "mutation runner",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/partial_evidence/test-results/junit.xml",
+      "producer": "pytest|schemathesis",
+      "owner": "runtime",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "backend-verify|frontend-verify",
+      "lifecycle": "ephemeral",
+      "retention": "14_days",
+      "regeneration_source": "pytest|schemathesis",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/run_aggregator_tests.py",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/run_collector_tests.py",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/summary.json",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    },
+    {
+      "artifact": "runtime/generated/verification/samples/summary.md",
+      "producer": "runtime test fixture (verification runtime self-test)",
+      "owner": "platform",
+      "consumers": [
+        "engineering-platform-audit.json"
+      ],
+      "verification_stage": "verification",
+      "pipeline": "verification-runtime",
+      "lifecycle": "fixture",
+      "retention": "permanent",
+      "regeneration_source": "runtime test fixture",
+      "engine": null,
+      "capability": null,
+      "unknown_ownership": false
+    }
+  ]
+}

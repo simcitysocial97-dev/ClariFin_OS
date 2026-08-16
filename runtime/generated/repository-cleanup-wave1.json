@@ -1,0 +1,106 @@
+{
+  "schema": "repository-cleanup-wave1/v1",
+  "generated_at": "2026-08-07T03:25:00.000000Z",
+  "program": "19.0",
+  "phase": "Phase 6 - Repository Cleanup",
+  "summary": {
+    "eligible_deletions": 0,
+    "deleted": 0,
+    "preserved": 5,
+    "skipped": 0
+  },
+  "already_executed": [
+    {
+      "path": "backend/src/services/base_service.py",
+      "status": "deleted_in_program_18",
+      "eligibility": "safe_delete_zero_importers",
+      "rollback": "git checkout -- backend/src/services/base_service.py"
+    },
+    {
+      "path": "frontend/types/financial.ts",
+      "status": "deleted_in_program_18",
+      "eligibility": "safe_delete_zero_importers",
+      "rollback": "git checkout -- frontend/types/financial.ts"
+    }
+  ],
+  "candidates_checked": [
+    {
+      "id": "legacy-behavior_engine-facade",
+      "path": "backend/src/engines/behavior_engine.py",
+      "category": "parked",
+      "classification": "Preserve",
+      "eligibility_check": {
+        "zero_importers": false,
+        "zero_execution_references": true,
+        "zero_ownership_references": false,
+        "zero_runtime_references": true,
+        "failure_reason": "Has 52 test_references and 51 documentation_references. Tests directly import from src.engines.behavior_engine. Cannot delete without updating tests first, which requires migration (deferred)."
+      },
+      "decision": "PRESERVED"
+    },
+    {
+      "id": "legacy-cashflow_engine-parked",
+      "path": "backend/src/engines/cashflow_engine.py.parked",
+      "category": "parked",
+      "classification": "Preserve",
+      "eligibility_check": {
+        "zero_importers": true,
+        "zero_execution_references": true,
+        "zero_ownership_references": false,
+        "zero_runtime_references": true,
+        "failure_reason": "Has 36 test_references and 19 documentation_references. Tests import from src.engines.cashflow_engine. Cannot delete without updating tests first."
+      },
+      "decision": "PRESERVED"
+    },
+    {
+      "id": "unused-alert_repository",
+      "path": "backend/src/repositories/alert_repository.py",
+      "category": "unused repository",
+      "classification": "Preserve",
+      "eligibility_check": {
+        "zero_importers": true,
+        "zero_execution_references": true,
+        "zero_ownership_references": false,
+        "zero_runtime_references": true,
+        "failure_reason": "Has 3 test_references and 8 documentation_references. Cannot delete without updating references."
+      },
+      "decision": "PRESERVED"
+    },
+    {
+      "id": "unused-reconciliation_audit_repository",
+      "path": "backend/src/repositories/reconciliation_audit_repository.py",
+      "category": "unused repository",
+      "classification": "Preserve",
+      "eligibility_check": {
+        "zero_importers": true,
+        "zero_execution_references": true,
+        "zero_ownership_references": false,
+        "zero_runtime_references": true,
+        "failure_reason": "Has 9 test_references and 3 documentation_references. Cannot delete without updating references."
+      },
+      "decision": "PRESERVED"
+    },
+    {
+      "id": "duplicate-behaviour-ownership",
+      "path": "backend/src/engines/behavior_engine.py vs backend/src/engines/behaviour_engine/",
+      "category": "duplicate",
+      "classification": "Safe Delete",
+      "eligibility_check": {
+        "zero_importers": false,
+        "zero_execution_references": true,
+        "zero_ownership_references": false,
+        "zero_runtime_references": true,
+        "failure_reason": "Although runtime imports are zero, test_references=52 and documentation_references=51 prevent safe deletion. The 'Safe Delete' classification in deletion-validation.json assumed test references would be updated as part of the migration, but migration was deferred."
+      },
+      "decision": "PRESERVED"
+    }
+  ],
+  "additional_notes": [
+    "No deletions executed during Wave 1.",
+    "All 5 preservation candidates checked against Phase 6 criteria: zero importers, zero execution references, zero ownership references, zero runtime references.",
+    "All 5 candidates failed at least one eligibility criterion (test references or documentation references).",
+    "The 2 safe deletes from Program 18 (base_service.py, financial.ts) are already confirmed deleted.",
+    "Every deletion is reversible through Git history.",
+    "Runtime certification preserved - no files deleted."
+  ]
+}

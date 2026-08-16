@@ -1,87 +1,137 @@
+# .github/workflows/playwright.yml
+#
+# PURPOSE: End-to-end browser tests (Playwright).
+# RESPONSIBILITY: Run `runtime/verify.py playwright` — the ONLY verification command.
+# Rule 1: no engineering logic in YAML. Rule 2: single responsibility. Rule 8:
+# delegate to runtime/verify.py. Rule 9: append `verify.py status` summary.
+#
+# The playwright profile (run_playwright_tests.sh) owns build + browser tests.
+# Browsers are provisioned by the setup-playwright action (environment only).
+
 name: Playwright Tests
 
 on:
   push:
-    branches: [main, master, develop]
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - "frontend/**"
+      - "e2e/**"
+      - "runtime/**"
   pull_request:
-    branches: [main, master, develop]
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - "frontend/**"
+      - "e2e/**"
+      - "runtime/**"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   test:
-    timeout-minutes: 60
+    name: E2E Tests (${{ matrix.project }})
     runs-on: ubuntu-latest
+    # M9-C8: each matrix job runs exactly one Playwright project (a bounded,
+    # full-coverage slice of the six-project matrix) in parallel, so the runtime
+    # of any single job stays well inside this window instead of serialising the
+    # entire 1,392-test matrix.
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - chromium
+          - firefox
+          - webkit
+          - mobile-chrome
+          - mobile-safari
+          - tablet
     steps:
-      - uses: actions/checkout@v4
-
-      # Setup Node.js
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          node-version: lts/*
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          fetch-depth: 0
 
-      # Setup Python for backend
-      - uses: actions/setup-python@v5
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
         with:
-          python-version: '3.12'
-          cache: 'pip'
-          cache-dependency-path: backend/requirements.txt
+          python-version: "3.12"
 
-      # Install frontend dependencies
-      - name: Install Frontend Dependencies
-        working-directory: ./frontend
-        run: npm ci
-
-      # Install Playwright browsers
-      - name: Install Playwright Browsers
-        working-directory: ./frontend
-        run: npx playwright install --with-deps
-
-      # Install backend dependencies
-      - name: Install Backend Dependencies
-        working-directory: ./backend
-        run: pip install -r requirements.txt
-
-      # Run Playwright tests
-      - name: Run Playwright Tests
-        working-directory: ./frontend
-        run: npx playwright test
-
-      # Upload test results
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
         with:
-          name: playwright-report
+          node-version: "20"
+          working-directory: "frontend"
+
+      - name: Install Playwright browsers
+        uses: ./.github/actions/setup-playwright
+        with:
+          working-directory: "frontend"
+          browsers: chromium firefox webkit
+
+      - name: Run playwright verification
+        env:
+          PLAYWRIGHT_PROJECT: ${{ matrix.project }}
+        run: python runtime/verify.py playwright
+
+      - name: Upload shared artifact — cross-layer-map
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: cross-layer-map-${{ matrix.project }}
+          path: runtime/generated/cross-layer-map.json
+          retention-days: 14
+
+      - name: Upload shared artifact — knowledge-index
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: knowledge-index-${{ matrix.project }}
+          path: runtime/generated/knowledge-index.json
+          retention-days: 14
+
+      - name: Upload shared artifact — verification-cache
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: verification-cache-${{ matrix.project }}
+          path: runtime/generated/verification-cache.json
+          retention-days: 14
+
+      - name: Upload shared artifact — engineering-history
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: engineering-history-${{ matrix.project }}
+          path: runtime/generated/engineering-history.json
+          retention-days: 14
+
+      - name: Upload playwright report
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: playwright-report-${{ matrix.project }}
           path: frontend/playwright-report/
           retention-days: 30
 
-      # Upload test results directory
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - name: Upload playwright evidence
+        uses: ./.github/actions/upload-runtime
         with:
-          name: test-results
+          name: playwright-evidence-${{ matrix.project }}
           path: frontend/test-results/
-          retention-days: 7
+          retention-days: 30
 
-      # Comment PR with results
-      - name: Comment PR with Test Results
-        if: github.event_name == 'pull_request' && always()
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = 'frontend/test-results/.setup-status.json';
-            
-            let status = 'Tests completed';
-            if (fs.existsSync(path)) {
-              const data = JSON.parse(fs.readFileSync(path, 'utf8'));
-              status = `Backend: ${data.backendAvailable ? '✅' : '❌'} | Setup: ${data.setupTime}`;
-            }
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🧪 **Playwright Test Results**\n\n${status}\n\n[View Report](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`
-            });
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }} — ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY
+        shell: bash

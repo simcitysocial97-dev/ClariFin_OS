@@ -1,0 +1,64 @@
+{
+  "schema": "test-modernization-v2/v1",
+  "generated_at": "2026-08-06T16:43:55.931315Z",
+  "program": "18.0",
+  "summary": {
+    "missing_unit_tests": 0,
+    "missing_integration_tests": 10,
+    "missing_contract_tests": 12,
+    "missing_mutation_coverage": 0,
+    "missing_verification_coverage": 0,
+    "legacy_test_targets": 4
+  },
+  "engine_test_coverage": [
+    {
+      "engine": "backend/src/engines/account_engine",
+      "test_count": 2,
+      "has_unit": true,
+      "has_integration": false,
+      "has_contract": false,
+      "coverage_status": "complete"
+    },
+    {
+      "engine": "backend/src/engines/behaviour_engine",
+      "test_count": 5,
+      "has_unit": true,
+      "has_integration": false,
+      "has_contract": false,
+      "coverage_status": "complete"
+    },
+    {
+      "engine": "backend/src/engines/credit_card_engine",
+      "test_count": 7,
+      "has_unit": true,
+      "has_integration": false,
+      "has_contract": false,
+      "coverage_status": "complete"
+    },
+    {
+      "engine": "backend/src/engines/loan_engine",
+      "test_count": 10,
+      "has_unit": true,
+      "has_integration": false,
+      "has_contract": false,
+      "coverage_status": "complete"
+    },
+    {
+      "engine": "backend/src/engines/recommendation_engine",
+      "test_count": 2,
+      "has_unit": true,
+      "has_integration": false,
+      "has_contract": false,
+      "coverage_status": "complete"
+    },
+    {
+      "engine": "backend/src/engines/reconciliation_engine.py",
+      "test_count": 4,
+      "has_unit": true,
+      "has_integration": false,
+      "has_contract": false,
+      "coverage_status": "complete"
+    }
+  ],
+  "missing_tests": []
+}

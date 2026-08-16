@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -8,6 +9,7 @@ import { MemberProvider } from '@/lib/context/member-context';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { QueryProvider } from '@/components/query-provider';
 import { AppShell } from '@/components/os-shell';
+import { RuntimeProvider } from '@/lib/runtime';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,8 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Load PDF.js from CDN */}
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        {/* Load PDF.js from CDN (non-blocking, injected before interactive) */}
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
+          strategy="beforeInteractive"
+        />
         <script dangerouslySetInnerHTML={{
           __html: `
             if (typeof pdfjsLib !== 'undefined') {
@@ -48,10 +53,12 @@ export default function RootLayout({
           >
             <QueryProvider>
               <MemberProvider>
-                <ErrorBoundary>
-                  <AppShell>{children}</AppShell>
-                </ErrorBoundary>
-                <Toaster />
+                <RuntimeProvider>
+                  <ErrorBoundary>
+                    <AppShell>{children}</AppShell>
+                  </ErrorBoundary>
+                  <Toaster />
+                </RuntimeProvider>
               </MemberProvider>
             </QueryProvider>
           </ThemeProvider>

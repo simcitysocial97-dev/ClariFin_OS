@@ -1,0 +1,41 @@
+# .github/actions/setup-node-runtime/action.yml
+# Canonical Node.js environment for the Engineering Runtime.
+# Used by frontend / playwright workflows via the bootstrap.
+# Rule 1 & 3: all Node setup lives here; no workflow inlines npm logic.
+
+name: "Setup Node.js Runtime"
+description: "Installs Node.js 20, configures npm, installs frontend dependencies with caching."
+
+inputs:
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: "20"
+  working-directory:
+    description: "Directory containing package.json"
+    required: false
+    default: "frontend"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Configure npm
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        npm config set fetch-retry-maxtimeout 120000
+        npm config set fetch-retries 5
+        npm config set fund false
+        npm config set audit false
+
+    - name: Install frontend dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm ci

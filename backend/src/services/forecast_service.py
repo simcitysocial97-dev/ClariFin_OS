@@ -6,6 +6,8 @@ No direct database access - uses repositories only.
 
 from typing import Any
 
+from src.core.dtos.forecast_dto import ForecastDTO
+from src.core.mappers.forecast_mapper import ForecastMapper
 from src.repositories.credit_card_repository import CreditCardRepository
 from src.repositories.investment_repository import InvestmentRepository
 from src.repositories.loan_repository import LoanRepository
@@ -25,7 +27,7 @@ class ForecastService(BaseService):
         self,
         horizon_months: int = 12,
         scenarios: list[str] | None = None,
-    ) -> dict[str, Any]:
+    ) -> ForecastDTO:
         """Get forecast summary for the workspace.
 
         Returns aggregated data matching ForecastViewModel format.
@@ -52,7 +54,7 @@ class ForecastService(BaseService):
             (projected_growth / current_net_worth * 100) if current_net_worth > 0 else 0
         )
 
-        return {
+        forecast_data = {
             "summary": {
                 "horizon_months": horizon_months,
                 "current_net_worth_paise": current_net_worth,
@@ -109,18 +111,9 @@ class ForecastService(BaseService):
                 "source_references": ["loans", "credit_cards", "investments"],
                 "confidence_score": 85,
             },
-            "filters": {
-                "horizon": horizon_months,
-                "scenarios": scenarios,
-            },
-            "navigation": {
-                "deep_link": "/forecast",
-                "cross_references": {
-                    "net_worth": "/net-worth",
-                    "cashflow": "/cashflow",
-                },
-            },
         }
+
+        return ForecastMapper.to_dto(forecast_data)
 
     def _generate_projections(
         self,

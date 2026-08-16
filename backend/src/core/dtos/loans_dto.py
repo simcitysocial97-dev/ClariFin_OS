@@ -21,14 +21,27 @@ LoanStatus = Literal["active", "closed", "defaulted"]
 
 
 class AmortizationEntryDTO(BaseModel):
-    """Single entry in amortization schedule."""
+    """Single amortization schedule entry."""
 
-    payment_number: int = Field(description="Payment number (1-based)")
+    month: int = Field(description="Month number (1-based)")
     date: str = Field(description="Payment date (ISO format)")
-    principal_paise: int = Field(description="Principal component in paise")
-    interest_paise: int = Field(description="Interest component in paise")
-    emi_paise: int = Field(description="Total EMI in paise")
+    emi_paise: int = Field(description="EMI amount in paise")
+    principal_paise: int = Field(description="Principal portion in paise")
+    interest_paise: int = Field(description="Interest portion in paise")
     balance_paise: int = Field(description="Remaining balance in paise")
+
+
+class AmortizationScheduleDTO(BaseModel):
+    """Amortization schedule response DTO."""
+
+    loan_id: str = Field(description="Loan identifier")
+    emi_paise: int = Field(description="Monthly EMI in paise")
+    total_interest_paise: int = Field(
+        description="Total interest over loan term in paise"
+    )
+    schedule: list[AmortizationEntryDTO] = Field(
+        description="Amortization schedule entries"
+    )
 
 
 # ===== Loan Summary Types =====
@@ -139,6 +152,37 @@ class LoanEvidenceChainDTO(BaseModel):
         default_factory=list, description="Source references for traceability"
     )
     confidence_score: float = Field(description="Overall confidence (0-100)")
+
+
+class PaymentResponseDTO(BaseModel):
+    """Payment response DTO."""
+
+    success: bool = Field(default=True, description="Payment success status")
+    payment_id: str = Field(description="Payment identifier")
+
+
+class PrepaymentSimulationDTO(BaseModel):
+    """Prepayment simulation response DTO."""
+
+    original_interest_paise: int = Field(description="Original total interest in paise")
+    new_interest_paise: int = Field(
+        description="New total interest after prepayment in paise"
+    )
+    interest_saved_paise: int = Field(description="Interest saved in paise")
+    new_tenure_months: int = Field(description="New tenure in months")
+    tenure_saved_months: int = Field(description="Tenure saved in months")
+    new_emi_paise: int | None = Field(default=None, description="New EMI in paise")
+
+
+class ForeclosureSimulationDTO(BaseModel):
+    """Foreclosure simulation response DTO."""
+
+    outstanding_paise: int = Field(description="Outstanding balance in paise")
+    penalty_paise: int = Field(description="Foreclosure penalty in paise")
+    foreclosure_amount_paise: int = Field(
+        description="Total foreclosure amount in paise"
+    )
+    interest_saved_paise: int = Field(description="Interest saved in paise")
 
 
 # ===== Main Loans DTO =====

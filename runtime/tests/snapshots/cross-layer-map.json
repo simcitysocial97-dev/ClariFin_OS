@@ -1,0 +1,107 @@
+{
+  "affected_capabilities": [
+    "useLoansCapability"
+  ],
+  "affected_components": [
+    "AmortizationTable"
+  ],
+  "affected_dtos": [],
+  "affected_endpoints": [
+    "GET /api/loans/{loan_id}/schedule"
+  ],
+  "affected_engines": [
+    "backend/src/engines/loan_engine/amortization.py"
+  ],
+  "affected_graph_renderers": [],
+  "affected_mappers": [
+    "loansMapper"
+  ],
+  "affected_models": [],
+  "affected_pages": [
+    "app/loans/page.tsx"
+  ],
+  "affected_routers": [
+    "backend/src/routers/loans.py"
+  ],
+  "affected_runtimes": [],
+  "affected_services": [
+    "LoanService"
+  ],
+  "affected_tests": [
+    "backend/tests/unit/engines/loan/test_amortization.py",
+    "backend/tests/contract/generated/test_loans.py"
+  ],
+  "affected_ui": [
+    "app/loans/page.tsx",
+    "LoansWorkspace",
+    "AmortizationTable"
+  ],
+  "affected_view_models": [
+    "LoansViewModel"
+  ],
+  "affected_workspaces": [
+    "LoansWorkspace"
+  ],
+  "changed_files": [
+    "backend/src/engines/loan_engine/amortization.py"
+  ],
+  "dependency_chains": [
+    {
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "components": [
+        "AmortizationTable"
+      ],
+      "endpoints": [
+        "GET /api/loans/{loan_id}/schedule"
+      ],
+      "engine": "backend/src/engines/loan_engine/amortization.py",
+      "mappers": [
+        "loansMapper"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ],
+      "services": [
+        "LoanService"
+      ],
+      "source": "backend/src/engines/loan_engine/amortization.py",
+      "tests": [
+        "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/contract/generated/test_loans.py"
+      ],
+      "view_models": [
+        "LoansViewModel"
+      ],
+      "workspaces": [
+        "LoansWorkspace"
+      ]
+    }
+  ],
+  "verification_plan": {
+    "capabilities": [
+      "useLoansCapability"
+    ],
+    "contract_paths": [
+      "backend/tests/contract/generated/test_loans.py"
+    ],
+    "dtos": [],
+    "engines": [
+      "backend/src/engines/loan_engine/amortization.py"
+    ],
+    "impact_summary": "1 engines, 1 services, 1 capabilities, 0 dtos, 2 tests",
+    "run_contract": true,
+    "run_frontend": true,
+    "run_integration": true,
+    "run_property": true,
+    "run_unit": true,
+    "services": [
+      "LoanService"
+    ],
+    "unit_paths": [
+      "backend/tests/unit/engines/loan/test_amortization.py",
+      "backend/tests/contract/generated/test_loans.py"
+    ]
+  }
+}

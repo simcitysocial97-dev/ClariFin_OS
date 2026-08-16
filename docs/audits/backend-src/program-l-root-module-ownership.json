@@ -1,0 +1,161 @@
+{
+  "program": "L",
+  "title": "Backend src/ Root Module Ownership & Placement Audit",
+  "date": "2026-08-08",
+  "mode": "audit-only",
+  "baseline_commit": "0c8410c3",
+  "executive_conclusion": "Root-level structure is architecturally valid and intentional. Modules are either application entrypoints (api, startup, ingest), cross-cutting infrastructure (config, logger, errors, health), or retained compatibility facades (db). No module is a misplaced canonical package member warranting relocation.",
+  "modules": [
+    {
+      "module": "api.py",
+      "classification": "A",
+      "classification_label": "Legitimate application root",
+      "production_consumers": 1,
+      "test_consumers": 3,
+      "tooling_consumers": 2,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "FastAPI app factory; imported by start.sh (uvicorn src.api:app), tests/fixtures/client.py, tests/contract/*, tools/development/coVF_discover.py, tools/development/generate_contract_tests.py"
+    },
+    {
+      "module": "config.py",
+      "classification": "B",
+      "classification_label": "Cross-cutting infrastructure",
+      "production_consumers": 7,
+      "test_consumers": 1,
+      "tooling_consumers": 0,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "Global Settings(); consumed by errors, startup, logger, health, api, core/db/config, tests/fixtures/database"
+    },
+    {
+      "module": "errors.py",
+      "classification": "B",
+      "classification_label": "Cross-cutting infrastructure",
+      "production_consumers": 8,
+      "test_consumers": 2,
+      "tooling_consumers": 0,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "Domain-wide exceptions + register_error_handlers; imported by api and 4 routers + behaviour_service; no core/errors package exists"
+    },
+    {
+      "module": "logger.py",
+      "classification": "B",
+      "classification_label": "Cross-cutting infrastructure",
+      "production_consumers": 4,
+      "test_consumers": 0,
+      "tooling_consumers": 0,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "setup_logging + log_* helpers; consumed by errors, startup, health, behaviour_service; no logging in common/"
+    },
+    {
+      "module": "health.py",
+      "classification": "B",
+      "classification_label": "Cross-cutting infrastructure",
+      "production_consumers": 2,
+      "test_consumers": 0,
+      "tooling_consumers": 0,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "Application /health + /ready endpoints; registered by api; re-exported (not duplicated) by routers/health.py"
+    },
+    {
+      "module": "startup.py",
+      "classification": "A",
+      "classification_label": "Application bootstrap CLI",
+      "production_consumers": 0,
+      "test_consumers": 0,
+      "tooling_consumers": 0,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "run_startup_validation() standalone CLI; not invoked by start.sh (which launches src.api:app). Entrypoint role justifies root."
+    },
+    {
+      "module": "ingest.py",
+      "classification": "A",
+      "classification_label": "Standalone CLI ingestion entrypoint",
+      "production_consumers": 0,
+      "test_consumers": 2,
+      "tooling_consumers": 0,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)",
+      "evidence": "Parallel PDF ingestion CLI; distinct from import_service/import_router (different DB path, validation, no post-upload pipeline). Only e2e import-presence tests reference it."
+    },
+    {
+      "module": "db.py",
+      "classification": "C",
+      "classification_label": "Compatibility infrastructure",
+      "production_consumers": 2,
+      "test_consumers": 0,
+      "tooling_consumers": 1,
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "future retirement",
+      "evidence": "Deprecated FinanceDB facade over src.core.db; consumers: common/database.py, tools/generators/generate_synthetic_data.py. Program K migrated fixture consumers."
+    },
+    {
+      "module": "__init__.py",
+      "classification": "A",
+      "classification_label": "Package marker",
+      "placement_justified": true,
+      "candidate_destination": null,
+      "risk": "none (retain)"
+    }
+  ],
+  "duplicate_overlap_findings": [
+    {
+      "pair": "health.py vs routers/health.py",
+      "verdict": "NOT duplicate",
+      "detail": "routers/health.py is a 6-line re-export of root health logic; contains zero logic of its own."
+    },
+    {
+      "pair": "ingest.py vs import_service.py/import_router.py",
+      "verdict": "Functional overlap, no code duplication",
+      "detail": "Both implement extract->categorize->store->validate but are separate implementations with different entry contracts (CLI vs HTTP), DB path resolution, and validation heuristics. ingest.py is a parallel/legacy CLI path, not a facade."
+    },
+    {
+      "pair": "config.py vs core/db/config.py",
+      "verdict": "Complementary, not overlapping",
+      "detail": "config owns application env settings; core/db/config owns canonical DB path. config delegates DB path downward."
+    }
+  ],
+  "dependency_direction": {
+    "observation": "Root modules sit above packages and depend downward (api/startup/ingest -> core/routers/extraction/repositories). No import-time circular dependency. config<->core.db.config uses lazy function-scope imports intentionally.",
+    "violations": "none"
+  },
+  "compatibility_surfaces_preserved": [
+    "src.api:app (deployment + tests + tooling)",
+    "src.db.FinanceDB (common/database re-export, tools/generators)",
+    "src.config.settings (ubiquitous)",
+    "src.errors.{AppError,NotFoundError,...} (routers + service contract)",
+    "src.logger.{logger,log_error,...}",
+    "src.health.register_health_routes"
+  ],
+  "relocation_candidates": {
+    "strong": [],
+    "conditional": [],
+    "retain": ["api.py", "config.py", "errors.py", "logger.py", "health.py", "startup.py", "ingest.py", "__init__.py"],
+    "future_retirement": ["db.py", "common/database.py"]
+  },
+  "recommended_next_program": {
+    "relocation_program": false,
+    "note": "No relocation warranted. Root modules are correctly placed.",
+    "future_program_if_needed": "Program M - Controlled Retirement of db.py / common/database.py compatibility facade (distinct from relocation)"
+  },
+  "no_change_validation": {
+    "all_root_modules_import": true,
+    "git_status_backend_src": "R backend/src/data/finance.db -> backend/src/data/__init__.py (pre-existing Program K rename only)",
+    "production_source_modified": false,
+    "runtime_verification_modified": false,
+    "tests_weakened": false
+  }
+}

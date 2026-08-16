@@ -15,7 +15,6 @@ Usage:
     from engines.balance_engine import compute_running_balance, validate_statement_balance
 """
 
-import sqlite3
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -41,7 +40,7 @@ def _parse_date_to_ymd(date_str: str) -> str:
         "%d %b %Y",
         "%d %b %y",
         "%d-%b-%Y",
-        "%d-%b-%y",
+        "XX%d-%b-%yXX",
         "%Y-%m-%d",
     ]
     s = date_str.strip()
@@ -94,8 +93,9 @@ def compute_running_balance(
             - balance_paise: int (running balance after this transaction)
             - bank: str
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
 
     # Phase 2A.2: Account-scoped determinism
     # Query directly by account_id - no JOIN needed
@@ -172,8 +172,9 @@ def compute_account_balance(
             - total_credit_paise: int
             - transaction_count: int
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
 
     # Phase 2A.2: Query directly by account_id - no JOIN needed
     sql = """
@@ -230,8 +231,9 @@ def validate_statement_balance(
             - difference_display: str
             - transaction_count: int
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
 
     # Get all transactions for this statement
     sql = """
@@ -279,8 +281,9 @@ def get_accounts_list(db_path: str) -> list[dict[str, Any]]:
     Returns:
         List of dicts with account info and balances.
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
+    from src.core.db.connection import get_connection
+
+    conn = get_connection(db_path)
 
     sql = """
         SELECT

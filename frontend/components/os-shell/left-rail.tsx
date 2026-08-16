@@ -9,10 +9,11 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { workspaceRegistry } from '@/lib/workspace/workspace-registry';
+import { navigationRuntime } from '@/lib/runtime';
 import { useShell } from './shell-provider';
 import { FinancialIcon } from '@/components/primitives/icon-system/financial-icon';
 import { ScrollRegion } from '@/components/primitives/layout/scroll-region';
@@ -140,6 +141,15 @@ export function LeftRail({ className }: LeftRailProps) {
     return routeMap[path] ?? 'dashboard';
   }, [pathname]);
 
+  // Navigation history depth indicator
+  const navDepth = navigationRuntime.state.currentIndex + 1;
+
+  // Handle workspace navigation — push to history
+  const handleWorkspaceNav = useCallback((workspace: WorkspaceName, deepLink: string) => {
+    const fullPath = deepLink + window.location.search;
+    navigationRuntime.pushPath(fullPath, workspace);
+  }, []);
+
   return (
     <aside
       className={cn(
@@ -200,6 +210,7 @@ export function LeftRail({ className }: LeftRailProps) {
                     <Link
                       key={ws.name}
                       href={ws.deepLink}
+                      onClick={() => handleWorkspaceNav(ws.name, ws.deepLink)}
                       title={ws.label}
                       className={cn(
                         'flex items-center justify-center h-8 w-full rounded-[var(--radius-sm)] transition-colors relative',
@@ -218,6 +229,7 @@ export function LeftRail({ className }: LeftRailProps) {
                     <Link
                       key={ws.name}
                       href={ws.deepLink}
+                      onClick={() => handleWorkspaceNav(ws.name, ws.deepLink)}
                       className={cn(
                         'flex items-center gap-2 h-7 px-2 rounded-[var(--radius-sm)] transition-colors relative group',
                         isActive
@@ -249,8 +261,9 @@ export function LeftRail({ className }: LeftRailProps) {
       {/* Footer */}
       <div className="border-t border-[var(--border-default)] px-2 py-1.5">
         {collapsed ? (
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-positive-500)]" title="Healthy" />
+            <span className="fin-caption text-[9px]" title="Navigation depth">{navDepth}</span>
           </div>
         ) : (
           <div className="flex items-center justify-between">
@@ -258,7 +271,10 @@ export function LeftRail({ className }: LeftRailProps) {
               <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-positive-500)]" />
               <span className="fin-caption">{graphNodes} nodes</span>
             </div>
-            <span className="fin-caption">v1.0</span>
+            <div className="flex items-center gap-1.5">
+              <span className="fin-caption">Depth: {navDepth}</span>
+              <span className="fin-caption">v1.0</span>
+            </div>
           </div>
         )}
       </div>

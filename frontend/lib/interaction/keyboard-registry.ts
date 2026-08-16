@@ -7,6 +7,7 @@
 
 import type { KeyboardShortcut } from './interaction-types';
 import type { WorkspaceName } from '../workspace';
+import { commandRuntime } from '../command/command-runtime';
 
 // ===== Shortcut Usage Tracking =====
 interface ShortcutUsage {
@@ -192,7 +193,7 @@ export const keyboardRegistry = new KeyboardRegistry();
  */
 export function createDefaultShortcuts(
   onWorkspaceSwitch: (workspace: WorkspaceName) => void,
-  onCommandPaletteOpen: () => void,
+  _onCommandPaletteOpen: () => void,
   onGlobalSearchOpen: () => void,
   onSelectionClear: () => void,
   onGraphFocus: () => void,
@@ -205,7 +206,9 @@ export function createDefaultShortcuts(
     {
       key: 'k',
       ctrl: true,
-      handler: () => onCommandPaletteOpen(),
+      handler: async () => {
+        await commandRuntime.execute('cmd:open-palette');
+      },
       description: 'Open command palette',
       category: 'system',
     },

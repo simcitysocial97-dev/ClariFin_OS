@@ -1,0 +1,41 @@
+name: "Setup Playwright"
+description: "Installs Playwright browsers with caching"
+inputs:
+  working-directory:
+    description: "Directory containing package.json"
+    required: false
+    default: "frontend"
+  browsers:
+    description: "Browsers to install"
+    required: false
+    default: "chromium"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Resolve Playwright cache key
+      id: cachekey
+      shell: bash
+      # Cache keys cannot contain commas. The browser list input may be a
+      # comma-separated set (e.g. "chromium,firefox,webkit"); sanitize it to a
+      # hyphenated, comma-free form so the key stays valid while preserving
+      # identity for the installed browser set.
+      run: |
+        SANITIZED="${{ inputs.browsers }}"
+        # Replace commas AND spaces with hyphens so the cache key is valid
+        # for either "chromium,firefox,webkit" or "chromium firefox webkit".
+        SANITIZED="${SANITIZED//[, ]/-}"
+        echo "key=${SANITIZED}" >> "$GITHUB_OUTPUT"
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ hashFiles(format('{0}/package-lock.json', inputs.working-directory)) }}-${{ steps.cachekey.outputs.key }}
+        restore-keys: |
+          playwright-${{ runner.os }}-
+
+    - name: Install Playwright browsers
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx playwright install --with-deps ${{ inputs.browsers }}

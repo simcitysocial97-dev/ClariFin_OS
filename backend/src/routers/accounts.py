@@ -13,21 +13,22 @@ from typing import Any
 
 from fastapi import APIRouter, Query
 
+from src.core.dtos.accounts_dto import (
+    AccountAnalyticsDTO,
+    AccountDetailDTO,
+    AccountLinkDTO,
+    BalanceSnapshotDTO,
+    InstitutionDTO,
+)
 from src.errors import NotFoundError
 from src.models.account import (
-    AccountAnalytics,
     AccountCreateRequest,
-    AccountResponse,
     AccountUpdateRequest,
 )
-from src.models.account_balance import (
-    BalanceSnapshotRequest,
-    BalanceSnapshotResponse,
-)
-from src.models.account_link import AccountLinkRequest, AccountLinkResponse
+from src.models.account_balance import BalanceSnapshotRequest
+from src.models.account_link import AccountLinkRequest
 from src.models.institution import (
     InstitutionCreateRequest,
-    InstitutionResponse,
     InstitutionUpdateRequest,
 )
 from src.services.account_service import AccountService
@@ -71,13 +72,29 @@ def _timed_log(
 # ============================================================
 
 
-@router.get("/accounts")
-def list_accounts() -> list[dict[str, Any]]:
+@router.get("/accounts", response_model=list[AccountDetailDTO])
+def list_accounts() -> list[AccountDetailDTO]:
     """Get all active accounts via AccountService."""
     start = time.monotonic()
     service = AccountService()
     accounts = service.list_accounts()
-    result = [AccountResponse.from_account_dict(acc).model_dump() for acc in accounts]
+    result = [
+        AccountDetailDTO(
+            id=str(acc["id"]),
+            name=acc["name"],
+            type=acc["account_type"],
+            institution=acc["bank"],
+            balance_paise=acc["balance_paise"],
+            status="active" if acc.get("is_active", True) else "inactive",
+            account_number_last4=acc.get("account_number_last4"),
+            opened_date=acc.get("created_at"),
+            closed_date=(
+                acc.get("updated_at") if not acc.get("is_active", True) else None
+            ),
+            notes=acc.get("notes"),
+        )
+        for acc in accounts
+    ]
     _timed_log("GET /accounts", None, (time.monotonic() - start) * 1000)
     return result
 
@@ -101,8 +118,8 @@ def create_account(request: AccountCreateRequest) -> dict[str, Any]:
     return {"success": True, "account_id": created_id}
 
 
-@router.get("/accounts/{account_id}")
-def get_account(account_id: int | str) -> dict[str, Any]:
+@router.get("/accounts/{account_id}", response_model=AccountDetailDTO)
+def get_account(account_id: int | str) -> AccountDetailDTO:
     """Get account details via AccountService."""
     start = time.monotonic()
     service = AccountService()
@@ -117,7 +134,22 @@ def get_account(account_id: int | str) -> dict[str, Any]:
                 error="Not found",
             )
             raise NotFoundError(f"Account {account_id} not found")
-        result = AccountResponse.from_account_dict(account).model_dump()
+        result = AccountDetailDTO(
+            id=account["id"],
+            name=account["name"],
+            type=account["account_type"],
+            institution=account["bank"],
+            balance_paise=account["balance_paise"],
+            status="active" if account.get("is_active", True) else "inactive",
+            account_number_last4=account.get("account_number_last4"),
+            opened_date=account.get("created_at"),
+            closed_date=(
+                account.get("updated_at")
+                if not account.get("is_active", True)
+                else None
+            ),
+            notes=account.get("notes"),
+        )
         _timed_log("GET /accounts/{id}", account_id, (time.monotonic() - start) * 1000)
         return result
     except ValueError as e:
@@ -212,7 +244,14 @@ def insert_balance_snapshot(
     # Fetch the created snapshot
     snapshot = service.get_balance_history(str(account_id), limit=1)
     if snapshot:
-        result = BalanceSnapshotResponse.from_snapshot_dict(snapshot[0]).model_dump()
+        result = {
+            "id": str(snapshot[0]["id"]),
+            "account_id": str(snapshot[0]["account_id"]),
+            "balance_paise": snapshot[0]["balance_paise"],
+            "date_iso": snapshot[0].get("date_iso"),
+            "source": snapshot[0].get("source"),
+            "created_at": snapshot[0].get("created_at"),
+        }
         _timed_log(
             "POST /accounts/{id}/balance-history",
             account_id,
@@ -229,18 +268,28 @@ def insert_balance_snapshot(
     raise NotFoundError("Failed to create balance snapshot")
 
 
-@router.get("/accounts/{account_id}/balance-history")
+@router.get(
+    "/accounts/{account_id}/balance-history", response_model=list[BalanceSnapshotDTO]
+)
 def get_balance_history(
     account_id: int | str,
     limit: int = Query(90, ge=1, le=365),
-) -> list[dict[str, Any]]:
+) -> list[BalanceSnapshotDTO]:
     """Get balance history for an account."""
     start = time.monotonic()
     service = AccountService()
 
     history = service.get_balance_history(str(account_id), limit)
     result = [
-        BalanceSnapshotResponse.from_snapshot_dict(h).model_dump() for h in history
+        BalanceSnapshotDTO(
+            id=str(h["id"]),
+            account_id=str(h["account_id"]),
+            balance_paise=h["balance_paise"],
+            date_iso=h.get("date_iso"),
+            source=h.get("source"),
+            created_at=h.get("created_at"),
+        )
+        for h in history
     ]
     _timed_log(
         "GET /accounts/{id}/balance-history",
@@ -250,8 +299,10 @@ def get_balance_history(
     return result
 
 
-@router.get("/accounts/{account_id}/balance-history/latest")
-def get_latest_balance(account_id: int | str) -> dict[str, Any]:
+@router.get(
+    "/accounts/{account_id}/balance-history/latest", response_model=BalanceSnapshotDTO
+)
+def get_latest_balance(account_id: int | str) -> BalanceSnapshotDTO:
     """Get the most recent balance snapshot for an account."""
     start = time.monotonic()
     service = AccountService()
@@ -267,7 +318,14 @@ def get_latest_balance(account_id: int | str) -> dict[str, Any]:
         )
         raise NotFoundError(f"No balance history for account {account_id}")
 
-    result = BalanceSnapshotResponse.from_snapshot_dict(snapshot).model_dump()
+    result = BalanceSnapshotDTO(
+        id=str(snapshot["id"]),
+        account_id=str(snapshot["account_id"]),
+        balance_paise=snapshot["balance_paise"],
+        date_iso=snapshot.get("date_iso"),
+        source=snapshot.get("source"),
+        created_at=snapshot.get("created_at"),
+    )
     _timed_log(
         "GET /accounts/{id}/balance-history/latest",
         account_id,
@@ -281,8 +339,8 @@ def get_latest_balance(account_id: int | str) -> dict[str, Any]:
 # ============================================================
 
 
-@router.get("/accounts/{account_id}/analytics")
-def get_account_analytics(account_id: int | str) -> dict[str, Any]:
+@router.get("/accounts/{account_id}/analytics", response_model=AccountAnalyticsDTO)
+def get_account_analytics(account_id: int | str) -> AccountAnalyticsDTO:
     """Get account analytics via AccountService."""
     start = time.monotonic()
     service = AccountService()
@@ -294,13 +352,13 @@ def get_account_analytics(account_id: int | str) -> dict[str, Any]:
     trend = service.calculate_balance_trend(str(account_id))
     velocity = service.calculate_balance_velocity(str(account_id))
 
-    response = AccountAnalytics(
+    response = AccountAnalyticsDTO(
         average_balance_paise=avg_balance,
         balance_change_paise=balance_change,
         balance_growth_bps=growth,
         trend=trend,
         velocity_paise_per_day=velocity,
-    ).model_dump()
+    )
 
     _timed_log(
         "GET /accounts/{id}/analytics", account_id, (time.monotonic() - start) * 1000
@@ -375,15 +433,23 @@ def get_account_dormancy(account_id: int | str) -> dict[str, Any]:
 # ============================================================
 
 
-@router.get("/institutions")
-def list_institutions() -> list[dict[str, Any]]:
+@router.get("/institutions", response_model=list[InstitutionDTO])
+def list_institutions() -> list[InstitutionDTO]:
     """Get all institutions via AccountService."""
     start = time.monotonic()
     service = AccountService()
 
     institutions = service.list_institutions()
     result = [
-        InstitutionResponse.from_institution_dict(inst).model_dump()
+        InstitutionDTO(
+            id=inst["id"],
+            name=inst["name"],
+            institution_type=inst["institution_type"],
+            interest_rate_bps=inst.get("interest_rate_bps"),
+            supported_features_json=inst.get("supported_features_json"),
+            created_at=inst.get("created_at"),
+            updated_at=inst.get("updated_at"),
+        )
         for inst in institutions
     ]
     _timed_log("GET /institutions", None, (time.monotonic() - start) * 1000)
@@ -407,8 +473,8 @@ def create_institution(request: InstitutionCreateRequest) -> dict[str, Any]:
     return {"success": True, "institution_id": institution_id}
 
 
-@router.get("/institutions/{institution_id}")
-def get_institution(institution_id: str) -> dict[str, Any]:
+@router.get("/institutions/{institution_id}", response_model=InstitutionDTO)
+def get_institution(institution_id: str) -> InstitutionDTO:
     """Get institution details via AccountService."""
     start = time.monotonic()
     service = AccountService()
@@ -425,7 +491,15 @@ def get_institution(institution_id: str) -> dict[str, Any]:
             )
             raise NotFoundError(f"Institution {institution_id} not found")
 
-        result = InstitutionResponse.from_institution_dict(institution).model_dump()
+        result = InstitutionDTO(
+            id=institution["id"],
+            name=institution["name"],
+            institution_type=institution["institution_type"],
+            interest_rate_bps=institution.get("interest_rate_bps"),
+            supported_features_json=institution.get("supported_features_json"),
+            created_at=institution.get("created_at"),
+            updated_at=institution.get("updated_at"),
+        )
         _timed_log(
             "GET /institutions/{id}", institution_id, (time.monotonic() - start) * 1000
         )
@@ -540,14 +614,23 @@ def unlink_accounts(
     return {"success": True}
 
 
-@router.get("/accounts/{account_id}/links")
-def get_linked_accounts(account_id: int | str) -> list[dict[str, Any]]:
+@router.get("/accounts/{account_id}/links", response_model=list[AccountLinkDTO])
+def get_linked_accounts(account_id: int | str) -> list[AccountLinkDTO]:
     """Get all accounts linked to the given account via AccountService."""
     start = time.monotonic()
     service = AccountService()
 
     links = service.get_linked_accounts(str(account_id))
-    result = [AccountLinkResponse.from_link_dict(link).model_dump() for link in links]
+    result = [
+        AccountLinkDTO(
+            id=str(link["id"]),
+            primary_account_id=str(link["primary_account_id"]),
+            linked_account_id=str(link["linked_account_id"]),
+            relationship_type=link["relationship_type"],
+            created_at=link.get("created_at"),
+        )
+        for link in links
+    ]
     _timed_log(
         "GET /accounts/{id}/links", account_id, (time.monotonic() - start) * 1000
     )

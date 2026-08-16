@@ -1,0 +1,90 @@
+{
+  "program": "Program E — Quality Gate Root Cause Isolation",
+  "comparison": {
+    "repository_state": {
+      "ci": {
+        "commit": "08fdea463d9a36d05685c1bb63053dd1b9ca1e5a",
+        "changed_files": 2,
+        "changed_files_list": [
+          "runtime/generated/cross-layer-map-v2.json",
+          "runtime/generated/knowledge-index.json"
+        ],
+        "untracked_ignored_files": [
+          "backend/src/core/db/__init__.py",
+          "backend/src/core/db/config.py",
+          "backend/src/core/db/connection.py",
+          "backend/src/core/db/schema.py",
+          "backend/src/core/db/transaction.py",
+          "backend/src/core/db/health.py"
+        ]
+      },
+      "local": {
+        "commit": "08fdea463d9a36d05685c1bb63053dd1b9ca1e5a",
+        "uncommitted_changes": 19,
+        "untracked_files": 2,
+        "untracked_ignored_files_present": [
+          "backend/src/core/db/__init__.py",
+          "backend/src/core/db/config.py",
+          "backend/src/core/db/connection.py",
+          "backend/src/core/db/schema.py",
+          "backend/src/core/db/transaction.py",
+          "backend/src/core/db/health.py"
+        ]
+      }
+    },
+    "environment": {
+      "ci": {
+        "python": "3.12.13 (hostedtoolcache)",
+        "python_command": "python",
+        "runner_os": "ubuntu-latest",
+        "working_directory": "/home/runner/work/ClariFin_OS/ClariFin_OS",
+        "shell": "/usr/bin/bash -e {0}",
+        "pytest_version": "8.3.0 (pinned in backend/requirements.txt)",
+        "installed_dependencies": "Pinned versions from backend/requirements.txt via pip install -r backend/requirements.txt"
+      },
+      "local": {
+        "python": "3.12.3",
+        "python_command": "python3",
+        "runner_os": "linux",
+        "working_directory": "/home/vasantha/AI-Projects/ClariFin_OS",
+        "shell": "bash",
+        "pytest_version": "9.0.2 (system-wide, not pinned)",
+        "installed_dependencies": "Mixed: system packages + editable install of root package + unpinned backend deps"
+      }
+    },
+    "generated_artifacts": {
+      "ci": {
+        "verification_report": "NOT GENERATED (job failed before upload steps)",
+        "execution_artifacts": "NOT UPLOADED (upload steps skipped due to failure)",
+        "note": "Bootstrap action regenerates cross-layer-map.json and knowledge-index.json, causing 2 tracked files to appear as changed."
+      },
+      "local": {
+        "verification_report": "runtime/generated/verification-report.md (stale — generated from previous commit state)",
+        "verification_cache": "runtime/generated/verification-cache.json (stale — last_commit=22ed278d)",
+        "execution_artifacts": "runtime/generated/execution/ (empty due to Executor cleanup bug)"
+      }
+    },
+    "divergence_points": [
+      {
+        "point": "Repository cleanliness",
+        "ci": "Clean checkout at 08fdea46. Missing backend/src/core/db/ files.",
+        "local": "Dirty working tree with untracked, ignored backend/src/core/db/ files present on disk."
+      },
+      {
+        "point": "Changed file count",
+        "ci": "2 (generated artifacts from bootstrap)",
+        "local": "19 modified + 2 untracked (working tree changes)"
+      },
+      {
+        "point": "Pytest version",
+        "ci": "8.3.0 (pinned)",
+        "local": "9.0.2 (unpinned)"
+      },
+      {
+        "point": "pythonpath handling",
+        "ci": "pytest 8.3.0 loads conftest plugins before applying pythonpath from pyproject.toml",
+        "local": "pytest 9.0.2 applies pythonpath early enough for plugin imports"
+      }
+    ]
+  }
+}

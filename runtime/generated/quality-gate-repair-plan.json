@@ -1,0 +1,22 @@
+{
+  "program": "Program E — Quality Gate Root Cause Isolation",
+  "repair_plan": {
+    "primary_root_cause": "Repository cleanliness — critical backend/src/core/db/ package files exist locally but are not tracked in git due to .gitignore rule 'src/' (line 89).",
+    "affected_files": [
+      "backend/src/core/db/__init__.py",
+      "backend/src/core/db/config.py",
+      "backend/src/core/db/connection.py",
+      "backend/src/core/db/schema.py",
+      "backend/src/core/db/transaction.py",
+      "backend/src/core/db/health.py",
+      ".gitignore"
+    ],
+    "smallest_possible_correction": "Add backend/src/core/db/*.py to git. The .gitignore rule 'src/' (line 89) is overly broad and matches backend/src/ at any level. Change it to '/src/' so it only ignores a root-level src/ directory. Then git add the 6 db package files.",
+    "expected_blast_radius": "Low. Only affects backend test execution in clean environments. No runtime logic, no verification logic, no workflow changes.",
+    "verification_required_after_repair": [
+      "git checkout main && git clean -fdx && python runtime/verify.py quick must return exit code 0",
+      "Verify backend/src/core/db/ files are tracked: git ls-files backend/src/core/db/ should list all 6 files",
+      "Verify .gitignore no longer ignores backend/src/core/db/: git check-ignore -v backend/src/core/db/schema.py should return no output"
+    ]
+  }
+}

@@ -1,0 +1,655 @@
+{
+  "generated_at": "2026-08-08T18:38:20.239100",
+  "engine_count": 12,
+  "canonical_architecture": "package-preferred; single-file only for small cohesive engines",
+  "engines": {
+    "account_engine": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE",
+      "entry_point": "engines/account_engine/__init__.py",
+      "implementation_module_count": 6,
+      "services": [
+        "backend/src/services/account_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/accounts.py",
+        "backend/src/routers/managed_accounts.py"
+      ],
+      "repositories": [
+        "account_balance_repository",
+        "account_link_repository",
+        "account_repository",
+        "institution_repository"
+      ],
+      "capabilities": [
+        "useAccountsCapability"
+      ],
+      "tests": [
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/unit/engines/account/test_account_engine.py"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/account_service.py"
+        ]
+      }
+    },
+    "behaviour_engine": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE",
+      "entry_point": "engines/behaviour_engine/__init__.py",
+      "implementation_module_count": 17,
+      "services": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/dashboard_service.py",
+        "backend/src/services/import_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/dashboard.py",
+        "backend/src/routers/import_router.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "reconciliation_repository",
+        "transaction_repository"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "tests": [
+        "backend/tests/capability/pattern_analysis/test_capability.py",
+        "backend/tests/properties/behaviour/test_engine_properties.py",
+        "backend/tests/properties/recommendations/test_engine_properties.py",
+        "backend/tests/unit/engines/behavior/test_behavior_engine.py",
+        "backend/tests/unit/engines/behaviour/test_core.py",
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/behaviour/test_metrics.py",
+        "backend/tests/unit/engines/behaviour/test_patterns.py"
+      ],
+      "evidence": {
+        "import_references": 3,
+        "importer_files": [
+          "backend/src/services/behaviour_service.py",
+          "backend/src/services/dashboard_service.py",
+          "backend/src/services/import_service.py"
+        ]
+      }
+    },
+    "credit_card_engine": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE",
+      "entry_point": "engines/credit_card_engine/__init__.py",
+      "implementation_module_count": 7,
+      "services": [
+        "backend/src/services/credit_card_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/credit_cards.py"
+      ],
+      "repositories": [
+        "credit_card_repository",
+        "credit_card_statement_repository"
+      ],
+      "capabilities": [
+        "useCreditCardsCapability"
+      ],
+      "tests": [
+        "backend/tests/properties/credit_card_engine/__init__.py",
+        "backend/tests/properties/credit_card_engine/test_billing_properties.py",
+        "backend/tests/properties/credit_card_engine/test_emi_properties.py",
+        "backend/tests/properties/credit_card_engine/test_interest_properties.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/credit_card_service.py"
+        ]
+      }
+    },
+    "financial_events": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
+      "entry_point": "engines/financial_events/__init__.py",
+      "implementation_module_count": 1,
+      "services": [
+        "backend/src/services/financial_events_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/financial_events.py"
+      ],
+      "repositories": [
+        "financial_event_repository"
+      ],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/financial_events/__init__.py",
+        "backend/tests/capability/financial_events/test_capability.py",
+        "backend/tests/capability/financial_events/test_revocation.py",
+        "backend/tests/contract/generated/test_financial_events.py",
+        "backend/tests/invariants/financial_events.py",
+        "backend/tests/properties/financial_events/__init__.py",
+        "backend/tests/properties/financial_events/test_engine_properties.py",
+        "backend/tests/properties/financial_events/test_lineage_properties.py",
+        "backend/tests/unit/engines/financial_events/__init__.py",
+        "backend/tests/unit/engines/financial_events/test_financial_events.py"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/financial_events_service.py"
+        ]
+      }
+    },
+    "financial_intelligence": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
+      "entry_point": "engines/financial_intelligence/__init__.py",
+      "implementation_module_count": 7,
+      "services": [
+        "backend/src/services/financial_intelligence_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "repositories": [
+        "financial_event_repository",
+        "financial_goal_repository"
+      ],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/properties/forecasting/test_engine_properties.py"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/financial_intelligence_service.py"
+        ]
+      }
+    },
+    "loan_engine": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE",
+      "entry_point": "engines/loan_engine/__init__.py",
+      "implementation_module_count": 8,
+      "services": [
+        "backend/src/services/loan_analysis_service.py",
+        "backend/src/services/loan_service.py",
+        "backend/src/services/loan_simulation_service.py",
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/loans.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_payment_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "capabilities": [
+        "useLoansCapability"
+      ],
+      "tests": [
+        "backend/tests/properties/lending/test_engine_properties.py",
+        "backend/tests/properties/loan_engine/__init__.py",
+        "backend/tests/properties/loan_engine/test_amortization_properties.py",
+        "backend/tests/properties/loan_engine/test_emi_properties.py",
+        "backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+        "backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+        "backend/tests/properties/loan_engine/test_metrics_properties.py",
+        "backend/tests/properties/loan_engine/test_prepayment_properties.py",
+        "backend/tests/unit/engines/loan/test_amortization.py",
+        "backend/tests/unit/engines/loan/test_loan_engine.py"
+      ],
+      "evidence": {
+        "import_references": 8,
+        "importer_files": [
+          "backend/src/engines/credit_card_engine/billing.py",
+          "backend/src/engines/credit_card_engine/foreclosure.py",
+          "backend/src/engines/financial_intelligence/scenario.py",
+          "backend/src/models/loan_simulation.py",
+          "backend/src/services/loan_analysis_service.py",
+          "backend/src/services/loan_service.py",
+          "backend/src/services/loan_simulation_service.py",
+          "backend/src/services/transaction_intelligence_service.py"
+        ]
+      }
+    },
+    "recommendation_engine": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE",
+      "entry_point": "engines/recommendation_engine/__init__.py",
+      "implementation_module_count": 1,
+      "services": [
+        "backend/src/services/behaviour_service.py",
+        "backend/src/services/recommendation_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/behaviour.py",
+        "backend/src/routers/financial_intelligence.py"
+      ],
+      "repositories": [
+        "account_repository",
+        "behaviour_repository",
+        "credit_card_repository",
+        "loan_repository",
+        "pattern_repository",
+        "transaction_repository"
+      ],
+      "capabilities": [
+        "useBehaviourCapability"
+      ],
+      "tests": [
+        "backend/tests/unit/engines/behaviour/test_integration.py",
+        "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+      ],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/services/behaviour_service.py",
+          "backend/src/services/recommendation_service.py"
+        ]
+      }
+    },
+    "transaction_intelligence": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "CANONICAL_PACKAGE_INTERNAL",
+      "entry_point": "engines/transaction_intelligence/__init__.py",
+      "implementation_module_count": 4,
+      "services": [
+        "backend/src/services/transaction_intelligence_service.py"
+      ],
+      "routers": [],
+      "repositories": [
+        "account_repository",
+        "credit_card_repository",
+        "financial_event_repository",
+        "liquidity_pattern_repository",
+        "loan_repository",
+        "statement_repository",
+        "transaction_classification_repository",
+        "transaction_repository"
+      ],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/transaction_intelligence/__init__.py",
+        "backend/tests/capability/transaction_intelligence/test_capability.py",
+        "backend/tests/properties/credit_cards/test_engine_properties.py",
+        "backend/tests/properties/transaction_intelligence/__init__.py",
+        "backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+        "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/transaction_intelligence_service.py"
+        ]
+      }
+    },
+    "balance_engine": {
+      "canonical_style": "single_file",
+      "legacy_style": true,
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL",
+      "entry_point": "engines/balance_engine.py",
+      "implementation_module_count": 0,
+      "services": [
+        "backend/src/services/statement_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/cards_statements.py"
+      ],
+      "repositories": [
+        "statement_repository"
+      ],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/invariants/test_determinism.py"
+      ],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/engines/balance_engine.py",
+          "backend/src/services/statement_service.py"
+        ]
+      }
+    },
+    "cashflow_engine": {
+      "canonical_style": "single_file",
+      "legacy_style": true,
+      "migration_status": "ORPHAN_INTERNAL",
+      "entry_point": "engines/cashflow_engine.py",
+      "implementation_module_count": 0,
+      "services": [],
+      "routers": [],
+      "repositories": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/capability/household_cashflow/test_capability.py",
+        "backend/tests/properties/cashflow/test_engine_properties.py"
+      ],
+      "evidence": {
+        "import_references": 0,
+        "importer_files": []
+      }
+    },
+    "ledger_audit_engine": {
+      "canonical_style": "single_file",
+      "legacy_style": true,
+      "migration_status": "CANONICAL_SINGLE_FILE_INTERNAL",
+      "entry_point": "engines/ledger_audit_engine.py",
+      "implementation_module_count": 0,
+      "services": [
+        "backend/src/services/audit_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/audit.py"
+      ],
+      "repositories": [],
+      "capabilities": [],
+      "tests": [
+        "backend/tests/audits/test_audit_minimal.py"
+      ],
+      "evidence": {
+        "import_references": 1,
+        "importer_files": [
+          "backend/src/services/audit_service.py"
+        ]
+      }
+    },
+    "reconciliation_engine": {
+      "canonical_style": "single_file",
+      "legacy_style": true,
+      "migration_status": "CANONICAL_SINGLE_FILE",
+      "entry_point": "engines/reconciliation_engine.py",
+      "implementation_module_count": 0,
+      "services": [
+        "backend/src/services/reconciliation_service.py"
+      ],
+      "routers": [
+        "backend/src/routers/reconciliation.py"
+      ],
+      "repositories": [
+        "reconciliation_repository"
+      ],
+      "capabilities": [
+        "useReconciliationCapability"
+      ],
+      "tests": [
+        "backend/tests/invariants/test_reconciliation_determinism.py",
+        "backend/tests/invariants/test_reconciliation_properties.py",
+        "backend/tests/properties/reconciliation/test_engine_properties.py",
+        "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+      ],
+      "evidence": {
+        "import_references": 2,
+        "importer_files": [
+          "backend/src/engines/reconciliation_engine.py",
+          "backend/src/services/reconciliation_service.py"
+        ]
+      }
+    },
+    "engines_namespace_facade": {
+      "canonical_style": "package",
+      "legacy_style": false,
+      "migration_status": "FACADE",
+      "entry_point": "backend/src/engines/__init__.py",
+      "note": "Re-exports balance_engine public API; namespace facade."
+    }
+  },
+  "report": {
+    "legacy_engines": [
+      "balance_engine",
+      "cashflow_engine",
+      "ledger_audit_engine",
+      "reconciliation_engine"
+    ],
+    "partially_migrated_engines": [],
+    "duplicate_engines": [],
+    "parked_engines": [],
+    "orphan_engines": [
+      "cashflow_engine"
+    ],
+    "facade_engines": [
+      {
+        "path": "backend/src/engines/__init__.py",
+        "note": "Re-exports balance_engine public API; namespace facade."
+      }
+    ],
+    "implementation_only_modules": [
+      {
+        "engine": "account_engine",
+        "module": "backend/src/engines/account_engine/balance.py"
+      },
+      {
+        "engine": "account_engine",
+        "module": "backend/src/engines/account_engine/cashflow.py"
+      },
+      {
+        "engine": "account_engine",
+        "module": "backend/src/engines/account_engine/dormant.py"
+      },
+      {
+        "engine": "account_engine",
+        "module": "backend/src/engines/account_engine/history.py"
+      },
+      {
+        "engine": "account_engine",
+        "module": "backend/src/engines/account_engine/lifecycle.py"
+      },
+      {
+        "engine": "account_engine",
+        "module": "backend/src/engines/account_engine/metrics.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/account.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/cashflow.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/core.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/credit_dependency.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/debt.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/income.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/insights.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/lifestyle.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/nudges.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/patterns.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/profile.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/resilience.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/savings.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/stress.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/temporal.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/utils.py"
+      },
+      {
+        "engine": "behaviour_engine",
+        "module": "backend/src/engines/behaviour_engine/wellness.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/billing.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/emi.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/foreclosure.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/interest.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/metrics.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/outstanding.py"
+      },
+      {
+        "engine": "credit_card_engine",
+        "module": "backend/src/engines/credit_card_engine/utilization.py"
+      },
+      {
+        "engine": "financial_events",
+        "module": "backend/src/engines/financial_events/lineage_walker.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/forecasting.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/goal_planner.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/intelligence.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/models.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/optimization.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/scenario.py"
+      },
+      {
+        "engine": "financial_intelligence",
+        "module": "backend/src/engines/financial_intelligence/utils.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/amortization.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/emi.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/floating_rate.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/foreclosure.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/metrics.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/models.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/prepayment.py"
+      },
+      {
+        "engine": "loan_engine",
+        "module": "backend/src/engines/loan_engine/utils.py"
+      },
+      {
+        "engine": "recommendation_engine",
+        "module": "backend/src/engines/recommendation_engine/recommendations.py"
+      },
+      {
+        "engine": "transaction_intelligence",
+        "module": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py"
+      },
+      {
+        "engine": "transaction_intelligence",
+        "module": "backend/src/engines/transaction_intelligence/cc_payment_detector.py"
+      },
+      {
+        "engine": "transaction_intelligence",
+        "module": "backend/src/engines/transaction_intelligence/detector_result.py"
+      },
+      {
+        "engine": "transaction_intelligence",
+        "module": "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
+      }
+    ],
+    "implementation_only_module_count": 51
+  },
+  "notes": [
+    "8 of 12 canonical engines are PACKAGES; 4 are single-file.",
+    "Single-file engines kept (balance_engine, cashflow_engine, ledger_audit_engine, reconciliation_engine) are small/cohesive.",
+    "behaviour_engine migration is COMPLETE: the canonical package is the only implementation; legacy behavior_engine.py, nudge_engine.py and insight_generator.py were removed and their behaviour now lives in behaviour_engine/nudges.py and behaviour_engine/insights.py.",
+    "cashflow_engine is a canonical single-file engine backing the household_cashflow capability (previously mis-recorded as parked).",
+    "transaction_intelligence, financial_events, financial_intelligence have NO capability owner (internal engines); they are CANONICAL_PACKAGE_INTERNAL."
+  ]
+}

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { formatINR } from '@/lib/utils/format';
 import { ChartContainer } from '@/components/ui/chart-container';
 import { ExplainButton } from '@/components/ui/explain-button';
@@ -25,12 +24,6 @@ interface CashflowChartProps {
 }
 
 export function CashflowChart({ months = 6 }: CashflowChartProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const { data, isLoading, isError, refetch } = useCashflow(months);
 
   // Format paise value for chart display
@@ -47,12 +40,6 @@ export function CashflowChart({ months = 6 }: CashflowChartProps) {
 
   // Check for empty data safely utilizing Zod structural parameters
   const isEmpty = !data || !data.months || data.months.length === 0;
-
-  if (!mounted) {
-    return (
-      <ChartContainer isLoading={true} isError={false} isEmpty={false} children={null} />
-    );
-  }
 
   return (
     <div className="w-full">

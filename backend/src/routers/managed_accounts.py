@@ -6,7 +6,6 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from src.errors import NotFoundError
-from src.repositories.account_repository import AccountRepository
 from src.services.account_service import AccountService
 
 router = APIRouter(prefix="/api", tags=["accounts"])
@@ -38,8 +37,8 @@ class AccountUpdate(BaseModel):
 def api_get_managed_accounts() -> dict[str, Any]:
     """Get all persistently stored accounts."""
     try:
-        repo = AccountRepository()
-        accounts = repo.get_all_accounts()
+        service = AccountService()
+        accounts = service.list_accounts()
         return {"accounts": accounts, "total": len(accounts)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
@@ -49,8 +48,8 @@ def api_get_managed_accounts() -> dict[str, Any]:
 def api_create_managed_account(account: AccountCreate) -> dict[str, Any]:
     """Create a new persistent account."""
     try:
-        repo = AccountRepository()
-        created = repo.create_account(
+        service = AccountService()
+        created = service.create_account(
             name=account.name,
             bank=account.bank,
             account_type=account.account_type,
@@ -69,8 +68,8 @@ def api_update_managed_account(
 ) -> dict[str, Any]:
     """Update an existing account."""
     try:
-        repo = AccountRepository()
-        updated = repo.update_account(
+        service = AccountService()
+        updated = service.update_account(
             account_id,
             **{k: v for k, v in account.model_dump().items() if v is not None},
         )
@@ -87,8 +86,8 @@ def api_update_managed_account(
 def api_delete_managed_account(account_id: str) -> dict[str, Any]:
     """Soft delete an account."""
     try:
-        repo = AccountRepository()
-        success = repo.delete_account(account_id)
+        service = AccountService()
+        success = service.deactivate_account(account_id)
         if not success:
             raise NotFoundError(f"Account {account_id} not found")
         return {"success": True}

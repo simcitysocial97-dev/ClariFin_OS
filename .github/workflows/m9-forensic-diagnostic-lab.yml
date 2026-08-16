@@ -1,0 +1,608 @@
+name: M9 Forensic Diagnostic Lab
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostician:
+    name: M9 Forensic Evidence Collection
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout exact PR commit with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Capture immutable GitHub context
+        run: |
+          set -u
+
+          mkdir -p runtime/generated/evidence
+
+          {
+            echo "=== GITHUB CONTEXT ==="
+            echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
+            echo "GITHUB_REF=$GITHUB_REF"
+            echo "GITHUB_REF_NAME=$GITHUB_REF_NAME"
+            echo "GITHUB_HEAD_REF=$GITHUB_HEAD_REF"
+            echo "GITHUB_BASE_REF=$GITHUB_BASE_REF"
+            echo "GITHUB_SHA=$GITHUB_SHA"
+            echo "PR_BASE_SHA=${{ github.event.pull_request.base.sha }}"
+            echo "PR_HEAD_SHA=${{ github.event.pull_request.head.sha }}"
+            echo "PR_NUMBER=${{ github.event.pull_request.number }}"
+            echo
+            echo "=== COMMITS ==="
+            git rev-parse HEAD
+            git rev-parse "${{ github.event.pull_request.head.sha }}"
+            git rev-parse "${{ github.event.pull_request.base.sha }}"
+            echo
+            echo "=== STATUS ==="
+            git status --short --branch
+            echo
+            echo "=== REMOTES ==="
+            git remote -v
+            echo
+            echo "=== REFS ==="
+            git show-ref
+            echo
+            echo "=== RECENT HISTORY ==="
+            git log --oneline --decorate --graph -20
+          } > runtime/generated/evidence/git-topology.txt
+
+      - name: Fetch exact PR base commit
+        run: |
+          set -euxo pipefail
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+
+          git cat-file -e "$BASE_SHA^{commit}"
+
+          echo "BASE_SHA=$BASE_SHA" \
+            > runtime/generated/evidence/base-resolution.txt
+
+          {
+            echo "BASE_SHA=$BASE_SHA"
+            echo "BASE_COMMIT:"
+            git show -s --format=fuller "$BASE_SHA"
+            echo
+            echo "HEAD_COMMIT:"
+            git show -s --format=fuller HEAD
+            echo
+            echo "MERGE_BASE:"
+            git merge-base HEAD "$BASE_SHA" || echo "MERGE_BASE_NOT_FOUND"
+          } >> runtime/generated/evidence/base-resolution.txt
+
+      - name: Compare all Git changed-file calculations
+        run: |
+          set +e
+
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+          OUT="runtime/generated/evidence/git-diff-comparison.txt"
+
+          {
+            echo "=================================================="
+            echo "EXACT PR BASE / HEAD"
+            echo "=================================================="
+            echo "BASE=$BASE_SHA"
+            echo "HEAD=$HEAD_SHA"
+            echo
+
+            echo "=================================================="
+            echo "A: THREE-DOT BASE...HEAD"
+            echo "=================================================="
+            git diff --name-only "$BASE_SHA...$HEAD_SHA"
+            echo
+            echo "COUNT:"
+            git diff --name-only "$BASE_SHA...$HEAD_SHA" | wc -l
+            echo
+
+            echo "=================================================="
+            echo "B: TWO-TREE BASE HEAD"
+            echo "=================================================="
+            git diff --name-only "$BASE_SHA" "$HEAD_SHA"
+            echo
+            echo "COUNT:"
+            git diff --name-only "$BASE_SHA" "$HEAD_SHA" | wc -l
+            echo
+
+            echo "=================================================="
+            echo "C: MERGE-BASE...HEAD"
+            echo "=================================================="
+            MERGE_BASE="$(git merge-base "$HEAD_SHA" "$BASE_SHA")"
+            echo "MERGE_BASE=$MERGE_BASE"
+            git diff --name-only "$MERGE_BASE...$HEAD_SHA"
+            echo
+            echo "COUNT:"
+            git diff --name-only "$MERGE_BASE...$HEAD_SHA" | wc -l
+            echo
+
+            echo "=================================================="
+            echo "D: GITHUB_BASE_REF"
+            echo "=================================================="
+            if [ -n "${GITHUB_BASE_REF:-}" ]; then
+              git diff --name-only "origin/$GITHUB_BASE_REF...$HEAD_SHA"
+              echo
+              echo "COUNT:"
+              git diff --name-only "origin/$GITHUB_BASE_REF...$HEAD_SHA" | wc -l
+            else
+              echo "GITHUB_BASE_REF is empty"
+            fi
+          } > "$OUT"
+
+          exit 0
+
+      - name: Capture verify.py source and configuration
+        run: |
+          {
+            echo "=== verify.py identity ==="
+            sha256sum runtime/verify.py
+            git status --short runtime/verify.py
+
+            echo
+            echo "=== orchestrator.py identity ==="
+            sha256sum runtime/foundation/verification/orchestrator.py
+            git status --short runtime/foundation/verification/orchestrator.py
+
+            echo
+            echo "=== executor.py identity ==="
+            sha256sum runtime/foundation/verification/executor.py
+            git status --short runtime/foundation/verification/executor.py
+
+            echo
+            echo "=== Relevant orchestrator functions ==="
+            grep -nE \
+              '_resolve_base_ref|_collect_changed_files|changed_files|timeout|execute|VerificationReport|to_markdown' \
+              runtime/foundation/verification/orchestrator.py || true
+
+            echo
+            echo "=== verify.py relevant functions ==="
+            grep -nE \
+              'changed_files|base_ref|GITHUB_BASE_REF|GITHUB_SHA|VerificationReport|profile|timeout' \
+              runtime/verify.py || true
+          } > runtime/generated/evidence/verification-source.txt
+
+      - name: Capture Python environment
+        run: |
+          {
+            echo "=== SYSTEM ==="
+            uname -a
+            echo
+
+            echo "=== PYTHON ==="
+            python --version
+            which python
+            python -c 'import sys; print(sys.executable)'
+            echo
+
+            echo "=== PIP ==="
+            python -m pip --version
+            python -m pip list
+            echo
+
+            echo "=== ENVIRONMENT VARIABLES ==="
+            env | sort | grep -E \
+              '^(CI|GITHUB_|RUNNER_|PYTHON|PATH|HOME|VIRTUAL_ENV|LANG|LC_)' \
+              || true
+          } > runtime/generated/evidence/environment.txt
+
+      - name: Bootstrap runtime
+        run: |
+          set -euxo pipefail
+
+          if [ -f runtime/bootstrap.sh ]; then
+            bash runtime/bootstrap.sh
+          elif [ -f scripts/bootstrap.sh ]; then
+            bash scripts/bootstrap.sh
+          elif [ -f pyproject.toml ]; then
+            # M10: single dependency authority (root pyproject.toml).
+            python -m pip install -e ".[all]"
+          else
+            echo "No bootstrap mechanism found"
+          fi
+
+          # Tooling is installed via [all] extras in the single authority.
+
+      - name: Verify runtime dependency health
+        run: |
+          set +e
+
+          {
+            echo "=== IMPORT CHECKS ==="
+
+            python - <<'PY'
+            import sys
+
+            modules = [
+                "pytest",
+                "ruff",
+                "mypy",
+                "black",
+            ]
+
+            for name in modules:
+                try:
+                    mod = __import__(name)
+                    print(f"{name}: OK {getattr(mod, '__version__', 'unknown')}")
+                except Exception as exc:
+                    print(f"{name}: FAIL {type(exc).__name__}: {exc}")
+
+            print(f"python: {sys.version}")
+          PY
+
+            echo
+            echo "=== EXECUTABLES ==="
+            command -v pytest || true
+            command -v ruff || true
+            command -v mypy || true
+            command -v black || true
+            command -v node || true
+            command -v npm || true
+          } > runtime/generated/evidence/dependency-health.txt
+
+          exit 0
+
+      # ── Black differential diagnosis ──────────────────────────────────────────
+
+      - name: Black identity and configuration
+        run: |
+          {
+            echo "=== BLACK IDENTITY ==="
+            black --version
+            echo
+            python --version
+            which black
+            python -c 'import black,sys; print(black.__file__); print(sys.version)'
+            echo
+            echo "=== BLACK CONFIG (pyproject.toml [tool.black]) ==="
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+          p = Path('backend/pyproject.toml')
+          if p.exists():
+              data = tomllib.loads(p.read_text())
+              if 'tool' in data and 'black' in data['tool']:
+                  import json
+                  print(json.dumps(data['tool']['black'], indent=2))
+              else:
+                  print('No [tool.black] section found')
+          else:
+              print('backend/pyproject.toml not found')
+          PY
+            echo
+            echo "=== REPO ROOT ==="
+            pwd
+            realpath .
+            realpath backend
+          } > runtime/generated/evidence/black-version.txt
+
+      - name: Black file inventory
+        run: |
+          {
+            echo "=== FILE INVENTORY (from backend/) ==="
+            cd backend
+            echo "Total files:"
+            find . -type f | wc -l
+            echo "Python files:"
+            find . -type f -name '*.py' | wc -l
+            echo "Symlinks:"
+            find . -type l | wc -l
+            echo
+            echo "=== SYMLINKS ==="
+            find . -type l -ls
+            echo
+            echo "=== TRACKED VS DISK ==="
+            cd ..
+            echo "git ls-files backend:"
+            git ls-files backend | wc -l
+            echo "find backend -type f:"
+            find backend -type f | wc -l
+            echo
+            echo "=== GIT STATUS ==="
+            git status --short
+            echo
+            echo "=== GIT DIFF STAT ==="
+            git diff --stat
+            echo
+            echo "=== GIT DIFF -- backend ==="
+            git diff -- backend
+          } > runtime/generated/evidence/black-file-inventory.txt
+
+      - name: Git working-tree cleanliness before Black
+        run: |
+          set +e
+          {
+            echo "=== BEFORE BLACK ==="
+            git status --porcelain=v1
+            echo
+            echo "=== PYTHON FILE HASHES (sample) ==="
+            cd backend
+            find . -name '*.py' -type f | sort | head -20 | xargs md5sum 2>/dev/null || true
+          } > runtime/generated/evidence/git-state-before-black.txt
+          exit 0
+
+      - name: Black check matrix — four invocations
+        run: |
+          set +e
+          {
+            echo "=================================================="
+            echo "BLACK CHECK MATRIX"
+            echo "=================================================="
+            echo
+
+            for cmd in \
+              "black --check ." \
+              "black --check --diff ." \
+              "python -m black --check ." \
+              "python -m black --check --diff ."
+            do
+              echo "--------------------------------------------------"
+              echo "CMD: $cmd"
+              echo "--------------------------------------------------"
+              cd backend
+              START=$(date +%s%N)
+              stdout_file=$(mktemp /tmp/black-matrix-stdout.XXXXXX)
+              stderr_file=$(mktemp /tmp/black-matrix-stderr.XXXXXX)
+              eval "$cmd" >"$stdout_file" 2>"$stderr_file"
+              EXIT=$?
+              END=$(date +%s%N)
+              DURATION_NS=$((END - START))
+              DURATION_S=$(python3 -c "print($DURATION_NS / 1_000_000_000)")
+              echo "EXIT=$EXIT"
+              echo "DURATION=${DURATION_S}s"
+              echo "--- STDOUT ---"
+              cat "$stdout_file"
+              echo "--- STDERR ---"
+              cat "$stderr_file"
+              echo
+              rm -f "$stdout_file" "$stderr_file"
+            done
+          } > runtime/generated/evidence/black-check-matrix.txt
+
+      - name: Black run_fast_checks diagnostic
+        run: |
+          set +e
+          {
+            echo "=== run_fast_checks.sh identity ==="
+            sed -n '1,240p' .github/scripts/run_fast_checks.sh
+            echo
+            echo "=== SYNTAX CHECK ==="
+            bash -n .github/scripts/run_fast_checks.sh && echo "SYNTAX OK" || echo "SYNTAX ERROR"
+            echo
+            echo "=== FILE TYPE ==="
+            file .github/scripts/run_fast_checks.sh
+            echo
+            echo "=== HIDDEN CHARACTERS (first 20 lines) ==="
+            sed -n '1,20l' .github/scripts/run_fast_checks.sh
+            echo
+            echo "=== BLACK EXIT FROM run_fast_checks.sh ==="
+            cd backend
+            set +e
+            black --check --diff . \
+              > /tmp/black-fc-stdout.txt \
+              2> /tmp/black-fc-stderr.txt
+            BLACK_EXIT=$?
+            set -e
+            echo "BLACK_EXIT=$BLACK_EXIT"
+            echo "=== STDOUT ==="
+            cat /tmp/black-fc-stdout.txt
+            echo "=== STDERR ==="
+            cat /tmp/black-fc-stderr.txt
+            rm -f /tmp/black-fc-stdout.txt /tmp/black-fc-stderr.txt
+          } > runtime/generated/evidence/fast-check-black-diag.txt
+
+      - name: Shell behaviour differential
+        run: |
+          set +e
+          {
+            echo "=== SHELL BEHAVIOUR DIFFERENTIAL ==="
+            echo
+
+            for shell_invocation in \
+              "bash .github/scripts/run_fast_checks.sh" \
+              "bash -x .github/scripts/run_fast_checks.sh" \
+              "bash -c 'bash .github/scripts/run_fast_checks.sh'" \
+              "/bin/sh -c 'bash .github/scripts/run_fast_checks.sh'"
+            do
+              echo "--------------------------------------------------"
+              echo "INVOCATION: $shell_invocation"
+              echo "--------------------------------------------------"
+              START=$(date +%s%N)
+              stdout_file=$(mktemp /tmp/shell-test-stdout.XXXXXX)
+              stderr_file=$(mktemp /tmp/shell-test-stderr.XXXXXX)
+              eval "$shell_invocation" >"$stdout_file" 2>"$stderr_file"
+              EXIT=$?
+              END=$(date +%s%N)
+              DURATION_NS=$((END - START))
+              DURATION_S=$(python3 -c "print($DURATION_NS / 1_000_000_000)")
+              echo "EXIT=$EXIT"
+              echo "DURATION=${DURATION_S}s"
+              echo "--- STDOUT (last 100 lines) ---"
+              tail -100 "$stdout_file"
+              echo "--- STDERR (last 50 lines) ---"
+              tail -50 "$stderr_file"
+              echo
+              rm -f "$stdout_file" "$stderr_file"
+            done
+          } > runtime/generated/evidence/shell-differential.txt
+
+      - name: Run verify.py quick with complete capture
+        continue-on-error: true
+        run: |
+          set +e
+
+          START=$(date +%s)
+
+          python runtime/verify.py quick \
+            > runtime/generated/evidence/verify-quick.stdout.log 2>&1
+
+          EXIT_CODE=$?
+
+          END=$(date +%s)
+
+          {
+            echo "profile=quick"
+            echo "exit_code=$EXIT_CODE"
+            echo "duration_seconds=$((END-START))"
+          } > runtime/generated/evidence/verify-quick.result
+
+          exit 0
+
+      - name: Run verify.py backend with complete capture
+        continue-on-error: true
+        run: |
+          set +e
+
+          START=$(date +%s)
+
+          python runtime/verify.py backend \
+            > runtime/generated/evidence/verify-backend.stdout.log 2>&1
+
+          EXIT_CODE=$?
+
+          END=$(date +%s)
+
+          {
+            echo "profile=backend"
+            echo "exit_code=$EXIT_CODE"
+            echo "duration_seconds=$((END-START))"
+          } > runtime/generated/evidence/verify-backend.result
+
+          exit 0
+
+      - name: Git working-tree cleanliness after diagnostics
+        run: |
+          {
+            echo "=== AFTER DIAGNOSTICS ==="
+            git status --porcelain=v1
+            echo
+            echo "=== GIT DIFF -- backend ==="
+            git diff -- backend
+          } > runtime/generated/evidence/git-state-after.txt
+
+      - name: Produce machine-readable diagnostic summary
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import subprocess
+
+          evidence = Path("runtime/generated/evidence")
+          evidence.mkdir(parents=True, exist_ok=True)
+
+          def read(path):
+              p = evidence / path
+              return p.read_text(errors="replace") if p.exists() else None
+
+          def command(cmd):
+              try:
+                  result = subprocess.run(
+                      cmd,
+                      text=True,
+                      capture_output=True,
+                      timeout=30,
+                  )
+                  return {
+                      "returncode": result.returncode,
+                      "stdout": result.stdout,
+                      "stderr": result.stderr,
+                  }
+              except Exception as exc:
+                  return {
+                      "error": f"{type(exc).__name__}: {exc}"
+                  }
+
+          summary = {
+              "github": {
+                  "repository": "${{ github.repository }}",
+                  "run_id": "${{ github.run_id }}",
+                  "run_attempt": "${{ github.run_attempt }}",
+                  "event": "${{ github.event_name }}",
+                  "pr_number": "${{ github.event.pull_request.number }}",
+                  "base_sha": "${{ github.event.pull_request.base.sha }}",
+                  "head_sha": "${{ github.event.pull_request.head.sha }}",
+              },
+              "git": {
+                  "head": command(["git", "rev-parse", "HEAD"]),
+                  "status": command(["git", "status", "--short", "--branch"]),
+                  "merge_base": command([
+                      "git", "merge-base",
+                      "${{ github.event.pull_request.head.sha }}",
+                      "${{ github.event.pull_request.base.sha }}"
+                  ]),
+              },
+              "verification": {
+                  "quick_result": read("verify-quick.result"),
+                  "backend_result": read("verify-backend.result"),
+                  "quick_stdout": read("verify-quick.stdout.log"),
+                  "backend_stdout": read("verify-backend.stdout.log"),
+                  "report": read("../verification-report.md"),
+              },
+              "black": {
+                  "version": read("black-version.txt"),
+                  "matrix": read("black-check-matrix.txt"),
+                  "fast_check_diag": read("fast-check-black-diag.txt"),
+                  "shell_diff": read("shell-differential.txt"),
+                  "inventory": read("black-file-inventory.txt"),
+              },
+              "evidence_files": sorted(
+                  str(p.relative_to(evidence))
+                  for p in evidence.rglob("*")
+                  if p.is_file()
+              ),
+          }
+
+          (evidence / "diagnostic-summary.json").write_text(
+              json.dumps(summary, indent=2)
+          )
+          PY
+
+      - name: Capture generated verification artifacts
+        if: always()
+        run: |
+          {
+            echo "=== GENERATED FILES ==="
+            find runtime/generated \
+              -type f \
+              -printf '%p\t%s bytes\n' \
+              | sort
+
+            echo
+            echo "=== EXECUTION ARTIFACTS ==="
+            find runtime/generated/execution \
+              -type f \
+              -maxdepth 1 \
+              -print \
+              2>/dev/null \
+              | sort || true
+
+            echo
+            echo "=== VERIFICATION REPORT ==="
+            if [ -f runtime/generated/verification-report.md ]; then
+              cat runtime/generated/verification-report.md
+            else
+              echo "verification-report.md NOT FOUND"
+            fi
+          } > runtime/generated/evidence/generated-artifacts.txt
+
+      - name: Upload complete M9 forensic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m9-execution-forensic-${{ github.run_id }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            runtime/generated/evidence/
+            runtime/generated/verification-report.md
+            runtime/generated/execution/

@@ -1,0 +1,38 @@
+{
+  "fast": {
+    "duration": 0.05912971496582031,
+    "status": "PASS",
+    "tests_run": 0,
+    "tests_skipped": 0
+  },
+  "coverage": {
+    "duration": 0.3031752109527588,
+    "status": "PASS",
+    "tests_run": 0,
+    "tests_skipped": 0
+  },
+  "change_intelligence": {
+    "duration": 0.34990382194519043,
+    "status": "PASS",
+    "tests_run": 0,
+    "tests_skipped": 0
+  },
+  "mutation_readiness": {
+    "duration": 1.653446912765503,
+    "status": "PASS",
+    "tests_run": 0,
+    "tests_skipped": 0
+  },
+  "architecture": {
+    "duration": 96.05705404281616,
+    "status": "PASS",
+    "tests_run": 0,
+    "tests_skipped": 0
+  },
+  "capability": {
+    "duration": 1.630457878112793,
+    "status": "FAIL",
+    "tests_run": 0,
+    "tests_skipped": 0
+  }
+}

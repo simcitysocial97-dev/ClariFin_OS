@@ -1,0 +1,27 @@
+{
+  "scenario": "loan_dto_field_rename",
+  "description": "A field in a loan DTO is renamed, requiring mapper, capability, and endpoint updates",
+  "changed_files": [
+    "backend/src/engines/loan_engine/amortization.py",
+    "backend/src/mappers/loans_mapper.py"
+  ],
+  "expected_affected_engines": ["backend/src/engines/loan_engine/amortization.py"],
+  "expected_affected_services": ["LoanService"],
+  "expected_affected_capabilities": ["useLoansCapability"],
+  "expected_affected_mappers": ["loansMapper"],
+  "expected_affected_workspaces": ["LoansWorkspace"],
+  "expected_affected_components": ["AmortizationTable", "LoansSummary"],
+  "expected_affected_tests": [
+    "backend/tests/unit/engines/loan/test_amortization.py",
+    "backend/tests/contract/generated/test_loans.py"
+  ],
+  "expected_excluded": [
+    "dashboard",
+    "forecast",
+    "investments",
+    "cards",
+    "cashflow",
+    "behaviour",
+    "reconciliation"
+  ]
+}

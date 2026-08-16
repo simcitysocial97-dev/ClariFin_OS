@@ -1,0 +1,355 @@
+# ClariFin OS — Verification Runtime Configuration
+# This file is the single source of truth for verification settings.
+# Populated incrementally through Programs 2-10 and the Program 11.5
+# GitHub Actions consolidation.
+# Do not edit manually — use verification CLI commands.
+
+version: "1.0"
+
+# Program 1: Infrastructure foundation
+infrastructure:
+  python_version: "3.12"
+  node_version: "20"
+  cache_strategy: "dependency-hash"
+
+# Program 2: Repository Intelligence (implemented)
+intelligence:
+  enabled: true
+
+# Program 3: Verification CLI (implemented)
+cli:
+  enabled: true
+
+# Program 4: Evidence Platform (implemented)
+evidence:
+  enabled: true
+
+# Program 5: Backend Verification (current thresholds)
+backend:
+  coverage_threshold: 40
+  mutation_threshold: 60
+  paths:
+    source: "backend/src"
+    tests: "backend/tests"
+
+# Program 6: Frontend Verification (placeholder)
+frontend:
+  enabled: true
+  paths:
+    source: "frontend/src"
+    tests: "frontend/tests"
+
+# Verification workflows (authoritative). Every command is invoked through the
+# bash interpreter so scripts need not carry the executable bit in git.
+workflows:
+  quick:
+    name: "Quick Verification"
+    description: "Fast local checks (lint, typecheck, unit tests)"
+    category: "capability"
+    scope: "quick"
+    command: "bash .github/scripts/run_fast_checks.sh"
+    estimated_duration_seconds: 60
+    scopes: ["quick"]
+    capabilities: ["quick"]
+
+  backend:
+    name: "Backend Verification"
+    description: "Full backend verification suite"
+    category: "capability"
+    scope: "backend"
+    command: "bash .github/scripts/run_backend_verification.sh"
+    estimated_duration_seconds: 300
+    scopes: ["backend", "contracts", "property"]
+    capabilities: ["loan-engine", "reconciliation", "ledger"]
+
+  frontend:
+    name: "Frontend Verification"
+    description: "Full frontend verification suite"
+    category: "contract_frontend"
+    scope: "frontend"
+    command: "bash .github/scripts/run_frontend_verification.sh"
+    estimated_duration_seconds: 180
+    scopes: ["frontend", "contracts"]
+    capabilities: ["api-contracts"]
+
+  contracts:
+    name: "Contract Verification"
+    description: "Contract tests for all capabilities"
+    category: "contract"
+    scope: "contracts"
+    command: "bash .github/scripts/run_contract_tests.sh"
+    estimated_duration_seconds: 180
+    scopes: ["contracts"]
+    capabilities: ["loan-engine", "reconciliation", "ledger", "api-contracts"]
+
+  property:
+    name: "Property Testing"
+    description: "Property-based testing for loan engine"
+    category: "property"
+    scope: "property"
+    command: "bash .github/scripts/run_property_tests.sh"
+    estimated_duration_seconds: 300
+    scopes: ["property"]
+    capabilities: ["loan-engine", "reconciliation"]
+
+  mutation:
+    name: "Mutation Testing"
+    description: "Mutation testing for critical modules"
+    category: "mutation"
+    scope: "mutation"
+    command: "bash .github/scripts/run_mutation_selective.sh"
+    estimated_duration_seconds: 600
+    scopes: ["mutation"]
+    capabilities: ["mutation-analysis"]
+
+  integration:
+    name: "Integration Tests"
+    description: "End-to-end integration tests"
+    category: "integration"
+    scope: "integration"
+    command: "bash .github/scripts/run_integration_tests.sh"
+    estimated_duration_seconds: 600
+    scopes: ["integration"]
+    capabilities: ["loan-engine"]
+
+  migration:
+    name: "Migration Verification"
+    description: "Database migration verification"
+    category: "migration"
+    scope: "migration"
+    command: "bash .github/scripts/run_migration_verification.sh"
+    estimated_duration_seconds: 120
+    scopes: ["migration"]
+    capabilities: ["migrations"]
+
+  repository:
+    name: "Repository Verification"
+    description: "Full repository verification"
+    category: "architectural"
+    scope: "repository"
+    command: "bash .github/scripts/run_full_verification.sh"
+    estimated_duration_seconds: 1800
+    scopes: ["repository"]
+
+  full:
+    name: "Full Verification"
+    description: "Complete verification suite"
+    category: "architectural"
+    scope: "full"
+    command: "bash .github/scripts/run_full_verification.sh"
+    estimated_duration_seconds: 3600
+    scopes: ["full"]
+
+  runtime:
+    name: "Runtime Verification"
+    description: "Engineering Runtime self-verification"
+    category: "architectural"
+    scope: "runtime"
+    command: "bash .github/scripts/run_runtime_verification.sh"
+    estimated_duration_seconds: 120
+    scopes: ["runtime"]
+    capabilities: ["runtime-verification"]
+
+  golden:
+    name: "Golden Regression"
+    description: "Golden dataset regression tests"
+    category: "capability"
+    scope: "golden"
+    command: "bash .github/scripts/run_golden_tests.sh"
+    estimated_duration_seconds: 600
+    scopes: ["golden"]
+    capabilities: ["golden-regression"]
+
+  playwright:
+    name: "Playwright E2E"
+    description: "End-to-end browser tests"
+    category: "integration"
+    scope: "playwright"
+    command: "bash .github/scripts/run_playwright_tests.sh"
+    estimated_duration_seconds: 1800
+    scopes: ["playwright"]
+    capabilities: ["e2e-tests"]
+
+# Verification scripts
+scripts:
+  run_fast_checks:
+    name: "Fast Checks"
+    path: ".github/scripts/run_fast_checks.sh"
+    description: "Fast lint, typecheck, format and unit tests"
+    category: "capability"
+    scope: "quick"
+    estimated_duration_seconds: 60
+
+  run_contract_tests:
+    name: "Contract Tests"
+    path: ".github/scripts/run_contract_tests.sh"
+    description: "Contract tests for all capabilities"
+    category: "contract"
+    scope: "contracts"
+    estimated_duration_seconds: 180
+
+  run_backend_verification:
+    name: "Backend Verification"
+    path: ".github/scripts/run_backend_verification.sh"
+    description: "Contract, invariant and property tests for the backend"
+    category: "capability"
+    scope: "backend"
+    estimated_duration_seconds: 300
+
+  run_frontend_verification:
+    name: "Frontend Verification"
+    path: ".github/scripts/run_frontend_verification.sh"
+    description: "ESLint, TypeScript typecheck and Vitest for the frontend"
+    category: "contract_frontend"
+    scope: "frontend"
+    estimated_duration_seconds: 180
+
+  run_property_tests:
+    name: "Property Tests"
+    path: ".github/scripts/run_property_tests.sh"
+    description: "Property-based tests for loan engine"
+    category: "property"
+    scope: "property"
+    estimated_duration_seconds: 300
+
+  run_mutation_selective:
+    name: "Selective Mutation Testing"
+    path: ".github/scripts/run_mutation_selective.sh"
+    description: "Mutation testing for critical modules"
+    category: "mutation"
+    scope: "mutation"
+    estimated_duration_seconds: 600
+
+  run_migration_verification:
+    name: "Migration Verification"
+    path: ".github/scripts/run_migration_verification.sh"
+    description: "Database migration integrity checks"
+    category: "migration"
+    scope: "migration"
+    estimated_duration_seconds: 120
+
+  run_integration_tests:
+    name: "Integration Tests"
+    path: ".github/scripts/run_integration_tests.sh"
+    description: "API integration tests"
+    category: "integration"
+    scope: "integration"
+    estimated_duration_seconds: 600
+
+  run_full_verification:
+    name: "Full Verification"
+    path: ".github/scripts/run_full_verification.sh"
+    description: "Complete backend test suite"
+    category: "architectural"
+    scope: "repository"
+    estimated_duration_seconds: 1800
+
+  run_runtime_verification:
+    name: "Runtime Verification"
+    path: ".github/scripts/run_runtime_verification.sh"
+    description: "Engineering Runtime self-verification"
+    category: "architectural"
+    scope: "runtime"
+    estimated_duration_seconds: 120
+
+  run_golden_tests:
+    name: "Golden Regression Tests"
+    path: ".github/scripts/run_golden_tests.sh"
+    description: "Golden dataset regression tests"
+    category: "capability"
+    scope: "golden"
+    estimated_duration_seconds: 600
+
+  run_playwright_tests:
+    name: "Playwright E2E Tests"
+    path: ".github/scripts/run_playwright_tests.sh"
+    description: "End-to-end Playwright browser tests"
+    category: "integration"
+    scope: "playwright"
+    estimated_duration_seconds: 1800
+
+# Capabilities.
+# NOTE: requirement definitions live in runtime/foundation/verification/registry/registry.py
+# (default capabilities). This config overrides scopes/workflows/scripts/modules only;
+# requirements are inherited from the defaults and are NOT overridden here.
+capabilities:
+  loan-engine:
+    name: "Loan Engine"
+    description: "Core loan calculation engine"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/loan_engine"]
+
+  reconciliation:
+    name: "Reconciliation Engine"
+    description: "Financial reconciliation engine"
+    category: "capability"
+    scopes: ["backend", "property", "contracts", "integration", "repository"]
+    workflows: ["property", "contracts", "backend"]
+    scripts: ["run_property_tests", "run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/reconciliation_engine.py"]
+
+  ledger:
+    name: "Ledger Service"
+    description: "General ledger and accounting"
+    category: "capability"
+    scopes: ["backend", "contracts", "integration", "repository"]
+    workflows: ["contracts", "backend", "integration"]
+    scripts: ["run_contract_tests", "run_backend_verification", "run_fast_checks"]
+    modules: ["backend/src/engines/ledger_audit_engine.py"]
+
+  api-contracts:
+    name: "API Contracts"
+    description: "OpenAPI contract verification"
+    category: "contract"
+    scopes: ["contracts", "frontend", "backend", "repository"]
+    workflows: ["contracts", "frontend", "backend"]
+    scripts: ["run_contract_tests", "run_frontend_verification", "run_backend_verification"]
+    modules: ["backend/src", "frontend/src"]
+
+  migrations:
+    name: "Database Migrations"
+    description: "Database migration verification"
+    category: "migration"
+    scopes: ["migration", "backend", "repository"]
+    workflows: ["migration", "backend"]
+    scripts: ["run_migration_verification", "run_backend_verification"]
+    modules: ["backend/src/migrations"]
+
+  runtime-verification:
+    name: "Runtime Verification"
+    description: "Engineering Runtime self-verification"
+    category: "architectural"
+    scopes: ["runtime"]
+    workflows: ["runtime"]
+    scripts: ["run_runtime_verification"]
+    modules: []
+
+  golden-regression:
+    name: "Golden Regression"
+    description: "Golden dataset regression"
+    category: "capability"
+    scopes: ["golden"]
+    workflows: ["golden"]
+    scripts: ["run_golden_tests"]
+    modules: []
+
+  mutation-analysis:
+    name: "Mutation Analysis"
+    description: "Mutation testing for critical modules"
+    category: "mutation"
+    scopes: ["mutation"]
+    workflows: ["mutation"]
+    scripts: ["run_mutation_selective"]
+    modules: []
+
+  e2e-tests:
+    name: "End-to-End Tests"
+    description: "End-to-end browser tests"
+    category: "integration"
+    scopes: ["playwright"]
+    workflows: ["playwright"]
+    scripts: ["run_playwright_tests"]
+    modules: []

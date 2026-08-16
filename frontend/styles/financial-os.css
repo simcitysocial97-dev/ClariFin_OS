@@ -111,13 +111,23 @@
     --shadow-selected: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-floating: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
     --shadow-overlay: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Spec-compliant elevation aliases (map to shadow tokens) */
+    --elevation-0: var(--shadow-none);
+    --elevation-1: var(--shadow-raised);
+    --elevation-2: var(--shadow-interactive);
+    --elevation-3: var(--shadow-selected);
+    --elevation-4: var(--shadow-floating);
+    --elevation-5: var(--shadow-overlay);
   }
 
   /* ===== Z-Index Scale ===== */
   :root {
     --z-base: 0;
+    --z-raised: 10;
     --z-dropdown: 1000;
     --z-sticky: 1100;
+    --z-overlay: 1000;
     --z-fixed: 1200;
     --z-modal: 1300;
     --z-popover: 1400;
@@ -135,6 +145,16 @@
     --duration-slow: 300ms;
     --duration-slower: 400ms;
     --duration-slowest: 500ms;
+
+    /* Spec-compliant numeric duration aliases (map to named tokens) */
+    --duration-0: var(--duration-instant);
+    --duration-1: var(--duration-fastest);
+    --duration-2: var(--duration-faster);
+    --duration-3: var(--duration-fast);
+    --duration-4: var(--duration-normal);
+    --duration-5: var(--duration-slow);
+    --duration-6: var(--duration-slower);
+    --duration-7: var(--duration-slowest);
   }
 
   /* ===== Easing ===== */
@@ -412,6 +432,30 @@
   }
 
   /* === Display Typography === */
+  .fin-h1 {
+    font-family: var(--font-display, var(--font-sans));
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
+  .fin-h2 {
+    font-family: var(--font-sans);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
+  .fin-h3 {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text-primary);
+  }
+
   .fin-label {
     font-family: var(--font-sans);
     font-size: var(--fs-sm);
@@ -875,6 +919,14 @@
     --density-font-size: 14px;
   }
 
+  .fin-density-spacious {
+    --density-table-row-height: 56px;
+    --density-panel-padding: 16px;
+    --density-icon-size: 18px;
+    --density-font-size: 14px;
+  }
+
+  /* Alias for backward compatibility */
   .fin-density-analytical {
     --density-table-row-height: 48px;
     --density-panel-padding: 16px;
@@ -899,5 +951,63 @@
     width: 1px;
     height: 1px;
     overflow: hidden;
+  }
+
+  /* ===== Focus-Visible States ===== */
+  a:focus-visible,
+  button:focus-visible,
+  [tabindex]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Table row focus (inset) */
+  tr:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: -2px;
+  }
+
+  /* Card/surface focus */
+  .fin-surface:focus-visible,
+  .fin-surface-raised:focus-visible,
+  .fin-surface-interactive:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Dialog/Modal accessibility */
+  [role="dialog"]:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: -2px;
+  }
+
+  /* Command palette input focus */
+  [data-command-input]:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* ===== Responsive Breakpoints ===== */
+
+  /* Desktop (>=1280px): Full layout — no overrides needed */
+
+  /* Tablet (768-1279px): Collapse left rail, hide household name */
+  @media (max-width: 1279px) {
+    :root {
+      --left-rail-width: 56px;
+    }
+  }
+
+  /* Mobile (<768px): Full-width workspace, panels as drawers */
+  @media (max-width: 767px) {
+    :root {
+      --left-rail-width: 0px;
+      --inspector-min: 0px;
+      --inspector-max: 0px;
+      --timeline-height: 0px;
+    }
   }
 }

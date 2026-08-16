@@ -9,6 +9,7 @@
 
 import { createContext, useContext, useMemo, useCallback, useState } from 'react';
 import type { SearchResult, SearchResultType } from '@/lib/interaction/interaction-types';
+import type { WorkspaceName } from '@/lib/workspace';
 import { commandCenterRuntime } from '@/lib/command-center';
 
 // ===== Context Types =====
@@ -54,7 +55,7 @@ export function SearchProvider({ children }: SearchProviderProps) {
           id: node.id,
           type: node.type as SearchResultType,
           label: node.label,
-          workspace: node.workspace as any,
+          workspace: node.workspace as WorkspaceName,
           value_paise: node.value_paise,
           metadata: node.metadata,
         });

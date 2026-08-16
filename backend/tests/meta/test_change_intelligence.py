@@ -23,7 +23,7 @@ def test_cif_generates_reports() -> None:
     result = subprocess.run(
         [
             sys.executable,
-            "backend/tools/change_intelligence.py",
+            "tools/development/change_intelligence.py",
             "backend/src/engines/cashflow_engine.py",
         ],
         cwd=PROJECT_ROOT,
@@ -183,7 +183,7 @@ def test_overall_risk_computed() -> None:
 def test_empty_changes_handled() -> None:
     """CIF must handle empty changes gracefully."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/change_intelligence.py"],
+        [sys.executable, "tools/development/change_intelligence.py"],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,
@@ -201,7 +201,11 @@ def test_empty_changes_handled() -> None:
 def test_unknown_file_handling() -> None:
     """Files not in capability graph should get UNKNOWN capability and LOW confidence."""
     result = subprocess.run(
-        [sys.executable, "backend/tools/change_intelligence.py", "some_random_file.py"],
+        [
+            sys.executable,
+            "tools/development/change_intelligence.py",
+            "some_random_file.py",
+        ],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True,

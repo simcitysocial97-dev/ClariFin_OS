@@ -170,14 +170,5 @@ export {
   type ForecastNavigationViewModel,
 } from './forecast-view-model';
 
-// Financial types
-export {
-  type NetWorth,
-  type NetWorthTrendResponse,
-  type MonthlyCashflowResponse,
-  type CashflowBreakdown,
-  type BehaviorScore,
-} from './financial';
-
 // API types
 export { type paths, type components, type operations } from './api-generated';

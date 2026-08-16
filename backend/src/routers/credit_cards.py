@@ -12,18 +12,23 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from src.core.dtos.credit_cards_dto import (
+    CreditCardSummaryDTO,
+    EmiConversionDTO,
+    ForeclosureDTO,
+    StatementDTO,
+)
+from src.core.mappers.credit_card_mapper import CreditCardMapper
 from src.errors import NotFoundError
 from src.models.credit_card import (
     CreditCardCreateRequest,
-    CreditCardResponse,
     CreditCardUpdateRequest,
 )
-from src.models.credit_card_emi import EmiConversionRequest, EmiConversionResponse
-from src.models.credit_card_foreclosure import ForeclosureRequest, ForeclosureResponse
+from src.models.credit_card_emi import EmiConversionRequest
+from src.models.credit_card_foreclosure import ForeclosureRequest
 from src.models.credit_card_statement import (
     PaymentRecordRequest,
     StatementGenerateRequest,
-    StatementResponse,
 )
 from src.services.credit_card_service import CreditCardService
 
@@ -64,25 +69,25 @@ def _timed_log(
 # ============================================================
 
 
-@router.get("/credit-cards")
-def list_cards() -> list[dict[str, Any]]:
+@router.get("/credit-cards", response_model=list[CreditCardSummaryDTO])
+def list_cards() -> list[CreditCardSummaryDTO]:
     """Get all active credit cards."""
     start = time.monotonic()
     service = CreditCardService()
     cards = service.list_cards()
-    result = [CreditCardResponse.from_card_dict(card).model_dump() for card in cards]
+    result = CreditCardMapper.to_list_dto(cards)
     _timed_log("GET /credit-cards", None, (time.monotonic() - start) * 1000)
     return result
 
 
-@router.get("/credit-cards/{card_id}")
-def get_card(card_id: str) -> dict[str, Any]:
+@router.get("/credit-cards/{card_id}", response_model=CreditCardSummaryDTO)
+def get_card(card_id: str) -> CreditCardSummaryDTO:
     """Get credit card details."""
     start = time.monotonic()
     service = CreditCardService()
     try:
         card = service.get_card(card_id)
-        result = CreditCardResponse.from_card_dict(card).model_dump()
+        result = CreditCardMapper.to_dto(card)
         _timed_log("GET /credit-cards/{id}", card_id, (time.monotonic() - start) * 1000)
         return result
     except ValueError as e:
@@ -182,29 +187,27 @@ def deactivate_card(card_id: str) -> dict[str, Any]:
 # ============================================================
 
 
-@router.get("/credit-cards/{card_id}/statements")
-def list_statements(card_id: str, limit: int = 12) -> list[dict[str, Any]]:
+@router.get("/credit-cards/{card_id}/statements", response_model=list[StatementDTO])
+def list_statements(card_id: str, limit: int = 12) -> list[StatementDTO]:
     """Get statement history for a card."""
     start = time.monotonic()
     service = CreditCardService()
     statements = service.list_statements(card_id, limit)
-    result = [StatementResponse.from_statement_dict(s).model_dump() for s in statements]
+    result = CreditCardMapper.to_statement_list_dto(statements)
     _timed_log(
         "GET /credit-cards/{id}/statements", card_id, (time.monotonic() - start) * 1000
     )
     return result
 
 
-@router.post("/credit-cards/{card_id}/statements")
-def generate_statement(
-    card_id: str, request: StatementGenerateRequest
-) -> dict[str, Any]:
+@router.post("/credit-cards/{card_id}/statements", response_model=StatementDTO)
+def generate_statement(card_id: str, request: StatementGenerateRequest) -> StatementDTO:
     """Generate a new statement for a credit card."""
     start = time.monotonic()
     service = CreditCardService()
     try:
         statement = service.generate_statement(card_id, request.statement_date)
-        result = StatementResponse.from_statement_dict(statement).model_dump()
+        result = CreditCardMapper.to_statement_dto(statement)
         _timed_log(
             "POST /credit-cards/{id}/statements",
             card_id,
@@ -326,8 +329,8 @@ def get_next_statement_date(card_id: str) -> dict[str, str]:
 # ============================================================
 
 
-@router.post("/credit-cards/{card_id}/payments")
-def record_payment(card_id: str, request: PaymentRecordRequest) -> dict[str, Any]:
+@router.post("/credit-cards/{card_id}/payments", response_model=StatementDTO)
+def record_payment(card_id: str, request: PaymentRecordRequest) -> StatementDTO:
     """Record a payment on the latest open statement."""
     start = time.monotonic()
     service = CreditCardService()
@@ -337,7 +340,7 @@ def record_payment(card_id: str, request: PaymentRecordRequest) -> dict[str, Any
             amount_paise=request.amount_paise,
             payment_date=request.payment_date,
         )
-        result = StatementResponse.from_statement_dict(statement).model_dump()
+        result = CreditCardMapper.to_statement_dto(statement)
         _timed_log(
             "POST /credit-cards/{id}/payments",
             card_id,
@@ -360,11 +363,11 @@ def record_payment(card_id: str, request: PaymentRecordRequest) -> dict[str, Any
 # ============================================================
 
 
-@router.post("/credit-cards/{card_id}/emi-conversion")
+@router.post("/credit-cards/{card_id}/emi-conversion", response_model=EmiConversionDTO)
 def convert_to_emi(
     card_id: str,
     request: EmiConversionRequest,
-) -> dict[str, int]:
+) -> EmiConversionDTO:
     """Convert a purchase to EMI.
 
     Delegates via credit_card_engine -> loan_engine.
@@ -379,12 +382,12 @@ def convert_to_emi(
             tenure_months=request.tenure_months,
             annual_rate_bps=request.annual_rate_bps,
         )
-        response = EmiConversionResponse(
+        response = EmiConversionDTO(
             emi_paise=result.emi_paise,
             total_interest_paise=result.total_interest_paise,
             total_repayment_paise=result.total_repayment_paise,
             monthly_interest_paise=result.monthly_interest_paise,
-        ).model_dump()
+        )
         _timed_log(
             "POST /credit-cards/{id}/emi-conversion",
             card_id,
@@ -407,11 +410,11 @@ def convert_to_emi(
 # ============================================================
 
 
-@router.post("/credit-cards/{card_id}/foreclosure")
+@router.post("/credit-cards/{card_id}/foreclosure", response_model=ForeclosureDTO)
 def quote_foreclosure(
     card_id: str,
     request: ForeclosureRequest,
-) -> dict[str, int]:
+) -> ForeclosureDTO:
     """Quote foreclosure payoff for a credit card EMI.
 
     Delegates via credit_card_engine -> loan_engine.
@@ -424,12 +427,12 @@ def quote_foreclosure(
             remaining_months=request.remaining_months,
             penalty_bps=request.penalty_bps,
         )
-        response = ForeclosureResponse(
+        response = ForeclosureDTO(
             foreclosure_amount_paise=result.foreclosure_amount_paise,
             outstanding_paise=result.outstanding_paise,
             accrued_interest_paise=result.accrued_interest_paise,
             penalty_paise=result.penalty_paise,
-        ).model_dump()
+        )
         _timed_log(
             "POST /credit-cards/{id}/foreclosure",
             card_id,

@@ -1,0 +1,26 @@
+{
+  "scenario": "capability_mapper_mismatch",
+  "description": "Capability and mapper are out of sync after a rename",
+  "changed_files": [
+    "backend/src/mappers/loans_mapper.py",
+    "frontend/lib/capabilities/useLoansCapability.ts"
+  ],
+  "expected_affected_mappers": ["loansMapper"],
+  "expected_affected_capabilities": ["useLoansCapability"],
+  "expected_affected_workspaces": ["LoansWorkspace"],
+  "expected_affected_components": ["AmortizationTable", "LoansSummary"],
+  "expected_affected_tests": [
+    "backend/tests/unit/engines/loan/test_amortization.py",
+    "backend/tests/contract/generated/test_loans.py"
+  ],
+  "expected_excluded": [
+    "dashboard",
+    "forecast",
+    "investments",
+    "cards",
+    "cashflow",
+    "behaviour",
+    "reconciliation",
+    "account_engine"
+  ]
+}

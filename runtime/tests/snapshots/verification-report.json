@@ -1,0 +1,57 @@
+# Verification Report
+
+**Profile:** quick
+**Generated:** 2026-01-01T00:00:00+00:00
+**Overall Status:** passed
+
+## Changed Files
+
+- `backend/src/engines/loan_engine/amortization.py`
+
+## Blast Radius
+
+- **affected_engines**: ['backend/src/engines/loan_engine/amortization.py']
+- **affected_services**: ['LoanService']
+- **affected_capabilities**: ['useLoansCapability']
+- **affected_tests**: ['backend/tests/unit/engines/loan/test_amortization.py', 'backend/tests/contract/generated/test_loans.py']
+
+## Verification Plan
+
+- **Plan ID:** plan-20260101-000000
+- **Scope:** quick
+- **Targets:** 9
+- **Steps:** 3
+- **Estimated Duration:** 540s
+
+## Tasks Executed
+
+| Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
+|---------|---------|--------|------|----------|-------|--------|--------|
+| step-0001 | no-op | VerificationStatus.SKIPPED |  | 0.0s |  |  |  |
+| step-0002 | no-op | VerificationStatus.SKIPPED |  | 0.0s |  |  |  |
+| step-0003 | no-op | VerificationStatus.SKIPPED |  | 0.0s |  |  |  |
+
+## Results Summary
+
+- **Passed:** 0
+- **Failed:** 0
+- **Skipped:** 3
+- **Total Duration:** 0.0s
+
+
+## Dependency Chains (Program 7A)
+
+### backend/src/engines/loan_engine/amortization.py
+- Engine: backend/src/engines/loan_engine/amortization.py
+- Services: LoanService
+- Endpoints: GET /api/loans/{loan_id}/schedule
+- Capabilities: useLoansCapability
+- Tests: 2 affected
+
+## Evidence Files
+
+No evidence files generated.
+
+## Recommendations
+
+- Review changes in affected engines: backend/src/engines/loan_engine/amortization.py

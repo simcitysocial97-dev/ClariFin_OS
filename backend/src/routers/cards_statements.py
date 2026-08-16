@@ -7,7 +7,6 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from src.common import format_inr, parse_date
-from src.repositories import StatementRepository
 from src.services.statement_service import StatementService
 
 router = APIRouter(prefix="/api", tags=["cards", "statements"])
@@ -17,8 +16,8 @@ router = APIRouter(prefix="/api", tags=["cards", "statements"])
 def get_statements() -> list[dict[str, Any]]:
     """Get all statements with metadata."""
     try:
-        repo = StatementRepository()
-        raw = repo.get_all_statements_with_metadata()
+        service = StatementService()
+        raw = service.repo.get_all_statements_with_metadata()
 
         statements = []
         for stmt in raw:
@@ -106,8 +105,8 @@ def get_cards() -> dict[str, Any]:
     Returns one entry per unique card with latest statement data.
     """
     try:
-        repo = StatementRepository()
-        raw = repo.get_all_statements_with_metadata()
+        service = StatementService()
+        raw = service.repo.get_all_statements_with_metadata()
 
         # Group statements by (bank, card_last4)
         card_groups: dict[tuple[str, str], list[Any]] = defaultdict(list)

@@ -60,6 +60,7 @@ from src.routers import (
     dashboard,
     export,
     financial_events,
+    financial_intelligence,
     forecast,
     import_router,
     investments,
@@ -88,6 +89,11 @@ app.include_router(cashflow_workspace.router)
 app.include_router(dashboard.router)
 app.include_router(export.router)
 app.include_router(financial_events.router)
+app.include_router(
+    financial_intelligence.router,
+    prefix="/api/v1",
+    tags=["financial-intelligence"],
+)
 app.include_router(forecast.router)
 app.include_router(import_router.router)
 app.include_router(investments.router)

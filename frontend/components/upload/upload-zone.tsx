@@ -14,8 +14,8 @@ import { cn } from '@/lib/utils';
 let parseStatement: any;
 const loadParser = async () => {
   if (!parseStatement) {
-    const module = await import('@/lib/parser');
-    parseStatement = module.parseStatement;
+    const mod = await import('@/lib/parser');
+    parseStatement = mod.parseStatement;
   }
   return parseStatement;
 };

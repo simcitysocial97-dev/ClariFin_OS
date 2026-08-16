@@ -1,0 +1,2554 @@
+{
+  "generated_at": "2026-08-08T18:38:19.818445",
+  "description": "Ownership graph: every edge has evidence. Ownership != execution.",
+  "node_count": 169,
+  "edge_count": 201,
+  "nodes": [
+    {
+      "id": "engine:account_engine",
+      "type": "Engine",
+      "label": "account_engine"
+    },
+    {
+      "id": "engine:account_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/account_engine/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/balance.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/balance.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/cashflow.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/cashflow.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/dormant.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/dormant.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/history.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/history.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/lifecycle.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/lifecycle.py"
+    },
+    {
+      "id": "module:backend/src/engines/account_engine/metrics.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/account_engine/metrics.py"
+    },
+    {
+      "id": "service:backend/src/services/account_service.py",
+      "type": "Service",
+      "label": "backend/src/services/account_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/accounts.py",
+      "type": "Router",
+      "label": "backend/src/routers/accounts.py"
+    },
+    {
+      "id": "router:backend/src/routers/managed_accounts.py",
+      "type": "Router",
+      "label": "backend/src/routers/managed_accounts.py"
+    },
+    {
+      "id": "repository:account_balance_repository",
+      "type": "Repository",
+      "label": "account_balance_repository"
+    },
+    {
+      "id": "repository:account_link_repository",
+      "type": "Repository",
+      "label": "account_link_repository"
+    },
+    {
+      "id": "repository:account_repository",
+      "type": "Repository",
+      "label": "account_repository"
+    },
+    {
+      "id": "repository:institution_repository",
+      "type": "Repository",
+      "label": "institution_repository"
+    },
+    {
+      "id": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/behaviour/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/account/test_account_engine.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/account/test_account_engine.py"
+    },
+    {
+      "id": "engine:behaviour_engine",
+      "type": "Engine",
+      "label": "behaviour_engine"
+    },
+    {
+      "id": "engine:behaviour_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/behaviour_engine/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/account.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/account.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/cashflow.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/cashflow.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/core.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/core.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/credit_dependency.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/credit_dependency.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/debt.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/debt.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/income.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/income.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/insights.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/insights.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/lifestyle.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/lifestyle.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/nudges.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/patterns.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/patterns.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/profile.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/profile.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/resilience.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/resilience.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/savings.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/savings.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/stress.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/stress.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/temporal.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/temporal.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/utils.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/utils.py"
+    },
+    {
+      "id": "module:backend/src/engines/behaviour_engine/wellness.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/behaviour_engine/wellness.py"
+    },
+    {
+      "id": "service:backend/src/services/behaviour_service.py",
+      "type": "Service",
+      "label": "backend/src/services/behaviour_service.py"
+    },
+    {
+      "id": "service:backend/src/services/dashboard_service.py",
+      "type": "Service",
+      "label": "backend/src/services/dashboard_service.py"
+    },
+    {
+      "id": "service:backend/src/services/import_service.py",
+      "type": "Service",
+      "label": "backend/src/services/import_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/behaviour.py",
+      "type": "Router",
+      "label": "backend/src/routers/behaviour.py"
+    },
+    {
+      "id": "router:backend/src/routers/dashboard.py",
+      "type": "Router",
+      "label": "backend/src/routers/dashboard.py"
+    },
+    {
+      "id": "router:backend/src/routers/import_router.py",
+      "type": "Router",
+      "label": "backend/src/routers/import_router.py"
+    },
+    {
+      "id": "repository:behaviour_repository",
+      "type": "Repository",
+      "label": "behaviour_repository"
+    },
+    {
+      "id": "repository:credit_card_repository",
+      "type": "Repository",
+      "label": "credit_card_repository"
+    },
+    {
+      "id": "repository:loan_repository",
+      "type": "Repository",
+      "label": "loan_repository"
+    },
+    {
+      "id": "repository:pattern_repository",
+      "type": "Repository",
+      "label": "pattern_repository"
+    },
+    {
+      "id": "repository:reconciliation_repository",
+      "type": "Repository",
+      "label": "reconciliation_repository"
+    },
+    {
+      "id": "repository:transaction_repository",
+      "type": "Repository",
+      "label": "transaction_repository"
+    },
+    {
+      "id": "test:backend/tests/capability/pattern_analysis/test_capability.py",
+      "type": "Test",
+      "label": "backend/tests/capability/pattern_analysis/test_capability.py"
+    },
+    {
+      "id": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/recommendations/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behavior/test_behavior_engine.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behaviour/test_core.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behaviour/test_core.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behaviour/test_integration.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behaviour/test_integration.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behaviour/test_metrics.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/behaviour/test_patterns.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/behaviour/test_patterns.py"
+    },
+    {
+      "id": "engine:credit_card_engine",
+      "type": "Engine",
+      "label": "credit_card_engine"
+    },
+    {
+      "id": "engine:credit_card_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/credit_card_engine/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/billing.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/billing.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/emi.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/emi.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/foreclosure.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/foreclosure.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/interest.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/interest.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/metrics.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/metrics.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/outstanding.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/outstanding.py"
+    },
+    {
+      "id": "module:backend/src/engines/credit_card_engine/utilization.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/credit_card_engine/utilization.py"
+    },
+    {
+      "id": "service:backend/src/services/credit_card_service.py",
+      "type": "Service",
+      "label": "backend/src/services/credit_card_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/credit_cards.py",
+      "type": "Router",
+      "label": "backend/src/routers/credit_cards.py"
+    },
+    {
+      "id": "repository:credit_card_statement_repository",
+      "type": "Repository",
+      "label": "credit_card_statement_repository"
+    },
+    {
+      "id": "test:backend/tests/properties/credit_card_engine/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/properties/credit_card_engine/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/properties/credit_card_engine/test_billing_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/credit_card_engine/test_billing_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/credit_card_engine/test_emi_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/credit_card_engine/test_emi_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/credit_card_engine/test_interest_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/credit_card_engine/test_interest_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/credit_cards/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/credit_cards/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/lending/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/lending/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/credit_card/test_credit_card_engine.py"
+    },
+    {
+      "id": "engine:financial_events",
+      "type": "Engine",
+      "label": "financial_events"
+    },
+    {
+      "id": "engine:financial_events:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/financial_events/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_events/lineage_walker.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_events/lineage_walker.py"
+    },
+    {
+      "id": "service:backend/src/services/financial_events_service.py",
+      "type": "Service",
+      "label": "backend/src/services/financial_events_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/financial_events.py",
+      "type": "Router",
+      "label": "backend/src/routers/financial_events.py"
+    },
+    {
+      "id": "repository:financial_event_repository",
+      "type": "Repository",
+      "label": "financial_event_repository"
+    },
+    {
+      "id": "test:backend/tests/capability/financial_events/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/capability/financial_events/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/capability/financial_events/test_capability.py",
+      "type": "Test",
+      "label": "backend/tests/capability/financial_events/test_capability.py"
+    },
+    {
+      "id": "test:backend/tests/capability/financial_events/test_revocation.py",
+      "type": "Test",
+      "label": "backend/tests/capability/financial_events/test_revocation.py"
+    },
+    {
+      "id": "test:backend/tests/contract/generated/test_financial_events.py",
+      "type": "Test",
+      "label": "backend/tests/contract/generated/test_financial_events.py"
+    },
+    {
+      "id": "test:backend/tests/invariants/financial_events.py",
+      "type": "Test",
+      "label": "backend/tests/invariants/financial_events.py"
+    },
+    {
+      "id": "test:backend/tests/properties/financial_events/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/properties/financial_events/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/properties/financial_events/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/financial_events/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/financial_events/test_lineage_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/financial_events/test_lineage_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/financial_events/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/financial_events/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/financial_events/test_financial_events.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/financial_events/test_financial_events.py"
+    },
+    {
+      "id": "engine:financial_intelligence",
+      "type": "Engine",
+      "label": "financial_intelligence"
+    },
+    {
+      "id": "engine:financial_intelligence:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/financial_intelligence/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/forecasting.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/forecasting.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/goal_planner.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/goal_planner.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/intelligence.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/intelligence.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/models.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/models.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/optimization.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/optimization.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/scenario.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/scenario.py"
+    },
+    {
+      "id": "module:backend/src/engines/financial_intelligence/utils.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/financial_intelligence/utils.py"
+    },
+    {
+      "id": "service:backend/src/services/financial_intelligence_service.py",
+      "type": "Service",
+      "label": "backend/src/services/financial_intelligence_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/financial_intelligence.py",
+      "type": "Router",
+      "label": "backend/src/routers/financial_intelligence.py"
+    },
+    {
+      "id": "repository:financial_goal_repository",
+      "type": "Repository",
+      "label": "financial_goal_repository"
+    },
+    {
+      "id": "test:backend/tests/properties/forecasting/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/forecasting/test_engine_properties.py"
+    },
+    {
+      "id": "engine:loan_engine",
+      "type": "Engine",
+      "label": "loan_engine"
+    },
+    {
+      "id": "engine:loan_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/loan_engine/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/amortization.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/amortization.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/emi.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/emi.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/floating_rate.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/floating_rate.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/foreclosure.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/foreclosure.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/metrics.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/metrics.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/models.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/models.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/prepayment.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/prepayment.py"
+    },
+    {
+      "id": "module:backend/src/engines/loan_engine/utils.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/loan_engine/utils.py"
+    },
+    {
+      "id": "service:backend/src/services/loan_analysis_service.py",
+      "type": "Service",
+      "label": "backend/src/services/loan_analysis_service.py"
+    },
+    {
+      "id": "service:backend/src/services/loan_service.py",
+      "type": "Service",
+      "label": "backend/src/services/loan_service.py"
+    },
+    {
+      "id": "service:backend/src/services/loan_simulation_service.py",
+      "type": "Service",
+      "label": "backend/src/services/loan_simulation_service.py"
+    },
+    {
+      "id": "service:backend/src/services/transaction_intelligence_service.py",
+      "type": "Service",
+      "label": "backend/src/services/transaction_intelligence_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/loans.py",
+      "type": "Router",
+      "label": "backend/src/routers/loans.py"
+    },
+    {
+      "id": "repository:liquidity_pattern_repository",
+      "type": "Repository",
+      "label": "liquidity_pattern_repository"
+    },
+    {
+      "id": "repository:loan_payment_repository",
+      "type": "Repository",
+      "label": "loan_payment_repository"
+    },
+    {
+      "id": "repository:statement_repository",
+      "type": "Repository",
+      "label": "statement_repository"
+    },
+    {
+      "id": "repository:transaction_classification_repository",
+      "type": "Repository",
+      "label": "transaction_classification_repository"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/test_amortization_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/test_amortization_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/test_emi_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/test_emi_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/test_floating_rate_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/test_foreclosure_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/test_metrics_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/test_metrics_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/loan_engine/test_prepayment_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/loan_engine/test_prepayment_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/loan/test_amortization.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/loan/test_amortization.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/loan/test_loan_engine.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/loan/test_loan_engine.py"
+    },
+    {
+      "id": "engine:recommendation_engine",
+      "type": "Engine",
+      "label": "recommendation_engine"
+    },
+    {
+      "id": "engine:recommendation_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/recommendation_engine/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/recommendation_engine/recommendations.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/recommendation_engine/recommendations.py"
+    },
+    {
+      "id": "service:backend/src/services/recommendation_service.py",
+      "type": "Service",
+      "label": "backend/src/services/recommendation_service.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/recommendation/test_recommendation_engine.py"
+    },
+    {
+      "id": "engine:transaction_intelligence",
+      "type": "Engine",
+      "label": "transaction_intelligence"
+    },
+    {
+      "id": "engine:transaction_intelligence:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/transaction_intelligence/__init__.py"
+    },
+    {
+      "id": "module:backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/transaction_intelligence/cash_conversion_detector.py"
+    },
+    {
+      "id": "module:backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/transaction_intelligence/cc_payment_detector.py"
+    },
+    {
+      "id": "module:backend/src/engines/transaction_intelligence/detector_result.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/transaction_intelligence/detector_result.py"
+    },
+    {
+      "id": "module:backend/src/engines/transaction_intelligence/loan_emi_detector.py",
+      "type": "EngineModule",
+      "label": "backend/src/engines/transaction_intelligence/loan_emi_detector.py"
+    },
+    {
+      "id": "test:backend/tests/capability/transaction_intelligence/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/capability/transaction_intelligence/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/capability/transaction_intelligence/test_capability.py",
+      "type": "Test",
+      "label": "backend/tests/capability/transaction_intelligence/test_capability.py"
+    },
+    {
+      "id": "test:backend/tests/properties/transaction_intelligence/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/properties/transaction_intelligence/__init__.py"
+    },
+    {
+      "id": "test:backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/transaction_intelligence/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/transaction_intelligence/__init__.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/transaction_intelligence/__init__.py"
+    },
+    {
+      "id": "engine:balance_engine",
+      "type": "Engine",
+      "label": "balance_engine"
+    },
+    {
+      "id": "engine:balance_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/balance_engine.py"
+    },
+    {
+      "id": "service:backend/src/services/statement_service.py",
+      "type": "Service",
+      "label": "backend/src/services/statement_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/cards_statements.py",
+      "type": "Router",
+      "label": "backend/src/routers/cards_statements.py"
+    },
+    {
+      "id": "test:backend/tests/invariants/test_determinism.py",
+      "type": "Test",
+      "label": "backend/tests/invariants/test_determinism.py"
+    },
+    {
+      "id": "engine:cashflow_engine",
+      "type": "Engine",
+      "label": "cashflow_engine"
+    },
+    {
+      "id": "engine:cashflow_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/cashflow_engine.py"
+    },
+    {
+      "id": "test:backend/tests/capability/household_cashflow/test_capability.py",
+      "type": "Test",
+      "label": "backend/tests/capability/household_cashflow/test_capability.py"
+    },
+    {
+      "id": "test:backend/tests/properties/cashflow/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/cashflow/test_engine_properties.py"
+    },
+    {
+      "id": "engine:ledger_audit_engine",
+      "type": "Engine",
+      "label": "ledger_audit_engine"
+    },
+    {
+      "id": "engine:ledger_audit_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/ledger_audit_engine.py"
+    },
+    {
+      "id": "service:backend/src/services/audit_service.py",
+      "type": "Service",
+      "label": "backend/src/services/audit_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/audit.py",
+      "type": "Router",
+      "label": "backend/src/routers/audit.py"
+    },
+    {
+      "id": "test:backend/tests/audits/test_audit_minimal.py",
+      "type": "Test",
+      "label": "backend/tests/audits/test_audit_minimal.py"
+    },
+    {
+      "id": "engine:reconciliation_engine",
+      "type": "Engine",
+      "label": "reconciliation_engine"
+    },
+    {
+      "id": "engine:reconciliation_engine:entry",
+      "type": "EngineEntryPoint",
+      "label": "engines/reconciliation_engine.py"
+    },
+    {
+      "id": "service:backend/src/services/reconciliation_service.py",
+      "type": "Service",
+      "label": "backend/src/services/reconciliation_service.py"
+    },
+    {
+      "id": "router:backend/src/routers/reconciliation.py",
+      "type": "Router",
+      "label": "backend/src/routers/reconciliation.py"
+    },
+    {
+      "id": "test:backend/tests/invariants/test_reconciliation_determinism.py",
+      "type": "Test",
+      "label": "backend/tests/invariants/test_reconciliation_determinism.py"
+    },
+    {
+      "id": "test:backend/tests/invariants/test_reconciliation_properties.py",
+      "type": "Test",
+      "label": "backend/tests/invariants/test_reconciliation_properties.py"
+    },
+    {
+      "id": "test:backend/tests/properties/reconciliation/test_engine_properties.py",
+      "type": "Test",
+      "label": "backend/tests/properties/reconciliation/test_engine_properties.py"
+    },
+    {
+      "id": "test:backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+      "type": "Test",
+      "label": "backend/tests/unit/engines/reconciliation/test_reconciliation.py"
+    }
+  ],
+  "edges": [
+    {
+      "from": "engine:account_engine",
+      "to": "engine:account_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/account_engine/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/balance.py",
+      "relation": "owns",
+      "evidence": "engines/account_engine/__init__.py re-exports symbols from backend/src/engines/account_engine/balance.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/cashflow.py",
+      "relation": "owns",
+      "evidence": "engines/account_engine/__init__.py re-exports symbols from backend/src/engines/account_engine/cashflow.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/dormant.py",
+      "relation": "owns",
+      "evidence": "engines/account_engine/__init__.py re-exports symbols from backend/src/engines/account_engine/dormant.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/history.py",
+      "relation": "owns",
+      "evidence": "engines/account_engine/__init__.py re-exports symbols from backend/src/engines/account_engine/history.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/lifecycle.py",
+      "relation": "owns",
+      "evidence": "engines/account_engine/__init__.py re-exports symbols from backend/src/engines/account_engine/lifecycle.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "module:backend/src/engines/account_engine/metrics.py",
+      "relation": "owns",
+      "evidence": "engines/account_engine/__init__.py re-exports symbols from backend/src/engines/account_engine/metrics.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "engine:account_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/account_service.py imports engines.account_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/accounts.py",
+      "to": "service:backend/src/services/account_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/accounts.py imports service class from backend/src/services/account_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/managed_accounts.py",
+      "to": "service:backend/src/services/account_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/managed_accounts.py imports service class from backend/src/services/account_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:account_balance_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/account_service.py imports repositories.account_balance_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:account_link_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/account_service.py imports repositories.account_link_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:account_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/account_service.py imports repositories.account_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/account_service.py",
+      "to": "repository:institution_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/account_service.py imports repositories.institution_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.account_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:account_engine",
+      "to": "test:backend/tests/unit/engines/account/test_account_engine.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.account_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "engine:behaviour_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/behaviour_engine/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/account.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/account.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/cashflow.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/cashflow.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/core.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/core.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/credit_dependency.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/credit_dependency.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/debt.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/debt.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/income.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/income.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/insights.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/insights.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/lifestyle.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/lifestyle.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/nudges.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/nudges.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/patterns.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/patterns.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/profile.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/profile.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/resilience.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/resilience.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/savings.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/savings.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/stress.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/stress.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/temporal.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/temporal.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/utils.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/utils.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "module:backend/src/engines/behaviour_engine/wellness.py",
+      "relation": "owns",
+      "evidence": "engines/behaviour_engine/__init__.py re-exports symbols from backend/src/engines/behaviour_engine/wellness.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "engine:behaviour_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports engines.behaviour_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "engine:behaviour_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/dashboard_service.py imports engines.behaviour_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/import_service.py",
+      "to": "engine:behaviour_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/import_service.py imports engines.behaviour_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/behaviour.py",
+      "to": "service:backend/src/services/behaviour_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/behaviour.py imports service class from backend/src/services/behaviour_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/dashboard.py",
+      "to": "service:backend/src/services/dashboard_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/dashboard.py imports service class from backend/src/services/dashboard_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/import_router.py",
+      "to": "service:backend/src/services/import_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/import_router.py imports service class from backend/src/services/import_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:account_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.account_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:behaviour_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.behaviour_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.credit_card_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:pattern_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.pattern_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/dashboard_service.py imports repositories.reconciliation_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.transaction_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/dashboard_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/dashboard_service.py imports repositories.transaction_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/capability/pattern_analysis/test_capability.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/properties/behaviour/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/properties/recommendations/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behavior/test_behavior_engine.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_core.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_integration.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_metrics.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:behaviour_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_patterns.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.behaviour_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "engine:credit_card_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/credit_card_engine/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/billing.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/billing.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/emi.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/emi.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/foreclosure.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/foreclosure.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/interest.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/interest.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/metrics.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/metrics.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/outstanding.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/outstanding.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "module:backend/src/engines/credit_card_engine/utilization.py",
+      "relation": "owns",
+      "evidence": "engines/credit_card_engine/__init__.py re-exports symbols from backend/src/engines/credit_card_engine/utilization.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/credit_card_service.py",
+      "to": "engine:credit_card_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/credit_card_service.py imports engines.credit_card_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/credit_cards.py",
+      "to": "service:backend/src/services/credit_card_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/credit_cards.py imports service class from backend/src/services/credit_card_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/credit_card_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/credit_card_service.py imports repositories.credit_card_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/credit_card_service.py",
+      "to": "repository:credit_card_statement_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/credit_card_service.py imports repositories.credit_card_statement_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/properties/credit_card_engine/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/properties/credit_card_engine/test_billing_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/properties/credit_card_engine/test_emi_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/properties/credit_card_engine/test_interest_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/properties/credit_cards/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/properties/lending/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:credit_card_engine",
+      "to": "test:backend/tests/unit/engines/credit_card/test_credit_card_engine.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.credit_card_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "engine:financial_events:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/financial_events/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "module:backend/src/engines/financial_events/lineage_walker.py",
+      "relation": "owns",
+      "evidence": "engines/financial_events/__init__.py re-exports symbols from backend/src/engines/financial_events/lineage_walker.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/financial_events_service.py",
+      "to": "engine:financial_events",
+      "relation": "owns",
+      "evidence": "backend/src/services/financial_events_service.py imports engines.financial_events (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/financial_events.py",
+      "to": "service:backend/src/services/financial_events_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/financial_events.py imports service class from backend/src/services/financial_events_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/financial_events_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/financial_events_service.py imports repositories.financial_event_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/capability/financial_events/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/capability/financial_events/test_capability.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/capability/financial_events/test_revocation.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/contract/generated/test_financial_events.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/invariants/financial_events.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/properties/financial_events/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/properties/financial_events/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/properties/financial_events/test_lineage_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/unit/engines/financial_events/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_events",
+      "to": "test:backend/tests/unit/engines/financial_events/test_financial_events.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_events",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "engine:financial_intelligence:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/financial_intelligence/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/forecasting.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/forecasting.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/goal_planner.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/goal_planner.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/intelligence.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/intelligence.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/models.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/models.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/optimization.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/optimization.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/scenario.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/scenario.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "module:backend/src/engines/financial_intelligence/utils.py",
+      "relation": "owns",
+      "evidence": "engines/financial_intelligence/__init__.py re-exports symbols from backend/src/engines/financial_intelligence/utils.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/financial_intelligence_service.py",
+      "to": "engine:financial_intelligence",
+      "relation": "owns",
+      "evidence": "backend/src/services/financial_intelligence_service.py imports engines.financial_intelligence (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/financial_intelligence.py",
+      "to": "service:backend/src/services/financial_intelligence_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/financial_intelligence.py imports service class from backend/src/services/financial_intelligence_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/financial_intelligence_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/financial_intelligence_service.py imports repositories.financial_event_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/financial_intelligence_service.py",
+      "to": "repository:financial_goal_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/financial_intelligence_service.py imports repositories.financial_goal_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:financial_intelligence",
+      "to": "test:backend/tests/properties/forecasting/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.financial_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "engine:loan_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/loan_engine/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/amortization.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/amortization.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/emi.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/emi.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/floating_rate.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/floating_rate.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/foreclosure.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/foreclosure.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/metrics.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/metrics.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/models.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/models.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/prepayment.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/prepayment.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "module:backend/src/engines/loan_engine/utils.py",
+      "relation": "owns",
+      "evidence": "engines/loan_engine/__init__.py re-exports symbols from backend/src/engines/loan_engine/utils.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "engine:loan_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_analysis_service.py imports engines.loan_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "engine:loan_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_service.py imports engines.loan_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "engine:loan_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_simulation_service.py imports engines.loan_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "engine:loan_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports engines.loan_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/loans.py",
+      "to": "service:backend/src/services/loan_analysis_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/loans.py imports service class from backend/src/services/loan_analysis_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/loans.py",
+      "to": "service:backend/src/services/loan_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/loans.py imports service class from backend/src/services/loan_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/loans.py",
+      "to": "service:backend/src/services/loan_simulation_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/loans.py imports service class from backend/src/services/loan_simulation_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:account_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.account_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.credit_card_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.financial_event_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:liquidity_pattern_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.liquidity_pattern_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:loan_payment_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_service.py imports repositories.loan_payment_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_analysis_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_analysis_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/loan_simulation_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/loan_simulation_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:statement_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.statement_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:transaction_classification_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.transaction_classification_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.transaction_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/lending/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/test_amortization_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/test_emi_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/test_floating_rate_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/test_foreclosure_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/test_metrics_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/properties/loan_engine/test_prepayment_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/unit/engines/loan/test_amortization.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:loan_engine",
+      "to": "test:backend/tests/unit/engines/loan/test_loan_engine.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.loan_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:recommendation_engine",
+      "to": "engine:recommendation_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/recommendation_engine/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:recommendation_engine",
+      "to": "module:backend/src/engines/recommendation_engine/recommendations.py",
+      "relation": "owns",
+      "evidence": "engines/recommendation_engine/__init__.py re-exports symbols from backend/src/engines/recommendation_engine/recommendations.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "engine:recommendation_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports engines.recommendation_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/recommendation_service.py",
+      "to": "engine:recommendation_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/recommendation_service.py imports engines.recommendation_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/behaviour.py",
+      "to": "service:backend/src/services/behaviour_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/behaviour.py imports service class from backend/src/services/behaviour_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/financial_intelligence.py",
+      "to": "service:backend/src/services/recommendation_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/financial_intelligence.py imports service class from backend/src/services/recommendation_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:account_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.account_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:behaviour_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.behaviour_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.credit_card_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:pattern_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.pattern_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/behaviour_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/behaviour_service.py imports repositories.transaction_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:recommendation_engine",
+      "to": "test:backend/tests/unit/engines/behaviour/test_integration.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.recommendation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:recommendation_engine",
+      "to": "test:backend/tests/unit/engines/recommendation/test_recommendation_engine.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.recommendation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "engine:transaction_intelligence:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/transaction_intelligence/__init__.py (canonical_style=package)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "module:backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+      "relation": "owns",
+      "evidence": "engines/transaction_intelligence/__init__.py re-exports symbols from backend/src/engines/transaction_intelligence/cash_conversion_detector.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "module:backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+      "relation": "owns",
+      "evidence": "engines/transaction_intelligence/__init__.py re-exports symbols from backend/src/engines/transaction_intelligence/cc_payment_detector.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "module:backend/src/engines/transaction_intelligence/detector_result.py",
+      "relation": "owns",
+      "evidence": "engines/transaction_intelligence/__init__.py re-exports symbols from backend/src/engines/transaction_intelligence/detector_result.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "module:backend/src/engines/transaction_intelligence/loan_emi_detector.py",
+      "relation": "owns",
+      "evidence": "engines/transaction_intelligence/__init__.py re-exports symbols from backend/src/engines/transaction_intelligence/loan_emi_detector.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "engine:transaction_intelligence",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports engines.transaction_intelligence (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:account_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.account_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:credit_card_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.credit_card_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:financial_event_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.financial_event_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:liquidity_pattern_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.liquidity_pattern_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:loan_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.loan_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:statement_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.statement_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:transaction_classification_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.transaction_classification_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/transaction_intelligence_service.py",
+      "to": "repository:transaction_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/transaction_intelligence_service.py imports repositories.transaction_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/capability/transaction_intelligence/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/capability/transaction_intelligence/test_capability.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/properties/credit_cards/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/properties/transaction_intelligence/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/properties/transaction_intelligence/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:transaction_intelligence",
+      "to": "test:backend/tests/unit/engines/transaction_intelligence/__init__.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.transaction_intelligence",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:balance_engine",
+      "to": "engine:balance_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/balance_engine.py (canonical_style=single_file)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/statement_service.py",
+      "to": "engine:balance_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/statement_service.py imports engines.balance_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/cards_statements.py",
+      "to": "service:backend/src/services/statement_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/cards_statements.py imports service class from backend/src/services/statement_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/statement_service.py",
+      "to": "repository:statement_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/statement_service.py imports repositories.statement_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:balance_engine",
+      "to": "test:backend/tests/invariants/test_determinism.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.balance_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:cashflow_engine",
+      "to": "engine:cashflow_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/cashflow_engine.py (canonical_style=single_file)",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:cashflow_engine",
+      "to": "test:backend/tests/capability/household_cashflow/test_capability.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.cashflow_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:cashflow_engine",
+      "to": "test:backend/tests/properties/cashflow/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.cashflow_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:ledger_audit_engine",
+      "to": "engine:ledger_audit_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/ledger_audit_engine.py (canonical_style=single_file)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/audit_service.py",
+      "to": "engine:ledger_audit_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/audit_service.py imports engines.ledger_audit_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/audit.py",
+      "to": "service:backend/src/services/audit_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/audit.py imports service class from backend/src/services/audit_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:ledger_audit_engine",
+      "to": "test:backend/tests/audits/test_audit_minimal.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.ledger_audit_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:reconciliation_engine",
+      "to": "engine:reconciliation_engine:entry",
+      "relation": "owns",
+      "evidence": "public_entry_point = engines/reconciliation_engine.py (canonical_style=single_file)",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/reconciliation_service.py",
+      "to": "engine:reconciliation_engine",
+      "relation": "owns",
+      "evidence": "backend/src/services/reconciliation_service.py imports engines.reconciliation_engine (see importer_files)",
+      "layer": "backend"
+    },
+    {
+      "from": "router:backend/src/routers/reconciliation.py",
+      "to": "service:backend/src/services/reconciliation_service.py",
+      "relation": "owns",
+      "evidence": "backend/src/routers/reconciliation.py imports service class from backend/src/services/reconciliation_service.py",
+      "layer": "backend"
+    },
+    {
+      "from": "service:backend/src/services/reconciliation_service.py",
+      "to": "repository:reconciliation_repository",
+      "relation": "owns",
+      "evidence": "backend/src/services/reconciliation_service.py imports repositories.reconciliation_repository",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:reconciliation_engine",
+      "to": "test:backend/tests/invariants/test_reconciliation_determinism.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.reconciliation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:reconciliation_engine",
+      "to": "test:backend/tests/invariants/test_reconciliation_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.reconciliation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:reconciliation_engine",
+      "to": "test:backend/tests/properties/reconciliation/test_engine_properties.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.reconciliation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "engine:reconciliation_engine",
+      "to": "test:backend/tests/unit/engines/reconciliation/test_reconciliation.py",
+      "relation": "owns",
+      "evidence": "test file imports engines.reconciliation_engine",
+      "layer": "backend"
+    },
+    {
+      "from": "capability:useAccountsCapability",
+      "to": "engine:account_engine",
+      "relation": "owns",
+      "evidence": "capability useAccountsCapability is backed by engine account_engine (engine.capabilities includes useAccountsCapability)",
+      "layer": "cross"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "engine:recommendation_engine",
+      "relation": "owns",
+      "evidence": "capability useBehaviourCapability is backed by engine recommendation_engine (engine.capabilities includes useBehaviourCapability)",
+      "layer": "cross"
+    },
+    {
+      "from": "capability:useBehaviourCapability",
+      "to": "engine:behaviour_engine",
+      "relation": "owns",
+      "evidence": "capability useBehaviourCapability is backed by engine behaviour_engine (engine.capabilities includes useBehaviourCapability)",
+      "layer": "cross"
+    },
+    {
+      "from": "capability:useCreditCardsCapability",
+      "to": "engine:credit_card_engine",
+      "relation": "owns",
+      "evidence": "capability useCreditCardsCapability is backed by engine credit_card_engine (engine.capabilities includes useCreditCardsCapability)",
+      "layer": "cross"
+    },
+    {
+      "from": "capability:useLoansCapability",
+      "to": "engine:loan_engine",
+      "relation": "owns",
+      "evidence": "capability useLoansCapability is backed by engine loan_engine (engine.capabilities includes useLoansCapability)",
+      "layer": "cross"
+    },
+    {
+      "from": "capability:useReconciliationCapability",
+      "to": "engine:reconciliation_engine",
+      "relation": "owns",
+      "evidence": "capability useReconciliationCapability is backed by engine reconciliation_engine (engine.capabilities includes useReconciliationCapability)",
+      "layer": "cross"
+    }
+  ],
+  "ownership_trees_by_capability": {
+    "useAccountsCapability": {
+      "capability": "useAccountsCapability",
+      "owns": [
+        {
+          "node": "engine:account_engine",
+          "type": "Engine",
+          "owns": [
+            {
+              "node": "service:backend/src/services/account_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "router:backend/src/routers/accounts.py",
+              "type": "Router"
+            },
+            {
+              "node": "router:backend/src/routers/managed_accounts.py",
+              "type": "Router"
+            },
+            {
+              "node": "repository:account_balance_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:account_link_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:account_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:institution_repository",
+              "type": "Repository"
+            }
+          ]
+        }
+      ]
+    },
+    "useBehaviourCapability": {
+      "capability": "useBehaviourCapability",
+      "owns": [
+        {
+          "node": "engine:behaviour_engine",
+          "type": "Engine",
+          "owns": [
+            {
+              "node": "service:backend/src/services/behaviour_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "service:backend/src/services/dashboard_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "service:backend/src/services/import_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "router:backend/src/routers/behaviour.py",
+              "type": "Router"
+            },
+            {
+              "node": "router:backend/src/routers/dashboard.py",
+              "type": "Router"
+            },
+            {
+              "node": "router:backend/src/routers/import_router.py",
+              "type": "Router"
+            },
+            {
+              "node": "repository:account_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:behaviour_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:credit_card_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:loan_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:pattern_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:reconciliation_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:transaction_repository",
+              "type": "Repository"
+            }
+          ]
+        },
+        {
+          "node": "engine:recommendation_engine",
+          "type": "Engine",
+          "owns": [
+            {
+              "node": "service:backend/src/services/behaviour_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "service:backend/src/services/recommendation_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "router:backend/src/routers/behaviour.py",
+              "type": "Router"
+            },
+            {
+              "node": "router:backend/src/routers/financial_intelligence.py",
+              "type": "Router"
+            },
+            {
+              "node": "repository:account_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:behaviour_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:credit_card_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:loan_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:pattern_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:transaction_repository",
+              "type": "Repository"
+            }
+          ]
+        }
+      ]
+    },
+    "useCashflowCapability": {
+      "capability": "useCashflowCapability",
+      "owns": []
+    },
+    "useCreditCardsCapability": {
+      "capability": "useCreditCardsCapability",
+      "owns": [
+        {
+          "node": "engine:credit_card_engine",
+          "type": "Engine",
+          "owns": [
+            {
+              "node": "service:backend/src/services/credit_card_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "router:backend/src/routers/credit_cards.py",
+              "type": "Router"
+            },
+            {
+              "node": "repository:credit_card_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:credit_card_statement_repository",
+              "type": "Repository"
+            }
+          ]
+        }
+      ]
+    },
+    "useForecastCapability": {
+      "capability": "useForecastCapability",
+      "owns": []
+    },
+    "useInvestmentsCapability": {
+      "capability": "useInvestmentsCapability",
+      "owns": []
+    },
+    "useLoansCapability": {
+      "capability": "useLoansCapability",
+      "owns": [
+        {
+          "node": "engine:loan_engine",
+          "type": "Engine",
+          "owns": [
+            {
+              "node": "service:backend/src/services/loan_analysis_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "service:backend/src/services/loan_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "service:backend/src/services/loan_simulation_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "service:backend/src/services/transaction_intelligence_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "router:backend/src/routers/loans.py",
+              "type": "Router"
+            },
+            {
+              "node": "repository:account_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:credit_card_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:financial_event_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:liquidity_pattern_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:loan_payment_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:loan_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:statement_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:transaction_classification_repository",
+              "type": "Repository"
+            },
+            {
+              "node": "repository:transaction_repository",
+              "type": "Repository"
+            }
+          ]
+        }
+      ]
+    },
+    "useNetworthCapability": {
+      "capability": "useNetworthCapability",
+      "owns": []
+    },
+    "useReconciliationCapability": {
+      "capability": "useReconciliationCapability",
+      "owns": [
+        {
+          "node": "engine:reconciliation_engine",
+          "type": "Engine",
+          "owns": [
+            {
+              "node": "service:backend/src/services/reconciliation_service.py",
+              "type": "Service"
+            },
+            {
+              "node": "router:backend/src/routers/reconciliation.py",
+              "type": "Router"
+            },
+            {
+              "node": "repository:reconciliation_repository",
+              "type": "Repository"
+            }
+          ]
+        }
+      ]
+    },
+    "useTransactionCapability": {
+      "capability": "useTransactionCapability",
+      "owns": []
+    }
+  },
+  "notes": [
+    "Implementation modules (EngineModule) are owned BY their engine; they are NOT ownership roots. The legacy cross-layer-map listed them as separate engines.",
+    "Capability is the top ownership root. Workspace/ViewModel/Mapper live in the frontend; Router/Service/Engine/Repository live in the backend.",
+    "transaction_intelligence, financial_events, balance_engine, ledger_audit_engine, reconciliation_engine have NO capability owner: they are internal/sub engines consumed by other engines or services."
+  ]
+}

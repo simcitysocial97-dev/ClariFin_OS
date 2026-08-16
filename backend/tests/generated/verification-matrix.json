@@ -1,0 +1,136 @@
+{
+  "generated_at": "2026-07-29T14:30:07.983250",
+  "capabilities": [
+    {
+      "capability_id": "financial_events",
+      "capability_name": "Financial Events",
+      "verification_coverage": 40.0,
+      "test_coverage": {
+        "capability": 25.0,
+        "property": 25.0
+      },
+      "risk_level": "MEDIUM",
+      "verification_status": "PARTIALLY_VERIFIED",
+      "last_verified": "2026-07-29T14:30:07.983153",
+      "issues_found": 0,
+      "critical_issues": 0,
+      "historical_pass_rate": [
+        40.0,
+        30.0,
+        20.0,
+        10.0,
+        0
+      ],
+      "test_types": [
+        "capability",
+        "property"
+      ]
+    },
+    {
+      "capability_id": "credit_cards",
+      "capability_name": "Credit Cards",
+      "verification_coverage": 20.0,
+      "test_coverage": {
+        "capability": 25.0,
+        "contract": 0.0
+      },
+      "risk_level": "HIGH",
+      "verification_status": "NOT_VERIFIED",
+      "last_verified": "2026-07-29T14:30:07.983159",
+      "issues_found": 1,
+      "critical_issues": 1,
+      "historical_pass_rate": [
+        20.0,
+        10.0,
+        0,
+        0,
+        0
+      ],
+      "test_types": [
+        "capability",
+        "contract"
+      ]
+    },
+    {
+      "capability_id": "debt_management",
+      "capability_name": "Debt Management",
+      "verification_coverage": 20.0,
+      "test_coverage": {
+        "capability": 25.0
+      },
+      "risk_level": "HIGH",
+      "verification_status": "NOT_VERIFIED",
+      "last_verified": "2026-07-29T14:30:07.983162",
+      "issues_found": 0,
+      "critical_issues": 0,
+      "historical_pass_rate": [
+        20.0,
+        10.0,
+        0,
+        0,
+        0
+      ],
+      "test_types": [
+        "capability"
+      ]
+    },
+    {
+      "capability_id": "account_management",
+      "capability_name": "Account Management",
+      "verification_coverage": 20.0,
+      "test_coverage": {
+        "unit": 25.0
+      },
+      "risk_level": "LOW",
+      "verification_status": "NOT_VERIFIED",
+      "last_verified": "2026-07-29T14:30:07.983165",
+      "issues_found": 0,
+      "critical_issues": 0,
+      "historical_pass_rate": [
+        20.0,
+        10.0,
+        0,
+        0,
+        0
+      ],
+      "test_types": [
+        "unit"
+      ]
+    }
+  ],
+  "overall_verification_coverage": 25.0,
+  "overall_test_coverage": 21.875,
+  "high_risk_capabilities": 2,
+  "fully_verified_capabilities": 0,
+  "total_capabilities": 4,
+  "verification_trends": {
+    "financial_events": [
+      40.0,
+      30.0,
+      20.0,
+      10.0,
+      0
+    ],
+    "credit_cards": [
+      20.0,
+      10.0,
+      0,
+      0,
+      0
+    ],
+    "debt_management": [
+      20.0,
+      10.0,
+      0,
+      0,
+      0
+    ],
+    "account_management": [
+      20.0,
+      10.0,
+      0,
+      0,
+      0
+    ]
+  }
+}

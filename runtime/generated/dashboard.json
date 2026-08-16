@@ -1,0 +1,270 @@
+{
+  "local": {
+    "verification": {
+      "total_runs": 1,
+      "passed_runs": 0,
+      "failed_runs": 1,
+      "success_rate": 0.0,
+      "avg_duration_seconds": 0.05,
+      "min_duration_seconds": 0.05,
+      "max_duration_seconds": 0.05
+    },
+    "analytics": {
+      "planner": {
+        "avg_duration_seconds": 0.0,
+        "runs": 0
+      },
+      "execution": {
+        "avg_duration_seconds": 0.0,
+        "runs": 0
+      },
+      "aggregation": {
+        "avg_duration_seconds": 0.0,
+        "runs": 0
+      },
+      "cache": {
+        "hit_rate": 0.0,
+        "hits": 0,
+        "total": 1
+      },
+      "intent_frequency": {
+        "developer-feedback": 1
+      },
+      "environment_frequency": {
+        "local": 1
+      },
+      "profile_usage": {
+        "quick": 1
+      },
+      "blast_radius": {
+        "avg_engines": 0.0,
+        "avg_services": 0.0,
+        "avg_endpoints": 0.0,
+        "avg_components": 0.0
+      },
+      "rolling_averages": {
+        "rolling_avg_30": 0.05,
+        "window": 1
+      },
+      "trends": {
+        "duration_trend": "stable",
+        "success_rate_trend": "stable",
+        "data_points": 1
+      }
+    },
+    "cost": {
+      "Planning": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Execution": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Aggregation": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Report generation": {
+        "total_seconds": 0.05,
+        "runs": 1,
+        "avg_seconds": 0.05
+      },
+      "Cache lookup": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Evidence generation": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Cross-layer analysis": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      }
+    }
+  },
+  "ci": {
+    "verification": {
+      "total_runs": 0,
+      "success_rate": 0.0
+    },
+    "analytics": {
+      "planner": {
+        "avg_duration_seconds": 0.0,
+        "runs": 0
+      },
+      "execution": {
+        "avg_duration_seconds": 0.0,
+        "runs": 0
+      },
+      "aggregation": {
+        "avg_duration_seconds": 0.0,
+        "runs": 0
+      },
+      "cache": {
+        "hit_rate": 0.0,
+        "hits": 0,
+        "total": 0
+      },
+      "intent_frequency": {},
+      "environment_frequency": {},
+      "profile_usage": {},
+      "blast_radius": {
+        "avg_engines": 0,
+        "avg_services": 0,
+        "avg_endpoints": 0,
+        "avg_components": 0
+      },
+      "rolling_averages": {
+        "rolling_avg_30": 0.0,
+        "window": 30
+      },
+      "trends": {
+        "duration_trend": "stable",
+        "success_rate_trend": "stable",
+        "data_points": 0
+      }
+    },
+    "cost": {
+      "Planning": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Execution": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Aggregation": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Report generation": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Cache lookup": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Evidence generation": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      },
+      "Cross-layer analysis": {
+        "total_seconds": 0.0,
+        "runs": 0,
+        "avg_seconds": 0.0
+      }
+    }
+  },
+  "combined": {
+    "health": {
+      "verification": {
+        "total_runs": 1,
+        "passed_runs": 0,
+        "failed_runs": 1,
+        "success_rate": 0.0,
+        "avg_duration_seconds": 0.05,
+        "min_duration_seconds": 0.05,
+        "max_duration_seconds": 0.05
+      },
+      "trends": {
+        "duration_trend": "stable",
+        "success_rate_trend": "stable",
+        "data_points": 1
+      },
+      "rolling_averages": {
+        "rolling_avg_30": 0.05,
+        "window": 1
+      },
+      "intent_frequency": {
+        "developer-feedback": 1
+      },
+      "environment_frequency": {
+        "local": 1
+      },
+      "profile_usage": {
+        "quick": 1
+      },
+      "blast_radius": {
+        "avg_engines": 0.0,
+        "avg_services": 0.0,
+        "avg_endpoints": 0.0,
+        "avg_components": 0.0
+      }
+    },
+    "growth": {
+      "engines": {
+        "category": "engines",
+        "current_count": 4,
+        "previous_count": 4,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577102+00:00"
+      },
+      "services": {
+        "category": "services",
+        "current_count": 1,
+        "previous_count": 1,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577114+00:00"
+      },
+      "routers": {
+        "category": "routers",
+        "current_count": 1,
+        "previous_count": 1,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577121+00:00"
+      },
+      "endpoints": {
+        "category": "endpoints",
+        "current_count": 1,
+        "previous_count": 1,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577124+00:00"
+      },
+      "capability_hooks": {
+        "category": "capability_hooks",
+        "current_count": 1,
+        "previous_count": 1,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577128+00:00"
+      },
+      "components": {
+        "category": "components",
+        "current_count": 1,
+        "previous_count": 1,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577131+00:00"
+      },
+      "graph_renderers": {
+        "category": "graph_renderers",
+        "current_count": 0,
+        "previous_count": 0,
+        "delta": 0,
+        "growth_rate": 0.0,
+        "timestamp": "2026-08-04T23:42:35.577134+00:00"
+      }
+    },
+    "flaky_tests": {}
+  },
+  "generated_at": "2026-08-04T23:42:35.577219+00:00"
+}

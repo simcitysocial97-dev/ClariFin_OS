@@ -484,3 +484,61 @@ export interface EngineResult {
 
 // ===== Version =====
 export const INTELLIGENCE_RUNTIME_VERSION = '1.0.0';
+
+// ===== Executive Insight Types =====
+export type ExecutiveSeverity = 'warning' | 'critical';
+
+export interface ExecutiveInsight {
+  id: string;
+  severity: ExecutiveSeverity;
+  title: string;
+  summary: string;
+  requiresAction: boolean;
+  actionLabel: string;
+  cancelLabel: string;
+  onAction?: () => void;
+  onCancel?: () => void;
+  auditTrail: {
+    detectedAt: number;
+    threshold?: number;
+    actualValue?: number;
+  };
+  acknowledged: boolean;
+  decisions: Array<{ decision: 'action' | 'cancel'; timestamp: number; details?: Record<string, unknown> }>;
+}
+
+// ===== Investigative Insight Types =====
+export type InvestigativeTrigger = 'entity-selected' | 'insight-clicked' | 'command-issued';
+
+export interface EvidenceLink {
+  label: string;
+  sourceType: 'transaction' | 'statement' | 'reconciliation' | 'forecast';
+  sourceId: string;
+  confidence: number;
+}
+
+export interface EntityReference {
+  entityId: string;
+  entityType: string;
+  label: string;
+  relationshipType: string;
+}
+
+export interface DrillDownAction {
+  label: string;
+  targetWorkspace?: string;
+  targetRoute?: string;
+  contextPayload?: Record<string, unknown>;
+}
+
+export interface InvestigativeInsight {
+  id: string;
+  trigger: InvestigativeTrigger;
+  title: string;
+  summary: string;
+  evidenceTrail: EvidenceLink[];
+  relatedEntities: EntityReference[];
+  drillDownActions: DrillDownAction[];
+  createdAt: number;
+  dismissed: boolean;
+}

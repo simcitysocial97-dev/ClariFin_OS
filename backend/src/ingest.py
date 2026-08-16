@@ -4,10 +4,13 @@ ingest.py
 CLI ingestion pipeline: PDF → extract → categorize → database.
 
 Usage:
-    python ingest.py <pdf_path_or_directory> [--debug]
+    python ingest.py <pdf_path_or_directory> [--debug] [--strategy simple|hybrid]
 
     # Single file
     python ingest.py statements/hdfc_jun_2025.pdf
+
+    # Single file with hybrid extractor
+    python ingest.py statements/hdfc_jun_2025.pdf --strategy hybrid
 
     # Entire directory
     python ingest.py statements/
@@ -34,11 +37,12 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-from src.categorizer import categorize
-from src.metadata_extractor import MetadataExtractor
+from src.extraction.categorizer import categorize
+from src.extraction.hybrid_extractor import HybridExtractor
+from src.extraction.metadata_extractor import MetadataExtractor
+from src.extraction.statement_extractor import StatementExtractor
 from src.repositories.statement_repository import StatementRepository
 from src.repositories.transaction_repository import TransactionRepository
-from src.statement_extractor import StatementExtractor
 
 # ============================================================
 # Core Ingestion Logic
@@ -46,7 +50,10 @@ from src.statement_extractor import StatementExtractor
 
 
 def ingest_pdf(
-    pdf_path: str, db_path: str = "data/finance.db", debug: bool = False
+    pdf_path: str,
+    db_path: str = "data/finance.db",
+    debug: bool = False,
+    extraction_strategy: str = "simple",
 ) -> dict[str, Any]:
     """
     Process a single PDF file through the full pipeline:
@@ -86,7 +93,12 @@ def ingest_pdf(
 
     try:
         # Step 1: Extract
-        extractor = StatementExtractor(pdf_path, debug=debug)
+        if extraction_strategy == "hybrid":
+            extractor: StatementExtractor | HybridExtractor = HybridExtractor(
+                pdf_path, debug=debug
+            )
+        else:
+            extractor = StatementExtractor(pdf_path, debug=debug)
         data = extractor.extract()
 
         bank = data.get("bank", "Unknown")
@@ -266,17 +278,22 @@ def ingest_pdf(
 
 
 def ingest_directory(
-    dir_path: str, db_path: str = "data/finance.db", debug: bool = False
+    directory: str,
+    db_path: str = "data/finance.db",
+    debug: bool = False,
+    extraction_strategy: str = "simple",
 ) -> list[dict[str, Any]]:
     """Process all .pdf files in a directory. Returns list of result dicts."""
-    pdf_files = sorted(Path(dir_path).glob("*.pdf"))
+    pdf_files = sorted(Path(directory).glob("*.pdf"))
     if not pdf_files:
-        print(f"No PDF files found in: {dir_path}")
+        print(f"No PDF files found in: {directory}")
         return []
 
     results = []
     for pdf_file in pdf_files:
-        result = ingest_pdf(str(pdf_file), db_path, debug=debug)
+        result = ingest_pdf(
+            str(pdf_file), db_path, debug=debug, extraction_strategy=extraction_strategy
+        )
         results.append(result)
     return results
 
@@ -359,13 +376,24 @@ def _print_summary(results: list[dict[str, Any]]) -> None:
 
 def main() -> None:
     if len(sys.argv) < 2:
-        print("Usage: python ingest.py <pdf_path_or_directory> [--debug]")
+        print(
+            "Usage: python ingest.py <pdf_path_or_directory> [--debug] [--strategy simple|hybrid]"
+        )
         print("       python ingest.py statements/hdfc_jun.pdf")
+        print("       python ingest.py statements/hdfc_jun.pdf --strategy hybrid")
         print("       python ingest.py statements/")
         sys.exit(1)
 
     target = sys.argv[1]
     debug = "--debug" in sys.argv
+    strategy = "simple"  # default
+    if "--strategy" in sys.argv:
+        idx = sys.argv.index("--strategy")
+        if idx + 1 < len(sys.argv):
+            strategy = sys.argv[idx + 1].lower()
+            if strategy not in ["simple", "hybrid"]:
+                print("Error: strategy must be 'simple' or 'hybrid'")
+                sys.exit(1)
 
     target_path = Path(target)
     if not target_path.exists():
@@ -376,9 +404,13 @@ def main() -> None:
     db_path = "data/finance.db"
 
     if target_path.is_dir():
-        results = ingest_directory(str(target_path), db_path, debug=debug)
+        results = ingest_directory(
+            str(target_path), db_path, debug=debug, extraction_strategy=strategy
+        )
     elif target_path.suffix.lower() == ".pdf":
-        result = ingest_pdf(str(target_path), db_path, debug=debug)
+        result = ingest_pdf(
+            str(target_path), db_path, debug=debug, extraction_strategy=strategy
+        )
         results = [result]
         _print_result(result)
         _print_summary(results)

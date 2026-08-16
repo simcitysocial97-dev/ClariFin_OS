@@ -1,0 +1,21 @@
+{
+  "scenario": "graph_renderer_disconnect",
+  "description": "A graph renderer is removed from the loan capability",
+  "changed_files": [
+    "frontend/lib/renderers/LoanGraphRenderer.tsx"
+  ],
+  "expected_affected_graph_renderers": ["LoanGraphRenderer"],
+  "expected_affected_capabilities": ["useLoansCapability"],
+  "expected_affected_pages": ["app/loans/page.tsx"],
+  "expected_affected_workspaces": ["LoansWorkspace"],
+  "expected_excluded": [
+    "dashboard",
+    "forecast",
+    "investments",
+    "cards",
+    "cashflow",
+    "behaviour",
+    "reconciliation",
+    "account_engine"
+  ]
+}

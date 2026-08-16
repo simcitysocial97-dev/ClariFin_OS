@@ -7,7 +7,7 @@ INVARIANT 4: All dates are ISO 8601 strings.
 """
 
 from datetime import date, timedelta
-from decimal import ROUND_HALF_EVEN, Decimal
+from decimal import ROUND_CEILING, ROUND_HALF_EVEN, Decimal
 
 from .models import AmortizationRow
 from .utils import bps_to_monthly_rate
@@ -38,6 +38,30 @@ def _add_months(start: date, months: int) -> date:
         return date(year, month_idx, min(start.day, last_day))
 
 
+def _required_emi(balance: Decimal, monthly_rate: Decimal, months: int) -> int:
+    """Smallest whole-paise instalment that clears `balance` in `months` months.
+
+    Rounded up, so the instalment is never short: paying it can only bring the
+    payoff forward, never leave a balloon.
+    """
+    if months <= 1:
+        return int(
+            (balance * (Decimal(1) + monthly_rate)).to_integral_value(
+                rounding=ROUND_CEILING
+            )
+        )
+    if monthly_rate == 0:
+        return int(
+            (balance / Decimal(months)).to_integral_value(rounding=ROUND_CEILING)
+        )
+    factor = (Decimal(1) + monthly_rate) ** months
+    return int(
+        (balance * monthly_rate * factor / (factor - Decimal(1))).to_integral_value(
+            rounding=ROUND_CEILING
+        )
+    )
+
+
 def generate_schedule(
     principal_paise: int,
     annual_rate_bps: int,
@@ -63,7 +87,42 @@ def generate_schedule(
         emi_paise = compute_emi_fixed(principal_paise, annual_rate_bps, tenure_months)
 
     monthly_rate: Decimal = bps_to_monthly_rate(annual_rate_bps)
+
+    # `balance` is the exact (fractional) outstanding balance; `reported_balance`
+    # is its integer-paise projection that appears in the schedule.
+    #
+    # Interest is accrued on the exact balance and the principal component is
+    # derived from the movement of the reported balance. Deriving it the other
+    # way round (principal = EMI - rounded interest) silently discards the
+    # sub-paise principal of every instalment, which makes high-rate/small-
+    # principal loans degenerate into interest-only schedules with a balloon
+    # final payment, and makes a schedule regenerated from an intermediate
+    # balance disagree with the original one.
+    #
+    # Reported interest is then EMI - principal, which keeps the ledger exactly
+    # self-consistent: principal + interest == EMI and
+    # balance[n] == balance[n-1] - principal[n].
     balance: Decimal = Decimal(principal_paise)
+    reported_balance: int = principal_paise
+
+    # A loan is "ill-conditioned" when quantizing the EMI to whole paise moves the
+    # payoff materially: the half-paise quantization error of the EMI compounds
+    # over the tenure into `0.5 * annuity_factor` paise of drift, which for a small
+    # principal at a high rate over a long tenure is a large fraction of the loan
+    # itself (the schedule would either close years early or end in a balloon, and
+    # a schedule regenerated from an intermediate balance would not agree with it).
+    # Such loans cannot be described by one fixed instalment, so the EMI is
+    # re-anchored to the outstanding balance and remaining term every month.
+    # Ordinary loans keep a single constant EMI, exactly as a lender would.
+    if monthly_rate > 0:
+        annuity_factor = (
+            (Decimal(1) + monthly_rate) ** tenure_months - Decimal(1)
+        ) / monthly_rate
+    else:
+        annuity_factor = Decimal(tenure_months)
+    ill_conditioned = annuity_factor / Decimal(2) > Decimal(principal_paise) / Decimal(
+        100
+    )
 
     schedule: list[AmortizationRow] = []
     cumulative_interest: int = 0
@@ -72,37 +131,50 @@ def generate_schedule(
     start: date = date.fromisoformat(start_date)
 
     for month in range(1, tenure_months + 1):
-        opening_balance = int(balance)
+        if ill_conditioned and month < tenure_months and reported_balance > 0:
+            emi_paise = _required_emi(balance, monthly_rate, tenure_months - month + 1)
 
-        # Compute interest with Decimal precision
-        interest_decimal: Decimal = balance * monthly_rate
-        interest_paise = int(
-            interest_decimal.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+        interest_exact: Decimal = balance * monthly_rate
+        interest_rounded = int(
+            interest_exact.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
         )
 
         if month == tenure_months:
-            # Last month: pay off exact remaining balance (including any rounding drift)
-            principal_component_paise = max(0, opening_balance)
+            # Last month: settle the exact remaining balance (absorbs any drift)
+            principal_component_paise = max(0, reported_balance)
+            interest_paise = interest_rounded
             actual_emi_paise = principal_component_paise + interest_paise
+            reported_balance = 0
+            balance = Decimal(0)
         else:
-            # Non-last month: standard EMI calculation
-            principal_component_paise = emi_paise - interest_paise
+            principal_exact: Decimal = Decimal(emi_paise) - interest_exact
 
-            # Ensure principal is never negative (interest cannot exceed EMI)
-            if principal_component_paise < 0:
+            if principal_exact <= 0 or reported_balance <= 0:
+                # EMI does not even cover the interest (or the loan is already
+                # closed): nothing is amortized this month.
                 principal_component_paise = 0
+                interest_paise = interest_rounded if reported_balance > 0 else 0
                 actual_emi_paise = interest_paise
+            elif balance - principal_exact <= 0:
+                # This instalment clears the loan early
+                principal_component_paise = reported_balance
+                interest_paise = interest_rounded
+                actual_emi_paise = principal_component_paise + interest_paise
+                reported_balance = 0
+                balance = Decimal(0)
             else:
+                balance = balance - principal_exact
+                new_reported = int(
+                    balance.quantize(Decimal(1), rounding=ROUND_HALF_EVEN)
+                )
+                principal_component_paise = max(0, reported_balance - new_reported)
+                principal_component_paise = min(principal_component_paise, emi_paise)
+                reported_balance -= principal_component_paise
+                interest_paise = emi_paise - principal_component_paise
                 actual_emi_paise = emi_paise
 
-            # If computed principal exceeds remaining balance, clamp it
-            if principal_component_paise > opening_balance:
-                principal_component_paise = opening_balance
-                actual_emi_paise = principal_component_paise + interest_paise
-
-        balance -= Decimal(principal_component_paise)
-        closing_balance = max(0, int(balance))
         cumulative_interest += interest_paise
+        closing_balance = max(0, reported_balance)
 
         # Compute payment date with proper edge case handling
         payment_date: date = _add_months(start, month - 1)

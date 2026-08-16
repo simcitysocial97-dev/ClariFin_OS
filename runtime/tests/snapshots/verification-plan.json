@@ -1,0 +1,32 @@
+{
+  "metadata_keys": [
+    "changed_capabilities",
+    "changed_endpoints",
+    "changed_files",
+    "generated_at",
+    "impacted_capabilities",
+    "impacted_modules",
+    "impacted_scopes",
+    "include_dependencies",
+    "include_dependents",
+    "max_depth"
+  ],
+  "scope": "backend",
+  "step_count": 3,
+  "step_ids": [
+    "step-0001",
+    "step-0002",
+    "step-0003"
+  ],
+  "target_count": 8,
+  "target_ids": [
+    "target-0001",
+    "target-0002",
+    "target-0003",
+    "target-0004",
+    "target-0005",
+    "target-0006",
+    "target-0007",
+    "target-0008"
+  ]
+}
