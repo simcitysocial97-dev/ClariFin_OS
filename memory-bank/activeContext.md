@@ -74,3 +74,14 @@ Program C — Financial OS Shell Architecture (Complete)
 - [x] Update memory-bank/activeContext.md with changes summary
 - [ ] Git commit
 </task_progress>
+
+---
+
+## M9-C8 — Merge-Gate Policy Separation (2026-08-16)
+
+- **Changed:** GitHub repository ruleset `protect-main-branch` (ID 20127383) — expanded `required_status_checks` from 1 to 6 contexts: `Quality Gate`, `Backend Verification`, `Frontend Verification`, `Runtime Verification`, `Plan / Execute / Reconcile`, `Analyze`
+- **Excluded from required:** All 6 Playwright E2E checks (`E2E Tests (*)`), `M9 Forensic Evidence Collection`, and dynamic `CodeQL` check — all remain non-required
+- **Preserved:** deletion, non_fast_forward, pull_request (1 review), strict=false, bypass_actors=[]
+- **No file changes** to workflows, Playwright config, application code, or verification framework — only `progress.md` appended
+- **Validation:** All 6 required checks pass on PR #5; Playwright/M9 fail but non-blocking; Playwright workflow remains `active`; PR mergeability blocked solely by the existing 1-approving-review requirement
+- **Next step:** Human reviewer approves PR #5 → mergeable. Playwright reliability remains a separate future task.

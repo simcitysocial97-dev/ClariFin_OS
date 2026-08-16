@@ -2645,3 +2645,237 @@ Neither failure touches application code, verification thresholds, or any M9-C7 
 
 **MERGE READINESS:** CONDITIONAL — pending one Playwright E2E re-run to convert the cancelled status to green. All framework corrections are implemented and verified. No further code changes are required.
 
+---
+
+## M9-C8 CI Certification Checkpoint
+
+### Phase 1 — Freeze the current implementation
+
+- **Current HEAD SHA:** `8db1a2c12fc8a3454ce05f8cce178a7d6d9132af`
+- **Branch:** `verification-framework-codeql-integration`
+- **Working tree status:** 5 modified files, no staged changes
+- **5 M9-C8 files (only intended changes):**
+
+| File | Change Summary |
+|---|---|
+| `.github/workflows/playwright.yml` | 6-project matrix; `PLAYWRIGHT_PROJECT` env per job; timeout 90 min; per-project artifact names |
+| `frontend/playwright.config.ts` | `workers: process.env.CI ? 4 : undefined` (was 1) |
+| `runtime/foundation/verification/profiles.py` | Playwright task: `npm run build && npx playwright test ${PLAYWRIGHT_PROJECT:+--project="$PLAYWRIGHT_PROJECT"}` |
+| `runtime/foundation/verification/orchestrator.py` | Added `per_step_timeout` parameter (default 3600) passed to Executor |
+| `runtime/verify.py` | Added `_stream_log` callback; `per_step_timeout=5400` |
+
+- **Not committed or pushed yet.** No speculative fixes. No application code modified.
+
+### Phase 2 — Local pre-CI certification (COMPLETE)
+
+**Verification framework chain:**
+```
+runtime/verify.py → playwright profile (2 bounded tasks) → one E2E execution step → aggregate/evidence
+```
+
+| Verification | Result | Evidence |
+|---|---|---|
+| `log_callback` reaches executor | ✅ | `Executor._log_callback` is `True`; `_tee()` calls callback per line |
+| Executor streams stdout/stderr | ✅ | `Popen` + line-buffered daemon threads in `_execute_once` |
+| `per_step_timeout=5400` applied | ✅ | `Executor._per_step_timeout = 5400` (programmatically verified) |
+| Bounded profile remains bounded | ✅ | `_BOUNDED_PROFILES` includes "playwright"; `respect_requested_scope=True` |
+| `verify.py playwright` no expansion | ✅ | No backend/frontend/runtime tasks in expanded plan |
+| No changes to other profiles | ✅ | `git diff` shows profiles.py change only in playwright task |
+
+**Playwright configuration:**
+- 6 projects retained: chromium, firefox, webkit, mobile-chrome, mobile-safari, tablet ✅
+- CI workers = 4 ✅
+- `PLAYWRIGHT_PROJECT=chromium` → `npx playwright test --project="chromium"` ✅
+- `PLAYWRIGHT_PROJECT` unset → `npx playwright test` (full matrix) ✅
+
+**Framework tests:** 48 passed (orchestrator + M9C5 + M9C3), 0 failed ✅
+
+### Phase 3 — Build dependency validation (COMPLETE)
+
+| Check | Result | Evidence |
+|---|---|---|
+| `npm run build` chained before `npx playwright test` | ✅ | Profile command: `npm run build && npx playwright test ...` |
+| No `run_playwright_tests.sh` | ✅ | Confirmed absent; direct `&&` chaining |
+| `npm run build` succeeds locally | ✅ | "Compiled successfully in 19.9s" |
+| `frontend/dist/` generated | ✅ | dist/ regenerated (timestamp updated) |
+| `dist/` exists before webServer | ✅ | `&&` ensures build completes before Playwright starts |
+| webServer reachable | ✅ | `python3 -m http.server --directory dist` → HTTP 200 |
+| `dist/` before webServer in CI | ✅ | `webServer.command: 'python3 -m http.server 3000 --directory dist'` |
+
+### Phase 4 — Commit (COMPLETE)
+
+- ✅ Staged exactly 5 M9-C8 files
+- ✅ Commit message: `fix: certify bounded parallel playwright CI execution`
+- ✅ Commit SHA: `32a72e5f08c5a533d8625f78a1f8da8b98cc072d`
+- ✅ `git diff HEAD^ HEAD --stat` confirmed: only 5 files, 62 insertions, 14 deletions — no accidental changes
+
+### Phase 5 — Push (COMPLETE — exactly once)
+
+- ✅ Pushed commit `32a72e5f` to `verification-framework-codeql-integration`
+- **Commit SHA:** `32a72e5f08c5a533d8625f78a1f8da8b98cc072d`
+- **PR number:** #5 (Verification framework codeql integration)
+- **Workflow run ID:** `31915908655`
+- **Workflow attempt:** 1
+- **Timestamp:** 2026-08-16 05:24 UTC
+
+### Phase 6 — Observe the Playwright matrix (PENDING)
+
+Awaiting CI run. Expect 6 jobs: chromium, firefox, webkit, mobile-chrome, mobile-safari, tablet.
+
+### Phase 7 — Failure classification protocol
+
+If any job fails, classify into: A (App/Test), B (Playwright config), C (Verification framework), D (GH/CI env), E (Resource/parallelism), F (Observability), G (Repo/config hygiene). Will not modify until: exact command, exit code, first error, whether tests/browser/webServer/build started, local reproducibility, predates M9-C8.
+
+### Phase 8/9 — Certification criteria
+
+All 6 jobs must satisfy: 6 projects retained ✅ / 6 matrix jobs execute / frontend build succeeds / dist/ before webServer / webServer starts / browser starts / E2E tests execute / live output visible / no unexplained cancellation / no timeout / no test weakening / no project removed / no unexplained skips / evidence uploaded / verify.py bounded ✅ / framework tests pass ✅.
+
+
+---
+
+## M9-C8 — Merge-Gate Policy Separation
+
+### Objective
+
+Remove Playwright E2E and M9 Forensic Diagnostic Lab from required merge checks on
+`main`, while making the six certified core verification checks required. Playwright
+workflow must remain enabled and visible (non-blocking).
+
+### Policy Before
+
+**Mechanism:** Repository ruleset `protect-main-branch` (ID `20127383`) targeting
+`~DEFAULT_BRANCH` (main). Branch protection (direct) was NOT configured (HTTP 404).
+
+**Rules before mutation:**
+- `deletion`: enabled
+- `non_fast_forward`: enabled
+- `required_status_checks`: **only** `Plan / Execute / Reconcile`
+  - `strict_required_status_checks_policy`: `false`
+  - `do_not_enforce_on_create`: `false`
+- `pull_request`: 1 approving review, allowed methods [merge, squash, rebase]
+- `bypass_actors`: none
+
+### Policy After
+
+**Rules after mutation (identical except required_status_checks expanded):**
+- `deletion`: **preserved** (unchanged)
+- `non_fast_forward`: **preserved** (unchanged)
+- `required_status_checks`: 6 contexts — see table below
+  - `strict_required_status_checks_policy`: `false` (preserved)
+  - `do_not_enforce_on_create`: `false` (preserved)
+- `pull_request`: 1 approving review, [merge, squash, rebase] (preserved)
+- `bypass_actors`: none (preserved)
+- `conditions.ref_name`: include `["~DEFAULT_BRANCH"]`, exclude `[]` (preserved)
+- `enforcement`: `active` (preserved)
+
+### Required Check Names (exact GitHub check-run names)
+
+| Purpose | GitHub check-run name | Source workflow | PR #5 status |
+|---|---|---|---|
+| Quality Gate | `Quality Gate` | quality.yml | pass ✅ |
+| Backend Verification | `Backend Verification` | backend-verify.yml | pass ✅ |
+| Frontend Verification | `Frontend Verification` | frontend-verify.yml | pass ✅ |
+| Runtime Verification | `Runtime Verification` | verification-runtime.yml | pass ✅ |
+| Verification Reconcile | `Plan / Execute / Reconcile` | verification-reconcile.yml | pass ✅ |
+| CodeQL Security Analysis | `Analyze` | security-codeql.yml | pass ✅ |
+
+### Non-Required Check Names (exact GitHub check-run names)
+
+| Purpose | GitHub check-run name | Source workflow | PR #5 status |
+|---|---|---|---|
+| Playwright E2E (chromium) | `E2E Tests (chromium)` | playwright.yml | fail (non-required) ✅ |
+| Playwright E2E (firefox) | `E2E Tests (firefox)` | playwright.yml | fail (non-required) ✅ |
+| Playwright E2E (webkit) | `E2E Tests (webkit)` | playwright.yml | fail (non-required) ✅ |
+| Playwright E2E (tablet) | `E2E Tests (tablet)` | playwright.yml | fail (non-required) ✅ |
+| Playwright E2E (mobile-safari) | `E2E Tests (mobile-safari)` | playwright.yml | fail (non-required) ✅ |
+| Playwright E2E (mobile-chrome) | `E2E Tests (mobile-chrome)` | playwright.yml | fail (non-required) ✅ |
+| M9 Forensic Diagnostic Lab | `M9 Forensic Evidence Collection` | m9-forensic-diagnostic-lab.yml | fail (non-required) ✅ |
+| Dynamic CodeQL (separate) | `CodeQL` | dynamic/github-code-scanning/codeql | fail (non-required) ✅ |
+
+> Note: `security-codeql.yml` has `name: CodeQL Security Analysis` and job
+> `name: Analyze`. The check-run produced is `Analyze` (matching the job name).
+> The separate `CodeQL` check (app=GitHub Advanced Security) is from GitHub's
+> dynamic/managed workflow — NOT one of the six certified checks. It remains
+> non-required.
+>
+> Note: GitHub workflows API lists a stale `codeql.yml` (path=.github/workflows/codeql.yml,
+> name=CodeQL Security Analysis) that does NOT exist on `main` (contents API returns 404).
+> This is stale API data; `security-codeql.yml` is the authoritative source-controlled workflow.
+
+### Playwright Workflow State
+
+- **Remains active:** `Playwright Tests [active] path=.github/workflows/playwright.yml` ✅
+- No workflow files were modified, deleted, disabled, renamed, or path-filtered.
+- All 16 workflows remain active (no changes to triggers or configuration).
+- No `[skip ci]`, no path exclusions, no workflow disabling invoked.
+
+### Files NOT Modified (confirmed via `git diff --name-only`)
+
+- `.github/workflows/playwright.yml` — unchanged ✅
+- `.github/workflows/*.yml` — all 12 workflow files unchanged ✅
+- `.github/scripts/*` — unchanged ✅
+- `frontend/playwright.config.ts` — unchanged ✅
+- `frontend/src/**` — unchanged ✅
+- `backend/src/**` — unchanged ✅
+- `runtime/**` — unchanged ✅
+- No application, test, Playwright, or verification-framework logic modified.
+- No thresholds or assertions weakened.
+
+### Git Repository Changes
+
+- **Branch:** `verification-framework-codeql-integration` (feature branch, NOT main)
+- **Only modified file:** `progress.md` (this forensic record appended)
+- No commit to `main`. No force-push. No workflow/application file changes.
+
+### Validation Evidence
+
+1. **Ruleset after update (GET /rulesets/20127383):**
+   - `required_status_checks` contains exactly 6 contexts:
+     `Quality Gate`, `Backend Verification`, `Frontend Verification`,
+     `Runtime Verification`, `Plan / Execute / Reconcile`, `Analyze`
+   - All 8 Playwright/M9/CodeQL contexts confirmed ABSENT from required list.
+   - `deletion`, `non_fast_forward`, `pull_request` (1 review), `strict=false`,
+     `do_not_enforce_on_create=false`, `bypass_actors=[]` all preserved.
+
+2. **PR #5 check-runs (14 unique):**
+   - 6 required checks: ALL `pass` ✅
+   - 8 non-required (Playwright x6, M9 x1, dynamic CodeQL x1): all `fail` but
+     confirmed NOT in required list ✅
+
+3. **Workflow state:** `Playwright Tests [active]` — unchanged ✅
+
+4. **PR mergeability:**
+   - `mergeable: true`, `mergeable_state: blocked`
+   - ALL 6 required status checks pass.
+   - The sole remaining blocker is the **1-approving-review requirement**
+     (existing `pull_request` rule, preserved): the only review on PR #5 is from
+     `github-advanced-security[bot]` with state `COMMENTED` (not `APPROVED`).
+   - This is an independent repository policy that must be satisfied by a human
+     reviewer — it is NOT a status-check block.
+
+### Final Mergeability State
+
+```
+Core certified checks (6 required):  ALL PASS  → not blocking
+Playwright E2E (6 checks):           FAILING   → NOT required, not blocking ✅
+M9 Forensic Evidence Collection:    FAILING   → NOT required, not blocking ✅
+Dynamic CodeQL (CodeQL check):     FAILING   → NOT required, not blocking ✅
+Review requirement:                 Pending  → 1 approving review needed (BLOCKED)
+
+PR #5: mergeable=true, mergeable_state=blocked
+  → Blocking cause: missing approving review (existing policy, preserved)
+  → NOT blocked by any status check.
+```
+
+### Forensic Baseline Snapshots
+
+- Before: captured at `/tmp/m9c8-ruleset-before.json` (only `Plan / Execute / Reconcile` required)
+- After: captured at `/tmp/m9c8-ruleset-after.json` (6 checks required)
+
+### API Call Log
+
+- `GET /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383` → retrieved baseline (200)
+- `PUT /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383` → updated ruleset (200)
+  - Note: GitHub ruleset update endpoint uses PUT, not PATCH (PATCH returns 404)
+- `GET /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383` → verified after (200)
+- No workflow files, application code, Playwright config, or verification framework modified.
