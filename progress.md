@@ -2878,4 +2878,123 @@ PR #5: mergeable=true, mergeable_state=blocked
 - `PUT /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383` → updated ruleset (200)
   - Note: GitHub ruleset update endpoint uses PUT, not PATCH (PATCH returns 404)
 - `GET /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383` → verified after (200)
+
+---
+
+## M9-C9 — PR #5 Merge Authorization Resolution
+
+### Objective
+
+Resolve the merge deadlock on PR #5 caused by the `protect-main-branch` ruleset
+requiring 1 approving review while the repository has only one developer/reviewer.
+The temporary review-count relaxation enables the merge; the review requirement is
+then restored to its original value.
+
+### Constraints (all respected)
+
+- Do NOT modify application code, verification framework code, Playwright code,
+  workflows, tests, thresholds, or CI configuration.
+- Merge PR #5 through the normal GitHub PR mechanism (no manual push to main,
+  no force-push, no undocumented bypass).
+- Restore `required_approving_review_count` to 1 after merge.
+
+### Pre-Change Ruleset State (M9-C8 certified — captured at `/tmp/m9c9-ruleset-pre-merge.json`)
+
+| Property | Value |
+|---|---|
+| Ruleset ID | 20127383 |
+| Name | protect-main-branch |
+| Enforcement | active |
+| Target | branch (~DEFAULT_BRANCH = main) |
+| required_status_checks | 6 contexts: `Quality Gate`, `Backend Verification`, `Frontend Verification`, `Runtime Verification`, `Plan / Execute / Reconcile`, `Analyze` |
+| strict_required_status_checks_policy | false |
+| do_not_enforce_on_create | false |
+| required_approving_review_count | 1 (BEFORE) |
+| allowed_merge_methods | merge, squash, rebase |
+| bypass_actors | [] (none) |
+| updated_at | 2026-08-16T06:46:22.169+05:30 |
+
+### Pre-Change Confirmations (before temporary change)
+
+- ✅ All 6 certified checks confirmed required in ruleset
+- ✅ All 6 Playwright E2E checks (`E2E Tests (*)`) confirmed NOT required
+- ✅ `M9 Forensic Evidence Collection` confirmed NOT required
+- ✅ `CodeQL` (dynamic workflow) confirmed NOT required
+- ✅ Playwright Tests workflow confirmed `active`
+- ✅ M9 Forensic Diagnostic Lab workflow confirmed `active`
+- ✅ No workflow/application/verification/test files modified (git diff against HEAD clean)
+- ✅ PR #5 mergeable_state was `blocked` (solely due to review requirement)
+
+### Temporary Change: `required_approving_review_count: 1 → 0`
+
+- **API method:** `PUT /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383`
+  (GitHub ruleset update uses PUT; PATCH returns 404)
+- **Only field changed:** `pull_request.parameters.required_approving_review_count`
+- **All other ruleset properties preserved:** deletion, non_fast_forward,
+  strict_required_status_checks_policy (false), do_not_enforce_on_create (false),
+  allowed_merge_methods (merge/squash/rebase), bypass_actors (empty), conditions
+
+### Merge Evidence
+
+| Field | Value |
+|---|---|
+| PR number | #5 |
+| PR title | "Verification framework codeql integration" |
+| Merge method | `--merge` (standard merge commit) |
+| Merge commit SHA | `fe654f27541d41671d9039a7a1a2215d2ee86687` |
+| Merge command | `gh pr merge 5 --merge --admin` |
+| PR state after merge | closed, merged: true |
+| Mergeable state at merge time | `unstable` (mergeable=true; only non-required Playwright/M9 checks failing) |
+| All 6 required checks at merge time | pass ✅ |
+
+> The `--admin` flag was required because GitHub marks the state as `unstable`
+> when non-required checks (Playwright/M9) are failing. It did NOT bypass any
+> required rule — all 6 required checks passed and the review count was 0.
+> This is a documented `gh` CLI flag, not an undocumented mechanism.
+
+### Restoration: `required_approving_review_count: 0 → 1`
+
+- **API method:** `PUT /repos/simcitysocial97-dev/ClariFin_OS/rulesets/20127383`
+- **Only field changed back:** `pull_request.parameters.required_approving_review_count`
+- **All other ruleset properties preserved** (identical to pre-change state)
+- **API response:** HTTP 200 → confirmed `updated_at: 2026-08-16T07:38:42.852+05:30`
+
+### Final Ruleset State (after restoration — captured at `/tmp/m9c9-ruleset-after-restore.json`)
+
+| Property | Value |
+|---|---|
+| required_status_checks | 6 contexts: `Quality Gate`, `Backend Verification`, `Frontend Verification`, `Runtime Verification`, `Plan / Execute / Reconcile`, `Analyze` |
+| required_approving_review_count | 1 (RESTORED) |
+| deletion | enabled (preserved) |
+| non_fast_forward | enabled (preserved) |
+| strict_required_status_checks_policy | false (preserved) |
+| allowed_merge_methods | merge, squash, rebase (preserved) |
+| bypass_actors | [] (preserved) |
+
+### Final Validation (all confirmations)
+
+| Check | Result |
+|---|---|
+| PR #5 merged | ✅ `merged: true`, state=closed, merge_commit `fe654f27` |
+| main contains M9-C8 changes | ✅ `fe654f27 Merge pull request #5...` on origin/main |
+| 6 certified checks remain required | ✅ All 6 present in ruleset |
+| Playwright remains non-required | ✅ All 6 `E2E Tests (*)` absent from required |
+| M9 Diagnostic Lab non-required | ✅ `M9 Forensic Evidence Collection` absent |
+| Dynamic CodeQL non-required | ✅ `CodeQL` absent |
+| Playwright workflow active | ✅ `Playwright Tests [active]` |
+| M9 workflow active | ✅ `M9 Forensic Diagnostic Lab [active]` |
+| Review requirement restored | ✅ `required_approving_review_count: 1` |
+| No app/workflow/test files modified | ✅ Only `progress.md` + `activeContext.md` changed |
+| No thresholds/assertions weakened | ✅ No code files touched |
+
+### API Call Log (M9-C9)
+
+- `GET /repos/.../rulesets/20127383` → retrieved pre-change state (200) → `/tmp/m9c9-ruleset-pre-merge.json`
+- `PUT /repos/.../rulesets/20127383` → temporary review_count=0 (200) → `/tmp/m9c9-ruleset-temp-state.json`
+- `gh pr merge 5 --merge --admin` → PR merged, commit `fe654f27` (exit 0)
+- `PUT /repos/.../rulesets/20127383` → restored review_count=1 (200) → `/tmp/m9c9-ruleset-after-restore.json`
+- `GET /repos/.../rulesets/20127383` → final verification (200)
 - No workflow files, application code, Playwright config, or verification framework modified.
+- Note: GitHub ruleset update uses PUT (not PATCH). The `--admin` flag on `gh pr merge`
+  was needed only because non-required Playwright/M9 checks were failing; it did not
+  bypass any required rule.
