@@ -2,7 +2,7 @@ import type { HookState } from './use-async-query';
 import { useAsyncQuery } from './use-async-query'
 import { CardsDataSchema, type CardsData, type CardSummary } from '@/lib/schemas/cards'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchCards(): Promise<CardsData> {

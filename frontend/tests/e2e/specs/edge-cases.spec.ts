@@ -168,7 +168,7 @@ test.describe('Edge Case - Zero Income', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     const edgeCaseTxns = generateZeroIncomeMonth();
@@ -222,7 +222,7 @@ test.describe('Edge Case - Interest Only Payment', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     const edgeCaseTxns = generateInterestOnlyMonth();
@@ -310,7 +310,7 @@ test.describe('Edge Case - Double Credit Extraction', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     const edgeCaseTxns = generateDoubleCreditExtraction();
@@ -387,7 +387,7 @@ test.describe('Edge Case - System Stability', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     // Seed data (wrapped in try-catch)

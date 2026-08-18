@@ -18,7 +18,7 @@ import { test, expect } from '../fixtures/test-fixtures';
 test.describe('Behavior Page Loading', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -33,8 +33,10 @@ test.describe('Behavior Page Loading', () => {
 
   test('should display page title', async ({ page, waitForPageReady }) => {
     await waitForPageReady(page);
-    
-    const title = page.locator('h1, h2').first();
+
+    // PanelHeader renders h3; wait for any skeleton to clear first
+    await page.locator('[class*="skeleton"]').waitFor({ state: 'hidden', timeout: 10000 });
+    const title = page.locator('h1, h2, h3').first();
     await expect(title).toBeVisible();
   });
 
@@ -55,7 +57,7 @@ test.describe('Behavior Page Loading', () => {
 test.describe('Financial Health Score', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -95,7 +97,7 @@ test.describe('Financial Health Score', () => {
 test.describe('Behavioral Indices', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -151,7 +153,7 @@ test.describe('Behavioral Indices', () => {
 test.describe('Behavioral Insights', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -197,7 +199,7 @@ test.describe('Behavioral Insights', () => {
 test.describe('Behavioral Nudges', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -228,7 +230,7 @@ test.describe('Behavioral Nudges', () => {
 test.describe('Risk Signals', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -264,7 +266,7 @@ test.describe('Risk Signals', () => {
 test.describe('Data Quality Indicators', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
   });
 
@@ -296,11 +298,11 @@ test.describe('Behavior API', () => {
     captureErrors(page);
     
     // Block API
-    await page.route('**/api/behavior/**', route => 
+    await page.route('**/api/v1/behaviour/**', route =>
       route.fulfill({ status: 500, body: JSON.stringify({ error: 'Server error' }) })
     );
     
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await waitForPageReady(page);
     
     // Page should still render
@@ -312,20 +314,27 @@ test.describe('Behavior API', () => {
     captureErrors(page);
     
     // Mock empty response
-    await page.route('**/api/behavior/**', route => 
-      route.fulfill({ 
-        status: 200, 
-        body: JSON.stringify({ 
-          behavioral_indices: {},
-          risk_signals: {},
-          confidence: 0,
-          financial_health_score: 50,
-          data_quality: { transactions_90_days: 0, total_transactions: 0 }
-        }) 
+    await page.route('**/api/v1/behaviour/wellness-score', route =>
+      route.fulfill({
+        status: 200,
+        body: JSON.stringify({
+          score: 100,
+          band: 'Excellent',
+          components: {
+            cashflow_health: 100,
+            debt_health: 1,
+            savings_behaviour: 100,
+            resilience: 100,
+            lifestyle_control: 100,
+            credit_behaviour: 0.5,
+          },
+          snapshot_date: new Date().toISOString().split('T')[0],
+          version: 1,
+        })
       })
     );
     
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await waitForPageReady(page);
     
     // Should show empty state or no data message

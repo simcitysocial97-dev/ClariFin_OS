@@ -33,8 +33,10 @@ test.describe('Reconciliation Page', () => {
 
   test('should display page title', async ({ page, waitForPageReady }) => {
     await waitForPageReady(page);
-    
-    const title = page.locator('h1, h2').first();
+
+    // PanelHeader renders h3; wait for any skeleton to clear first
+    await page.locator('[class*="skeleton"]').waitFor({ state: 'hidden', timeout: 10000 });
+    const title = page.locator('h1, h2, h3').first();
     await expect(title).toBeVisible();
   });
 

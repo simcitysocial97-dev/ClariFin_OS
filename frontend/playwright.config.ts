@@ -125,12 +125,11 @@ export default defineConfig({
     },
   ],
   
-  // Production server (avoids CSS corruption in dev mode)
-  // CI uses python3 (guaranteed on ubuntu-latest); local uses npm start.
+  // Production server (avoids CSS corruption in dev mode).
+  // C24: single frontend runtime model — `next start` serves the build in
+  // both local and CI. The static-export + python3 http.server fork is removed.
   webServer: {
-    command: process.env.CI
-      ? 'python3 -m http.server 3000 --directory dist'
-      : 'npm start',
+    command: 'npm start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

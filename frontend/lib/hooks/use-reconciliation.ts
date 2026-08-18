@@ -3,7 +3,7 @@ import { useAsyncQuery } from './use-async-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ReconciliationsDataSchema, type ReconciliationsData, type ReconciliationMatch, type TransactionDetail } from '@/lib/schemas/reconciliation'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchReconciliations(): Promise<ReconciliationsData> {

@@ -82,6 +82,16 @@ workflows:
     scopes: ["contracts"]
     capabilities: ["loan-engine", "reconciliation", "ledger", "api-contracts"]
 
+  api-contracts:
+    name: "API Contract Integrity Gate"
+    description: "M9-C27 — API Contract Integrity & Drift-Proofing. Detects DTO/Zod/endpoint/openapi drift before E2E."
+    category: "contract"
+    scope: "contracts"
+    command: "bash .github/scripts/run_api_contracts.sh"
+    estimated_duration_seconds: 120
+    scopes: ["contracts", "frontend", "backend"]
+    capabilities: ["api-contracts"]
+
   property:
     name: "Property Testing"
     description: "Property-based testing for loan engine"
@@ -187,6 +197,14 @@ scripts:
     category: "contract"
     scope: "contracts"
     estimated_duration_seconds: 180
+
+  run_api_contracts:
+    name: "API Contract Integrity Gate"
+    path: ".github/scripts/run_api_contracts.sh"
+    description: "M9-C27 API Contract Integrity & Drift-Proofing gate"
+    category: "contract"
+    scope: "contracts"
+    estimated_duration_seconds: 120
 
   run_backend_verification:
     name: "Backend Verification"
@@ -302,12 +320,12 @@ capabilities:
 
   api-contracts:
     name: "API Contracts"
-    description: "OpenAPI contract verification"
+    description: "M9-C27 API Contract Integrity & Drift-Proofing — OpenAPI freshness, generated-type reproducibility, runtime Zod compatibility, consumer/endpoint integrity, and live wire validation."
     category: "contract"
     scopes: ["contracts", "frontend", "backend", "repository"]
-    workflows: ["contracts", "frontend", "backend"]
-    scripts: ["run_contract_tests", "run_frontend_verification", "run_backend_verification"]
-    modules: ["backend/src", "frontend/src"]
+    workflows: ["api-contracts", "contracts", "frontend", "backend"]
+    scripts: ["run_api_contracts", "run_contract_tests", "run_frontend_verification", "run_backend_verification"]
+    modules: ["backend/src", "frontend/src", "frontend/lib", "frontend/types"]
 
   migrations:
     name: "Database Migrations"

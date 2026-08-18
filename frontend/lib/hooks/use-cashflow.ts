@@ -6,7 +6,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { CashflowResponseSchema, type CashflowResponse } from '@/lib/schemas/cashflow'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchCashflow(months: number = 6): Promise<CashflowResponse> {

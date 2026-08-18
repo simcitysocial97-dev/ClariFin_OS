@@ -41,6 +41,7 @@ dependencies = [
     "click==8.4.2",
     # ── Backend runtime ──────────────────────────────────────────────────────
     "fastapi==0.139.2",
+    "uvicorn==0.51.0",  # ASGI server that launches src.api:app (Playwright global-setup + start.sh)
     "pydantic==2.13.4",
     "python-multipart==0.0.22",
     "pdfplumber==0.11.9",

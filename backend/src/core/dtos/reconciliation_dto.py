@@ -192,6 +192,98 @@ class ReconciliationDTO(BaseModel):
 # ===== Reconciliation Response Types =====
 
 
+class ReconciliationMatchDTO(BaseModel):
+    """Reconciliation match record from transfer matching."""
+
+    id: int = Field(description="Reconciliation identifier")
+    debit_txn_id: int = Field(description="Debit transaction ID")
+    credit_txn_id: int = Field(description="Credit transaction ID")
+    debit_account_id: str = Field(description="Debit account ID")
+    credit_account_id: str = Field(description="Credit account ID")
+    amount_paise: int = Field(description="Matched amount in paise")
+    date_diff_days: int = Field(description="Days between transactions")
+    match_confidence_bps: int = Field(
+        description="Match confidence in basis points (0-10000)"
+    )
+    match_type: str = Field(description="Match type (exact, window, fuzzy, manual)")
+    status: Literal["pending", "confirmed", "rejected"] = Field(
+        description="Reconciliation status"
+    )
+    created_at: str = Field(description="Record creation timestamp")
+    confirmed_at: str | None = Field(
+        default=None, description="Confirmation timestamp if confirmed"
+    )
+    # Joined debit transaction details
+    debit_date: str = Field(description="Debit transaction date")
+    debit_date_iso: str = Field(description="Debit transaction ISO date")
+    debit_description: str = Field(description="Debit transaction description")
+    debit_amount_paise: int = Field(description="Debit transaction amount in paise")
+    debit_bank: str = Field(description="Debit transaction bank")
+    # Joined credit transaction details
+    credit_date: str = Field(description="Credit transaction date")
+    credit_date_iso: str = Field(description="Credit transaction ISO date")
+    credit_description: str = Field(description="Credit transaction description")
+    credit_amount_paise: int = Field(description="Credit transaction amount in paise")
+    credit_bank: str = Field(description="Credit transaction bank")
+
+
+class ReconciliationsListResponse(BaseModel):
+    """Response for reconciliation list endpoint."""
+
+    reconciliations: list[ReconciliationMatchDTO] = Field(
+        description="List of reconciliation matches"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "reconciliations": [
+                    {
+                        "id": 1,
+                        "debit_txn_id": 101,
+                        "credit_txn_id": 201,
+                        "debit_account_id": "HDFC Bank",
+                        "credit_account_id": "ICICI Bank",
+                        "amount_paise": 4500000,
+                        "date_diff_days": 1,
+                        "match_confidence_bps": 7000,
+                        "match_type": "window",
+                        "status": "pending",
+                        "created_at": "2025-01-15T10:00:00",
+                        "confirmed_at": None,
+                        "debit_date": "15/01/2025",
+                        "debit_date_iso": "2025-01-15",
+                        "debit_description": "CC PAYMENT",
+                        "debit_amount_paise": 4500000,
+                        "debit_bank": "HDFC Bank",
+                        "credit_date": "16/01/2025",
+                        "credit_date_iso": "2025-01-16",
+                        "credit_description": "SALARY CREDIT",
+                        "credit_amount_paise": 4500000,
+                        "credit_bank": "ICICI Bank",
+                    }
+                ]
+            }
+        }
+
+
+class ReconciliationScanResponse(BaseModel):
+    """Response for reconciliation scan endpoint."""
+
+    matches: list[dict[str, Any]] = Field(
+        description="List of potential match candidates"
+    )
+    count: int = Field(description="Total number of potential matches")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "matches": [],
+                "count": 0,
+            }
+        }
+
+
 class ReconciliationDiscrepancyResponse(BaseModel):
     """Response for discrepancy list endpoint."""
 

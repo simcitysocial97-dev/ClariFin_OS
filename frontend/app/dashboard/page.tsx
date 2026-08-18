@@ -62,7 +62,7 @@ function NetCashFlowCard({ amount_paise }: { amount_paise: number }) {
 }
 
 function SavingsRateCard({ rate }: { rate: number }) {
-  const isGood = rate >= 0.2;
+  const isGood = rate >= 20;
   return (
     <Surface variant="raised" density="none" className="p-4">
       <Stack gap={2}>
@@ -84,7 +84,7 @@ function SavingsRateCard({ rate }: { rate: number }) {
 }
 
 function EMIRatioCard({ ratio }: { ratio: number }) {
-  const isHigh = ratio > 0.4;
+  const isHigh = ratio > 40;
   return (
     <Surface variant="raised" density="none" className={`p-4 ${isHigh ? "bg-[var(--color-negative-50)] border-[var(--color-negative-200)]" : ""}`}>
       <Stack gap={2}>

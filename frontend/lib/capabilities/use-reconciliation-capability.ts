@@ -111,7 +111,7 @@ export function useReconciliationCapability(): ReconciliationCapabilityReturn {
   } = useQuery<ReconciliationViewModel | null>({
     queryKey: [RECONCILIATION_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/reconciliations');
+      const response = await fetch('/api/v1/reconciliation');
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }

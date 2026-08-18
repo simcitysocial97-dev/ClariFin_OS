@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { AnalyticsSchema, type Analytics } from '@/lib/schemas/analytics'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchAnalytics(): Promise<Analytics> {

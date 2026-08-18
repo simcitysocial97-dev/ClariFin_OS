@@ -26,7 +26,7 @@ class DashboardService(BaseService):
         """
         Orchestrate dashboard data from multiple sources.
 
-        Returns a DashboardSummaryDTO with financial metrics in paise.
+        Returns a DashboardSummaryDTO with financial metrics in paise and ratios 0-1.
         """
         # Check cache first
         cached = get_cached_behavior_profile(self.db_path)
@@ -41,12 +41,12 @@ class DashboardService(BaseService):
 
         # Get transactions
         raw = self.txn_repo.get_all_transactions_with_bank({})
-        transactions = [enrich_transaction(dict(t)) for t in raw]
+        all_transactions = [enrich_transaction(dict(t)) for t in raw]
 
         # Calculate income and expenses this month
         this_month_cutoff = datetime.now().replace(day=1).strftime("%Y-%m-%d")
         this_month_txns = [
-            t for t in transactions if t.get("parsed_date", "") >= this_month_cutoff
+            t for t in all_transactions if t.get("parsed_date", "") >= this_month_cutoff
         ]
         total_income_paise = sum(
             t.get("amount_paise", 0)
@@ -60,21 +60,28 @@ class DashboardService(BaseService):
         )
         net_cash_flow_paise = total_income_paise - total_expenses_paise
 
-        # Savings rate
+        # Savings rate as ratio (0-1)
         savings_rate = 0.0
         if total_income_paise > 0:
-            savings_rate = round((net_cash_flow_paise / total_income_paise) * 100, 2)
+            savings_rate = round(net_cash_flow_paise / total_income_paise, 4)
 
-        # EMI ratio (from profile or calculated)
+        # EMI ratio as ratio (0-1) (from profile)
         indices = profile.get("behavioral_indices", {})
         savings_discipline = indices.get("savings_discipline", {})
         emi_paise = int(savings_discipline.get("emi_paise", 0) or 0)
         emi_ratio = 0.0
         if total_income_paise > 0:
-            emi_ratio = round((emi_paise / total_income_paise) * 100, 2)
+            emi_ratio = round(emi_paise / total_income_paise, 4)
 
         # Buffer days (from profile)
         buffer_days = int(savings_discipline.get("buffer_days", 0) or 0)
+
+        # Financial health score from behavior profile (0-100)
+        financial_health_score = profile.get("financial_health_score")
+
+        # Recent transactions (last 10 enriched)
+        sorted_txns = sorted(all_transactions, key=lambda x: x.get("parsed_date", ""), reverse=True)
+        recent_transactions = sorted_txns[:10]
 
         return DashboardSummaryDTO(
             net_cash_flow_paise=net_cash_flow_paise,
@@ -84,4 +91,6 @@ class DashboardService(BaseService):
             emi_paise=emi_paise,
             emi_ratio=emi_ratio,
             buffer_days=buffer_days,
+            financial_health_score=financial_health_score,
+            recent_transactions=recent_transactions,
         )

@@ -441,6 +441,23 @@ _VERIFY_PLAYWRIGHT_TASKS = (
     ),
 )
 
+# M9-C27 — API Contract Integrity & Drift-Proofing (api-contracts capability).
+# Runs STRUCTURAL freshness, GENERATED-type reproducibility, CONSUMER integrity,
+# and WIRE validation as a single, cheap, deterministic gate. This is a
+# precondition for frontend/E2E certification: a contract break fails here
+# (cheaply) instead of after 1,392 Playwright instances.
+_VERIFY_API_CONTRACTS_TASKS = (
+    VerificationTask(
+        id="api-contracts-gate",
+        name="API Contract Integrity Gate",
+        profile="api-contracts",
+        commands=["python3 runtime/verify.py api-contracts"],
+        category=VerificationCategory.CONTRACT,
+        scope=VerificationScope.CONTRACTS,
+        estimated_duration_seconds=120,
+    ),
+)
+
 _PROFILES: dict[str, VerificationProfile] = {
     "quick": VerificationProfile(
         name="quick",
@@ -507,6 +524,12 @@ _PROFILES: dict[str, VerificationProfile] = {
         scope=VerificationScope.PLAYWRIGHT,
         description="End-to-end Playwright browser tests",
         tasks=_VERIFY_PLAYWRIGHT_TASKS,
+    ),
+    "api-contracts": VerificationProfile(
+        name="api-contracts",
+        scope=VerificationScope.CONTRACTS,
+        description="M9-C27 API Contract Integrity & Drift-Proofing gate",
+        tasks=_VERIFY_API_CONTRACTS_TASKS,
     ),
 }
 

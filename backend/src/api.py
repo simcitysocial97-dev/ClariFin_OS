@@ -13,21 +13,35 @@ Phase 2 Router Extraction Complete:
 - This file now contains only app setup, middleware, and router registration
 """
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import settings
 from src.errors import register_error_handlers
 from src.health import register_health_routes
+from src.startup import run_startup_validation
 
 # ============================================================
 # FastAPI App
 # ============================================================
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> None:
+    # Ensure the SQLite schema exists/is current before serving requests.
+    # Delegates to the canonical startup-validation owner (src/startup.py),
+    # which now performs idempotent schema initialization.
+    run_startup_validation()
+    yield
+
+
 app = FastAPI(
     title="Personal Finance API",
     description="REST API for personal finance tracker",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Enable CORS

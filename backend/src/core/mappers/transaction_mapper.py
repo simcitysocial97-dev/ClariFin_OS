@@ -34,11 +34,12 @@ class TransactionMapper:
         description: str,
         amount: Money,
         balance: Money | None,
+        type: str,
         category: str,
         subcategory: str | None,
-        bank: str,
-        transaction_type: str,
-        reference_number: str | None = None,
+        bank: str | None,
+        member: str | None,
+        statement_file: str | None = None,
     ) -> TransactionDTO:
         """
         Convert transaction data to TransactionDTO.
@@ -49,11 +50,12 @@ class TransactionMapper:
             description: Transaction description
             amount: Money instance for transaction amount
             balance: Money instance for running balance (optional)
+            type: Transaction type (debit/credit)
             category: Transaction category
             subcategory: Transaction subcategory (optional)
-            bank: Bank name
-            transaction_type: Transaction type (debit/credit)
-            reference_number: Bank reference number (optional)
+            bank: Bank name (optional)
+            member: Member name (optional)
+            statement_file: Statement file name for import tracking (optional)
 
         Returns:
             TransactionDTO instance
@@ -68,11 +70,12 @@ class TransactionMapper:
                 if balance
                 else None
             ),
+            type=type,
             category=category,
             subcategory=subcategory,
             bank=bank,
-            transaction_type=transaction_type,
-            reference_number=reference_number,
+            member=member,
+            statement_file=statement_file,
         )
 
     @staticmethod
@@ -103,11 +106,12 @@ class TransactionMapper:
             description = txn.get("description", "")
             amount_paise = txn.get("amount_paise", 0)
             balance_paise = txn.get("balance_paise")
+            type_val = txn.get("type", "") or "debit"
             category = txn.get("category", "Uncategorized")
             subcategory = txn.get("subcategory")
-            bank = txn.get("bank", "")
-            transaction_type = txn.get("type", "debit")
-            reference_number = txn.get("reference_number")
+            bank = txn.get("bank")
+            member = txn.get("member")
+            statement_file = txn.get("statement_file")
 
             # Create Money instances
             amount = Money(amount_paise)
@@ -120,11 +124,12 @@ class TransactionMapper:
                 description=description,
                 amount=amount,
                 balance=balance,
+                type=type_val,
                 category=category,
                 subcategory=subcategory,
                 bank=bank,
-                transaction_type=transaction_type,
-                reference_number=reference_number,
+                member=member,
+                statement_file=statement_file,
             )
             transaction_dtos.append(dto)
 

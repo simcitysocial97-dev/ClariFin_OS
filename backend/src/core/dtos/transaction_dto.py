@@ -40,27 +40,29 @@ class TransactionDTO(BaseModel):
     balance: MoneyDTO | None = Field(
         default=None, description="Running balance after transaction as Money object"
     )
+    type: str = Field(description="Transaction type (debit/credit)")
     category: str = Field(description="Transaction category")
     subcategory: str | None = Field(default=None, description="Transaction subcategory")
-    bank: str = Field(description="Bank name")
-    transaction_type: str = Field(description="Transaction type (debit/credit)")
-    reference_number: str | None = Field(
-        default=None, description="Bank reference number"
+    bank: str = Field(default="", description="Bank name")
+    member: str | None = Field(default=None, description="Member name")
+    statement_file: str | None = Field(
+        default=None, description="Statement file name for import tracking"
     )
 
     class Config:
         json_schema_extra = {
             "example": {
-                "id": "txn_123",
+                "id": 1,
                 "date": "2026-07-05",
                 "description": "Amazon Purchase",
-                "amount": {"paise": -150000, "rupees": -1500.0},
+                "amount": {"paise": 150000, "rupees": 1500.0},
                 "balance": {"paise": 850000, "rupees": 8500.0},
+                "type": "debit",
                 "category": "Shopping",
                 "subcategory": "E-commerce",
                 "bank": "HDFC Bank",
-                "transaction_type": "debit",
-                "reference_number": "REF123",
+                "member": "Self",
+                "statement_file": "statement_july.pdf",
             }
         }
 

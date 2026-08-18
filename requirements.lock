@@ -8,8 +8,8 @@ cachetools==7.1.4
 camelot-py==0.11.0
 certifi==2026.7.22
 cffi==2.1.1
-chardet==7.5.1
-charset-normalizer==3.5.0
+chardet==7.6.0
+charset-normalizer==3.5.1
 click==8.4.2
 coverage==7.15.2
 cryptography==50.0.0
@@ -50,7 +50,7 @@ pycparser==3.0
 pydantic==2.13.4
 pydantic_core==2.46.4
 Pygments==2.20.0
-pypdf==6.16.0
+pypdf==6.16.1
 pypdfium2==5.13.0
 pytest==9.1.1
 pytest-asyncio==1.4.0
@@ -74,3 +74,4 @@ textual==8.2.8
 typing-inspection==0.4.4
 typing_extensions==4.16.0
 uc-micro-py==2.0.0
+uvicorn==0.51.0
