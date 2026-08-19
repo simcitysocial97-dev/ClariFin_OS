@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 import { ROUTE_REDIRECTS } from './lib/config/navigation';
 
 export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
+  // Strip trailing slash for route lookup (Next.js trailingSlash adds it automatically)
+  const path = request.nextUrl.pathname.replace(/\/$/, '');
   const redirectPath = ROUTE_REDIRECTS[path];
   if (redirectPath) {
     console.log(`Redirecting ${path} -> ${redirectPath}`);

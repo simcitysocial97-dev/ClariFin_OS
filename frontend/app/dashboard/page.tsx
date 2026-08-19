@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/pan
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
 import { MoneyValue } from "@/components/primitives/data-display/money-value";
-import { UploadModal } from "@/components/upload/upload-modal";
 
 // ============================================================
 // Internal Presentational Components
@@ -169,7 +168,7 @@ function HealthScoreFooter({ score }: { score: number | null | undefined }) {
 
 export default function DashboardPage() {
   const { data, loading, error, refetch } = useDashboardMetrics();
-  const [uploadOpen, setUploadOpen] = useState(false);
+  const router = useRouter();
   // useOverview hook is available for future use
 
   // Page Loading state
@@ -179,6 +178,12 @@ export default function DashboardPage() {
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
           <PanelHeader title="Dashboard" />
+            <div className="flex justify-end px-4">
+              <Button variant="outline" onClick={() => router.push("?upload=true")}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            </div>
           <PanelBody loading>
             <div className="p-4">
               <DashboardSkeleton />
@@ -197,6 +202,12 @@ export default function DashboardPage() {
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
           <PanelHeader title="Dashboard" />
+            <div className="flex justify-end px-4">
+              <Button variant="outline" onClick={() => router.push("?upload=true")}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            </div>
           <PanelBody error={error.message}>
             <div className="p-4">
               <ErrorFallback error={error} resetErrorBoundary={refetch} />
@@ -215,6 +226,12 @@ export default function DashboardPage() {
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
           <PanelHeader title="Dashboard" />
+            <div className="flex justify-end px-4">
+              <Button variant="outline" onClick={() => router.push("?upload=true")}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            </div>
           <PanelBody empty emptyMessage="No data available">
             <div className="p-4">
               <Alert>
@@ -236,6 +253,12 @@ export default function DashboardPage() {
     <Surface variant="default" density="none" className="flex flex-col h-full">
       <Panel fill>
         <PanelHeader title="Dashboard" />
+            <div className="flex justify-end px-4">
+              <Button variant="outline" onClick={() => router.push("?upload=true")}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            </div>
         <PanelBody scrollable>
           <Stack gap={4} className="p-4">
             {/* KPI Row - 4 Key Numbers */}
@@ -252,12 +275,6 @@ export default function DashboardPage() {
             </ErrorBoundary>
 
             {/* Upload Button */}
-            <div className="flex justify-end">
-              <Button variant="outline" onClick={() => setUploadOpen(true)}>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-            </div>
 
             {/* Main Content - 2-column on desktop, stack on mobile */}
             <Grid gap={4} className="grid-cols-1 lg:grid-cols-3">
@@ -335,7 +352,6 @@ export default function DashboardPage() {
         </PanelBody>
       </Panel>
     </Surface>
-    <UploadModal open={uploadOpen} onOpenChange={setUploadOpen} />
     </main>
   );
 }
