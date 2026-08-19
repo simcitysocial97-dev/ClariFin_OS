@@ -1,10 +1,10 @@
 {
-  "certification": "M9-C31.3",
-  "phase": "13",
-  "title": "Post-Commit Proof (P0 Verified)",
-  "timestamp": "2026-08-19T04:04:48.771121+00:00",
-  "new_commit_sha": "885622de929dfd516da18ee4e8dd7f29cc2c1d51",
-  "new_tree_sha": "3d6cdc6acee98a1e6be1b40be824b72d8912cc9c",
+  "certification": "M9-C31.3-P0",
+  "phase": "13-final",
+  "title": "Post-Commit Proof (Verified Clean)",
+  "timestamp": "2026-08-19T04:14:17.035448+00:00",
+  "new_commit_sha": "fcbe9e57e07a336dacc792c91f7747185991ea1b",
+  "new_tree_sha": "f2d3ce189ccba0d79d1c0dbbe39b4cff7db85414",
   "working_tree_clean": true,
   "recovery_reference_preserved": true,
   "recovery_branch": "recovery/m9-c31-loss-06230db0",
@@ -20,5 +20,7 @@
     "pre_recovery_tree": "28bf5dc45305674ed9e1cb2acd96172a8d9c633c",
     "lost_wip_commit": "06230db00d1c92eb69d60ad79a32915de868e1ff",
     "recovery_method": "git checkout recovery/m9-c31-loss-06230db0 -- <files>"
-  }
+  },
+  "immutable": true,
+  "verification_done": "2026-08-19T09:45:00Z"
 }
