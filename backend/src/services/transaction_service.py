@@ -14,6 +14,8 @@ from src.common import (
     format_inr,
     percentage_change,
 )
+from src.core.dtos.transaction_dto import TransactionListResponse
+from src.core.mappers.transaction_mapper import TransactionMapper
 from src.repositories import TransactionRepository
 
 
@@ -32,10 +34,32 @@ class TransactionService:
         member: str | None = "All",
         limit: int = 100,
         offset: int = 0,
-    ) -> list[dict[str, Any]]:
-        """Get transactions as enriched dictionaries."""
-        rows = self.repo.get_all()
-        return [dict(r) for r in rows]
+    ) -> TransactionListResponse:
+        """Get transactions with filtering and pagination."""
+        filters = {}
+        if search:
+            filters["search"] = search
+        if bank and bank != "All":
+            filters["bank"] = bank
+        if category and category != "All":
+            filters["category"] = category
+        if type and type != "All":
+            filters["type"] = type
+        if member and member != "All":
+            filters["member"] = member
+
+        # Get all matching rows (repo applies filters)
+        raw_rows = self.repo.get_all_transactions_with_bank(filters)
+        all_rows = [dict(r) for r in raw_rows]
+        
+        # Total count before pagination
+        total = len(all_rows)
+        
+        # Apply pagination
+        page_rows = all_rows[offset:offset + limit]
+        
+        # Build response using mapper
+        return TransactionMapper.to_list_response(page_rows, total, limit, offset)
 
     def get_overview(
         self,

@@ -1,0 +1,346 @@
+{
+  "certification": "M9-C31",
+  "title": "Post-Contract Full Application Re-Certification",
+  "run_id": "20260818T191500Z",
+  "parent_certification": "M9-C30",
+  "commit": "8fc2cd9e",
+  "timestamp": "2026-08-18T19:15:00Z",
+  
+  "executive_summary": {
+    "status": "CONDITIONAL",
+    "message": "C30 contract gate certified. C26 historical defects NOT fully resolved. 0 of 4 C26 defects resolved, 1 partially resolved, 3 remain or have regressions. Environment failures (RC-D/E) confirmed as downstream of API defects.",
+    "c26_defects_resolved": 0,
+    "c26_defects_partially_resolved": 1,
+    "c26_defects_remaining": 3,
+    "new_defects_found": 4,
+    "recommendation": "Proceed to C32 for defect remediation"
+  },
+
+  "baseline": {
+    "backend_verification": {
+      "profile": "backend",
+      "status": "PASS",
+      "tests_passed": 1346,
+      "tests_failed": 0,
+      "tests_skipped": 0,
+      "duration_seconds": 140.68,
+      "environment": "local",
+      "python_version": "3.12.3"
+    },
+    "contract_tests": {
+      "profile": "contract",
+      "status": "PASS",
+      "tests_passed": 161,
+      "tests_failed": 0,
+      "tests_skipped": 0,
+      "duration_seconds": 77.27,
+      "note": "Hypothesis-based property tests covering all endpoints"
+    },
+    "api_contracts_gate": {
+      "status": "FAIL",
+      "dimensions": {
+        "freshness": {"status": "PASS", "failures": 0},
+        "generated_types": {"status": "PASS", "failures": 0},
+        "schema_compat": {"status": "FAIL", "failures": 1},
+        "consumer_integrity": {"status": "FAIL", "failures": 3},
+        "wire": {"status": "FAIL", "failures": 5}
+      },
+      "total_failures": 9,
+      "operations_inventory": 114,
+      "consumers_inventory": 46
+    },
+    "c30_governance": {
+      "status": "PASS",
+      "surfaces_inventoryed": 62,
+      "mutations_tested": 14,
+      "mutations_detected": 9,
+      "mutations_missed": 0,
+      "mutations_skipped": 5,
+      "ci_gated": false,
+      "no_ci_bypass": true
+    }
+  },
+
+  "c26_regression_analysis": {
+    "objective": "Prove C26 four historical API defects are resolved",
+    "defect_trace": [
+      {
+        "defect_id": "C26-1",
+        "endpoint": "GET /api/dashboard/summary",
+        "original_failure": "financial_health_score missing from response",
+        "current_status": "NOT_RESOLVED",
+        "findings": [
+          {
+            "check": "HTTP response",
+            "status": "PASS",
+            "detail": "Returns HTTP 200 with valid JSON"
+          },
+          {
+            "check": "DTO schema validation",
+            "status": "FAIL",
+            "detail": "financial_health_score field absent from response despite being in DTO"
+          },
+          {
+            "check": "Hook/capability interpretation",
+            "status": "PASS",
+            "detail": "Frontend hook exists at frontend/lib/hooks/use-behavior-score.ts"
+          },
+          {
+            "check": "Component rendering",
+            "status": "SKIPPED",
+            "detail": "Requires full frontend build"
+          },
+          {
+            "check": "DOM-visible data",
+            "status": "SKIPPED",
+            "detail": "Requires Playwright execution"
+          }
+        ],
+        "root_cause": "DashboardService.get_summary() does not pass financial_health_score to DTO constructor",
+        "classification": "PRODUCTION_LOGIC_REGRESSION",
+        "remediation": "Add financial_health_score=profile.get('financial_health_score') to DashboardSummaryDTO constructor call"
+      },
+      {
+        "defect_id": "C26-2",
+        "endpoint": "GET /api/transactions",
+        "original_failure": "Response envelope drift (bare array instead of wrapped object)",
+        "current_status": "NOT_RESOLVED",
+        "findings": [
+          {
+            "check": "HTTP response",
+            "status": "PASS",
+            "detail": "Returns HTTP 200"
+          },
+          {
+            "check": "Response envelope",
+            "status": "FAIL",
+            "detail": "Returns bare array [txn1, txn2, ...] instead of {transactions: [...], total: N, limit: N, offset: N}"
+          },
+          {
+            "check": "Schema validation",
+            "status": "FAIL",
+            "detail": "OpenAPI schema declares type: array, but TransactionListResponse expects object with transactions field"
+          },
+          {
+            "check": "Consumer integrity",
+            "status": "FAIL",
+            "detail": "Frontend TransactionsResponseSchema expects {transactions: array, total: number}"
+          }
+        ],
+        "root_cause": "Transaction endpoint response_model changed from TransactionListResponse to list[dict[str, Any]]",
+        "classification": "PRODUCTION_LOGIC_REGRESSION",
+        "remediation": "Change response_model back to TransactionListResponse and update service to return wrapped response"
+      },
+      {
+        "defect_id": "C26-3",
+        "endpoint": "GET /api/reconciliation",
+        "original_failure": "Endpoint not found (404)",
+        "current_status": "PATH_MISMATCH",
+        "findings": [
+          {
+            "check": "HTTP response",
+            "status": "FAIL",
+            "detail": "Returns HTTP 404 for /api/reconciliation"
+          },
+          {
+            "check": "Backend routes",
+            "status": "INFO",
+            "detail": "Backend defines /api/reconciliations (plural), not /api/reconciliation (singular)"
+          },
+          {
+            "check": "Consumer references",
+            "status": "WARNING",
+            "detail": "One test file references /api/reconciliation (singular)"
+          }
+        ],
+        "root_cause": "Frontend test references deprecated singular path; backend uses plural path consistently",
+        "classification": "CONSUMER_DRIFT",
+        "remediation": "Update test reference from /api/reconciliation to /api/reconciliations"
+      },
+      {
+        "defect_id": "C26-4",
+        "endpoint": "GET /api/v1/behaviour/wellness-score",
+        "original_failure": "Endpoint not found or empty response",
+        "current_status": "ENVIRONMENTAL_FAILURE",
+        "findings": [
+          {
+            "check": "HTTP response",
+            "status": "FAIL",
+            "detail": "Returns HTTP 404 with error 'No behaviour snapshot available'"
+          },
+          {
+            "check": "Backend routes",
+            "status": "PASS",
+            "detail": "Endpoint exists in OpenAPI"
+          },
+          {
+            "check": "Data dependency",
+            "status": "FAIL",
+            "detail": "Behavior profile cache is empty in fresh database"
+          },
+          {
+            "check": "Fixture coverage",
+            "status": "FAIL",
+            "detail": "Contract fixture does not seed behavior data"
+          }
+        ],
+        "root_cause": "Wellness score requires pre-computed behavior profile; fixture only seeds transactions",
+        "classification": "FIXTURE_INCOMPLETE",
+        "remediation": "Add behavior profile computation to contract fixture or mock behavior service"
+      }
+    ],
+    "summary": {
+      "resolved": 0,
+      "partially_resolved": 0,
+      "not_resolved": 2,
+      "path_mismatch": 1,
+      "environmental": 1
+    }
+  },
+
+  "new_defects_discovered": [
+    {
+      "id": "C31-NEW-1",
+      "classification": "SCHEMA_COMPATIBILITY",
+      "severity": "HIGH",
+      "endpoint": "GET /api/dashboard/summary",
+      "field": "savings_rate",
+      "description": "OpenAPI description says 'percentage (0-100)' but wire check expects ratio (0-1)",
+      "evidence": "Live response returns 0.0-100.0 range, gate checks for >1.0 threshold",
+      "remediation": "Align DTO description with actual implementation or fix wire check logic"
+    },
+    {
+      "id": "C31-NEW-2",
+      "classification": "NULLABILITY_DRIFT",
+      "severity": "MEDIUM",
+      "endpoint": "GET /api/dashboard/summary",
+      "field": "net_cash_flow_rupees",
+      "description": "Backend DTO has float | None (nullable), Zod schema has .optional() (different semantics)",
+      "evidence": "Gate detects nullability mismatch between OpenAPI and Zod schema",
+      "remediation": "Update Zod schema to use .nullable().optional() to match backend"
+    },
+    {
+      "id": "C31-NEW-3",
+      "classification": "ENDPOINT_DRIFT",
+      "severity": "MEDIUM",
+      "endpoint": "GET /api/behavior/score",
+      "description": "Frontend consumer references deprecated endpoint path",
+      "evidence": "use-behavior-score.ts calls /api/behavior/score but OpenAPI has /api/v1/behaviour/wellness-score",
+      "remediation": "Update frontend consumer to use new endpoint path"
+    },
+    {
+      "id": "C31-NEW-4",
+      "classification": "ENDPOINT_DRIFT",
+      "severity": "MEDIUM",
+      "endpoint": "GET /api/categories/list",
+      "description": "Frontend consumer references deprecated endpoint path",
+      "evidence": "api/client.ts calls /api/categories/list but OpenAPI has /api/categories",
+      "remediation": "Update frontend consumer to use new endpoint path"
+    }
+  ],
+
+  "test_inventory_delta": {
+    "objective": "Reconcile test count changes from C25 to C31",
+    "metric": {
+      "backend_unit_tests": {"C25": "unknown", "C31": 760, "delta": "+unknown", "explanation": "Unit tests expanded during Phase 5 stabilization"},
+      "backend_contract_tests": {"C25": "unknown", "C31": 161, "delta": "+unknown", "explanation": "Schemathesis-generated property tests added"},
+      "backend_capability_tests": {"C25": "unknown", "C31": 28, "delta": "+unknown", "explanation": "Capability tests added for financial health, patterns, etc."},
+      "frontend_vitest_tests": {"C25": "unknown", "C31": "654 files", "delta": "+unknown", "explanation": "Frontend test infrastructure expanded"},
+      "playwright_e2e": {"C25": 232, "C31": "pending", "delta": "-", "explanation": "E2E tests require contract gate to pass first"},
+      "workflow_count": {"C25": 9, "C31": 13, "delta": "+4", "explanation": "Added: api-contracts.yml, m9-forensic-diagnostic-lab.yml, verification-reconcile.yml, verification-runtime.yml"},
+      "verification_capabilities": {"C25": 9, "C31": 11, "delta": "+2", "explanation": "Added: api-contracts, contract-governance"}
+    }
+  },
+
+  "environmental_analysis": {
+    "rc_d_e_status": {
+      "networkidle_failures": "PENDING_E2E",
+      "waitforselector_failures": "PENDING_E2E",
+      "parallel_load_contention": "PENDING_E2E",
+      "assessment": "RC-D/E failures are downstream of API contract failures. Will re-evaluate after C26 defects are remediated."
+    },
+    "visual_regression": {
+      "snapshot_count": 0,
+      "provenance_tracked": false,
+      "status": "NOT_CERTIFIABLE",
+      "recommendation": "Visual baseline must be established with provenance before C31 can be fully certified"
+    }
+  },
+
+  "acceptance_gate": {
+    "application": {
+      "c26_four_defects_resolved": false,
+      "live_responses_conform_to_dtos": false,
+      "frontend_consumers_interpret_correctly": false,
+      "no_new_a_class_defects": false
+    },
+    "verification": {
+      "api_contracts_5_5_pass": false,
+      "c30_governance_pass": true,
+      "mutation_suite_8_8": "pending",
+      "no_contract_gate_bypass": true,
+      "no_new_artifact_drift": false
+    },
+    "full_test_matrix": {
+      "all_workflows_execute": "partial",
+      "no_workflow_disappears": true,
+      "no_new_skips": true,
+      "no_threshold_reduction": true,
+      "no_tests_deleted": true,
+      "no_matrix_reduction": true
+    },
+    "chromium": {
+      "fresh_full_run": "pending",
+      "every_failure_classified": "pending",
+      "no_unknown_failure": "pending",
+      "cascades_collapsed_to_root_causes": "pending",
+      "environment_separated_from_application": "pending"
+    },
+    "governance": {
+      "c30_only_changes_justified": true,
+      "emi_ratio_fix_has_evidence": true,
+      "fixture_no_invented_behavior": true,
+      "c30_code_not_on_hot_path": true
+    },
+    "overall": "FAIL"
+  },
+
+  "recommendations": [
+    {
+      "priority": "P0",
+      "action": "Fix C26-2: Restore TransactionListResponse envelope for /api/transactions",
+      "effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": "P0",
+      "action": "Fix C26-1: Add financial_health_score to DashboardService.get_summary() return",
+      "effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": "P1",
+      "action": "Fix C31-NEW-3/4: Update frontend consumers for deprecated endpoint paths",
+      "effort": "LOW",
+      "impact": "MEDIUM"
+    },
+    {
+      "priority": "P1",
+      "action": "Fix C31-NEW-1: Align savings_rate/emi_ratio documentation with implementation",
+      "effort": "LOW",
+      "impact": "MEDIUM"
+    },
+    {
+      "priority": "P2",
+      "action": "Fix C31-NEW-2: Update Zod schema nullability for net_cash_flow_rupees",
+      "effort": "LOW",
+      "impact": "LOW"
+    },
+    {
+      "priority": "P2",
+      "action": "Add behavior profile to contract fixture for C26-4",
+      "effort": "MEDIUM",
+      "impact": "MEDIUM"
+    }
+  ]
+}

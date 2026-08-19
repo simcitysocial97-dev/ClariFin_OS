@@ -33,16 +33,18 @@ test.describe('Dashboard Loading', () => {
 
   test('should load dashboard page', async ({ page, waitForPageReady, assertNoErrors }) => {
     await page.goto('/');
+    // Wait for loading skeleton to disappear before asserting headings
+    await page.locator('[class*="skeleton"]').waitFor({ state: 'hidden', timeout: 10000 });
     await waitForPageReady(page);
-    
-    // Check for dashboard header
-    const header = page.locator('h1, h2').first();
+
+    // Check for dashboard header (PanelHeader renders h3)
+    const header = page.locator('h1, h2, h3').first();
     await expect(header).toBeVisible();
-    
+
     // Check for main content area
     const main = page.locator('main').first();
     await expect(main).toBeVisible();
-    
+
     assertNoErrors();
   });
 

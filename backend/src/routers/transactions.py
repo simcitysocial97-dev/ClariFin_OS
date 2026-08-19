@@ -4,12 +4,13 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
+from src.core.dtos.transaction_dto import TransactionListResponse
 from src.services.transaction_service import TransactionService
 
 router = APIRouter(prefix="/api", tags=["transactions"])
 
 
-@router.get("/transactions", response_model=list[dict[str, Any]])
+@router.get("/transactions", response_model=TransactionListResponse)
 def get_transactions(
     search: str | None = None,
     bank: str | None = "All",
@@ -18,8 +19,8 @@ def get_transactions(
     member: str | None = "All",
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
-) -> list[dict[str, Any]]:
-    """Get transactions as enriched dictionaries."""
+) -> TransactionListResponse:
+    """Get transactions with filtering and pagination."""
     try:
         service = TransactionService()
         return service.get_transactions(

@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { BehaviorScoreSchema, type BehaviorScore } from '@/lib/schemas/behavior-score'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchBehaviorScore(): Promise<BehaviorScore> {
-  const response = await fetch(`${API_BASE}/api/behavior/score`)
+  const response = await fetch(`${API_BASE}/api/v1/behaviour/wellness-score`)
   if (!response.ok) throw new Error(`Behavior score fetch failed: ${response.status}`)
   
   // This is unverified raw payload from the network

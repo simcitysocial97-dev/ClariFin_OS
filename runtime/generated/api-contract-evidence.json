@@ -1,0 +1,362 @@
+{
+  "run_id": "20260818T192005Z",
+  "repository_revision": "8fc2cd9e",
+  "backend_revision": "8fc2cd9e",
+  "openapi_hash": "7afa3d86c3a66509d5e4c713c5222a2b0a2790ba88b2af23bc0552cdd674cc4f",
+  "generated_types_hash": "c227090842e085b25e1d301e6ad2eb217fedaee8f311744a28fdd3a34161617e",
+  "inventory": {
+    "backend_operations": 114,
+    "frontend_consumers": 46,
+    "runtime_schemas": 2,
+    "committed_artifacts": 0,
+    "contract_inventory_hash": "0c62478d335b79bb"
+  },
+  "dimensions": [
+    {
+      "name": "freshness",
+      "status": "fail",
+      "failures": [
+        {
+          "classification": "OPENAPI_STALE",
+          "operation": "*",
+          "path": "paths./api/dashboard/summary.get",
+          "method": "",
+          "source": "freshness",
+          "expected": "FRONTEND: '<present>'",
+          "actual": "FRONTEND LIVE: None",
+          "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
+          "boundary": ""
+        },
+        {
+          "classification": "OPENAPI_STALE",
+          "operation": "*",
+          "path": "paths./api/dashboard/summary.post",
+          "method": "",
+          "source": "freshness",
+          "expected": "FRONTEND: None",
+          "actual": "FRONTEND LIVE: '<present>'",
+          "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
+          "boundary": ""
+        },
+        {
+          "classification": "OPENAPI_STALE",
+          "operation": "*",
+          "path": "paths./api/dashboard/summary.get",
+          "method": "",
+          "source": "freshness",
+          "expected": "BACKEND_TESTS: '<present>'",
+          "actual": "BACKEND_TESTS LIVE: None",
+          "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
+          "boundary": ""
+        },
+        {
+          "classification": "OPENAPI_STALE",
+          "operation": "*",
+          "path": "paths./api/dashboard/summary.post",
+          "method": "",
+          "source": "freshness",
+          "expected": "BACKEND_TESTS: None",
+          "actual": "BACKEND_TESTS LIVE: '<present>'",
+          "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
+          "boundary": ""
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "name": "generated_types",
+      "status": "fail",
+      "failures": [
+        {
+          "classification": "GENERATED_TYPES_STALE",
+          "operation": "*",
+          "path": "frontend/types/api-generated.ts",
+          "method": "",
+          "source": "generated_types",
+          "expected": "types reproducible from live OpenAPI (no diff)",
+          "actual": "differences detected starting line 57",
+          "details": "Run `npm run gen:types` while backend is running to regenerate.",
+          "boundary": ""
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "name": "schema_compat",
+      "status": "fail",
+      "failures": [
+        {
+          "classification": "NULLABILITY_DRIFT",
+          "operation": "schema:DashboardMetricsSchema",
+          "path": "DashboardSummaryDTO.net_cash_flow_rupees",
+          "method": "",
+          "source": "schema_compat",
+          "expected": "net_cash_flow_rupees nullable=True",
+          "actual": "net_cash_flow_rupees nullable=False",
+          "details": "",
+          "boundary": "Backend DashboardSummaryDTO -> frontend DashboardMetricsSchema"
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "name": "consumer_integrity",
+      "status": "fail",
+      "failures": [
+        {
+          "classification": "ENDPOINT_DRIFT",
+          "operation": "GET /api/behavior/score",
+          "path": "/api/behavior/score",
+          "method": "GET",
+          "source": "consumer_integrity",
+          "expected": "endpoint /api/behavior/score exists in backend",
+          "actual": "endpoint not found in OpenAPI",
+          "details": "Consumer in lib/hooks/use-behavior-score.ts calls non-existent endpoint",
+          "boundary": ""
+        },
+        {
+          "classification": "ENDPOINT_DRIFT",
+          "operation": "GET /api/dashboard/summary",
+          "path": "/api/dashboard/summary",
+          "method": "GET",
+          "source": "consumer_integrity",
+          "expected": "endpoint /api/dashboard/summary exists in backend",
+          "actual": "endpoint not found in OpenAPI",
+          "details": "Consumer in lib/hooks/use-dashboard-metrics.ts calls non-existent endpoint",
+          "boundary": ""
+        },
+        {
+          "classification": "ENDPOINT_DRIFT",
+          "operation": "GET /api/categories/list",
+          "path": "/api/categories/list",
+          "method": "GET",
+          "source": "consumer_integrity",
+          "expected": "endpoint /api/categories/list exists in backend",
+          "actual": "endpoint not found in OpenAPI",
+          "details": "Consumer in lib/api/client.ts calls non-existent endpoint",
+          "boundary": ""
+        },
+        {
+          "classification": "API_BASE_DRIFT",
+          "operation": "GET /api/v1/reconciliations",
+          "path": "/api/v1/reconciliations",
+          "method": "GET",
+          "source": "consumer_integrity",
+          "expected": "absolute backend URL or proper proxy config",
+          "actual": "relative fetch URL in lib/capabilities/use-reconciliation-capability.ts (targets :3000)",
+          "details": "Consumer in lib/capabilities/use-reconciliation-capability.ts uses relative URL without API_BASE prefix",
+          "boundary": ""
+        }
+      ],
+      "metadata": {}
+    },
+    {
+      "name": "wire",
+      "status": "fail",
+      "failures": [
+        {
+          "classification": "WIRE_STATUS_DRIFT",
+          "operation": "GET /api/dashboard/summary",
+          "path": "/api/dashboard/summary",
+          "method": "GET",
+          "source": "wire",
+          "expected": "HTTP 200",
+          "actual": "HTTP 405: {\"detail\":\"Method Not Allowed\"}",
+          "details": "Live wire probe failed",
+          "boundary": ""
+        },
+        {
+          "classification": "RESPONSE_ENVELOPE_DRIFT",
+          "operation": "GET /api/transactions",
+          "path": "/api/transactions",
+          "method": "GET",
+          "source": "wire",
+          "expected": "{transactions: [...], total: int}",
+          "actual": "bare array with 3 items",
+          "details": "Expected wrapped response envelope",
+          "boundary": ""
+        },
+        {
+          "classification": "WIRE_STATUS_DRIFT",
+          "operation": "GET /api/reconciliation",
+          "path": "/api/reconciliation",
+          "method": "GET",
+          "source": "wire",
+          "expected": "HTTP 200",
+          "actual": "HTTP 404: {\"detail\":\"Not Found\"}",
+          "details": "Live wire probe failed",
+          "boundary": ""
+        },
+        {
+          "classification": "WIRE_STATUS_DRIFT",
+          "operation": "GET /api/v1/behaviour/wellness-score",
+          "path": "/api/v1/behaviour/wellness-score",
+          "method": "GET",
+          "source": "wire",
+          "expected": "HTTP 200",
+          "actual": "HTTP 404: {\"error\":{\"message\":\"No behaviour snapshot available\",\"status_code\":404}}",
+          "details": "Live wire probe failed",
+          "boundary": ""
+        }
+      ],
+      "metadata": {}
+    }
+  ],
+  "failures": [
+    {
+      "classification": "OPENAPI_STALE",
+      "operation": "*",
+      "path": "paths./api/dashboard/summary.get",
+      "method": "",
+      "source": "freshness",
+      "expected": "FRONTEND: '<present>'",
+      "actual": "FRONTEND LIVE: None",
+      "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
+      "boundary": ""
+    },
+    {
+      "classification": "OPENAPI_STALE",
+      "operation": "*",
+      "path": "paths./api/dashboard/summary.post",
+      "method": "",
+      "source": "freshness",
+      "expected": "FRONTEND: None",
+      "actual": "FRONTEND LIVE: '<present>'",
+      "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
+      "boundary": ""
+    },
+    {
+      "classification": "OPENAPI_STALE",
+      "operation": "*",
+      "path": "paths./api/dashboard/summary.get",
+      "method": "",
+      "source": "freshness",
+      "expected": "BACKEND_TESTS: '<present>'",
+      "actual": "BACKEND_TESTS LIVE: None",
+      "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
+      "boundary": ""
+    },
+    {
+      "classification": "OPENAPI_STALE",
+      "operation": "*",
+      "path": "paths./api/dashboard/summary.post",
+      "method": "",
+      "source": "freshness",
+      "expected": "BACKEND_TESTS: None",
+      "actual": "BACKEND_TESTS LIVE: '<present>'",
+      "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
+      "boundary": ""
+    },
+    {
+      "classification": "GENERATED_TYPES_STALE",
+      "operation": "*",
+      "path": "frontend/types/api-generated.ts",
+      "method": "",
+      "source": "generated_types",
+      "expected": "types reproducible from live OpenAPI (no diff)",
+      "actual": "differences detected starting line 57",
+      "details": "Run `npm run gen:types` while backend is running to regenerate.",
+      "boundary": ""
+    },
+    {
+      "classification": "NULLABILITY_DRIFT",
+      "operation": "schema:DashboardMetricsSchema",
+      "path": "DashboardSummaryDTO.net_cash_flow_rupees",
+      "method": "",
+      "source": "schema_compat",
+      "expected": "net_cash_flow_rupees nullable=True",
+      "actual": "net_cash_flow_rupees nullable=False",
+      "details": "",
+      "boundary": "Backend DashboardSummaryDTO -> frontend DashboardMetricsSchema"
+    },
+    {
+      "classification": "ENDPOINT_DRIFT",
+      "operation": "GET /api/behavior/score",
+      "path": "/api/behavior/score",
+      "method": "GET",
+      "source": "consumer_integrity",
+      "expected": "endpoint /api/behavior/score exists in backend",
+      "actual": "endpoint not found in OpenAPI",
+      "details": "Consumer in lib/hooks/use-behavior-score.ts calls non-existent endpoint",
+      "boundary": ""
+    },
+    {
+      "classification": "ENDPOINT_DRIFT",
+      "operation": "GET /api/dashboard/summary",
+      "path": "/api/dashboard/summary",
+      "method": "GET",
+      "source": "consumer_integrity",
+      "expected": "endpoint /api/dashboard/summary exists in backend",
+      "actual": "endpoint not found in OpenAPI",
+      "details": "Consumer in lib/hooks/use-dashboard-metrics.ts calls non-existent endpoint",
+      "boundary": ""
+    },
+    {
+      "classification": "ENDPOINT_DRIFT",
+      "operation": "GET /api/categories/list",
+      "path": "/api/categories/list",
+      "method": "GET",
+      "source": "consumer_integrity",
+      "expected": "endpoint /api/categories/list exists in backend",
+      "actual": "endpoint not found in OpenAPI",
+      "details": "Consumer in lib/api/client.ts calls non-existent endpoint",
+      "boundary": ""
+    },
+    {
+      "classification": "API_BASE_DRIFT",
+      "operation": "GET /api/v1/reconciliations",
+      "path": "/api/v1/reconciliations",
+      "method": "GET",
+      "source": "consumer_integrity",
+      "expected": "absolute backend URL or proper proxy config",
+      "actual": "relative fetch URL in lib/capabilities/use-reconciliation-capability.ts (targets :3000)",
+      "details": "Consumer in lib/capabilities/use-reconciliation-capability.ts uses relative URL without API_BASE prefix",
+      "boundary": ""
+    },
+    {
+      "classification": "WIRE_STATUS_DRIFT",
+      "operation": "GET /api/dashboard/summary",
+      "path": "/api/dashboard/summary",
+      "method": "GET",
+      "source": "wire",
+      "expected": "HTTP 200",
+      "actual": "HTTP 405: {\"detail\":\"Method Not Allowed\"}",
+      "details": "Live wire probe failed",
+      "boundary": ""
+    },
+    {
+      "classification": "RESPONSE_ENVELOPE_DRIFT",
+      "operation": "GET /api/transactions",
+      "path": "/api/transactions",
+      "method": "GET",
+      "source": "wire",
+      "expected": "{transactions: [...], total: int}",
+      "actual": "bare array with 3 items",
+      "details": "Expected wrapped response envelope",
+      "boundary": ""
+    },
+    {
+      "classification": "WIRE_STATUS_DRIFT",
+      "operation": "GET /api/reconciliation",
+      "path": "/api/reconciliation",
+      "method": "GET",
+      "source": "wire",
+      "expected": "HTTP 200",
+      "actual": "HTTP 404: {\"detail\":\"Not Found\"}",
+      "details": "Live wire probe failed",
+      "boundary": ""
+    },
+    {
+      "classification": "WIRE_STATUS_DRIFT",
+      "operation": "GET /api/v1/behaviour/wellness-score",
+      "path": "/api/v1/behaviour/wellness-score",
+      "method": "GET",
+      "source": "wire",
+      "expected": "HTTP 200",
+      "actual": "HTTP 404: {\"error\":{\"message\":\"No behaviour snapshot available\",\"status_code\":404}}",
+      "details": "Live wire probe failed",
+      "boundary": ""
+    }
+  ],
+  "passed": false
+}

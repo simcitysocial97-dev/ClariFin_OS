@@ -330,7 +330,7 @@ test.describe('Performance with Complex Data', () => {
     captureErrors(page);
     
     // Navigate first
-    await page.goto('/behavior');
+    await page.goto('/behaviour');
     await page.waitForLoadState('networkidle');
     
     // Seed data (wrapped in try-catch)

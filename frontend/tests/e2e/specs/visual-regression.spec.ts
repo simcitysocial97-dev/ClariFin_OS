@@ -10,6 +10,9 @@
 
 import { test, expect } from '../fixtures/test-fixtures';
 
+// Repoint snapshot directory to committed baselines (tests/e2e/snapshots/)
+test.use({ snapshotDir: 'tests/e2e/snapshots' });
+
 // ============================================================================
 // Configuration
 // ============================================================================
@@ -26,7 +29,7 @@ const PAGES = [
   { path: '/cards', name: 'cards' },
   { path: '/import', name: 'import' },
   { path: '/settings', name: 'settings' },
-  { path: '/behavior', name: 'behavior' },
+  { path: '/behaviour', name: 'behavior' },
   { path: '/reconciliation', name: 'reconciliation' },
 ];
 
@@ -162,10 +165,12 @@ test.describe('Visual Regression - States', () => {
   });
 
   test('should match empty state snapshot', async ({ page, waitForPageReady }) => {
-    // Clear all data
-    await page.evaluate(() => localStorage.clear());
-    
     await page.goto('/');
+    await waitForPageReady(page);
+    
+    // Clear all data (must navigate first to establish valid origin)
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
     await waitForPageReady(page);
     
     // Look for empty state

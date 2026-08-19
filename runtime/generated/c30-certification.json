@@ -1,0 +1,542 @@
+{
+  "certification": "M9-C30",
+  "title": "Contract Governance & Enforcement Certification",
+  "run_id": "20260819T032606Z",
+  "duration_seconds": 233.356021,
+  "start_time": "2026-08-19T03:26:06.550912+00:00",
+  "end_time": "2026-08-19T03:29:59.906933+00:00",
+  "summary": {
+    "surfaces_inventoryed": 62,
+    "surfaces_auto_detected": 57,
+    "surfaces_outside_boundary": 5,
+    "mutations_tested": 14,
+    "mutations_detected": 13,
+    "mutations_missed": 0,
+    "blind_spots_analyzed": 8,
+    "blind_spots_fully_active": 6,
+    "artifacts_reproducible": true,
+    "ci_gated": false,
+    "no_ci_bypass": true
+  },
+  "mutation_results": {
+    "mut-backend-method-change": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 7,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          4
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "fail",
+          1
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    },
+    "mut-backend-route-rename": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 17,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          10
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "fail",
+          5
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    },
+    "mut-backend-field-remove": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 6,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          4
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    },
+    "mut-backend-field-rename": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 13,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          10
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "fail",
+          1
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    },
+    "mut-backend-nullable-change": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 6,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          4
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "fail",
+          1
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "pass",
+          0
+        ]
+      ]
+    },
+    "mut-backend-type-change": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 4,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          2
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    },
+    "mut-backend-enum-change": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 3,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          2
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "pass",
+          0
+        ]
+      ]
+    },
+    "mut-frontend-stale-types": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 1,
+      "dimensions": [
+        [
+          "freshness",
+          "pass",
+          0
+        ],
+        [
+          "generated_types",
+          "fail",
+          1
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "pass",
+          0
+        ]
+      ]
+    },
+    "mut-frontend-stale-zod": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 1,
+      "dimensions": [
+        [
+          "freshness",
+          "pass",
+          0
+        ],
+        [
+          "generated_types",
+          "pass",
+          0
+        ],
+        [
+          "schema_compat",
+          "fail",
+          1
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "pass",
+          0
+        ]
+      ]
+    },
+    "mut-artifact-empty-openapi": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 1,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          1
+        ],
+        [
+          "generated_types",
+          "pass",
+          0
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "pass",
+          0
+        ]
+      ]
+    },
+    "mut-artifact-malformed-openapi": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 1,
+      "dimensions": [
+        [
+          "freshness",
+          "fail",
+          1
+        ],
+        [
+          "generated_types",
+          "pass",
+          0
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "pass",
+          0
+        ]
+      ]
+    },
+    "mut-wire-semantic-ratio": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 1,
+      "dimensions": [
+        [
+          "freshness",
+          "pass",
+          0
+        ],
+        [
+          "generated_types",
+          "pass",
+          0
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    },
+    "mut-wire-emi-ratio": {
+      "status": "SKIP",
+      "detail": "no mutation applied"
+    },
+    "mut-wire-monetary-unit": {
+      "status": "PASS",
+      "gate_passed": false,
+      "failure_count": 1,
+      "dimensions": [
+        [
+          "freshness",
+          "pass",
+          0
+        ],
+        [
+          "generated_types",
+          "pass",
+          0
+        ],
+        [
+          "schema_compat",
+          "pass",
+          0
+        ],
+        [
+          "consumer_integrity",
+          "pass",
+          0
+        ],
+        [
+          "wire",
+          "fail",
+          1
+        ]
+      ]
+    }
+  },
+  "blind_spots": [
+    {
+      "field": "savings_rate",
+      "description": "Savings rate as ratio (0-1)",
+      "expected_range": "[0, 1]",
+      "fixture_activation": "yes",
+      "detector": "wire",
+      "confidence": "high"
+    },
+    {
+      "field": "emi_ratio",
+      "description": "EMI to income ratio (0-1)",
+      "expected_range": "[0, 1]",
+      "fixture_activation": "yes",
+      "detector": "wire",
+      "confidence": "high"
+    },
+    {
+      "field": "financial_health_score",
+      "description": "Financial health score from behavior analysis (0-100)",
+      "expected_range": "[0, 100]",
+      "fixture_activation": "partial",
+      "detector": "wire",
+      "confidence": "medium"
+    },
+    {
+      "field": "buffer_days",
+      "description": "Emergency buffer in days",
+      "expected_range": "non-negative int",
+      "fixture_activation": "yes",
+      "detector": "wire",
+      "confidence": "high"
+    },
+    {
+      "field": "total_income_paise",
+      "description": "Total income in paise",
+      "expected_range": "positive int",
+      "fixture_activation": "yes",
+      "detector": "wire",
+      "confidence": "high"
+    },
+    {
+      "field": "amount_paise",
+      "description": "Amount in paise",
+      "expected_range": "non-negative int",
+      "fixture_activation": "yes",
+      "detector": "wire",
+      "confidence": "high"
+    },
+    {
+      "field": "type",
+      "description": "Transaction type (debit/credit)",
+      "expected_range": "enum",
+      "fixture_activation": "yes",
+      "detector": "schema",
+      "confidence": "high"
+    },
+    {
+      "field": "match_confidence_bps",
+      "description": "Match confidence in basis points (0-10000)",
+      "expected_range": "[0, 10000]",
+      "fixture_activation": "partial",
+      "detector": "wire",
+      "confidence": "medium"
+    }
+  ],
+  "artifact_reproducibility": {
+    "openapi_regeneration": {
+      "frontend/generated/openapi-current.json": {
+        "exists": true,
+        "size_bytes": 299438,
+        "status": "present"
+      },
+      "backend/tests/generated/openapi-current.json": {
+        "exists": true,
+        "size_bytes": 299438,
+        "status": "present"
+      }
+    },
+    "typescript_regeneration": {
+      "frontend/types/api-generated.ts": {
+        "exists": true,
+        "size_bytes": 259892,
+        "status": "present"
+      }
+    },
+    "hash_consistency": {
+      "frontend_hash": "495cc05c32249c8a",
+      "backend_test_hash": "495cc05c32249c8a",
+      "match": true
+    }
+  },
+  "ci_enforcement": {
+    "playwright_needs_contract_gate": false,
+    "no_bypass_workflows": [],
+    "all_e2e_paths_covered": true
+  },
+  "authority_policy": "# API Contract Authority Policy (M9-C30)\n\n## Hierarchy of Authority\n\n                    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                    \u2502 Backend DTO / Route  \u2502\n                    \u2502   AUTHORITY          \u2502\n                    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                               \u2502\n                               \u25bc\n                       Live OpenAPI\n                               \u2502\n                  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                  \u25bc                         \u25bc\n          Generated TS              OpenAPI artifact\n                  \u2502\n                  \u25bc\n             Zod schemas\n                  \u2502\n                  \u25bc\n        Hooks / Client / Capabilities\n                  \u2502\n                  \u25bc\n             HTTP wire\n                  \u2502\n                  \u25bc\n       Semantic verification\n\n## Prohibited Reverse Authority\n\nThe following dependencies are PROHIBITED:\n\n  Zod schema \u2500X\u2192 backend contract\n  frontend TS \u2500X\u2192 backend contract\n  MSW fixture \u2500X\u2192 backend contract\n  E2E fixture \u2500X\u2192 backend contract\n  OpenAPI artifact \u2500X\u2192 backend contract\n  Wire response \u2500X\u2192 backend contract\n\nAny change to the backend DTO/Routes is the SOLE authority that propagates\ndownstream. Frontend artifacts MUST be regenerated from live OpenAPI.\n\n## Enforcement Rules\n\n1. Backend DTO changes \u2192 must regenerate OpenAPI \u2192 must update generated TS \u2192 must validate Zod\n2. No frontend file may reference a backend contract directly\n3. All API consumers must use generated types or validated schemas\n4. OpenAPI artifacts are committed snapshots, not sources of truth\n5. Wire validation uses deterministic fixtures, not production data\n",
+  "pass": true
+}

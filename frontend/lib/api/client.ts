@@ -173,7 +173,7 @@ export async function fetchBanks(): Promise<{ banks: string[] }> {
  * Fetch list of categories
  */
 export async function fetchCategoryList(): Promise<{ categories: string[] }> {
-  const res = await fetch(`${API_BASE}/api/categories/list`);
+  const res = await fetch(`${API_BASE}/api/categories`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json();
 }

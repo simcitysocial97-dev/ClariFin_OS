@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const NetWorthSchema = z.object({
   net_worth_paise: z.number().int(),

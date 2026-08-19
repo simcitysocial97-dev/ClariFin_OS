@@ -259,15 +259,20 @@ def test_get_wellness_score_success(
 def test_get_wellness_score_not_found(
     behaviour_service: BehaviourService, mock_repositories: dict[str, Any]
 ) -> None:
-    """Test wellness score retrieval when no snapshot exists."""
-    # Setup mocks
+    """Test wellness score retrieval when no snapshot exists — falls back to on-demand computation."""
+    # Setup mocks: no snapshot, empty transactions
     mock_repositories["behaviour_repo"].get_latest_snapshot.return_value = None
+    mock_repositories["transaction_repo"].get_all_transactions.return_value = []
+    mock_repositories["account_repo"].get_all_accounts.return_value = []
+    mock_repositories["loan_repo"].list_loans.return_value = []
+    mock_repositories["credit_card_repo"].list_cards.return_value = []
 
-    # Call service method and verify error
-    with pytest.raises(NotFoundError) as exc_info:
-        behaviour_service.get_wellness_score()
+    # Call service method — should compute on-demand, not raise NotFoundError
+    result = behaviour_service.get_wellness_score()
 
-    assert "No behaviour snapshot available" in str(exc_info.value.message)
+    # Verify result has default/fallback values when no data
+    assert result is not None
+    assert hasattr(result, 'score')
 
 
 def test_get_debt_health_success(

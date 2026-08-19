@@ -1,0 +1,79 @@
+# .github/workflows/api-contracts.yml
+#
+# PURPOSE: M9-C27 — API Contract Integrity & Drift-Proofing gate.
+# RESPONSIBILITY: Run the canonical api-contracts capability.
+#   A contract break fails here (cheaply, ~seconds) instead of after
+#   1,392 Playwright instances. This is a precondition for E2E.
+# Rule 1: no engineering logic in YAML. Rule 8: delegate to runtime/verify.py.
+# Rule 9: append verify.py status summary.
+
+name: API Contract Integrity
+
+on:
+  push:
+    branches:
+      - "**"
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "runtime/**"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "runtime/**"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Playwright Tests"]
+    types:
+      - failed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  api-contracts:
+    name: API Contract Integrity Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap Engineering Runtime
+        uses: ./.github/actions/bootstrap-runtime
+        with:
+          python-version: "3.12"
+
+      - name: Setup Node.js runtime
+        uses: ./.github/actions/setup-node-runtime
+        with:
+          node-version: "20"
+          working-directory: "frontend"
+
+      - name: Run API contract integrity gate
+        run: python runtime/verify.py api-contracts
+
+      - name: Upload contract evidence
+        uses: ./.github/actions/upload-runtime
+        with:
+          name: api-contract-evidence
+          path: runtime/generated/api-contract-evidence.json
+          retention-days: 30
+
+      - name: Job Summary
+        if: always()
+        run: |
+          echo "## ${{ github.workflow }} — Run #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          python runtime/verify.py status >> $GITHUB_STEP_SUMMARY

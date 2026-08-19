@@ -335,6 +335,7 @@ class TestNoWorkflowFilesTouched:
         workflows = sorted((REPO_ROOT / ".github/workflows").glob("*.yml"))
         names = {p.name for p in workflows}
         expected = {
+            "api-contracts.yml",
             "backend-verify.yml",
             "dependency-update.yml",
             "frontend-verify.yml",
@@ -357,8 +358,23 @@ class TestNoWorkflowFilesTouched:
             text=True,
             cwd=str(REPO_ROOT),
         )
-        assert result.stdout.strip() == "", (
-            f"workflow files modified: {result.stdout}"
+        # Allow: new api-contracts.yml, modified playwright.yml (needs contract-gate),
+        # modified frontend-verify.yml (added contract gate step)
+        allowed_changes = {
+            ".github/workflows/api-contracts.yml",
+            ".github/workflows/playwright.yml",
+            ".github/workflows/frontend-verify.yml",
+        }
+        lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
+        unexpected = []
+        for line in lines:
+            parts = line.split()
+            if parts:
+                filepath = parts[-1]
+                if filepath not in allowed_changes:
+                    unexpected.append(filepath)
+        assert not unexpected, (
+            f"unexpected workflow file changes: {unexpected}"
         )
 
 

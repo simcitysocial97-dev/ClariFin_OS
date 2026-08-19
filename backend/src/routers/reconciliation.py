@@ -4,15 +4,47 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 
-from src.core.dtos.reconciliation_dto import ReconciliationDTO
+from src.core.dtos.reconciliation_dto import (
+    ReconciliationMatchDTO,
+    ReconciliationsListResponse,
+    ReconciliationScanResponse,
+)
 from src.core.mappers.reconciliation_mapper import ReconciliationMapper
 from src.services.reconciliation_service import ReconciliationService
 
-router = APIRouter(prefix="/api/reconciliations", tags=["reconciliation"])
+router = APIRouter(prefix="/api/reconciliation", tags=["reconciliation"])
 
 
-@router.get("", response_model=ReconciliationDTO)
-def api_get_reconciliations(status: str | None = None) -> ReconciliationDTO:
+def _build_match_dto(row: dict[str, Any]) -> ReconciliationMatchDTO:
+    """Build a ReconciliationMatchDTO from a service row."""
+    return ReconciliationMatchDTO(
+        id=row.get("id", 0),
+        debit_txn_id=row.get("debit_txn_id", 0),
+        credit_txn_id=row.get("credit_txn_id", 0),
+        debit_account_id=row.get("debit_account_id", ""),
+        credit_account_id=row.get("credit_account_id", ""),
+        amount_paise=row.get("amount_paise", 0),
+        date_diff_days=row.get("date_diff_days", 0),
+        match_confidence_bps=row.get("confidence_bps", 0),
+        match_type=row.get("match_type", "exact"),
+        status=row.get("status", "pending"),
+        created_at=row.get("created_at", ""),
+        confirmed_at=row.get("confirmed_at"),
+        debit_date=row.get("debit_date", ""),
+        debit_date_iso=row.get("debit_date_iso", ""),
+        debit_description=row.get("debit_description", ""),
+        debit_amount_paise=row.get("debit_amount_paise", 0),
+        debit_bank=row.get("debit_bank", ""),
+        credit_date=row.get("credit_date", ""),
+        credit_date_iso=row.get("credit_date_iso", ""),
+        credit_description=row.get("credit_description", ""),
+        credit_amount_paise=row.get("credit_amount_paise", 0),
+        credit_bank=row.get("credit_bank", ""),
+    )
+
+
+@router.get("", response_model=ReconciliationsListResponse)
+def api_get_reconciliations(status: str | None = None) -> ReconciliationsListResponse:
     """
     Get all reconciliations with transaction details.
 
@@ -23,43 +55,21 @@ def api_get_reconciliations(status: str | None = None) -> ReconciliationDTO:
     """
     try:
         service = ReconciliationService()
-        reconciliations = service.get_reconciliations(status)
-
-        result = ReconciliationMapper.to_dto(
-            {
-                "statements": [],
-                "discrepancies": reconciliations,
-                "status_overview": {
-                    "total_transactions": len(reconciliations),
-                    "reconciled": len(
-                        [r for r in reconciliations if r.get("status") == "confirmed"]
-                    ),
-                    "pending": len(
-                        [r for r in reconciliations if r.get("status") == "pending"]
-                    ),
-                    "discrepancies": len(
-                        [r for r in reconciliations if r.get("status") == "disputed"]
-                    ),
-                    "match_rate": 95.0 if reconciliations else 0.0,
-                },
-                "audit_trail": [],
-                "insights": [],
-                "evidence_chain": None,
-            }
-        )
-        return result
+        rows = service.get_reconciliations(status)
+        matches = [_build_match_dto(r) for r in rows]
+        return ReconciliationsListResponse(reconciliations=matches)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-@router.get("/pending")
-def api_get_pending_reconciliations() -> ReconciliationDTO:
+@router.get("/pending", response_model=ReconciliationsListResponse)
+def api_get_pending_reconciliations() -> ReconciliationsListResponse:
     """Get all pending reconciliations."""
     return api_get_reconciliations(status="pending")
 
 
-@router.get("/scan", response_model=ReconciliationDTO)
-def api_scan_reconciliations() -> ReconciliationDTO:
+@router.get("/scan", response_model=ReconciliationScanResponse)
+def api_scan_reconciliations() -> ReconciliationScanResponse:
     """
     Scan for potential transfer matches across accounts.
 
@@ -70,41 +80,7 @@ def api_scan_reconciliations() -> ReconciliationDTO:
     try:
         service = ReconciliationService()
         matches = service.scan_potential_matches()
-
-        # Transform match data to discrepancy format
-        discrepancies = []
-        for m in matches:
-            discrepancies.append(
-                {
-                    "id": 0,  # Not yet inserted
-                    "transaction_id": m.get("debit_txn_id", 0),
-                    "statement_id": 0,
-                    "type": "transfer_match",
-                    "expected_paise": int(m.get("amount", 0) * 100),
-                    "actual_paise": int(m.get("amount", 0) * 100),
-                    "difference_paise": 0,
-                    "status": "pending",
-                    "notes": f"Date diff: {m.get('date_diff_days', 0)} days, Confidence: {m.get('match_confidence', 0):.0%}",
-                }
-            )
-
-        result = ReconciliationMapper.to_dto(
-            {
-                "statements": [],
-                "discrepancies": discrepancies,
-                "status_overview": {
-                    "total_transactions": len(matches),
-                    "reconciled": 0,
-                    "pending": len(matches),
-                    "discrepancies": len(matches),
-                    "match_rate": 0.0,
-                },
-                "audit_trail": [],
-                "insights": [],
-                "evidence_chain": None,
-            }
-        )
-        return result
+        return ReconciliationScanResponse(matches=matches, count=len(matches))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 

@@ -13,8 +13,10 @@ export const TransactionSchema = z.object({
   amount: MoneySchema.optional(),
   type: z.enum(['debit', 'credit']),
   category: z.string(),
-  bank: z.string(),
-  member: z.string().optional(),
+  subcategory: z.string().optional(),
+  bank: z.string().nullable().optional(),
+  member: z.string().nullable().optional(),
+  statement_file: z.string().nullable().optional(),
   // Deprecated fields for backward compatibility
   amount_paise: z.number().int().optional(),
   amount_rupees: z.number().optional(),
@@ -23,6 +25,8 @@ export const TransactionSchema = z.object({
 export const TransactionsResponseSchema = z.object({
   transactions: z.array(TransactionSchema),
   total: z.number().int(),
+  limit: z.number().int().optional(),
+  offset: z.number().int().optional(),
 })
 
 export type Transaction = z.infer<typeof TransactionSchema>

@@ -1,25 +1,46 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "FastAPI",
-    "version": "0.1.0"
+    "title": "Personal Finance API",
+    "description": "REST API for personal finance tracker",
+    "version": "1.0.0"
   },
   "paths": {
-    "/api/dashboard/summary": {
+    "/health": {
       "get": {
-        "tags": [
-          "dashboard"
-        ],
-        "summary": "Api Dashboard Summary",
-        "description": "Get dashboard summary with behavior insights.\n\nReturns:\n- behavior_score: Financial health score (0-1)\n- spending_this_month: Total spending for current month\n- top_category: Most common spending category\n- insights: Personalized insights\n- nudges: Action recommendations\n- reconciliation_pending: Count of pending transfers\n- large_transactions: Significant transactions (>= \u20b910,000)",
-        "operationId": "api_dashboard_summary_api_dashboard_summary_get",
+        "summary": "Health Check",
+        "description": "Basic health check endpoint.\n\nReturns 200 OK if the application is running.\nThis is a lightweight check that doesn't verify database connectivity.",
+        "operationId": "health_check_health_get",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DashboardSummaryDTO"
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Check Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ready": {
+      "get": {
+        "summary": "Readiness Check",
+        "description": "Readiness check endpoint.\n\nVerifies:\n- Database is reachable\n- Required directories exist\n- Essential files are present\n\nReturns 200 OK if all checks pass, 503 otherwise.",
+        "operationId": "readiness_check_ready_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Readiness Check Ready Get"
                 }
               }
             }
@@ -985,6 +1006,30 @@
         }
       }
     },
+    "/api/audit/report": {
+      "get": {
+        "tags": [
+          "audit"
+        ],
+        "summary": "Api Audit Report",
+        "description": "Run full ledger audit and return combined report.\n\nPhase 2C: Read-only integrity verification.\n\nReturns:\n    {\n        \"overall_status\": \"PASS\" or \"FAIL\",\n        \"ledger_integrity\": {...},\n        \"hash_verification\": {...}\n    }",
+        "operationId": "api_audit_report_api_audit_report_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Api Audit Report Api Audit Report Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/banks": {
       "get": {
         "tags": [
@@ -1420,6 +1465,52 @@
         }
       }
     },
+    "/api/v1/behaviour": {
+      "get": {
+        "tags": [
+          "behaviour-workspace"
+        ],
+        "summary": "Get Behaviour",
+        "description": "Get behaviour summary for the Behaviour Intelligence Workspace.\n\nReturns aggregated data matching BehaviourViewModel format.",
+        "operationId": "get_behaviour_api_v1_behaviour_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "monthly",
+              "title": "Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Behaviour Api V1 Behaviour Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/statements": {
       "get": {
         "tags": [
@@ -1513,153 +1604,6 @@
                   "type": "object",
                   "additionalProperties": true,
                   "title": "Response Api Validate Statement Api Statements  Statement Id  Validate Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/cashflow": {
-      "get": {
-        "tags": [
-          "cashflow"
-        ],
-        "summary": "Get Cashflow",
-        "description": "Returns cashflow summary with total income, expenses, and net cashflow.\nAll monetary values in paise (INTEGER).",
-        "operationId": "get_cashflow_api_cashflow_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CashflowSummaryDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/cashflow/monthly": {
-      "get": {
-        "tags": [
-          "cashflow"
-        ],
-        "summary": "Get Cashflow Monthly",
-        "description": "Returns month-by-month income and expense aggregation.\nAll monetary values in paise (INTEGER).",
-        "operationId": "get_cashflow_monthly_api_cashflow_monthly_get",
-        "parameters": [
-          {
-            "name": "months",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 12,
-              "minimum": 1,
-              "default": 6,
-              "title": "Months"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CashflowMonthlyResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/cashflow/categories": {
-      "get": {
-        "tags": [
-          "cashflow"
-        ],
-        "summary": "Get Cashflow Categories",
-        "description": "Returns category breakdown for cashflow.\nAll monetary values in paise (INTEGER).",
-        "operationId": "get_cashflow_categories_api_cashflow_categories_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CashflowCategoryResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/cashflow/transactions": {
-      "get": {
-        "tags": [
-          "cashflow"
-        ],
-        "summary": "Get Cashflow Transactions",
-        "description": "Returns transactions for cashflow view.\nAll monetary values in paise (INTEGER).",
-        "operationId": "get_cashflow_transactions_api_cashflow_transactions_get",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 100,
-              "minimum": 1,
-              "default": 50,
-              "title": "Limit"
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0,
-              "title": "Offset"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CashflowTransactionResponse"
                 }
               }
             }
@@ -2381,6 +2325,221 @@
         }
       }
     },
+    "/api/cashflow": {
+      "get": {
+        "tags": [
+          "cashflow"
+        ],
+        "summary": "Get Cashflow",
+        "description": "Returns cashflow summary with total income, expenses, and net cashflow.\nAll monetary values in paise (INTEGER).",
+        "operationId": "get_cashflow_api_cashflow_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashflowSummaryDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cashflow/monthly": {
+      "get": {
+        "tags": [
+          "cashflow"
+        ],
+        "summary": "Get Cashflow Monthly",
+        "description": "Returns month-by-month income and expense aggregation.\nAll monetary values in paise (INTEGER).",
+        "operationId": "get_cashflow_monthly_api_cashflow_monthly_get",
+        "parameters": [
+          {
+            "name": "months",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 12,
+              "minimum": 1,
+              "default": 6,
+              "title": "Months"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashflowMonthlyResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cashflow/categories": {
+      "get": {
+        "tags": [
+          "cashflow"
+        ],
+        "summary": "Get Cashflow Categories",
+        "description": "Returns category breakdown for cashflow.\nAll monetary values in paise (INTEGER).",
+        "operationId": "get_cashflow_categories_api_cashflow_categories_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashflowCategoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cashflow/transactions": {
+      "get": {
+        "tags": [
+          "cashflow"
+        ],
+        "summary": "Get Cashflow Transactions",
+        "description": "Returns transactions for cashflow view.\nAll monetary values in paise (INTEGER).",
+        "operationId": "get_cashflow_transactions_api_cashflow_transactions_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashflowTransactionResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/cashflow": {
+      "get": {
+        "tags": [
+          "cashflow-workspace"
+        ],
+        "summary": "Get Cashflow",
+        "description": "Get cashflow summary for the Cashflow Truth Workspace.\n\nReturns aggregated data matching CashflowViewModel format.\nAll monetary values in paise (integer).",
+        "operationId": "get_cashflow_api_v1_cashflow_get",
+        "parameters": [
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "monthly",
+              "title": "Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Cashflow Api V1 Cashflow Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/summary": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Api Dashboard Summary",
+        "description": "Get dashboard summary with behavior insights.\n\nReturns:\n- behavior_score: Financial health score (0-1)\n- spending_this_month: Total spending for current month\n- top_category: Most common spending category\n- insights: Personalized insights\n- nudges: Action recommendations\n- reconciliation_pending: Count of pending transfers\n- large_transactions: Significant transactions (>= \u20b910,000)",
+        "operationId": "api_dashboard_summary_api_dashboard_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardSummaryDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/export/csv": {
       "get": {
         "tags": [
@@ -2816,14 +2975,15 @@
         }
       }
     },
-    "/financial-intelligence/cashflow-forecast": {
+    "/api/v1/financial-intelligence/cashflow-forecast": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Cashflow Forecast",
         "description": "Get cashflow forecast for the household.\n\nProjects future monthly income, expenses, and surplus using weighted moving average.\nReturns confidence score based on historical variance.\nUses TRUE cashflow adjusted for artificial income (cash advances, transfers).\n\nArgs:\n    forecast_months: Number of months to forecast (1-12, default: 3)\n    household_id: Household identifier (default: \"primary\")\n    owner_id: Owner filter - \"self\" for individual, None for household-wide\n\nReturns:\n    Dict with forecast list and confidence score",
-        "operationId": "get_cashflow_forecast_financial_intelligence_cashflow_forecast_get",
+        "operationId": "get_cashflow_forecast_api_v1_financial_intelligence_cashflow_forecast_get",
         "parameters": [
           {
             "name": "forecast_months",
@@ -2872,7 +3032,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Cashflow Forecast Financial Intelligence Cashflow Forecast Get"
+                  "title": "Response Get Cashflow Forecast Api V1 Financial Intelligence Cashflow Forecast Get"
                 }
               }
             }
@@ -2890,14 +3050,15 @@
         }
       }
     },
-    "/financial-intelligence/liquidity-forecast": {
+    "/api/v1/financial-intelligence/liquidity-forecast": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Liquidity Forecast",
         "description": "Get liquidity forecast for the household.\n\nPredicts future liquidity position and identifies potential stress points.\n\nArgs:\n    forecast_months: Number of months to forecast (1-12, default: 3)\n    emergency_threshold_paise: Emergency threshold in paise (default: 3,000,000 paise = \u20b930,000)\n    household_id: Household identifier (default: \"primary\")\n    owner_id: Owner filter - \"self\" for individual, None for household-wide\n\nReturns:\n    Dict with months_until_stress, projected_min_balance_paise, and risk_level",
-        "operationId": "get_liquidity_forecast_financial_intelligence_liquidity_forecast_get",
+        "operationId": "get_liquidity_forecast_api_v1_financial_intelligence_liquidity_forecast_get",
         "parameters": [
           {
             "name": "forecast_months",
@@ -2958,7 +3119,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Liquidity Forecast Financial Intelligence Liquidity Forecast Get"
+                  "title": "Response Get Liquidity Forecast Api V1 Financial Intelligence Liquidity Forecast Get"
                 }
               }
             }
@@ -2976,14 +3137,15 @@
         }
       }
     },
-    "/financial-intelligence/credit-forecast": {
+    "/api/v1/financial-intelligence/credit-forecast": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Credit Forecast",
         "description": "Get credit dependency forecast.\n\nPredicts future credit utilization trends based on revolving behavior.\n\nArgs:\n    month: Month in YYYY-MM format (default: current month)\n    household_id: Household identifier (default: \"primary\")\n\nReturns:\n    Dict with current/forecast dependency ratios and trend",
-        "operationId": "get_credit_forecast_financial_intelligence_credit_forecast_get",
+        "operationId": "get_credit_forecast_api_v1_financial_intelligence_credit_forecast_get",
         "parameters": [
           {
             "name": "month",
@@ -3024,7 +3186,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Credit Forecast Financial Intelligence Credit Forecast Get"
+                  "title": "Response Get Credit Forecast Api V1 Financial Intelligence Credit Forecast Get"
                 }
               }
             }
@@ -3042,14 +3204,15 @@
         }
       }
     },
-    "/financial-intelligence/outlook": {
+    "/api/v1/financial-intelligence/outlook": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Financial Outlook",
         "description": "Get comprehensive financial outlook.\n\nCombines cashflow, liquidity, and credit forecasts with risk flags.\n\nArgs:\n    forecast_months: Number of months to forecast (1-12, default: 3)\n    emergency_threshold_paise: Emergency threshold in paise (default: 3,000,000 paise = \u20b930,000)\n    household_id: Household identifier\n\nReturns:\n    Dict with cashflow, liquidity, credit forecasts and risk_flags",
-        "operationId": "get_financial_outlook_financial_intelligence_outlook_get",
+        "operationId": "get_financial_outlook_api_v1_financial_intelligence_outlook_get",
         "parameters": [
           {
             "name": "forecast_months",
@@ -3098,7 +3261,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Financial Outlook Financial Intelligence Outlook Get"
+                  "title": "Response Get Financial Outlook Api V1 Financial Intelligence Outlook Get"
                 }
               }
             }
@@ -3116,14 +3279,15 @@
         }
       }
     },
-    "/financial-intelligence/report": {
+    "/api/v1/financial-intelligence/report": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Financial Intelligence Report",
         "description": "Get comprehensive financial intelligence report.\n\nAggregates data from all financial domains:\n- Behaviour (wellness, credit dependency)\n- Cashflow (monthly surplus)\n- Liquidity (forecast)\n- Debts (loans, credit cards)\n- Goals (active goals)\n- Optimization (recommended actions)\n\nArgs:\n    household_id: Household identifier (default: \"primary\")\n\nReturns:\n    IntelligenceReport with snapshot, health_score, priorities, risks, opportunities, confidence",
-        "operationId": "get_financial_intelligence_report_financial_intelligence_report_get",
+        "operationId": "get_financial_intelligence_report_api_v1_financial_intelligence_report_get",
         "parameters": [
           {
             "name": "household_id",
@@ -3146,7 +3310,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Financial Intelligence Report Financial Intelligence Report Get"
+                  "title": "Response Get Financial Intelligence Report Api V1 Financial Intelligence Report Get"
                 }
               }
             }
@@ -3164,14 +3328,15 @@
         }
       }
     },
-    "/financial-intelligence/priorities": {
+    "/api/v1/financial-intelligence/priorities": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Financial Intelligence Priorities",
         "description": "Get ranked financial priorities.\n\nReturns only the priority actions from the intelligence report.\n\nArgs:\n    household_id: Household identifier (default: \"primary\")\n\nReturns:\n    Dict with priorities list",
-        "operationId": "get_financial_intelligence_priorities_financial_intelligence_priorities_get",
+        "operationId": "get_financial_intelligence_priorities_api_v1_financial_intelligence_priorities_get",
         "parameters": [
           {
             "name": "household_id",
@@ -3194,7 +3359,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Financial Intelligence Priorities Financial Intelligence Priorities Get"
+                  "title": "Response Get Financial Intelligence Priorities Api V1 Financial Intelligence Priorities Get"
                 }
               }
             }
@@ -3212,14 +3377,15 @@
         }
       }
     },
-    "/financial-intelligence/recommendations": {
+    "/api/v1/financial-intelligence/recommendations": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Financial Recommendations",
         "description": "Get personalized financial recommendations.\n\nReturns a list of actionable recommendations based on financial behavior,\nspending patterns, and goals.\n\nArgs:\n    household_id: Household identifier (default: \"primary\")\n\nReturns:\n    Dict with recommendations, profile, and model version",
-        "operationId": "get_financial_recommendations_financial_intelligence_recommendations_get",
+        "operationId": "get_financial_recommendations_api_v1_financial_intelligence_recommendations_get",
         "parameters": [
           {
             "name": "household_id",
@@ -3242,7 +3408,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Financial Recommendations Financial Intelligence Recommendations Get"
+                  "title": "Response Get Financial Recommendations Api V1 Financial Intelligence Recommendations Get"
                 }
               }
             }
@@ -3260,14 +3426,15 @@
         }
       }
     },
-    "/financial-intelligence/recommendations/{recommendation_id}": {
+    "/api/v1/financial-intelligence/recommendations/{recommendation_id}": {
       "get": {
         "tags": [
+          "financial-intelligence",
           "financial-intelligence"
         ],
         "summary": "Get Recommendation Details",
         "description": "Get detailed information about a specific recommendation.\n\nArgs:\n    recommendation_id: Recommendation identifier\n    household_id: Household identifier (default: \"primary\")\n\nReturns:\n    Dict with detailed recommendation information",
-        "operationId": "get_recommendation_details_financial_intelligence_recommendations__recommendation_id__get",
+        "operationId": "get_recommendation_details_api_v1_financial_intelligence_recommendations__recommendation_id__get",
         "parameters": [
           {
             "name": "recommendation_id",
@@ -3299,7 +3466,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Get Recommendation Details Financial Intelligence Recommendations  Recommendation Id  Get"
+                  "title": "Response Get Recommendation Details Api V1 Financial Intelligence Recommendations  Recommendation Id  Get"
                 }
               }
             }
@@ -3372,48 +3539,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/health": {
-      "get": {
-        "summary": "Health Check",
-        "description": "Basic health check endpoint.\n\nReturns 200 OK if the application is running.\nThis is a lightweight check that doesn't verify database connectivity.",
-        "operationId": "health_check_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Health Check Health Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/ready": {
-      "get": {
-        "summary": "Readiness Check",
-        "description": "Readiness check endpoint.\n\nVerifies:\n- Database is reachable\n- Required directories exist\n- Essential files are present\n\nReturns 200 OK if all checks pass, 503 otherwise.",
-        "operationId": "readiness_check_ready_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Readiness Check Ready Get"
                 }
               }
             }
@@ -3698,6 +3823,90 @@
                   "type": "object",
                   "additionalProperties": true,
                   "title": "Response Delete Investment Api Investments  Investment Id  Delete"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/investments": {
+      "get": {
+        "tags": [
+          "investments-workspace"
+        ],
+        "summary": "Get Investments",
+        "description": "Get investments summary for the Investments Intelligence Workspace.\n\nReturns aggregated data matching InvestmentsViewModel format.",
+        "operationId": "get_investments_api_v1_investments_get",
+        "parameters": [
+          {
+            "name": "investment_types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Investment Types"
+            }
+          },
+          {
+            "name": "institutions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Institutions"
+            }
+          },
+          {
+            "name": "statuses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Statuses"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Investments Api V1 Investments Get"
                 }
               }
             }
@@ -4306,6 +4515,90 @@
         }
       }
     },
+    "/api/v1/loans": {
+      "get": {
+        "tags": [
+          "loans-workspace"
+        ],
+        "summary": "Get Loans",
+        "description": "Get loans summary for the Loans Intelligence Workspace.\n\nReturns aggregated data matching LoansViewModel format.",
+        "operationId": "get_loans_api_v1_loans_get",
+        "parameters": [
+          {
+            "name": "loan_types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Loan Types"
+            }
+          },
+          {
+            "name": "lenders",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lenders"
+            }
+          },
+          {
+            "name": "statuses",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Statuses"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Loans Api V1 Loans Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/accounts/manage": {
       "get": {
         "tags": [
@@ -4792,14 +5085,92 @@
         }
       }
     },
-    "/api/reconciliations": {
+    "/api/v1/net-worth": {
+      "get": {
+        "tags": [
+          "networth-workspace"
+        ],
+        "summary": "Get Networth",
+        "description": "Get net worth summary for the Net Worth Intelligence Workspace.\n\nReturns aggregated data matching NetWorthViewModel format.",
+        "operationId": "get_networth_api_v1_net_worth_get",
+        "parameters": [
+          {
+            "name": "date_range",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date Range"
+            }
+          },
+          {
+            "name": "account_types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Account Types"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "1M",
+              "title": "Period"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Networth Api V1 Net Worth Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reconciliation": {
       "get": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Get Reconciliations",
         "description": "Get all reconciliations with transaction details.\n\nPhase 2B: Metadata-only, no ledger mutation.\n\nArgs:\n    status: Optional filter ('pending', 'confirmed', 'rejected')",
-        "operationId": "api_get_reconciliations_api_reconciliations_get",
+        "operationId": "api_get_reconciliations_api_reconciliation_get",
         "parameters": [
           {
             "name": "status",
@@ -4824,7 +5195,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReconciliationDTO"
+                  "$ref": "#/components/schemas/ReconciliationsListResponse"
                 }
               }
             }
@@ -4842,21 +5213,21 @@
         }
       }
     },
-    "/api/reconciliations/pending": {
+    "/api/reconciliation/pending": {
       "get": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Get Pending Reconciliations",
         "description": "Get all pending reconciliations.",
-        "operationId": "api_get_pending_reconciliations_api_reconciliations_pending_get",
+        "operationId": "api_get_pending_reconciliations_api_reconciliation_pending_get",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReconciliationDTO"
+                  "$ref": "#/components/schemas/ReconciliationsListResponse"
                 }
               }
             }
@@ -4864,21 +5235,21 @@
         }
       }
     },
-    "/api/reconciliations/scan": {
+    "/api/reconciliation/scan": {
       "get": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Scan Reconciliations",
         "description": "Scan for potential transfer matches across accounts.\n\nPhase 2B.1: Deterministic matching with confidence scoring.\n\nReturns potential matches that can be saved as reconciliations.",
-        "operationId": "api_scan_reconciliations_api_reconciliations_scan_get",
+        "operationId": "api_scan_reconciliations_api_reconciliation_scan_get",
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReconciliationDTO"
+                  "$ref": "#/components/schemas/ReconciliationScanResponse"
                 }
               }
             }
@@ -4886,14 +5257,14 @@
         }
       }
     },
-    "/api/reconciliations/create": {
+    "/api/reconciliation/create": {
       "post": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Create Reconciliation",
         "description": "Create a reconciliation record between two transactions.\n\nPhase 2B: Metadata-only, no ledger mutation.\nUses INSERT OR IGNORE for idempotency.",
-        "operationId": "api_create_reconciliation_api_reconciliations_create_post",
+        "operationId": "api_create_reconciliation_api_reconciliation_create_post",
         "parameters": [
           {
             "name": "debit_txn_id",
@@ -4994,7 +5365,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Api Create Reconciliation Api Reconciliations Create Post"
+                  "title": "Response Api Create Reconciliation Api Reconciliation Create Post"
                 }
               }
             }
@@ -5012,14 +5383,14 @@
         }
       }
     },
-    "/api/reconciliations/batch-insert": {
+    "/api/reconciliation/batch-insert": {
       "post": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Batch Insert Reconciliations",
         "description": "Scan and insert all potential matches as pending reconciliations.\n\nUses INSERT OR IGNORE for idempotency - existing records are not duplicated.",
-        "operationId": "api_batch_insert_reconciliations_api_reconciliations_batch_insert_post",
+        "operationId": "api_batch_insert_reconciliations_api_reconciliation_batch_insert_post",
         "responses": {
           "200": {
             "description": "Successful Response",
@@ -5028,7 +5399,7 @@
                 "schema": {
                   "additionalProperties": true,
                   "type": "object",
-                  "title": "Response Api Batch Insert Reconciliations Api Reconciliations Batch Insert Post"
+                  "title": "Response Api Batch Insert Reconciliations Api Reconciliation Batch Insert Post"
                 }
               }
             }
@@ -5036,14 +5407,14 @@
         }
       }
     },
-    "/api/reconciliations/{reconciliation_id}/confirm": {
+    "/api/reconciliation/{reconciliation_id}/confirm": {
       "post": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Confirm Reconciliation",
         "description": "Confirm a pending reconciliation.\n\nPhase 2B: Updates reconciliation.status only. No ledger mutation.",
-        "operationId": "api_confirm_reconciliation_api_reconciliations__reconciliation_id__confirm_post",
+        "operationId": "api_confirm_reconciliation_api_reconciliation__reconciliation_id__confirm_post",
         "parameters": [
           {
             "name": "reconciliation_id",
@@ -5063,7 +5434,7 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Api Confirm Reconciliation Api Reconciliations  Reconciliation Id  Confirm Post"
+                  "title": "Response Api Confirm Reconciliation Api Reconciliation  Reconciliation Id  Confirm Post"
                 }
               }
             }
@@ -5081,14 +5452,14 @@
         }
       }
     },
-    "/api/reconciliations/{reconciliation_id}/reject": {
+    "/api/reconciliation/{reconciliation_id}/reject": {
       "post": {
         "tags": [
           "reconciliation"
         ],
         "summary": "Api Reject Reconciliation",
         "description": "Reject a pending reconciliation.\n\nPhase 2B: Updates reconciliation.status only. No ledger mutation.",
-        "operationId": "api_reject_reconciliation_api_reconciliations__reconciliation_id__reject_post",
+        "operationId": "api_reject_reconciliation_api_reconciliation__reconciliation_id__reject_post",
         "parameters": [
           {
             "name": "reconciliation_id",
@@ -5108,7 +5479,75 @@
                 "schema": {
                   "type": "object",
                   "additionalProperties": true,
-                  "title": "Response Api Reject Reconciliation Api Reconciliations  Reconciliation Id  Reject Post"
+                  "title": "Response Api Reject Reconciliation Api Reconciliation  Reconciliation Id  Reject Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reconciliation": {
+      "get": {
+        "tags": [
+          "reconciliation-workspace"
+        ],
+        "summary": "Get Reconciliation",
+        "description": "Get reconciliation summary for the Reconciliation Intelligence Workspace.\n\nReturns aggregated data matching ReconciliationViewModel format.",
+        "operationId": "get_reconciliation_api_v1_reconciliation_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "banks",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Banks"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get Reconciliation Api V1 Reconciliation Get"
                 }
               }
             }
@@ -5132,7 +5571,7 @@
           "transactions"
         ],
         "summary": "Get Transactions",
-        "description": "Get transactions as enriched dictionaries.",
+        "description": "Get transactions with filtering and pagination.",
         "operationId": "get_transactions_api_transactions_get",
         "parameters": [
           {
@@ -5249,12 +5688,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "additionalProperties": true
-                  },
-                  "title": "Response Get Transactions Api Transactions Get"
+                  "$ref": "#/components/schemas/TransactionListResponse"
                 }
               }
             }
@@ -5460,436 +5894,6 @@
                   "type": "object",
                   "additionalProperties": true,
                   "title": "Response Get Analytics Api Analytics Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/audit/report": {
-      "get": {
-        "tags": [
-          "audit"
-        ],
-        "summary": "Api Audit Report",
-        "description": "Run full ledger audit and return combined report.\n\nPhase 2C: Read-only integrity verification.\n\nReturns:\n    {\n        \"overall_status\": \"PASS\" or \"FAIL\",\n        \"ledger_integrity\": {...},\n        \"hash_verification\": {...}\n    }",
-        "operationId": "api_audit_report_api_audit_report_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "type": "object",
-                  "title": "Response Api Audit Report Api Audit Report Get"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/behaviour": {
-      "get": {
-        "tags": [
-          "behaviour-workspace"
-        ],
-        "summary": "Get Behaviour",
-        "description": "Get behaviour summary for the Behaviour Intelligence Workspace.\n\nReturns aggregated data matching BehaviourViewModel format.",
-        "operationId": "get_behaviour_api_v1_behaviour_get",
-        "parameters": [
-          {
-            "name": "period",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "monthly",
-              "title": "Period"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Behaviour Api V1 Behaviour Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/cashflow": {
-      "get": {
-        "tags": [
-          "cashflow-workspace"
-        ],
-        "summary": "Get Cashflow",
-        "description": "Get cashflow summary for the Cashflow Truth Workspace.\n\nReturns aggregated data matching CashflowViewModel format.\nAll monetary values in paise (integer).",
-        "operationId": "get_cashflow_api_v1_cashflow_get",
-        "parameters": [
-          {
-            "name": "period",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "monthly",
-              "title": "Period"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Cashflow Api V1 Cashflow Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/investments": {
-      "get": {
-        "tags": [
-          "investments-workspace"
-        ],
-        "summary": "Get Investments",
-        "description": "Get investments summary for the Investments Intelligence Workspace.\n\nReturns aggregated data matching InvestmentsViewModel format.",
-        "operationId": "get_investments_api_v1_investments_get",
-        "parameters": [
-          {
-            "name": "investment_types",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Investment Types"
-            }
-          },
-          {
-            "name": "institutions",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Institutions"
-            }
-          },
-          {
-            "name": "statuses",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Statuses"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Investments Api V1 Investments Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/loans": {
-      "get": {
-        "tags": [
-          "loans-workspace"
-        ],
-        "summary": "Get Loans",
-        "description": "Get loans summary for the Loans Intelligence Workspace.\n\nReturns aggregated data matching LoansViewModel format.",
-        "operationId": "get_loans_api_v1_loans_get",
-        "parameters": [
-          {
-            "name": "loan_types",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Loan Types"
-            }
-          },
-          {
-            "name": "lenders",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Lenders"
-            }
-          },
-          {
-            "name": "statuses",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Statuses"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Loans Api V1 Loans Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/net-worth": {
-      "get": {
-        "tags": [
-          "networth-workspace"
-        ],
-        "summary": "Get Networth",
-        "description": "Get net worth summary for the Net Worth Intelligence Workspace.\n\nReturns aggregated data matching NetWorthViewModel format.",
-        "operationId": "get_networth_api_v1_net_worth_get",
-        "parameters": [
-          {
-            "name": "date_range",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Date Range"
-            }
-          },
-          {
-            "name": "account_types",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Account Types"
-            }
-          },
-          {
-            "name": "period",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "1M",
-              "title": "Period"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Networth Api V1 Net Worth Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/reconciliation": {
-      "get": {
-        "tags": [
-          "reconciliation-workspace"
-        ],
-        "summary": "Get Reconciliation",
-        "description": "Get reconciliation summary for the Reconciliation Intelligence Workspace.\n\nReturns aggregated data matching ReconciliationViewModel format.",
-        "operationId": "get_reconciliation_api_v1_reconciliation_get",
-        "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Status"
-            }
-          },
-          {
-            "name": "banks",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Banks"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": true,
-                  "title": "Response Get Reconciliation Api V1 Reconciliation Get"
                 }
               }
             }
@@ -6395,57 +6399,6 @@
         "type": "object",
         "title": "AccountUpdateRequest",
         "description": "Account update request."
-      },
-      "AuditTrailEntryDTO": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id",
-            "description": "Audit entry identifier"
-          },
-          "transaction_id": {
-            "type": "integer",
-            "title": "Transaction Id",
-            "description": "Transaction identifier"
-          },
-          "action": {
-            "type": "string",
-            "title": "Action",
-            "description": "Action taken (reconcile, reject, dispute)"
-          },
-          "user": {
-            "type": "string",
-            "title": "User",
-            "description": "User who performed the action"
-          },
-          "timestamp": {
-            "type": "string",
-            "title": "Timestamp",
-            "description": "Action timestamp (ISO format)"
-          },
-          "notes": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Notes",
-            "description": "Action notes"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "transaction_id",
-          "action",
-          "user",
-          "timestamp"
-        ],
-        "title": "AuditTrailEntryDTO",
-        "description": "Single entry in audit trail."
       },
       "BalanceSnapshotDTO": {
         "properties": {
@@ -7454,7 +7407,7 @@
               }
             ],
             "title": "Net Cash Flow Rupees",
-            "description": "Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise)"
+            "description": "Net cash flow in rupees (DEPRECATED - use net_cash_flow_paise). Null when not computed."
           },
           "total_income_paise": {
             "type": "integer",
@@ -7469,7 +7422,7 @@
           "savings_rate": {
             "type": "number",
             "title": "Savings Rate",
-            "description": "Savings rate as percentage (0-100)"
+            "description": "Savings rate as ratio (0-1)"
           },
           "emi_paise": {
             "type": "integer",
@@ -7479,12 +7432,33 @@
           "emi_ratio": {
             "type": "number",
             "title": "Emi Ratio",
-            "description": "EMI to income ratio (0-100)"
+            "description": "EMI to income ratio (0-1)"
           },
           "buffer_days": {
             "type": "integer",
             "title": "Buffer Days",
             "description": "Emergency buffer in days"
+          },
+          "financial_health_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Financial Health Score",
+            "description": "Financial health score from behavior analysis (0-100)"
+          },
+          "recent_transactions": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Recent Transactions",
+            "description": "Most recent transactions for display (up to 10)"
           }
         },
         "type": "object",
@@ -7495,17 +7469,19 @@
           "savings_rate",
           "emi_paise",
           "emi_ratio",
-          "buffer_days"
+          "buffer_days",
+          "financial_health_score"
         ],
         "title": "DashboardSummaryDTO",
         "description": "Dashboard summary data transfer object.\n\nMonetary fields:\n- net_cash_flow_paise: Net cash flow in paise (canonical)\n- total_income_paise: Total income in paise\n- total_expenses_paise: Total expenses in paise\n- emi_paise: EMI amount in paise\n- savings_paise: Savings amount in paise",
         "example": {
           "buffer_days": 45,
           "emi_paise": 1250000,
-          "emi_ratio": 12.5,
+          "emi_ratio": 0.125,
+          "financial_health_score": 75,
           "net_cash_flow_paise": 2500000,
-          "net_cash_flow_rupees": 25000.0,
-          "savings_rate": 25.0,
+          "recent_transactions": [],
+          "savings_rate": 0.25,
           "total_expenses_paise": 7500000,
           "total_income_paise": 10000000
         }
@@ -7563,81 +7539,6 @@
         ],
         "title": "DebtHealthResponse",
         "description": "Response model for debt health metrics."
-      },
-      "DiscrepancyDTO": {
-        "properties": {
-          "id": {
-            "type": "integer",
-            "title": "Id",
-            "description": "Discrepancy identifier"
-          },
-          "transaction_id": {
-            "type": "integer",
-            "title": "Transaction Id",
-            "description": "Transaction identifier"
-          },
-          "statement_id": {
-            "type": "integer",
-            "title": "Statement Id",
-            "description": "Statement identifier"
-          },
-          "type": {
-            "type": "string",
-            "title": "Type",
-            "description": "Discrepancy type (amount, date, description)"
-          },
-          "expected_paise": {
-            "type": "integer",
-            "title": "Expected Paise",
-            "description": "Expected amount in paise"
-          },
-          "actual_paise": {
-            "type": "integer",
-            "title": "Actual Paise",
-            "description": "Actual amount in paise"
-          },
-          "difference_paise": {
-            "type": "integer",
-            "title": "Difference Paise",
-            "description": "Difference in paise"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "confirmed",
-              "rejected",
-              "disputed"
-            ],
-            "title": "Status",
-            "description": "Discrepancy status"
-          },
-          "notes": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Notes",
-            "description": "Additional notes"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "transaction_id",
-          "statement_id",
-          "type",
-          "expected_paise",
-          "actual_paise",
-          "difference_paise",
-          "status"
-        ],
-        "title": "DiscrepancyDTO",
-        "description": "Discrepancy between transaction and statement."
       },
       "EmiConversionDTO": {
         "properties": {
@@ -9056,6 +8957,31 @@
         "title": "MemberUpdate",
         "description": "Member update request."
       },
+      "MoneyDTO": {
+        "properties": {
+          "paise": {
+            "type": "integer",
+            "title": "Paise",
+            "description": "Amount in paise (canonical integer representation)"
+          },
+          "rupees": {
+            "type": "number",
+            "title": "Rupees",
+            "description": "Amount in rupees (for display purposes)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "paise",
+          "rupees"
+        ],
+        "title": "MoneyDTO",
+        "description": "Money data transfer object.\n\nRepresents monetary value with explicit paise (integer) and rupees (float) fields.\nThis is the canonical API representation of the Money domain object.",
+        "example": {
+          "paise": 123456,
+          "rupees": 1234.56
+        }
+      },
       "MonthlySummaryResponse": {
         "properties": {
           "period": {
@@ -9749,219 +9675,69 @@
         "title": "RecommendationsResponse",
         "description": "Response model for a list of recommendations."
       },
-      "ReconciliationCalculationStepDTO": {
+      "ReconciliationMatchDTO": {
         "properties": {
-          "name": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "Reconciliation identifier"
+          },
+          "debit_txn_id": {
+            "type": "integer",
+            "title": "Debit Txn Id",
+            "description": "Debit transaction ID"
+          },
+          "credit_txn_id": {
+            "type": "integer",
+            "title": "Credit Txn Id",
+            "description": "Credit transaction ID"
+          },
+          "debit_account_id": {
             "type": "string",
-            "title": "Name",
-            "description": "Step name"
+            "title": "Debit Account Id",
+            "description": "Debit account ID"
           },
-          "description": {
+          "credit_account_id": {
             "type": "string",
-            "title": "Description",
-            "description": "Step description"
+            "title": "Credit Account Id",
+            "description": "Credit account ID"
           },
-          "inputs": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Inputs",
-            "description": "Input values"
+          "amount_paise": {
+            "type": "integer",
+            "title": "Amount Paise",
+            "description": "Matched amount in paise"
           },
-          "outputs": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Outputs",
-            "description": "Output values"
-          }
-        },
-        "type": "object",
-        "required": [
-          "name",
-          "description"
-        ],
-        "title": "ReconciliationCalculationStepDTO",
-        "description": "Calculation step in the reconciliation derivation chain."
-      },
-      "ReconciliationDTO": {
-        "properties": {
-          "statements": {
-            "items": {
-              "$ref": "#/components/schemas/ReconciliationSummaryDTO"
-            },
-            "type": "array",
-            "title": "Statements",
-            "description": "List of statement summaries"
+          "date_diff_days": {
+            "type": "integer",
+            "title": "Date Diff Days",
+            "description": "Days between transactions"
           },
-          "discrepancies": {
-            "items": {
-              "$ref": "#/components/schemas/DiscrepancyDTO"
-            },
-            "type": "array",
-            "title": "Discrepancies",
-            "description": "List of discrepancies"
+          "match_confidence_bps": {
+            "type": "integer",
+            "title": "Match Confidence Bps",
+            "description": "Match confidence in basis points (0-10000)"
           },
-          "status_overview": {
-            "$ref": "#/components/schemas/StatusOverviewDTO",
-            "description": "Reconciliation status overview"
-          },
-          "audit_trail": {
-            "items": {
-              "$ref": "#/components/schemas/AuditTrailEntryDTO"
-            },
-            "type": "array",
-            "title": "Audit Trail",
-            "description": "Audit trail entries"
-          },
-          "insights": {
-            "items": {
-              "$ref": "#/components/schemas/ReconciliationInsightDTO"
-            },
-            "type": "array",
-            "title": "Insights",
-            "description": "List of insights about reconciliation"
-          },
-          "evidence_chain": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ReconciliationEvidenceChainDTO"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Evidence chain for explainability"
-          }
-        },
-        "type": "object",
-        "title": "ReconciliationDTO",
-        "description": "Reconciliation data transfer object.\n\nMonetary fields:\n- total_discrepancy_paise: Total discrepancy in paise (canonical)\n- total_reconciled_paise: Total reconciled in paise",
-        "example": {
-          "audit_trail": [],
-          "discrepancies": [],
-          "insights": [],
-          "statements": [],
-          "status_overview": {
-            "discrepancies": 2,
-            "match_rate": 95.0,
-            "pending": 3,
-            "reconciled": 95,
-            "total_transactions": 100
-          }
-        }
-      },
-      "ReconciliationEvidenceChainDTO": {
-        "properties": {
-          "summary": {
+          "match_type": {
             "type": "string",
-            "title": "Summary",
-            "description": "Overall summary of the calculation"
+            "title": "Match Type",
+            "description": "Match type (exact, window, fuzzy, manual)"
           },
-          "evidence": {
-            "items": {
-              "$ref": "#/components/schemas/ReconciliationEvidenceItemDTO"
-            },
-            "type": "array",
-            "title": "Evidence",
-            "description": "List of evidence items"
-          },
-          "calculation_steps": {
-            "items": {
-              "$ref": "#/components/schemas/ReconciliationCalculationStepDTO"
-            },
-            "type": "array",
-            "title": "Calculation Steps",
-            "description": "Calculation chain steps"
-          },
-          "source_references": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Source References",
-            "description": "Source references for traceability"
-          },
-          "confidence_score": {
-            "type": "number",
-            "title": "Confidence Score",
-            "description": "Overall confidence (0-100)"
-          }
-        },
-        "type": "object",
-        "required": [
-          "summary",
-          "confidence_score"
-        ],
-        "title": "ReconciliationEvidenceChainDTO",
-        "description": "Evidence chain for reconciliation calculation."
-      },
-      "ReconciliationEvidenceItemDTO": {
-        "properties": {
-          "type": {
-            "type": "string",
-            "title": "Type",
-            "description": "Evidence type (transaction, statement, match)"
-          },
-          "summary": {
-            "type": "string",
-            "title": "Summary",
-            "description": "Human-readable summary"
-          },
-          "source": {
-            "type": "string",
-            "title": "Source",
-            "description": "Source reference"
-          },
-          "confidence": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Confidence",
-            "description": "Confidence score (0-100)"
-          }
-        },
-        "type": "object",
-        "required": [
-          "type",
-          "summary",
-          "source"
-        ],
-        "title": "ReconciliationEvidenceItemDTO",
-        "description": "Evidence item for reconciliation calculation."
-      },
-      "ReconciliationInsightDTO": {
-        "properties": {
-          "type": {
+          "status": {
             "type": "string",
             "enum": [
-              "positive",
-              "warning",
-              "info",
-              "alert"
+              "pending",
+              "confirmed",
+              "rejected"
             ],
-            "title": "Type",
-            "description": "Insight type"
+            "title": "Status",
+            "description": "Reconciliation status"
           },
-          "severity": {
+          "created_at": {
             "type": "string",
-            "enum": [
-              "low",
-              "medium",
-              "high"
-            ],
-            "title": "Severity",
-            "description": "Insight severity"
+            "title": "Created At",
+            "description": "Record creation timestamp"
           },
-          "message": {
-            "type": "string",
-            "title": "Message",
-            "description": "Human-readable insight message"
-          },
-          "action_url": {
+          "confirmed_at": {
             "anyOf": [
               {
                 "type": "string"
@@ -9970,87 +9746,160 @@
                 "type": "null"
               }
             ],
-            "title": "Action Url",
-            "description": "URL for detailed view or action"
+            "title": "Confirmed At",
+            "description": "Confirmation timestamp if confirmed"
+          },
+          "debit_date": {
+            "type": "string",
+            "title": "Debit Date",
+            "description": "Debit transaction date"
+          },
+          "debit_date_iso": {
+            "type": "string",
+            "title": "Debit Date Iso",
+            "description": "Debit transaction ISO date"
+          },
+          "debit_description": {
+            "type": "string",
+            "title": "Debit Description",
+            "description": "Debit transaction description"
+          },
+          "debit_amount_paise": {
+            "type": "integer",
+            "title": "Debit Amount Paise",
+            "description": "Debit transaction amount in paise"
+          },
+          "debit_bank": {
+            "type": "string",
+            "title": "Debit Bank",
+            "description": "Debit transaction bank"
+          },
+          "credit_date": {
+            "type": "string",
+            "title": "Credit Date",
+            "description": "Credit transaction date"
+          },
+          "credit_date_iso": {
+            "type": "string",
+            "title": "Credit Date Iso",
+            "description": "Credit transaction ISO date"
+          },
+          "credit_description": {
+            "type": "string",
+            "title": "Credit Description",
+            "description": "Credit transaction description"
+          },
+          "credit_amount_paise": {
+            "type": "integer",
+            "title": "Credit Amount Paise",
+            "description": "Credit transaction amount in paise"
+          },
+          "credit_bank": {
+            "type": "string",
+            "title": "Credit Bank",
+            "description": "Credit transaction bank"
           }
         },
         "type": "object",
         "required": [
-          "type",
-          "severity",
-          "message"
+          "id",
+          "debit_txn_id",
+          "credit_txn_id",
+          "debit_account_id",
+          "credit_account_id",
+          "amount_paise",
+          "date_diff_days",
+          "match_confidence_bps",
+          "match_type",
+          "status",
+          "created_at",
+          "debit_date",
+          "debit_date_iso",
+          "debit_description",
+          "debit_amount_paise",
+          "debit_bank",
+          "credit_date",
+          "credit_date_iso",
+          "credit_description",
+          "credit_amount_paise",
+          "credit_bank"
         ],
-        "title": "ReconciliationInsightDTO",
-        "description": "Insight about reconciliation changes or patterns."
+        "title": "ReconciliationMatchDTO",
+        "description": "Reconciliation match record from transfer matching."
       },
-      "ReconciliationSummaryDTO": {
+      "ReconciliationScanResponse": {
         "properties": {
-          "statement_id": {
+          "matches": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Matches",
+            "description": "List of potential match candidates"
+          },
+          "count": {
             "type": "integer",
-            "title": "Statement Id",
-            "description": "Statement identifier"
-          },
-          "bank": {
-            "type": "string",
-            "title": "Bank",
-            "description": "Bank name"
-          },
-          "period_from": {
-            "type": "string",
-            "title": "Period From",
-            "description": "Statement period start"
-          },
-          "period_to": {
-            "type": "string",
-            "title": "Period To",
-            "description": "Statement period end"
-          },
-          "total_debit_paise": {
-            "type": "integer",
-            "title": "Total Debit Paise",
-            "description": "Total debit in paise"
-          },
-          "total_credit_paise": {
-            "type": "integer",
-            "title": "Total Credit Paise",
-            "description": "Total credit in paise"
-          },
-          "transaction_count": {
-            "type": "integer",
-            "title": "Transaction Count",
-            "description": "Number of transactions"
-          },
-          "reconciled_count": {
-            "type": "integer",
-            "title": "Reconciled Count",
-            "description": "Number of reconciled transactions"
-          },
-          "status": {
-            "type": "string",
-            "enum": [
-              "pending",
-              "confirmed",
-              "rejected",
-              "disputed"
-            ],
-            "title": "Status",
-            "description": "Overall status"
+            "title": "Count",
+            "description": "Total number of potential matches"
           }
         },
         "type": "object",
         "required": [
-          "statement_id",
-          "bank",
-          "period_from",
-          "period_to",
-          "total_debit_paise",
-          "total_credit_paise",
-          "transaction_count",
-          "reconciled_count",
-          "status"
+          "matches",
+          "count"
         ],
-        "title": "ReconciliationSummaryDTO",
-        "description": "Reconciliation summary for a statement."
+        "title": "ReconciliationScanResponse",
+        "description": "Response for reconciliation scan endpoint.",
+        "example": {
+          "count": 0,
+          "matches": []
+        }
+      },
+      "ReconciliationsListResponse": {
+        "properties": {
+          "reconciliations": {
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationMatchDTO"
+            },
+            "type": "array",
+            "title": "Reconciliations",
+            "description": "List of reconciliation matches"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reconciliations"
+        ],
+        "title": "ReconciliationsListResponse",
+        "description": "Response for reconciliation list endpoint.",
+        "example": {
+          "reconciliations": [
+            {
+              "amount_paise": 4500000,
+              "created_at": "2025-01-15T10:00:00",
+              "credit_account_id": "ICICI Bank",
+              "credit_amount_paise": 4500000,
+              "credit_bank": "ICICI Bank",
+              "credit_date": "16/01/2025",
+              "credit_date_iso": "2025-01-16",
+              "credit_description": "SALARY CREDIT",
+              "credit_txn_id": 201,
+              "date_diff_days": 1,
+              "debit_account_id": "HDFC Bank",
+              "debit_amount_paise": 4500000,
+              "debit_bank": "HDFC Bank",
+              "debit_date": "15/01/2025",
+              "debit_date_iso": "2025-01-15",
+              "debit_description": "CC PAYMENT",
+              "debit_txn_id": 101,
+              "id": 1,
+              "match_confidence_bps": 7000,
+              "match_type": "window",
+              "status": "pending"
+            }
+          ]
+        }
       },
       "StatementDTO": {
         "properties": {
@@ -10173,44 +10022,170 @@
         "title": "StatementGenerateRequest",
         "description": "Request to generate a new statement."
       },
-      "StatusOverviewDTO": {
+      "TransactionDTO": {
         "properties": {
-          "total_transactions": {
-            "type": "integer",
-            "title": "Total Transactions",
-            "description": "Total transactions"
+          "id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "title": "Id",
+            "description": "Unique transaction identifier"
           },
-          "reconciled": {
-            "type": "integer",
-            "title": "Reconciled",
-            "description": "Number of reconciled transactions"
+          "date": {
+            "type": "string",
+            "title": "Date",
+            "description": "Transaction date (ISO format)"
           },
-          "pending": {
-            "type": "integer",
-            "title": "Pending",
-            "description": "Number of pending reconciliations"
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Transaction description"
           },
-          "discrepancies": {
-            "type": "integer",
-            "title": "Discrepancies",
-            "description": "Number of discrepancies"
+          "amount": {
+            "$ref": "#/components/schemas/MoneyDTO",
+            "description": "Transaction amount as Money object"
           },
-          "match_rate": {
-            "type": "number",
-            "title": "Match Rate",
-            "description": "Match rate percentage (0-100)"
+          "balance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MoneyDTO"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Running balance after transaction as Money object"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "Transaction type (debit/credit)"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category",
+            "description": "Transaction category"
+          },
+          "subcategory": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Subcategory",
+            "description": "Transaction subcategory"
+          },
+          "bank": {
+            "type": "string",
+            "title": "Bank",
+            "description": "Bank name",
+            "default": ""
+          },
+          "member": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member",
+            "description": "Member name"
+          },
+          "statement_file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statement File",
+            "description": "Statement file name for import tracking"
           }
         },
         "type": "object",
         "required": [
-          "total_transactions",
-          "reconciled",
-          "pending",
-          "discrepancies",
-          "match_rate"
+          "id",
+          "date",
+          "description",
+          "amount",
+          "type",
+          "category"
         ],
-        "title": "StatusOverviewDTO",
-        "description": "Reconciliation status overview."
+        "title": "TransactionDTO",
+        "description": "Transaction data transfer object.\n\nMonetary fields:\n- amount: MoneyDTO with paise and rupees (canonical)\n- balance: MoneyDTO with paise and rupees (optional)",
+        "example": {
+          "amount": {
+            "paise": 150000,
+            "rupees": 1500.0
+          },
+          "balance": {
+            "paise": 850000,
+            "rupees": 8500.0
+          },
+          "bank": "HDFC Bank",
+          "category": "Shopping",
+          "date": "2026-07-05",
+          "description": "Amazon Purchase",
+          "id": 1,
+          "member": "Self",
+          "statement_file": "statement_july.pdf",
+          "subcategory": "E-commerce",
+          "type": "debit"
+        }
+      },
+      "TransactionListResponse": {
+        "properties": {
+          "transactions": {
+            "items": {
+              "$ref": "#/components/schemas/TransactionDTO"
+            },
+            "type": "array",
+            "title": "Transactions",
+            "description": "List of transactions"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total number of transactions"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit",
+            "description": "Number of transactions per page"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset",
+            "description": "Offset for pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "transactions",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "TransactionListResponse",
+        "description": "Response for transaction list endpoint.",
+        "example": {
+          "limit": 50,
+          "offset": 0,
+          "total": 0,
+          "transactions": []
+        }
       },
       "ValidationError": {
         "properties": {

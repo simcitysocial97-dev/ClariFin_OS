@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-14T11:37:36.374274+00:00",
+  "indexed_at": "2026-08-18T19:33:07.000996+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -8687,6 +8687,16 @@
         ]
       },
       {
+        "title": "M9-C10-forensic-report",
+        "path": "docs/M9-C10-forensic-report.md",
+        "references": {
+          "path": "docs/M9-C10-forensic-report.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "PROGRAM_11.6_EVALUATION_REPORT",
         "path": "docs/PROGRAM_11.6_EVALUATION_REPORT.md",
         "references": {
@@ -10369,6 +10379,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 184
+    "documentation": 185
   }
 }

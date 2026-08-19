@@ -48,8 +48,8 @@ export const BREAKPOINTS: ResponsiveBreakpoint[] = [
 ];
 
 export const SIDEBAR_WIDTHS = {
-  expanded: 256,
-  collapsed: 64,
+  expanded: 180,
+  collapsed: 56,
 };
 
 // ============================================================================

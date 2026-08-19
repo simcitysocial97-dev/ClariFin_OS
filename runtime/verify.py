@@ -969,9 +969,86 @@ def cmd_intelligence_audit() -> int:
     artifacts = generate_migration_artifacts()
     print("Program 14.1 migration reports generated:")
     for name in artifacts:
-        path = REPO_ROOT / "runtime" / "generated" / name
+        path = REPO_ROOT / "runtime/generated" / name
         print(f"  {path.relative_to(REPO_ROOT)}")
     return 0
+
+
+def cmd_api_contracts() -> int:
+    """M9-C27 — API Contract Integrity & Drift-Proofing gate.
+
+    Runs the canonical ``api-contracts`` capability: STRUCTURAL freshness,
+    GENERATED-type reproducibility, CONSUMER integrity, and WIRE validation.
+    Emits a machine-readable evidence artifact and exits non-zero on drift.
+    """
+    import json as _json
+
+    from runtime.foundation.verification.api_contracts.gate import ApiContractGate
+
+    gate = ApiContractGate()
+    report = gate.run()
+
+    evidence_path = (
+        REPO_ROOT
+        / "runtime"
+        / "generated"
+        / "api-contract-evidence.json"
+    )
+    evidence_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence_path.write_text(
+        _json.dumps(report.to_dict(), indent=2, default=str), encoding="utf-8"
+    )
+
+    # Human-readable summary
+    print("=" * 72)
+    print("  M9-C27 — API CONTRACT INTEGRITY GATE")
+    print("=" * 72)
+    print(f"  Run ID:              {report.run_id}")
+    print(f"  Repo revision:      {report.repository_revision}")
+    print(f"  OpenAPI hash:        {report.openapi_hash[:16]}")
+    print(f"  Inventory hash:      {report.inventory.contract_inventory_hash}")
+    print(f"  Backend operations:  {report.inventory.backend_operations}")
+    print(f"  Frontend consumers:  {report.inventory.frontend_consumers}")
+    print(f"  Runtime schemas:     {report.inventory.runtime_schemas}")
+    print("-" * 72)
+    for dim in report.dimensions:
+        status = dim.status.upper()
+        nfail = len(dim.failures)
+        print(f"  {dim.name:<22} {status:<8} ({nfail} failures)")
+    print("-" * 72)
+
+    if report.failures:
+        print(f"  TOTAL FAILURES: {len(report.failures)}")
+        for f in report.failures[:20]:
+            print(
+                f"  [{f.classification.value}] {f.operation}\n"
+                f"      expected: {f.expected}\n"
+                f"      actual:   {f.actual}"
+            )
+    else:
+        print("  ALL CONTRACT CHECKS PASSED")
+
+    print("=" * 72)
+    print(f"  Evidence: {evidence_path.relative_to(REPO_ROOT)}")
+    print("=" * 72)
+
+    return 0 if report.passed else 1
+
+
+def cmd_contract_governance() -> int:
+    """M9-C30 — Contract Governance & Enforcement Certification.
+
+    Forensic certification that proves no reasonable future mutation can
+    silently bypass the API contract gate. Covers:
+      - Exhaustive mutation surface inventory
+      - Gate attack with mutation matrix
+      - Semantic blind spot analysis
+      - Authority policy establishment
+      - Artifact reproducibility verification
+      - CI enforcement verification
+    """
+    from runtime.foundation.verification.api_contracts.c30_certification import main
+    return main()
 
 
 def cmd_audit() -> int:
@@ -1059,7 +1136,7 @@ def main() -> int:
             file=sys.stderr,
         )
         print(
-            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit",
+            "Commands: status, metrics, history, deps, verify-status, analytics, health, doctor, ci-doctor, diagnose, diagnose-failures, plan, reconcile, exec-evidence, deep-contract, local-gate, affected, repair, risk, integrity, knowledge, knowledge endpoint, knowledge capability, knowledge workspace, knowledge rule, knowledge component, dashboard, intelligence, intelligence-audit, certify-v4, certify-v5, audit, api-contracts, contract-governance",
             file=sys.stderr,
         )
         return 1
@@ -1131,6 +1208,10 @@ def main() -> int:
         return cmd_intelligence_audit()
     if command == "audit":
         return cmd_audit()
+    if command == "api-contracts":
+        return cmd_api_contracts()
+    if command == "contract-governance":
+        return cmd_contract_governance()
 
     profile_name = command
 
