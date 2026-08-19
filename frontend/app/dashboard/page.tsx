@@ -10,8 +10,10 @@
 
 "use client";
 
+import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, PiggyBank, Home, Shield, Activity, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton";
 import { ErrorFallback } from "@/components/error-boundary";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
@@ -30,6 +32,7 @@ import { Panel, PanelHeader, PanelBody } from "@/components/primitives/panel/pan
 import { Stack } from "@/components/primitives/layout/stack";
 import { Grid } from "@/components/primitives/layout/grid";
 import { MoneyValue } from "@/components/primitives/data-display/money-value";
+import { UploadModal } from "@/components/upload/upload-modal";
 
 // ============================================================
 // Internal Presentational Components
@@ -129,13 +132,13 @@ function BufferDaysCard({ days }: { days: number }) {
   );
 }
 
-function HealthScoreFooter({ score }: { score: number }) {
+function HealthScoreFooter({ score }: { score: number | null | undefined }) {
   const getColor = (s: number) => {
     if (s >= 70) return "text-[var(--color-positive-600)]";
     if (s >= 40) return "text-[var(--color-warning-600)]";
     return "text-[var(--color-negative-600)]";
   };
-  
+
   return (
     <Surface variant="raised" density="none" className="p-4">
       <div className="flex items-center justify-between">
@@ -143,9 +146,18 @@ function HealthScoreFooter({ score }: { score: number }) {
           <Activity className="h-4 w-4 text-[var(--text-tertiary)]" />
           <span className="text-sm text-[var(--text-secondary)]">Financial Health Score</span>
         </div>
-        <span className={`text-lg font-bold ${getColor(score)}`}>
-          {score.toFixed(0)}/100
-        </span>
+        {score == null ? (
+          <span
+            className="text-lg font-bold text-[var(--text-tertiary)]"
+            title="Financial health score is not available until behaviour analysis runs"
+          >
+            —
+          </span>
+        ) : (
+          <span className={`text-lg font-bold ${getColor(score)}`}>
+            {score.toFixed(0)}/100
+          </span>
+        )}
       </div>
     </Surface>
   );
@@ -157,11 +169,13 @@ function HealthScoreFooter({ score }: { score: number }) {
 
 export default function DashboardPage() {
   const { data, loading, error, refetch } = useDashboardMetrics();
+  const [uploadOpen, setUploadOpen] = useState(false);
   // useOverview hook is available for future use
 
   // Page Loading state
   if (loading) {
     return (
+      <main>
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
           <PanelHeader title="Dashboard" />
@@ -172,12 +186,14 @@ export default function DashboardPage() {
           </PanelBody>
         </Panel>
       </Surface>
+      </main>
     );
   }
 
   // Page Global Error state (Hook failures)
   if (error) {
     return (
+      <main>
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
           <PanelHeader title="Dashboard" />
@@ -188,12 +204,14 @@ export default function DashboardPage() {
           </PanelBody>
         </Panel>
       </Surface>
+      </main>
     );
   }
 
   // No data state
   if (!data) {
     return (
+      <main>
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
           <PanelHeader title="Dashboard" />
@@ -209,10 +227,12 @@ export default function DashboardPage() {
           </PanelBody>
         </Panel>
       </Surface>
+      </main>
     );
   }
 
   return (
+    <main>
     <Surface variant="default" density="none" className="flex flex-col h-full">
       <Panel fill>
         <PanelHeader title="Dashboard" />
@@ -230,6 +250,14 @@ export default function DashboardPage() {
             <ErrorBoundary componentName="Analytics Summary Bar">
               <AnalyticsSummaryBar />
             </ErrorBoundary>
+
+            {/* Upload Button */}
+            <div className="flex justify-end">
+              <Button variant="outline" onClick={() => setUploadOpen(true)}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            </div>
 
             {/* Main Content - 2-column on desktop, stack on mobile */}
             <Grid gap={4} className="grid-cols-1 lg:grid-cols-3">
@@ -307,5 +335,7 @@ export default function DashboardPage() {
         </PanelBody>
       </Panel>
     </Surface>
+    <UploadModal open={uploadOpen} onOpenChange={setUploadOpen} />
+    </main>
   );
 }
