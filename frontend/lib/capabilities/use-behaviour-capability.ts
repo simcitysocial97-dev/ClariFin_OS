@@ -115,8 +115,8 @@ export function useBehaviourCapability(): BehaviourCapabilityReturn {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retry: 1,
+    retryDelay: 1000,
   });
 
   // Loading timeout effect - show message after 10 seconds

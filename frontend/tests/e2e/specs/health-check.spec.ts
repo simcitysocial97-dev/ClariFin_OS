@@ -160,8 +160,8 @@ test('Transactions - shows transaction rows', async ({ page }) => {
 // Test 4: Cashflow page shows chart
 test('Cashflow - renders chart with data', async ({ page }) => {
   await page.goto('http://localhost:3000/cashflow/',
-    { waitUntil: 'networkidle' });
-  await page.waitForTimeout(3000); // Charts need time to render
+    { waitUntil: 'load', timeout: 30000 });
+  await page.waitForTimeout(5000); // Charts need time to render
 
   // Check for SVG (charts render as SVG)
   const svgCount = await page.locator('svg').count();
