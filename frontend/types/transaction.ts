@@ -32,10 +32,10 @@ export interface Transaction {
 
   // ===== Extended Fields (from API) =====
   sequence_num?: number;
-  subcategory?: string;
+  subcategory?: string | null;
   raw_description?: string;
-  member?: string;
-  statement_file?: string;
+  member?: string | null;
+  statement_file?: string | null;
   statement_period_from?: string | null;
   statement_period_to?: string | null;
 

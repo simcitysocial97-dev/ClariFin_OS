@@ -634,9 +634,14 @@ class MutationAttacker:
         if not mutated_any:
             return {"status": "SKIP", "detail": "no mutation applied"}
 
-        # Run gate in subprocess to clear Python cache
-        proc = subprocess.run(
-            [sys.executable, "-c", """
+        # Run gate in subprocess to clear Python cache. Restoration of the
+        # original file contents is guaranteed by the ``finally`` block below so
+        # the working tree can never be left corrupted, even if the gate
+        # subprocess times out or raises an exception.
+        proc = None
+        try:
+            proc = subprocess.run(
+                [sys.executable, "-c", """
 import sys, json
 sys.path.insert(0, 'backend')
 from runtime.foundation.verification.api_contracts.gate import ApiContractGate
@@ -645,16 +650,16 @@ r = g.run()
 dims = [(d.name, d.status, len(d.failures)) for d in r.dimensions]
 print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r.failures)}))
 """],
-            cwd=str(REPO_ROOT),
-            capture_output=True,
-            text=True,
-            timeout=120,
-        )
-
-        # Restore originals
-        for key, path in targets.items():
-            if path.exists() and key in snapshots:
-                path.write_text(snapshots[key])
+                cwd=str(REPO_ROOT),
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+        finally:
+            # ALWAYS restore originals — even when the gate subprocess fails.
+            for key, path in targets.items():
+                if path.exists() and key in snapshots:
+                    path.write_text(snapshots[key])
 
         try:
             output = proc.stdout.strip()

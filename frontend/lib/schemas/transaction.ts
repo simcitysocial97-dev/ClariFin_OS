@@ -13,8 +13,8 @@ export const TransactionSchema = z.object({
   amount: MoneySchema.optional(),
   type: z.enum(['debit', 'credit']),
   category: z.string(),
-  subcategory: z.string().optional(),
-  bank: z.string().nullable().optional(),
+  subcategory: z.string().nullable().optional(),
+  bank: z.string(),
   member: z.string().nullable().optional(),
   statement_file: z.string().nullable().optional(),
   // Deprecated fields for backward compatibility

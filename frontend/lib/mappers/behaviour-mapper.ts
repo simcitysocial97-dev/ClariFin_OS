@@ -19,6 +19,7 @@ import type {
   BehaviourFiltersViewModel,
   BehaviourNavigationViewModel,
 } from '../../types/behaviour-view-model';
+import type { BehaviorScore } from '../../lib/schemas/behavior-score';
 
 // ===== DTO Types (from backend) =====
 
@@ -109,6 +110,14 @@ export interface IBehaviourMapper {
   mapBehaviourDTO(dto: BehaviourDTO): BehaviourViewModel;
 
   /**
+   * Map the canonical wellness-score response (BehavioralScore) returned by
+   * /api/v1/behaviour/wellness-score to a BehaviourViewModel. The backend only
+   * exposes the wellness score, so the richer BehaviourDTO fields are left empty
+   * (the corresponding UI surfaces render empty states).
+   */
+  mapBehavioralScoreToViewModel(dto: BehaviorScore): BehaviourViewModel;
+
+  /**
    * Map wellness score DTO to ViewModel
    */
   mapWellnessScore(dto: BehaviourScoreDTO): BehaviourScoreViewModel;
@@ -165,6 +174,42 @@ export class BehaviourMapper implements IBehaviourMapper {
       wellness_radar: this.mapWellnessRadar(dto.wellness_radar),
       insights: this.mapInsights(dto.insights),
       evidence_chain: this.mapEvidenceChain(dto.evidence_chain),
+      filters: this.createDefaultFilters(),
+      navigation: this.createDefaultNavigation(),
+    };
+  }
+
+  /**
+   * Map the canonical wellness-score response to a BehaviourViewModel.
+   *
+   * The backend exposes only /api/v1/behaviour/wellness-score, which returns a
+   * BehavioralScore (score in basis points, band, component health map). This
+   * mapper maps that onto the BehaviourViewModel contract, deriving the wellness
+   * radar and score factors from the component health map. Surfaces that depend
+   * on data the backend does not currently expose (spending patterns, savings
+   * rate, debt health, insights) receive empty values so their UI renders
+   * empty states rather than crashing.
+   */
+  mapBehavioralScoreToViewModel(dto: BehaviorScore): BehaviourViewModel {
+    const components = dto.components ?? {};
+    const componentEntries = Object.entries(components).map(([dimension, rawScore]) => ({
+      dimension,
+      score: Number(rawScore),
+      max_score: 100,
+    }));
+
+    return {
+      wellness_score: {
+        score: dto.score / 100, // canonical score is in basis points (0-10000)
+        label: dto.band,
+        factors: Object.keys(components),
+      },
+      spending_patterns: [],
+      savings_rate: undefined,
+      debt_health: undefined,
+      wellness_radar: componentEntries,
+      insights: [],
+      evidence_chain: undefined,
       filters: this.createDefaultFilters(),
       navigation: this.createDefaultNavigation(),
     };

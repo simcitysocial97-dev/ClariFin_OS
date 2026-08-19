@@ -1,19 +1,48 @@
 {
-  "run_id": "20260819T055130Z",
-  "repository_revision": "8b5a82c2",
-  "backend_revision": "8b5a82c2",
-  "openapi_hash": "64b81d8db2132175634cd39f2dfde26890637877aaf1a1bd0b137a1f1160370a",
-  "contract_family": {
-    "reconciliation": {
-      "status": "PASS",
-      "path_drift_fixed": true,
-      "msw_synced": true,
-      "contract_tests_updated": true,
-      "e2e_tests_updated": true
-    }
+  "run_id": "20260819T060307Z",
+  "repository_revision": "46ddb925",
+  "backend_revision": "46ddb925",
+  "openapi_hash": "3a6085cb92f5dbb98b0fd2b01af5d378fcaf8ac519e63cd4c1296742b1314525",
+  "generated_types_hash": "b47d7e386b6dbd61cdfb2cd91842737dc5bbd94fe8006bf1cb571ec7f79c0231",
+  "inventory": {
+    "backend_operations": 114,
+    "frontend_consumers": 46,
+    "runtime_schemas": 2,
+    "committed_artifacts": 2,
+    "contract_inventory_hash": "a3b3ec83053cff0c"
   },
-  "defects_resolved": [
-    "C26-3"
+  "dimensions": [
+    {
+      "name": "freshness",
+      "status": "pass",
+      "failures": [],
+      "metadata": {}
+    },
+    {
+      "name": "generated_types",
+      "status": "pass",
+      "failures": [],
+      "metadata": {}
+    },
+    {
+      "name": "schema_compat",
+      "status": "pass",
+      "failures": [],
+      "metadata": {}
+    },
+    {
+      "name": "consumer_integrity",
+      "status": "pass",
+      "failures": [],
+      "metadata": {}
+    },
+    {
+      "name": "wire",
+      "status": "pass",
+      "failures": [],
+      "metadata": {}
+    }
   ],
-  "timestamp": "2026-08-19T05:51:30.308422Z"
+  "failures": [],
+  "passed": true
 }

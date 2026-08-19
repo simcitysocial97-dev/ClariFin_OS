@@ -49,7 +49,9 @@ function ComponentBar({ label, value, invert = false }: { label: string; value: 
 export function BehaviorScoreCard() {
   const { data, isLoading, isError, refetch } = useBehaviorScore();
 
-  const healthScore = data?.financial_health_score ?? data?.score ?? 0;
+  // Backend wellness score is in basis points (0-10000); normalise to 0-100 for display.
+  const rawScore = data?.financial_health_score ?? data?.score ?? 0;
+  const healthScore = rawScore > 100 ? rawScore / 100 : rawScore;
   const isEmpty = !data;
 
   return (
