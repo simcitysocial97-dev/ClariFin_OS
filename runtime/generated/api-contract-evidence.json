@@ -1,84 +1,27 @@
 {
-  "run_id": "20260819T040803Z",
-  "repository_revision": "885622de",
-  "backend_revision": "885622de",
-  "openapi_hash": "6f8ca409233c6c0b66091407bb42f68f4bbd42e11ca6c3b82b02af9a98ef965d",
-  "generated_types_hash": "361aea47b29d88b3231652a17e8596fcefed962beec1197691f25e3204a64729",
+  "run_id": "20260819T042159Z",
+  "repository_revision": "42663e26",
+  "backend_revision": "42663e26",
+  "openapi_hash": "3a6085cb92f5dbb98b0fd2b01af5d378fcaf8ac519e63cd4c1296742b1314525",
+  "generated_types_hash": "b47d7e386b6dbd61cdfb2cd91842737dc5bbd94fe8006bf1cb571ec7f79c0231",
   "inventory": {
     "backend_operations": 114,
     "frontend_consumers": 46,
     "runtime_schemas": 2,
-    "committed_artifacts": 0,
-    "contract_inventory_hash": "8ec8268f1a8e4df2"
+    "committed_artifacts": 2,
+    "contract_inventory_hash": "a3b3ec83053cff0c"
   },
   "dimensions": [
     {
       "name": "freshness",
-      "status": "fail",
-      "failures": [
-        {
-          "classification": "OPENAPI_STALE",
-          "operation": "*",
-          "path": "paths./api/dashboard/summary.get",
-          "method": "",
-          "source": "freshness",
-          "expected": "FRONTEND: '<present>'",
-          "actual": "FRONTEND LIVE: None",
-          "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
-          "boundary": ""
-        },
-        {
-          "classification": "OPENAPI_STALE",
-          "operation": "*",
-          "path": "paths./api/dashboard/summary.post",
-          "method": "",
-          "source": "freshness",
-          "expected": "FRONTEND: None",
-          "actual": "FRONTEND LIVE: '<present>'",
-          "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
-          "boundary": ""
-        },
-        {
-          "classification": "OPENAPI_STALE",
-          "operation": "*",
-          "path": "paths./api/dashboard/summary.get",
-          "method": "",
-          "source": "freshness",
-          "expected": "BACKEND_TESTS: '<present>'",
-          "actual": "BACKEND_TESTS LIVE: None",
-          "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
-          "boundary": ""
-        },
-        {
-          "classification": "OPENAPI_STALE",
-          "operation": "*",
-          "path": "paths./api/dashboard/summary.post",
-          "method": "",
-          "source": "freshness",
-          "expected": "BACKEND_TESTS: None",
-          "actual": "BACKEND_TESTS LIVE: '<present>'",
-          "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
-          "boundary": ""
-        }
-      ],
+      "status": "pass",
+      "failures": [],
       "metadata": {}
     },
     {
       "name": "generated_types",
-      "status": "fail",
-      "failures": [
-        {
-          "classification": "GENERATED_TYPES_STALE",
-          "operation": "*",
-          "path": "frontend/types/api-generated.ts",
-          "method": "",
-          "source": "generated_types",
-          "expected": "types reproducible from live OpenAPI (no diff)",
-          "actual": "differences detected starting line 999",
-          "details": "Run `npm run gen:types` while backend is running to regenerate.",
-          "boundary": ""
-        }
-      ],
+      "status": "pass",
+      "failures": [],
       "metadata": {}
     },
     {
@@ -89,119 +32,17 @@
     },
     {
       "name": "consumer_integrity",
-      "status": "fail",
-      "failures": [
-        {
-          "classification": "ENDPOINT_DRIFT",
-          "operation": "GET /api/dashboard/summary",
-          "path": "/api/dashboard/summary",
-          "method": "GET",
-          "source": "consumer_integrity",
-          "expected": "endpoint /api/dashboard/summary exists in backend",
-          "actual": "endpoint not found in OpenAPI",
-          "details": "Consumer in lib/hooks/use-dashboard-metrics.ts calls non-existent endpoint",
-          "boundary": ""
-        }
-      ],
+      "status": "pass",
+      "failures": [],
       "metadata": {}
     },
     {
       "name": "wire",
-      "status": "fail",
-      "failures": [
-        {
-          "classification": "WIRE_STATUS_DRIFT",
-          "operation": "GET /api/dashboard/summary",
-          "path": "/api/dashboard/summary",
-          "method": "GET",
-          "source": "wire",
-          "expected": "HTTP 200",
-          "actual": "HTTP 405: {\"detail\":\"Method Not Allowed\"}",
-          "details": "Live wire probe failed",
-          "boundary": ""
-        }
-      ],
+      "status": "pass",
+      "failures": [],
       "metadata": {}
     }
   ],
-  "failures": [
-    {
-      "classification": "OPENAPI_STALE",
-      "operation": "*",
-      "path": "paths./api/dashboard/summary.get",
-      "method": "",
-      "source": "freshness",
-      "expected": "FRONTEND: '<present>'",
-      "actual": "FRONTEND LIVE: None",
-      "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
-      "boundary": ""
-    },
-    {
-      "classification": "OPENAPI_STALE",
-      "operation": "*",
-      "path": "paths./api/dashboard/summary.post",
-      "method": "",
-      "source": "freshness",
-      "expected": "FRONTEND: None",
-      "actual": "FRONTEND LIVE: '<present>'",
-      "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
-      "boundary": ""
-    },
-    {
-      "classification": "OPENAPI_STALE",
-      "operation": "*",
-      "path": "paths./api/dashboard/summary.get",
-      "method": "",
-      "source": "freshness",
-      "expected": "BACKEND_TESTS: '<present>'",
-      "actual": "BACKEND_TESTS LIVE: None",
-      "details": "Drift: MISSING_IN_LIVE at paths./api/dashboard/summary.get",
-      "boundary": ""
-    },
-    {
-      "classification": "OPENAPI_STALE",
-      "operation": "*",
-      "path": "paths./api/dashboard/summary.post",
-      "method": "",
-      "source": "freshness",
-      "expected": "BACKEND_TESTS: None",
-      "actual": "BACKEND_TESTS LIVE: '<present>'",
-      "details": "Drift: EXTRA_IN_LIVE at paths./api/dashboard/summary.post",
-      "boundary": ""
-    },
-    {
-      "classification": "GENERATED_TYPES_STALE",
-      "operation": "*",
-      "path": "frontend/types/api-generated.ts",
-      "method": "",
-      "source": "generated_types",
-      "expected": "types reproducible from live OpenAPI (no diff)",
-      "actual": "differences detected starting line 999",
-      "details": "Run `npm run gen:types` while backend is running to regenerate.",
-      "boundary": ""
-    },
-    {
-      "classification": "ENDPOINT_DRIFT",
-      "operation": "GET /api/dashboard/summary",
-      "path": "/api/dashboard/summary",
-      "method": "GET",
-      "source": "consumer_integrity",
-      "expected": "endpoint /api/dashboard/summary exists in backend",
-      "actual": "endpoint not found in OpenAPI",
-      "details": "Consumer in lib/hooks/use-dashboard-metrics.ts calls non-existent endpoint",
-      "boundary": ""
-    },
-    {
-      "classification": "WIRE_STATUS_DRIFT",
-      "operation": "GET /api/dashboard/summary",
-      "path": "/api/dashboard/summary",
-      "method": "GET",
-      "source": "wire",
-      "expected": "HTTP 200",
-      "actual": "HTTP 405: {\"detail\":\"Method Not Allowed\"}",
-      "details": "Live wire probe failed",
-      "boundary": ""
-    }
-  ],
-  "passed": false
+  "failures": [],
+  "passed": true
 }
