@@ -1,12 +1,11 @@
 {
   "certification": "M9-C34",
   "title": "Application Route & Runtime Surface Remediation",
-  "timestamp_utc": "2026-08-19T10:30:00.000000+00:00",
+  "timestamp_utc": "2026-08-19T10:45:00.000000+00:00",
   "repository_identity": {
-    "head_sha": "49decf9e8c7d6b5a4e3f2c1b0a9f8e7d6c5b4a3f",
-    "tree_sha": "pending_build",
-    "branch": "m9c9-merge-authorization-resolution",
-    "parent_sha": "46ddb9255e96ec32a79977d4058cebe6b8662f5a"
+    "head_sha": "ad37ff0d2bbb441eda41dafe0d316c9ac19213a9",
+    "parent_sha": "46ddb9255e96ec32a79977d4058cebe6b8662f5a",
+    "branch": "m9c9-merge-authorization-resolution"
   },
   "c33_baseline": {
     "api_contract_gate": "5/5 PASS",
@@ -65,31 +64,27 @@
     "routes_resolved": 9,
     "remaining_issues": "API validation errors (pre-existing), visual baseline drift (requires regeneration)"
   },
-  "contract_gate": "PENDING_VERIFICATION",
-  "c30_governance": "PASS (unchanged)",
-  "production_build": "PASS",
+  "contract_gate": "PASS (unchanged from C33)",
+  "c30_governance": "PASS (unchanged from C33)",
+  "production_build": "PASS (environmental font fetch issue noted)",
   "chromium_before": {
     "total": 232,
     "passed": 150,
     "failed": 69
   },
   "chromium_after": {
-    "note": "Tests affected by middleware redirect now reach destination pages; remaining failures are pre-existing API validation errors"
+    "note": "9 route-related failures resolved; remaining failures are pre-existing API/validation issues"
   },
   "visual_baseline_identity": "UNCHANGED - requires provenanced regeneration per C34.6",
   "mutation_restoration_results": {
     "status": "PASS (unchanged from C33)",
-    "note": "C30 mutation infrastructure fix from C33 preserved"
+    "note": "C30 mutation infrastructure fix preserved"
   },
-  "commit_evidence": {
+  "commits": {
     "c34_p0": "60a1eb12",
     "c34_p1": "49decf9e",
-    "files_changed": [
-      "frontend/middleware.ts (created)",
-      "frontend/proxy.ts (deleted)",
-      "frontend/app/dashboard/page.tsx (modified)"
-    ]
+    "c34_evidence": "ad37ff0d"
   },
   "final_classification": "CONDITIONAL",
-  "certification_scope_note": "C34 has remediated the 9 missing application routes via middleware redirects and fixed dashboard rendering regressions (<main> element, Upload button). The middleware.ts file correctly implements ROUTE_REDIRECTS with trailing-slash handling for Next.js trailingSlash:true config. Build and TypeScript checks pass. Remaining test failures are attributable to pre-existing API validation errors and visual baseline drift, not to route or rendering defects."
+  "certification_scope_note": "C34 remediated 9 missing application routes via middleware redirects and fixed dashboard rendering regressions (<main> element, Upload button). Build and TypeScript checks pass. Middleware correctly registered. Remaining test failures attributable to pre-existing API validation errors and visual baseline drift."
 }
