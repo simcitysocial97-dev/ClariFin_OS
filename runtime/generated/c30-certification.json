@@ -1,10 +1,10 @@
 {
   "certification": "M9-C30",
   "title": "Contract Governance & Enforcement Certification",
-  "run_id": "20260819T032606Z",
-  "duration_seconds": 233.356021,
-  "start_time": "2026-08-19T03:26:06.550912+00:00",
-  "end_time": "2026-08-19T03:29:59.906933+00:00",
+  "run_id": "20260819T040448Z",
+  "duration_seconds": 151.965826,
+  "start_time": "2026-08-19T04:04:48.079649+00:00",
+  "end_time": "2026-08-19T04:07:20.045475+00:00",
   "summary": {
     "surfaces_inventoryed": 62,
     "surfaces_auto_detected": 57,
@@ -510,7 +510,7 @@
     "openapi_regeneration": {
       "frontend/generated/openapi-current.json": {
         "exists": true,
-        "size_bytes": 299438,
+        "size_bytes": 299439,
         "status": "present"
       },
       "backend/tests/generated/openapi-current.json": {
@@ -527,9 +527,9 @@
       }
     },
     "hash_consistency": {
-      "frontend_hash": "495cc05c32249c8a",
+      "frontend_hash": "f14e7a1bc8d2e263",
       "backend_test_hash": "495cc05c32249c8a",
-      "match": true
+      "match": false
     }
   },
   "ci_enforcement": {
