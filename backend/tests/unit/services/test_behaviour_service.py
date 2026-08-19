@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.errors import AppError, NotFoundError
+from src.errors import AppError
 from src.models.behaviour import (
     CashflowHealthResponse,
     DebtHealthResponse,
@@ -272,7 +272,7 @@ def test_get_wellness_score_not_found(
 
     # Verify result has default/fallback values when no data
     assert result is not None
-    assert hasattr(result, 'score')
+    assert hasattr(result, "score")
 
 
 def test_get_debt_health_success(

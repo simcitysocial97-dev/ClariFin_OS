@@ -265,7 +265,9 @@ class BehaviourService:
             snapshot = self.behaviour_repo.get_latest_snapshot(household_id)
             if not snapshot:
                 # Auto-compute snapshot from current data if none exists
-                logger.info(f"No snapshot found for {household_id}, computing on-demand")
+                logger.info(
+                    f"No snapshot found for {household_id}, computing on-demand"
+                )
                 self.compute_financial_profile(household_id)
                 snapshot = self.behaviour_repo.get_latest_snapshot(household_id)
                 if not snapshot:
@@ -290,7 +292,9 @@ class BehaviourService:
             # Use .get() for fields not stored in snapshot (debt_cycle_score, credit_revolver_ratio
             # are computed on-demand in other methods)
             components: dict[str, Decimal] = {
-                "cashflow_health": Decimal(str(snapshot.get("cashflow_stability_score", 50))),
+                "cashflow_health": Decimal(
+                    str(snapshot.get("cashflow_stability_score", 50))
+                ),
                 "debt_health": Decimal("1")
                 - (Decimal(str(snapshot.get("debt_cycle_score", 50))) / Decimal("100")),
                 "savings_behaviour": max(
@@ -302,11 +306,15 @@ class BehaviourService:
                 - min(
                     Decimal("1"),
                     max(
-                        Decimal("0"), Decimal(str(snapshot.get("lifestyle_inflation_rate", 0)))
+                        Decimal("0"),
+                        Decimal(str(snapshot.get("lifestyle_inflation_rate", 0))),
                     ),
                 ),
                 "credit_behaviour": Decimal("0.5")
-                * (Decimal("1") - Decimal(str(snapshot.get("credit_revolver_ratio", 0.4))))
+                * (
+                    Decimal("1")
+                    - Decimal(str(snapshot.get("credit_revolver_ratio", 0.4)))
+                )
                 + Decimal("0.5")
                 * (Decimal("1") - min(Decimal("1"), Decimal("0.4"))),  # Simplified FOIR
             }
@@ -315,7 +323,9 @@ class BehaviourService:
 
             band = cast(
                 WellnessBand,
-                classify_wellness_band(Decimal(str(snapshot.get("wellness_score", 75)))),
+                classify_wellness_band(
+                    Decimal(str(snapshot.get("wellness_score", 75)))
+                ),
             )
 
             return WellnessScoreResponse(

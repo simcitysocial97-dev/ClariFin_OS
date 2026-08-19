@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// Dashboard Metrics Schema
+// Dashboard Metrics Schema - matches backend DashboardSummaryDTO
 export const DashboardMetricsSchema = z.object({
   // Canonical paise fields
   net_cash_flow_paise: z.number().int(),
@@ -12,7 +12,7 @@ export const DashboardMetricsSchema = z.object({
   emi_ratio: z.number().min(0),
   buffer_days: z.number().int(),
   // Health score from behaviour analysis (0-100), nullable as per DTO
-  financial_health_score: z.number().min(0).max(100).nullable().optional(),
+  financial_health_score: z.number().min(0).max(100).nullable(),
   recent_transactions: z.array(z.any()).optional(),
   // Deprecated nullable field (backend returns null, kept for contract parity)
   net_cash_flow_rupees: z.number().nullable().optional(),

@@ -80,7 +80,9 @@ class DashboardService(BaseService):
         financial_health_score = profile.get("financial_health_score")
 
         # Recent transactions (last 10 enriched)
-        sorted_txns = sorted(all_transactions, key=lambda x: x.get("parsed_date", ""), reverse=True)
+        sorted_txns = sorted(
+            all_transactions, key=lambda x: x.get("parsed_date", ""), reverse=True
+        )
         recent_transactions = sorted_txns[:10]
 
         return DashboardSummaryDTO(

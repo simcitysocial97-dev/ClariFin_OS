@@ -6,10 +6,9 @@ from fastapi import APIRouter, HTTPException, Query
 
 from src.core.dtos.reconciliation_dto import (
     ReconciliationMatchDTO,
-    ReconciliationsListResponse,
     ReconciliationScanResponse,
+    ReconciliationsListResponse,
 )
-from src.core.mappers.reconciliation_mapper import ReconciliationMapper
 from src.services.reconciliation_service import ReconciliationService
 
 router = APIRouter(prefix="/api/reconciliation", tags=["reconciliation"])
