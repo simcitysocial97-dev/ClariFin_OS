@@ -145,7 +145,9 @@ export function TopCommandBar({ className }: TopCommandBarProps) {
         'h-11 min-h-11',
         'border-b border-[var(--border-default)]',
         'bg-[var(--surface-default)]',
-        'pl-[180px]',
+        // Mobile: full width, Desktop: offset by left rail
+        'left-0 w-full',
+        'lg:left-[180px] lg:w-auto lg:w-[calc(100%-180px)]',
         'flex items-center',
         className,
       )}

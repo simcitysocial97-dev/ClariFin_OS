@@ -22,9 +22,15 @@ export function WorkspaceContainer({ children, className }: WorkspaceContainerPr
     <div
       className={cn(
         'absolute inset-0',
-        'pt-44', // Account for top command bar (44px)
-        'pl-180', // Account for left rail (180px)
-        'pb-88', // Account for bottom timeline (88px)
+        'pt-11', // Account for top command bar (44px) - base
+        'lg:pt-44', // Desktop: full top padding
+        'pl-0', // Mobile: no left padding (sidebar hidden)
+        'sm:pl-14', // Small: collapsed sidebar (56px)
+        'lg:pl-[180px]', // Large: expanded sidebar (180px)
+        'pr-0', // Mobile: no right padding (inspector hidden)
+        'md:pr-[320px]', // Medium+: account for right inspector (320px)
+        'pb-0', // Mobile: no bottom padding (timeline hidden)
+        'md:pb-[88px]', // Medium+: timeline height (88px)
         className,
       )}
     >

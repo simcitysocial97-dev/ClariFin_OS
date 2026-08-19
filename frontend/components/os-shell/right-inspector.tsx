@@ -40,6 +40,7 @@ export function RightInspector({ className }: RightInspectorProps) {
           'w-10 border-l border-[var(--border-default)]',
           'bg-[var(--surface-default)]',
           'flex flex-col items-center pt-2 gap-1',
+          'hidden md:flex',
           className,
         )}
       >
@@ -64,6 +65,9 @@ export function RightInspector({ className }: RightInspectorProps) {
         'border-l border-[var(--border-default)]',
         'bg-[var(--surface-default)]',
         'flex flex-col',
+        'overflow-hidden',
+        // Mobile: hidden, Tablet+: visible
+        'hidden md:flex',
         className,
       )}
       style={{ width: `${width}px` }}

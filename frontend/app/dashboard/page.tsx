@@ -177,13 +177,12 @@ export default function DashboardPage() {
       <main>
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
-          <PanelHeader title="Dashboard" />
-            <div className="flex justify-end px-4">
-              <Button variant="outline" onClick={() => router.push("?upload=true")}>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-            </div>
+          <PanelHeader title="Dashboard" actions={
+            <Button variant="outline" onClick={() => router.push('?upload=true')}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload
+            </Button>
+          } />
           <PanelBody loading>
             <div className="p-4">
               <DashboardSkeleton />
@@ -201,13 +200,12 @@ export default function DashboardPage() {
       <main>
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
-          <PanelHeader title="Dashboard" />
-            <div className="flex justify-end px-4">
-              <Button variant="outline" onClick={() => router.push("?upload=true")}>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-            </div>
+          <PanelHeader title="Dashboard" actions={
+            <Button variant="outline" onClick={() => router.push('?upload=true')}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload
+            </Button>
+          } />
           <PanelBody error={error.message}>
             <div className="p-4">
               <ErrorFallback error={error} resetErrorBoundary={refetch} />
@@ -225,13 +223,12 @@ export default function DashboardPage() {
       <main>
       <Surface variant="default" density="none" className="flex flex-col h-full">
         <Panel fill>
-          <PanelHeader title="Dashboard" />
-            <div className="flex justify-end px-4">
-              <Button variant="outline" onClick={() => router.push("?upload=true")}>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-            </div>
+          <PanelHeader title="Dashboard" actions={
+            <Button variant="outline" onClick={() => router.push('?upload=true')}>
+              <Upload className="h-4 w-4 mr-2" />
+              Upload
+            </Button>
+          } />
           <PanelBody empty emptyMessage="No data available">
             <div className="p-4">
               <Alert>
@@ -252,13 +249,12 @@ export default function DashboardPage() {
     <main>
     <Surface variant="default" density="none" className="flex flex-col h-full">
       <Panel fill>
-        <PanelHeader title="Dashboard" />
-            <div className="flex justify-end px-4">
-              <Button variant="outline" onClick={() => router.push("?upload=true")}>
-                <Upload className="h-4 w-4 mr-2" />
-                Upload
-              </Button>
-            </div>
+        <PanelHeader title="Dashboard" actions={
+          <Button variant="outline" onClick={() => router.push('?upload=true')}>
+            <Upload className="h-4 w-4 mr-2" />
+            Upload
+          </Button>
+        } />
         <PanelBody scrollable>
           <Stack gap={4} className="p-4">
             {/* KPI Row - 4 Key Numbers */}

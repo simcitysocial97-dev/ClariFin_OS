@@ -157,7 +157,8 @@ export function LeftRail({ className }: LeftRailProps) {
         'border-r border-[var(--border-default)]',
         'bg-[var(--surface-default)]',
         'transition-all duration-150 ease-out',
-        collapsed ? 'w-14' : 'w-[180px]',
+        // Mobile: collapsed by default (56px), Desktop: expanded (180px)
+        'lg:w-[180px] w-14',
         className,
       )}
     >
