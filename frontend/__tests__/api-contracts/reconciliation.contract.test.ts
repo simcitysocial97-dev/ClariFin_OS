@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 
-describe('GET /api/reconciliations contract', () => {
+describe('GET /api/reconciliation contract', () => {
   it('returns an object with reconciliations array', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/reconciliation')
     const data = await response.json()
 
     expect(data).toHaveProperty('reconciliations')
@@ -10,7 +10,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('each reconciliation has required fields', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/reconciliation')
     const data = await response.json()
 
     const rec = data.reconciliations[0]
@@ -27,7 +27,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('each reconciliation has transaction details', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/reconciliation')
     const data = await response.json()
 
     const rec = data.reconciliations[0]
@@ -46,7 +46,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('match_confidence is between 0 and 1', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/reconciliation')
     const data = await response.json()
 
     for (const rec of data.reconciliations) {
@@ -56,7 +56,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('match_type is valid', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/reconciliation')
     const data = await response.json()
 
     const validTypes = ['exact', 'window', 'fuzzy', 'manual']
@@ -66,7 +66,7 @@ describe('GET /api/reconciliations contract', () => {
   })
 
   it('status is valid', async () => {
-    const response = await fetch('/api/reconciliations')
+    const response = await fetch('/api/reconciliation')
     const data = await response.json()
 
     const validStatuses = ['pending', 'confirmed', 'rejected']
@@ -76,9 +76,9 @@ describe('GET /api/reconciliations contract', () => {
   })
 })
 
-describe('GET /api/reconciliations/pending contract', () => {
+describe('GET /api/reconciliation/pending contract', () => {
   it('returns only pending reconciliations', async () => {
-    const response = await fetch('/api/reconciliations/pending')
+    const response = await fetch('/api/reconciliation/pending')
     const data = await response.json()
 
     for (const rec of data.reconciliations) {
@@ -87,9 +87,9 @@ describe('GET /api/reconciliations/pending contract', () => {
   })
 })
 
-describe('GET /api/reconciliations/scan contract', () => {
+describe('GET /api/reconciliation/scan contract', () => {
   it('returns matches array and count', async () => {
-    const response = await fetch('/api/reconciliations/scan')
+    const response = await fetch('/api/reconciliation/scan')
     const data = await response.json()
 
     expect(data).toHaveProperty('matches')
@@ -99,7 +99,7 @@ describe('GET /api/reconciliations/scan contract', () => {
   })
 
   it('each match has required fields', async () => {
-    const response = await fetch('/api/reconciliations/scan')
+    const response = await fetch('/api/reconciliation/scan')
     const data = await response.json()
 
     const match = data.matches[0]

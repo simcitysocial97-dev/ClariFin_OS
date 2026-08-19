@@ -208,7 +208,7 @@ test.describe('Reconciliation API', () => {
     captureErrors(page);
     
     // Block API
-    await page.route('**/api/reconciliations**', route => 
+    await page.route('**/api/reconciliation*', route => 
       route.fulfill({ status: 500, body: JSON.stringify({ error: 'Server error' }) })
     );
     
@@ -224,7 +224,7 @@ test.describe('Reconciliation API', () => {
     captureErrors(page);
     
     // Mock empty response
-    await page.route('**/api/reconciliations**', route => 
+    await page.route('**/api/reconciliation*', route => 
       route.fulfill({ status: 200, body: JSON.stringify({ reconciliations: [] }) })
     );
     
