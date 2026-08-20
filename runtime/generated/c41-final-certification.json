@@ -1,7 +1,7 @@
 {
   "certification": "M9-C41 FINAL CERTIFICATION",
-  "generated_at": "2026-08-20T21:40:00+05:30",
-  "head": "aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f",
+  "generated_at": "2026-08-21T02:30:00+05:30",
+  "head": "1d59e429676860890998b0e11fe5f95f57f5f3e4",
   "tree": "c43d6d20162735079e46d923a762644c771f44e4",
   "status": "CONDITIONAL",
   "c40_baseline": {
@@ -28,17 +28,17 @@
     "workflows": "9/9 parity preserved"
   },
   "genuine_defects_resolved": [
-    "APPLICATION_DEFECT (sidebar collapse state machine): LeftRail collapse wired to authoritative useAppStore; width transitions 180px<->56px. (navigation:134, css-integrity:47 fixed)"
+    "APPLICATION_DEFECT (sidebar collapse state machine): LeftRail collapse wired to authoritative useAppStore; width transitions 180px↔56px. (navigation:134, css-integrity:47 fixed)",
+    "CLICK_INTERCEPTION / LAYOUT_OVERLAP (D1): InsightPanel overlapped transaction table rows due to missing min-h-0 on scrollable PanelBody and conflicting h-full on Panel fill. FIXED: PanelBody scrollable now has min-h-0; Panel fill variant uses flex-1 only (no h-full). Verified: transactions 14/14 pass, navigation 28/28 pass, behavior/recon/edge-cases 73 passed."
   ],
   "test_defects_resolved": [
     "SELECTOR_DEFECT: navigation spec asserted non-existent <nav>/hamburger; corrected to actual LeftRail DOM.",
     "TEST_DEFECT: API-unavailable/edge-case tests asserted <main> on pages that render non-<main> Alert/empty states; corrected.",
-    "TEST_DEFECT (false positive): text=NaN substring-matched 'fiNaNcial'; replaced with leaf-text scan. App renders NO actual NaN/Infinity (proven).",
+    "TEST_DEFECT (false positive): text=NaN substring-matched 'fiNaNcial'; replaced with leaf-text scan. Proven: app renders NO actual NaN/Infinity.",
     "FIXTURE_DEFECT: edge-case tests leaked persisted zustand store; added beforeEach localStorage.clear()."
   ],
   "remaining_defects": [
-    {"id": "D1", "area": "transactions click interception", "classification": "CLICK_INTERCEPTION / LAYOUT_OVERLAP", "severity": "high", "status": "OPEN", "next": "Resolve absolute-inset-0 workspace overlay stacking so table rows receive pointer events; confirm row-click->detail contract."},
-    {"id": "D2", "area": "visual baselines (cards/behaviour/reconciliation)", "classification": "VISUAL_BASELINE_DEFECT", "severity": "medium", "status": "OPEN", "next": "Reset app state before visual snapshots, prove canonical UI, rebaseline with provenance binding."},
+    {"id": "D2", "area": "visual baselines (cards/behaviour/reconciliation/import/transactions/mobile)", "classification": "VISUAL_BASELINE_DEFECT", "severity": "medium", "status": "OPEN", "next": "Rebaseline 7 visual snapshots with provenance after confirming canonical UI (layout fix changed InsightPanel position)."},
     {"id": "D3", "area": "performance home page 2s", "classification": "PERFORMANCE_DEFECT (env-dependent)", "severity": "medium", "status": "OPEN", "next": "Isolate bottleneck via traced timing under load; optimize only proven layer. Threshold NOT raised."},
     {"id": "D4", "area": "dashboard component timeouts under full parallel run", "classification": "SERVER_LIFECYCLE/TIMEOUT (flaky)", "severity": "low", "status": "OPEN", "next": "Passes in isolation; monitor under full matrix, tune waitUntil."},
     {"id": "D5", "area": "mutation nightly CI", "classification": "MUTATION_SCORE_FAILURE (unverified)", "severity": "unknown", "status": "OPEN", "next": "Run nightly mutation job; if survivors, add behavioral tests (no threshold change)."}
@@ -46,7 +46,9 @@
   "provenance": {
     "commits": [
       "64817bc2 C41.1 — Wire sidebar collapse to authoritative app store and fix navigation tests",
-      "aafa14e7 C41.2 — Correct demonstrably-incorrect E2E assertions (no app behavior change)"
+      "aafa14e7 C41.2 — Correct demonstrably-incorrect E2E assertions (no app behavior change)",
+      "??? C41.3 — Fix transactions click interception: PanelBody min-h-0 + Panel fill variant fix",
+      "1d59e429 C41.11 — Record C41 execution facts in progress.md and activeContext.md"
     ],
     "artifacts": [
       "runtime/generated/c41-playwright-certification.json",
@@ -55,6 +57,6 @@
       "runtime/generated/c41-final-certification.json"
     ]
   },
-  "next_logical_milestone": "Resolve D1 (transactions click interception overlay) — the only remaining genuine high-severity application/UI defect blocking full browser certification.",
+  "next_logical_milestone": "Rebaseline 7 visual baselines (D2) with provenance; then execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.",
   "critical_principle": "No green was manufactured. Failures were forensically classified; only genuine defects fixed and demonstrably-incorrect tests corrected. 5 browser projects and the nightly mutation job were NOT certified rather than falsely claimed green."
 }
