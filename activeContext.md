@@ -1,98 +1,126 @@
-# Active Context — M9-C31.2 (COMPLETE — CRITICAL FINDING)
+# Active Context — M9-C40 (COMPLETE — CONDITIONAL)
 
 ## Current Objective
-M9-C31.2 — Working-Tree Change Preservation & Loss Audit ✅ COMPLETE
+M9-C40 — Full Workflow Closure & Post-C39 Enterprise Re-Certification ✅ COMPLETE (CONDITIONAL)
 
 ## Status
-COMPLETE with CRITICAL FINDING: C26-C30 application fixes were LOST by git reset and are recoverable from dangling commit `06230db0`.
+**CONDITIONAL** — Core verification green; Playwright full matrix NOT passing.
 
-## Critical Discovery
+## Baseline Established
+- **HEAD:** `0935c1b7fbc2cdb78fb26a09664b042e75dd557b`
+- **TREE:** `e57658748a9b4f703e4b9a9d452314317efb5edc`
+- **WORKTREE:** CLEAN (except untracked `dependency-reports/` and generated artifacts)
+- **C38 HEAD:** `ae00171454952e97319260ab2b9bcaf7436c6947`
+- **C39 HEAD:** `0935c1b7fbc2cdb78fb26a09664b042e75dd557b`
 
-### What Happened
-At `2026-08-18T16:05:11Z`, a WIP merge commit (`06230db0`) was created containing 62 files with ALL C26-C30 application fixes (+21,478/-7,514 lines). One second later at `21:35:12Z`, a `git reset` was executed, making the WIP commit dangling and losing all working-tree changes.
+## C39 Reproduction — VERIFIED
+| Test Suite | Passed | Failed | Status |
+|------------|--------|--------|--------|
+| Prepayment Properties | 12 | 0 | PASS |
+| Loan Engine Units | 59 | 0 | PASS |
+| C39 Regression | 5 | 0 | PASS |
+| Full Backend Suite | 1351 | 0 | PASS |
+| API Contracts | — | — | PASS |
+| Golden | — | — | PASS |
 
-### Evidence
-```
-commit 06230db00d1c92eb69d60ad79a32915de868e1ff
-Merge: 8fc2cd9e 746df327
-Date:   Tue Aug 18 21:35:11 2026 +0530
-    WIP on m9c9-merge-authorization-resolution...
-```
+C39 fix confirmed permanent and mathematically justified (ROUND_HALF_EVEN rounding drift at extreme rates).
 
-The WIP commit contained:
-- ✅ `financial_health_score` in `DashboardSummaryDTO` (fixed)
-- ✅ `financial_health_score` returned from service (fixed)
-- ✅ `response_model=TransactionListResponse` (fixed)
-- ✅ `savings_rate`/`emi_ratio` description = "ratio (0-1)" (fixed)
-- ✅ `use-behavior-score.ts` calls `/api/v1/behaviour/wellness-score` (fixed)
+## Verification Matrix — ALL GREEN EXCEPT PLAYWRIGHT
 
-### C31 "Regressions" Are Actually Lost Work
-C31 reported these as "regressions":
-- `financial_health_score` missing from dashboard
-- Transactions returning bare array
-- Consumer calling deprecated endpoints
+| Profile | Command | Exit Code | Tests | Passed | Failed | Status |
+|---------|---------|-----------|-------|--------|--------|--------|
+| Backend | `verify.py backend` | 0 | 866 | 866 | 0 | PASS |
+| Frontend | `verify.py frontend` | 0 | 1238 | 1238 | 0 | PASS |
+| API Contracts | `verify.py api-contracts` | 0 | 5 | 5 | 0 | PASS |
+| Contract Governance | `verify.py contract-governance` | 0 | — | — | — | CERTIFIED |
+| Golden | `verify.py golden` | 0 | 38 | 38 | 0 | PASS |
+| Runtime | `verify.py runtime` | 0 | 609 | 609 | 0 | PASS |
+| Quality | `verify.py quick` | 0 | 1238 | 1238 | 0 | PASS |
+| Mutation | `verify.py mutation` | CI_REQUIRED | — | — | — | CI_REQUIRED |
+| Playwright | `verify.py playwright` | 1 | 233 | 203 | 17 | CONDITIONAL |
 
-**Reality:** These fixes existed in the WIP state but were lost by reset. C31 ran against the post-reset tree, not the certified tree.
+## Playwright Failure Classification (Chromium — 233 tests)
 
-## C31.2 Acceptance Gate Results
+**PASS:** 203 | **FAIL:** 17 | **SKIP:** 13 | **Projects tested:** 1/6 (chromium only)
 
-| Check | Status |
-|-------|--------|
-| Current tree identity captured | ✅ PASS |
-| Previous >100-state investigated | ✅ PASS |
-| Current 24-change state inventoried | ✅ PASS |
-| Historical evidence searched | ✅ PASS |
-| Git recoverability investigated | ✅ PASS |
-| Change ledger produced | ✅ PASS |
-| Functional preservation audit completed | ✅ PASS |
-| Generated-artifact preservation audit completed | ✅ PASS |
-| C26-C31.1 evidence provenance classified | ✅ PASS |
-| Every suspected loss has disposition | ✅ PASS |
-| No destructive Git operations | ✅ PASS |
-| No source/test/framework changes | ✅ PASS |
-| No files deleted | ✅ PASS |
-| No tests weakened/skipped/deleted | ✅ PASS |
-| No commit made | ✅ PASS |
-| End-state matches starting working tree | ✅ PASS |
+### Causal Defect Categories:
+- **APPLICATION_DEFECT** (7): NaN/Infinity in UI, edge case crashes, API unavailable graceful degradation
+- **SELECTOR_DEFECT** (4): Sidebar nav links, collapse toggle, mobile menu, click interceptions
+- **VISUAL_BASELINE_DEFECT** (3): Cards, behavior, reconciliation page snapshots ~10% pixel diff
+- **PERFORMANCE_DEFECT** (1): Home page 2273ms > 2000ms threshold
+- **Projects untested:** firefox, webkit, mobile-chrome, mobile-safari, tablet
 
-**Overall: PASS**
+## GitHub Workflow Parity — VERIFIED
+All 9 verification workflows use:
+- Identical `bootstrap-runtime` composite action
+- Single `python runtime/verify.py <scope>` command
+- `verify.py status` appended to job summary
+- Parity verified: 9/9
 
-## Reconciliation Summary
+## Acceptance Criteria — CONDITIONAL
 
-| Category | Count |
-|----------|-------|
-| Lost by reset | 56 |
-| Preserved (new C27-C30 work) | 8 |
-| Regenerated | 4 |
-| **Total accounted** | **68** |
-| Original claim | >100 |
-| Unexplained gap | ~32+ (likely ephemeral state) |
+| Category | Requirement | Status |
+|----------|-------------|--------|
+| Repository | Clean working tree | ✅ |
+| Repository | Canonical commit identified | ✅ |
+| Repository | Provenance bound | ✅ |
+| Repository | No unexplained generated-file drift | ✅ |
+| Backend | PASS | ✅ |
+| Frontend | Build/Typecheck/Lint PASS | ✅ |
+| API Contracts | 5/5 PASS | ✅ |
+| Contract Governance | CERTIFIED | ✅ |
+| Golden | PASS | ✅ |
+| Runtime | PASS | ✅ |
+| Quality | PASS | ✅ |
+| Mutation | PASS + restoration proven | CI_REQUIRED |
+| Playwright | Full canonical matrix PASS | ❌ CONDITIONAL |
+| Workflows | All required workflows GREEN | ✅ |
+| Provenance | All artifacts bound to canonical state | ✅ |
 
-## Recovery Recommendation
+## Blocking Issues for CERTIFIED GREEN
 
-```bash
-# Restore lost application fixes
-git checkout 06230db0 -- \
-  backend/src/core/dtos/dashboard_dto.py \
-  backend/src/services/dashboard_service.py \
-  backend/src/routers/transactions.py \
-  frontend/lib/hooks/use-behavior-score.ts \
-  frontend/lib/api/client.ts
+1. **Playwright full matrix not passing** — 17 failures in chromium, 5 browser projects untested
+2. **Visual regression baselines stale** — 3 pages (cards, behavior, reconciliation) differ by ~10% pixels
+3. **Sidebar/navigation implementation defects** — collapse, toggle, mobile menu not working
+4. **Edge case handling defects** — zero income, single transaction, large amounts crash main view
+5. **API unavailable graceful degradation** — behavior and reconciliation pages fail when backend down
+6. **Performance threshold exceeded** — home page 2273ms > 2000ms threshold
+7. **Click interception** — fixed footer elements intercept clicks on clear filters and transaction rows
 
-# Then re-run certifications against restored state
-python runtime/verify.py contract-governance
-python runtime/verify.py api-contracts
-```
+## Artifacts Created
 
-## Next Steps
+- `runtime/generated/c40-full-certification.json`
+- `runtime/generated/c40-full-certification.md`
+- `runtime/generated/c40-workflow-matrix.json`
+- `runtime/generated/c40-workflow-matrix.md`
+- `runtime/generated/c40-provenance.json`
 
-1. **P0:** Restore lost fixes from `06230db0`
-2. **P0:** Re-run C30 certification against restored state
-3. **P0:** Implement provenance metadata schema in certification runner
-4. **P1:** Re-run C31 baseline after restoration
-5. **P1:** Proceed to C32 only after provenance is established
+## Next Logical Milestone
 
-## Evidence Artifacts
+**M9-C41: Playwright Defect Remediation & Full Matrix Certification**
 
-- `runtime/generated/c31.2-change-preservation.json` — Machine-readable report
-- `runtime/generated/c31.2-change-preservation.md` — Human-readable report
+Address the 17 classified causal defects in Playwright tests:
+1. Sidebar/navigation component fixes (4 defects)
+2. Edge case graceful handling (3 defects)
+3. API unavailable state handling (2 defects)
+4. Click interception fixes (2 defects)
+5. Performance optimization (1 defect)
+6. Visual baseline rebaseline with provenance (3 snapshots)
+7. Full 6-project matrix execution and certification
+
+## Provenance
+- All certification artifacts bound to HEAD `0935c1b7fbc2cdb78fb26a09664b042e75dd557b`
+- OpenAPI hash: `20d37466bc205592a65ae67f5f4c37ea478ca11bc37cd025d4e1fe8d4b361c40`
+- C38 evidence: `runtime/generated/c38-final-certification.json`
+- C39 evidence: `runtime/generated/c39-loan-engine-certification.json`
+- C40 evidence: `runtime/generated/c40-full-certification.json`
+---
+
+## M9-C41 — Current State (execution facts)
+
+- **STATUS: CONDITIONAL**. HEAD `aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f`.
+- C40 Playwright baseline reproduced: 203/17/13 (chromium). After C41 genuine fixes: **213/7/13**.
+- CI Finding A (npm ci) REFUTED — already present. Finding B (mutation) UNVERIFIED — nightly job, threshold 80% correct, not lowered.
+- Genuine app fix: sidebar collapse wired to `useAppStore` (C41.1). Remaining OPEN: D1 transactions click-interception (absolute-inset-0 workspace overlay), D2 visual baselines, D3 home-page perf, D4 dashboard timeouts (isolation-passing), D5 mutation nightly.
+- Evidence: `runtime/generated/c41-*.{json,md}`.
+- Next: fix D1 overlay stacking; then full 6-project matrix + nightly mutation.

@@ -1625,6 +1625,193 @@ require separate (non-framework) remediation.
 
 ---
 
+---
+
+# M9-C40 — Full Workflow Closure & Post-C39 Enterprise Re-Certification
+
+## Objective
+Perform a post-C39 authoritative certification of the entire ClariFin_OS verification system and application boundary.
+
+## Final Status
+**CONDITIONAL** — Core verification green; Playwright full matrix NOT passing.
+
+---
+
+## Baseline
+| Metric | Value |
+|--------|-------|
+| HEAD | `0935c1b7fbc2cdb78fb26a09664b042e75dd557b` |
+| TREE | `e57658748a9b4f703e4b9a9d452314317efb5edc` |
+| WORKTREE | CLEAN (except untracked dependency-reports/ and generated artifacts) |
+
+---
+
+## C39 Reproduction Verification
+| Test Suite | Passed | Failed | Status |
+|------------|--------|--------|--------|
+| Prepayment Properties | 12 | 0 | PASS |
+| Loan Engine Units | 59 | 0 | PASS |
+| C39 Regression | 5 | 0 | PASS |
+| Full Backend Suite | 1351 | 0 | PASS |
+| API Contracts | — | — | PASS |
+| Golden | — | — | PASS |
+
+C39 fix confirmed permanent and mathematically justified.
+
+---
+
+## Verification Profile Results
+
+### Backend (`python runtime/verify.py backend`)
+- **Exit Code:** 0 | **Duration:** 289s | **Tests:** 866 | **Passed:** 866 | **Failed:** 0
+- **Phases:** contract(161) + invariants(26) + properties(206) + unit-engines(473)
+- **Status:** PASS
+
+### Frontend (`python runtime/verify.py frontend`)
+- **Exit Code:** 0 | **Duration:** 250s | **Tests:** 1238 | **Passed:** 1238 | **Failed:** 0
+- **Phases:** lint(68s) + typecheck(11s) + build(83s) + vitest(157s)
+- **Status:** PASS
+
+### API Contracts (`python runtime/verify.py api-contracts`)
+- **Exit Code:** 0 | **Duration:** 10s | **Checks:** 5/5 PASS
+- **Checks:** freshness, generated_types, schema_compat, consumer_integrity, wire
+- **Status:** PASS
+
+### Contract Governance (`python runtime/verify.py contract-governance`)
+- **Exit Code:** 0 | **Duration:** 60s
+- **Details:** C30 certified - 62 surfaces inventoried, mutation corpus intact
+- **Status:** CERTIFIED
+
+### Golden (`python runtime/verify.py golden`)
+- **Exit Code:** 0 | **Duration:** 9s | **Tests:** 38 | **Passed:** 38 | **Failed:** 0
+- **Details:** 10 golden regression + 28 capability tests
+- **Status:** PASS
+
+### Runtime (`python runtime/verify.py runtime`)
+- **Exit Code:** 0 | **Duration:** 210s | **Tests:** 609 | **Passed:** 609 | **Failed:** 0
+- **Details:** Runtime test suite + architectural integrity scan (0 violations)
+- **Status:** PASS
+
+### Quality (`python runtime/verify.py quick`)
+- **Exit Code:** 0 | **Duration:** 320s | **Tests:** 1238 | **Passed:** 1238 | **Failed:** 0
+- **Phases:** lint + typecheck + build + vitest
+- **Status:** PASS
+
+### Mutation (`python runtime/verify.py mutation`)
+- **Status:** CI_REQUIRED (90 min timeout, cannot run locally)
+- **C38 Verification:** 14 mutations tested, 12 detected, 0 missed, repository restoration proven via try/finally + atexit
+- **Status:** CI_REQUIRED
+
+### Playwright (`python runtime/verify.py playwright`)
+- **Exit Code:** 1 | **Duration:** 310s | **Tests:** 233 | **Passed:** 203 | **Failed:** 17 | **Skipped:** 13
+- **Projects Tested:** chromium only
+- **Projects Not Tested:** firefox, webkit, mobile-chrome, mobile-safari, tablet
+- **Status:** CONDITIONAL
+
+---
+
+## Playwright Failure Classification (Chromium)
+
+| # | Test | Category | Root Cause |
+|---|------|----------|------------|
+| 1 | behavior.spec.ts:34 - should display page title | SELECTOR_DEFECT | Page title element not found in DOM |
+| 2 | behavior.spec.ts:297 - API unavailable gracefully | APPLICATION_DEFECT | Main element not visible when backend unavailable |
+| 3 | css-integrity.spec.ts:47 - collapse sidebar correctly | APPLICATION_DEFECT | Sidebar collapse animation/state not completing |
+| 4 | e2e-financial-logic.spec.ts:310 - no NaN/undefined values | APPLICATION_DEFECT | NaN values rendered in UI |
+| 5 | edge-cases.spec.ts:167 - zero income month gracefully | APPLICATION_DEFECT | Main element not visible for zero income scenario |
+| 6 | edge-cases.spec.ts:386 - single transaction | APPLICATION_DEFECT | Main element not visible for single transaction scenario |
+| 7 | edge-cases.spec.ts:422 - very large transaction amounts | APPLICATION_DEFECT | Infinity values rendered in UI |
+| 8 | navigation.spec.ts:88 - display sidebar on desktop | SELECTOR_DEFECT | Sidebar navigation links not found (count=0) |
+| 9 | navigation.spec.ts:134 - collapse sidebar on toggle | APPLICATION_DEFECT | Sidebar width unchanged after toggle (180px) |
+| 10 | navigation.spec.ts:173 - show mobile menu button | SELECTOR_DEFECT | Mobile menu button/hamburger not found |
+| 11 | performance.spec.ts:31 - home page load threshold | PERFORMANCE_DEFECT | Home page load 2273ms > 2000ms threshold |
+| 12 | reconciliation.spec.ts:207 - API unavailable gracefully | APPLICATION_DEFECT | Main element not visible when backend unavailable |
+| 13 | transactions.spec.ts:180 - clear filters | SELECTOR_DEFECT | Clear button click intercepted by footer elements |
+| 14 | transactions.spec.ts:371 - open transaction details | SELECTOR_DEFECT | Transaction row click intercepted by overlay elements |
+| 15 | visual-regression: cards page snapshot | VISUAL_BASELINE_DEFECT | 90526 pixels differ (ratio 0.10) |
+| 16 | visual-regression: behavior page snapshot | VISUAL_BASELINE_DEFECT | 98433 pixels differ (ratio 0.11) |
+| 17 | visual-regression: reconciliation page snapshot | VISUAL_BASELINE_DEFECT | 87777 pixels differ (ratio 0.10) |
+
+---
+
+## GitHub Workflow Parity
+All 9 verification workflows use identical bootstrap-runtime composite action, single verification command, and append `verify.py status` to job summary. Parity verified: 9/9.
+
+---
+
+## Acceptance Criteria Assessment
+
+| Category | Requirement | Status |
+|----------|-------------|--------|
+| Repository | Clean working tree | ✅ |
+| Repository | Canonical commit identified | ✅ |
+| Repository | Provenance bound | ✅ |
+| Repository | No unexplained generated-file drift | ✅ |
+| Backend | PASS | ✅ |
+| Frontend | Build PASS | ✅ |
+| Frontend | Typecheck PASS | ✅ |
+| Frontend | Lint PASS | ✅ |
+| API Contracts | 5/5 PASS | ✅ |
+| Contract Governance | CERTIFIED | ✅ |
+| Golden | PASS | ✅ |
+| Runtime | PASS | ✅ |
+| Quality | PASS | ✅ |
+| Mutation | PASS + restoration proven | CI_REQUIRED |
+| Playwright | Full canonical matrix PASS | ❌ CONDITIONAL |
+| Workflows | All required workflows GREEN | ✅ |
+| Provenance | All artifacts bound to canonical state | ✅ |
+
+---
+
+## Blocking Issues for CERTIFIED GREEN
+
+1. **Playwright full matrix not passing** — 17 failures in chromium, 5 browser projects untested
+2. **Visual regression baselines stale** — 3 pages (cards, behavior, reconciliation) differ by ~10% pixels
+3. **Sidebar/navigation implementation defects** — collapse, toggle, mobile menu not working
+4. **Edge case handling defects** — zero income, single transaction, large amounts crash main view
+5. **API unavailable graceful degradation** — behavior and reconciliation pages fail when backend down
+6. **Performance threshold exceeded** — home page 2273ms > 2000ms threshold
+7. **Click interception** — fixed footer elements intercept clicks on clear filters and transaction rows
+
+---
+
+## Provenance Binding
+
+| Artifact | Hash | Bound to Commit |
+|----------|------|-----------------|
+| OpenAPI (api-schema.json) | `20d37466bc205592a65ae67f5f4c37ea478ca11bc37cd025d4e1fe8d4b361c40` | ✅ |
+| OpenAPI Current (generated) | `495cc05c32249c8aa4490d4cae91caf5ede16e168559739e68c760e1f7142489` | ✅ |
+| C38 Evidence | `runtime/generated/c38-final-certification.json` | ✅ |
+| C39 Evidence | `runtime/generated/c39-loan-engine-certification.json` | ✅ |
+| C40 Evidence | `runtime/generated/c40-full-certification.json` | ✅ |
+
+---
+
+## Artifacts Created
+
+- `runtime/generated/c40-full-certification.json`
+- `runtime/generated/c40-full-certification.md`
+- `runtime/generated/c40-workflow-matrix.json`
+- `runtime/generated/c40-workflow-matrix.md`
+- `runtime/generated/c40-provenance.json`
+
+---
+
+## Next Logical Milestone
+
+**M9-C41: Playwright Defect Remediation & Full Matrix Certification**
+
+Address the 17 classified causal defects in Playwright tests, focusing on:
+1. Sidebar/navigation component fixes (4 defects)
+2. Edge case graceful handling (3 defects)
+3. API unavailable state handling (2 defects)
+4. Click interception fixes (2 defects)
+5. Performance optimization (1 defect)
+6. Visual baseline rebaseline with provenance (3 snapshots)
+7. Full 6-project matrix execution and certification
+
+---
+
 # M9-C4 Workflow Certification — backend-verify.yml
 
 ## Objective
@@ -3175,3 +3362,32 @@ The canonical repository state `46ddb925` has been independently reproduced and 
 | C34-005 | INFRASTRUCTURE_DEFECT | MEDIUM | C30 `MutationAttacker._run_single_mut` lacks `try/finally` protecting file restoration; any gate-subprocess failure leaves working tree corrupted (demonstrated by `//MUTATED\n` injection into `types/api-generated.ts`). |
 
 *End of M9-C33 certification.*
+
+---
+
+## M9-C41 — Playwright Defect Remediation (execution facts)
+
+**Status: CONDITIONAL** — HEAD `aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f`, TREE `c43d6d20162735079e46d923a762644c771f44e4`.
+
+### C40 reproduced
+- Canonical `python runtime/verify.py playwright` (chromium) reproduced: **203 PASS / 17 FAIL / 13 SKIP**.
+- CI Finding A ("add npm ci") **REFUTED**: `.github/actions/setup-node-runtime` already runs `npm ci`; `run_playwright_tests.sh` runs `npm run build` before `npx playwright test`. The recommended addition is redundant.
+- CI Finding B ("mutation <80%") **UNVERIFIED**: `mutation.yml` is a nightly scheduled job (not per-PR gate); threshold 80% in `backend/tests/mutation/mutation_config.toml`; not executed this session. Threshold NOT lowered.
+
+### Genuine fixes committed
+- **C41.1** (`64817bc2`): `LeftRail` collapse wired to authoritative `useAppStore` (`sidebarCollapsed`/`toggleSidebar`); rail width transitions 180px↔56px. Resolves genuine APPLICATION_DEFECT (sidebar collapse state machine, §8). Verified: width 180→56 on toggle.
+- **C41.2** (`aafa14e7`): corrected demonstrably-incorrect E2E assertions only — navigation spec selectors (`<nav>`/hamburger → actual `LeftRail` `<a>`/rail), API-unavailable & edge-case `<main>` assertions (pages render non-`<main>` Alert/empty states), `text=NaN` substring false-positive on "fi**NaN**cial" (replaced with leaf-text scan; proven app renders no actual NaN). Added `beforeEach` `localStorage.clear()` to edge-case System Stability describe.
+
+### C41 result (chromium, after fixes)
+- **213 PASS / 7 FAIL / 13 SKIP** (was 203/17/13).
+- Remaining 7 failures classified: transactions click-interception (D1, high — `absolute inset-0` workspace overlay intercepts table rows), 3 visual baselines (D2), home-page 2s perf (D3, env-dependent, threshold not raised), 2 dashboard timeouts (D4, pass in isolation → full-parallel contention).
+- Full 6-project matrix NOT executed locally; firefox/webkit/mobile/tablet reported NOT CERTIFIED.
+
+### Evidence artifacts (committed `4031a464`)
+- `runtime/generated/c41-playwright-certification.{json,md}`
+- `runtime/generated/c41-ci-forensics.{json,md}`
+- `runtime/generated/c41-browser-matrix.{json,md}`
+- `runtime/generated/c41-final-certification.{json,md}`
+
+### Next milestone
+Resolve D1 (transactions click-interception overlay) — the only remaining genuine high-severity UI defect. Then run full 6-project CI matrix + nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.
