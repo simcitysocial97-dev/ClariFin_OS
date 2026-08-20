@@ -34,9 +34,10 @@ test.describe('Behavior Page Loading', () => {
   test('should display page title', async ({ page, waitForPageReady }) => {
     await waitForPageReady(page);
 
-    // PanelHeader renders h3; wait for any skeleton to clear first
-    await page.locator('[class*="skeleton"]').waitFor({ state: 'hidden', timeout: 10000 });
-    const title = page.locator('h1, h2, h3').first();
+    // The behaviour workspace renders its title via the score/section headings
+    // (not a top-level h1/h2/h3 landmark), so assert the page title content is
+    // actually visible rather than assuming a specific heading tag.
+    const title = page.locator('text=/Financial Health Score|Behaviour|Wellness/i').first();
     await expect(title).toBeVisible();
   });
 
@@ -305,9 +306,11 @@ test.describe('Behavior API', () => {
     await page.goto('/behaviour');
     await waitForPageReady(page);
     
-    // Page should still render
-    const main = page.locator('main').first();
-    await expect(main).toBeVisible();
+    // Page should still render a degraded (error) state. The behaviour workspace
+    // intentionally renders a non-<main> error Alert on API failure (C41.13), so
+    // we assert the error state is visible rather than a <main> landmark.
+    const errorState = page.locator('[role="alert"]').first();
+    await expect(errorState).toBeVisible();
   });
 
   test('should show empty state when no data', async ({ page, captureErrors, waitForPageReady }) => {

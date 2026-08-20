@@ -215,9 +215,11 @@ test.describe('Reconciliation API', () => {
     await page.goto('/reconciliation');
     await waitForPageReady(page);
     
-    // Page should still render
-    const main = page.locator('main').first();
-    await expect(main).toBeVisible();
+    // Page should still render a degraded (error) state. The reconciliation
+    // workspace intentionally renders a non-<main> error Alert on API failure
+    // (C41.13), so we assert the error state is visible rather than a <main>.
+    const errorState = page.locator('[role="alert"]').first();
+    await expect(errorState).toBeVisible();
   });
 
   test('should show empty state when no matches', async ({ page, captureErrors, waitForPageReady }) => {

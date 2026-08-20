@@ -311,12 +311,32 @@ test.describe('UI/Backend Consistency', () => {
     await page.goto('/dashboard');
     await waitForPageReady(page);
     
-    // Check for any NaN text in the page
-    const hasNaN = await page.locator('text=NaN').count() > 0;
-    const hasUndefined = await page.locator('text=undefined').count() > 0;
+    // A naive `text=NaN` locator does a SUBSTRING match and falsely matches the
+    // word "fiNaNcial" (e.g. "Financial Health Score"), so we scan leaf text
+    // nodes for a STANDALONE "NaN"/"Infinity"/"undefined" token instead. This
+    // verifies the real contract (the app must never render a numeric NaN) without
+    // false positives.
+    const hasBadValue = await page.evaluate(() => {
+      const bad = /(^|[^A-Za-z])(NaN|Infinity|undefined)($|[^A-Za-z])/;
+      const walk = (node: Node): boolean => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          if (bad.test(node.textContent ?? '')) return true;
+        }
+        // Skip framework/script payloads (Next.js RSC __next_f.push strings) which
+        // are not rendered UI and would cause false positives.
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = (node as Element).tagName;
+          if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT') return false;
+        }
+        for (const child of Array.from(node.childNodes)) {
+          if (walk(child)) return true;
+        }
+        return false;
+      };
+      return walk(document.body);
+    });
     
-    expect(hasNaN).toBe(false);
-    expect(hasUndefined).toBe(false);
+    expect(hasBadValue).toBe(false);
   });
 });
 
