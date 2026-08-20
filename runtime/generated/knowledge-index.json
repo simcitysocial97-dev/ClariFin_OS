@@ -1,5 +1,5 @@
 {
-  "indexed_at": "2026-08-20T10:01:33.179855+00:00",
+  "indexed_at": "2026-08-20T12:50:43.933679+00:00",
   "source_artifacts": [
     "runtime.foundation.architecture (canonical provider)",
     "runtime/generated/dashboard.json",
@@ -8737,6 +8737,16 @@
         ]
       },
       {
+        "title": "FRONTEND_BACKEND_RUNTIME_INTEGRATION",
+        "path": "docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md",
+        "references": {
+          "path": "docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md"
+        },
+        "tags": [
+          "md"
+        ]
+      },
+      {
         "title": "PROGRAM_ARCHITECTURE",
         "path": "docs/architecture/PROGRAM_ARCHITECTURE.md",
         "references": {
@@ -10379,6 +10389,6 @@
     "verification_profiles": 11,
     "integrity_rules": 28,
     "runtime_artifacts": 9,
-    "documentation": 185
+    "documentation": 186
   }
 }

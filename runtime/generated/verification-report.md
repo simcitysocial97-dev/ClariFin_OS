@@ -1,12 +1,13 @@
 # Verification Report
 
 **Profile:** golden
-**Generated:** 2026-08-20T10:08:00.678195+00:00
+**Generated:** 2026-08-20T12:47:33.388352+00:00
 **Overall Status:** passed
 
 ## Changed Files
 
 - `.github/scripts/run_api_contracts.sh`
+- `.github/scripts/run_playwright_tests.sh`
 - `.github/workflows/api-contracts.yml`
 - `.kilo/plans/1787137122047-health-check-timeout-fix.md`
 - `activeContext.md`
@@ -24,6 +25,7 @@
 - `backend/tests/generated/openapi-current.json`
 - `backend/tests/unit/services/test_behaviour_service.py`
 - `docs/M9-C10-forensic-report.md`
+- `docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md`
 - `docs/evidence/m9-c32-preflight/api-contract-evidence-committed.json`
 - `docs/evidence/m9-c32-preflight/api-contract-evidence-pre-c32.json`
 - `docs/evidence/m9-c32-preflight/openapi-committed.json`
@@ -39,6 +41,7 @@
 - `frontend/components/os-shell/workspace-container.tsx`
 - `frontend/components/query-provider.tsx`
 - `frontend/generated/openapi-current.json`
+- `frontend/lib/__tests__/gateway-invariance.test.ts`
 - `frontend/lib/api/client.ts`
 - `frontend/lib/api/gateway.ts`
 - `frontend/lib/capabilities/use-accounts-capability.ts`
@@ -57,10 +60,12 @@
 - `frontend/lib/hooks/use-behavior-score.ts`
 - `frontend/lib/hooks/use-cards.ts`
 - `frontend/lib/hooks/use-cashflow.ts`
+- `frontend/lib/hooks/use-dashboard-metrics.ts`
 - `frontend/lib/hooks/use-investments.ts`
 - `frontend/lib/hooks/use-loans.ts`
 - `frontend/lib/hooks/use-networth.ts`
 - `frontend/lib/hooks/use-overview.ts`
+- `frontend/lib/hooks/use-query-finance.ts`
 - `frontend/lib/hooks/use-reconciliation.ts`
 - `frontend/lib/mappers/behaviour-mapper.ts`
 - `frontend/lib/mappers/transaction-mapper.ts`
@@ -75,6 +80,8 @@
 - `frontend/mocks/fixtures/transactions.ts`
 - `frontend/mocks/handlers/behavior.ts`
 - `frontend/mocks/handlers/reconciliation.ts`
+- `frontend/next.config.ts`
+- `frontend/playwright.config.ts`
 - `frontend/proxy.ts`
 - `frontend/tests/e2e/fixtures/css-helpers.ts`
 - `frontend/tests/e2e/fixtures/test-fixtures.ts`
@@ -129,11 +136,11 @@
 - `runtime/verify.py`
 - `test-results/.last-run.json`
 - `tools/e2e_seed.py`
+- `backend/tests/unit/engines/loan/test_c39_regression.py`
 - `dependency-reports/dependency-health.md`
 - `dependency-reports/npm-audit.txt`
 - `dependency-reports/npm-outdated.json`
 - `dependency-reports/python-audit.txt`
-- `frontend/lib/__tests__/gateway-invariance.test.ts`
 
 ## Blast Radius
 
@@ -144,7 +151,7 @@
 
 ## Verification Plan
 
-- **Plan ID:** plan-20260820-100756
+- **Plan ID:** plan-20260820-124727
 - **Scope:** golden
 - **Targets:** 1
 - **Steps:** 1
@@ -154,14 +161,14 @@
 
 | Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
 |---------|---------|--------|------|----------|-------|--------|--------|
-| step-0001 | bash .github/scripts/run_golden_tests.sh | VerificationStatus.PASSED | 0 | 3.8s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
+| step-0001 | bash .github/scripts/run_golden_tests.sh | VerificationStatus.PASSED | 0 | 5.9s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
 
 ## Results Summary
 
 - **Passed:** 1
 - **Failed:** 0
 - **Skipped:** 0
-- **Total Duration:** 3.8s
+- **Total Duration:** 5.9s
 
 
 ## Dependency Chains (Program 7A)

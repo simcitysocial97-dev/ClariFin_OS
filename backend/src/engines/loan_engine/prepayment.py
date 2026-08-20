@@ -187,6 +187,37 @@ def apply_prepayment_at_month(
     prefix = schedule[:tail_start_index] if tail_start_index > 0 else []
     new_schedule = prefix + tail
 
+    # C39: for reduce_emi, ensure two invariants hold on the regenerated tail:
+    #   (a) no balloon larger than the stated EMI (prevents illegal final month)
+    #   (b) total payment stays within tolerance of the original schedule
+    #       (prevents asymmetric quantization drift from making prepayment
+    #       appear to INCREASE total payment).
+    # compute_emi_fixed uses ROUND_HALF_EVEN; when the fractional true EMI is
+    # just below a half-paise boundary the quantized EMI undershoots, which
+    # compounds over a long tenure. Each +1 EMI changes total by roughly
+    # -(annuity_factor - n), typically hundreds of thousands of paise — so a
+    # bounded loop converges in 1-2 iterations. This logic lives here (not in
+    # regenerate_schedule) because we need the original schedule's total for
+    # the comparison, and non-prepayment callers of regenerate_schedule
+    # (e.g. floating-rate adjustment) must not be affected.
+    if mode_literal == "reduce_emi" and new_schedule:
+        original_total = sum(r.emi_paise for r in schedule)
+        tol = original_remaining_months * 10 + 1000
+        for _ in range(20):
+            has_balloon = new_schedule[-1].emi_paise > new_schedule[0].emi_paise
+            new_total = sum(r.emi_paise for r in new_schedule)
+            if not has_balloon and new_total <= original_total + tol:
+                break
+            bumped_emi = new_schedule[0].emi_paise + 1
+            tail = generate_schedule(
+                principal_paise=new_balance,
+                annual_rate_bps=annual_rate_bps,
+                tenure_months=original_remaining_months,
+                start_date=start_date or schedule[tail_start_index].payment_date,
+                emi_paise=bumped_emi,
+            )
+            new_schedule = prefix + tail
+
     # Compute savings
     original_interest = total_interest_paise(schedule)
     new_interest = total_interest_paise(new_schedule)
