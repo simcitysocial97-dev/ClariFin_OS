@@ -256,7 +256,12 @@ class ExecutionResult:
 
 @dataclass(frozen=True, slots=True)
 class VerificationSummary:
-    """Summary of a completed verification run."""
+    """Summary of a completed verification run.
+
+    M9-C37 meta-invariant: the totals arithmetic is enforced at construction
+    time — passed + failed + skipped must equal total_tasks, so a summary can
+    never report inconsistent totals (e.g. "66/50 PASS").
+    """
 
     profile: str
     total_tasks: int
@@ -270,6 +275,16 @@ class VerificationSummary:
     dependency_chains: list[dict[str, Any]] = field(default_factory=list)
     recommendations: list[str] = field(default_factory=list)
     overall_status: VerificationStatus = VerificationStatus.PASSED
+
+    def __post_init__(self) -> None:
+        computed = self.passed + self.failed + self.skipped
+        if computed != self.total_tasks:
+            raise ValueError(
+                "certification arithmetic violated: "
+                f"passed({self.passed}) + failed({self.failed}) + "
+                f"skipped({self.skipped}) = {computed} != "
+                f"total_tasks({self.total_tasks}) [profile={self.profile}]"
+            )
 
 
 @dataclass(frozen=True, slots=True)

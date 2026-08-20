@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ForecastViewModel } from '@/types/forecast-view-model';
 import { forecastMapper } from '@/lib/mappers/forecast-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const FORECAST_QUERY_KEY = 'forecast';
@@ -108,16 +109,12 @@ export function useForecastCapability(): ForecastCapabilityReturn {
   } = useQuery<ForecastViewModel | null>({
     queryKey: [FORECAST_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/forecast');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const raw = await apiFetchJson('/api/v1/forecast') as any;
       return forecastMapper.mapForecastDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 1,
+    retry: transientRetryPolicy,
     retryDelay: 1000,
   });
 

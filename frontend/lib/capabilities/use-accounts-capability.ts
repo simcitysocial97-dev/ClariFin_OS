@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { AccountsViewModel } from '@/types/accounts-view-model';
 import { accountsMapper } from '@/lib/mappers/accounts-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const ACCOUNTS_QUERY_KEY = 'accounts';
@@ -122,16 +123,12 @@ export function useAccountsCapability(): AccountsCapabilityReturn {
   } = useQuery<AccountsViewModel | null>({
     queryKey: [ACCOUNTS_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/accounts');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const raw = await apiFetchJson('/api/v1/accounts') as any;
       return accountsMapper.mapAccountsDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 1,
+    retry: transientRetryPolicy,
     retryDelay: 1000,
   });
 

@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ReconciliationViewModel } from '@/types/reconciliation-view-model';
 import { reconciliationMapper } from '@/lib/mappers/reconciliation-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const RECONCILIATION_QUERY_KEY = 'reconciliation';
@@ -111,16 +112,12 @@ export function useReconciliationCapability(): ReconciliationCapabilityReturn {
   } = useQuery<ReconciliationViewModel | null>({
     queryKey: [RECONCILIATION_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/reconciliation');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const raw = await apiFetchJson('/api/v1/reconciliation') as any;
       return reconciliationMapper.mapReconciliationDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 1,
+    retry: transientRetryPolicy,
     retryDelay: 1000,
   });
 

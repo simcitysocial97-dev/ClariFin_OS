@@ -10,8 +10,6 @@
 
 import { test, expect } from '../fixtures/test-fixtures';
 
-// Repoint snapshot directory to committed baselines (tests/e2e/snapshots/)
-test.use({ snapshotDir: 'tests/e2e/snapshots' });
 
 // ============================================================================
 // Configuration

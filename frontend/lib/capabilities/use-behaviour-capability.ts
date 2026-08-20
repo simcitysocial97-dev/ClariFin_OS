@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { BehaviourViewModel } from '@/types/behaviour-view-model';
 import { behaviourMapper } from '@/lib/mappers/behaviour-mapper';
 import { BehaviorScoreSchema, type BehaviorScore } from '@/lib/schemas/behavior-score';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const BEHAVIOUR_QUERY_KEY = 'behaviour';
@@ -101,11 +102,7 @@ export function useBehaviourCapability(): BehaviourCapabilityReturn {
   } = useQuery<BehaviourViewModel | null>({
     queryKey: [BEHAVIOUR_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/behaviour/wellness-score');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const raw = await apiFetchJson('/api/v1/behaviour/wellness-score') as any;
       const parsed = BehaviorScoreSchema.safeParse(raw);
       if (!parsed.success) {
         console.error('[useBehaviourCapability] API response validation failed:', parsed.error.issues);
@@ -115,7 +112,7 @@ export function useBehaviourCapability(): BehaviourCapabilityReturn {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 1,
+    retry: transientRetryPolicy,
     retryDelay: 1000,
   });
 

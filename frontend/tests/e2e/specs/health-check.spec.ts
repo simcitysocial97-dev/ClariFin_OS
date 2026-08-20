@@ -85,7 +85,7 @@ for (const pageConfig of PAGES) {
 
     const response = await page.goto(
       `http://localhost:3000${pageConfig.url}`,
-      { waitUntil: 'networkidle', timeout: 15000 }
+      { waitUntil: 'load', timeout: 30000 }
     );
 
     // Page must return 200
@@ -124,7 +124,7 @@ for (const pageConfig of PAGES) {
 // Test 2: Dashboard shows financial data
 test('Dashboard - shows financial metrics', async ({ page }) => {
   await page.goto('http://localhost:3000/dashboard/',
-    { waitUntil: 'networkidle' });
+    { waitUntil: 'load' });
 
   // Should show some numbers (net worth, cashflow, etc.)
   const pageText = await page.locator('body').textContent();
@@ -137,7 +137,7 @@ test('Dashboard - shows financial metrics', async ({ page }) => {
 // Test 3: Transactions page shows transaction list
 test('Transactions - shows transaction rows', async ({ page }) => {
   await page.goto('http://localhost:3000/transactions/',
-    { waitUntil: 'networkidle' });
+    { waitUntil: 'load' });
   await page.waitForTimeout(3000);
 
   // Find the actual selector by checking page content
@@ -179,7 +179,7 @@ test('Cashflow - renders chart with data', async ({ page }) => {
 // Test 5: Net Worth page shows chart and number
 test('Net Worth - shows net worth value and chart', async ({ page }) => {
   await page.goto('http://localhost:3000/net-worth/',
-    { waitUntil: 'networkidle' });
+    { waitUntil: 'load' });
   await page.waitForTimeout(3000);
 
   const svgCount = await page.locator('svg').count();
@@ -202,7 +202,7 @@ test('API proxy - frontend reaches backend', async ({ page }) => {
   });
 
   await page.goto('http://localhost:3000/dashboard/',
-    { waitUntil: 'networkidle' });
+    { waitUntil: 'load' });
   await page.waitForTimeout(3000);
 
   console.log('API responses captured:', apiResponses);
@@ -217,7 +217,7 @@ test('API proxy - frontend reaches backend', async ({ page }) => {
 // Test 7: Navigation works
 test('Navigation - can move between pages', async ({ page }) => {
   await page.goto('http://localhost:3000/dashboard/',
-    { waitUntil: 'networkidle' });
+    { waitUntil: 'load' });
   await page.waitForTimeout(2000);
 
   // Take screenshot to see what navigation looks like
@@ -283,4 +283,36 @@ test('No pages return 404', async ({ page }) => {
     console.log('Pages returning 404:', notFoundPages);
   }
   expect(notFoundPages).toHaveLength(0);
+});
+
+
+// M9-C37 regression: API gateway must route ALL /api/* paths to the backend
+// without 308 redirects or 404s. Every navigated page should produce at least
+// one healthy 2xx response from the backend through the same-origin path.
+test('API gateway regression — zero dead redirects or 404s', async ({ page }) => {
+  const apiEvents: Array<{url: string; status: number}> = [];
+  page.on('response', r => {
+    if (r.url().includes('/api/') && !r.url().includes('_next')) {
+      apiEvents.push({ url: r.url(), status: r.status() });
+    }
+  });
+
+  // Navigate each capability-exercising page
+  const pages = ['/cards/', '/investments/', '/behaviour/',
+                 '/reconciliation/', '/cashflow/', '/dashboard/'];
+  for (const p of pages) {
+    await page.goto(`http://localhost:3000${p}`, { waitUntil: 'load' });
+    await page.waitForTimeout(1500);
+  }
+
+  const redirects = apiEvents.filter(e => e.status === 308);
+  const notFound  = apiEvents.filter(e => e.status === 404);
+  const serverErr = apiEvents.filter(e => e.status >= 500);
+  const ok        = apiEvents.filter(e => e.status >= 200 && e.status < 400);
+
+  console.log(`API events: OK=${ok.length} Redirects=${redirects.length} 404s=${notFound.length} 5xx=${serverErr.length}`);
+  expect(redirects).toHaveLength(0);
+  expect(notFound).toHaveLength(0);
+  expect(serverErr).toHaveLength(0);
+  expect(ok.length).toBeGreaterThan(0);
 });

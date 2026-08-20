@@ -13,6 +13,7 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { InvestmentsViewModel } from '@/types/investments-view-model';
 import { investmentsMapper } from '@/lib/mappers/investments-mapper';
+import { apiFetchJson, transientRetryPolicy } from '@/lib/api/gateway';
 
 // Query key for React Query
 const INVESTMENTS_QUERY_KEY = 'investments';
@@ -115,16 +116,12 @@ export function useInvestmentsCapability(): InvestmentsCapabilityReturn {
   } = useQuery<InvestmentsViewModel | null>({
     queryKey: [INVESTMENTS_QUERY_KEY, queryParams],
     queryFn: async () => {
-      const response = await fetch('/api/v1/investments');
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      const raw = await response.json();
+      const raw = await apiFetchJson('/api/v1/investments') as any;
       return investmentsMapper.mapInvestmentsDTO(raw);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes (React Query v5 uses gcTime instead of cacheTime)
-    retry: 1,
+    retry: transientRetryPolicy,
     retryDelay: 1000,
   });
 
