@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { AnalyticsSchema, type Analytics } from '@/lib/schemas/analytics'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchAnalytics(): Promise<Analytics> {
-  const response = await fetch(`${API_BASE}/api/analytics`)
+  const response = await apiFetch(`/api/analytics`)
   if (!response.ok) throw new Error(`Analytics fetch failed: ${response.status}`)
   
   // This is unverified raw payload from the network

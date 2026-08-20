@@ -1,12 +1,12 @@
 import type { HookState } from './use-async-query';
+import { apiFetch } from '@/lib/api/gateway';
 import { useAsyncQuery } from './use-async-query'
 import { CardsDataSchema, type CardsData, type CardSummary } from '@/lib/schemas/cards'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchCards(): Promise<CardsData> {
-  const response = await fetch(`${API_BASE}/api/cards`)
+  const response = await apiFetch(`/api/cards`)
   if (!response.ok) throw new Error(`Cards fetch failed: ${response.status}`)
 
   // This is unverified raw payload from the network

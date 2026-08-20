@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { z } from 'zod'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const InvestmentSchema = z.object({
   id: z.number(),
@@ -50,7 +50,7 @@ export interface CreateInvestmentInput {
 }
 
 async function fetchInvestments() {
-  const res = await fetch(`${API_BASE}/api/investments`)
+  const res = await apiFetch(`/api/investments`)
   if (!res.ok) throw new Error('Failed to fetch investments')
   
   // This is unverified raw payload from the network
@@ -69,7 +69,7 @@ async function fetchInvestments() {
 }
 
 async function createInvestment(input: CreateInvestmentInput) {
-  const res = await fetch(`${API_BASE}/api/investments`, {
+  const res = await apiFetch(`/api/investments`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -79,7 +79,7 @@ async function createInvestment(input: CreateInvestmentInput) {
 }
 
 async function updateInvestment(id: string, input: Partial<CreateInvestmentInput>) {
-  const res = await fetch(`${API_BASE}/api/investments/${id}`, {
+  const res = await apiFetch(`/api/investments/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -89,7 +89,7 @@ async function updateInvestment(id: string, input: Partial<CreateInvestmentInput
 }
 
 async function deleteInvestment(id: string) {
-  const res = await fetch(`${API_BASE}/api/investments/${id}`, { method: 'DELETE' })
+  const res = await apiFetch(`/api/investments/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete investment')
   return res.json()
 }

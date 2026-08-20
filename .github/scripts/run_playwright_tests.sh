@@ -22,7 +22,8 @@ echo "================================================"
 
 mkdir -p test-results playwright-report
 
-# Build the frontend first — Playwright's webServer serves from dist/
+# Build the frontend first — Playwright's webServer (`npm start` = `next start`)
+# serves the server-mode build from dist/ (C38.6: deterministic lifecycle).
 echo -e "\n${YELLOW}Building frontend...${NC}"
 npm run build
 

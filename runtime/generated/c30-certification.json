@@ -1,16 +1,16 @@
 {
   "certification": "M9-C30",
   "title": "Contract Governance & Enforcement Certification",
-  "run_id": "20260819T060551Z",
-  "duration_seconds": 218.835298,
-  "start_time": "2026-08-19T06:05:51.223078+00:00",
-  "end_time": "2026-08-19T06:09:30.058376+00:00",
+  "run_id": "20260820T090750Z",
+  "duration_seconds": 135.608233,
+  "start_time": "2026-08-20T09:07:50.640694+00:00",
+  "end_time": "2026-08-20T09:10:06.248927+00:00",
   "summary": {
     "surfaces_inventoryed": 62,
     "surfaces_auto_detected": 57,
     "surfaces_outside_boundary": 5,
     "mutations_tested": 14,
-    "mutations_detected": 13,
+    "mutations_detected": 12,
     "mutations_missed": 0,
     "blind_spots_analyzed": 8,
     "blind_spots_fully_active": 6,
@@ -22,12 +22,12 @@
     "mut-backend-method-change": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 7,
+      "failure_count": 5,
       "dimensions": [
         [
           "freshness",
           "fail",
-          4
+          3
         ],
         [
           "generated_types",
@@ -41,8 +41,8 @@
         ],
         [
           "consumer_integrity",
-          "fail",
-          1
+          "pass",
+          0
         ],
         [
           "wire",
@@ -54,12 +54,12 @@
     "mut-backend-route-rename": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 17,
+      "failure_count": 8,
       "dimensions": [
         [
           "freshness",
           "fail",
-          10
+          6
         ],
         [
           "generated_types",
@@ -73,8 +73,8 @@
         ],
         [
           "consumer_integrity",
-          "fail",
-          5
+          "pass",
+          0
         ],
         [
           "wire",
@@ -86,12 +86,12 @@
     "mut-backend-field-remove": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 6,
+      "failure_count": 5,
       "dimensions": [
         [
           "freshness",
           "fail",
-          4
+          3
         ],
         [
           "generated_types",
@@ -118,12 +118,12 @@
     "mut-backend-field-rename": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 13,
+      "failure_count": 9,
       "dimensions": [
         [
           "freshness",
           "fail",
-          10
+          6
         ],
         [
           "generated_types",
@@ -150,12 +150,12 @@
     "mut-backend-nullable-change": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 6,
+      "failure_count": 5,
       "dimensions": [
         [
           "freshness",
           "fail",
-          4
+          3
         ],
         [
           "generated_types",
@@ -246,12 +246,12 @@
     "mut-frontend-stale-types": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 1,
+      "failure_count": 2,
       "dimensions": [
         [
           "freshness",
-          "pass",
-          0
+          "fail",
+          1
         ],
         [
           "generated_types",
@@ -282,13 +282,13 @@
       "dimensions": [
         [
           "freshness",
-          "pass",
-          0
+          "fail",
+          1
         ],
         [
           "generated_types",
-          "fail",
-          1
+          "pass",
+          0
         ],
         [
           "schema_compat",
@@ -310,7 +310,7 @@
     "mut-artifact-empty-openapi": {
       "status": "PASS",
       "gate_passed": false,
-      "failure_count": 2,
+      "failure_count": 1,
       "dimensions": [
         [
           "freshness",
@@ -319,8 +319,8 @@
         ],
         [
           "generated_types",
-          "fail",
-          1
+          "pass",
+          0
         ],
         [
           "schema_compat",
@@ -340,36 +340,8 @@
       ]
     },
     "mut-artifact-malformed-openapi": {
-      "status": "PASS",
-      "gate_passed": false,
-      "failure_count": 2,
-      "dimensions": [
-        [
-          "freshness",
-          "fail",
-          1
-        ],
-        [
-          "generated_types",
-          "fail",
-          1
-        ],
-        [
-          "schema_compat",
-          "pass",
-          0
-        ],
-        [
-          "consumer_integrity",
-          "pass",
-          0
-        ],
-        [
-          "wire",
-          "pass",
-          0
-        ]
-      ]
+      "status": "SKIP",
+      "detail": "no mutation applied"
     },
     "mut-wire-semantic-ratio": {
       "status": "PASS",
@@ -378,13 +350,13 @@
       "dimensions": [
         [
           "freshness",
-          "pass",
-          0
+          "fail",
+          1
         ],
         [
           "generated_types",
-          "fail",
-          1
+          "pass",
+          0
         ],
         [
           "schema_compat",
@@ -414,13 +386,13 @@
       "dimensions": [
         [
           "freshness",
-          "pass",
-          0
+          "fail",
+          1
         ],
         [
           "generated_types",
-          "fail",
-          1
+          "pass",
+          0
         ],
         [
           "schema_compat",
@@ -510,7 +482,7 @@
     "openapi_regeneration": {
       "frontend/generated/openapi-current.json": {
         "exists": true,
-        "size_bytes": 299438,
+        "size_bytes": 16,
         "status": "present"
       },
       "backend/tests/generated/openapi-current.json": {
@@ -522,12 +494,12 @@
     "typescript_regeneration": {
       "frontend/types/api-generated.ts": {
         "exists": true,
-        "size_bytes": 259904,
+        "size_bytes": 259892,
         "status": "present"
       }
     },
     "hash_consistency": {
-      "frontend_hash": "495cc05c32249c8a",
+      "frontend_hash": "7603207cc66a5b7e",
       "backend_test_hash": "25a56fa83b609ae7",
       "match": false
     }

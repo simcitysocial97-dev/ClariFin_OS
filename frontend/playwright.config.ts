@@ -125,14 +125,17 @@ export default defineConfig({
     },
   ],
   
-  // Production server (avoids CSS corruption in dev mode)
-  // CI uses python3 (guaranteed on ubuntu-latest); local uses npm start.
+  // C38.6 — Deterministic E2E server lifecycle. The frontend is ALWAYS served
+  // by `next start` (server mode), identical to local dev and production. We
+  // never serve the static `dist` export because middleware (legacy-route
+  // redirects) and SPA routing only work under server mode. `reuseExistingServer`
+  // is intentionally FALSE so a test run can never depend on an accidentally
+  // pre-existing server on :3000 — Playwright owns the lifecycle end to end.
+  // The backend on :8000 is started/health-checked by tests/global-setup.ts.
   webServer: {
-    command: process.env.CI
-      ? 'python3 -m http.server 3000 --directory dist'
-      : 'npm start',
+    command: 'npm start',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120000,
     stdout: 'ignore',
     stderr: 'pipe',

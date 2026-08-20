@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { z } from 'zod'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const NetWorthSchema = z.object({
   net_worth_paise: z.number().int(),
@@ -26,7 +26,7 @@ const NetWorthSchema = z.object({
 export type NetWorth = z.infer<typeof NetWorthSchema>
 
 async function fetchNetWorth() {
-  const res = await fetch(`${API_BASE}/api/networth`)
+  const res = await apiFetch(`/api/networth`)
   if (!res.ok) throw new Error('Failed to fetch net worth')
   
   // This is unverified raw payload from the network

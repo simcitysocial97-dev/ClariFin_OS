@@ -1,0 +1,110 @@
+{
+  "c38": {
+    "baseline_head": "ae00171454952e97319260ab2b9bcaf7436c6947",
+    "baseline_tree": "e9074cb5dcf0ddafcf340b41a8f9c2c057db9d7c",
+    "timestamp": "2026-08-20T10:15:59.853757Z",
+    "architecture_decisions": {
+      "serving_model": {
+        "canonical": "next start (server mode)",
+        "previous_c37_state": "CI exported static + http.server (divergent from local)",
+        "change": "removed output:'export' conditional; unified to server mode everywhere",
+        "evidence": "curl localhost:3000/dashboard/ returns 200; /import redirect chain resolves to /transactions/?tab=import via middleware",
+        "file": "frontend/next.config.ts"
+      },
+      "api_boundary": {
+        "canonical": "lib/api/gateway.ts \u2014 single transport layer",
+        "previous_c37_state": "9 capabilities migrated, but lib/hooks/* and lib/api/client.ts still used raw fetch()+API_BASE constants",
+        "change": "migrated client.ts + 12 hooks through apiFetch(apiFetchJson) from gateway; removed all NEXT_PUBLIC_API_URL/localhost:8000 literals from consumers",
+        "evidence": "grep -r fetch( lib hooks components app returns only gateway.ts; vitest invariant test passes; 1238 unit tests pass",
+        "files": [
+          "frontend/lib/api/client.ts",
+          "frontend/lib/hooks/use-*.ts"
+        ]
+      },
+      "playwright_lifecycle": {
+        "canonical": "npm start (server mode), reuseExistingServer: false",
+        "previous_c37_state": "CI: python3 -m http.server 3000 --directory dist (static); local: npm start \u2014 two different serving models",
+        "change": "webServer.command = 'npm start' for ALL envs; reuseExistingServer set to false to prevent accidental stale-server reuse",
+        "evidence": "frontend/playwright.config.ts updated; run_playwright_tests.sh comment updated",
+        "file": "frontend/playwright.config.ts"
+      },
+      "mutation_safety": {
+        "canonical": "try/finally + atexit.register(self._restore) in FailureInjector.run_experiments",
+        "previous_c37_state": "try/finally present but no atexit safety net \u2014 SIGKILL during long mutation runs can leave mutated source in working tree (observed: openapi-current.json truncated to '{invalid json:::' after killed verify.py mutation)",
+        "change": "added `atexit.register(self._restore)` defense-in-depth; restored openapi-current.json from HEAD; re-ran bounded control \u2192 clean tree",
+        "evidence": "bounded 8-mutation control all PASS/SKIP; git status shows no mutation-target modification post-run",
+        "file": "runtime/foundation/verification/api_contracts/mutations.py"
+      }
+    },
+    "invariant_test": {
+      "file": "frontend/lib/__tests__/gateway-invariance.test.ts",
+      "checks": [
+        "scans non-trivial source set (>20 files)",
+        "forbids raw backend fetch outside gateway.ts",
+        "forbids scattered URL literals outside gateway.ts + global-setup.ts",
+        "confirms gateway.ts owns at least one raw fetch call"
+      ],
+      "status": "PASS (4/4 tests pass)"
+    },
+    "contract_gate": {
+      "cmd": "python runtime/verify.py api-contracts",
+      "status": "PASS",
+      "freshness": "PASS",
+      "generated_types": "PASS",
+      "schema_compat": "PASS",
+      "consumer_integrity": "PASS",
+      "wire": "PASS"
+    },
+    "contract_governance_c30": {
+      "cmd": "python runtime/verify.py contract-governance",
+      "status": "CERTIFIED: YES",
+      "surfaces_inventoried": 62,
+      "mutations_tested": 14,
+      "mutations_detected": 12,
+      "mutations_missed": 0
+    },
+    "backend_verify": {
+      "cmd": "python runtime/verify.py backend",
+      "status": "PASS",
+      "phases": {
+        "lint": "pass (39s)",
+        "typecheck": "pass (15s)",
+        "build": "pass (42s)",
+        "test": "pass 1238/1238 (83s) \u2014 frontend vitest suite"
+      }
+    },
+    "quality_gate_quick": {
+      "cmd": "python runtime/verify.py quick",
+      "status": "FAILED (1/4)",
+      "failure": {
+        "step": "step-0002",
+        "unit": "backend-unit",
+        "test": "tests/properties/loan_engine/test_prepayment_properties.py::test_apply_prepayment_at_month_reduce_emi_mode",
+        "assertion": "new_total (447909460) <= original_total (447431336) + tolerance (4560)",
+        "overshoot": "478124 paise (~\u20b94781, 0.107%)",
+        "classification": "LEGITIMATE APPLICATION BUG (backend loan engine reduce-EMI financial invariant)",
+        "out_of_scope_for_c38": true,
+        "reproducible_with_fresh_hypothesis_db": true,
+        "not_caused_by_c38_changes": true,
+        "recommendation": "Separate M9 program to fix reduce-EMI amortization recalculator tolerance or document acceptable variance."
+      }
+    },
+    "golden_profile": {
+      "cmd": "python runtime/verify.py golden",
+      "status": "PASS (28 capability integration tests)"
+    },
+    "playwright_status": {
+      "cmd": "npx playwright test tests/e2e/specs/health-check.spec.ts",
+      "note": "Timed out during this session due to build+startup taking >5min under resource constraints. Architecture validated by: (a) next.js build succeeds in server mode (Route table printed, Middleware present), (b) curl /dashboard/ returns 200, (c) middleware legacy redirects resolve end-to-end (/import \u2192 /transactions?tab=import 308 chain, 200 final). Full E2E matrix will be validated in CI (playwright.yml CI workflow)."
+    },
+    "known_defect_d1": {
+      "id": "D1",
+      "component": "backend/src/engineers/loan_engine (reduce-EMI prepayment)",
+      "symptom": "Property test fails: total-after-prepayment exceeds original-total + tolerance by ~0.107%",
+      "provenance": "Pre-existing; independent of C38 changes; reproducible with fresh Hypothesis DB",
+      "classification": "LEGITIMATE APPLICATION BUG",
+      "ci_impact": "verify.py quick (quality gate) will FAIL until resolved in a future M9 program",
+      "mitigation": "None in this stabilization \u2014 do not weaken test tolerance as that would mask a genuine financial invariant violation."
+    }
+  }
+}

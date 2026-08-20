@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { useMemo, useCallback } from 'react'
 import { DashboardMetricsSchema, type DashboardMetrics } from '@/lib/schemas/dashboard-metrics'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 interface HookState<T> {
   data: T | null
@@ -14,7 +14,7 @@ interface HookState<T> {
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchDashboardSummary(): Promise<DashboardMetrics> {
-  const res = await fetch(`${API_BASE}/api/dashboard/summary`)
+  const res = await apiFetch(`/api/dashboard/summary`)
   if (!res.ok) throw new Error(`API error: ${res.status}`)
   
   // This is unverified raw payload from the network

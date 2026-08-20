@@ -1,13 +1,13 @@
 import type { HookState } from './use-async-query';
+import { apiFetch } from '@/lib/api/gateway';
 import { useAsyncQuery } from './use-async-query'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ReconciliationsDataSchema, type ReconciliationsData, type ReconciliationMatch, type TransactionDetail } from '@/lib/schemas/reconciliation'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchReconciliations(): Promise<ReconciliationsData> {
-  const response = await fetch(`${API_BASE}/api/reconciliation`)
+  const response = await apiFetch(`/api/reconciliation`)
   if (!response.ok) throw new Error(`Reconciliations fetch failed: ${response.status}`)
 
   // This is unverified raw payload from the network
@@ -26,7 +26,7 @@ async function fetchReconciliations(): Promise<ReconciliationsData> {
 }
 
 async function fetchPendingReconciliations(): Promise<ReconciliationsData> {
-  const response = await fetch(`${API_BASE}/api/reconciliation/pending`)
+  const response = await apiFetch(`/api/reconciliation/pending`)
   if (!response.ok) throw new Error(`Pending reconciliations fetch failed: ${response.status}`)
 
   const raw = await response.json()
@@ -42,7 +42,7 @@ async function fetchPendingReconciliations(): Promise<ReconciliationsData> {
 }
 
 async function scanReconciliations(): Promise<{ matches: ReconciliationMatch[]; count: number }> {
-  const response = await fetch(`${API_BASE}/api/reconciliation/scan`)
+  const response = await apiFetch(`/api/reconciliation/scan`)
   if (!response.ok) throw new Error(`Scan reconciliations failed: ${response.status}`)
 
   const raw = await response.json()
@@ -53,7 +53,7 @@ async function scanReconciliations(): Promise<{ matches: ReconciliationMatch[]; 
 }
 
 async function confirmReconciliation(id: number): Promise<{ success: boolean; status: string }> {
-  const response = await fetch(`${API_BASE}/api/reconciliation/${id}/confirm`, {
+  const response = await apiFetch(`/api/reconciliation/${id}/confirm`, {
     method: 'POST',
   })
   if (!response.ok) throw new Error(`Confirm reconciliation failed: ${response.status}`)
@@ -61,7 +61,7 @@ async function confirmReconciliation(id: number): Promise<{ success: boolean; st
 }
 
 async function rejectReconciliation(id: number): Promise<{ success: boolean; status: string }> {
-  const response = await fetch(`${API_BASE}/api/reconciliation/${id}/reject`, {
+  const response = await apiFetch(`/api/reconciliation/${id}/reject`, {
     method: 'POST',
   })
   if (!response.ok) throw new Error(`Reject reconciliation failed: ${response.status}`)

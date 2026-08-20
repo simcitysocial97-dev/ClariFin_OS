@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { z } from 'zod'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const AccountSchema = z.object({
   id: z.string(),
@@ -33,7 +33,7 @@ export interface CreateAccountInput {
 }
 
 async function fetchManagedAccounts() {
-  const res = await fetch(`${API_BASE}/api/accounts/manage`)
+  const res = await apiFetch(`/api/accounts/manage`)
   if (!res.ok) throw new Error('Failed to fetch accounts')
   
   // This is unverified raw payload from the network
@@ -52,7 +52,7 @@ async function fetchManagedAccounts() {
 }
 
 async function createAccount(input: CreateAccountInput) {
-  const res = await fetch(`${API_BASE}/api/accounts/manage`, {
+  const res = await apiFetch(`/api/accounts/manage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -62,7 +62,7 @@ async function createAccount(input: CreateAccountInput) {
 }
 
 async function updateAccount(id: string, input: Partial<CreateAccountInput>) {
-  const res = await fetch(`${API_BASE}/api/accounts/manage/${id}`, {
+  const res = await apiFetch(`/api/accounts/manage/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -72,7 +72,7 @@ async function updateAccount(id: string, input: Partial<CreateAccountInput>) {
 }
 
 async function deleteAccount(id: string) {
-  const res = await fetch(`${API_BASE}/api/accounts/manage/${id}`, {
+  const res = await apiFetch(`/api/accounts/manage/${id}`, {
     method: 'DELETE',
   })
   if (!res.ok) throw new Error('Failed to delete account')

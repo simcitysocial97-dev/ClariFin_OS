@@ -7,6 +7,7 @@ tree remains clean. Covers C26 defect classes and semantic drift cases.
 
 from __future__ import annotations
 
+import atexit
 import json
 import subprocess
 import sys
@@ -87,6 +88,12 @@ class FailureInjector:
         ]
 
         results: dict[str, tuple[str, str]] = {}
+        # C38.11 — defense-in-depth: register a restore hook so that even an
+        # unexpected interpreter exit (e.g. signal) cannot leave a mutated
+        # source file in the working tree. The per-experiment try/finally
+        # already guarantees restoration on normal exceptions; this covers the
+        # narrow interruption window where the loop is mid-mutation.
+        atexit.register(self._restore)
         for name, mutator in experiments:
             try:
                 ok = self._mutate(name, mutator)

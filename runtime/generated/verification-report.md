@@ -1,7 +1,7 @@
 # Verification Report
 
-**Profile:** frontend
-**Generated:** 2026-08-20T02:15:25.902305+00:00
+**Profile:** golden
+**Generated:** 2026-08-20T10:08:00.678195+00:00
 **Overall Status:** passed
 
 ## Changed Files
@@ -37,8 +37,10 @@
 - `frontend/components/os-shell/right-inspector.tsx`
 - `frontend/components/os-shell/top-command-bar.tsx`
 - `frontend/components/os-shell/workspace-container.tsx`
+- `frontend/components/query-provider.tsx`
 - `frontend/generated/openapi-current.json`
 - `frontend/lib/api/client.ts`
+- `frontend/lib/api/gateway.ts`
 - `frontend/lib/capabilities/use-accounts-capability.ts`
 - `frontend/lib/capabilities/use-behaviour-capability.ts`
 - `frontend/lib/capabilities/use-cashflow-capability.ts`
@@ -75,6 +77,7 @@
 - `frontend/mocks/handlers/reconciliation.ts`
 - `frontend/proxy.ts`
 - `frontend/tests/e2e/fixtures/css-helpers.ts`
+- `frontend/tests/e2e/fixtures/test-fixtures.ts`
 - `frontend/tests/e2e/specs/behavior-scoring.spec.ts`
 - `frontend/tests/e2e/specs/behavior.spec.ts`
 - `frontend/tests/e2e/specs/dashboard.spec.ts`
@@ -118,9 +121,19 @@
 - `runtime/foundation/verification/api_contracts/mutations.py`
 - `runtime/foundation/verification/api_contracts/normalize.py`
 - `runtime/foundation/verification/api_contracts/taxonomy.py`
+- `runtime/foundation/verification/models/model.py`
+- `runtime/foundation/verification/totals.py`
+- `runtime/system/evidence/collectors/test_results.py`
 - `runtime/tests/test_backend_evidence.py`
+- `runtime/tests/test_c37_certification_arithmetic.py`
 - `runtime/verify.py`
 - `test-results/.last-run.json`
+- `tools/e2e_seed.py`
+- `dependency-reports/dependency-health.md`
+- `dependency-reports/npm-audit.txt`
+- `dependency-reports/npm-outdated.json`
+- `dependency-reports/python-audit.txt`
+- `frontend/lib/__tests__/gateway-invariance.test.ts`
 
 ## Blast Radius
 
@@ -131,27 +144,24 @@
 
 ## Verification Plan
 
-- **Plan ID:** plan-20260820-020341
-- **Scope:** frontend
-- **Targets:** 10
-- **Steps:** 4
-- **Estimated Duration:** 660s
+- **Plan ID:** plan-20260820-100756
+- **Scope:** golden
+- **Targets:** 1
+- **Steps:** 1
+- **Estimated Duration:** 600s
 
 ## Tasks Executed
 
 | Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
 |---------|---------|--------|------|----------|-------|--------|--------|
-| step-0001 | bash .github/scripts/run_backend_verification.sh | VerificationStatus.PASSED | 0 | 90.6s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
-| step-0002 | bash .github/scripts/run_fast_checks.sh | VerificationStatus.PASSED | 0 | 101.2s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stderr.txt |
-| step-0003 | bash .github/scripts/run_frontend_verification.sh | VerificationStatus.PASSED | 0 | 300.7s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stderr.txt |
-| step-0004 | bash .github/scripts/run_runtime_verification.sh | VerificationStatus.PASSED | 0 | 211.5s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stderr.txt |
+| step-0001 | bash .github/scripts/run_golden_tests.sh | VerificationStatus.PASSED | 0 | 3.8s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
 
 ## Results Summary
 
-- **Passed:** 4
+- **Passed:** 1
 - **Failed:** 0
 - **Skipped:** 0
-- **Total Duration:** 704.0s
+- **Total Duration:** 3.8s
 
 
 ## Dependency Chains (Program 7A)

@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { z } from 'zod'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 const LoanSchema = z.object({
   id: z.number(),
@@ -56,7 +56,7 @@ export interface CreateLoanInput {
 }
 
 async function fetchLoans() {
-  const res = await fetch(`${API_BASE}/api/loans`)
+  const res = await apiFetch(`/api/loans`)
   if (!res.ok) throw new Error('Failed to fetch loans')
   
   // This is unverified raw payload from the network
@@ -75,7 +75,7 @@ async function fetchLoans() {
 }
 
 async function fetchLoanSchedule(loanId: string) {
-  const res = await fetch(`${API_BASE}/api/loans/${loanId}/schedule`)
+  const res = await apiFetch(`/api/loans/${loanId}/schedule`)
   if (!res.ok) throw new Error('Failed to fetch schedule')
   return res.json()
 }
@@ -85,7 +85,7 @@ async function simulatePrepayment(
   prepaymentPaise: number,
   mode: 'reduce_tenure' | 'reduce_emi'
 ) {
-  const res = await fetch(`${API_BASE}/api/loans/${loanId}/prepayment-simulation`, {
+  const res = await apiFetch(`/api/loans/${loanId}/prepayment-simulation`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prepayment_paise: prepaymentPaise, mode }),
@@ -95,7 +95,7 @@ async function simulatePrepayment(
 }
 
 async function createLoan(input: CreateLoanInput) {
-  const res = await fetch(`${API_BASE}/api/loans`, {
+  const res = await apiFetch(`/api/loans`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -105,7 +105,7 @@ async function createLoan(input: CreateLoanInput) {
 }
 
 async function updateLoan(id: string, input: Partial<CreateLoanInput>) {
-  const res = await fetch(`${API_BASE}/api/loans/${id}`, {
+  const res = await apiFetch(`/api/loans/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
@@ -115,7 +115,7 @@ async function updateLoan(id: string, input: Partial<CreateLoanInput>) {
 }
 
 async function deleteLoan(id: string) {
-  const res = await fetch(`${API_BASE}/api/loans/${id}`, { method: 'DELETE' })
+  const res = await apiFetch(`/api/loans/${id}`, { method: 'DELETE' })
   if (!res.ok) throw new Error('Failed to delete loan')
   return res.json()
 }

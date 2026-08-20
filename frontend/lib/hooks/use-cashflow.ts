@@ -4,13 +4,13 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
+import { apiFetch } from '@/lib/api/gateway';
 import { CashflowResponseSchema, type CashflowResponse } from '@/lib/schemas/cashflow'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 // 🛡️ Data fetching function utilizing Zod runtime parsing
 async function fetchCashflow(months: number = 6): Promise<CashflowResponse> {
-  const response = await fetch(`${API_BASE}/api/cashflow/monthly?months=${months}`)
+  const response = await apiFetch(`/api/cashflow/monthly?months=${months}`)
   
   if (!response.ok) {
     throw new Error(`Cashflow fetch failed: ${response.status}`)
