@@ -1,6 +1,6 @@
 {
   "certification": "M9-C41 Playwright Defect Remediation",
-  "generated_at": "2026-08-21T02:00:00+05:30",
+  "generated_at": "2026-08-21T03:00:00+05:30",
   "head": "1d59e429676860890998b0e11fe5f95f57f5f3e4",
   "tree": "c43d6d20162735079e46d923a762644c771f44e4",
   "baseline_c40": {
@@ -15,7 +15,7 @@
     "skip": 13,
     "duration_minutes": 4.9,
     "command": "npx playwright test --project=chromium",
-    "note": "After C41 genuine fixes (sidebar collapse + demonstrably-incorrect test corrections), failures reduced 17 -> 7. D1 (click interception) RESOLVED via Panel/PanelBody layout fix."
+    "note": "After C41 genuine fixes (sidebar collapse + demonstrably-incorrect test corrections), failures reduced 17 -> 7. D1 (click interception) RESOLVED via Panel/PanelBody layout fix. D2 (visual baselines) RESOLVED via provenance-bound rebaseline."
   },
   "failure_ledger": [
     {
@@ -48,8 +48,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Layout fix (Panel/PanelBody min-h-0) changed InsightPanel position; baselines stale. Not a defect — canonical UI improved.",
       "severity": "medium",
-      "permanent_correction": "PENDING — rebaseline with provenance after confirming canonical UI.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.4/C41.5) — Provenance-bound rebaseline completed. Verified: 24/24 visual tests pass.",
+      "regression_coverage": "visual-regression.spec.ts cards-page snapshot rebaselined"
     },
     {
       "test": "visual-regression.spec.ts behaviour-page",
@@ -59,8 +59,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Same layout change as cards-page. Baseline stale.",
       "severity": "medium",
-      "permanent_correction": "PENDING — provenance-bound rebaseline.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.4) — Provenance-bound rebaseline completed.",
+      "regression_coverage": "visual-regression.spec.ts behaviour-page snapshot rebaselined"
     },
     {
       "test": "visual-regression.spec.ts reconciliation-page",
@@ -70,8 +70,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Same layout change as cards-page. Baseline stale.",
       "severity": "medium",
-      "permanent_correction": "PENDING — provenance-bound rebaseline.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.5) — Provenance-bound rebaseline completed.",
+      "regression_coverage": "visual-regression.spec.ts reconciliation-page snapshot rebaselined"
     },
     {
       "test": "visual-regression.spec.ts import-page",
@@ -81,8 +81,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Same layout change. Baseline stale.",
       "severity": "medium",
-      "permanent_correction": "PENDING — provenance-bound rebaseline.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.4) — Provenance-bound rebaseline completed.",
+      "regression_coverage": "visual-regression.spec.ts import-page snapshot rebaselined"
     },
     {
       "test": "visual-regression.spec.ts transactions-page",
@@ -92,8 +92,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Directly affected by Panel/PanelBody layout fix. Baseline must be rebaselined.",
       "severity": "medium",
-      "permanent_correction": "PENDING — provenance-bound rebaseline.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.4) — Provenance-bound rebaseline completed.",
+      "regression_coverage": "visual-regression.spec.ts transactions-page snapshot rebaselined"
     },
     {
       "test": "visual-regression.spec.ts transactions-mobile",
@@ -103,8 +103,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Mobile viewport affected by PanelBody min-h-0 change.",
       "severity": "medium",
-      "permanent_correction": "PENDING — provenance-bound rebaseline.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.4) — Provenance-bound rebaseline completed.",
+      "regression_coverage": "visual-regression.spec.ts transactions-mobile snapshot rebaselined"
     },
     {
       "test": "visual-regression.spec.ts categories-mobile",
@@ -114,8 +114,8 @@
       "classification": "VISUAL_BASELINE_DEFECT",
       "root_cause": "Mobile viewport affected by Panel/Layout change.",
       "severity": "medium",
-      "permanent_correction": "PENDING — provenance-bound rebaseline.",
-      "regression_coverage": "none yet"
+      "permanent_correction": "RESOLVED (C41.4) — Provenance-bound rebaseline completed.",
+      "regression_coverage": "visual-regression.spec.ts categories-mobile snapshot rebaselined"
     },
     {
       "test": "dashboard.spec.ts:111 should display quick stats cards",
@@ -157,7 +157,8 @@
     "C41.2 — API-unavailable/edge-case <main> assertions (TEST_DEFECT): corrected to assert actual Alert/empty states. Fixes behaviour:297, reconciliation:207, edge-cases:167,386.",
     "C41.2 — NaN false-positive (TEST_DEFECT): text=NaN substring-matched 'fiNaNcial'; replaced with leaf-text scan. Proven: app renders NO actual NaN/Infinity. Fixes edge-cases:422, e2e-financial-logic:310.",
     "C41.2 — Edge-case fixture isolation (FIXTURE_DEFECT): added beforeEach localStorage.clear(). Fixes cross-test contamination.",
-    "C41.3 — Transactions click interception (genuine CLICK_INTERCEPTION/LAYOUT_OVERLAP): InsightPanel overlapped table rows due to missing min-h-0 on scrollable PanelBody and conflicting h-full on Panel fill. FIXED: PanelBody scrollable now has min-h-0; Panel fill variant uses flex-1 only (no h-full). Verified: transactions 14/14 pass, navigation 28/28 pass, behavior/recon/edge-cases 73 passed."
+    "C41.3 — Transactions click interception (genuine CLICK_INTERCEPTION/LAYOUT_OVERLAP): InsightPanel overlapped table rows due to missing min-h-0 on scrollable PanelBody and conflicting h-full on Panel fill. FIXED: PanelBody scrollable now has min-h-0; Panel fill variant uses flex-1 only (no h-full). Verified: transactions 14/14 pass, navigation 28/28 pass, behavior/recon/edge-cases 73 passed.",
+    "C41.4 — Visual baseline rebaseline (D2): 7 stale snapshots rebaselined with provenance after Panel/PanelBody layout fix changed InsightPanel position. Cards, behaviour, reconciliation, import, transactions, transactions-mobile, categories-mobile. Verified: 24/24 visual tests pass."
   ],
   "status": "CONDITIONAL"
 }

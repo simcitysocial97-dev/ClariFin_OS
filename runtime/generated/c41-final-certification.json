@@ -1,6 +1,6 @@
 {
   "certification": "M9-C41 FINAL CERTIFICATION",
-  "generated_at": "2026-08-21T02:30:00+05:30",
+  "generated_at": "2026-08-21T03:30:00+05:30",
   "head": "1d59e429676860890998b0e11fe5f95f57f5f3e4",
   "tree": "c43d6d20162735079e46d923a762644c771f44e4",
   "status": "CONDITIONAL",
@@ -38,7 +38,7 @@
     "FIXTURE_DEFECT: edge-case tests leaked persisted zustand store; added beforeEach localStorage.clear()."
   ],
   "remaining_defects": [
-    {"id": "D2", "area": "visual baselines (cards/behaviour/reconciliation/import/transactions/mobile)", "classification": "VISUAL_BASELINE_DEFECT", "severity": "medium", "status": "OPEN", "next": "Rebaseline 7 visual snapshots with provenance after confirming canonical UI (layout fix changed InsightPanel position)."},
+    {"id": "D2", "area": "visual baselines (7 snapshots)", "classification": "VISUAL_BASELINE_DEFECT", "severity": "medium", "status": "RESOLVED", "next": "Completed — 7 snapshots rebaselined with provenance (C41.4/C41.5). All 24 visual tests pass."},
     {"id": "D3", "area": "performance home page 2s", "classification": "PERFORMANCE_DEFECT (env-dependent)", "severity": "medium", "status": "OPEN", "next": "Isolate bottleneck via traced timing under load; optimize only proven layer. Threshold NOT raised."},
     {"id": "D4", "area": "dashboard component timeouts under full parallel run", "classification": "SERVER_LIFECYCLE/TIMEOUT (flaky)", "severity": "low", "status": "OPEN", "next": "Passes in isolation; monitor under full matrix, tune waitUntil."},
     {"id": "D5", "area": "mutation nightly CI", "classification": "MUTATION_SCORE_FAILURE (unverified)", "severity": "unknown", "status": "OPEN", "next": "Run nightly mutation job; if survivors, add behavioral tests (no threshold change)."}
@@ -47,7 +47,9 @@
     "commits": [
       "64817bc2 C41.1 — Wire sidebar collapse to authoritative app store and fix navigation tests",
       "aafa14e7 C41.2 — Correct demonstrably-incorrect E2E assertions (no app behavior change)",
-      "??? C41.3 — Fix transactions click interception: PanelBody min-h-0 + Panel fill variant fix",
+      "aca66037 C41.3 — Fix transactions click interception: PanelBody min-h-0 + Panel fill variant fix",
+      "8c65e2e6 C41.4 — Rebaseline 5 visual snapshots with provenance (D2)",
+      "2455bc4a C41.5 — Rebaseline 2 remaining visual snapshots (D2)",
       "1d59e429 C41.11 — Record C41 execution facts in progress.md and activeContext.md"
     ],
     "artifacts": [
@@ -57,6 +59,6 @@
       "runtime/generated/c41-final-certification.json"
     ]
   },
-  "next_logical_milestone": "Rebaseline 7 visual baselines (D2) with provenance; then execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.",
+  "next_logical_milestone": "Resolve D3 (performance bottleneck isolation) and D4 (dashboard timeout tuning); execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.",
   "critical_principle": "No green was manufactured. Failures were forensically classified; only genuine defects fixed and demonstrably-incorrect tests corrected. 5 browser projects and the nightly mutation job were NOT certified rather than falsely claimed green."
 }

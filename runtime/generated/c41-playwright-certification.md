@@ -1,4 +1,4 @@
-# M9-C41 — Playwright Defect Remediation Certification (Updated with D1 Resolution)
+# M9-C41 — Playwright Defect Remediation Certification (Updated with D1+D2 Resolution)
 
 **Status: CONDITIONAL** (chromium reproduced; full green not achieved)
 
@@ -18,13 +18,7 @@
 
 | Test | Classification | Root Cause | Resolution |
 |------|----------------|-----------|------------|
-| visual: cards-page | VISUAL_BASELINE_DEFECT | Layout fix changed InsightPanel position; baselines stale | Rebaseline with provenance |
-| visual: behaviour-page | VISUAL_BASELINE_DEFECT | Same as cards-page | Rebaseline with provenance |
-| visual: reconciliation-page | VISUAL_BASELINE_DEFECT | Same as cards-page | Rebaseline with provenance |
-| visual: import-page | VISUAL_BASELINE_DEFECT | Layout fix changed panel positioning | Rebaseline with provenance |
-| visual: transactions-page | VISUAL_BASELINE_DEFECT | Directly affected by Panel/PanelBody fix | Rebaseline with provenance |
-| visual: transactions-mobile | VISUAL_BASELINE_DEFECT | Mobile viewport affected by PanelBody min-h-0 | Rebaseline with provenance |
-| visual: categories-mobile | VISUAL_BASELINE_DEFECT | Mobile viewport affected | Rebaseline with provenance |
+| visual: 7 snapshots | VISUAL_BASELINE_DEFECT | Layout fix changed InsightPanel position; baselines stale | **RESOLVED (C41.4/5) — 24/24 pass** |
 | performance: home page | PERFORMANCE_DEFECT (env) | Passes in isolation <2s; load-dependent | Threshold NOT raised |
 | dashboard: quick stats | SERVER/TIMEOUT (flaky) | Passes in isolation; full-parallel contention | Monitor |
 | dashboard: nav sidebar | SERVER/TIMEOUT (flaky) | Passes in isolation | Monitor |
@@ -37,9 +31,10 @@
 | Navigation selectors | SELECTOR_DEFECT | Corrected to actual LeftRail DOM |
 | API-unavailable `<main>` assertions | TEST_DEFECT | Pages render Alert/empty states |
 | Edge-case `<main>` + store leak | TEST/FIXTURE_DEFECT | Added `localStorage.clear()` beforeEach |
-| NaN false-positive ("fi**NaN**cial") | TEST_DEFECT (false positive) | Leaf-text scan; proven no NaN rendered |
+| NaN false-positive ("fi**NaN**cial") | TEST_DEFECT (false positive) | Leaf-text scan; proven no NaN/Infinity |
 | Edge-case fixture isolation | FIXTURE_DEFECT | `localStorage.clear()` beforeEach |
 | **Transactions click interception (D1)** | **CLICK_INTERCEPTION / LAYOUT_OVERLAP** | **PanelBody min-h-0 + Panel fill fix** |
+| **Visual baselines (D2)** | **VISUAL_BASELINE_DEFECT** | **7 snapshots rebaselined with provenance (24/24 pass)** |
 
 ## C41.3 — D1 Click Interception Resolution (Genuine)
 
@@ -58,6 +53,16 @@
 
 **Note**: `onRowClick={() => {}}` is no-op (no detail navigation wired). Row click now works; feature contract for row→detail must be confirmed separately.
 
+## C41.4/5 — D2 Visual Baseline Resolution (Genuine)
+
+**Root cause**: Panel/PanelBody layout fix changed InsightPanel position → 7 stale baselines.
+
+**Fix**: Provenance-bound rebaseline of 7 snapshots:
+- cards-page, behaviour-page, reconciliation-page, import-page, transactions-page
+- transactions-mobile, categories-mobile
+
+**Verification**: All 24 visual regression tests pass (24/24).
+
 ## Status
 
-**CONDITIONAL** — 10 of 17 C40 failures resolved with evidence; 7 remain (7 visual baselines need provenance-bound rebaseline, 1 performance env-dependent, 2 dashboard timeouts flaky). No green manufactured.
+**CONDITIONAL** — 10 of 17 C40 failures resolved with evidence; 7 remain (1 performance env-dependent, 2 dashboard flaky timeouts). No green manufactured.

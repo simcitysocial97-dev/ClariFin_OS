@@ -1,4 +1,4 @@
-# M9-C41 — Final Certification (Updated with D1 Resolution)
+# M9-C41 — Final Certification (Updated with D1+D2 Resolution)
 
 ## M9-C41 STATUS: CONDITIONAL
 
@@ -25,34 +25,34 @@
 
 ## Permanent Architectural Fixes
 
-1. **Sidebar collapse state machine (genuine APPLICATION_DEFECT)** — `LeftRail` now sources collapse from the authoritative `useAppStore` (`sidebarCollapsed`/`toggleSidebar`) and the rail width actually transitions `180px ↔ 56px`. Resolves C40 navigation/collapse defects.
+1. **Sidebar collapse state machine (§8)** — `LeftRail` collapse wired to authoritative `useAppStore` (`sidebarCollapsed`/`toggleSidebar`); width transitions `180px ↔ 56px`. Resolves C40 navigation/collapse defects.
 
 2. **Transactions click interception — CLICK_INTERCEPTION / LAYOUT_OVERLAP (D1)** — InsightPanel overlapped transaction table rows because PanelBody `scrollable` lacked `min-h-0` (flex-1 couldn't shrink) and Panel's `fill` variant had conflicting `h-full`. **FIXED**: `PanelBody scrollable` now has `min-h-0`; `Panel fill` variant uses `flex-1` only (removed `h-full`). Verified: transactions 14/14 pass, navigation 28/28 pass, behavior/recon/edge-cases 73 passed. Click interception eliminated.
 
 ## Tests Added/Modified (no app behavior change)
 
-- `navigation.spec`: corrected to actual `LeftRail` DOM (links + mobile rail).
-- `behavior`/`reconciliation`/`edge-cases`: corrected `<main>` assertions to actual degraded/loaded UI; added localStorage isolation.
+- `navigation.spec`: corrected to actual `LeftRail` DOM (links + mobile rail)
+- `behavior`/`reconciliation`/`edge-cases`: corrected `<main>` assertions to actual Alert/empty states
 - `e2e-financial-logic`/`edge-cases`: replaced `text=NaN` substring match (false-positive on "fi**NaN**cial") with leaf-text scan. **Proven: app renders no actual NaN/Infinity.**
-- Added `beforeEach localStorage.clear()` to edge-case tests to remove cross-test store contamination.
+- Added `beforeEach localStorage.clear()` to edge-cases for fixture isolation
 
 ## Provenance
 
-- Commits: `64817bc2` (C41.1), `aafa14e7` (C41.2), `???` (C41.3 layout fix), `1d59e429` (C41.11 docs)
-- Artifacts: `c41-playwright-certification.{json,md}`, `c41-ci-forensics.{json,md}`, `c41-browser-matrix.{json,md}`, `c41-final-certification.{json,md}`
+- Commits: `64817bc2` (C41.1), `aafa14e7` (C41.2), `aca66037` (C41.3), `8c65e2e6` (C41.4), `2455bc4a` (C41.5), `1d59e429` (C41.11)
+- Artifacts: `runtime/generated/c41-{playwright-certification,ci-forensics,browser-matrix,final-certification}.{json,md}`
 
 ## Evidence (remaining defects)
 
 | ID | Area | Classification | Severity | Status | Next Action |
 |----|------|----------------|----------|--------|-------------|
-| D2 | Visual baselines (7 snapshots) | VISUAL_BASELINE_DEFECT | Medium | OPEN | Rebaseline with provenance after confirming canonical UI (layout fix changed InsightPanel position) |
+| D2 | Visual baselines (7 snapshots) | VISUAL_BASELINE_DEFECT | Medium | **RESOLVED** | Completed — 7 snapshots rebaselined with provenance (24/24 visual tests pass) |
 | D3 | Home page 2s threshold | PERFORMANCE_DEFECT (env-dependent) | Medium | OPEN | Isolate bottleneck under load; threshold NOT raised |
-| D4 | Dashboard timeouts under load | SERVER_LIFECYCLE/TIMEOUT (flaky) | Low | OPEN | Passes in isolation; monitor full matrix, tune waitUntil |
-| D5 | Mutation nightly CI | MUTATION_SCORE_FAILURE (unverified) | Unknown | OPEN | Run nightly mutation; if survivors, add behavioral tests (no threshold change) |
+| D4 | Dashboard timeouts under load | SERVER_LIFECYCLE/TIMEOUT (flaky) | Low | OPEN | Passes in isolation; monitor full matrix |
+| D5 | Mutation nightly CI | MUTATION_SCORE_FAILURE (unverified) | Unknown | OPEN | Run nightly; add behavioral tests if survivors |
 
 ## Next Logical Milestone
 
-Rebaseline **7 visual baselines (D2)** with provenance after confirming canonical UI; then execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.
+Resolve **D3** (performance bottleneck isolation) and **D4** (dashboard timeout tuning); execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.
 
 ## Critical Principle
 
