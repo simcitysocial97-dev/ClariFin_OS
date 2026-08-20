@@ -93,8 +93,11 @@ test.describe('Sidebar Navigation', () => {
     const sidebar = page.locator('aside').first();
     await expect(sidebar).toBeVisible();
     
-    // Sidebar should have navigation links
-    const navLinks = sidebar.locator('nav a, nav button');
+    // Sidebar should have navigation links. The canonical navigation rail
+    // (LeftRail) renders workspace links as <a> elements grouped inside <div>
+    // sections (not a single <nav> wrapper), so we assert on the actual anchor
+    // elements rather than a non-existent `nav a` selector.
+    const navLinks = sidebar.locator('a');
     const count = await navLinks.count();
     expect(count).toBeGreaterThan(0);
   });
@@ -170,17 +173,26 @@ test.describe('Mobile Navigation', () => {
     await page.setViewportSize({ width: 375, height: 667 });
   });
 
-  test('should show mobile menu button', async ({ page, waitForPageReady }) => {
+  test('should show mobile navigation rail with links', async ({ page, waitForPageReady }) => {
     await page.goto('/');
     await waitForPageReady(page);
     
-    // Mobile menu button should be visible
-    const menuBtn = page.locator('button:has([class*="menu"]), [data-testid="mobile-menu"]').first();
-    const isVisible = await menuBtn.isVisible().catch(() => false);
-    
-    // Either menu button or hamburger icon should exist
-    const hasMobileNav = isVisible || await page.locator('[class*="Menu"]').count() > 0;
-    expect(hasMobileNav).toBe(true);
+    // Mobile architecture: a persistent narrow icon rail (LeftRail) is always
+    // present instead of a hamburger Sheet. Verify the rail is visible and
+    // exposes navigation links (the actual mobile contract per C41.9).
+    const sidebar = page.locator('aside').first();
+    await expect(sidebar).toBeVisible();
+
+    const navLinks = sidebar.locator('a');
+    const count = await navLinks.count();
+    expect(count).toBeGreaterThan(0);
+
+    // Tapping a navigation link should route to its destination.
+    const transactionsLink = page.locator('a:has-text("Transactions")').first();
+    await transactionsLink.click();
+    await page.waitForURL('**/transactions**');
+    await waitForPageReady(page);
+    expect(page.url()).toContain('/transactions');
   });
 
   test('should open mobile sidebar on menu click', async ({ page, waitForPageReady }) => {

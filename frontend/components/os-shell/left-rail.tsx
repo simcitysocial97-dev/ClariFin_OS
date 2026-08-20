@@ -9,12 +9,13 @@
 
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { workspaceRegistry } from '@/lib/workspace/workspace-registry';
 import { navigationRuntime } from '@/lib/runtime';
 import { useShell } from './shell-provider';
+import { useAppStore } from '@/lib/store/use-app-store';
 import { FinancialIcon } from '@/components/primitives/icon-system/financial-icon';
 import { ScrollRegion } from '@/components/primitives/layout/scroll-region';
 import { Stack } from '@/components/primitives/layout/stack';
@@ -111,7 +112,12 @@ interface LeftRailProps {
 
 export function LeftRail({ className }: LeftRailProps) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  // C41.1 — collapse state is owned by the authoritative app store (single
+  // source of truth) so the rail stays consistent across route transitions and
+  // between desktop/mobile, instead of a per-mount local state that reset on
+  // every navigation. The store is the canonical navigation/runtime boundary.
+  const collapsed = useAppStore((s) => s.sidebarCollapsed);
+  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const { performance } = useShell();
 
   const domainGroups = useMemo(() => buildDomainGroups(), []);
@@ -157,8 +163,9 @@ export function LeftRail({ className }: LeftRailProps) {
         'border-r border-[var(--border-default)]',
         'bg-[var(--surface-default)]',
         'transition-all duration-150 ease-out',
-        // Mobile: collapsed by default (56px), Desktop: expanded (180px)
-        'lg:w-[180px] w-14',
+        // Mobile: always narrow icon rail (56px). Desktop: width reflects the
+        // authoritative collapse state (180px expanded, 56px collapsed).
+        collapsed ? 'lg:w-14 w-14' : 'lg:w-[180px] w-14',
         className,
       )}
     >
@@ -176,7 +183,7 @@ export function LeftRail({ className }: LeftRailProps) {
           </span>
         )}
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => toggleSidebar()}
           className="flex items-center justify-center rounded-[var(--radius-sm)] h-6 w-6 hover:bg-[var(--surface-interactive)] text-[var(--text-tertiary)] transition-colors"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
