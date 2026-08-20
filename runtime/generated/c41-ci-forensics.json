@@ -1,0 +1,52 @@
+{
+  "certification": "M9-C41 CI Dependency Lifecycle & Mutation Forensics",
+  "generated_at": "2026-08-20T21:40:00+05:30",
+  "head": "aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f",
+  "tree": "c43d6d20162735079e46d923a762644c771f44e4",
+  "finding_a": {
+    "external_claim": "next: not found — add `working-directory: ./frontend` + `npm ci`",
+    "investigation": {
+      "workflow": ".github/workflows/playwright.yml",
+      "node_setup_action": ".github/actions/setup-node-runtime/action.yml",
+      "node_setup_does_npm_ci": true,
+      "node_setup_working_dir": "frontend (input default)",
+      "run_script": ".github/scripts/run_playwright_tests.sh",
+      "run_script_builds_before_test": true,
+      "run_script_command": "npm run build && npx playwright test",
+      "verify_profile_command": "cd frontend && npm run build && npx playwright test ${PLAYWRIGHT_PROJECT}",
+      "conclusion": "The CI pipeline ALREADY installs dependencies via `npm ci` (setup-node-runtime) and builds via `npm run build` before Playwright. The recommended `npm ci` addition is REDUNDANT and was NOT a causal CI failure."
+    },
+    "classification": "CI_INFRASTRUCTURE_DEFECT — NOT REPRODUCED (false positive)",
+    "permanent_correction": "None required. Documented that the dependency lifecycle is already correct in CI: checkout -> setup-node(npm ci) -> setup-playwright -> verify.py playwright (build+test) -> upload artifacts.",
+    "local_note": "Locally, `npx playwright test` directly (without `npm run build`) fails because next start requires a build in dist/. That is a LOCAL usage error, not a CI defect. `python runtime/verify.py playwright` correctly builds first."
+  },
+  "finding_b": {
+    "external_claim": "mutation exited code 1 because mutation score < 80%",
+    "investigation": {
+      "workflow": ".github/workflows/mutation.yml (schedule: nightly 02:00 + workflow_dispatch)",
+      "command": "python runtime/verify.py mutation -> .github/scripts/run_mutation_selective.sh",
+      "threshold_source": "backend/tests/mutation/mutation_config.toml [thresholds] = 80 per engine",
+      "mutmut_invocation": "mutmut run (full scope src/engines/, pytest runner)",
+      "exit_code_semantics": "0=success, 1=infra failure, 2/4/8=mutation failure(survivors/timeout/slow), bit-OR combinations",
+      "threshold_in_ci_matches_local": true,
+      "corpus_identical_ci_local": true,
+      "repository_restored_after_run": "mutmut run is read-only against source under test; no source mutation persisted",
+      "verified_in_this_session": false,
+      "reason": "Full mutmut run across src/engines is long-running and is a NIGHTLY scheduled job, not part of the per-PR CI gate (C40 reported Mutation = CI_REQUIRED). It was not executed in this session."
+    },
+    "classification": "MUTATION_SCORE_FAILURE — UNVERIFIED (requires nightly CI run to confirm)",
+    "permanent_correction": "DO NOT lower the 80% threshold. If the nightly run shows genuine survivors, add behaviorally-meaningful tests covering the missed mutant; never write tests whose sole purpose is killing a mutant. Threshold synchronization already confirmed identical locally/CI.",
+    "threshold_lowered": false
+  },
+  "dependency_lifecycle_authoritative": {
+    "fresh_runner": "yes",
+    "checkout": "actions/checkout@v4 fetch-depth:0",
+    "node_setup": "setup-node-runtime (npm ci)",
+    "playwright_browsers": "setup-playwright (chromium firefox webkit)",
+    "build": "run_playwright_tests.sh: npm run build",
+    "playwright": "npx playwright test (matrix sharded by PLAYWRIGHT_PROJECT)",
+    "runtime_parity": "verify.py playwright == CI playwright.yml (same source, same build+test, same pass/fail)",
+    "single_installation_authority": true
+  },
+  "status": "CONDITIONAL — Finding A refuted; Finding B requires nightly CI confirmation"
+}

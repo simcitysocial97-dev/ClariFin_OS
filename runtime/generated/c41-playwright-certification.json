@@ -1,0 +1,118 @@
+{
+  "certification": "M9-C41 Playwright Defect Remediation",
+  "generated_at": "2026-08-20T21:40:00+05:30",
+  "head": "aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f",
+  "tree": "c43d6d20162735079e46d923a762644c771f44e4",
+  "baseline_c40": {
+    "chromium_pass": 203,
+    "chromium_fail": 17,
+    "chromium_skip": 13,
+    "note": "C40 baseline. Reproduced via `python runtime/verify.py playwright` (chromium first, then all projects)."
+  },
+  "c41_reproduced_chromium": {
+    "pass": 213,
+    "fail": 7,
+    "skip": 13,
+    "duration_minutes": 4.9,
+    "command": "npx playwright test --project=chromium",
+    "note": "After C41 genuine fixes (sidebar collapse + demonstrably-incorrect test corrections), failures reduced 17 -> 7."
+  },
+  "failure_ledger": [
+    {
+      "test": "transactions.spec.ts:180 should clear filters",
+      "browser": "chromium",
+      "route": "/transactions",
+      "first_causal_failure": "searchInput.fill('Test') timed out (element visible but action blocked)",
+      "classification": "CLICK_INTERCEPTION / LAYOUT_OVERLAP",
+      "root_cause": "A full-area `absolute inset-0` workspace overlay (WorkspaceContainer/WorkspaceContent nesting in os-shell) intercepts pointer events on the transactions table region. Rows are visually present but not clickable at their coordinates (elementFromPoint at row center resolves to a sibling surface, not the row).",
+      "severity": "high",
+      "permanent_correction": "PENDING — requires resolving the stacking/overlap in the workspace container so the table receives pointer events (not pointer-events:none workaround).",
+      "regression_coverage": "none yet"
+    },
+    {
+      "test": "transactions.spec.ts:371 should open transaction details",
+      "browser": "chromium",
+      "route": "/transactions",
+      "first_causal_failure": "transactionRow.click() timed out (15s)",
+      "classification": "CLICK_INTERCEPTION / LAYOUT_OVERLAP",
+      "root_cause": "Same absolute-inset-0 overlay intercepts the table row click. Note: page passes onRowClick={() => {}} (no detail navigation wired), so even a successful click opens nothing — the feature contract for row->detail must also be confirmed/implemented.",
+      "severity": "high",
+      "permanent_correction": "PENDING — fix overlay stacking; confirm row-click->detail contract.",
+      "regression_coverage": "none yet"
+    },
+    {
+      "test": "visual-regression.spec.ts cards-page",
+      "browser": "chromium",
+      "route": "/cards",
+      "first_causal_failure": "toHaveScreenshot mismatch vs cards-page-chromium-linux.png",
+      "classification": "VISUAL_BASELINE_DEFECT",
+      "root_cause": "Stale baseline OR persisted collapse-state leakage from earlier tests in the same browser context (rail width 56px vs 180px). App UI verified correct via 200+ functional tests. Provenance not yet re-established.",
+      "severity": "medium",
+      "permanent_correction": "PENDING — add state reset before visual snapshots, prove canonical UI, rebaseline with provenance binding.",
+      "regression_coverage": "none yet"
+    },
+    {
+      "test": "visual-regression.spec.ts behaviour-page",
+      "browser": "chromium",
+      "route": "/behaviour",
+      "first_causal_failure": "toHaveScreenshot mismatch vs behavior-page-chromium-linux.png",
+      "classification": "VISUAL_BASELINE_DEFECT",
+      "root_cause": "Same as cards-page (baseline drift / state leakage).",
+      "severity": "medium",
+      "permanent_correction": "PENDING — provenance-bound rebaseline.",
+      "regression_coverage": "none yet"
+    },
+    {
+      "test": "visual-regression.spec.ts reconciliation-page",
+      "browser": "chromium",
+      "route": "/reconciliation",
+      "first_causal_failure": "toHaveScreenshot mismatch vs reconciliation-page-chromium-linux.png",
+      "classification": "VISUAL_BASELINE_DEFECT",
+      "root_cause": "Same as cards-page (baseline drift / state leakage).",
+      "severity": "medium",
+      "permanent_correction": "PENDING — provenance-bound rebaseline.",
+      "regression_coverage": "none yet"
+    },
+    {
+      "test": "dashboard.spec.ts:111 should display quick stats cards",
+      "browser": "chromium",
+      "route": "/dashboard",
+      "first_causal_failure": "page.goto('/') timeout waiting for 'load' (30s) in beforeEach",
+      "classification": "SERVER_LIFECYCLE / TIMEOUT (flaky under full parallel run)",
+      "root_cause": "Timeout occurs only in the full 233-test parallel run (resource contention / load-event race), NOT in isolated runs where the spec passes 90/90. Not a genuine application defect.",
+      "severity": "low",
+      "permanent_correction": "Resolved by isolation; monitor under full matrix. May indicate need for waitUntil tuning in tests.",
+      "regression_coverage": "passes in isolation"
+    },
+    {
+      "test": "dashboard.spec.ts:124 should display navigation sidebar",
+      "browser": "chromium",
+      "route": "/dashboard",
+      "first_causal_failure": "page.goto('/') timeout waiting for 'load' (30s) in beforeEach",
+      "classification": "SERVER_LIFECYCLE / TIMEOUT (flaky under full parallel run)",
+      "root_cause": "Same as quick-stats; passes in isolated run.",
+      "severity": "low",
+      "permanent_correction": "Resolved by isolation; monitor under full matrix.",
+      "regression_coverage": "passes in isolation"
+    },
+    {
+      "test": "performance.spec.ts:31 home page should load within threshold",
+      "browser": "chromium",
+      "route": "/",
+      "first_causal_failure": "load time > 2000ms (C40 measured ~2273ms)",
+      "classification": "PERFORMANCE_DEFECT (environment/parallelism dependent)",
+      "root_cause": "In isolated run the home page loads within threshold. Under the full parallel matrix the shared server/DB incurs contention. Bottleneck not yet isolated to a specific app layer (server response / JS exec / API fan-out). Threshold (2s) treated as authoritative product requirement — NOT raised.",
+      "severity": "medium",
+      "permanent_correction": "PENDING — isolate bottleneck via traced timing; optimize only the proven layer.",
+      "regression_coverage": "none yet"
+    }
+  ],
+  "resolved_in_c41": [
+    "sidebar collapse state machine (genuine APPLICATION_DEFECT) — LeftRail now sources collapse from authoritative useAppStore; width transitions 180px<->56px. Fixes navigation:134 + css-integrity:47.",
+    "navigation spec selectors (TEST_SELECTOR_DEFECT) — assert actual LeftRail <a> links and mobile rail navigation; fixes navigation:88, navigation:173.",
+    "API-unavailable graceful tests asserted <main> (TEST_DEFECT) — behaviour/reconciliation pages render non-<main> Alert error states; fixed to assert error Alert. Fixes behaviour:297, reconciliation:207.",
+    "edge-case stability tests asserted <main> + leaked persisted store (FIXTURE/SELECTOR_DEFECT) — fixed to assert rendered content + added beforeEach localStorage.clear(). Fixes edge-cases:167,386.",
+    "NaN checks used text=NaN substring match on 'fiNaNcial' (TEST_DEFECT false positive) — replaced with leaf-text scan ignoring framework scripts. Fixes edge-cases:422, e2e-financial-logic:310. Proven: app renders NO actual NaN/Infinity."
+  ],
+  "status": "CONDITIONAL"
+}

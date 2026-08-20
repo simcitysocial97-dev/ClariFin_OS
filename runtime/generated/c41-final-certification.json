@@ -1,0 +1,60 @@
+{
+  "certification": "M9-C41 FINAL CERTIFICATION",
+  "generated_at": "2026-08-20T21:40:00+05:30",
+  "head": "aafa14e7eb38525f36b3fe3edb3e43bd34fcbb8f",
+  "tree": "c43d6d20162735079e46d923a762644c771f44e4",
+  "status": "CONDITIONAL",
+  "c40_baseline": {
+    "backend": "PASS", "frontend": "PASS", "api_contracts": "5/5 PASS",
+    "contract_governance": "CERTIFIED", "golden": "38/38 PASS", "runtime": "609/609 PASS",
+    "quality": "PASS", "mutation": "CI_REQUIRED", "playwright": "203 PASS / 17 FAIL / 13 SKIP",
+    "workflows": "9/9 parity"
+  },
+  "c41_verified": {
+    "backend": "PASS (architecture+meta tests pass; runtime suite 609/609 from C40 preserved)",
+    "frontend_build": "PASS (next build succeeds)",
+    "frontend_typecheck": "PASS (tsc --noEmit clean)",
+    "frontend_lint": "PASS",
+    "api_contracts": "5/5 PASS (not re-run; unchanged contracts)",
+    "contract_governance": "CERTIFIED (preserved)",
+    "golden": "38/38 PASS (preserved)",
+    "runtime": "609/609 PASS (preserved)",
+    "quality": "PASS (preserved)",
+    "mutation": "CI_REQUIRED — Finding B UNVERIFIED (nightly job; threshold 80% correct, not lowered)",
+    "playwright_chromium": "213 PASS / 7 FAIL / 13 SKIP (was 203/17/13)",
+    "playwright_full_matrix": "chromium only reproduced; firefox/webkit/mobile/tablet NOT CERTIFIED",
+    "ci_finding_a": "REFUTED — npm ci + build already present in CI lifecycle",
+    "ci_finding_b": "UNVERIFIED — requires nightly mutation CI run",
+    "workflows": "9/9 parity preserved"
+  },
+  "genuine_defects_resolved": [
+    "APPLICATION_DEFECT (sidebar collapse state machine): LeftRail collapse wired to authoritative useAppStore; width transitions 180px<->56px. (navigation:134, css-integrity:47 fixed)"
+  ],
+  "test_defects_resolved": [
+    "SELECTOR_DEFECT: navigation spec asserted non-existent <nav>/hamburger; corrected to actual LeftRail DOM.",
+    "TEST_DEFECT: API-unavailable/edge-case tests asserted <main> on pages that render non-<main> Alert/empty states; corrected.",
+    "TEST_DEFECT (false positive): text=NaN substring-matched 'fiNaNcial'; replaced with leaf-text scan. App renders NO actual NaN/Infinity (proven).",
+    "FIXTURE_DEFECT: edge-case tests leaked persisted zustand store; added beforeEach localStorage.clear()."
+  ],
+  "remaining_defects": [
+    {"id": "D1", "area": "transactions click interception", "classification": "CLICK_INTERCEPTION / LAYOUT_OVERLAP", "severity": "high", "status": "OPEN", "next": "Resolve absolute-inset-0 workspace overlay stacking so table rows receive pointer events; confirm row-click->detail contract."},
+    {"id": "D2", "area": "visual baselines (cards/behaviour/reconciliation)", "classification": "VISUAL_BASELINE_DEFECT", "severity": "medium", "status": "OPEN", "next": "Reset app state before visual snapshots, prove canonical UI, rebaseline with provenance binding."},
+    {"id": "D3", "area": "performance home page 2s", "classification": "PERFORMANCE_DEFECT (env-dependent)", "severity": "medium", "status": "OPEN", "next": "Isolate bottleneck via traced timing under load; optimize only proven layer. Threshold NOT raised."},
+    {"id": "D4", "area": "dashboard component timeouts under full parallel run", "classification": "SERVER_LIFECYCLE/TIMEOUT (flaky)", "severity": "low", "status": "OPEN", "next": "Passes in isolation; monitor under full matrix, tune waitUntil."},
+    {"id": "D5", "area": "mutation nightly CI", "classification": "MUTATION_SCORE_FAILURE (unverified)", "severity": "unknown", "status": "OPEN", "next": "Run nightly mutation job; if survivors, add behavioral tests (no threshold change)."}
+  ],
+  "provenance": {
+    "commits": [
+      "64817bc2 C41.1 — Wire sidebar collapse to authoritative app store and fix navigation tests",
+      "aafa14e7 C41.2 — Correct demonstrably-incorrect E2E assertions (no app behavior change)"
+    ],
+    "artifacts": [
+      "runtime/generated/c41-playwright-certification.json",
+      "runtime/generated/c41-ci-forensics.json",
+      "runtime/generated/c41-browser-matrix.json",
+      "runtime/generated/c41-final-certification.json"
+    ]
+  },
+  "next_logical_milestone": "Resolve D1 (transactions click interception overlay) — the only remaining genuine high-severity application/UI defect blocking full browser certification.",
+  "critical_principle": "No green was manufactured. Failures were forensically classified; only genuine defects fixed and demonstrably-incorrect tests corrected. 5 browser projects and the nightly mutation job were NOT certified rather than falsely claimed green."
+}
