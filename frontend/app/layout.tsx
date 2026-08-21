@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Script from 'next/script';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -26,22 +25,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Load PDF.js from CDN (non-blocking, injected before interactive) */}
-        <Script
-          src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
-          strategy="beforeInteractive"
-        />
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            if (typeof pdfjsLib !== 'undefined') {
-              pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
-          `
-        }} />
-        {/* Load Bank Parser */}
-        <script src="/parser/browser-parser.js" defer />
-        {/* Load Debug Panel */}
-        <script src="/parser/debug.js" defer />
       </head>
       <body className={inter.className}>
         <TooltipProvider delayDuration={300}>

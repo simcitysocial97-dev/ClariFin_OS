@@ -1,5 +1,5 @@
 {
-  "last_commit": "a74892ce6a7f83cde61abef09274df89f19aa071",
+  "last_commit": "0935c1b7fbc2cdb78fb26a09664b042e75dd557b",
   "changed_files": [
     ".github/scripts/run_api_contracts.sh",
     ".github/scripts/run_playwright_tests.sh",
@@ -11,6 +11,7 @@
     "backend/src/core/dtos/reconciliation_dto.py",
     "backend/src/core/dtos/transaction_dto.py",
     "backend/src/core/mappers/transaction_mapper.py",
+    "backend/src/engines/loan_engine/prepayment.py",
     "backend/src/routers/reconciliation.py",
     "backend/src/routers/transactions.py",
     "backend/src/services/behaviour_service.py",
@@ -18,6 +19,7 @@
     "backend/src/services/transaction_service.py",
     "backend/src/startup.py",
     "backend/tests/generated/openapi-current.json",
+    "backend/tests/unit/engines/loan/test_c39_regression.py",
     "backend/tests/unit/services/test_behaviour_service.py",
     "docs/M9-C10-forensic-report.md",
     "docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md",
@@ -131,7 +133,6 @@
     "runtime/verify.py",
     "test-results/.last-run.json",
     "tools/e2e_seed.py",
-    "backend/tests/unit/engines/loan/test_c39_regression.py",
     "dependency-reports/dependency-health.md",
     "dependency-reports/npm-audit.txt",
     "dependency-reports/npm-outdated.json",
@@ -617,6 +618,7 @@
         "backend/src/core/dtos/reconciliation_dto.py",
         "backend/src/core/dtos/transaction_dto.py",
         "backend/src/core/mappers/transaction_mapper.py",
+        "backend/src/engines/loan_engine/prepayment.py",
         "backend/src/routers/reconciliation.py",
         "backend/src/routers/transactions.py",
         "backend/src/services/behaviour_service.py",
@@ -624,6 +626,7 @@
         "backend/src/services/transaction_service.py",
         "backend/src/startup.py",
         "backend/tests/generated/openapi-current.json",
+        "backend/tests/unit/engines/loan/test_c39_regression.py",
         "backend/tests/unit/services/test_behaviour_service.py",
         "docs/M9-C10-forensic-report.md",
         "docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md",
@@ -737,7 +740,6 @@
         "runtime/verify.py",
         "test-results/.last-run.json",
         "tools/e2e_seed.py",
-        "backend/tests/unit/engines/loan/test_c39_regression.py",
         "dependency-reports/dependency-health.md",
         "dependency-reports/npm-audit.txt",
         "dependency-reports/npm-outdated.json",
@@ -882,6 +884,6 @@
       ]
     }
   },
-  "duration": 7.5091950749992975,
-  "timestamp": "2026-08-20T12:47:33.389452+00:00"
+  "duration": 9.030090150998149,
+  "timestamp": "2026-08-20T13:40:37.166514+00:00"
 }

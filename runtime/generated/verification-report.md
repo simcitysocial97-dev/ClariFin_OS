@@ -1,7 +1,7 @@
 # Verification Report
 
 **Profile:** golden
-**Generated:** 2026-08-20T12:47:33.388352+00:00
+**Generated:** 2026-08-20T13:40:37.164157+00:00
 **Overall Status:** passed
 
 ## Changed Files
@@ -16,6 +16,7 @@
 - `backend/src/core/dtos/reconciliation_dto.py`
 - `backend/src/core/dtos/transaction_dto.py`
 - `backend/src/core/mappers/transaction_mapper.py`
+- `backend/src/engines/loan_engine/prepayment.py`
 - `backend/src/routers/reconciliation.py`
 - `backend/src/routers/transactions.py`
 - `backend/src/services/behaviour_service.py`
@@ -23,6 +24,7 @@
 - `backend/src/services/transaction_service.py`
 - `backend/src/startup.py`
 - `backend/tests/generated/openapi-current.json`
+- `backend/tests/unit/engines/loan/test_c39_regression.py`
 - `backend/tests/unit/services/test_behaviour_service.py`
 - `docs/M9-C10-forensic-report.md`
 - `docs/architecture/FRONTEND_BACKEND_RUNTIME_INTEGRATION.md`
@@ -136,7 +138,6 @@
 - `runtime/verify.py`
 - `test-results/.last-run.json`
 - `tools/e2e_seed.py`
-- `backend/tests/unit/engines/loan/test_c39_regression.py`
 - `dependency-reports/dependency-health.md`
 - `dependency-reports/npm-audit.txt`
 - `dependency-reports/npm-outdated.json`
@@ -144,14 +145,14 @@
 
 ## Blast Radius
 
-- **affected_engines**: ['backend/src/engines/reconciliation_engine.py', 'backend/src/engines/behaviour_engine', 'backend/src/engines/account_engine', 'backend/src/engines/credit_card_engine', 'backend/src/engines/loan_engine']
-- **affected_services**: ['backend/src/services/reconciliation_service.py', 'backend/src/services/behaviour_service.py', 'backend/src/services/dashboard_service.py', 'backend/src/services/import_service.py', 'backend/src/services/account_service.py', 'backend/src/services/credit_card_service.py', 'backend/src/services/loan_analysis_service.py', 'backend/src/services/loan_service.py', 'backend/src/services/loan_simulation_service.py', 'backend/src/services/transaction_intelligence_service.py', 'service:backend/src/services/transaction_service.py', 'service:backend/src/services/dashboard_service.py', 'service:backend/src/services/import_service.py', 'service:backend/src/services/__init__.py']
-- **affected_capabilities**: ['useReconciliationCapability', 'useBehaviourCapability', 'useAccountsCapability', 'useCreditCardsCapability', 'useLoansCapability', 'capability:useCashflowCapability', 'capability:useForecastCapability', 'capability:useInvestmentsCapability', 'capability:useNetWorthCapability', 'capability:useTransactionCapability', 'capability:useBehaviourCapability', 'capability:useReconciliationCapability', 'capability:useLoansCapability']
-- **affected_tests**: ['backend/tests/invariants/test_reconciliation_determinism.py', 'backend/tests/invariants/test_reconciliation_properties.py', 'backend/tests/properties/reconciliation/test_engine_properties.py', 'backend/tests/unit/engines/reconciliation/test_reconciliation.py', 'backend/tests/capability/pattern_analysis/test_capability.py', 'backend/tests/properties/behaviour/test_engine_properties.py', 'backend/tests/properties/recommendations/test_engine_properties.py', 'backend/tests/unit/engines/behavior/test_behavior_engine.py', 'backend/tests/unit/engines/behaviour/test_core.py', 'backend/tests/unit/engines/behaviour/test_integration.py', 'backend/tests/unit/engines/behaviour/test_metrics.py', 'backend/tests/unit/engines/behaviour/test_patterns.py', 'backend/tests/unit/engines/account/test_account_engine.py', 'backend/tests/properties/credit_card_engine/__init__.py', 'backend/tests/properties/credit_card_engine/test_billing_properties.py', 'backend/tests/properties/credit_card_engine/test_emi_properties.py', 'backend/tests/properties/credit_card_engine/test_interest_properties.py', 'backend/tests/properties/credit_cards/test_engine_properties.py', 'backend/tests/properties/lending/test_engine_properties.py', 'backend/tests/unit/engines/credit_card/test_credit_card_engine.py', 'backend/tests/properties/loan_engine/__init__.py', 'backend/tests/properties/loan_engine/test_amortization_properties.py', 'backend/tests/properties/loan_engine/test_emi_properties.py', 'backend/tests/properties/loan_engine/test_floating_rate_properties.py', 'backend/tests/properties/loan_engine/test_foreclosure_properties.py', 'backend/tests/properties/loan_engine/test_metrics_properties.py', 'backend/tests/properties/loan_engine/test_prepayment_properties.py', 'backend/tests/unit/engines/loan/test_amortization.py', 'backend/tests/unit/engines/loan/test_loan_engine.py']
+- **affected_engines**: ['backend/src/engines/loan_engine', 'backend/src/engines/reconciliation_engine.py', 'backend/src/engines/behaviour_engine', 'backend/src/engines/account_engine', 'backend/src/engines/credit_card_engine']
+- **affected_services**: ['backend/src/services/loan_analysis_service.py', 'backend/src/services/loan_service.py', 'backend/src/services/loan_simulation_service.py', 'backend/src/services/transaction_intelligence_service.py', 'backend/src/services/reconciliation_service.py', 'backend/src/services/behaviour_service.py', 'backend/src/services/dashboard_service.py', 'backend/src/services/import_service.py', 'backend/src/services/account_service.py', 'backend/src/services/credit_card_service.py', 'service:backend/src/services/transaction_service.py', 'service:backend/src/services/dashboard_service.py', 'service:backend/src/services/import_service.py', 'service:backend/src/services/__init__.py']
+- **affected_capabilities**: ['useLoansCapability', 'useReconciliationCapability', 'useBehaviourCapability', 'useAccountsCapability', 'useCreditCardsCapability', 'capability:useCashflowCapability', 'capability:useForecastCapability', 'capability:useInvestmentsCapability', 'capability:useNetWorthCapability', 'capability:useTransactionCapability', 'capability:useBehaviourCapability', 'capability:useReconciliationCapability', 'capability:useLoansCapability']
+- **affected_tests**: ['backend/tests/properties/lending/test_engine_properties.py', 'backend/tests/properties/loan_engine/__init__.py', 'backend/tests/properties/loan_engine/test_amortization_properties.py', 'backend/tests/properties/loan_engine/test_emi_properties.py', 'backend/tests/properties/loan_engine/test_floating_rate_properties.py', 'backend/tests/properties/loan_engine/test_foreclosure_properties.py', 'backend/tests/properties/loan_engine/test_metrics_properties.py', 'backend/tests/properties/loan_engine/test_prepayment_properties.py', 'backend/tests/unit/engines/loan/test_amortization.py', 'backend/tests/unit/engines/loan/test_loan_engine.py', 'backend/tests/invariants/test_reconciliation_determinism.py', 'backend/tests/invariants/test_reconciliation_properties.py', 'backend/tests/properties/reconciliation/test_engine_properties.py', 'backend/tests/unit/engines/reconciliation/test_reconciliation.py', 'backend/tests/capability/pattern_analysis/test_capability.py', 'backend/tests/properties/behaviour/test_engine_properties.py', 'backend/tests/properties/recommendations/test_engine_properties.py', 'backend/tests/unit/engines/behavior/test_behavior_engine.py', 'backend/tests/unit/engines/behaviour/test_core.py', 'backend/tests/unit/engines/behaviour/test_integration.py', 'backend/tests/unit/engines/behaviour/test_metrics.py', 'backend/tests/unit/engines/behaviour/test_patterns.py', 'backend/tests/unit/engines/account/test_account_engine.py', 'backend/tests/properties/credit_card_engine/__init__.py', 'backend/tests/properties/credit_card_engine/test_billing_properties.py', 'backend/tests/properties/credit_card_engine/test_emi_properties.py', 'backend/tests/properties/credit_card_engine/test_interest_properties.py', 'backend/tests/properties/credit_cards/test_engine_properties.py', 'backend/tests/unit/engines/credit_card/test_credit_card_engine.py']
 
 ## Verification Plan
 
-- **Plan ID:** plan-20260820-124727
+- **Plan ID:** plan-20260820-134029
 - **Scope:** golden
 - **Targets:** 1
 - **Steps:** 1
@@ -161,17 +162,24 @@
 
 | Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
 |---------|---------|--------|------|----------|-------|--------|--------|
-| step-0001 | bash .github/scripts/run_golden_tests.sh | VerificationStatus.PASSED | 0 | 5.9s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
+| step-0001 | bash .github/scripts/run_golden_tests.sh | VerificationStatus.PASSED | 0 | 7.7s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
 
 ## Results Summary
 
 - **Passed:** 1
 - **Failed:** 0
 - **Skipped:** 0
-- **Total Duration:** 5.9s
+- **Total Duration:** 7.7s
 
 
 ## Dependency Chains (Program 7A)
+
+### backend/src/engines/loan_engine/prepayment.py
+- Engine: backend/src/engines/loan_engine
+- Services: backend/src/services/loan_analysis_service.py, backend/src/services/loan_service.py, backend/src/services/loan_simulation_service.py, backend/src/services/transaction_intelligence_service.py
+- Endpoints: DELETE /loans/{loan_id}, GET /loans, GET /loans/analysis/priority, GET /loans/{loan_id}, GET /loans/{loan_id}/schedule
+- Capabilities: useLoansCapability
+- Tests: 10 affected
 
 ### backend/src/routers/reconciliation.py
 - Engine: backend/src/engines/reconciliation_engine.py
@@ -235,4 +243,4 @@ No evidence files generated.
 
 ## Recommendations
 
-- Review changes in affected engines: backend/src/engines/reconciliation_engine.py, backend/src/engines/behaviour_engine, backend/src/engines/account_engine, backend/src/engines/credit_card_engine, backend/src/engines/loan_engine
+- Review changes in affected engines: backend/src/engines/loan_engine, backend/src/engines/reconciliation_engine.py, backend/src/engines/behaviour_engine, backend/src/engines/account_engine, backend/src/engines/credit_card_engine
