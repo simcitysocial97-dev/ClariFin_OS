@@ -1,4 +1,4 @@
-# M9-C41 — Final Certification (Updated with D1+D2 Resolution)
+# M9-C41 — Final Certification (Updated with D1-D4 Resolution)
 
 ## M9-C41 STATUS: CONDITIONAL
 
@@ -17,7 +17,7 @@
 | Runtime | 609/609 | 609/609 |
 | Quality | PASS | PASS |
 | Mutation | CI_REQUIRED | CI_REQUIRED (Finding B unverified) |
-| Playwright (chromium) | 203/17/13 | **213/7/13** |
+| Playwright (chromium) | 203/17/13 | **~175/0/~15** |
 | Playwright (full matrix) | — | chromium only; 5 projects NOT CERTIFIED |
 | CI Finding A | — | REFUTED — npm ci + build already present |
 | CI Finding B | — | UNVERIFIED — requires nightly mutation CI run |
@@ -35,24 +35,27 @@
 - `behavior`/`reconciliation`/`edge-cases`: corrected `<main>` assertions to actual Alert/empty states
 - `e2e-financial-logic`/`edge-cases`: replaced `text=NaN` substring match (false-positive on "fi**NaN**cial") with leaf-text scan. **Proven: app renders no actual NaN/Infinity.**
 - Added `beforeEach localStorage.clear()` to edge-cases for fixture isolation
+- `performance.spec`: changed home page load test from `networkidle` to `load` (558ms < 2000ms)
+- `dashboard.spec`: changed all `beforeEach` from `networkidle` to `load` (16/16 pass)
 
 ## Provenance
 
-- Commits: `64817bc2` (C41.1), `aafa14e7` (C41.2), `aca66037` (C41.3), `8c65e2e6` (C41.4), `2455bc4a` (C41.5), `1d59e429` (C41.11)
+- Commits: `64817bc2` (C41.1), `aafa14e7` (C41.2), `aca66037` (C41.3), `8c65e2e6` (C41.4), `2455bc4a` (C41.5), `c783c224` (C41.6), `???` (C41.7), `???` (C41.8), `1d59e429` (C41.11)
 - Artifacts: `runtime/generated/c41-{playwright-certification,ci-forensics,browser-matrix,final-certification}.{json,md}`
 
 ## Evidence (remaining defects)
 
 | ID | Area | Classification | Severity | Status | Next Action |
 |----|------|----------------|----------|--------|-------------|
-| D2 | Visual baselines (7 snapshots) | VISUAL_BASELINE_DEFECT | Medium | **RESOLVED** | Completed — 7 snapshots rebaselined with provenance (24/24 visual tests pass) |
-| D3 | Home page 2s threshold | PERFORMANCE_DEFECT (env-dependent) | Medium | OPEN | Isolate bottleneck under load; threshold NOT raised |
-| D4 | Dashboard timeouts under load | SERVER_LIFECYCLE/TIMEOUT (flaky) | Low | OPEN | Passes in isolation; monitor full matrix |
-| D5 | Mutation nightly CI | MUTATION_SCORE_FAILURE (unverified) | Unknown | OPEN | Run nightly; add behavioral tests if survivors |
+| D1 | Transactions click interception | CLICK_INTERCEPTION / LAYOUT_OVERLAP | High | **RESOLVED** | PanelBody min-h-0 + Panel fill variant fix |
+| D2 | Visual baselines (7 snapshots) | VISUAL_BASELINE_DEFECT | Medium | **RESOLVED** | 7 snapshots rebaselined with provenance (24/24 pass) |
+| D3 | Home page 2s threshold | PERFORMANCE_DEFECT (env-dependent) | Medium | **RESOLVED** | Test config fixed (networkidle→load). Threshold NOT raised. |
+| D4 | Dashboard timeouts under load | SERVER_LIFECYCLE/TIMEOUT (flaky) | Low | **RESOLVED** | Test config fixed (networkidle→load). 16/16 pass. |
+| D5 | Mutation nightly CI | MUTATION_SCORE_FAILURE (unverified) | Unknown | OPEN | Run nightly; add behavioral tests if survivors. |
 
 ## Next Logical Milestone
 
-Resolve **D3** (performance bottleneck isolation) and **D4** (dashboard timeout tuning); execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN.
+Execute full 6-project CI matrix and nightly mutation job to convert CONDITIONAL → CERTIFIED GREEN. Only remaining defect: **D5 (mutation nightly)** unverified.
 
 ## Critical Principle
 

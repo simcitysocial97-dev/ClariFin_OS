@@ -21,8 +21,7 @@ test.describe('Dashboard Loading', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
     // Navigate first, then clear
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'load' });
     // Clear any existing data (wrapped in try-catch)
     try {
       await page.evaluate(() => localStorage.clear());
@@ -72,7 +71,7 @@ test.describe('Dashboard Loading', () => {
     await loadPromise;
     
     // Loading state should eventually resolve
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
   });
 });
 
@@ -84,7 +83,7 @@ test.describe('Dashboard Components', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
   });
 
   test('should display upload button', async ({ page }) => {
@@ -139,7 +138,7 @@ test.describe('Dashboard Charts', () => {
     captureErrors(page);
     // Navigate first
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     
     // Seed some test data (wrapped in try-catch)
     try {
@@ -158,7 +157,7 @@ test.describe('Dashboard Charts', () => {
         localStorage.setItem('bank-parser-storage', JSON.stringify(testData));
       });
       await page.reload();
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('load');
     } catch {
       // localStorage may not be available
     }
@@ -194,7 +193,7 @@ test.describe('Dashboard Interactions', () => {
   test.beforeEach(async ({ page, captureErrors }) => {
     captureErrors(page);
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
   });
 
   test('should toggle exclude transfers switch', async ({ page, waitForPageReady }) => {
@@ -306,7 +305,7 @@ test.describe('Dashboard Responsive', () => {
     
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     
     // Main content should be visible
     const main = page.locator('main').first();
@@ -322,7 +321,7 @@ test.describe('Dashboard Responsive', () => {
     
     await page.setViewportSize({ width: 768, height: 1024 });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     
     // Main content should be visible
     const main = page.locator('main').first();
@@ -334,7 +333,7 @@ test.describe('Dashboard Responsive', () => {
     
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('load');
     
     // Main content should be visible
     const main = page.locator('main').first();

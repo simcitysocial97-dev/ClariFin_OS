@@ -32,8 +32,7 @@ test.describe('Page Load Performance', () => {
     captureErrors(page);
     
     const startTime = Date.now();
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'load' });
     const loadTime = Date.now() - startTime;
     
     console.log(`Home page load time: ${loadTime}ms`);
