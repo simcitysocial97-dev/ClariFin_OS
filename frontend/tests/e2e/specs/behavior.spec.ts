@@ -37,7 +37,8 @@ test.describe('Behavior Page Loading', () => {
     // The behaviour workspace renders its title via the score/section headings
     // (not a top-level h1/h2/h3 landmark), so assert the page title content is
     // actually visible rather than assuming a specific heading tag.
-    const title = page.locator('text=/Financial Health Score|Behaviour|Wellness/i').first();
+    // Look for the visible page heading, not sidebar navigation labels
+    const title = page.locator('text=Financial Health Score').first();
     await expect(title).toBeVisible();
   });
 

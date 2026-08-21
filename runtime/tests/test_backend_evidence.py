@@ -118,14 +118,22 @@ class TestExitCodeContract:
         independent concurrent failures reflects the actual parallel execution
         model and is the correct contract.
         """
-        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        # Locate the canonical probe file and inject it into the invariants
+        # collection path so the backend verification script discovers it.
+        probe_file = REPO_ROOT / "backend/tests/probes/test_m4_exit_probe.py"
         evidence = tmp_path / "evidence"
+
+        # Ensure the canonical probe file exists in the repo
+        assert probe_file.exists(), f"Probe file not found at {probe_file}"
+
+        # Clean up any leftover probe from previous interrupted runs
+        probe_dir = REPO_ROOT / "backend/tests/invariants/_m4_exit_probe"
+        if probe_dir.exists():
+            shutil.rmtree(probe_dir, ignore_errors=True)
 
         probe_dir.mkdir(parents=True, exist_ok=True)
         try:
-            (probe_dir / "test_m4_exit_probe.py").write_text(
-                "def test_m4_probe():\n    assert False\n"
-            )
+            shutil.copy2(probe_file, probe_dir / "test_m4_exit_probe.py")
             failing = subprocess.run(
                 ["bash", str(BACKEND_SCRIPT)],
                 capture_output=True,
@@ -176,7 +184,7 @@ class TestBackendPhaseDecomposition:
     def test_suites_still_run_in_parallel(self):
         """Plan M4: preserve parallelism; do not serialize for convenience."""
         source = _script(BACKEND_SCRIPT)
-        assert "&\n" in source or "> \"$out\" 2>&1 &" in source
+        assert "&\n" in source or '> "$out" 2>&1 &' in source
         assert "pids+=($!)" in source
         assert 'wait "${pids[$i]}"' in source
 
@@ -291,9 +299,7 @@ class TestJUnitEmission:
             pytest.skip("merged junit.xml not present")
 
         evidence = TestResultCollector(REPO_ROOT).collect()
-        assert evidence.passed > 0, (
-            "collector parsed no tests; E-1 would still be open"
-        )
+        assert evidence.passed > 0, "collector parsed no tests; E-1 would still be open"
         assert evidence.duration_seconds > 0
         # Failure names must be reported whenever failures are counted — a count
         # without names would be unattributable evidence.
@@ -359,13 +365,16 @@ class TestNoWorkflowFilesTouched:
             cwd=str(REPO_ROOT),
         )
         # Allow: new api-contracts.yml, modified playwright.yml (needs contract-gate),
-        # modified frontend-verify.yml (added contract gate step)
+        # modified frontend-verify.yml (added contract gate step), modified mutation.yml (C43.4 mutation observability)
         allowed_changes = {
             ".github/workflows/api-contracts.yml",
             ".github/workflows/playwright.yml",
             ".github/workflows/frontend-verify.yml",
+            ".github/workflows/mutation.yml",
         }
-        lines = [line.strip() for line in result.stdout.strip().split("\n") if line.strip()]
+        lines = [
+            line.strip() for line in result.stdout.strip().split("\n") if line.strip()
+        ]
         unexpected = []
         for line in lines:
             parts = line.split()
@@ -373,9 +382,7 @@ class TestNoWorkflowFilesTouched:
                 filepath = parts[-1]
                 if filepath not in allowed_changes:
                     unexpected.append(filepath)
-        assert not unexpected, (
-            f"unexpected workflow file changes: {unexpected}"
-        )
+        assert not unexpected, f"unexpected workflow file changes: {unexpected}"
 
 
 class TestExitCodeContractLightweight:
@@ -395,7 +402,9 @@ class TestExitCodeContractLightweight:
             capture_output=True,
             text=True,
         )
-        assert result.returncode == 0, f"passing probe must exit 0; stderr={result.stderr}"
+        assert (
+            result.returncode == 0
+        ), f"passing probe must exit 0; stderr={result.stderr}"
 
     def test_failing_pytest_exits_nonzero(self, tmp_path: Path):
         probe = tmp_path / "test_fail.py"
@@ -419,9 +428,9 @@ class TestMutationRunnerPortability:
 
     def test_mutation_runner_uses_python3_not_python(self):
         source = _script(self._MUTATION_SCRIPT)
-        assert "python3 -m pytest" in source, (
-            "mutation runner must use python3 per repository convention"
-        )
+        assert (
+            "python3 -m pytest" in source
+        ), "mutation runner must use python3 per repository convention"
         assert "python -m pytest" not in source, (
             "bare `python -m pytest` is a CI portability defect; "
             "ubuntu-latest only ships `python3`"

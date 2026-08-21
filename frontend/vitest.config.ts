@@ -24,6 +24,7 @@ export default defineConfig({
       '.next',
       'playwright/**',
       'tests/**',
+      '**/.archive/**',
     ],
     coverage: {
       provider: 'v8',
