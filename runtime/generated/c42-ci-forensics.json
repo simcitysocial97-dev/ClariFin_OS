@@ -1,0 +1,90 @@
+{
+  "milestone": "M9-C42",
+  "timestamp": "2026-08-21T04:00:00Z",
+  "repository": {
+    "head": "1b8a601d8ed64ce29b9418f962642790585adab3",
+    "tree": "1cb6029db9e38cf0a4ef64c1c075dc717aae111c",
+    "branch": "m9c9-merge-authorization-resolution",
+    "remote": "https://github.com/simcitysocial97-dev/ClariFin_OS.git",
+    "remote_head": "1b8a601d",
+    "c40_baseline": "0935c1b7",
+    "commits_since_c40": 12
+  },
+  "certification": "CONDITIONAL",
+  "workflows": {
+    "api_contracts": {
+      "run_id": 32442687366,
+      "status": "success"
+    },
+    "verification_reconcile": {
+      "run_id": 32442687310,
+      "status": "success"
+    },
+    "backend_verification": {
+      "run_id": 32442703376,
+      "status": "success"
+    },
+    "frontend_verification": {
+      "run_id": 32442707345,
+      "status": "success"
+    },
+    "quality_gate": {
+      "run_id": 32442705599,
+      "status": "success"
+    },
+    "golden": {
+      "run_id": 32441740061,
+      "status": "success"
+    },
+    "mutation": {
+      "run_id": 32442699755,
+      "status": "failure",
+      "classification": "G.MUTATION_DEFECT"
+    },
+    "playwright": {
+      "run_id": 32442701700,
+      "status": "failure",
+      "classification": "E.SERVER_LIFECYCLE_DEFECT"
+    }
+  },
+  "playwright_matrix": {
+    "chromium": {
+      "passed": 1151,
+      "failed": 166,
+      "skipped": 78
+    },
+    "firefox": {
+      "passed": 1150,
+      "failed": 166,
+      "skipped": 78
+    },
+    "webkit": {
+      "passed": 1153,
+      "failed": 166,
+      "skipped": 78
+    },
+    "mobile_chrome": {
+      "passed": 1147,
+      "failed": 168,
+      "skipped": 78
+    },
+    "mobile_safari": {
+      "passed": 1148,
+      "failed": 168,
+      "skipped": 78
+    }
+  },
+  "fixes_applied": [
+    "test_c39_regression.py: remove unused imports, fix formatting",
+    "dashboard_dto.py: annotate json_schema_extra type",
+    "transaction_mapper.py: coerce bank str|None to str",
+    "camelot_extractor.py: remove stale type: ignore",
+    "hybrid_extractor.py: remove stale type: ignore",
+    "api.py: fix async generator return annotation"
+  ],
+  "remaining_blockers": [
+    "D6: Backend server startup timeout in Playwright CI",
+    "D7: Missing visual regression baselines for non-chromium browsers",
+    "D8: Mutation score undetermined (output suppressed)"
+  ]
+}
