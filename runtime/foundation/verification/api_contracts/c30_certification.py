@@ -37,13 +37,17 @@ if str(BACKEND_DIR) not in sys.path:
 # C30.1 — Mutation Surface Inventory
 # =============================================================================
 
+
 @dataclass(frozen=True)
 class MutationSurface:
     """A single contract mutation surface with its detector."""
+
     id: str
     category: str  # backend | frontend | artifact | wire
     description: str
-    detector: str  # freshness | generated_types | schema_compat | consumer_integrity | wire
+    detector: (
+        str  # freshness | generated_types | schema_compat | consumer_integrity | wire
+    )
     classification: str  # automatically_detected | outside_boundary
     confidence: str  # high | medium | low
 
@@ -292,7 +296,6 @@ MUTATION_SURFACE_INVENTORY: tuple[MutationSurface, ...] = (
         classification="outside_boundary",
         confidence="low",
     ),
-
     # -------------------------------------------------------------------------
     # FRONTEND SURFACES
     # -------------------------------------------------------------------------
@@ -424,7 +427,6 @@ MUTATION_SURFACE_INVENTORY: tuple[MutationSurface, ...] = (
         classification="automatically_detected",
         confidence="high",
     ),
-
     # -------------------------------------------------------------------------
     # ARTIFACT SURFACES
     # -------------------------------------------------------------------------
@@ -492,7 +494,6 @@ MUTATION_SURFACE_INVENTORY: tuple[MutationSurface, ...] = (
         classification="automatically_detected",
         confidence="high",
     ),
-
     # -------------------------------------------------------------------------
     # WIRE SURFACES
     # -------------------------------------------------------------------------
@@ -567,6 +568,7 @@ MUTATION_SURFACE_INVENTORY: tuple[MutationSurface, ...] = (
 # C30.2 — Mutation Attack Matrix
 # =============================================================================
 
+
 class MutationAttacker:
     """Apply controlled mutations and verify gate detection."""
 
@@ -604,9 +606,7 @@ class MutationAttacker:
 
         return self.results
 
-    def _run_single_mut(
-        self, name: str, mutator: Any
-    ) -> dict[str, Any]:
+    def _run_single_mut(self, name: str, mutator: Any) -> dict[str, Any]:
         """Apply mutation, run gate, restore, report."""
         from runtime.foundation.verification.api_contracts.gate import ApiContractGate
 
@@ -641,7 +641,10 @@ class MutationAttacker:
         proc = None
         try:
             proc = subprocess.run(
-                [sys.executable, "-c", """
+                [
+                    sys.executable,
+                    "-c",
+                    """
 import sys, json
 sys.path.insert(0, 'backend')
 from runtime.foundation.verification.api_contracts.gate import ApiContractGate
@@ -649,7 +652,8 @@ g = ApiContractGate()
 r = g.run()
 dims = [(d.name, d.status, len(d.failures)) for d in r.dimensions]
 print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r.failures)}))
-"""],
+""",
+                ],
                 cwd=str(REPO_ROOT),
                 capture_output=True,
                 text=True,
@@ -677,30 +681,54 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
             pass
 
         if proc.returncode != 0:
-            return {"status": "PASS", "detail": "gate process failed (mutation broke server)"}
+            return {
+                "status": "PASS",
+                "detail": "gate process failed (mutation broke server)",
+            }
         return {"status": "FAIL_NO_CATCH", "detail": "no dimension detected mutation"}
 
     def _get_targets_for_mut(self, name: str) -> dict[str, Path]:
         """Map mutation name to target files."""
         targets: dict[str, Path] = {}
-        if name in ("mut-backend-field-remove", "mut-backend-field-rename",
-                     "mut-backend-nullable-change", "mut-backend-type-change"):
-            targets["dto"] = REPO_ROOT / "backend" / "src" / "core" / "dtos" / "dashboard_dto.py"
+        if name in (
+            "mut-backend-field-remove",
+            "mut-backend-field-rename",
+            "mut-backend-nullable-change",
+            "mut-backend-type-change",
+        ):
+            targets["dto"] = (
+                REPO_ROOT / "backend" / "src" / "core" / "dtos" / "dashboard_dto.py"
+            )
         elif name == "mut-backend-enum-change":
-            targets["dto"] = REPO_ROOT / "backend" / "src" / "core" / "dtos" / "transaction_dto.py"
+            targets["dto"] = (
+                REPO_ROOT / "backend" / "src" / "core" / "dtos" / "transaction_dto.py"
+            )
         elif name == "mut-frontend-stale-types":
             targets["ts"] = REPO_ROOT / "frontend" / "types" / "api-generated.ts"
         elif name == "mut-frontend-stale-zod":
-            targets["zod"] = REPO_ROOT / "frontend" / "lib" / "schemas" / "dashboard-metrics.ts"
+            targets["zod"] = (
+                REPO_ROOT / "frontend" / "lib" / "schemas" / "dashboard-metrics.ts"
+            )
         elif name in ("mut-artifact-empty-openapi", "mut-artifact-malformed-openapi"):
-            targets["artifact"] = REPO_ROOT / "frontend" / "generated" / "openapi-current.json"
-        elif name in ("mut-wire-semantic-ratio", "mut-wire-emi-ratio",
-                       "mut-wire-monetary-unit"):
-            targets["service"] = REPO_ROOT / "backend" / "src" / "services" / "dashboard_service.py"
+            targets["artifact"] = (
+                REPO_ROOT / "frontend" / "generated" / "openapi-current.json"
+            )
+        elif name in (
+            "mut-wire-semantic-ratio",
+            "mut-wire-emi-ratio",
+            "mut-wire-monetary-unit",
+        ):
+            targets["service"] = (
+                REPO_ROOT / "backend" / "src" / "services" / "dashboard_service.py"
+            )
         elif name == "mut-backend-method-change":
-            targets["router"] = REPO_ROOT / "backend" / "src" / "routers" / "dashboard.py"
+            targets["router"] = (
+                REPO_ROOT / "backend" / "src" / "routers" / "dashboard.py"
+            )
         elif name == "mut-backend-route-rename":
-            targets["router"] = REPO_ROOT / "backend" / "src" / "routers" / "transactions.py"
+            targets["router"] = (
+                REPO_ROOT / "backend" / "src" / "routers" / "transactions.py"
+            )
         return targets
 
     def _mutate_http_method(self, content: str, key: str) -> str:
@@ -716,10 +744,10 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
     def _mutate_remove_field(self, content: str, key: str) -> str:
         if key == "dto":
             return content.replace(
-                '    financial_health_score: float | None = Field(\n'
+                "    financial_health_score: float | None = Field(\n"
                 '        description="Financial health score from behavior analysis (0-100)",\n'
-                '    )',
-                ""
+                "    )",
+                "",
             )
         return content
 
@@ -731,24 +759,23 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
     def _mutate_nullable(self, content: str, key: str) -> str:
         if key == "dto":
             return content.replace(
-                '    financial_health_score: float | None = Field(',
-                '    financial_health_score: float = Field('
+                "    financial_health_score: float | None = Field(",
+                "    financial_health_score: float = Field(",
             )
         return content
 
     def _mutate_type_change(self, content: str, key: str) -> str:
         if key == "dto":
             return content.replace(
-                "savings_rate: float = Field(",
-                "savings_rate: str = Field("
+                "savings_rate: float = Field(", "savings_rate: str = Field("
             )
         return content
 
     def _mutate_enum_values(self, content: str, key: str) -> str:
         if key == "dto":
             return content.replace(
-                "type: str = Field(description=\"Transaction type (debit/credit)\")",
-                "type: str = Field(description=\"Transaction type\")"
+                'type: str = Field(description="Transaction type (debit/credit)")',
+                'type: str = Field(description="Transaction type")',
             )
         return content
 
@@ -761,7 +788,7 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
         if key == "zod":
             return content.replace(
                 "savings_rate: z.number().min(0),",
-                "savings_rate: z.number().min(0).max(100),"
+                "savings_rate: z.number().min(0).max(100),",
             )
         return content
 
@@ -779,7 +806,7 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
         if key == "service":
             return content.replace(
                 "savings_rate = round(net_cash_flow_paise / total_income_paise, 4)",
-                "savings_rate = round(net_cash_flow_paise / total_income_paise * 100, 4)"
+                "savings_rate = round(net_cash_flow_paise / total_income_paise * 100, 4)",
             )
         return content
 
@@ -787,7 +814,7 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
         if key == "service":
             return content.replace(
                 "emi_ratio = round(total_emi_paise / total_income_paise, 4)",
-                "emi_ratio = round(total_emi_paise / total_income_paise * 100, 4)"
+                "emi_ratio = round(total_emi_paise / total_income_paise * 100, 4)",
             )
         return content
 
@@ -795,7 +822,7 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
         if key == "service":
             return content.replace(
                 "net_cash_flow_paise=net_cash_flow_paise",
-                "net_cash_flow_paise=int(net_cash_flow_paise / 100)"
+                "net_cash_flow_paise=int(net_cash_flow_paise / 100)",
             )
         return content
 
@@ -804,9 +831,11 @@ print(json.dumps({"passed": r.passed, "dimensions": dims, "failure_count": len(r
 # C30.3 — Blind Spot Analysis
 # =============================================================================
 
+
 @dataclass
 class SemanticBlindSpot:
     """Analysis of a semantic field's detectability."""
+
     field_name: str
     openapi_description: str
     expected_range: str
@@ -895,14 +924,16 @@ def analyze_semantic_blind_spots(openapi: dict[str, Any]) -> list[SemanticBlindS
             spec = props.get(field_name, {})
             desc = spec.get("description", "") or analysis["desc"]
 
-            spots.append(SemanticBlindSpot(
-                field_name=field_name,
-                openapi_description=desc,
-                expected_range=analysis["expected_range"],
-                fixture_activation=analysis["fixture"],
-                detector=analysis["detector"],
-                confidence=analysis["confidence"],
-            ))
+            spots.append(
+                SemanticBlindSpot(
+                    field_name=field_name,
+                    openapi_description=desc,
+                    expected_range=analysis["expected_range"],
+                    fixture_activation=analysis["fixture"],
+                    detector=analysis["detector"],
+                    confidence=analysis["confidence"],
+                )
+            )
 
     return spots
 
@@ -967,6 +998,7 @@ downstream. Frontend artifacts MUST be regenerated from live OpenAPI.
 # C30.5 — Artifact Reproducibility
 # =============================================================================
 
+
 def verify_artifact_reproducibility() -> dict[str, Any]:
     """Prove artifacts are reproducible from clean state."""
     results = {
@@ -1013,6 +1045,7 @@ def verify_artifact_reproducibility() -> dict[str, Any]:
     # Verify hashes match between artifacts (they should be identical)
     if artifacts[0].exists() and artifacts[1].exists():
         import hashlib
+
         h1 = hashlib.sha256(artifacts[0].read_bytes()).hexdigest()
         h2 = hashlib.sha256(artifacts[1].read_bytes()).hexdigest()
         results["hash_consistency"] = {
@@ -1028,6 +1061,7 @@ def verify_artifact_reproducibility() -> dict[str, Any]:
 # C30.6 — CI Enforcement Verification
 # =============================================================================
 
+
 def verify_ci_enforcement() -> dict[str, Any]:
     """Prove CI enforces contract gate before E2E execution."""
     workflows_dir = REPO_ROOT / ".github" / "workflows"
@@ -1041,8 +1075,10 @@ def verify_ci_enforcement() -> dict[str, Any]:
     playwright_wf = workflows_dir / "playwright.yml"
     if playwright_wf.exists():
         content = playwright_wf.read_text()
-        results["playwright_needs_contract_gate"] = "needs: [contract-gate]" in content or \
-                                                    "needs:\n    - contract-gate" in content
+        results["playwright_needs_contract_gate"] = (
+            "needs: [contract-gate]" in content
+            or "needs:\n    - contract-gate" in content
+        )
 
     # Scan all workflows for E2E/browser test execution without contract gate dependency
     # Only flag workflows that actually run Playwright or browser tests
@@ -1057,18 +1093,22 @@ def verify_ci_enforcement() -> dict[str, Any]:
         # Check if this workflow runs actual E2E/browser tests
         has_e2e = any(kw in content.lower() for kw in e2e_keywords)
         # Check if it runs unit/backend tests (not E2E)
-        has_unit_tests = any(kw in content.lower() for kw in ["pytest", "unittest", "backend"])
+        has_unit_tests = any(
+            kw in content.lower() for kw in ["pytest", "unittest", "backend"]
+        )
         has_security_scan = "codeql" in content.lower() or "security" in content.lower()
 
         # Only flag as bypass if it runs E2E tests without contract gate
         if has_e2e and not has_unit_tests and not has_security_scan:
             has_contract_dep = "api-contracts" in content or "contract-gate" in content
             if not has_contract_dep:
-                bypass_found.append({
-                    "workflow": wf.name,
-                    "has_e2e": True,
-                    "has_contract_dep": False,
-                })
+                bypass_found.append(
+                    {
+                        "workflow": wf.name,
+                        "has_e2e": True,
+                        "has_contract_dep": False,
+                    }
+                )
 
     results["no_bypass_workflows"] = bypass_found
     results["all_e2e_paths_covered"] = len(bypass_found) == 0
@@ -1079,6 +1119,7 @@ def verify_ci_enforcement() -> dict[str, Any]:
 # =============================================================================
 # C30.7 — Certification Orchestrator
 # =============================================================================
+
 
 def run_c30_certification() -> dict[str, Any]:
     """Run full C30 certification and return results."""
@@ -1092,8 +1133,14 @@ def run_c30_certification() -> dict[str, Any]:
     # C30.1 — Surface inventory
     print("\n[C30.1] Building mutation surface inventory...")
     surface_count = len(MUTATION_SURFACE_INVENTORY)
-    auto_detected = sum(1 for s in MUTATION_SURFACE_INVENTORY if s.classification == "automatically_detected")
-    outside_boundary = sum(1 for s in MUTATION_SURFACE_INVENTORY if s.classification == "outside_boundary")
+    auto_detected = sum(
+        1
+        for s in MUTATION_SURFACE_INVENTORY
+        if s.classification == "automatically_detected"
+    )
+    outside_boundary = sum(
+        1 for s in MUTATION_SURFACE_INVENTORY if s.classification == "outside_boundary"
+    )
 
     print(f"  Total surfaces:     {surface_count}")
     print(f"  Auto-detected:      {auto_detected}")
@@ -1105,7 +1152,9 @@ def run_c30_certification() -> dict[str, Any]:
     mutation_results = attacker.run_all_mutations()
 
     pass_count = sum(1 for r in mutation_results.values() if r.get("status") == "PASS")
-    fail_count = sum(1 for r in mutation_results.values() if r.get("status") == "FAIL_NO_CATCH")
+    fail_count = sum(
+        1 for r in mutation_results.values() if r.get("status") == "FAIL_NO_CATCH"
+    )
     skip_count = sum(1 for r in mutation_results.values() if r.get("status") == "SKIP")
 
     print(f"  Mutations tested:   {len(mutation_results)}")
@@ -1117,6 +1166,7 @@ def run_c30_certification() -> dict[str, Any]:
     print("\n[C30.3] Analyzing semantic blind spots...")
     try:
         from src.api import app
+
         openapi = app.openapi()
         blind_spots = analyze_semantic_blind_spots(openapi)
 
@@ -1153,7 +1203,9 @@ def run_c30_certification() -> dict[str, Any]:
     # C30.6 — CI enforcement
     print("\n[C30.6] Verifying CI enforcement...")
     ci_results = verify_ci_enforcement()
-    print(f"  Playwright gated:   {ci_results.get('playwright_needs_contract_gate', False)}")
+    print(
+        f"  Playwright gated:   {ci_results.get('playwright_needs_contract_gate', False)}"
+    )
     print(f"  No bypass workflows: {ci_results.get('all_e2e_paths_covered', False)}")
     bypasses = ci_results.get("no_bypass_workflows", [])
     if bypasses:
@@ -1200,7 +1252,8 @@ def run_c30_certification() -> dict[str, Any]:
         "artifact_reproducibility": repro_results,
         "ci_enforcement": ci_results,
         "authority_policy": AUTHORITY_POLICY,
-        "pass": pass_count == len([r for r in mutation_results.values() if r.get("status") != "SKIP"]),
+        "pass": pass_count
+        == len([r for r in mutation_results.values() if r.get("status") != "SKIP"]),
     }
 
     return report

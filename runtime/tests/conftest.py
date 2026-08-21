@@ -124,7 +124,13 @@ def isolated_registry(tmp_path: Path):
                 "name": "Loan Engine",
                 "description": "Loan calculations",
                 "category": "capability",
-                "scopes": ["backend", "property", "contracts", "integration", "repository"],
+                "scopes": [
+                    "backend",
+                    "property",
+                    "contracts",
+                    "integration",
+                    "repository",
+                ],
                 "workflows": ["property", "contracts", "backend"],
                 "scripts": ["run_fast_checks"],
                 "modules": ["backend/src/engines/loan_engine"],
@@ -153,7 +159,13 @@ def isolated_registry(tmp_path: Path):
                 "name": "Reconciliation Engine",
                 "description": "Reconciliation",
                 "category": "capability",
-                "scopes": ["backend", "property", "contracts", "integration", "repository"],
+                "scopes": [
+                    "backend",
+                    "property",
+                    "contracts",
+                    "integration",
+                    "repository",
+                ],
                 "workflows": ["property", "contracts", "backend"],
                 "scripts": ["run_fast_checks"],
                 "modules": ["backend/src/reconciliation"],
@@ -212,8 +224,16 @@ def isolated_registry(tmp_path: Path):
             "full": {"enabled": True},
         },
         "modules": {
-            "backend": {"source": "backend/src", "tests": "backend/tests", "category": "capability"},
-            "frontend": {"source": "frontend/src", "tests": "frontend/tests", "category": "contract_frontend"},
+            "backend": {
+                "source": "backend/src",
+                "tests": "backend/tests",
+                "category": "capability",
+            },
+            "frontend": {
+                "source": "frontend/src",
+                "tests": "frontend/tests",
+                "category": "contract_frontend",
+            },
         },
     }
 

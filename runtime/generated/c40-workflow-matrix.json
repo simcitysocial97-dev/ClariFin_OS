@@ -1,0 +1,135 @@
+{
+  "c40_workflow_matrix": {
+    "timestamp": "2026-08-20T19:59:00.000Z",
+    "inventory_source": ".github/workflows/",
+    "workflows": [
+      {
+        "file": "backend-verify.yml",
+        "name": "Backend Verification",
+        "trigger": { "push_paths": ["backend/**", "runtime/**"], "pr_paths": ["backend/**", "runtime/**"] },
+        "command": "python runtime/verify.py backend",
+        "local_equivalent": "python runtime/verify.py backend",
+        "parity_verified": true,
+        "timeout_minutes": 30,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "backend-report", "backend-evidence"],
+        "setup_actions": ["bootstrap-runtime", "setup-node-runtime"],
+        "status": "GREEN"
+      },
+      {
+        "file": "frontend-verify.yml",
+        "name": "Frontend Verification",
+        "trigger": { "push_paths": ["frontend/**", "backend/src/routers/**", "backend/src/mappers/**", "runtime/**"], "pr_paths": ["frontend/**", "backend/src/routers/**", "backend/src/mappers/**", "runtime/**"] },
+        "command": "python runtime/verify.py frontend",
+        "local_equivalent": "python runtime/verify.py frontend",
+        "parity_verified": true,
+        "timeout_minutes": 25,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "frontend-report", "frontend-evidence"],
+        "setup_actions": ["bootstrap-runtime", "setup-node-runtime"],
+        "status": "GREEN"
+      },
+      {
+        "file": "api-contracts.yml",
+        "name": "API Contract Integrity",
+        "trigger": { "push_paths": ["backend/**", "frontend/**", "runtime/**"], "pr_paths": ["backend/**", "frontend/**", "runtime/**"], "workflow_run": ["Playwright Tests"] },
+        "command": "python runtime/verify.py api-contracts",
+        "local_equivalent": "python runtime/verify.py api-contracts",
+        "parity_verified": true,
+        "timeout_minutes": 5,
+        "artifacts": ["api-contract-evidence"],
+        "setup_actions": ["bootstrap-runtime", "setup-node-runtime"],
+        "status": "GREEN"
+      },
+      {
+        "file": "verification-runtime.yml",
+        "name": "Verification Runtime",
+        "trigger": { "push_paths": ["runtime/**", "backend/src/engines/**", "backend/src/routers/**", "backend/src/mappers/**"], "pr_paths": ["runtime/**", "backend/src/engines/**", "backend/src/routers/**", "backend/src/mappers/**"] },
+        "command": "python runtime/verify.py runtime",
+        "local_equivalent": "python runtime/verify.py runtime",
+        "parity_verified": true,
+        "timeout_minutes": 30,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "runtime-quality", "runtime-performance"],
+        "setup_actions": ["bootstrap-runtime", "setup-node-runtime"],
+        "status": "GREEN"
+      },
+      {
+        "file": "quality.yml",
+        "name": "Quality Gate",
+        "trigger": { "push_branches": ["**"], "pr_branches": ["main", "develop"] },
+        "command": "python runtime/verify.py quick",
+        "local_equivalent": "python runtime/verify.py quick",
+        "parity_verified": true,
+        "timeout_minutes": 10,
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "quality-report", "fast-checks-evidence"],
+        "setup_actions": ["bootstrap-runtime", "setup-node-runtime"],
+        "status": "GREEN"
+      },
+      {
+        "file": "mutation.yml",
+        "name": "Mutation Testing",
+        "trigger": { "schedule": "0 2 * * *", "workflow_dispatch": true },
+        "command": "python runtime/verify.py mutation",
+        "local_equivalent": "python runtime/verify.py mutation",
+        "parity_verified": true,
+        "timeout_minutes": 90,
+        "concurrency": { "cancel_in_progress": false },
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "mutation-report", "mutation-evidence"],
+        "setup_actions": ["bootstrap-runtime"],
+        "status": "CI_ONLY"
+      },
+      {
+        "file": "playwright.yml",
+        "name": "Playwright Tests",
+        "trigger": { "push_branches": ["main", "master", "develop"], "push_paths": ["frontend/**", "e2e/**", "runtime/**"], "pr_branches": ["main", "master", "develop"], "pr_paths": ["frontend/**", "e2e/**", "runtime/**"] },
+        "command": "python runtime/verify.py playwright",
+        "local_equivalent": "python runtime/verify.py playwright",
+        "parity_verified": true,
+        "timeout_minutes": 90,
+        "matrix": {
+          "projects": ["chromium", "firefox", "webkit", "mobile-chrome", "mobile-safari", "tablet"],
+          "fail_fast": false
+        },
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "playwright-report", "playwright-evidence"],
+        "setup_actions": ["bootstrap-runtime", "setup-node-runtime", "setup-playwright"],
+        "status": "CONDITIONAL"
+      },
+      {
+        "file": "golden.yml",
+        "name": "Golden Dataset Regression",
+        "trigger": { "schedule": "0 3 * * *", "workflow_dispatch": true },
+        "command": "python runtime/verify.py golden",
+        "local_equivalent": "python runtime/verify.py golden",
+        "parity_verified": true,
+        "timeout_minutes": 30,
+        "concurrency": { "cancel_in_progress": false },
+        "artifacts": ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history", "golden-report", "golden-evidence"],
+        "setup_actions": ["bootstrap-runtime"],
+        "status": "GREEN"
+      },
+      {
+        "file": "verification-reconcile.yml",
+        "name": "Verification Reconcile",
+        "trigger": { "push_paths": ["runtime/**", "backend/**"], "pr_paths": ["runtime/**", "backend/**"] },
+        "command": "python runtime/verify.py plan + runtime + exec-evidence + reconcile",
+        "local_equivalent": "python runtime/verify.py plan --tier pr + python runtime/verify.py runtime + python runtime/verify.py exec-evidence + python runtime/verify.py reconcile",
+        "parity_verified": true,
+        "timeout_minutes": 30,
+        "artifacts": ["reconciliation-report"],
+        "setup_actions": ["bootstrap-runtime"],
+        "status": "GREEN"
+      }
+    ],
+    "missing_workflows_checked": [
+      "release.yml - release automation, not verification",
+      "dependency-update.yml - dependabot, not verification",
+      "security-codeql.yml - security scan, not verification"
+    ],
+    "parity_summary": {
+      "total_workflows": 9,
+      "verification_workflows": 9,
+      "parity_verified": 9,
+      "all_use_bootstrap_runtime": true,
+      "all_single_verify_command": true,
+      "all_append_status_summary": true
+    }
+  }
+}

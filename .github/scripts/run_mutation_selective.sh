@@ -75,11 +75,19 @@ fi
 
 cat > "$MUTATION_OUTPUT_DIR/mutation-summary.json" <<EOF
 {
+  "mutmut_version": "$(mutmut --version 2>/dev/null || echo 'unknown')",
+  "source_scope": "$TARGET_PATH",
+  "test_scope": "tests/unit/, tests/properties/",
+  "git_commit_sha": "$(git rev-parse HEAD 2>/dev/null || echo 'unknown')",
+  "git_tree_hash": "$(git rev-parse HEAD^{tree} 2>/dev/null || echo 'unknown')",
+  "dependency_lock_hash": "$(sha256sum backend/requirements.lock 2>/dev/null | cut -d' ' -f1 || echo 'unknown')",
   "killed": $KILLED,
   "survived": $SURVIVED,
   "timeout": $TIMEOUT_COUNT,
   "total": $TOTAL,
   "score_percent": $SCORE,
+  "threshold_percent": 80,
+  "threshold_met": $([ "$SCORE" != "N/A" ] && [ $(echo "$SCORE >= 80" | bc) -eq 1 ] && echo true || echo false),
   "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "target": "$TARGET_PATH",
   "duration_seconds": $DURATION,
@@ -106,19 +114,23 @@ case $MUTMUT_RC in
   0)
     echo "  STATUS: MUTATION SUCCESS — all mutants killed, threshold met."
     RESULT="success"
+    EXIT_CODE=0
     ;;
   1)
     echo "  STATUS: INFRASTRUCTURE FAILURE — fatal error in mutmut execution."
     echo "  Check mutation-run.log for details. This is NOT a quality gate failure."
     RESULT="infrastructure_failure"
+    EXIT_CODE=1
     ;;
   2|4|8)
     echo "  STATUS: MUTATION FAILURE — score below threshold or timeouts detected."
     RESULT="mutation_failure"
+    EXIT_CODE=2
     ;;
   *)
     echo "  STATUS: UNKNOWN exit code $MUTMUT_RC"
     RESULT="unknown"
+    EXIT_CODE=1
     ;;
 esac
 
@@ -134,5 +146,11 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 echo ""
 echo "Evidence saved to: $MUTATION_OUTPUT_DIR/"
 
-# Preserve the actual mutmut exit code for the workflow
-exit "$MUTMUT_RC"
+# ── Enforce threshold ───────────────────────────────────────────────────────
+if [ "$RESULT" = "success" ] && [ "$(jq -r '.threshold_met' "$MUTATION_OUTPUT_DIR/mutation-summary.json")" = "false" ]; then
+  echo "❌ Mutation score below threshold (80%)"
+  EXIT_CODE=2
+fi
+
+# Preserve the actual exit code for the workflow
+exit $EXIT_CODE

@@ -226,7 +226,9 @@ def _extract_components(cross_layer_map: dict[str, Any]) -> list[ComponentEntry]
     return components
 
 
-def _extract_graph_renderers(cross_layer_map: dict[str, Any]) -> list[GraphRendererEntry]:
+def _extract_graph_renderers(
+    cross_layer_map: dict[str, Any],
+) -> list[GraphRendererEntry]:
     renderers: list[GraphRendererEntry] = []
     seen: set[str] = set()
     for file_path, entry in cross_layer_map.items():
@@ -304,14 +306,28 @@ def _extract_integrity_rules() -> list[IntegrityRuleEntry]:
             references = {
                 "rule_id": rule_id,
                 "name": rule.name,
-                "category": rule.category.value if hasattr(rule.category, "value") else str(rule.category),
-                "severity": rule.severity.value if hasattr(rule.severity, "value") else str(rule.severity),
+                "category": (
+                    rule.category.value
+                    if hasattr(rule.category, "value")
+                    else str(rule.category)
+                ),
+                "severity": (
+                    rule.severity.value
+                    if hasattr(rule.severity, "value")
+                    else str(rule.severity)
+                ),
             }
             rules.append(
                 IntegrityRuleEntry(
                     rule_id=rule_id,
                     references=references,
-                    tags=(rule.category.value if hasattr(rule.category, "value") else str(rule.category),),
+                    tags=(
+                        (
+                            rule.category.value
+                            if hasattr(rule.category, "value")
+                            else str(rule.category)
+                        ),
+                    ),
                 )
             )
     except Exception:
@@ -372,7 +388,11 @@ def _merge_from_provider(
             refs[f"engine:{eng}"] = f"engine:{eng}"
         for cap in ep.capabilities:
             refs[f"capability:{cap}"] = f"capability:{cap}"
-        out_eps.append(EndpointEntry(path=ep.path, method=ep.method, references=refs, tags=("provider",)))
+        out_eps.append(
+            EndpointEntry(
+                path=ep.path, method=ep.method, references=refs, tags=("provider",)
+            )
+        )
 
     for name, cap in arch.capabilities.items():
         if name in existing_caps:
@@ -417,7 +437,9 @@ def build_index() -> KnowledgeIndex:
     workspaces = _extract_workspaces(cross_layer_map)
     components = _extract_components(cross_layer_map)
     graph_renderers = _extract_graph_renderers(cross_layer_map)
-    endpoints, capabilities, workspaces = _merge_from_provider(endpoints, capabilities, workspaces)
+    endpoints, capabilities, workspaces = _merge_from_provider(
+        endpoints, capabilities, workspaces
+    )
     runtime_artifacts = _extract_runtime_artifacts()
     documentation = _extract_documentation()
     integrity_rules = _extract_integrity_rules()
@@ -425,13 +447,17 @@ def build_index() -> KnowledgeIndex:
 
     catalog = KnowledgeCatalog(
         endpoints=tuple(sorted(endpoints, key=lambda e: e.path)),
-        capabilities=tuple(sorted(capabilities, key=lambda c: getattr(c, "name", str(c)))),
+        capabilities=tuple(
+            sorted(capabilities, key=lambda c: getattr(c, "name", str(c)))
+        ),
         mappers=tuple(sorted(mappers, key=lambda m: m.name)),
         view_models=tuple(sorted(view_models, key=lambda v: v.name)),
         workspaces=tuple(sorted(workspaces, key=lambda w: w.name)),
         components=tuple(sorted(components, key=lambda c: c.name)),
         graph_renderers=tuple(sorted(graph_renderers, key=lambda g: g.name)),
-        verification_profiles=tuple(sorted(verification_profiles, key=lambda v: v.name)),
+        verification_profiles=tuple(
+            sorted(verification_profiles, key=lambda v: v.name)
+        ),
         integrity_rules=tuple(sorted(integrity_rules, key=lambda r: r.rule_id)),
         runtime_artifacts=tuple(sorted(runtime_artifacts, key=lambda r: r.path)),
         documentation=tuple(sorted(documentation, key=lambda d: d.path)),

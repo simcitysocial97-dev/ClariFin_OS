@@ -5,6 +5,7 @@ Simulates common developer workflows and validates that the platform
 correctly produces affected entities, affected tests, verification plan,
 engineering risk, and repair recommendations.
 """
+
 from __future__ import annotations
 
 import json
@@ -22,14 +23,15 @@ from runtime.foundation.intelligence.platform.risk import assess_risk
 from runtime.foundation.intelligence.platform.optimizer import optimize_verification
 from runtime.foundation.intelligence.platform.resolver import get_resolver
 
-
 WORKFLOWS = {
     "modify_backend_engine": ["backend/src/engines/account_engine.py"],
     "modify_router": ["backend/src/routers/accounts.py"],
     "modify_repository": ["backend/src/repositories/account_repository.py"],
     "modify_capability": ["frontend/src/lib/capabilities/useAccountsCapability.ts"],
     "modify_workspace": ["frontend/src/workspaces/reconciliation/index.ts"],
-    "modify_frontend_component": ["frontend/src/components/reconciliation/status-overview.tsx"],
+    "modify_frontend_component": [
+        "frontend/src/components/reconciliation/status-overview.tsx"
+    ],
 }
 
 
@@ -38,18 +40,20 @@ def build_changeset(paths: list[str]) -> ChangeSet:
     for path in paths:
         full_path = REPO_ROOT / path
         if full_path.exists():
-            files.append(ChangedFile(
-                path=path,
-                status="modified",
-                added_lines=10,
-                removed_lines=5,
-                added_symbols=(),
-                removed_symbols=(),
-                added_imports=(),
-                removed_imports=(),
-                added_routes=(),
-                removed_routes=(),
-            ))
+            files.append(
+                ChangedFile(
+                    path=path,
+                    status="modified",
+                    added_lines=10,
+                    removed_lines=5,
+                    added_symbols=(),
+                    removed_symbols=(),
+                    added_imports=(),
+                    removed_imports=(),
+                    added_routes=(),
+                    removed_routes=(),
+                )
+            )
     return ChangeSet(
         base="HEAD",
         head="HEAD",
@@ -74,10 +78,18 @@ def validate_workflow(name: str, paths: list[str], resolver) -> dict:
             "affected_entities": {
                 "engines": [r.to_dict() for r in change.entities.get("engines", ())],
                 "routers": [r.to_dict() for r in change.entities.get("routers", ())],
-                "repositories": [r.to_dict() for r in change.entities.get("repositories", ())],
-                "capabilities": [r.to_dict() for r in change.entities.get("capabilities", ())],
-                "workspaces": [r.to_dict() for r in change.entities.get("workspaces", ())],
-                "components": [r.to_dict() for r in change.entities.get("components", ())],
+                "repositories": [
+                    r.to_dict() for r in change.entities.get("repositories", ())
+                ],
+                "capabilities": [
+                    r.to_dict() for r in change.entities.get("capabilities", ())
+                ],
+                "workspaces": [
+                    r.to_dict() for r in change.entities.get("workspaces", ())
+                ],
+                "components": [
+                    r.to_dict() for r in change.entities.get("components", ())
+                ],
                 "tests": [r.to_dict() for r in change.entities.get("tests", ())],
             },
             "affected_tests": [r.to_dict() for r in change.entities.get("tests", ())],
@@ -91,7 +103,11 @@ def validate_workflow(name: str, paths: list[str], resolver) -> dict:
                 "overall_level": risk.overall_level,
                 "overall_score": risk.overall_score,
                 "confidence": risk.confidence,
-                "dimensions": [d.to_dict() for d in risk.dimensions] if hasattr(risk, "dimensions") else [],
+                "dimensions": (
+                    [d.to_dict() for d in risk.dimensions]
+                    if hasattr(risk, "dimensions")
+                    else []
+                ),
             },
             "repair_recommendations": repair.items,
         },
@@ -127,7 +143,9 @@ def main() -> int:
     }
 
     out_path = REPO_ROOT / "runtime" / "generated" / "workflow-validation.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

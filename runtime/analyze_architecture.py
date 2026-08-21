@@ -61,8 +61,16 @@ ENGINE_PACKAGE_NAMES = {
     "backend/src/engines/transaction_intelligence": "Transaction Intelligence Engine",
 }
 
-EXCLUDE_DIRS = {".git", "__pycache__", "node_modules", ".pytest_cache",
-                ".ruff_cache", ".mypy_cache", "evidence-download", ".hypothesis"}
+EXCLUDE_DIRS = {
+    ".git",
+    "__pycache__",
+    "node_modules",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".mypy_cache",
+    "evidence-download",
+    ".hypothesis",
+}
 EXCLUDE_FILES = ("test_", "_test.py", "conftest.py")
 
 
@@ -103,8 +111,15 @@ def parse_py(filepath: Path):
         content = filepath.read_text(encoding="utf-8")
         tree = ast.parse(content)
     except Exception as e:
-        return {"error": str(e), "imports": [], "classes": [], "functions": [],
-                "decorators": [], "docstring": "", "content": ""}
+        return {
+            "error": str(e),
+            "imports": [],
+            "classes": [],
+            "functions": [],
+            "decorators": [],
+            "docstring": "",
+            "content": "",
+        }
     imports, classes, functions, decorators = [], [], [], []
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -115,23 +130,34 @@ def parse_py(filepath: Path):
             for a in node.names:
                 imports.append(f"{mod}.{a.name}")
         elif isinstance(node, ast.ClassDef):
-            classes.append({
-                "name": node.name,
-                "bases": [ast.unparse(b) for b in node.bases],
-                "decorators": [ast.unparse(d) for d in node.decorator_list],
-                "methods": [n.name for n in node.body if isinstance(n, ast.FunctionDef)],
-            })
+            classes.append(
+                {
+                    "name": node.name,
+                    "bases": [ast.unparse(b) for b in node.bases],
+                    "decorators": [ast.unparse(d) for d in node.decorator_list],
+                    "methods": [
+                        n.name for n in node.body if isinstance(n, ast.FunctionDef)
+                    ],
+                }
+            )
         elif isinstance(node, ast.FunctionDef):
-            functions.append({
-                "name": node.name,
-                "decorators": [ast.unparse(d) for d in node.decorator_list],
-                "args": [a.arg for a in node.args.args],
-            })
+            functions.append(
+                {
+                    "name": node.name,
+                    "decorators": [ast.unparse(d) for d in node.decorator_list],
+                    "args": [a.arg for a in node.args.args],
+                }
+            )
             for d in node.decorator_list:
                 decorators.append(ast.unparse(d))
-    return {"imports": imports, "classes": classes, "functions": functions,
-            "decorators": decorators, "docstring": ast.get_docstring(tree) or "",
-            "content": content}
+    return {
+        "imports": imports,
+        "classes": classes,
+        "functions": functions,
+        "decorators": decorators,
+        "docstring": ast.get_docstring(tree) or "",
+        "content": content,
+    }
 
 
 def classify_py(rel: str, info: dict) -> str:
@@ -170,7 +196,9 @@ def classify_py(rel: str, info: dict) -> str:
     # ---- ROUTER ----
     if "/routers/" in rel:
         return "Router"
-    if any("router" in c.lower() for c in classes) or any("@router." in d for d in decorators):
+    if any("router" in c.lower() for c in classes) or any(
+        "@router." in d for d in decorators
+    ):
         return "Router"
     if ("fastapi" in ilower or "APIRouter" in ilower) and "/routers/" not in rel:
         return "Router"
@@ -178,7 +206,9 @@ def classify_py(rel: str, info: dict) -> str:
     # ---- SERVICE ----
     if "/services/" in rel:
         return "Service"
-    if "service" in clower and not any(x in rel for x in ("test", "frontend", "runtime")):
+    if "service" in clower and not any(
+        x in rel for x in ("test", "frontend", "runtime")
+    ):
         return "Service"
 
     # ---- REPOSITORY ----
@@ -216,20 +246,38 @@ def classify_py(rel: str, info: dict) -> str:
         return "Verification Profile"
 
     # ---- KNOWLEDGE SOURCE ----
-    if "knowledge" in rel and ("indexer" in rel or "catalog" in rel or "/query" in rel or "query" in rel):
+    if "knowledge" in rel and (
+        "indexer" in rel or "catalog" in rel or "/query" in rel or "query" in rel
+    ):
         return "Knowledge Source"
 
     # ---- ARTIFACT PRODUCER / CONSUMER ----
-    if any(k in flower for k in ("generate_", "build_", "emit_", "produce_")) and ("runtime" in rel or "tools" in rel):
+    if any(k in flower for k in ("generate_", "build_", "emit_", "produce_")) and (
+        "runtime" in rel or "tools" in rel
+    ):
         return "Artifact Producer"
-    if "artifact" in rel and any(k in flower for k in ("consume", "load_", "read_", "parse_")):
+    if "artifact" in rel and any(
+        k in flower for k in ("consume", "load_", "read_", "parse_")
+    ):
         return "Artifact Consumer"
 
     # ---- UTILITY (core infra, common, extraction, runtime foundation) ----
-    if any(p in rel for p in ("/utils/", "/common/", "/core/db/", "/core/domain/",
-                              "/data/", "/extraction/", "runtime/foundation/audit/",
-                              "runtime/foundation/intelligence/", "runtime/foundation/integrity/",
-                              "runtime/foundation/workspace/", "runtime/system/")):
+    if any(
+        p in rel
+        for p in (
+            "/utils/",
+            "/common/",
+            "/core/db/",
+            "/core/domain/",
+            "/data/",
+            "/extraction/",
+            "runtime/foundation/audit/",
+            "runtime/foundation/intelligence/",
+            "runtime/foundation/integrity/",
+            "runtime/foundation/workspace/",
+            "runtime/system/",
+        )
+    ):
         return "Utility"
 
     return "Utility"
@@ -240,13 +288,19 @@ FRONTEND_VM_RE = re.compile(r"[A-Z][a-zA-Z]*ViewModel")
 
 
 def classify_ts(rel: str, content: str, exports) -> str:
-    if "/lib/capabilities/" in rel and rel.endswith(".ts") and not rel.endswith(".test.ts"):
+    if (
+        "/lib/capabilities/" in rel
+        and rel.endswith(".ts")
+        and not rel.endswith(".test.ts")
+    ):
         return "Capability"
     if "/lib/store/" in rel:
         return "ViewModel"
     if "/lib/mappers/" in rel and rel.endswith("mapper.ts"):
         return "Mapper"
-    if rel.startswith("frontend/app/") and (rel.endswith("page.tsx") or rel.endswith("layout.tsx")):
+    if rel.startswith("frontend/app/") and (
+        rel.endswith("page.tsx") or rel.endswith("layout.tsx")
+    ):
         return "Workspace"
     return "Utility"
 
@@ -260,17 +314,29 @@ def main():
         info = parse_py(f)
         rel = str(f.relative_to(REPO_ROOT))
         nt = classify_py(rel, info)
-        modules.append({
-            "path": rel,
-            "language": "python",
-            "node_type": nt,
-            "imports": info["imports"],
-            "classes": [c["name"] for c in info["classes"]],
-            "functions": [x["name"] for x in info["functions"]],
-            "decorators": info["decorators"],
-            "docstring": info["docstring"],
-            "engine_name": ENGINE_PACKAGE_NAMES.get(next((r for r in ENGINE_PACKAGE_ROOTS if rel.startswith(r + "/") or rel == f"{r}/__init__.py"), ""), ""),
-        })
+        modules.append(
+            {
+                "path": rel,
+                "language": "python",
+                "node_type": nt,
+                "imports": info["imports"],
+                "classes": [c["name"] for c in info["classes"]],
+                "functions": [x["name"] for x in info["functions"]],
+                "decorators": info["decorators"],
+                "docstring": info["docstring"],
+                "engine_name": ENGINE_PACKAGE_NAMES.get(
+                    next(
+                        (
+                            r
+                            for r in ENGINE_PACKAGE_ROOTS
+                            if rel.startswith(r + "/") or rel == f"{r}/__init__.py"
+                        ),
+                        "",
+                    ),
+                    "",
+                ),
+            }
+        )
 
     for f in ts_files:
         content = ""
@@ -278,20 +344,25 @@ def main():
             content = f.read_text(encoding="utf-8")
         except Exception:
             pass
-        exports = re.findall(r'export\s+(?:default\s+)?(?:class|function|const|interface|type)\s+(\w+)', content)
+        exports = re.findall(
+            r"export\s+(?:default\s+)?(?:class|function|const|interface|type)\s+(\w+)",
+            content,
+        )
         rel = str(f.relative_to(REPO_ROOT))
         nt = classify_ts(rel, content, exports)
-        modules.append({
-            "path": rel,
-            "language": "typescript",
-            "node_type": nt,
-            "imports": re.findall(r'from\s+[\'"]([^\'"]+)[\'"]', content),
-            "classes": exports,
-            "functions": [],
-            "decorators": [],
-            "docstring": "",
-            "engine_name": "",
-        })
+        modules.append(
+            {
+                "path": rel,
+                "language": "typescript",
+                "node_type": nt,
+                "imports": re.findall(r'from\s+[\'"]([^\'"]+)[\'"]', content),
+                "classes": exports,
+                "functions": [],
+                "decorators": [],
+                "docstring": "",
+                "engine_name": "",
+            }
+        )
 
     type_counts = Counter(m["node_type"] for m in modules)
     output = {
@@ -313,8 +384,9 @@ def main():
         "type_counts": dict(sorted(type_counts.items(), key=lambda x: -x[1])),
         "modules_by_type": {k: sorted(v) for k, v in sorted(by_type.items())},
     }
-    (REPO_ROOT / "runtime" / "generated" / "architecture-inventory-summary.json").write_text(
-        json.dumps(summary, indent=2))
+    (
+        REPO_ROOT / "runtime" / "generated" / "architecture-inventory-summary.json"
+    ).write_text(json.dumps(summary, indent=2))
 
     print(f"Total modules: {len(modules)}")
     for t, c in sorted(type_counts.items(), key=lambda x: -x[1]):

@@ -54,8 +54,12 @@ from runtime.foundation.verification.failure_report import (  # noqa: E402
     build_failure_report,
 )
 
-VERIFICATION_CACHE_PATH = REPO_ROOT / "runtime" / "generated" / "verification-cache.json"
-VERIFICATION_REPORT_PATH = REPO_ROOT / "runtime" / "generated" / "verification-report.md"
+VERIFICATION_CACHE_PATH = (
+    REPO_ROOT / "runtime" / "generated" / "verification-cache.json"
+)
+VERIFICATION_REPORT_PATH = (
+    REPO_ROOT / "runtime" / "generated" / "verification-report.md"
+)
 
 
 def _log_changed_files_boundary(cf_result: Any) -> None:
@@ -90,8 +94,14 @@ def _record_verification_event(
 ) -> None:
     try:
         from runtime.system.observability.execution_context import create_context
-        from runtime.system.observability.event_store import create_event, EngineeringEventStore
-        from runtime.system.observability.repository import LocalMetricsRepository, RunRecord
+        from runtime.system.observability.event_store import (
+            create_event,
+            EngineeringEventStore,
+        )
+        from runtime.system.observability.repository import (
+            LocalMetricsRepository,
+            RunRecord,
+        )
 
         if report is not None:
             _status = report.summary.overall_status.value
@@ -158,27 +168,34 @@ def _record_verification_event(
 
 def cmd_status() -> int:
     from runtime.foundation.workspace.status import cmd_status as _cmd_status
+
     return _cmd_status()
 
 
 def cmd_history() -> int:
     from runtime.foundation.workspace.history import cmd_history as _cmd_history
+
     return _cmd_history()
 
 
 def cmd_deps() -> int:
     from runtime.foundation.workspace.dependencies import cmd_deps as _cmd_deps
+
     file_path = sys.argv[2] if len(sys.argv) > 2 else None
     return _cmd_deps(file_path)
 
 
 def cmd_verify_status() -> int:
-    from runtime.foundation.workspace.verification import cmd_verify_status as _cmd_verify_status
+    from runtime.foundation.workspace.verification import (
+        cmd_verify_status as _cmd_verify_status,
+    )
+
     return _cmd_verify_status()
 
 
 def cmd_metrics() -> int:
     from runtime.foundation.workspace.metrics import cmd_metrics as _cmd_metrics
+
     return _cmd_metrics()
 
 
@@ -232,9 +249,11 @@ def cmd_diagnose() -> int:
         return 1
 
     bundle = analyze(changed_files=changed_files)
-    print(format_diagnostic(
-        bundle["change"], bundle["blast"], bundle["risk"], bundle["repair"]
-    ))
+    print(
+        format_diagnostic(
+            bundle["change"], bundle["blast"], bundle["risk"], bundle["repair"]
+        )
+    )
     return 0
 
 
@@ -367,11 +386,14 @@ def cmd_knowledge() -> int:
 def cmd_knowledge_endpoint() -> int:
     from runtime.foundation.knowledge.query import query_endpoint
     from runtime.foundation.knowledge.indexer import build_index
+
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
-        print("Usage: python runtime/verify.py knowledge endpoint <path>", file=sys.stderr)
+        print(
+            "Usage: python runtime/verify.py knowledge endpoint <path>", file=sys.stderr
+        )
         return 1
 
     path = sys.argv[3]
@@ -387,11 +409,15 @@ def cmd_knowledge_endpoint() -> int:
 def cmd_knowledge_capability() -> int:
     from runtime.foundation.knowledge.query import query_capability
     from runtime.foundation.knowledge.indexer import build_index
+
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
-        print("Usage: python runtime/verify.py knowledge capability <name>", file=sys.stderr)
+        print(
+            "Usage: python runtime/verify.py knowledge capability <name>",
+            file=sys.stderr,
+        )
         return 1
 
     name = sys.argv[3]
@@ -407,11 +433,15 @@ def cmd_knowledge_capability() -> int:
 def cmd_knowledge_workspace() -> int:
     from runtime.foundation.knowledge.query import query_workspace
     from runtime.foundation.knowledge.indexer import build_index
+
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
-        print("Usage: python runtime/verify.py knowledge workspace <name>", file=sys.stderr)
+        print(
+            "Usage: python runtime/verify.py knowledge workspace <name>",
+            file=sys.stderr,
+        )
         return 1
 
     name = sys.argv[3]
@@ -427,6 +457,7 @@ def cmd_knowledge_workspace() -> int:
 def cmd_knowledge_rule() -> int:
     from runtime.foundation.knowledge.query import query_rule
     from runtime.foundation.knowledge.indexer import build_index
+
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
@@ -447,11 +478,15 @@ def cmd_knowledge_rule() -> int:
 def cmd_knowledge_component() -> int:
     from runtime.foundation.knowledge.query import query_component
     from runtime.foundation.knowledge.indexer import build_index
+
     build_index()  # noqa: F841 - warm knowledge cache
     from runtime.foundation.knowledge.formatter import format_query_result
 
     if len(sys.argv) < 4:
-        print("Usage: python runtime/verify.py knowledge component <name>", file=sys.stderr)
+        print(
+            "Usage: python runtime/verify.py knowledge component <name>",
+            file=sys.stderr,
+        )
         return 1
 
     name = sys.argv[3]
@@ -483,11 +518,15 @@ def cmd_plan() -> int:
     parser.add_argument("--tier", required=True, choices=["local", "pr", "deep"])
     parser.add_argument("--base", default=None, help="explicit PR base ref")
     parser.add_argument(
-        "--changed", nargs="*", default=None,
+        "--changed",
+        nargs="*",
+        default=None,
         help="explicit changed files (bypass git; for CI override / tests)",
     )
     parser.add_argument("--head", default=None, help="explicit head ref")
-    parser.add_argument("--no-write", action="store_true", help="do not write the manifest file")
+    parser.add_argument(
+        "--no-write", action="store_true", help="do not write the manifest file"
+    )
     args, _ = parser.parse_known_args(sys.argv[2:])
 
     # M5-A — PR base correctness. For a PR the base ref must be the PR base
@@ -570,22 +609,44 @@ def cmd_reconcile() -> int:
 
     parser = argparse.ArgumentParser(prog="verify.py reconcile", add_help=False)
     # Generate-and-compare mode (legacy / dev).
-    parser.add_argument("--local", default=None, help="path to a LOCAL plan manifest (JSON)")
-    parser.add_argument("--ci", default=None, help="path to a CI/PR plan manifest (JSON)")
+    parser.add_argument(
+        "--local", default=None, help="path to a LOCAL plan manifest (JSON)"
+    )
+    parser.add_argument(
+        "--ci", default=None, help="path to a CI/PR plan manifest (JSON)"
+    )
     parser.add_argument("--tier", default="local", choices=["local", "pr", "deep"])
     parser.add_argument("--pr-tier", default="pr", choices=["local", "pr", "deep"])
     parser.add_argument("--base", default=None, help="explicit PR base ref")
     parser.add_argument(
-        "--changed", nargs="*", default=None,
+        "--changed",
+        nargs="*",
+        default=None,
         help="explicit changed files (when generating both plans)",
     )
     parser.add_argument("--head", default=None, help="explicit head ref")
     # M5 persisted-artifact mode (CI gate).
-    parser.add_argument("--plan", default=None, help="path to the CI/PR plan manifest (JSON)")
-    parser.add_argument("--evidence", default=None, help="path to CI/PR execution-evidence artifact (JSON)")
-    parser.add_argument("--local-evidence", default=None, help="path to a LOCAL execution-evidence artifact (JSON)")
-    parser.add_argument("--report", default=None, help="path to write the persisted reconciliation report (JSON)")
-    parser.add_argument("--commit", default=None, help="commit sha for the evidence identity spine")
+    parser.add_argument(
+        "--plan", default=None, help="path to the CI/PR plan manifest (JSON)"
+    )
+    parser.add_argument(
+        "--evidence",
+        default=None,
+        help="path to CI/PR execution-evidence artifact (JSON)",
+    )
+    parser.add_argument(
+        "--local-evidence",
+        default=None,
+        help="path to a LOCAL execution-evidence artifact (JSON)",
+    )
+    parser.add_argument(
+        "--report",
+        default=None,
+        help="path to write the persisted reconciliation report (JSON)",
+    )
+    parser.add_argument(
+        "--commit", default=None, help="commit sha for the evidence identity spine"
+    )
     args, _ = parser.parse_known_args(sys.argv[2:])
 
     if args.plan is not None:
@@ -608,6 +669,7 @@ def cmd_reconcile() -> int:
                 commit=args.commit,
             )
     else:
+
         def _load_or_generate(path: str | None, tier: str) -> TierPlan:
             if path:
                 data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -618,13 +680,17 @@ def cmd_reconcile() -> int:
                     changed_files=tuple(data["changed_files"]),
                     selected=tuple(
                         __import__(
-                            "runtime.foundation.verification.tier", fromlist=["SelectedUnit"]
-                        ).SelectedUnit(**s) for s in data["selected"]
+                            "runtime.foundation.verification.tier",
+                            fromlist=["SelectedUnit"],
+                        ).SelectedUnit(**s)
+                        for s in data["selected"]
                     ),
                     excluded=tuple(
                         __import__(
-                            "runtime.foundation.verification.tier", fromlist=["ExcludedUnit"]
-                        ).ExcludedUnit(**e) for e in data["excluded"]
+                            "runtime.foundation.verification.tier",
+                            fromlist=["ExcludedUnit"],
+                        ).ExcludedUnit(**e)
+                        for e in data["excluded"]
                     ),
                     estimated_seconds=data["estimated_seconds"],
                     planner_version=data["planner_version"],
@@ -700,10 +766,15 @@ def cmd_exec_evidence() -> int:
     from runtime.foundation.verification.tier import TierPlan
 
     parser = argparse.ArgumentParser(prog="verify.py exec-evidence", add_help=False)
-    parser.add_argument("--plan", required=True, help="path to the plan manifest (JSON)")
-    parser.add_argument("--profile", default="runtime", help="profile that executed the plan")
     parser.add_argument(
-        "--report", default="runtime/generated/verification-report.md",
+        "--plan", required=True, help="path to the plan manifest (JSON)"
+    )
+    parser.add_argument(
+        "--profile", default="runtime", help="profile that executed the plan"
+    )
+    parser.add_argument(
+        "--report",
+        default="runtime/generated/verification-report.md",
         help="evidence location for the executed profile",
     )
     parser.add_argument("--status", required=True, choices=["pass", "fail", "skipped"])
@@ -711,7 +782,8 @@ def cmd_exec_evidence() -> int:
     parser.add_argument("--duration", type=float, default=0.0)
     parser.add_argument("--commit", default=None)
     parser.add_argument(
-        "--out", default="runtime/generated/vea5-execution.json",
+        "--out",
+        default="runtime/generated/vea5-execution.json",
         help="path to write the execution-evidence artifact",
     )
     parser.add_argument("--v1", action="store_true", help="emit legacy M5 v1 schema")
@@ -726,12 +798,14 @@ def cmd_exec_evidence() -> int:
         selected=tuple(
             __import__(
                 "runtime.foundation.verification.tier", fromlist=["SelectedUnit"]
-            ).SelectedUnit(**s) for s in data["selected"]
+            ).SelectedUnit(**s)
+            for s in data["selected"]
         ),
         excluded=tuple(
             __import__(
                 "runtime.foundation.verification.tier", fromlist=["ExcludedUnit"]
-            ).ExcludedUnit(**e) for e in data["excluded"]
+            ).ExcludedUnit(**e)
+            for e in data["excluded"]
         ),
         estimated_seconds=data["estimated_seconds"],
         planner_version=data["planner_version"],
@@ -818,7 +892,9 @@ def cmd_deep_contract() -> int:
     )
 
     parser = argparse.ArgumentParser(prog="verify.py deep-contract", add_help=False)
-    parser.add_argument("--out", default=None, help="path to write the contract manifest")
+    parser.add_argument(
+        "--out", default=None, help="path to write the contract manifest"
+    )
     args, _ = parser.parse_known_args(sys.argv[2:])
 
     manifest = deep_contract_manifest()
@@ -856,11 +932,15 @@ def cmd_local_gate() -> int:
     parser = argparse.ArgumentParser(prog="verify.py local-gate", add_help=False)
     parser.add_argument(
         "--out",
-        default=str(MANIFEST_PATH).replace("vea5-tier-plan.json", "vea5-tier-plan.local.json"),
+        default=str(MANIFEST_PATH).replace(
+            "vea5-tier-plan.json", "vea5-tier-plan.local.json"
+        ),
         help="path to write the LOCAL plan manifest",
     )
     parser.add_argument(
-        "--changed", nargs="*", default=None,
+        "--changed",
+        nargs="*",
+        default=None,
         help="explicit changed files (bypass git; for tests)",
     )
     args, _ = parser.parse_known_args(sys.argv[2:])
@@ -901,12 +981,18 @@ def cmd_intelligence() -> int:
     print(f"  Changed files:      {len(run.change.changeset.files)}")
     print(f"  Direct impact:      {len(run.blast.direct)}")
     print(f"  Indirect impact:    {len(run.blast.indirect)}")
-    print(f"  Risk:               {run.risk.overall_level} "
-          f"(score {run.risk.overall_score}, confidence {run.risk.confidence})")
-    print(f"  Verification units: {len(run.plan.selected)} selected, "
-          f"{len(run.plan.skipped)} skipped")
-    print(f"  Estimated cost:     {run.plan.estimated_seconds}s "
-          f"(baseline {run.plan.baseline_seconds}s)")
+    print(
+        f"  Risk:               {run.risk.overall_level} "
+        f"(score {run.risk.overall_score}, confidence {run.risk.confidence})"
+    )
+    print(
+        f"  Verification units: {len(run.plan.selected)} selected, "
+        f"{len(run.plan.skipped)} skipped"
+    )
+    print(
+        f"  Estimated cost:     {run.plan.estimated_seconds}s "
+        f"(baseline {run.plan.baseline_seconds}s)"
+    )
     print("\nArtifacts:")
     for path in run.written:
         print(f"  {path.relative_to(REPO_ROOT)}")
@@ -918,7 +1004,9 @@ def cmd_certify_v4() -> int:
     from runtime.foundation.intelligence.platform import certification
 
     result = certification.certify()
-    output_json = REPO_ROOT / "runtime" / "generated" / "engineering-platform-audit-v4.json"
+    output_json = (
+        REPO_ROOT / "runtime" / "generated" / "engineering-platform-audit-v4.json"
+    )
     output_md = REPO_ROOT / "runtime" / "generated" / "program14-certification.md"
     output_json.parent.mkdir(parents=True, exist_ok=True)
     output_json.write_text(
@@ -932,8 +1020,10 @@ def cmd_certify_v4() -> int:
             print(f"      {check.detail}")
 
     print(f"\nRuntime audit: {result.audit_status}")
-    print(f"Program 14 certification: "
-          f"{'CERTIFIED' if result.passed else 'NOT CERTIFIED'}")
+    print(
+        f"Program 14 certification: "
+        f"{'CERTIFIED' if result.passed else 'NOT CERTIFIED'}"
+    )
     print(f"  {output_json.relative_to(REPO_ROOT)}")
     print(f"  {output_md.relative_to(REPO_ROOT)}")
     return 0 if result.passed else 1
@@ -952,9 +1042,7 @@ def cmd_certify_v5() -> int:
             print(f"      {check['detail']}")
 
     print(f"\nRuntime audit: {result['runtime_audit']['certification_status']}")
-    print(
-        f"Program 14.1 certification: {result['certification_status']}"
-    )
+    print(f"Program 14.1 certification: {result['certification_status']}")
     print(f"  {REPO_ROOT / 'runtime/generated/engineering-platform-audit-v5.json'}")
     print(f"  {REPO_ROOT / 'runtime/generated/program14.1-certification.md'}")
     return 0 if result["certification_status"] == "CERTIFIED" else 1
@@ -988,12 +1076,7 @@ def cmd_api_contracts() -> int:
     gate = ApiContractGate()
     report = gate.run()
 
-    evidence_path = (
-        REPO_ROOT
-        / "runtime"
-        / "generated"
-        / "api-contract-evidence.json"
-    )
+    evidence_path = REPO_ROOT / "runtime" / "generated" / "api-contract-evidence.json"
     evidence_path.parent.mkdir(parents=True, exist_ok=True)
     evidence_path.write_text(
         _json.dumps(report.to_dict(), indent=2, default=str), encoding="utf-8"
@@ -1048,6 +1131,7 @@ def cmd_contract_governance() -> int:
       - CI enforcement verification
     """
     from runtime.foundation.verification.api_contracts.c30_certification import main
+
     return main()
 
 
@@ -1056,7 +1140,9 @@ def cmd_audit() -> int:
     from runtime.foundation.audit.reporter import AuditReporter
     from runtime.foundation.audit.repository import audit as _audit_repository
     from runtime.foundation.audit.cross_layer import audit as _audit_cross_layer
-    from runtime.foundation.audit.dependency_graph import audit as _audit_dependency_graph
+    from runtime.foundation.audit.dependency_graph import (
+        audit as _audit_dependency_graph,
+    )
     from runtime.foundation.audit.planner import audit as _audit_planner
     from runtime.foundation.audit.executor import audit as _audit_executor
     from runtime.foundation.audit.evidence import audit as _audit_evidence
@@ -1067,10 +1153,16 @@ def cmd_audit() -> int:
     from runtime.foundation.audit.github_actions import audit as _audit_github_actions
     from runtime.foundation.audit.runtime_cli import audit as _audit_runtime_cli
     from runtime.foundation.audit.github_runtime import audit as _audit_github_runtime
-    from runtime.foundation.audit.verification_profiles import audit as _audit_verification_profiles
-    from runtime.foundation.audit.artifact_ownership import audit as _audit_artifact_ownership
+    from runtime.foundation.audit.verification_profiles import (
+        audit as _audit_verification_profiles,
+    )
+    from runtime.foundation.audit.artifact_ownership import (
+        audit as _audit_artifact_ownership,
+    )
     from runtime.foundation.audit.performance import audit as _audit_performance
-    from runtime.foundation.audit.failure_injection import audit as _audit_failure_injection
+    from runtime.foundation.audit.failure_injection import (
+        audit as _audit_failure_injection,
+    )
     from runtime.foundation.audit.pipeline import audit as _audit_pipeline
     from runtime.foundation.audit.roi import audit as _audit_roi
 
@@ -1231,7 +1323,10 @@ def main() -> int:
 
     if not changed_files and profile_name not in ("full", "graph"):
         import os
-        in_ci = os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+
+        in_ci = (
+            os.environ.get("CI") == "true" or os.environ.get("GITHUB_ACTIONS") == "true"
+        )
         if in_ci:
             print(
                 "No changed files detected and git is unavailable in CI. "
@@ -1320,14 +1415,10 @@ def main() -> int:
     report.save_markdown(report_path)
 
     overall = (
-        "pass"
-        if report.summary.overall_status == VerificationStatus.PASSED
-        else "fail"
+        "pass" if report.summary.overall_status == VerificationStatus.PASSED else "fail"
     )
     unit_statuses = tuple(
-        (r.unit_id or "UNMAPPED", r.status.value)
-        for r in report.results
-        if r.unit_id
+        (r.unit_id or "UNMAPPED", r.status.value) for r in report.results if r.unit_id
     )
     verdict = CachedVerdict(
         overall_status=overall,
@@ -1364,7 +1455,11 @@ def main() -> int:
                 reason_str = (
                     "(none)"
                     if raw_error is None
-                    else ("[empty stderr]" if raw_error == "" else raw_error.replace("\n", " ").strip()[:300])
+                    else (
+                        "[empty stderr]"
+                        if raw_error == ""
+                        else raw_error.replace("\n", " ").strip()[:300]
+                    )
                 )
                 print(f"  - {r.task_id}: exit={r.exit_code} reason={reason_str}")
                 if r.stderr_path:

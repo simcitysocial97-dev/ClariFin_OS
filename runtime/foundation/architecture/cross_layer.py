@@ -175,7 +175,8 @@ def build_cross_layer_map_v2(arch: Architecture | None = None) -> dict[str, Any]
         "chains": chains,
         "endpointOwnership": endpoint_ownership,
         "facades": {
-            path: facade.to_dict() for path, facade in sorted(architecture.facades.items())
+            path: facade.to_dict()
+            for path, facade in sorted(architecture.facades.items())
         },
         "phantomEngineKeysRemoved": list(LEGACY_PHANTOM_ENGINE_KEYS),
         "implementationModulesDemoted": demoted,
@@ -196,7 +197,9 @@ def save(output_path: Path | None = None, arch: Architecture | None = None) -> P
     data = build_cross_layer_map_v2(arch)
     target = output_path or (GENERATED_DIR / OUTPUT_NAME)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(data, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(data, indent=2, sort_keys=False) + "\n", encoding="utf-8"
+    )
     return target
 
 

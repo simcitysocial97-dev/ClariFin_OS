@@ -28,7 +28,11 @@ echo -e "\n${YELLOW}Building frontend...${NC}"
 npm run build
 
 echo -e "\n${YELLOW}Running Playwright test suite...${NC}"
-npx playwright test --reporter=list
+if [ -n "${PLAYWRIGHT_PROJECT:-}" ]; then
+  npx playwright test --project="${PLAYWRIGHT_PROJECT}" --reporter=list
+else
+  npx playwright test --reporter=list
+fi
 
 status=$?
 if [ "$status" -eq 0 ]; then

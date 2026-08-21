@@ -47,7 +47,9 @@ class WorkspaceLoader:
     Only consumes artifacts already produced by Programs 7-8.
     """
 
-    def __init__(self, repo_root: Path | None = None, chain_map: dict | None = None) -> None:
+    def __init__(
+        self, repo_root: Path | None = None, chain_map: dict | None = None
+    ) -> None:
         self.repo_root = repo_root or Path(__file__).resolve().parents[3]
         self.generated_dir = self.repo_root / "runtime" / "generated"
         # Explicit injection seam for isolated unit tests only. At runtime this
@@ -109,7 +111,11 @@ class WorkspaceLoader:
 
     def load_verification_status(self) -> VerificationStatusInfo:
         cache = self._load_json("verification-cache.json") or {}
-        last_profile = cache.get("executed_profiles", [""])[-1] if cache.get("executed_profiles") else ""
+        last_profile = (
+            cache.get("executed_profiles", [""])[-1]
+            if cache.get("executed_profiles")
+            else ""
+        )
         duration = cache.get("duration", 0.0)
 
         history = self._load_json("engineering-history.json") or {}
@@ -117,8 +123,12 @@ class WorkspaceLoader:
         for key in ("local", "ci", "combined"):
             runs = history.get(key, [])
             if runs:
-                runs_sorted = sorted(runs, key=lambda r: r.get("timestamp", ""), reverse=True)
-                if not last_run or runs_sorted[0].get("timestamp", "") > last_run.get("timestamp", ""):
+                runs_sorted = sorted(
+                    runs, key=lambda r: r.get("timestamp", ""), reverse=True
+                )
+                if not last_run or runs_sorted[0].get("timestamp", "") > last_run.get(
+                    "timestamp", ""
+                ):
                     last_run = runs_sorted[0]
 
         if last_run:
@@ -264,7 +274,9 @@ class WorkspaceLoader:
             risk=self.load_risk_summary(),
         )
 
-    def load_verification_counts(self, environment: str = "combined") -> VerificationCounts:
+    def load_verification_counts(
+        self, environment: str = "combined"
+    ) -> VerificationCounts:
         analytics = self._load_json("engineering-analytics.json") or {}
         env_data = analytics.get(environment, {})
         verif = env_data.get("verification", {})
@@ -294,7 +306,8 @@ class WorkspaceLoader:
             avg_seconds=verif.get("avg_duration_seconds", 0.0),
             min_seconds=verif.get("min_duration_seconds", 0.0),
             max_seconds=verif.get("max_duration_seconds", 0.0),
-            total_seconds=verif.get("avg_duration_seconds", 0.0) * verif.get("total_runs", 0),
+            total_seconds=verif.get("avg_duration_seconds", 0.0)
+            * verif.get("total_runs", 0),
         )
 
     def load_failure_rate(self) -> FailureRate:
@@ -387,7 +400,9 @@ class WorkspaceLoader:
         ci = _to_events(history.get("ci", []))
         combined = _to_events(history.get("combined", []))
 
-        all_events = sorted(local + ci + combined, key=lambda e: e.timestamp, reverse=True)
+        all_events = sorted(
+            local + ci + combined, key=lambda e: e.timestamp, reverse=True
+        )
         return VerificationHistory(local=local, ci=ci, combined=all_events)
 
     def load_verification_profiles(self) -> list[VerificationProfile]:
@@ -433,22 +448,36 @@ class WorkspaceLoader:
         cross_layer = self._load_chain_map()
         entry = cross_layer.get(file_path)
         if entry is None:
-            return DependencyExplorerResult(file_path=file_path, chain=None, found=False)
+            return DependencyExplorerResult(
+                file_path=file_path, chain=None, found=False
+            )
 
         chain = DependencyChain(
             file_path=file_path,
             engine=entry.get("engine") if isinstance(entry, dict) else None,
             services=list(entry.get("services", [])) if isinstance(entry, dict) else [],
             routers=list(entry.get("routers", [])) if isinstance(entry, dict) else [],
-            endpoints=list(entry.get("endpoints", [])) if isinstance(entry, dict) else [],
-            capabilities=list(entry.get("capabilities", [])) if isinstance(entry, dict) else [],
+            endpoints=(
+                list(entry.get("endpoints", [])) if isinstance(entry, dict) else []
+            ),
+            capabilities=(
+                list(entry.get("capabilities", [])) if isinstance(entry, dict) else []
+            ),
             mappers=list(entry.get("mappers", [])) if isinstance(entry, dict) else [],
-            view_models=list(entry.get("viewModels", [])) if isinstance(entry, dict) else [],
+            view_models=(
+                list(entry.get("viewModels", [])) if isinstance(entry, dict) else []
+            ),
             pages=list(entry.get("pages", [])) if isinstance(entry, dict) else [],
-            workspaces=list(entry.get("workspace", [])) if isinstance(entry, dict) else [],
-            components=list(entry.get("components", [])) if isinstance(entry, dict) else [],
+            workspaces=(
+                list(entry.get("workspace", [])) if isinstance(entry, dict) else []
+            ),
+            components=(
+                list(entry.get("components", [])) if isinstance(entry, dict) else []
+            ),
             tests=list(entry.get("tests", [])) if isinstance(entry, dict) else [],
-            graph_renderers=list(entry.get("graphRenderers", [])) if isinstance(entry, dict) else [],
+            graph_renderers=(
+                list(entry.get("graphRenderers", [])) if isinstance(entry, dict) else []
+            ),
         )
         return DependencyExplorerResult(file_path=file_path, chain=chain, found=True)
 

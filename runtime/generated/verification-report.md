@@ -1,7 +1,7 @@
 # Verification Report
 
-**Profile:** golden
-**Generated:** 2026-08-20T13:40:37.164157+00:00
+**Profile:** backend
+**Generated:** 2026-08-21T18:00:36.019702+00:00
 **Overall Status:** passed
 
 ## Changed Files
@@ -17,6 +17,8 @@
 - `backend/src/core/dtos/transaction_dto.py`
 - `backend/src/core/mappers/transaction_mapper.py`
 - `backend/src/engines/loan_engine/prepayment.py`
+- `backend/src/extraction/camelot_extractor.py`
+- `backend/src/extraction/hybrid_extractor.py`
 - `backend/src/routers/reconciliation.py`
 - `backend/src/routers/transactions.py`
 - `backend/src/services/behaviour_service.py`
@@ -36,11 +38,13 @@
 - `frontend/__tests__/api-contracts/reconciliation.contract.test.ts`
 - `frontend/__tests__/api-contracts/transactions.contract.test.ts`
 - `frontend/app/dashboard/page.tsx`
+- `frontend/app/layout.tsx`
 - `frontend/components/dashboard/behavior-score-card.tsx`
 - `frontend/components/os-shell/left-rail.tsx`
 - `frontend/components/os-shell/right-inspector.tsx`
 - `frontend/components/os-shell/top-command-bar.tsx`
 - `frontend/components/os-shell/workspace-container.tsx`
+- `frontend/components/primitives/panel/panel.tsx`
 - `frontend/components/query-provider.tsx`
 - `frontend/generated/openapi-current.json`
 - `frontend/lib/__tests__/gateway-invariance.test.ts`
@@ -94,7 +98,9 @@
 - `frontend/tests/e2e/specs/edge-cases.spec.ts`
 - `frontend/tests/e2e/specs/health-check.spec.ts`
 - `frontend/tests/e2e/specs/navigation.spec.ts`
+- `frontend/tests/e2e/specs/performance.spec.ts`
 - `frontend/tests/e2e/specs/reconciliation.spec.ts`
+- `frontend/tests/e2e/specs/transactions.spec.ts`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-chromium-linux.png`
 - `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-chromium-linux.png`
@@ -138,10 +144,84 @@
 - `runtime/verify.py`
 - `test-results/.last-run.json`
 - `tools/e2e_seed.py`
+- `.kilo/plans/1787286911071-c43-remaining-issues-plan.md`
+- `backend/tests/probes/test_m4_exit_probe.py`
 - `dependency-reports/dependency-health.md`
 - `dependency-reports/npm-audit.txt`
 - `dependency-reports/npm-outdated.json`
 - `dependency-reports/python-audit.txt`
+- `frontend/tests/e2e/snapshots/historical/analytics-mobile-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/analytics-mobile-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/analytics-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/analytics-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/behavior-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/behavior-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/cards-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/cards-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/categories-mobile-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/categories-mobile-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/categories-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/categories-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/dark-mode-dashboard-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/dark-mode-dashboard-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/dashboard-mobile-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/dashboard-mobile-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/dashboard-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/dashboard-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/family-mode-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/family-mode-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/header-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/header-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/home-mobile-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/home-mobile-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/home-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/home-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/import-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/import-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/mode-toggle-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/mode-toggle-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/personal-mode-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/personal-mode-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/reconciliation-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/reconciliation-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/settings-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/settings-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/sidebar-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/sidebar-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/transactions-mobile-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/transactions-mobile-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/transactions-page-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/transactions-page-tablet-linux.png`
+- `frontend/tests/e2e/snapshots/historical/upload-button-firefox-linux.png`
+- `frontend/tests/e2e/snapshots/historical/upload-button-tablet-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-firefox-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/analytics-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/behavior-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-firefox-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/cards-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-firefox-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/categories-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dark-mode-dashboard-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-firefox-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/dashboard-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/family-mode-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/header-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-firefox-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/home-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/import-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/personal-mode-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/reconciliation-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/settings-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/sidebar-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-mobile-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-firefox-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/transactions-page-mobile-chrome-linux.png`
+- `frontend/tests/e2e/specs/visual-regression.spec.ts-snapshots/upload-button-mobile-chrome-linux.png`
+- `runtime/foundation/verification/product-support.md`
 
 ## Blast Radius
 
@@ -152,24 +232,27 @@
 
 ## Verification Plan
 
-- **Plan ID:** plan-20260820-134029
-- **Scope:** golden
-- **Targets:** 1
-- **Steps:** 1
-- **Estimated Duration:** 600s
+- **Plan ID:** plan-20260821-175234
+- **Scope:** backend
+- **Targets:** 10
+- **Steps:** 4
+- **Estimated Duration:** 660s
 
 ## Tasks Executed
 
 | Task ID | Command | Status | Exit | Duration | Error | Stdout | Stderr |
 |---------|---------|--------|------|----------|-------|--------|--------|
-| step-0001 | bash .github/scripts/run_golden_tests.sh | VerificationStatus.PASSED | 0 | 7.7s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
+| step-0001 | bash .github/scripts/run_backend_verification.sh | VerificationStatus.PASSED | 0 | 83.9s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0001-stderr.txt |
+| step-0002 | bash .github/scripts/run_fast_checks.sh | VerificationStatus.PASSED | 0 | 61.3s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0002-stderr.txt |
+| step-0003 | bash .github/scripts/run_frontend_verification.sh | VerificationStatus.PASSED | 0 | 173.8s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0003-stderr.txt |
+| step-0004 | bash .github/scripts/run_runtime_verification.sh | VerificationStatus.PASSED | 0 | 163.0s |  | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stdout.txt | /home/vasantha/AI-Projects/ClariFin_OS/runtime/generated/execution/step-0004-stderr.txt |
 
 ## Results Summary
 
-- **Passed:** 1
+- **Passed:** 4
 - **Failed:** 0
 - **Skipped:** 0
-- **Total Duration:** 7.7s
+- **Total Duration:** 482.0s
 
 
 ## Dependency Chains (Program 7A)
@@ -201,6 +284,13 @@
 - Endpoints: GET /cashflow-health, GET /debt-health, GET /monthly-report, GET /patterns, GET /profile
 - Capabilities: useBehaviourCapability
 - Tests: 8 affected
+
+### frontend/components/primitives/panel/panel.tsx
+- Engine: backend/src/engines/account_engine
+- Services: backend/src/services/account_service.py
+- Endpoints: DELETE /accounts/manage/{account_id}, DELETE /accounts/{account_id}, DELETE /accounts/{account_id}/links/{linked_account_id}, GET /accounts, GET /accounts/manage
+- Capabilities: useAccountsCapability
+- Tests: 2 affected
 
 ### frontend/lib/capabilities/use-accounts-capability.ts
 - Engine: backend/src/engines/account_engine

@@ -181,7 +181,9 @@ class UnitExecutionRecord:
         return cls(
             unit_id=d["unit_id"],
             provenance=d.get("provenance", {}),
-            attempts=tuple(ExecutionAttempt.from_dict(a) for a in d.get("attempts", [])),
+            attempts=tuple(
+                ExecutionAttempt.from_dict(a) for a in d.get("attempts", [])
+            ),
         )
 
     def primary_status(self) -> str:
@@ -235,9 +237,7 @@ class ExecutionEvidenceV2:
         )
 
 
-def save_execution_evidence_v2(
-    evidence: ExecutionEvidenceV2, path: Path | str
-) -> Path:
+def save_execution_evidence_v2(evidence: ExecutionEvidenceV2, path: Path | str) -> Path:
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(evidence.to_dict(), indent=2) + "\n", encoding="utf-8")

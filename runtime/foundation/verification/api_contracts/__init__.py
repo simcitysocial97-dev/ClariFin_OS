@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from runtime.foundation.verification.api_contracts.gate import ApiContractGate, GateReport
+from runtime.foundation.verification.api_contracts.gate import (
+    ApiContractGate,
+    GateReport,
+)
 from runtime.foundation.verification.api_contracts.inventory import ContractInventory
 from runtime.foundation.verification.api_contracts.mutations import FailureInjector
 from runtime.foundation.verification.api_contracts.normalize import (

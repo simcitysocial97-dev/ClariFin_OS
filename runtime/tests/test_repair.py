@@ -33,8 +33,9 @@ def test_repair_plan_orders_and_cites_provider_owners():
 
 
 def test_repair_plan_is_reproducible():
-    defect = Defect("d1", "test", "x",
-                    ("backend/src/engines/account_engine/balance.py",), "high")
+    defect = Defect(
+        "d1", "test", "x", ("backend/src/engines/account_engine/balance.py",), "high"
+    )
 
     def order():
         repair = repair_plan(defects=[defect], changed_files=[])

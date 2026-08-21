@@ -97,7 +97,9 @@ class Table:
 
         header_cells = []
         for idx, h in enumerate(self.headers):
-            header_cells.append(_pad(_truncate(h, self.col_widths[idx]), self.col_widths[idx]))
+            header_cells.append(
+                _pad(_truncate(h, self.col_widths[idx]), self.col_widths[idx])
+            )
         lines.append(f"{_V} " + f" {_TJ} ".join(header_cells) + f" {_V}")
 
         separator = (
@@ -108,7 +110,9 @@ class Table:
         for row in self.rows:
             cells = []
             for idx, cell in enumerate(row):
-                cells.append(_pad(_truncate(cell, self.col_widths[idx]), self.col_widths[idx]))
+                cells.append(
+                    _pad(_truncate(cell, self.col_widths[idx]), self.col_widths[idx])
+                )
             lines.append(f"{_V} " + f" {_V} ".join(cells) + f" {_V}")
 
         footer_line = (
@@ -121,6 +125,7 @@ class Table:
 def shutil_get_terminal_width() -> int:
     try:
         import shutil
+
         return shutil.get_terminal_size().columns
     except Exception:
         return 80

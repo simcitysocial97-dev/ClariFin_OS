@@ -127,9 +127,7 @@ def run_intelligence(
     blast = compute_blast_radius(change, resolver=res)
     plan = optimize_verification(blast, resolver=res)
     memory = build_memory(generated_dir=gen)
-    risk = assess_risk(
-        change, blast, plan, resolver=res, memory=memory.as_risk_input()
-    )
+    risk = assess_risk(change, blast, plan, resolver=res, memory=memory.as_risk_input())
     repair = build_repair_intelligence(blast, resolver=res)
 
     if collect_ci:
@@ -143,8 +141,16 @@ def run_intelligence(
 
     cost = estimate_cost(plan)
     state = build_platform_state(
-        change, blast, plan, risk, repair, memory, github, cost,
-        resolver=res, generated_dir=gen,
+        change,
+        blast,
+        plan,
+        risk,
+        repair,
+        memory,
+        github,
+        cost,
+        resolver=res,
+        generated_dir=gen,
     )
 
     run = IntelligenceRun(

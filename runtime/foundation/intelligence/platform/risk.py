@@ -107,8 +107,7 @@ def assess_risk(
         f.path
         for f in change.changeset.files
         if any(
-            e.entry_point == f.path or e.path == f.path
-            for e in arch.engines.values()
+            e.entry_point == f.path or e.path == f.path for e in arch.engines.values()
         )
     ]
     if entry_changes:
@@ -119,7 +118,11 @@ def assess_risk(
         )
     if not arch_ev:
         arch_ev.append("no engine ownership root or entry point changed")
-    dims.append(RiskDimension("Architectural Risk", _level(arch_score), arch_score, tuple(arch_ev)))
+    dims.append(
+        RiskDimension(
+            "Architectural Risk", _level(arch_score), arch_score, tuple(arch_ev)
+        )
+    )
 
     # 2. Regression risk — breadth of indirect impact.
     indirect = len(blast.indirect)
@@ -134,7 +137,9 @@ def assess_risk(
         reg_score += 10
         reg_ev.append(f"{len(deep)} entities impacted at propagation depth >= 3")
     reg_score = min(100, reg_score)
-    dims.append(RiskDimension("Regression Risk", _level(reg_score), reg_score, tuple(reg_ev)))
+    dims.append(
+        RiskDimension("Regression Risk", _level(reg_score), reg_score, tuple(reg_ev))
+    )
 
     # 3. Dependency risk — fan-in of changed entities in dependency graph.
     dep_score = 0
@@ -152,8 +157,12 @@ def assess_risk(
         top = sorted(dependents.items(), key=lambda kv: (-kv[1], kv[0]))[:5]
         dep_ev.extend(f"{ref} has {n} direct dependent(s)" for ref, n in top)
     else:
-        dep_ev.append("changed entities have no recorded dependents in the dependency graph")
-    dims.append(RiskDimension("Dependency Risk", _level(dep_score), dep_score, tuple(dep_ev)))
+        dep_ev.append(
+            "changed entities have no recorded dependents in the dependency graph"
+        )
+    dims.append(
+        RiskDimension("Dependency Risk", _level(dep_score), dep_score, tuple(dep_ev))
+    )
 
     # 4. Coverage risk — impacted engines lacking provider-recorded tests.
     cov_score = 0
@@ -186,7 +195,9 @@ def assess_risk(
                 "verification impact is empty and no suite was selected: "
                 "nothing verifies this change"
             )
-    dims.append(RiskDimension("Coverage Risk", _level(cov_score), cov_score, tuple(cov_ev)))
+    dims.append(
+        RiskDimension("Coverage Risk", _level(cov_score), cov_score, tuple(cov_ev))
+    )
 
     # 5. Ownership risk — changed paths with no provider owner.
     own_score = 0
@@ -205,7 +216,9 @@ def assess_risk(
             f"{len(blast.unresolved_nodes)} graph node(s) are not registered in "
             "provider entity tables: " + ", ".join(blast.unresolved_nodes[:5])
         )
-    dims.append(RiskDimension("Ownership Risk", _level(own_score), own_score, tuple(own_ev)))
+    dims.append(
+        RiskDimension("Ownership Risk", _level(own_score), own_score, tuple(own_ev))
+    )
 
     # 6. Contract risk — endpoint / API surface movement.
     con_score = 0
@@ -226,7 +239,9 @@ def assess_risk(
     if not con_ev:
         con_ev.append("no endpoint or route declaration affected")
     con_score = min(100, con_score)
-    dims.append(RiskDimension("Contract Risk", _level(con_score), con_score, tuple(con_ev)))
+    dims.append(
+        RiskDimension("Contract Risk", _level(con_score), con_score, tuple(con_ev))
+    )
 
     # 7. CI risk — historical CI instability for the impacted surface.
     ci_score = 0

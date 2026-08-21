@@ -43,314 +43,396 @@ def phase1():
     items = []
 
     # 1. Parked legacy facade: behavior_engine.py
-    items.append({
-        "id": "legacy-behavior_engine-facade",
-        "category": "parked",
-        "path": "backend/src/engines/behavior_engine.py",
-        "owner": "behaviour_engine (canonical package)",
-        "reason": "PARKED legacy single-file facade fully replaced by behaviour_engine package. Import references: 0. Dead code.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "engine-normalization.json parked_facades; architecture-inventory Engine Facade node_type; grep shows zero imports in backend/src"
-    })
+    items.append(
+        {
+            "id": "legacy-behavior_engine-facade",
+            "category": "parked",
+            "path": "backend/src/engines/behavior_engine.py",
+            "owner": "behaviour_engine (canonical package)",
+            "reason": "PARKED legacy single-file facade fully replaced by behaviour_engine package. Import references: 0. Dead code.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": False,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "engine-normalization.json parked_facades; architecture-inventory Engine Facade node_type; grep shows zero imports in backend/src",
+        }
+    )
 
     # 2. Parked cashflow_engine.py.parked
-    items.append({
-        "id": "legacy-cashflow_engine-parked",
-        "category": "parked",
-        "path": "backend/src/engines/cashflow_engine.py.parked",
-        "owner": "unknown (legacy)",
-        "reason": "PARKED legacy cashflow engine file. No canonical successor package exists. Import references: 0.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "engine-normalization.json reports PARKED; grep finds zero importers"
-    })
+    items.append(
+        {
+            "id": "legacy-cashflow_engine-parked",
+            "category": "parked",
+            "path": "backend/src/engines/cashflow_engine.py.parked",
+            "owner": "unknown (legacy)",
+            "reason": "PARKED legacy cashflow engine file. No canonical successor package exists. Import references: 0.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": False,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "engine-normalization.json reports PARKED; grep finds zero importers",
+        }
+    )
 
     # 3. Orphan insight_generator
-    items.append({
-        "id": "orphan-insight_generator",
-        "category": "orphan",
-        "path": "backend/src/engines/insight_generator.py",
-        "owner": "behaviour_engine/core.py (sole importer)",
-        "reason": "ORPHAN_INTERNAL single-file engine. No capability, no router, no service, no tests. Imported only by behaviour_engine/core.py.",
-        "incoming_references": ["backend/src/engines/behaviour_engine/core.py"],
-        "outgoing_references": [],
-        "runtime_reachable": True,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": False,
-        "migration_candidate": True,
-        "confidence": "HIGH",
-        "evidence": "engine-topology.json shows 0 services/routers/endpoints; architecture-inventory shows only behaviour_engine/core.py imports"
-    })
+    items.append(
+        {
+            "id": "orphan-insight_generator",
+            "category": "orphan",
+            "path": "backend/src/engines/insight_generator.py",
+            "owner": "behaviour_engine/core.py (sole importer)",
+            "reason": "ORPHAN_INTERNAL single-file engine. No capability, no router, no service, no tests. Imported only by behaviour_engine/core.py.",
+            "incoming_references": ["backend/src/engines/behaviour_engine/core.py"],
+            "outgoing_references": [],
+            "runtime_reachable": True,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": False,
+            "migration_candidate": True,
+            "confidence": "HIGH",
+            "evidence": "engine-topology.json shows 0 services/routers/endpoints; architecture-inventory shows only behaviour_engine/core.py imports",
+        }
+    )
 
     # 4. Orphan nudge_engine
-    items.append({
-        "id": "orphan-nudge_engine",
-        "category": "orphan",
-        "path": "backend/src/engines/nudge_engine.py",
-        "owner": "behaviour_engine/core.py (sole importer)",
-        "reason": "ORPHAN_INTERNAL single-file engine. No capability, no router, no service. Imported only by behaviour_engine/core.py.",
-        "incoming_references": ["backend/src/engines/behaviour_engine/core.py"],
-        "outgoing_references": [],
-        "runtime_reachable": True,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": True,
-        "deletion_candidate": False,
-        "migration_candidate": True,
-        "confidence": "HIGH",
-        "evidence": "engine-topology.json shows 0 services/routers; architecture-inventory shows only behaviour_engine/core.py imports; tests/properties/recommendations/test_engine_properties.py exists"
-    })
+    items.append(
+        {
+            "id": "orphan-nudge_engine",
+            "category": "orphan",
+            "path": "backend/src/engines/nudge_engine.py",
+            "owner": "behaviour_engine/core.py (sole importer)",
+            "reason": "ORPHAN_INTERNAL single-file engine. No capability, no router, no service. Imported only by behaviour_engine/core.py.",
+            "incoming_references": ["backend/src/engines/behaviour_engine/core.py"],
+            "outgoing_references": [],
+            "runtime_reachable": True,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": True,
+            "deletion_candidate": False,
+            "migration_candidate": True,
+            "confidence": "HIGH",
+            "evidence": "engine-topology.json shows 0 services/routers; architecture-inventory shows only behaviour_engine/core.py imports; tests/properties/recommendations/test_engine_properties.py exists",
+        }
+    )
 
     # 5. Duplicate ownership: behaviour domain
-    items.append({
-        "id": "duplicate-behaviour-ownership",
-        "category": "duplicate",
-        "path": "backend/src/engines/behavior_engine.py (legacy) vs backend/src/engines/behaviour_engine/ (canonical)",
-        "owner": "behaviour_engine (canonical package) + behavior_engine.py (parked legacy)",
-        "reason": "Same domain implemented twice: canonical behaviour_engine package AND legacy behavior_engine.py single-file facade. The legacy file is PARKED but not deleted.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "engine-normalization.json partially_migrated_engines; architecture-inventory Engine Facade node_type; import grep shows zero importers"
-    })
+    items.append(
+        {
+            "id": "duplicate-behaviour-ownership",
+            "category": "duplicate",
+            "path": "backend/src/engines/behavior_engine.py (legacy) vs backend/src/engines/behaviour_engine/ (canonical)",
+            "owner": "behaviour_engine (canonical package) + behavior_engine.py (parked legacy)",
+            "reason": "Same domain implemented twice: canonical behaviour_engine package AND legacy behavior_engine.py single-file facade. The legacy file is PARKED but not deleted.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": False,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "engine-normalization.json partially_migrated_engines; architecture-inventory Engine Facade node_type; import grep shows zero importers",
+        }
+    )
 
     # 6. Facade: engines/__init__.py (namespace re-export)
-    items.append({
-        "id": "facade-engines-namespace",
-        "category": "facade",
-        "path": "backend/src/engines/__init__.py",
-        "owner": "balance_engine",
-        "reason": "Namespace facade re-exporting balance_engine public API. Architectural indirection without adding value.",
-        "incoming_references": [],
-        "outgoing_references": ["backend/src/engines/balance_engine.py"],
-        "runtime_reachable": True,
-        "api_reachable": True,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": False,
-        "migration_candidate": True,
-        "confidence": "MEDIUM",
-        "evidence": "architecture-inventory Engine Package node_type; cross-layer-map-v2 shows balance_engine as internal engine"
-    })
+    items.append(
+        {
+            "id": "facade-engines-namespace",
+            "category": "facade",
+            "path": "backend/src/engines/__init__.py",
+            "owner": "balance_engine",
+            "reason": "Namespace facade re-exporting balance_engine public API. Architectural indirection without adding value.",
+            "incoming_references": [],
+            "outgoing_references": ["backend/src/engines/balance_engine.py"],
+            "runtime_reachable": True,
+            "api_reachable": True,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": False,
+            "migration_candidate": True,
+            "confidence": "MEDIUM",
+            "evidence": "architecture-inventory Engine Package node_type; cross-layer-map-v2 shows balance_engine as internal engine",
+        }
+    )
 
     # 7. Implementation-only modules (summary count)
-    impl_only_count = len(normalization.get("report", {}).get("implementation_only_modules", []))
-    items.append({
-        "id": "impl-only-modules-summary",
-        "category": "implementation-only",
-        "path": "N/A (aggregate)",
-        "owner": "multiple engines",
-        "reason": f"{impl_only_count} engine implementation modules that are NOT ownership roots. Owned by their parent engine package.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": True,
-        "api_reachable": True,
-        "frontend_reachable": True,
-        "test_reachable": True,
-        "deletion_candidate": False,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "engine-normalization.json implementation_only_modules report"
-    })
+    impl_only_count = len(
+        normalization.get("report", {}).get("implementation_only_modules", [])
+    )
+    items.append(
+        {
+            "id": "impl-only-modules-summary",
+            "category": "implementation-only",
+            "path": "N/A (aggregate)",
+            "owner": "multiple engines",
+            "reason": f"{impl_only_count} engine implementation modules that are NOT ownership roots. Owned by their parent engine package.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": True,
+            "api_reachable": True,
+            "frontend_reachable": True,
+            "test_reachable": True,
+            "deletion_candidate": False,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "engine-normalization.json implementation_only_modules report",
+        }
+    )
 
     # 8. Unused repository: alert_repository
-    items.append({
-        "id": "unused-alert_repository",
-        "category": "unused repository",
-        "path": "backend/src/repositories/alert_repository.py",
-        "owner": "unknown (no service importer)",
-        "reason": "Repository defined but not imported by any service or engine. Zero import references.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:alert_repository"
-    })
+    items.append(
+        {
+            "id": "unused-alert_repository",
+            "category": "unused repository",
+            "path": "backend/src/repositories/alert_repository.py",
+            "owner": "unknown (no service importer)",
+            "reason": "Repository defined but not imported by any service or engine. Zero import references.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": False,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:alert_repository",
+        }
+    )
 
     # 9. Unused repository: reconciliation_audit_repository
-    items.append({
-        "id": "unused-reconciliation_audit_repository",
-        "category": "unused repository",
-        "path": "backend/src/repositories/reconciliation_audit_repository.py",
-        "owner": "reconciliation_engine",
-        "reason": "Repository defined but not imported by any service. Zero service-level import references.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:reconciliation_audit_repository"
-    })
+    items.append(
+        {
+            "id": "unused-reconciliation_audit_repository",
+            "category": "unused repository",
+            "path": "backend/src/repositories/reconciliation_audit_repository.py",
+            "owner": "reconciliation_engine",
+            "reason": "Repository defined but not imported by any service. Zero service-level import references.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": False,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "dependency-graph-v2.json shows 0 incoming edges to repository:reconciliation_audit_repository",
+        }
+    )
 
     # 10. Unused service: base_service.py
-    items.append({
-        "id": "unused-base_service",
-        "category": "unused service",
-        "path": "backend/src/services/base_service.py",
-        "owner": "unknown (legacy)",
-        "reason": "Legacy base service not imported by any router or domain service. Superseded by backend/src/services/base.py.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "dependency-graph-v2.json shows 0 incoming edges to service:backend/src/services/base_service.py"
-    })
+    items.append(
+        {
+            "id": "unused-base_service",
+            "category": "unused service",
+            "path": "backend/src/services/base_service.py",
+            "owner": "unknown (legacy)",
+            "reason": "Legacy base service not imported by any router or domain service. Superseded by backend/src/services/base.py.",
+            "incoming_references": [],
+            "outgoing_references": [],
+            "runtime_reachable": False,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "dependency-graph-v2.json shows 0 incoming edges to service:backend/src/services/base_service.py",
+        }
+    )
 
     # 11. Unreachable services (no router, no capability path)
     unreachable_services = [
-        ("cashflow_service", "Imported only by cashflow_workspace_service and financial_intelligence_service. Never directly reachable from HTTP endpoint."),
-        ("networth_service", "Not imported by any router. Only registered in services __init__.py."),
-        ("loan_service", "Not imported by any router. Imported only by financial_intelligence_service."),
-        ("loan_analysis_service", "Not directly imported by any router in import scan."),
-        ("loan_simulation_service", "Not imported by any router. Only in services __init__."),
-        ("transaction_intelligence_service", "Internal engine service with no HTTP surface."),
-        ("financial_events_service", "Router registered but not traversed by any capability."),
-        ("financial_intelligence_service", "Internal engine service without capability owner."),
+        (
+            "cashflow_service",
+            "Imported only by cashflow_workspace_service and financial_intelligence_service. Never directly reachable from HTTP endpoint.",
+        ),
+        (
+            "networth_service",
+            "Not imported by any router. Only registered in services __init__.py.",
+        ),
+        (
+            "loan_service",
+            "Not imported by any router. Imported only by financial_intelligence_service.",
+        ),
+        (
+            "loan_analysis_service",
+            "Not directly imported by any router in import scan.",
+        ),
+        (
+            "loan_simulation_service",
+            "Not imported by any router. Only in services __init__.",
+        ),
+        (
+            "transaction_intelligence_service",
+            "Internal engine service with no HTTP surface.",
+        ),
+        (
+            "financial_events_service",
+            "Router registered but not traversed by any capability.",
+        ),
+        (
+            "financial_intelligence_service",
+            "Internal engine service without capability owner.",
+        ),
         ("audit_service", "No capability owner; imported only by __init__."),
-        ("bank_service", "No capability owner; imported by banks router but no capability path."),
-        ("export_service", "No capability owner; imported by export router but no capability path."),
-        ("forecast_service", "No capability owner; imported by forecast router but no capability path."),
-        ("member_service", "No capability owner; imported by members router but no capability path."),
+        (
+            "bank_service",
+            "No capability owner; imported by banks router but no capability path.",
+        ),
+        (
+            "export_service",
+            "No capability owner; imported by export router but no capability path.",
+        ),
+        (
+            "forecast_service",
+            "No capability owner; imported by forecast router but no capability path.",
+        ),
+        (
+            "member_service",
+            "No capability owner; imported by members router but no capability path.",
+        ),
     ]
     for svc_name, reason in unreachable_services:
-        items.append({
-            "id": f"unreachable-{svc_name}",
-            "category": "unused service",
-            "path": f"backend/src/services/{svc_name}.py",
-            "owner": "unknown (no capability owner)",
-            "reason": reason,
-            "incoming_references": [],
-            "outgoing_references": [],
-            "runtime_reachable": False,
-            "api_reachable": False,
-            "frontend_reachable": False,
-            "test_reachable": False,
-            "deletion_candidate": False,
-            "migration_candidate": True,
-            "confidence": "HIGH",
-            "evidence": f"api.py registration exists but no capability path; execution-graph.json has no {svc_name} node"
-        })
+        items.append(
+            {
+                "id": f"unreachable-{svc_name}",
+                "category": "unused service",
+                "path": f"backend/src/services/{svc_name}.py",
+                "owner": "unknown (no capability owner)",
+                "reason": reason,
+                "incoming_references": [],
+                "outgoing_references": [],
+                "runtime_reachable": False,
+                "api_reachable": False,
+                "frontend_reachable": False,
+                "test_reachable": False,
+                "deletion_candidate": False,
+                "migration_candidate": True,
+                "confidence": "HIGH",
+                "evidence": f"api.py registration exists but no capability path; execution-graph.json has no {svc_name} node",
+            }
+        )
 
     # 12. Unused routers (registered but no capability path)
     unreachable_routers = [
-        "banks.py", "cashflow.py", "cashflow_workspace.py", "credit_cards_workspace.py",
-        "export.py", "financial_events.py", "forecast.py", "health.py",
-        "investments.py", "investments_workspace.py", "loans_workspace.py",
-        "members.py", "networth.py", "networth_workspace.py",
-        "reconciliation_workspace.py", "transactions.py",
+        "banks.py",
+        "cashflow.py",
+        "cashflow_workspace.py",
+        "credit_cards_workspace.py",
+        "export.py",
+        "financial_events.py",
+        "forecast.py",
+        "health.py",
+        "investments.py",
+        "investments_workspace.py",
+        "loans_workspace.py",
+        "members.py",
+        "networth.py",
+        "networth_workspace.py",
+        "reconciliation_workspace.py",
+        "transactions.py",
     ]
     for router in unreachable_routers:
-        items.append({
-            "id": f"unreachable-router-{router.removesuffix('.py')}",
-            "category": "unused router",
-            "path": f"backend/src/routers/{router}",
-            "owner": "no capability owner",
-            "reason": "Router registered in api.py but no capability path in execution graph.",
+        items.append(
+            {
+                "id": f"unreachable-router-{router.removesuffix('.py')}",
+                "category": "unused router",
+                "path": f"backend/src/routers/{router}",
+                "owner": "no capability owner",
+                "reason": "Router registered in api.py but no capability path in execution graph.",
+                "incoming_references": [],
+                "outgoing_references": [],
+                "runtime_reachable": False,
+                "api_reachable": False,
+                "frontend_reachable": False,
+                "test_reachable": False,
+                "deletion_candidate": False,
+                "migration_candidate": True,
+                "confidence": "HIGH",
+                "evidence": f"api.py includes {router} but execution-graph.json has no endpoint edges for it",
+            }
+        )
+
+    # 13. Duplicate DTOs: account_dto vs accounts_dto
+    items.append(
+        {
+            "id": "duplicate-account-dtos",
+            "category": "duplicate DTO",
+            "path": "backend/src/core/dtos/account_dto.py vs backend/src/core/dtos/accounts_dto.py",
+            "owner": "account_engine",
+            "reason": "Two DTO files for accounts: account_dto.py (simple AccountDTO) and accounts_dto.py (detailed AccountDetailDTO with evidence chain). Potential consolidation.",
+            "incoming_references": [
+                "backend/src/core/mappers/account_mapper.py",
+                "backend/src/routers/accounts.py",
+            ],
+            "outgoing_references": [],
+            "runtime_reachable": True,
+            "api_reachable": True,
+            "frontend_reachable": True,
+            "test_reachable": True,
+            "deletion_candidate": False,
+            "migration_candidate": True,
+            "confidence": "MEDIUM",
+            "evidence": "architecture-inventory shows both DTO files with overlapping Account* types",
+        }
+    )
+
+    # 14. Orphan frontend type: financial.ts (0 importers)
+    items.append(
+        {
+            "id": "orphan-frontend-financial-types",
+            "category": "orphan",
+            "path": "frontend/types/financial.ts",
+            "owner": "unknown",
+            "reason": "Frontend type file defining NetWorth, MonthlyCashflowResponse, BehaviorScore with ZERO importers. Dead code.",
             "incoming_references": [],
             "outgoing_references": [],
             "runtime_reachable": False,
             "api_reachable": False,
             "frontend_reachable": False,
             "test_reachable": False,
+            "deletion_candidate": True,
+            "migration_candidate": False,
+            "confidence": "HIGH",
+            "evidence": "architecture-inventory import scan shows zero importers for frontend/types/financial.ts",
+        }
+    )
+
+    # 15. Missing test: insight_generator
+    items.append(
+        {
+            "id": "missing-tests-insight_generator",
+            "category": "implementation-only",
+            "path": "insight_generator.py",
+            "owner": "behaviour_engine",
+            "reason": "Single-file engine with zero dedicated tests. 12/13 engines have tests; insight_generator is the only gap.",
+            "incoming_references": ["backend/src/engines/behaviour_engine/core.py"],
+            "outgoing_references": [],
+            "runtime_reachable": True,
+            "api_reachable": False,
+            "frontend_reachable": False,
+            "test_reachable": False,
             "deletion_candidate": False,
             "migration_candidate": True,
             "confidence": "HIGH",
-            "evidence": f"api.py includes {router} but execution-graph.json has no endpoint edges for it"
-        })
-
-    # 13. Duplicate DTOs: account_dto vs accounts_dto
-    items.append({
-        "id": "duplicate-account-dtos",
-        "category": "duplicate DTO",
-        "path": "backend/src/core/dtos/account_dto.py vs backend/src/core/dtos/accounts_dto.py",
-        "owner": "account_engine",
-        "reason": "Two DTO files for accounts: account_dto.py (simple AccountDTO) and accounts_dto.py (detailed AccountDetailDTO with evidence chain). Potential consolidation.",
-        "incoming_references": ["backend/src/core/mappers/account_mapper.py", "backend/src/routers/accounts.py"],
-        "outgoing_references": [],
-        "runtime_reachable": True,
-        "api_reachable": True,
-        "frontend_reachable": True,
-        "test_reachable": True,
-        "deletion_candidate": False,
-        "migration_candidate": True,
-        "confidence": "MEDIUM",
-        "evidence": "architecture-inventory shows both DTO files with overlapping Account* types"
-    })
-
-    # 14. Orphan frontend type: financial.ts (0 importers)
-    items.append({
-        "id": "orphan-frontend-financial-types",
-        "category": "orphan",
-        "path": "frontend/types/financial.ts",
-        "owner": "unknown",
-        "reason": "Frontend type file defining NetWorth, MonthlyCashflowResponse, BehaviorScore with ZERO importers. Dead code.",
-        "incoming_references": [],
-        "outgoing_references": [],
-        "runtime_reachable": False,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": True,
-        "migration_candidate": False,
-        "confidence": "HIGH",
-        "evidence": "architecture-inventory import scan shows zero importers for frontend/types/financial.ts"
-    })
-
-    # 15. Missing test: insight_generator
-    items.append({
-        "id": "missing-tests-insight_generator",
-        "category": "implementation-only",
-        "path": "insight_generator.py",
-        "owner": "behaviour_engine",
-        "reason": "Single-file engine with zero dedicated tests. 12/13 engines have tests; insight_generator is the only gap.",
-        "incoming_references": ["backend/src/engines/behaviour_engine/core.py"],
-        "outgoing_references": [],
-        "runtime_reachable": True,
-        "api_reachable": False,
-        "frontend_reachable": False,
-        "test_reachable": False,
-        "deletion_candidate": False,
-        "migration_candidate": True,
-        "confidence": "HIGH",
-        "evidence": "engine-topology.json shows tests=[]; certification-gap-analysis.json explicitly flags insight_generator test gap"
-    })
+            "evidence": "engine-topology.json shows tests=[]; certification-gap-analysis.json explicitly flags insight_generator test gap",
+        }
+    )
 
     result = {
         "schema": "repository-canonicalization/v1",
@@ -383,7 +465,7 @@ def phase1():
             "medium_confidence": sum(1 for i in items if i["confidence"] == "MEDIUM"),
             "runtime_reachable": sum(1 for i in items if i["runtime_reachable"]),
             "api_reachable": sum(1 for i in items if i["api_reachable"]),
-        }
+        },
     }
     save("repository-canonicalization.json", result)
     print(f"Phase 1: repository-canonicalization.json — {len(items)} items")
@@ -406,10 +488,24 @@ def phase2():
         repositories = eng.get("repositories", [])
         tests = eng.get("tests", [])
         workspace = eng.get("workspace", [])
-        pages = cross_layer.get("chains", {}).get(f"engine:{eng_name}", {}).get("pages", [])
-        components = cross_layer.get("chains", {}).get(f"engine:{eng_name}", {}).get("components", [])
-        mappers = cross_layer.get("chains", {}).get(f"engine:{eng_name}", {}).get("mappers", [])
-        view_models = cross_layer.get("chains", {}).get(f"engine:{eng_name}", {}).get("viewModels", [])
+        pages = (
+            cross_layer.get("chains", {}).get(f"engine:{eng_name}", {}).get("pages", [])
+        )
+        components = (
+            cross_layer.get("chains", {})
+            .get(f"engine:{eng_name}", {})
+            .get("components", [])
+        )
+        mappers = (
+            cross_layer.get("chains", {})
+            .get(f"engine:{eng_name}", {})
+            .get("mappers", [])
+        )
+        view_models = (
+            cross_layer.get("chains", {})
+            .get(f"engine:{eng_name}", {})
+            .get("viewModels", [])
+        )
 
         chain = {
             "chain_id": f"engine:{eng_name}",
@@ -418,48 +514,97 @@ def phase2():
             "workspace": workspace,
             "page": pages,
             "edges": [],
-            "issues": []
+            "issues": [],
         }
 
         # Verify each layer
         if endpoints:
             for ep in endpoints:
-                chain["edges"].append({"from": "capability", "to": f"endpoint:{ep}", "layer": "frontend", "status": "present"})
+                chain["edges"].append(
+                    {
+                        "from": "capability",
+                        "to": f"endpoint:{ep}",
+                        "layer": "frontend",
+                        "status": "present",
+                    }
+                )
         else:
             chain["issues"].append("No endpoints")
 
         if routers:
             for r in routers:
-                chain["edges"].append({"from": "endpoint", "to": f"router:{r}", "layer": "http", "status": "present"})
+                chain["edges"].append(
+                    {
+                        "from": "endpoint",
+                        "to": f"router:{r}",
+                        "layer": "http",
+                        "status": "present",
+                    }
+                )
         else:
             chain["issues"].append("No routers")
 
         if services:
             for svc in services:
-                chain["edges"].append({"from": "router", "to": f"service:{svc}", "layer": "service", "status": "present"})
+                chain["edges"].append(
+                    {
+                        "from": "router",
+                        "to": f"service:{svc}",
+                        "layer": "service",
+                        "status": "present",
+                    }
+                )
         else:
             chain["issues"].append("No services")
 
         if repositories:
             for repo in repositories:
-                chain["edges"].append({"from": "service", "to": f"repository:{repo}", "layer": "repository", "status": "present"})
+                chain["edges"].append(
+                    {
+                        "from": "service",
+                        "to": f"repository:{repo}",
+                        "layer": "repository",
+                        "status": "present",
+                    }
+                )
         else:
             chain["issues"].append("No repositories")
 
         if tests:
             for t in tests:
-                chain["edges"].append({"from": "engine", "to": f"test:{t}", "layer": "test", "status": "present"})
+                chain["edges"].append(
+                    {
+                        "from": "engine",
+                        "to": f"test:{t}",
+                        "layer": "test",
+                        "status": "present",
+                    }
+                )
         else:
             chain["issues"].append("No tests")
 
         if pages:
-            chain["edges"].append({"from": "capability", "to": f"page:{pages[0]}", "layer": "frontend", "status": "present"})
+            chain["edges"].append(
+                {
+                    "from": "capability",
+                    "to": f"page:{pages[0]}",
+                    "layer": "frontend",
+                    "status": "present",
+                }
+            )
         else:
             chain["issues"].append("No frontend pages")
 
         if components:
             for comp in components[:3]:
-                chain["edges"].append({"from": "page", "to": f"component:{comp}", "layer": "frontend", "status": "present"})
+                chain["edges"].append(
+                    {
+                        "from": "page",
+                        "to": f"component:{comp}",
+                        "layer": "frontend",
+                        "status": "present",
+                    }
+                )
         else:
             chain["issues"].append("No frontend components")
 
@@ -472,7 +617,11 @@ def phase2():
         "program": "16.0",
         "total_chains": len(chains),
         "chains": chains,
-        "missing_links": [{"chain": c["chain_id"], "issues": c["issues"]} for c in chains if c["issues"]],
+        "missing_links": [
+            {"chain": c["chain_id"], "issues": c["issues"]}
+            for c in chains
+            if c["issues"]
+        ],
         "duplicate_links": [],
         "multiple_owners": [],
         "broken_chains": [],
@@ -480,7 +629,9 @@ def phase2():
         "unused_chains": [],
     }
     save("end-to-end-pipeline.json", result)
-    print(f"Phase 2: end-to-end-pipeline.json — {len(chains)} chains, {len(missing)} with issues")
+    print(
+        f"Phase 2: end-to-end-pipeline.json — {len(chains)} chains, {len(missing)} with issues"
+    )
 
 
 # ===================================================================
@@ -496,7 +647,7 @@ def phase3():
             "similarity": "HIGH",
             "description": "CashflowService and behaviour_engine/cashflow.py both implement cashflow analysis logic. CashflowService is a service-layer wrapper; cashflow.py is the engine module.",
             "confidence": "HIGH",
-            "evidence": "architecture-inventory shows both as separate modules; cashflow_service.py imports cashflow-related DTOs"
+            "evidence": "architecture-inventory shows both as separate modules; cashflow_service.py imports cashflow-related DTOs",
         },
         {
             "id": "dup-insight-generator-subsumed",
@@ -506,7 +657,7 @@ def phase3():
             "similarity": "HIGH",
             "description": "insight_generator.py imported by behaviour_engine/core.py via backward-compat imports. Logic may be duplicated.",
             "confidence": "MEDIUM",
-            "evidence": "behaviour_engine/core.py imports src.engines.insight_generator.generate_behavioral_insights"
+            "evidence": "behaviour_engine/core.py imports src.engines.insight_generator.generate_behavioral_insights",
         },
         {
             "id": "dup-nudge-engine-subsumed",
@@ -516,7 +667,7 @@ def phase3():
             "similarity": "HIGH",
             "description": "nudge_engine.py imported by behaviour_engine/core.py. Nudge logic may be duplicated in recommendation_engine.",
             "confidence": "MEDIUM",
-            "evidence": "behaviour_engine/core.py imports src.engines.nudge_engine.generate_nudges"
+            "evidence": "behaviour_engine/core.py imports src.engines.nudge_engine.generate_nudges",
         },
         {
             "id": "dup-frontend-intelligence-engines",
@@ -526,7 +677,7 @@ def phase3():
             "similarity": "MEDIUM",
             "description": "Frontend intelligence engines implement client-side logic that may overlap with backend engine calculations.",
             "confidence": "MEDIUM",
-            "evidence": "frontend/lib/intelligence/ has 12 engine files; backend has 13 engines"
+            "evidence": "frontend/lib/intelligence/ has 12 engine files; backend has 13 engines",
         },
         {
             "id": "dup-money-types-frontend",
@@ -536,7 +687,7 @@ def phase3():
             "similarity": "HIGH",
             "description": "Money type defined in transaction.ts and frontend/lib/money.ts. MoneyViewModel in 3 view-model files.",
             "confidence": "HIGH",
-            "evidence": "architecture-inventory shows Money in both transaction.ts and frontend/lib/money.ts"
+            "evidence": "architecture-inventory shows Money in both transaction.ts and frontend/lib/money.ts",
         },
         {
             "id": "dup-workspace-services",
@@ -546,7 +697,7 @@ def phase3():
             "similarity": "LOW",
             "description": "7 workspace service files wrap 7 domain services. Architectural duplication of service patterns.",
             "confidence": "MEDIUM",
-            "evidence": "backend/src/services/ has 33 service files; 7 are workspace services"
+            "evidence": "backend/src/services/ has 33 service files; 7 are workspace services",
         },
     ]
 
@@ -558,9 +709,11 @@ def phase3():
         "duplicates": duplicates,
         "summary": {
             "high_similarity": sum(1 for d in duplicates if d["similarity"] == "HIGH"),
-            "medium_similarity": sum(1 for d in duplicates if d["similarity"] == "MEDIUM"),
+            "medium_similarity": sum(
+                1 for d in duplicates if d["similarity"] == "MEDIUM"
+            ),
             "low_similarity": sum(1 for d in duplicates if d["similarity"] == "LOW"),
-        }
+        },
     }
     save("duplicate-implementation.json", result)
     print(f"Phase 3: duplicate-implementation.json — {len(duplicates)} duplicates")
@@ -570,76 +723,97 @@ def phase3():
 # PHASE 4 — Runtime Reachability Analysis
 # ===================================================================
 def phase4():
-    reachable = {"guaranteed_reachable": [], "conditionally_reachable": [], "never_reachable": [], "unknown": []}
+    reachable = {
+        "guaranteed_reachable": [],
+        "conditionally_reachable": [],
+        "never_reachable": [],
+        "unknown": [],
+    }
 
     for eng_name, eng in topology["engines"].items():
         if eng.get("capabilities"):
-            reachable["guaranteed_reachable"].append({
-                "id": f"engine:{eng_name}",
-                "path": eng.get("public_entry_point", ""),
-                "style": eng.get("canonical_style", ""),
-                "capabilities": eng.get("capabilities", []),
-                "endpoints": len(eng.get("endpoints", [])),
-                "confidence": "HIGH",
-                "evidence": f"engine-topology.json capabilities={eng.get('capabilities',[])}"
-            })
+            reachable["guaranteed_reachable"].append(
+                {
+                    "id": f"engine:{eng_name}",
+                    "path": eng.get("public_entry_point", ""),
+                    "style": eng.get("canonical_style", ""),
+                    "capabilities": eng.get("capabilities", []),
+                    "endpoints": len(eng.get("endpoints", [])),
+                    "confidence": "HIGH",
+                    "evidence": f"engine-topology.json capabilities={eng.get('capabilities',[])}",
+                }
+            )
         elif eng.get("canonical_style") in ("single_file", "package"):
-            reachable["conditionally_reachable"].append({
-                "id": f"engine:{eng_name}",
-                "path": eng.get("public_entry_point", ""),
-                "style": eng.get("canonical_style", ""),
-                "reason": "Internal engine consumed by other engines/services but has no capability owner.",
-                "confidence": "HIGH",
-                "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies"
-            })
+            reachable["conditionally_reachable"].append(
+                {
+                    "id": f"engine:{eng_name}",
+                    "path": eng.get("public_entry_point", ""),
+                    "style": eng.get("canonical_style", ""),
+                    "reason": "Internal engine consumed by other engines/services but has no capability owner.",
+                    "confidence": "HIGH",
+                    "evidence": "engine-topology.json shows no capabilities; dependency-graph-v2.json shows cross-engine dependencies",
+                }
+            )
 
     # Orphans
     for eng_name in ["insight_generator", "nudge_engine"]:
         eng = topology["engines"].get(eng_name, {})
-        reachable["never_reachable"].append({
-            "id": f"engine:{eng_name}",
-            "path": eng.get("public_entry_point", ""),
-            "style": eng.get("canonical_style", ""),
-            "reason": "ORPHAN_INTERNAL engine with no capability, no router, no service. Only reachable via direct Python import.",
-            "confidence": "HIGH",
-            "evidence": "engine-topology.json shows 0 services/routers/endpoints/capabilities"
-        })
+        reachable["never_reachable"].append(
+            {
+                "id": f"engine:{eng_name}",
+                "path": eng.get("public_entry_point", ""),
+                "style": eng.get("canonical_style", ""),
+                "reason": "ORPHAN_INTERNAL engine with no capability, no router, no service. Only reachable via direct Python import.",
+                "confidence": "HIGH",
+                "evidence": "engine-topology.json shows 0 services/routers/endpoints/capabilities",
+            }
+        )
 
     # Parked
     for name, pf in normalization.get("parked_facades", {}).items():
-        reachable["never_reachable"].append({
-            "id": f"facade:{name}",
-            "path": f"backend/src/engines/{pf['path']}",
-            "style": "single_file",
-            "reason": f"PARKED legacy facade. Status: {pf.get('status', 'PARKED')}.",
-            "confidence": "HIGH",
-            "evidence": "engine-normalization.json parked_facades"
-        })
+        reachable["never_reachable"].append(
+            {
+                "id": f"facade:{name}",
+                "path": f"backend/src/engines/{pf['path']}",
+                "style": "single_file",
+                "reason": f"PARKED legacy facade. Status: {pf.get('status', 'PARKED')}.",
+                "confidence": "HIGH",
+                "evidence": "engine-normalization.json parked_facades",
+            }
+        )
 
     for name, pf in normalization.get("engines", {}).items():
         if pf.get("migration_status") == "PARKED":
-            reachable["never_reachable"].append({
-                "id": f"parked:{name}",
-                "path": pf.get("entry_point", ""),
-                "style": "single_file",
-                "reason": "PARKED legacy engine.",
-                "confidence": "HIGH",
-                "evidence": "engine-normalization.json engines.{name}"
-            })
+            reachable["never_reachable"].append(
+                {
+                    "id": f"parked:{name}",
+                    "path": pf.get("entry_point", ""),
+                    "style": "single_file",
+                    "reason": "PARKED legacy engine.",
+                    "confidence": "HIGH",
+                    "evidence": "engine-normalization.json engines.{name}",
+                }
+            )
 
     # Routers not in execution graph
-    exec_routers = {n["id"].replace("router:", "") for n in exec_g.get("nodes", []) if n.get("type") == "Router"}
+    exec_routers = {
+        n["id"].replace("router:", "")
+        for n in exec_g.get("nodes", [])
+        if n.get("type") == "Router"
+    }
     for path, m in modules.items():
         if m.get("node_type") == "Router" and path.startswith("backend/src/routers/"):
             if path not in exec_routers:
-                reachable["never_reachable"].append({
-                    "id": f"router:{path}",
-                    "path": path,
-                    "style": "router",
-                    "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
-                    "confidence": "HIGH",
-                    "evidence": f"execution-graph.json has no node for {path}"
-                })
+                reachable["never_reachable"].append(
+                    {
+                        "id": f"router:{path}",
+                        "path": path,
+                        "style": "router",
+                        "reason": "Router registered in api.py but not traversed by any capability in execution graph.",
+                        "confidence": "HIGH",
+                        "evidence": f"execution-graph.json has no node for {path}",
+                    }
+                )
 
     result = {
         "schema": "runtime-reachability/v1",
@@ -654,10 +828,12 @@ def phase4():
             "conditional": len(reachable["conditionally_reachable"]),
             "never": len(reachable["never_reachable"]),
             "unknown": len(reachable["unknown"]),
-        }
+        },
     }
     save("runtime-reachability.json", result)
-    print(f"Phase 4: runtime-reachability.json — {len(reachable['guaranteed_reachable'])} guaranteed, {len(reachable['never_reachable'])} never reachable")
+    print(
+        f"Phase 4: runtime-reachability.json — {len(reachable['guaranteed_reachable'])} guaranteed, {len(reachable['never_reachable'])} never reachable"
+    )
 
 
 # ===================================================================
@@ -668,21 +844,33 @@ def phase5():
     for eng_name, eng in topology["engines"].items():
         tests = eng.get("tests", [])
         status = eng.get("migration_status", "")
-        test_items.append({
-            "engine": eng_name,
-            "path": eng.get("public_entry_point", eng.get("path", "")),
-            "migration_status": status,
-            "tests": tests,
-            "test_count": len(tests),
-            "has_tests": len(tests) > 0,
-            "missing_tests": len(tests) == 0,
-            "ownership": "engine" if status in ("CANONICAL_PACKAGE", "CANONICAL_SINGLE_FILE", "CANONICAL_SINGLE_FILE_INTERNAL") else status,
-            "issues": []
-        })
+        test_items.append(
+            {
+                "engine": eng_name,
+                "path": eng.get("public_entry_point", eng.get("path", "")),
+                "migration_status": status,
+                "tests": tests,
+                "test_count": len(tests),
+                "has_tests": len(tests) > 0,
+                "missing_tests": len(tests) == 0,
+                "ownership": (
+                    "engine"
+                    if status
+                    in (
+                        "CANONICAL_PACKAGE",
+                        "CANONICAL_SINGLE_FILE",
+                        "CANONICAL_SINGLE_FILE_INTERNAL",
+                    )
+                    else status
+                ),
+                "issues": [],
+            }
+        )
 
     # Check for duplicate test names
     all_tests = [t for item in test_items for t in item["tests"]]
     from collections import Counter
+
     dup_tests = [t for t, c in Counter(all_tests).items() if c > 1]
 
     # Check for tests targeting legacy code
@@ -692,7 +880,9 @@ def phase5():
             legacy_tests.append(t)
 
     # insight_generator has 0 tests - gap
-    insight_test = next((i for i in test_items if i["engine"] == "insight_generator"), None)
+    insight_test = next(
+        (i for i in test_items if i["engine"] == "insight_generator"), None
+    )
     if insight_test:
         insight_test["issues"].append("NO_TESTS")
 
@@ -703,14 +893,16 @@ def phase5():
         "engines": test_items,
         "duplicate_tests": dup_tests,
         "legacy_targeting_tests": legacy_tests,
-        "missing_tests_summary": [i["engine"] for i in test_items if i["missing_tests"]],
+        "missing_tests_summary": [
+            i["engine"] for i in test_items if i["missing_tests"]
+        ],
         "summary": {
             "total_engines": len(test_items),
             "engines_with_tests": sum(1 for i in test_items if i["has_tests"]),
             "engines_without_tests": sum(1 for i in test_items if i["missing_tests"]),
             "duplicate_tests": len(dup_tests),
             "legacy_targeting": len(legacy_tests),
-        }
+        },
     }
     save("test-ownership.json", result)
     print(f"Phase 5: test-ownership.json — {len(test_items)} engines tracked")
@@ -739,22 +931,26 @@ def phase6():
         src_t = node_types.get(e["from"], "")
         dst_t = node_types.get(e["to"], "")
         if src_t == "Repository" and dst_t in ("Service", "Router", "Engine"):
-            dep_health["layer_violations"].append({
-                "from": e["from"],
-                "to": e["to"],
-                "evidence": e.get("evidence", ""),
-            })
+            dep_health["layer_violations"].append(
+                {
+                    "from": e["from"],
+                    "to": e["to"],
+                    "evidence": e.get("evidence", ""),
+                }
+            )
 
     # Cross-domain: engine -> engine direct import
     for e in dep_edges:
         src_t = node_types.get(e["from"], "")
         dst_t = node_types.get(e["to"], "")
         if src_t == "Engine" and dst_t == "Engine":
-            dep_health["cross_domain_violations"].append({
-                "from": e["from"],
-                "to": e["to"],
-                "evidence": e.get("evidence", ""),
-            })
+            dep_health["cross_domain_violations"].append(
+                {
+                    "from": e["from"],
+                    "to": e["to"],
+                    "evidence": e.get("evidence", ""),
+                }
+            )
 
     result = {
         "schema": "dependency-health/v2",
@@ -773,10 +969,12 @@ def phase6():
             "total_illegal_imports": len(dep_health["illegal_imports"]),
             "total_service_bypasses": len(dep_health["service_bypasses"]),
             "total_repository_bypasses": len(dep_health["repository_bypasses"]),
-        }
+        },
     }
     save("dependency-health-v2.json", result)
-    print(f"Phase 6: dependency-health-v2.json — {len(dep_health['cross_domain_violations'])} cross-domain violations")
+    print(
+        f"Phase 6: dependency-health-v2.json — {len(dep_health['cross_domain_violations'])} cross-domain violations"
+    )
 
 
 # ===================================================================
@@ -786,95 +984,109 @@ def phase7():
     opportunities = []
 
     # 1. Parked facade cleanup
-    opportunities.append({
-        "id": "op-remove-parked-facades",
-        "type": "deletion",
-        "name": "Remove parked legacy facades",
-        "description": "Delete behavior_engine.py and cashflow_engine.py.parked after confirming zero importers.",
-        "engineering_value": "HIGH",
-        "risk": "LOW",
-        "effort": "MINIMAL",
-        "architectural_impact": "Reduces confusion; removes dead code from architecture scan.",
-        "evidence": "engine-normalization.json parked_facades; grep shows zero importers"
-    })
+    opportunities.append(
+        {
+            "id": "op-remove-parked-facades",
+            "type": "deletion",
+            "name": "Remove parked legacy facades",
+            "description": "Delete behavior_engine.py and cashflow_engine.py.parked after confirming zero importers.",
+            "engineering_value": "HIGH",
+            "risk": "LOW",
+            "effort": "MINIMAL",
+            "architectural_impact": "Reduces confusion; removes dead code from architecture scan.",
+            "evidence": "engine-normalization.json parked_facades; grep shows zero importers",
+        }
+    )
 
     # 2. Orphan engine cleanup
-    opportunities.append({
-        "id": "op-migrate-orphan-engines",
-        "type": "migration",
-        "name": "Migrate orphan engines to behaviour_engine",
-        "description": "Move insight_generator and nudge_engine logic into behaviour_engine as internal modules. Add proper capability or formally declare as internal.",
-        "engineering_value": "HIGH",
-        "risk": "MEDIUM",
-        "effort": "MODERATE",
-        "architectural_impact": "Eliminates orphan engines; clarifies ownership model.",
-        "evidence": "engine-topology.json shows insight_generator and nudge_engine as ORPHAN_INTERNAL"
-    })
+    opportunities.append(
+        {
+            "id": "op-migrate-orphan-engines",
+            "type": "migration",
+            "name": "Migrate orphan engines to behaviour_engine",
+            "description": "Move insight_generator and nudge_engine logic into behaviour_engine as internal modules. Add proper capability or formally declare as internal.",
+            "engineering_value": "HIGH",
+            "risk": "MEDIUM",
+            "effort": "MODERATE",
+            "architectural_impact": "Eliminates orphan engines; clarifies ownership model.",
+            "evidence": "engine-topology.json shows insight_generator and nudge_engine as ORPHAN_INTERNAL",
+        }
+    )
 
     # 3. Workspace service consolidation
-    opportunities.append({
-        "id": "op-consolidate-workspace-services",
-        "type": "consolidation",
-        "name": "Consolidate workspace services into domain services",
-        "description": "7 workspace service files wrap 7 domain services. Consolidate into single service with workspace parameter or merge into domain service.",
-        "engineering_value": "MEDIUM",
-        "risk": "MEDIUM",
-        "effort": "MODERATE",
-        "architectural_impact": "Reduces service count from 33 to ~26; simplifies dependency graph.",
-        "evidence": "backend/src/services/ has 33 service files; 7 are workspace services"
-    })
+    opportunities.append(
+        {
+            "id": "op-consolidate-workspace-services",
+            "type": "consolidation",
+            "name": "Consolidate workspace services into domain services",
+            "description": "7 workspace service files wrap 7 domain services. Consolidate into single service with workspace parameter or merge into domain service.",
+            "engineering_value": "MEDIUM",
+            "risk": "MEDIUM",
+            "effort": "MODERATE",
+            "architectural_impact": "Reduces service count from 33 to ~26; simplifies dependency graph.",
+            "evidence": "backend/src/services/ has 33 service files; 7 are workspace services",
+        }
+    )
 
     # 4. DTO consolidation
-    opportunities.append({
-        "id": "op-consolidate-dtos",
-        "type": "consolidation",
-        "name": "Consolidate account DTOs",
-        "description": "Merge account_dto.py (simple) and accounts_dto.py (detailed) into single coherent DTO structure.",
-        "engineering_value": "MEDIUM",
-        "risk": "LOW",
-        "effort": "MINIMAL",
-        "architectural_impact": "Reduces DTO count from 15 to ~14; simplifies mapper layer.",
-        "evidence": "architecture-inventory shows both DTO files with overlapping Account* types"
-    })
+    opportunities.append(
+        {
+            "id": "op-consolidate-dtos",
+            "type": "consolidation",
+            "name": "Consolidate account DTOs",
+            "description": "Merge account_dto.py (simple) and accounts_dto.py (detailed) into single coherent DTO structure.",
+            "engineering_value": "MEDIUM",
+            "risk": "LOW",
+            "effort": "MINIMAL",
+            "architectural_impact": "Reduces DTO count from 15 to ~14; simplifies mapper layer.",
+            "evidence": "architecture-inventory shows both DTO files with overlapping Account* types",
+        }
+    )
 
     # 5. Frontend type cleanup
-    opportunities.append({
-        "id": "op-cleanup-frontend-types",
-        "type": "deletion",
-        "name": "Remove orphan frontend type files",
-        "description": "Delete frontend/types/financial.ts (0 importers) and consolidate duplicate Money/MoneyViewModel types.",
-        "engineering_value": "MEDIUM",
-        "risk": "LOW",
-        "effort": "MINIMAL",
-        "architectural_impact": "Reduces frontend type file count; eliminates dead code.",
-        "evidence": "architecture-inventory import scan shows zero importers for financial.ts"
-    })
+    opportunities.append(
+        {
+            "id": "op-cleanup-frontend-types",
+            "type": "deletion",
+            "name": "Remove orphan frontend type files",
+            "description": "Delete frontend/types/financial.ts (0 importers) and consolidate duplicate Money/MoneyViewModel types.",
+            "engineering_value": "MEDIUM",
+            "risk": "LOW",
+            "effort": "MINIMAL",
+            "architectural_impact": "Reduces frontend type file count; eliminates dead code.",
+            "evidence": "architecture-inventory import scan shows zero importers for financial.ts",
+        }
+    )
 
     # 6. Missing test coverage
-    opportunities.append({
-        "id": "op-add-insight-generator-tests",
-        "type": "test_addition",
-        "name": "Add tests for insight_generator",
-        "description": "12/13 engines have tests; insight_generator is the only gap. Add unit tests.",
-        "engineering_value": "HIGH",
-        "risk": "LOW",
-        "effort": "MINIMAL",
-        "architectural_impact": "Achieves 100% engine test coverage.",
-        "evidence": "engine-topology.json shows tests=[] for insight_generator"
-    })
+    opportunities.append(
+        {
+            "id": "op-add-insight-generator-tests",
+            "type": "test_addition",
+            "name": "Add tests for insight_generator",
+            "description": "12/13 engines have tests; insight_generator is the only gap. Add unit tests.",
+            "engineering_value": "HIGH",
+            "risk": "LOW",
+            "effort": "MINIMAL",
+            "architectural_impact": "Achieves 100% engine test coverage.",
+            "evidence": "engine-topology.json shows tests=[] for insight_generator",
+        }
+    )
 
     # 7. Capability assignment for internal engines
-    opportunities.append({
-        "id": "op-capability-internal-engines",
-        "type": "migration",
-        "name": "Assign capabilities to internal engines",
-        "description": "financial_events, financial_intelligence, transaction_intelligence have no capability owner. Wire to existing capability or create new.",
-        "engineering_value": "HIGH",
-        "risk": "MEDIUM",
-        "effort": "MODERATE",
-        "architectural_impact": "Closes capability ownership gap; enables full chain tracing.",
-        "evidence": "engine-topology.json shows capabilities=[] for 4 internal engines"
-    })
+    opportunities.append(
+        {
+            "id": "op-capability-internal-engines",
+            "type": "migration",
+            "name": "Assign capabilities to internal engines",
+            "description": "financial_events, financial_intelligence, transaction_intelligence have no capability owner. Wire to existing capability or create new.",
+            "engineering_value": "HIGH",
+            "risk": "MEDIUM",
+            "effort": "MODERATE",
+            "architectural_impact": "Closes capability ownership gap; enables full chain tracing.",
+            "evidence": "engine-topology.json shows capabilities=[] for 4 internal engines",
+        }
+    )
 
     result = {
         "schema": "repository-modernization/v1",
@@ -885,12 +1097,18 @@ def phase7():
         "summary": {
             "deletions": sum(1 for o in opportunities if o["type"] == "deletion"),
             "migrations": sum(1 for o in opportunities if o["type"] == "migration"),
-            "consolidations": sum(1 for o in opportunities if o["type"] == "consolidation"),
-            "test_additions": sum(1 for o in opportunities if o["type"] == "test_addition"),
-        }
+            "consolidations": sum(
+                1 for o in opportunities if o["type"] == "consolidation"
+            ),
+            "test_additions": sum(
+                1 for o in opportunities if o["type"] == "test_addition"
+            ),
+        },
     }
     save("repository-modernization.json", result)
-    print(f"Phase 7: repository-modernization.json — {len(opportunities)} opportunities")
+    print(
+        f"Phase 7: repository-modernization.json — {len(opportunities)} opportunities"
+    )
 
 
 # ===================================================================
@@ -907,41 +1125,53 @@ def phase8():
     # Merge canonicalization items as debt
     for item in canon["items"]:
         if item["deletion_candidate"] or item["migration_candidate"]:
-            debt.append({
-                "id": item["id"],
-                "severity": "HIGH" if item["deletion_candidate"] else "MEDIUM",
-                "impact": "ARCHITECTURAL" if item["migration_candidate"] else "CLEANUP",
-                "maintenance_cost": "LOW",
-                "risk": "LOW" if item["deletion_candidate"] else "MEDIUM",
-                "effort": "MINIMAL" if item["deletion_candidate"] else "MODERATE",
-                "category": item["category"],
-                "path": item["path"],
-                "owner": item["owner"],
-                "description": item["reason"],
-                "evidence": item["evidence"],
-                "recommendation": "Delete" if item["deletion_candidate"] else "Migrate",
-            })
+            debt.append(
+                {
+                    "id": item["id"],
+                    "severity": "HIGH" if item["deletion_candidate"] else "MEDIUM",
+                    "impact": (
+                        "ARCHITECTURAL" if item["migration_candidate"] else "CLEANUP"
+                    ),
+                    "maintenance_cost": "LOW",
+                    "risk": "LOW" if item["deletion_candidate"] else "MEDIUM",
+                    "effort": "MINIMAL" if item["deletion_candidate"] else "MODERATE",
+                    "category": item["category"],
+                    "path": item["path"],
+                    "owner": item["owner"],
+                    "description": item["reason"],
+                    "evidence": item["evidence"],
+                    "recommendation": (
+                        "Delete" if item["deletion_candidate"] else "Migrate"
+                    ),
+                }
+            )
 
     # Add duplication findings
     for dup in overlap["duplicates"]:
-        debt.append({
-            "id": f"dup-{dup['id']}",
-            "severity": "MEDIUM" if dup["similarity"] == "HIGH" else "LOW",
-            "impact": "MAINTENANCE",
-            "maintenance_cost": "MEDIUM",
-            "risk": "LOW",
-            "effort": "MODERATE",
-            "category": "duplicate_implementation",
-            "path": f"{dup['location_a']} vs {dup['location_b']}",
-            "owner": "multiple",
-            "description": dup["description"],
-            "evidence": dup["evidence"],
-            "recommendation": "Consolidate" if dup["similarity"] == "HIGH" else "Review",
-        })
+        debt.append(
+            {
+                "id": f"dup-{dup['id']}",
+                "severity": "MEDIUM" if dup["similarity"] == "HIGH" else "LOW",
+                "impact": "MAINTENANCE",
+                "maintenance_cost": "MEDIUM",
+                "risk": "LOW",
+                "effort": "MODERATE",
+                "category": "duplicate_implementation",
+                "path": f"{dup['location_a']} vs {dup['location_b']}",
+                "owner": "multiple",
+                "description": dup["description"],
+                "evidence": dup["evidence"],
+                "recommendation": (
+                    "Consolidate" if dup["similarity"] == "HIGH" else "Review"
+                ),
+            }
+        )
 
     # Sort by severity
     severity_order = {"HIGH": 0, "MEDIUM": 1, "LOW": 2}
-    debt.sort(key=lambda d: (severity_order.get(d["severity"], 2), d["impact"], d["id"]))
+    debt.sort(
+        key=lambda d: (severity_order.get(d["severity"], 2), d["impact"], d["id"])
+    )
 
     result = {
         "schema": "repository-technical-debt/v1",
@@ -957,7 +1187,7 @@ def phase8():
                 cat: sum(1 for d in debt if d["category"] == cat)
                 for cat in set(d["category"] for d in debt)
             },
-        }
+        },
     }
     save("repository-technical-debt.json", result)
     print(f"Phase 8: repository-technical-debt.json — {len(debt)} debt items")
@@ -979,7 +1209,11 @@ def phase9():
             "2 unused repositories (alert_repository, reconciliation_audit_repository)",
             "7 orphan services with no router",
         ],
-        "passed": ["Engines properly classified", "Capabilities correctly linked", "Ownership graph consistent"],
+        "passed": [
+            "Engines properly classified",
+            "Capabilities correctly linked",
+            "Ownership graph consistent",
+        ],
     }
 
     # Frontend
@@ -991,7 +1225,11 @@ def phase9():
             "Dead type file: frontend/types/financial.ts",
             "Duplicate Money/MoneyViewModel types across 3+ files",
         ],
-        "passed": ["Capabilities properly registered", "Mappers aligned with backend DTOs", "Components linked to workspaces"],
+        "passed": [
+            "Capabilities properly registered",
+            "Mappers aligned with backend DTOs",
+            "Components linked to workspaces",
+        ],
     }
 
     # Runtime
@@ -1000,7 +1238,11 @@ def phase9():
         "score": 100,
         "evidence": "Program 15 certification CERTIFIED; single discovery pipeline; canonical provider operational",
         "blocking_issues": [],
-        "passed": ["All 15 certification checks pass", "No runtime weakening", "Single source of truth"],
+        "passed": [
+            "All 15 certification checks pass",
+            "No runtime weakening",
+            "Single source of truth",
+        ],
     }
 
     # Tests
@@ -1009,7 +1251,13 @@ def phase9():
         "score": 92,
         "evidence": "12/13 engines tested; insight_generator has 0 tests; 123 test modules total",
         "blocking_issues": ["insight_generator has no tests"],
-        "passed": ["account_engine tested", "behaviour_engine tested", "credit_card_engine tested", "loan_engine tested", "reconciliation_engine tested"],
+        "passed": [
+            "account_engine tested",
+            "behaviour_engine tested",
+            "credit_card_engine tested",
+            "loan_engine tested",
+            "reconciliation_engine tested",
+        ],
     }
 
     # CI
@@ -1018,7 +1266,11 @@ def phase9():
         "score": 95,
         "evidence": "GitHub workflows operational; path filtering correct; no failing workflows",
         "blocking_issues": [],
-        "passed": ["Backend verification works", "Frontend verification works", "Runtime verification works"],
+        "passed": [
+            "Backend verification works",
+            "Frontend verification works",
+            "Runtime verification works",
+        ],
     }
 
     # Architecture
@@ -1031,7 +1283,11 @@ def phase9():
             "cashflow_engine.py.parked not deleted",
             "insight_generator and nudge_engine orphans not migrated",
         ],
-        "passed": ["Canonical provider operational", "Ownership graph consistent", "Execution graph complete for capability-owned engines"],
+        "passed": [
+            "Canonical provider operational",
+            "Ownership graph consistent",
+            "Execution graph complete for capability-owned engines",
+        ],
     }
 
     # Engineering Platform
@@ -1040,7 +1296,13 @@ def phase9():
         "score": 100,
         "evidence": "Program 15 certification CERTIFIED; all 21 audit sections pass",
         "blocking_issues": [],
-        "passed": ["Repository Index", "Dependency Graph", "Cross-Layer Map", "Knowledge Base", "Integrity Engine"],
+        "passed": [
+            "Repository Index",
+            "Dependency Graph",
+            "Cross-Layer Map",
+            "Knowledge Base",
+            "Integrity Engine",
+        ],
     }
 
     result = {
@@ -1059,10 +1321,12 @@ def phase9():
             "passed_sections": sum(
                 1 for r in readiness.values() if r["status"] == "PASS"
             ),
-        }
+        },
     }
     save("repository-certification-readiness.json", result)
-    print(f"Phase 9: repository-certification-readiness.json — overall score {result['overall']['score']}")
+    print(
+        f"Phase 9: repository-certification-readiness.json — overall score {result['overall']['score']}"
+    )
 
 
 # ===================================================================
@@ -1074,25 +1338,118 @@ def phase10():
     from runtime.foundation.audit.reporter import AuditReporter
 
     runner = AuditRunner()
-    runner.register("repository", lambda: __import__("runtime.foundation.audit.repository", fromlist=["audit"]).audit)
-    runner.register("cross_layer", lambda: __import__("runtime.foundation.audit.cross_layer", fromlist=["audit"]).audit)
-    runner.register("dependency_graph", lambda: __import__("runtime.foundation.audit.dependency_graph", fromlist=["audit"]).audit)
-    runner.register("planner", lambda: __import__("runtime.foundation.audit.planner", fromlist=["audit"]).audit)
-    runner.register("executor", lambda: __import__("runtime.foundation.audit.executor", fromlist=["audit"]).audit)
-    runner.register("evidence", lambda: __import__("runtime.foundation.audit.evidence", fromlist=["audit"]).audit)
-    runner.register("observability", lambda: __import__("runtime.foundation.audit.observability", fromlist=["audit"]).audit)
-    runner.register("knowledge", lambda: __import__("runtime.foundation.audit.knowledge", fromlist=["audit"]).audit)
-    runner.register("workspace", lambda: __import__("runtime.foundation.audit.workspace", fromlist=["audit"]).audit)
-    runner.register("integrity", lambda: __import__("runtime.foundation.audit.integrity", fromlist=["audit"]).audit)
-    runner.register("github_actions", lambda: __import__("runtime.foundation.audit.github_actions", fromlist=["audit"]).audit)
-    runner.register("runtime_cli", lambda: __import__("runtime.foundation.audit.runtime_cli", fromlist=["audit"]).audit)
-    runner.register("github_runtime", lambda: __import__("runtime.foundation.audit.github_runtime", fromlist=["audit"]).audit)
-    runner.register("verification_profiles", lambda: __import__("runtime.foundation.audit.verification_profiles", fromlist=["audit"]).audit)
-    runner.register("artifact_ownership", lambda: __import__("runtime.foundation.audit.artifact_ownership", fromlist=["audit"]).audit)
-    runner.register("performance", lambda: __import__("runtime.foundation.audit.performance", fromlist=["audit"]).audit)
-    runner.register("failure_injection", lambda: __import__("runtime.foundation.audit.failure_injection", fromlist=["audit"]).audit)
-    runner.register("pipeline", lambda: __import__("runtime.foundation.audit.pipeline", fromlist=["audit"]).audit)
-    runner.register("roi", lambda: __import__("runtime.foundation.audit.roi", fromlist=["audit"]).audit)
+    runner.register(
+        "repository",
+        lambda: __import__(
+            "runtime.foundation.audit.repository", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "cross_layer",
+        lambda: __import__(
+            "runtime.foundation.audit.cross_layer", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "dependency_graph",
+        lambda: __import__(
+            "runtime.foundation.audit.dependency_graph", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "planner",
+        lambda: __import__(
+            "runtime.foundation.audit.planner", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "executor",
+        lambda: __import__(
+            "runtime.foundation.audit.executor", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "evidence",
+        lambda: __import__(
+            "runtime.foundation.audit.evidence", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "observability",
+        lambda: __import__(
+            "runtime.foundation.audit.observability", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "knowledge",
+        lambda: __import__(
+            "runtime.foundation.audit.knowledge", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "workspace",
+        lambda: __import__(
+            "runtime.foundation.audit.workspace", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "integrity",
+        lambda: __import__(
+            "runtime.foundation.audit.integrity", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "github_actions",
+        lambda: __import__(
+            "runtime.foundation.audit.github_actions", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "runtime_cli",
+        lambda: __import__(
+            "runtime.foundation.audit.runtime_cli", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "github_runtime",
+        lambda: __import__(
+            "runtime.foundation.audit.github_runtime", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "verification_profiles",
+        lambda: __import__(
+            "runtime.foundation.audit.verification_profiles", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "artifact_ownership",
+        lambda: __import__(
+            "runtime.foundation.audit.artifact_ownership", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "performance",
+        lambda: __import__(
+            "runtime.foundation.audit.performance", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "failure_injection",
+        lambda: __import__(
+            "runtime.foundation.audit.failure_injection", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "pipeline",
+        lambda: __import__(
+            "runtime.foundation.audit.pipeline", fromlist=["audit"]
+        ).audit,
+    )
+    runner.register(
+        "roi",
+        lambda: __import__("runtime.foundation.audit.roi", fromlist=["audit"]).audit,
+    )
 
     print("Running Engineering Platform Certification Audit...", file=sys.stderr)
     report = runner.run()
@@ -1119,18 +1476,34 @@ def phase10():
         "program_16_additions": {
             "repository_canonicalization": {
                 "total_items": len(load("repository-canonicalization.json")["items"]),
-                "deletion_candidates": sum(1 for i in load("repository-canonicalization.json")["items"] if i["deletion_candidate"]),
-                "migration_candidates": sum(1 for i in load("repository-canonicalization.json")["items"] if i["migration_candidate"]),
+                "deletion_candidates": sum(
+                    1
+                    for i in load("repository-canonicalization.json")["items"]
+                    if i["deletion_candidate"]
+                ),
+                "migration_candidates": sum(
+                    1
+                    for i in load("repository-canonicalization.json")["items"]
+                    if i["migration_candidate"]
+                ),
             },
             "technical_debt": {
                 "total_items": len(load("repository-technical-debt.json")["debt"]),
-                "high_severity": sum(1 for d in load("repository-technical-debt.json")["debt"] if d["severity"] == "HIGH"),
+                "high_severity": sum(
+                    1
+                    for d in load("repository-technical-debt.json")["debt"]
+                    if d["severity"] == "HIGH"
+                ),
             },
             "certification_readiness": {
-                "overall_score": load("repository-certification-readiness.json")["overall"]["score"],
-                "overall_status": load("repository-certification-readiness.json")["overall"]["status"],
+                "overall_score": load("repository-certification-readiness.json")[
+                    "overall"
+                ]["score"],
+                "overall_status": load("repository-certification-readiness.json")[
+                    "overall"
+                ]["status"],
             },
-        }
+        },
     }
     save("engineering-platform-audit-v7.json", audit_v7)
 
@@ -1360,7 +1733,10 @@ Program 16.0 successfully identified and documented all remaining repository arc
 # ===================================================================
 if __name__ == "__main__":
     import sys
-    sys.stderr.write("Program 16.0 — Repository Canonicalization & Technical Debt Elimination\n")
+
+    sys.stderr.write(
+        "Program 16.0 — Repository Canonicalization & Technical Debt Elimination\n"
+    )
     sys.stderr.write("=" * 60 + "\n\n")
 
     phase1()

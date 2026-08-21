@@ -294,7 +294,6 @@ class MetadataScanner(BaseScanner):
             if ln.strip().lstrip().startswith(('"', "'"))
         ]
 
-
     def _scan_package_json(self, result: ScanResult) -> None:
         """Load frontend package.json for dependency metadata."""
         pkg = self.safe_read_json(self.frontend_dir / "package.json")

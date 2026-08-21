@@ -58,7 +58,9 @@ class TestVerificationOrchestrator:
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
         orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-        orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+        orchestrator._changed_files = [
+            "backend/src/engines/loan_engine/amortization.py"
+        ]
 
         plan = orchestrator.generate_plan(scope=VerificationScope.BACKEND)
 
@@ -99,7 +101,9 @@ class TestVerificationOrchestrator:
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
         orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-        orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+        orchestrator._changed_files = [
+            "backend/src/engines/loan_engine/amortization.py"
+        ]
         plan = orchestrator.generate_plan(scope=VerificationScope.BACKEND)
 
         orders = [s.order for s in plan.steps]
@@ -107,7 +111,9 @@ class TestVerificationOrchestrator:
 
     @patch("runtime.foundation.verification.orchestrator.subprocess.run")
     def test_execution_result_collection(self, mock_run: MagicMock, tmp_path: Path):
-        mock_run.return_value = MockSubprocessResult(returncode=0, stdout="ok", stderr="")
+        mock_run.return_value = MockSubprocessResult(
+            returncode=0, stdout="ok", stderr=""
+        )
 
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
@@ -132,7 +138,9 @@ class TestVerificationOrchestrator:
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
         orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-        orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+        orchestrator._changed_files = [
+            "backend/src/engines/loan_engine/amortization.py"
+        ]
         plan = orchestrator.generate_plan(scope=VerificationScope.QUICK)
 
         results = orchestrator.execute()
@@ -142,7 +150,9 @@ class TestVerificationOrchestrator:
 
     @patch("runtime.foundation.verification.orchestrator.subprocess.run")
     def test_report_generation(self, mock_run: MagicMock, tmp_path: Path):
-        mock_run.return_value = MockSubprocessResult(returncode=0, stdout="ok", stderr="")
+        mock_run.return_value = MockSubprocessResult(
+            returncode=0, stdout="ok", stderr=""
+        )
 
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
@@ -166,18 +176,24 @@ class TestVerificationOrchestrator:
         map_path = tmp_path / "cross-layer-map.json"
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
-        with patch(
-            "runtime.foundation.verification.orchestrator._find_repo_root",
-            return_value=tmp_path,
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
-            tmp_path / "verification-report.md",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
-            tmp_path / "verification-cache.json",
+        with (
+            patch(
+                "runtime.foundation.verification.orchestrator._find_repo_root",
+                return_value=tmp_path,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
+                tmp_path / "verification-report.md",
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
+                tmp_path / "verification-cache.json",
+            ),
         ):
             orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-            orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator._changed_files = [
+                "backend/src/engines/loan_engine/amortization.py"
+            ]
             plan = orchestrator.generate_plan(scope=VerificationScope.QUICK)
             for i, step in enumerate(plan.steps):
                 plan.steps[i] = step.__class__(
@@ -195,12 +211,16 @@ class TestVerificationOrchestrator:
                 )
             orchestrator._plan = plan
             orchestrator._results = [
-                type("R", (), {
-                    "task_id": s.id,
-                    "command": s.command or "no-op",
-                    "status": VerificationStatus.SKIPPED,
-                    "duration_seconds": 0.0,
-                })()
+                type(
+                    "R",
+                    (),
+                    {
+                        "task_id": s.id,
+                        "command": s.command or "no-op",
+                        "status": VerificationStatus.SKIPPED,
+                        "duration_seconds": 0.0,
+                    },
+                )()
                 for s in plan.steps
             ]
 
@@ -213,7 +233,9 @@ class TestVerificationOrchestrator:
 
     @patch("runtime.foundation.verification.orchestrator.subprocess.run")
     def test_cache_generation_and_reuse(self, mock_run: MagicMock, tmp_path: Path):
-        mock_run.return_value = MockSubprocessResult(returncode=0, stdout="ok", stderr="")
+        mock_run.return_value = MockSubprocessResult(
+            returncode=0, stdout="ok", stderr=""
+        )
 
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
@@ -237,18 +259,24 @@ class TestVerificationOrchestrator:
         map_path = tmp_path / "cross-layer-map.json"
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
-        with patch(
-            "runtime.foundation.verification.orchestrator._find_repo_root",
-            return_value=tmp_path,
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
-            tmp_path / "verification-report.md",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
-            tmp_path / "verification-cache.json",
+        with (
+            patch(
+                "runtime.foundation.verification.orchestrator._find_repo_root",
+                return_value=tmp_path,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
+                tmp_path / "verification-report.md",
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
+                tmp_path / "verification-cache.json",
+            ),
         ):
             orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-            orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator._changed_files = [
+                "backend/src/engines/loan_engine/amortization.py"
+            ]
             plan = orchestrator.generate_plan(scope=VerificationScope.QUICK)
             for i, step in enumerate(plan.steps):
                 plan.steps[i] = step.__class__(
@@ -266,12 +294,16 @@ class TestVerificationOrchestrator:
                 )
             orchestrator._plan = plan
             orchestrator._results = [
-                type("R", (), {
-                    "task_id": s.id,
-                    "command": s.command or "no-op",
-                    "status": VerificationStatus.SKIPPED,
-                    "duration_seconds": 0.0,
-                })()
+                type(
+                    "R",
+                    (),
+                    {
+                        "task_id": s.id,
+                        "command": s.command or "no-op",
+                        "status": VerificationStatus.SKIPPED,
+                        "duration_seconds": 0.0,
+                    },
+                )()
                 for s in plan.steps
             ]
 
@@ -282,7 +314,9 @@ class TestVerificationOrchestrator:
 
     @patch("runtime.foundation.verification.orchestrator.subprocess.run")
     def test_non_zero_exit_on_failure(self, mock_run: MagicMock, tmp_path: Path):
-        mock_run.return_value = MockSubprocessResult(returncode=1, stdout="", stderr="error")
+        mock_run.return_value = MockSubprocessResult(
+            returncode=1, stdout="", stderr="error"
+        )
 
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
@@ -307,7 +341,9 @@ class TestVerificationOrchestrator:
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
         orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-        orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+        orchestrator._changed_files = [
+            "backend/src/engines/loan_engine/amortization.py"
+        ]
         orchestrator.generate_plan(scope=VerificationScope.QUICK)
         results = orchestrator.execute()
 
@@ -316,7 +352,9 @@ class TestVerificationOrchestrator:
 
     @patch("runtime.foundation.verification.orchestrator.subprocess.run")
     def test_full_run_pipeline(self, mock_run: MagicMock, tmp_path: Path):
-        mock_run.return_value = MockSubprocessResult(returncode=0, stdout="ok", stderr="")
+        mock_run.return_value = MockSubprocessResult(
+            returncode=0, stdout="ok", stderr=""
+        )
 
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
@@ -340,21 +378,28 @@ class TestVerificationOrchestrator:
         map_path = tmp_path / "cross-layer-map.json"
         map_path.write_text(json.dumps(map_data), encoding="utf-8")
 
-        with patch(
-            "runtime.foundation.verification.orchestrator._find_repo_root",
-            return_value=tmp_path,
-        ), patch(
-            "runtime.foundation.verification.orchestrator._is_git_available",
-            return_value=False,
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
-            tmp_path / "verification-report.md",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
-            tmp_path / "verification-cache.json",
+        with (
+            patch(
+                "runtime.foundation.verification.orchestrator._find_repo_root",
+                return_value=tmp_path,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator._is_git_available",
+                return_value=False,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
+                tmp_path / "verification-report.md",
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
+                tmp_path / "verification-cache.json",
+            ),
         ):
             orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-            orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator._changed_files = [
+                "backend/src/engines/loan_engine/amortization.py"
+            ]
             plan = orchestrator.generate_plan(scope=VerificationScope.QUICK)
             for i, step in enumerate(plan.steps):
                 plan.steps[i] = step.__class__(
@@ -372,12 +417,16 @@ class TestVerificationOrchestrator:
                 )
             orchestrator._plan = plan
             orchestrator._results = [
-                type("R", (), {
-                    "task_id": s.id,
-                    "command": s.command or "no-op",
-                    "status": VerificationStatus.SKIPPED,
-                    "duration_seconds": 0.0,
-                })()
+                type(
+                    "R",
+                    (),
+                    {
+                        "task_id": s.id,
+                        "command": s.command or "no-op",
+                        "status": VerificationStatus.SKIPPED,
+                        "duration_seconds": 0.0,
+                    },
+                )()
                 for s in plan.steps
             ]
 
@@ -511,7 +560,9 @@ def test_ci_and_local_changed_file_parity(monkeypatch):
     ci_no_base = set(collect().files)
     assert ci_no_base == expected
 
-    assert local == ci_no_base, "default local must equal CI path with no explicit base ref"
+    assert (
+        local == ci_no_base
+    ), "default local must equal CI path with no explicit base ref"
 
 
 def test_pr_base_resolution_priority_and_sha(monkeypatch, tmp_path):
@@ -523,7 +574,9 @@ def test_pr_base_resolution_priority_and_sha(monkeypatch, tmp_path):
     # A. PR base resolution with explicit base SHA via event payload.
     _clear_ci_env(monkeypatch)
     event = tmp_path / "event.json"
-    event.write_text(json.dumps({"pull_request": {"base": {"sha": "abc123" * 6 + "0" * 16}}}))
+    event.write_text(
+        json.dumps({"pull_request": {"base": {"sha": "abc123" * 6 + "0" * 16}}})
+    )
     monkeypatch.setenv("GITHUB_EVENT_NAME", "pull_request")
     monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
     assert _resolve_base_ref() == "abc123" * 6 + "0" * 16
@@ -628,8 +681,12 @@ class TestVerificationReportDiagnostics:
             overall_status=VerificationStatus.FAILED,
         )
         plan = VerificationPlan(
-            name="quick", id="plan-x", scope=VerificationScope.QUICK,
-            targets=[], steps=[], estimated_duration_seconds=0,
+            name="quick",
+            id="plan-x",
+            scope=VerificationScope.QUICK,
+            targets=[],
+            steps=[],
+            estimated_duration_seconds=0,
         )
         report = VerificationReport(
             profile="quick",
@@ -640,7 +697,9 @@ class TestVerificationReportDiagnostics:
             summary=summary,
             dependency_chains=[],
             evidence_files=[],
-            recommendations=["Investigate failing task: bash .github/scripts/run_runtime_verification.sh"],
+            recommendations=[
+                "Investigate failing task: bash .github/scripts/run_runtime_verification.sh"
+            ],
         )
 
         md = report.to_markdown()
@@ -700,19 +759,34 @@ class TestVerificationReportDiagnostics:
             error="some actual error message",
         )
         summary = VerificationSummary(
-            profile="test", total_tasks=3, passed=1, failed=2, skipped=0,
-            duration_seconds=0.3, report_path=str(tmp_path / "r.md"),
+            profile="test",
+            total_tasks=3,
+            passed=1,
+            failed=2,
+            skipped=0,
+            duration_seconds=0.3,
+            report_path=str(tmp_path / "r.md"),
             cache_path=str(tmp_path / "c.json"),
             overall_status=VerificationStatus.FAILED,
         )
         plan = VerificationPlan(
-            name="test", id="p1", scope=VerificationScope.QUICK,
-            targets=[], steps=[], estimated_duration_seconds=0,
+            name="test",
+            id="p1",
+            scope=VerificationScope.QUICK,
+            targets=[],
+            steps=[],
+            estimated_duration_seconds=0,
         )
         report = VerificationReport(
-            profile="test", changed_files=[], blast_radius={}, plan=plan,
-            results=[passed_none, failed_empty, failed_actual], summary=summary,
-            dependency_chains=[], evidence_files=[], recommendations=[],
+            profile="test",
+            changed_files=[],
+            blast_radius={},
+            plan=plan,
+            results=[passed_none, failed_empty, failed_actual],
+            summary=summary,
+            dependency_chains=[],
+            evidence_files=[],
+            recommendations=[],
         )
 
         md = report.to_markdown()
@@ -758,9 +832,9 @@ class TestMutationGateTopology:
                 impacted=[VerificationScope.MUTATION],
                 blast_scopes=(VerificationScope.REPOSITORY,),
             )
-            assert VerificationScope.MUTATION not in merged, (
-                f"{requested.value} profile must not include MUTATION scope"
-            )
+            assert (
+                VerificationScope.MUTATION not in merged
+            ), f"{requested.value} profile must not include MUTATION scope"
 
     def test_merge_scopes_keeps_mutation_for_mutation_and_full(self):
         planner = VerificationPlanner()
@@ -770,9 +844,9 @@ class TestMutationGateTopology:
                 impacted=[VerificationScope.MUTATION],
                 blast_scopes=(),
             )
-            assert VerificationScope.MUTATION in merged, (
-                f"{requested.value} profile must retain MUTATION scope"
-            )
+            assert (
+                VerificationScope.MUTATION in merged
+            ), f"{requested.value} profile must retain MUTATION scope"
 
     def test_quick_plan_excludes_mutation_run_even_when_mutation_files_changed(self):
         from runtime.foundation.verification.profiles import get_profile
@@ -803,9 +877,9 @@ class TestMutationGateTopology:
             orch._changed_files = changed
             orch.analyze_cross_layer()
             plan = orch.generate_plan(scope=get_profile(pname).scope)
-            assert any(s.unit_id == "mutation-run" for s in plan.steps), (
-                f"{pname} profile must still run mutation-run"
-            )
+            assert any(
+                s.unit_id == "mutation-run" for s in plan.steps
+            ), f"{pname} profile must still run mutation-run"
 
 
 class TestBoundedProfileScopeHonor:
@@ -835,9 +909,9 @@ class TestBoundedProfileScopeHonor:
         plan = orch.generate_plan(scope=VerificationScope.PLAYWRIGHT)
 
         commands = [s.command for s in plan.steps]
-        assert len(plan.steps) == 1, (
-            f"playwright must run exactly 1 step on large boundary, got {len(plan.steps)}"
-        )
+        assert (
+            len(plan.steps) == 1
+        ), f"playwright must run exactly 1 step on large boundary, got {len(plan.steps)}"
         assert ".github/scripts/run_playwright_tests.sh" in commands[0]
         assert all("backend_verification" not in c for c in commands)
         assert all("frontend_verification" not in c for c in commands)
@@ -852,9 +926,9 @@ class TestBoundedProfileScopeHonor:
         plan = orch.generate_plan(scope=VerificationScope.GOLDEN)
 
         commands = [s.command for s in plan.steps]
-        assert len(plan.steps) == 1, (
-            f"golden must run exactly 1 step on large boundary, got {len(plan.steps)}"
-        )
+        assert (
+            len(plan.steps) == 1
+        ), f"golden must run exactly 1 step on large boundary, got {len(plan.steps)}"
         assert ".github/scripts/run_golden_tests.sh" in commands[0]
 
     def test_unbounded_profiles_still_expand(self):
@@ -867,22 +941,26 @@ class TestBoundedProfileScopeHonor:
             orch.analyze_cross_layer()
             plan = orch.generate_plan(scope=get_profile(pname).scope)
             # Unbounded profiles expand to multiple steps on a large boundary.
-            assert len(plan.steps) >= 2, (
-                f"{pname} must expand on large boundary, got {len(plan.steps)} steps"
-            )
+            assert (
+                len(plan.steps) >= 2
+            ), f"{pname} must expand on large boundary, got {len(plan.steps)} steps"
 
     def test_merge_scopes_respects_requested_for_bounded(self):
         """Direct unit test of the _merge_scopes flag."""
         planner = VerificationPlanner()
         merged = planner._merge_scopes(
             VerificationScope.PLAYWRIGHT,
-            impacted=[VerificationScope.BACKEND, VerificationScope.FRONTEND, VerificationScope.RUNTIME],
+            impacted=[
+                VerificationScope.BACKEND,
+                VerificationScope.FRONTEND,
+                VerificationScope.RUNTIME,
+            ],
             blast_scopes=(VerificationScope.BACKEND,),
             respect_requested_scope=True,
         )
-        assert merged == [VerificationScope.PLAYWRIGHT], (
-            f"bounded profile scope must not expand, got {merged}"
-        )
+        assert merged == [
+            VerificationScope.PLAYWRIGHT
+        ], f"bounded profile scope must not expand, got {merged}"
 
     def test_merge_scopes_respects_requested_flag(self):
         """The flag suppresses impacted/blast merge regardless of profile.
@@ -928,33 +1006,46 @@ class TestC5Observability:
         # Echo a known sequence; each line should arrive via the callback.
         result = ex.execute("printf 'line-a\\nline-b\\n'", task_id="test-stream")
         assert result.status.value == "passed"
-        assert any("line-a" in c for c in captured), f"callback did not receive line-a; got {captured}"
-        assert any("line-b" in c for c in captured), f"callback did not receive line-b; got {captured}"
+        assert any(
+            "line-a" in c for c in captured
+        ), f"callback did not receive line-a; got {captured}"
+        assert any(
+            "line-b" in c for c in captured
+        ), f"callback did not receive line-b; got {captured}"
 
     def test_orchestrator_emits_per_step_progress(self, tmp_path: Path, monkeypatch):
         """The orchestrator prints a '[N/M] Running step ...' line before each run."""
         from runtime.foundation.verification.profiles import get_profile
-        from runtime.foundation.verification.orchestrator import VerificationOrchestrator
+        from runtime.foundation.verification.orchestrator import (
+            VerificationOrchestrator,
+        )
         from runtime.foundation.verification.models import VerificationScope
 
-        orch = VerificationOrchestrator(profile=get_profile("quick"), repo_root=tmp_path)
+        orch = VerificationOrchestrator(
+            profile=get_profile("quick"), repo_root=tmp_path
+        )
         orch._changed_files = []
         orch.analyze_cross_layer()
         orch.generate_plan(scope=VerificationScope.QUICK)
         # Capture stdout from execute().
         import io
         import contextlib
+
         buf = io.StringIO()
         with contextlib.redirect_stdout(buf):
             orch.execute()
         out = buf.getvalue()
         # At least one 'Running step' line must appear.
-        assert "Running step" in out, f"No per-step progress emitted; output was:\n{out}"
+        assert (
+            "Running step" in out
+        ), f"No per-step progress emitted; output was:\n{out}"
 
     def test_orchestrator_respects_overall_timeout(self, tmp_path: Path):
         """When total wall-clock exceeds ``overall_timeout``, remaining steps abort."""
         from runtime.foundation.verification.profiles import get_profile
-        from runtime.foundation.verification.orchestrator import VerificationOrchestrator
+        from runtime.foundation.verification.orchestrator import (
+            VerificationOrchestrator,
+        )
         from runtime.foundation.verification.models import VerificationScope
 
         orch = VerificationOrchestrator(

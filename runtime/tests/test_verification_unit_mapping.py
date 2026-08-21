@@ -143,9 +143,9 @@ class TestMappingTargetsAreReal:
             if workflow_id == UNMAPPED:
                 continue
             workflow = registry.get_workflow(workflow_id)
-            assert workflow is not None and workflow.command, (
-                f"Unit '{unit_id}' maps to workflow '{workflow_id}' with no command."
-            )
+            assert (
+                workflow is not None and workflow.command
+            ), f"Unit '{unit_id}' maps to workflow '{workflow_id}' with no command."
 
     def test_get_workflow_for_unit_returns_the_workflow_object(self):
         registry = VerificationRegistry()

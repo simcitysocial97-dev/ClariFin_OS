@@ -13,7 +13,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EVENT_STORE_PATH = REPO_ROOT / "runtime" / "generated" / "engineering-events.jsonl"
 

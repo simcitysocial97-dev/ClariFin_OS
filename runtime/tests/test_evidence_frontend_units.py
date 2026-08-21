@@ -40,14 +40,34 @@ FRONTEND_PASS = {
     "overall_status": "pass",
     "unit_id": "frontend-typecheck-build",
     "phases": [
-        {"phase": "lint", "status": "pass", "exit_code": 0, "duration_seconds": 28,
-         "log": "/tmp/lint.log"},
-        {"phase": "typecheck", "status": "pass", "exit_code": 0, "duration_seconds": 7,
-         "log": "/tmp/typecheck.log"},
-        {"phase": "build", "status": "pass", "exit_code": 0, "duration_seconds": 49,
-         "log": "/tmp/build.log"},
-        {"phase": "test", "status": "pass", "exit_code": 0, "duration_seconds": 104,
-         "log": "/tmp/test.log"},
+        {
+            "phase": "lint",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 28,
+            "log": "/tmp/lint.log",
+        },
+        {
+            "phase": "typecheck",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 7,
+            "log": "/tmp/typecheck.log",
+        },
+        {
+            "phase": "build",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 49,
+            "log": "/tmp/build.log",
+        },
+        {
+            "phase": "test",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 104,
+            "log": "/tmp/test.log",
+        },
     ],
 }
 
@@ -56,14 +76,34 @@ FRONTEND_BUILD_FAILED = {
     "overall_status": "fail",
     "unit_id": "frontend-typecheck-build",
     "phases": [
-        {"phase": "lint", "status": "pass", "exit_code": 0, "duration_seconds": 28,
-         "log": "/tmp/lint.log"},
-        {"phase": "typecheck", "status": "pass", "exit_code": 0, "duration_seconds": 7,
-         "log": "/tmp/typecheck.log"},
-        {"phase": "build", "status": "fail", "exit_code": 1, "duration_seconds": 19,
-         "log": "/tmp/build.log"},
-        {"phase": "test", "status": "pass", "exit_code": 0, "duration_seconds": 103,
-         "log": "/tmp/test.log"},
+        {
+            "phase": "lint",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 28,
+            "log": "/tmp/lint.log",
+        },
+        {
+            "phase": "typecheck",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 7,
+            "log": "/tmp/typecheck.log",
+        },
+        {
+            "phase": "build",
+            "status": "fail",
+            "exit_code": 1,
+            "duration_seconds": 19,
+            "log": "/tmp/build.log",
+        },
+        {
+            "phase": "test",
+            "status": "pass",
+            "exit_code": 0,
+            "duration_seconds": 103,
+            "log": "/tmp/test.log",
+        },
     ],
 }
 
@@ -267,9 +307,7 @@ class TestUnitKeyedFailures:
         ]
 
     def test_passing_phases_produce_no_failure_records(self, tmp_path: Path):
-        evidence = _write_evidence(
-            tmp_path, frontend=FRONTEND_PASS, manifest=MANIFEST
-        )
+        evidence = _write_evidence(tmp_path, frontend=FRONTEND_PASS, manifest=MANIFEST)
         assert _aggregate(tmp_path, evidence).unit_failures == []
 
     def test_backend_phase_failure_is_keyed_by_unit(self, tmp_path: Path):
@@ -278,10 +316,20 @@ class TestUnitKeyedFailures:
             "overall_status": "fail",
             "unit_id": "backend-unit",
             "phases": [
-                {"phase": "contract", "status": "pass", "exit_code": 0,
-                 "duration_seconds": 20, "log": "/tmp/c.log"},
-                {"phase": "invariants", "status": "fail", "exit_code": 1,
-                 "duration_seconds": 20, "log": "/tmp/i.log"},
+                {
+                    "phase": "contract",
+                    "status": "pass",
+                    "exit_code": 0,
+                    "duration_seconds": 20,
+                    "log": "/tmp/c.log",
+                },
+                {
+                    "phase": "invariants",
+                    "status": "fail",
+                    "exit_code": 1,
+                    "duration_seconds": 20,
+                    "log": "/tmp/i.log",
+                },
             ],
         }
         evidence = _write_evidence(tmp_path, backend=backend, manifest=MANIFEST)
@@ -335,9 +383,9 @@ class TestUnitKeyedFailures:
             "a frontend failure was attributed to a backend unit — this is the E-4 "
             "'first entry wins' defect reappearing in a new format"
         )
-        assert failure["provenance"] == {}, (
-            "provenance from an unrelated step must not be attached to this failure"
-        )
+        assert (
+            failure["provenance"] == {}
+        ), "provenance from an unrelated step must not be attached to this failure"
 
     def test_join_is_by_workflow_not_by_position(self, tmp_path: Path):
         """Order in the manifest must not influence the join."""
@@ -422,9 +470,9 @@ class TestE4RemainsUntouched:
         source = inspect.getsource(EvidenceAggregator._collect_unit_failures)
         assert "_load_run_manifest" in source
         for banned in (".startswith(", ".endswith(", " in command", "re.search"):
-            assert banned not in source, (
-                f"substring/keyword matching ({banned}) reintroduces the E-4 defect"
-            )
+            assert (
+                banned not in source
+            ), f"substring/keyword matching ({banned}) reintroduces the E-4 defect"
 
 
 class TestSerialization:

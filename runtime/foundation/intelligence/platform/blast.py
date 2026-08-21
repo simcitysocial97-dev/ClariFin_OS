@@ -483,14 +483,14 @@ def compute_blast_radius(
     )
     # C4: standalone backend mapper / router changes must propagate to the
     # frontend entities the same chain records.
-    _enrich_backend_bridge_impact(
-        impacted, seeds, res, visited, frontier
-    )
+    _enrich_backend_bridge_impact(impacted, seeds, res, visited, frontier)
 
     direct = tuple(
         sorted(
             (
-                ImpactNode(ref=r, depth=0, graph="change", via="changed", relation="changed")
+                ImpactNode(
+                    ref=r, depth=0, graph="change", via="changed", relation="changed"
+                )
                 for r in seeds
             ),
             key=lambda n: n.ref.ref,
@@ -505,9 +505,7 @@ def compute_blast_radius(
     user_visible = tuple(
         n for n in (*direct, *indirect) if n.ref.kind in _USER_VISIBLE_KINDS
     )
-    developer = tuple(
-        n for n in (*direct, *indirect) if n.ref.kind in _DEVELOPER_KINDS
-    )
+    developer = tuple(n for n in (*direct, *indirect) if n.ref.kind in _DEVELOPER_KINDS)
 
     return BlastRadius(
         generated_at=datetime.now(timezone.utc).isoformat(),

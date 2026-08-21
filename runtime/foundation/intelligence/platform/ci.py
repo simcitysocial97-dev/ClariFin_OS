@@ -190,7 +190,8 @@ def collect_github_intelligence(
 
         # -- Step 4: annotations (usually sufficient) ---------------------
         ann_cmd = [
-            "gh", "api",
+            "gh",
+            "api",
             f"repos/{{owner}}/{{repo}}/check-runs/{run_id}/annotations",
         ]
         api_calls.append(" ".join(ann_cmd))
@@ -218,7 +219,8 @@ def collect_github_intelligence(
 
         # -- Step 6: artifact metadata (names/sizes only, no download) ----
         art_cmd = [
-            "gh", "api",
+            "gh",
+            "api",
             f"repos/{{owner}}/{{repo}}/actions/runs/{run_id}/artifacts",
         ]
         api_calls.append(" ".join(art_cmd))
@@ -246,7 +248,8 @@ def collect_github_intelligence(
             if job_id is None or not job.get("failed_steps"):
                 continue
             log_cmd = [
-                "gh", "api",
+                "gh",
+                "api",
                 f"repos/{{owner}}/{{repo}}/actions/jobs/{job_id}/logs",
             ]
             api_calls.append(" ".join(log_cmd))

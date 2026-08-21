@@ -44,17 +44,19 @@ def _check_profile_expansion_determinism() -> list[dict[str, Any]]:
     try:
         from runtime.foundation.verification.profiles import list_profiles
     except ImportError as exc:
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-profile-import",
-            "name": "Profile module import",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": f"Cannot import profiles module: {exc}",
-            "details": {},
-            "recommendation": "Ensure runtime.foundation.verification.profiles is importable",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-profile-import",
+                "name": "Profile module import",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": f"Cannot import profiles module: {exc}",
+                "details": {},
+                "recommendation": "Ensure runtime.foundation.verification.profiles is importable",
+            }
+        )
         return findings
 
     profiles = list_profiles()
@@ -65,15 +67,15 @@ def _check_profile_expansion_determinism() -> list[dict[str, Any]]:
             tasks2 = profile.expand_tasks()
             ids1 = tuple(t.id for t in tasks1)
             ids2 = tuple(t.id for t in tasks2)
-            commands1 = tuple(
-                tuple(t.commands) for t in tasks1
-            )
-            commands2 = tuple(
-                tuple(t.commands) for t in tasks2
-            )
+            commands1 = tuple(tuple(t.commands) for t in tasks1)
+            commands2 = tuple(tuple(t.commands) for t in tasks2)
             deterministic = ids1 == ids2 and commands1 == commands2
             status = "pass" if deterministic else "fail"
-            message = f"Profile '{profile.name}' expand_tasks() is deterministic" if deterministic else f"Profile '{profile.name}' expand_tasks() is NOT deterministic"
+            message = (
+                f"Profile '{profile.name}' expand_tasks() is deterministic"
+                if deterministic
+                else f"Profile '{profile.name}' expand_tasks() is NOT deterministic"
+            )
         except Exception as exc:
             status = "fail"
             message = f"Profile '{profile.name}' expand_tasks() raised: {exc}"
@@ -83,21 +85,27 @@ def _check_profile_expansion_determinism() -> list[dict[str, Any]]:
             commands1 = ()
             commands2 = ()
 
-        findings.append({
-            "section": "planner",
-            "check_id": f"planner-expand-deterministic-{profile.name}",
-            "name": f"Profile '{profile.name}' expansion determinism",
-            "status": status,
-            "severity": "critical" if status == "fail" else "info",
-            "priority": "critical" if status == "fail" else "low",
-            "message": message,
-            "details": {
-                "task_ids_1": ids1,
-                "task_ids_2": ids2,
-                "deterministic": deterministic,
-            },
-            "recommendation": "" if status == "pass" else f"Fix non-determinism in expand_tasks() for profile '{profile.name}'",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": f"planner-expand-deterministic-{profile.name}",
+                "name": f"Profile '{profile.name}' expansion determinism",
+                "status": status,
+                "severity": "critical" if status == "fail" else "info",
+                "priority": "critical" if status == "fail" else "low",
+                "message": message,
+                "details": {
+                    "task_ids_1": ids1,
+                    "task_ids_2": ids2,
+                    "deterministic": deterministic,
+                },
+                "recommendation": (
+                    ""
+                    if status == "pass"
+                    else f"Fix non-determinism in expand_tasks() for profile '{profile.name}'"
+                ),
+            }
+        )
 
     return findings
 
@@ -108,17 +116,19 @@ def _check_no_duplicate_task_ids() -> list[dict[str, Any]]:
     try:
         from runtime.foundation.verification.profiles import list_profiles
     except ImportError:
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-dup-import",
-            "name": "Profile module import for duplicate check",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": "Cannot import profiles module",
-            "details": {},
-            "recommendation": "Ensure runtime.foundation.verification.profiles is importable",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-dup-import",
+                "name": "Profile module import for duplicate check",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": "Cannot import profiles module",
+                "details": {},
+                "recommendation": "Ensure runtime.foundation.verification.profiles is importable",
+            }
+        )
         return findings
 
     profiles = list_profiles()
@@ -137,17 +147,23 @@ def _check_no_duplicate_task_ids() -> list[dict[str, Any]]:
             if status == "pass"
             else f"Profile '{profile.name}' has duplicate task IDs: {duplicates}"
         )
-        findings.append({
-            "section": "planner",
-            "check_id": f"planner-no-dup-tasks-{profile.name}",
-            "name": f"Profile '{profile.name}' no duplicate tasks",
-            "status": status,
-            "severity": "high" if status == "fail" else "info",
-            "priority": "high" if status == "fail" else "low",
-            "message": message,
-            "details": {"duplicate_ids": duplicates, "total_tasks": len(task_ids)},
-            "recommendation": "" if status == "pass" else f"Remove duplicate task IDs from profile '{profile.name}'",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": f"planner-no-dup-tasks-{profile.name}",
+                "name": f"Profile '{profile.name}' no duplicate tasks",
+                "status": status,
+                "severity": "high" if status == "fail" else "info",
+                "priority": "high" if status == "fail" else "low",
+                "message": message,
+                "details": {"duplicate_ids": duplicates, "total_tasks": len(task_ids)},
+                "recommendation": (
+                    ""
+                    if status == "pass"
+                    else f"Remove duplicate task IDs from profile '{profile.name}'"
+                ),
+            }
+        )
 
     return findings
 
@@ -194,7 +210,11 @@ def _check_profile_coverage() -> dict[str, Any]:
             "missing": sorted(missing),
             "extra": sorted(extra),
         },
-        "recommendation": "" if status == "pass" else f"Add missing profiles: {', '.join(sorted(missing))}",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else f"Add missing profiles: {', '.join(sorted(missing))}"
+        ),
     }
 
 
@@ -204,17 +224,19 @@ def _check_profile_task_ordering() -> list[dict[str, Any]]:
     try:
         from runtime.foundation.verification.profiles import list_profiles
     except ImportError as exc:
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-task-order-import",
-            "name": "Task ordering",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": f"Cannot import profiles module: {exc}",
-            "details": {},
-            "recommendation": "Ensure profiles module is importable",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-task-order-import",
+                "name": "Task ordering",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": f"Cannot import profiles module: {exc}",
+                "details": {},
+                "recommendation": "Ensure profiles module is importable",
+            }
+        )
         return findings
 
     profiles = list_profiles()
@@ -229,22 +251,31 @@ def _check_profile_task_ordering() -> list[dict[str, Any]]:
         negative = sum(1 for d in order_values if d < 0)
         if negative > 0:
             status = "fail"
-            message = f"Profile '{profile.name}' has {negative} tasks with negative durations"
+            message = (
+                f"Profile '{profile.name}' has {negative} tasks with negative durations"
+            )
         else:
             status = "pass"
             message = f"Profile '{profile.name}' tasks have valid ordering ({len(order_values)} tasks)"
 
-        findings.append({
-            "section": "planner",
-            "check_id": f"planner-task-ordering-{profile.name}",
-            "name": f"Profile '{profile.name}' task ordering",
-            "status": status,
-            "severity": "medium" if status == "fail" else "info",
-            "priority": "medium" if status == "fail" else "low",
-            "message": message,
-            "details": {"task_count": len(order_values), "negative_durations": negative},
-            "recommendation": "" if status == "pass" else "Fix negative duration estimates",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": f"planner-task-ordering-{profile.name}",
+                "name": f"Profile '{profile.name}' task ordering",
+                "status": status,
+                "severity": "medium" if status == "fail" else "info",
+                "priority": "medium" if status == "fail" else "low",
+                "message": message,
+                "details": {
+                    "task_count": len(order_values),
+                    "negative_durations": negative,
+                },
+                "recommendation": (
+                    "" if status == "pass" else "Fix negative duration estimates"
+                ),
+            }
+        )
 
     return findings
 
@@ -278,7 +309,9 @@ def _check_plan_verification_determinism() -> dict[str, Any]:
         workflows_2 = tuple(plan2.required_workflows)
         scripts_1 = tuple(plan1.required_scripts)
         scripts_2 = tuple(plan2.required_scripts)
-        duration_match = plan1.estimated_duration_seconds == plan2.estimated_duration_seconds
+        duration_match = (
+            plan1.estimated_duration_seconds == plan2.estimated_duration_seconds
+        )
         step_order_1 = tuple(s.order for s in plan1.steps)
         step_order_2 = tuple(s.order for s in plan2.steps)
 
@@ -291,7 +324,11 @@ def _check_plan_verification_determinism() -> dict[str, Any]:
             and step_order_1 == step_order_2
         )
         status = "pass" if deterministic else "fail"
-        message = "plan_verification() is deterministic" if deterministic else "plan_verification() is NOT deterministic"
+        message = (
+            "plan_verification() is deterministic"
+            if deterministic
+            else "plan_verification() is NOT deterministic"
+        )
     except Exception as exc:
         status = "fail"
         message = f"plan_verification() raised: {exc}"
@@ -322,7 +359,9 @@ def _check_plan_verification_determinism() -> dict[str, Any]:
             "plan2_steps": len(step_ids_2),
             "note": "Plan ID includes timestamp and is excluded from determinism check",
         },
-        "recommendation": "" if status == "pass" else "Fix non-determinism in plan_verification()",
+        "recommendation": (
+            "" if status == "pass" else "Fix non-determinism in plan_verification()"
+        ),
     }
 
 
@@ -332,17 +371,19 @@ def _check_step_ordering() -> list[dict[str, Any]]:
     try:
         from runtime.foundation.verification.planner import plan_verification
     except ImportError as exc:
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-step-order-import",
-            "name": "Step ordering validation",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": f"Cannot import plan_verification: {exc}",
-            "details": {},
-            "recommendation": "Ensure planner module is importable",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-step-order-import",
+                "name": "Step ordering validation",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": f"Cannot import plan_verification: {exc}",
+                "details": {},
+                "recommendation": "Ensure planner module is importable",
+            }
+        )
         return findings
 
     test_files = [
@@ -355,7 +396,9 @@ def _check_step_ordering() -> list[dict[str, Any]]:
         orders = [s.order for s in plan.steps]
         unique_orders = set(orders)
         no_duplicates = len(orders) == len(unique_orders)
-        sequential = sorted(orders) == list(range(1, len(orders) + 1)) if orders else True
+        sequential = (
+            sorted(orders) == list(range(1, len(orders) + 1)) if orders else True
+        )
 
         status = "pass" if (no_duplicates and sequential) else "fail"
         message = (
@@ -364,17 +407,27 @@ def _check_step_ordering() -> list[dict[str, Any]]:
             else f"Steps have ordering issues: duplicates={not no_duplicates}, sequential={sequential}"
         )
 
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-step-ordering",
-            "name": "Step ordering validation",
-            "status": status,
-            "severity": "high" if status == "fail" else "info",
-            "priority": "high" if status == "fail" else "low",
-            "message": message,
-            "details": {"orders": orders, "all_unique": no_duplicates, "sequential": sequential},
-            "recommendation": "" if status == "pass" else "Fix step ordering to be sequential and unique",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-step-ordering",
+                "name": "Step ordering validation",
+                "status": status,
+                "severity": "high" if status == "fail" else "info",
+                "priority": "high" if status == "fail" else "low",
+                "message": message,
+                "details": {
+                    "orders": orders,
+                    "all_unique": no_duplicates,
+                    "sequential": sequential,
+                },
+                "recommendation": (
+                    ""
+                    if status == "pass"
+                    else "Fix step ordering to be sequential and unique"
+                ),
+            }
+        )
 
         # Also check step dependencies reference valid step IDs
         step_ids = {s.id for s in plan.steps}
@@ -384,29 +437,41 @@ def _check_step_ordering() -> list[dict[str, Any]]:
                 if dep not in step_ids:
                     invalid_deps.append(f"{s.id} -> {dep}")
         dep_status = "pass" if not invalid_deps else "fail"
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-step-deps",
-            "name": "Step dependency validation",
-            "status": dep_status,
-            "severity": "high" if dep_status == "fail" else "info",
-            "priority": "high" if dep_status == "fail" else "low",
-            "message": "All step dependencies reference valid steps" if dep_status == "pass" else f"Found {len(invalid_deps)} invalid dependencies",
-            "details": {"invalid_deps": invalid_deps[:50]},
-            "recommendation": "" if dep_status == "pass" else "Fix step dependencies to reference valid step IDs",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-step-deps",
+                "name": "Step dependency validation",
+                "status": dep_status,
+                "severity": "high" if dep_status == "fail" else "info",
+                "priority": "high" if dep_status == "fail" else "low",
+                "message": (
+                    "All step dependencies reference valid steps"
+                    if dep_status == "pass"
+                    else f"Found {len(invalid_deps)} invalid dependencies"
+                ),
+                "details": {"invalid_deps": invalid_deps[:50]},
+                "recommendation": (
+                    ""
+                    if dep_status == "pass"
+                    else "Fix step dependencies to reference valid step IDs"
+                ),
+            }
+        )
     except Exception as exc:
-        findings.append({
-            "section": "planner",
-            "check_id": "planner-step-order",
-            "name": "Step ordering validation",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": f"Could not generate plan: {exc}",
-            "details": {},
-            "recommendation": "Fix planner to generate plans without errors",
-        })
+        findings.append(
+            {
+                "section": "planner",
+                "check_id": "planner-step-order",
+                "name": "Step ordering validation",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": f"Could not generate plan: {exc}",
+                "details": {},
+                "recommendation": "Fix planner to generate plans without errors",
+            }
+        )
 
     return findings
 
@@ -427,7 +492,13 @@ def _check_verification_cache(cache_path: Path) -> dict[str, Any]:
 
     try:
         data = json.loads(cache_path.read_text(encoding="utf-8"))
-        required_keys = {"last_commit", "changed_files", "executed_profiles", "duration", "timestamp"}
+        required_keys = {
+            "last_commit",
+            "changed_files",
+            "executed_profiles",
+            "duration",
+            "timestamp",
+        }
         missing = [k for k in required_keys if k not in data]
         if missing:
             status = "fail"
@@ -456,7 +527,9 @@ def _check_verification_cache(cache_path: Path) -> dict[str, Any]:
         "priority": "high" if status == "fail" else "low",
         "message": message,
         "details": details,
-        "recommendation": "" if status == "pass" else "Fix verification cache structure",
+        "recommendation": (
+            "" if status == "pass" else "Fix verification cache structure"
+        ),
     }
 
 
@@ -485,13 +558,21 @@ def _check_cross_layer_determinism() -> dict[str, Any]:
         report2 = cli.analyze_cross_layer_impact(changed_files)
 
         same_engines = report1.affected_engines == report2.affected_engines
-        same_capabilities = report1.affected_capabilities == report2.affected_capabilities
+        same_capabilities = (
+            report1.affected_capabilities == report2.affected_capabilities
+        )
         same_endpoints = report1.affected_endpoints == report2.affected_endpoints
         same_chains = len(report1.dependency_chains) == len(report2.dependency_chains)
 
-        deterministic = same_engines and same_capabilities and same_endpoints and same_chains
+        deterministic = (
+            same_engines and same_capabilities and same_endpoints and same_chains
+        )
         status = "pass" if deterministic else "fail"
-        message = "Cross-layer impact analysis is deterministic" if deterministic else "Cross-layer impact analysis is NOT deterministic"
+        message = (
+            "Cross-layer impact analysis is deterministic"
+            if deterministic
+            else "Cross-layer impact analysis is NOT deterministic"
+        )
 
         findings_data = {
             "same_engines": same_engines,
@@ -514,7 +595,9 @@ def _check_cross_layer_determinism() -> dict[str, Any]:
         "priority": "critical" if status == "fail" else "low",
         "message": message,
         "details": findings_data,
-        "recommendation": "" if status == "pass" else "Fix non-determinism in CrossLayerImpactPlanner",
+        "recommendation": (
+            "" if status == "pass" else "Fix non-determinism in CrossLayerImpactPlanner"
+        ),
     }
 
 

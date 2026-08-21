@@ -47,9 +47,7 @@ class ArchitecturalIntegrityEngine:
             counts, and suggested engineering actions.
         """
         scanner = self._scanner or ArchitecturalScanner(
-            repo_root=(
-                self._repo_root and __import__("pathlib").Path(self._repo_root)
-            )
+            repo_root=(self._repo_root and __import__("pathlib").Path(self._repo_root))
         )
         graph = scanner.scan()
         violations: list[Violation] = []
@@ -63,9 +61,8 @@ class ArchitecturalIntegrityEngine:
         return IntegrityReport(
             timestamp=datetime.now(timezone.utc).isoformat(),
             rules_evaluated=self._registry.total_count,
-            rules_passed=self._registry.total_count - len(
-                {v.rule_id for v in violations}
-            ),
+            rules_passed=self._registry.total_count
+            - len({v.rule_id for v in violations}),
             rules_failed=len({v.rule_id for v in violations}),
             violations=tuple(violations),
             files_scanned=graph.files_scanned,

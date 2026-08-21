@@ -13,7 +13,6 @@ from typing import Any
 
 from .event_store import EngineeringEventStore
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 FLAKY_TESTS_PATH = REPO_ROOT / "runtime" / "generated" / "flaky-tests.json"
 
@@ -77,7 +76,9 @@ class FlakyTestIntelligence:
                 status = payload.get("status", "unknown")
                 timestamp = event.timestamp.isoformat()
                 env = event.execution_context.get("environment", "unknown")
-                profile = event.execution_context.get("metadata", {}).get("profile", "unknown")
+                profile = event.execution_context.get("metadata", {}).get(
+                    "profile", "unknown"
+                )
 
                 if task_id not in test_records:
                     test_records[task_id] = FlakyTestRecord(
@@ -101,7 +102,9 @@ class FlakyTestIntelligence:
 
         for record in test_records.values():
             total = record.failures + record.successes
-            record.failure_frequency = round(record.failures / total, 4) if total > 0 else 0.0
+            record.failure_frequency = (
+                round(record.failures / total, 4) if total > 0 else 0.0
+            )
 
         return test_records
 
@@ -114,7 +117,9 @@ class FlakyTestIntelligence:
             json.dump(data, f, indent=2, default=str)
 
 
-def generate_flaky_tests(event_store: EngineeringEventStore | None = None) -> dict[str, Any]:
+def generate_flaky_tests(
+    event_store: EngineeringEventStore | None = None,
+) -> dict[str, Any]:
     intelligence = FlakyTestIntelligence(event_store)
     intelligence.save()
     return {name: record.to_dict() for name, record in intelligence.compute().items()}

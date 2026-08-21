@@ -228,7 +228,12 @@ class Mapper:
     layer: str = "backend"
 
     def to_dict(self) -> dict[str, Any]:
-        return {"id": self.id, "name": self.name, "path": self.path, "layer": self.layer}
+        return {
+            "id": self.id,
+            "name": self.name,
+            "path": self.path,
+            "layer": self.layer,
+        }
 
 
 @dataclass(frozen=True, slots=True)

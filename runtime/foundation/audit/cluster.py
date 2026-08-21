@@ -34,22 +34,39 @@ def _cluster_key(issue: dict[str, Any]) -> str:
     pipeline_stage = issue.get("pipeline_stage", "")
     root_cause = issue.get("root_cause", "")
 
-    if "repository" in subsystem and ("referential integrity" in root_cause.lower() or "reproducibility" in root_cause.lower() or "count consistency" in root_cause.lower()):
+    if "repository" in subsystem and (
+        "referential integrity" in root_cause.lower()
+        or "reproducibility" in root_cause.lower()
+        or "count consistency" in root_cause.lower()
+    ):
         return "repository_graph_integrity"
 
-    if "cross_layer" in subsystem and ("duplicate" in root_cause.lower() or "ownership" in root_cause.lower()):
+    if "cross_layer" in subsystem and (
+        "duplicate" in root_cause.lower() or "ownership" in root_cause.lower()
+    ):
         return "cross_layer_completeness"
 
-    if "dependency_graph" in subsystem and ("referential integrity" in root_cause.lower() or "structural" in root_cause.lower() or "isolated" in root_cause.lower()):
+    if "dependency_graph" in subsystem and (
+        "referential integrity" in root_cause.lower()
+        or "structural" in root_cause.lower()
+        or "isolated" in root_cause.lower()
+    ):
         return "dependency_graph_integrity"
 
-    if "executor" in subsystem and ("retry" in root_cause.lower() or "cancel" in root_cause.lower() or "parallel" in root_cause.lower()):
+    if "executor" in subsystem and (
+        "retry" in root_cause.lower()
+        or "cancel" in root_cause.lower()
+        or "parallel" in root_cause.lower()
+    ):
         return "executor_resilience"
 
     if "executor" in subsystem and "format" in root_cause.lower():
         return "executor_command_formatting"
 
-    if "knowledge" in subsystem and ("broken link" in root_cause.lower() or "indexer consistency" in root_cause.lower()):
+    if "knowledge" in subsystem and (
+        "broken link" in root_cause.lower()
+        or "indexer consistency" in root_cause.lower()
+    ):
         return "knowledge_data_quality"
 
     if "runtime_cli" in subsystem and "dashboard" in root_cause.lower():
@@ -130,7 +147,16 @@ def _cluster_metadata(cluster_key: str) -> tuple[str, str, str, str, str]:
             "Artifact ownership is unambiguous",
         ),
     }
-    return mapping.get(cluster_key, ("Miscellaneous", "Various issues", "Investigate individually", "medium", "Certification progress"))
+    return mapping.get(
+        cluster_key,
+        (
+            "Miscellaneous",
+            "Various issues",
+            "Investigate individually",
+            "medium",
+            "Certification progress",
+        ),
+    )
 
 
 def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
@@ -145,7 +171,9 @@ def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
     for key, cluster_issues in clusters.items():
         name, description, repair_strategy, complexity, benefit = _cluster_metadata(key)
         subsystems = tuple(sorted(set(i["subsystem"] for i in cluster_issues)))
-        pipeline_stages = tuple(sorted(set(i["pipeline_stage"] for i in cluster_issues)))
+        pipeline_stages = tuple(
+            sorted(set(i["pipeline_stage"] for i in cluster_issues))
+        )
         issue_ids = tuple(i["issue_id"] for i in cluster_issues)
 
         cluster = RootCauseCluster(
@@ -160,19 +188,21 @@ def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
             expected_benefit=benefit,
             repair_strategy=repair_strategy,
         )
-        result_clusters.append({
-            "cluster_id": cluster.cluster_id,
-            "name": cluster.name,
-            "description": cluster.description,
-            "root_cause": cluster.root_cause,
-            "issues": list(cluster.issues),
-            "subsystems": list(cluster.subsystems),
-            "pipeline_stages": list(cluster.pipeline_stages),
-            "estimated_repair_complexity": cluster.estimated_repair_complexity,
-            "expected_benefit": cluster.expected_benefit,
-            "repair_strategy": cluster.repair_strategy,
-            "issue_count": len(cluster_issues),
-        })
+        result_clusters.append(
+            {
+                "cluster_id": cluster.cluster_id,
+                "name": cluster.name,
+                "description": cluster.description,
+                "root_cause": cluster.root_cause,
+                "issues": list(cluster.issues),
+                "subsystems": list(cluster.subsystems),
+                "pipeline_stages": list(cluster.pipeline_stages),
+                "estimated_repair_complexity": cluster.estimated_repair_complexity,
+                "expected_benefit": cluster.expected_benefit,
+                "repair_strategy": cluster.repair_strategy,
+                "issue_count": len(cluster_issues),
+            }
+        )
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -183,7 +213,9 @@ def cluster_issues(issues: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def run_clustering() -> dict[str, Any]:
-    with open(REPO_ROOT / "runtime" / "generated" / "normalized-issues.json", encoding="utf-8") as f:
+    with open(
+        REPO_ROOT / "runtime" / "generated" / "normalized-issues.json", encoding="utf-8"
+    ) as f:
         normalized = json.load(f)
 
     issues = normalized.get("issues", [])
@@ -195,6 +227,8 @@ def run_clustering() -> dict[str, Any]:
 
 if __name__ == "__main__":
     result = run_clustering()
-    print(f"Clustered {result['total_issues']} issues into {result['total_clusters']} root causes")
+    print(
+        f"Clustered {result['total_issues']} issues into {result['total_clusters']} root causes"
+    )
     for c in result["clusters"]:
         print(f"  {c['cluster_id']}: {c['name']} ({c['issue_count']} issues)")

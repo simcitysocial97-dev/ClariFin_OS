@@ -24,10 +24,18 @@ def render_verification(workspace: VerificationWorkspace) -> str:
 
     lines.append(render_section("Verification Profiles"))
     rows = [
-        [p.name, format_status(p.status), p.last_executed or "never", str(p.executed_count), p.cache_usage]
+        [
+            p.name,
+            format_status(p.status),
+            p.last_executed or "never",
+            str(p.executed_count),
+            p.cache_usage,
+        ]
         for p in workspace.profiles
     ]
-    lines.append(render_table(["Profile", "Status", "Last Executed", "Count", "Cache"], rows))
+    lines.append(
+        render_table(["Profile", "Status", "Last Executed", "Count", "Cache"], rows)
+    )
 
     lines.append(render_section("Execution History"))
     rows = [
@@ -42,36 +50,48 @@ def render_verification(workspace: VerificationWorkspace) -> str:
         ]
         for e in workspace.execution_history.recent_runs
     ]
-    lines.append(render_table(["Run ID", "Timestamp", "Profile", "Status", "Pass", "Fail", "Duration"], rows))
+    lines.append(
+        render_table(
+            ["Run ID", "Timestamp", "Profile", "Status", "Pass", "Fail", "Duration"],
+            rows,
+        )
+    )
 
     lines.append(render_section("Last Execution"))
     if workspace.last_execution:
         e = workspace.last_execution
-        lines.append(render_table(
-            ["Field", "Value"],
-            [
-                ["Run ID", e.run_id],
-                ["Timestamp", e.timestamp],
-                ["Environment", e.environment],
-                ["Profile", e.profile],
-                ["Status", format_status(e.status)],
-                ["Passed", str(e.passed)],
-                ["Failed", str(e.failed)],
-                ["Skipped", str(e.skipped)],
-                ["Duration", format_duration(e.duration_seconds)],
-            ],
-        ))
+        lines.append(
+            render_table(
+                ["Field", "Value"],
+                [
+                    ["Run ID", e.run_id],
+                    ["Timestamp", e.timestamp],
+                    ["Environment", e.environment],
+                    ["Profile", e.profile],
+                    ["Status", format_status(e.status)],
+                    ["Passed", str(e.passed)],
+                    ["Failed", str(e.failed)],
+                    ["Skipped", str(e.skipped)],
+                    ["Duration", format_duration(e.duration_seconds)],
+                ],
+            )
+        )
     else:
         lines.append(render_table(["Field", "Value"], [["Last Execution", "none"]]))
 
     lines.append(render_section("Pending Verification"))
-    lines.append(render_table(
-        ["Metric", "Value"],
-        [
-            ["Pending Count", str(workspace.pending.pending_count)],
-            ["Pending Profiles", ", ".join(workspace.pending.pending_profiles) or "none"],
-        ],
-    ))
+    lines.append(
+        render_table(
+            ["Metric", "Value"],
+            [
+                ["Pending Count", str(workspace.pending.pending_count)],
+                [
+                    "Pending Profiles",
+                    ", ".join(workspace.pending.pending_profiles) or "none",
+                ],
+            ],
+        )
+    )
 
     return "\n".join(lines)
 

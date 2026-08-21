@@ -325,8 +325,7 @@ def build_cli_consistency() -> dict[str, Any]:
                 "command": cmd,
                 "intelligence_imports": imports,
                 "legacy_imports": legacy,
-                "consumes_canonical_layer": consistent
-                and bool(imports),
+                "consumes_canonical_layer": consistent and bool(imports),
             }
         )
     return {
@@ -398,9 +397,7 @@ def build_retirement_plan() -> dict[str, Any]:
 def build_constitution() -> dict[str, Any]:
     # Legacy modules must be gone.
     legacy_present = [
-        name
-        for name in _LEGACY_MODULES
-        if (INTELLIGENCE_DIR / name).exists()
+        name for name in _LEGACY_MODULES if (INTELLIGENCE_DIR / name).exists()
     ]
 
     # No filename-based test inference in the platform layer. Only flag live
@@ -416,9 +413,7 @@ def build_constitution() -> dict[str, Any]:
                 inference_hits.append(f"{py.name}:{i}: {line.strip()}")
 
     # Exactly one module per capability.
-    capability_homes = {
-        cap: [path] for cap, path in _CANONICAL_CAPABILITIES.items()
-    }
+    capability_homes = {cap: [path] for cap, path in _CANONICAL_CAPABILITIES.items()}
 
     checks = [
         {
@@ -522,7 +517,9 @@ def build_simplification() -> dict[str, Any]:
     }
 
 
-def generate_migration_artifacts(generated_dir: Path | None = None) -> dict[str, dict[str, Any]]:
+def generate_migration_artifacts(
+    generated_dir: Path | None = None,
+) -> dict[str, dict[str, Any]]:
     gen = generated_dir or GENERATED_DIR
     artifacts = {
         "intelligence-inventory.json": build_inventory(),

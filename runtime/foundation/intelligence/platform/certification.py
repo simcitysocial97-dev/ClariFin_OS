@@ -117,9 +117,7 @@ class CertificationResult:
 def _strip_volatile(obj: Any) -> Any:
     if isinstance(obj, dict):
         return {
-            k: _strip_volatile(v)
-            for k, v in obj.items()
-            if k not in _VOLATILE_KEYS
+            k: _strip_volatile(v) for k, v in obj.items() if k not in _VOLATILE_KEYS
         }
     if isinstance(obj, list):
         return [_strip_volatile(v) for v in obj]
@@ -180,7 +178,14 @@ def _check_canonical_provider() -> Check:
     """Architectural facts must be sourced from the provider/resolver."""
     consumers: list[str] = []
     missing: list[str] = []
-    for name in ("change.py", "blast.py", "optimizer.py", "risk.py", "repair.py", "state.py"):
+    for name in (
+        "change.py",
+        "blast.py",
+        "optimizer.py",
+        "risk.py",
+        "repair.py",
+        "state.py",
+    ):
         path = PLATFORM_DIR / name
         if not path.exists():
             continue
@@ -212,9 +217,7 @@ def _check_no_production_modified() -> Check:
     diff = _git(["diff", "--name-only", "HEAD"])
     untracked = _git(["ls-files", "--others", "--exclude-standard"])
     changed = [
-        line.strip()
-        for line in (diff + "\n" + untracked).splitlines()
-        if line.strip()
+        line.strip() for line in (diff + "\n" + untracked).splitlines() if line.strip()
     ]
     production = [
         p
@@ -479,8 +482,7 @@ _LEGACY_MODULES = (
 
 def _check_legacy_modules_removed() -> Check:
     present = [
-        name for name in _LEGACY_MODULES
-        if (PLATFORM_DIR.parent / name).exists()
+        name for name in _LEGACY_MODULES if (PLATFORM_DIR.parent / name).exists()
     ]
     return Check(
         id="P14.1-001",
@@ -579,7 +581,10 @@ def _check_single_internal_api() -> Check:
             if ok
             else f"canonical={canonical} legacy_direct_import={bool(legacy_import)}"
         ),
-        evidence={"canonical_api_used": canonical, "legacy_direct_import": bool(legacy_import)},
+        evidence={
+            "canonical_api_used": canonical,
+            "legacy_direct_import": bool(legacy_import),
+        },
     )
 
 
@@ -593,7 +598,14 @@ def _check_no_filename_inference() -> Check:
     pattern = re.compile(
         r'f["\'](backend/tests/unit/(engines|services|routers)/|planner/|playwright/|contract/)\{[a-z_]+\}["\']'
     )
-    builders = ("change.py", "blast.py", "optimizer.py", "repair.py", "state.py", "api.py")
+    builders = (
+        "change.py",
+        "blast.py",
+        "optimizer.py",
+        "repair.py",
+        "state.py",
+        "api.py",
+    )
     hits: list[str] = []
     for name in builders:
         path = PLATFORM_DIR / name
@@ -659,7 +671,9 @@ def certify_v5(generated_dir: Path | None = None) -> dict[str, Any]:
         "program": "14.1 — Eliminate Legacy Intelligence & Complete "
         "Constitutional Migration",
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "certification_status": "CERTIFIED" if passed == len(all_checks) else "NOT_CERTIFIED",
+        "certification_status": (
+            "CERTIFIED" if passed == len(all_checks) else "NOT_CERTIFIED"
+        ),
         "intelligence_checks": [c.to_dict() for c in all_checks],
         "counts": {
             "checks": len(all_checks),
@@ -669,7 +683,9 @@ def certify_v5(generated_dir: Path | None = None) -> dict[str, Any]:
         "runtime_audit": {
             "certification_status": audit_status,
             "section_count": len(sections),
-            "sections": [{"name": s.get("name"), "status": s.get("status")} for s in sections],
+            "sections": [
+                {"name": s.get("name"), "status": s.get("status")} for s in sections
+            ],
             "note": "audits were NOT rerun by v5 certification; status read from artifact",
         },
         "deliverables": [

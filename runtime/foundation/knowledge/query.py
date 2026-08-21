@@ -101,27 +101,115 @@ class KnowledgeQueryEngine:
         """Return all knowledge entries."""
         results: list[KnowledgeEntry] = []
         for ep in self._catalog.endpoints:
-            results.append(KnowledgeEntry(id=ep.path, category="endpoint", name=ep.path, references=ep.references, tags=ep.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=ep.path,
+                    category="endpoint",
+                    name=ep.path,
+                    references=ep.references,
+                    tags=ep.tags,
+                )
+            )
         for cap in self._catalog.capabilities:
-            results.append(KnowledgeEntry(id=getattr(cap, "name", str(cap)), category="capability", name=getattr(cap, "name", str(cap)), references=getattr(cap, "references", {}), tags=getattr(cap, "tags", ())))
+            results.append(
+                KnowledgeEntry(
+                    id=getattr(cap, "name", str(cap)),
+                    category="capability",
+                    name=getattr(cap, "name", str(cap)),
+                    references=getattr(cap, "references", {}),
+                    tags=getattr(cap, "tags", ()),
+                )
+            )
         for mp in self._catalog.mappers:
-            results.append(KnowledgeEntry(id=mp.name, category="mapper", name=mp.name, references=mp.references, tags=mp.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=mp.name,
+                    category="mapper",
+                    name=mp.name,
+                    references=mp.references,
+                    tags=mp.tags,
+                )
+            )
         for vm in self._catalog.view_models:
-            results.append(KnowledgeEntry(id=vm.name, category="viewModel", name=vm.name, references=vm.references, tags=vm.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=vm.name,
+                    category="viewModel",
+                    name=vm.name,
+                    references=vm.references,
+                    tags=vm.tags,
+                )
+            )
         for ws in self._catalog.workspaces:
-            results.append(KnowledgeEntry(id=ws.name, category="workspace", name=ws.name, references=ws.references, tags=ws.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=ws.name,
+                    category="workspace",
+                    name=ws.name,
+                    references=ws.references,
+                    tags=ws.tags,
+                )
+            )
         for comp in self._catalog.components:
-            results.append(KnowledgeEntry(id=comp.name, category="component", name=comp.name, references=comp.references, tags=comp.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=comp.name,
+                    category="component",
+                    name=comp.name,
+                    references=comp.references,
+                    tags=comp.tags,
+                )
+            )
         for gr in self._catalog.graph_renderers:
-            results.append(KnowledgeEntry(id=gr.name, category="graphRenderer", name=gr.name, references=gr.references, tags=gr.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=gr.name,
+                    category="graphRenderer",
+                    name=gr.name,
+                    references=gr.references,
+                    tags=gr.tags,
+                )
+            )
         for vp in self._catalog.verification_profiles:
-            results.append(KnowledgeEntry(id=vp.name, category="verificationProfile", name=vp.name, references=vp.references, tags=vp.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=vp.name,
+                    category="verificationProfile",
+                    name=vp.name,
+                    references=vp.references,
+                    tags=vp.tags,
+                )
+            )
         for rule in self._catalog.integrity_rules:
-            results.append(KnowledgeEntry(id=rule.rule_id, category="integrityRule", name=rule.rule_id, references=rule.references, tags=rule.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=rule.rule_id,
+                    category="integrityRule",
+                    name=rule.rule_id,
+                    references=rule.references,
+                    tags=rule.tags,
+                )
+            )
         for ra in self._catalog.runtime_artifacts:
-            results.append(KnowledgeEntry(id=ra.path, category="runtimeArtifact", name=ra.path, references=ra.references, tags=ra.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=ra.path,
+                    category="runtimeArtifact",
+                    name=ra.path,
+                    references=ra.references,
+                    tags=ra.tags,
+                )
+            )
         for doc in self._catalog.documentation:
-            results.append(KnowledgeEntry(id=doc.path, category="documentation", name=doc.title, references=doc.references, tags=doc.tags))
+            results.append(
+                KnowledgeEntry(
+                    id=doc.path,
+                    category="documentation",
+                    name=doc.title,
+                    references=doc.references,
+                    tags=doc.tags,
+                )
+            )
         return results
 
     def _build_result(self, entry: KnowledgeEntry) -> QueryResult:

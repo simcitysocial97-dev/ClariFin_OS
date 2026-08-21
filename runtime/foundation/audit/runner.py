@@ -20,7 +20,6 @@ from runtime.foundation.audit.models import (
     AuditStatus,
 )
 
-
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 AUDIT_OUTPUT_DIR = REPO_ROOT / "runtime" / "generated"
 
@@ -112,11 +111,25 @@ class AuditRunner:
             all_findings.extend(sr.findings)
 
         critical = tuple(
-            f for f in all_findings if f.priority == AuditPriority.CRITICAL and f.status == AuditStatus.FAIL
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.CRITICAL and f.status == AuditStatus.FAIL
         )
-        high = tuple(f for f in all_findings if f.priority == AuditPriority.HIGH and f.status == AuditStatus.FAIL)
-        medium = tuple(f for f in all_findings if f.priority == AuditPriority.MEDIUM and f.status == AuditStatus.FAIL)
-        low = tuple(f for f in all_findings if f.priority == AuditPriority.LOW and f.status == AuditStatus.FAIL)
+        high = tuple(
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.HIGH and f.status == AuditStatus.FAIL
+        )
+        medium = tuple(
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.MEDIUM and f.status == AuditStatus.FAIL
+        )
+        low = tuple(
+            f
+            for f in all_findings
+            if f.priority == AuditPriority.LOW and f.status == AuditStatus.FAIL
+        )
 
         overall = AuditStatus.PASS
         if critical:

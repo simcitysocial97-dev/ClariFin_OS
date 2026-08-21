@@ -240,11 +240,15 @@ class TestContractCollector:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir = Path(tmpdir)
             contract_file = tmpdir / "contract.json"
-            contract_file.write_text(json.dumps({
-                "endpoints_tested": 5,
-                "failures": [],
-                "schema_violations": 0,
-            }))
+            contract_file.write_text(
+                json.dumps(
+                    {
+                        "endpoints_tested": 5,
+                        "failures": [],
+                        "schema_violations": 0,
+                    }
+                )
+            )
             evidence = ContractCollector(tmpdir).collect(contract_file)
             assert evidence.status == "pass"
 
@@ -252,13 +256,17 @@ class TestContractCollector:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir = Path(tmpdir)
             contract_file = tmpdir / "contract.json"
-            contract_file.write_text(json.dumps({
-                "endpoints_tested": 5,
-                "failures": [
-                    {"endpoint": "/loans", "method": "GET", "status_code": 500}
-                ],
-                "schema_violations": 0,
-            }))
+            contract_file.write_text(
+                json.dumps(
+                    {
+                        "endpoints_tested": 5,
+                        "failures": [
+                            {"endpoint": "/loans", "method": "GET", "status_code": 500}
+                        ],
+                        "schema_violations": 0,
+                    }
+                )
+            )
             evidence = ContractCollector(tmpdir).collect(contract_file)
             assert evidence.status == "fail"
 
@@ -266,11 +274,15 @@ class TestContractCollector:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir = Path(tmpdir)
             contract_file = tmpdir / "contract.json"
-            contract_file.write_text(json.dumps({
-                "endpoints_tested": 5,
-                "failures": [],
-                "schema_violations": 2,
-            }))
+            contract_file.write_text(
+                json.dumps(
+                    {
+                        "endpoints_tested": 5,
+                        "failures": [],
+                        "schema_violations": 2,
+                    }
+                )
+            )
             evidence = ContractCollector(tmpdir).collect(contract_file)
             assert evidence.status == "warning"
 
@@ -284,13 +296,23 @@ class TestContractCollector:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir = Path(tmpdir)
             contract_file = tmpdir / "contract.json"
-            contract_file.write_text(json.dumps({
-                "endpoints_tested": 3,
-                "failures": [
-                    {"endpoint": "/accounts", "method": "POST", "status_code": 404, "response": "Not Found", "request": "{}"}
-                ],
-                "schema_violations": 0,
-            }))
+            contract_file.write_text(
+                json.dumps(
+                    {
+                        "endpoints_tested": 3,
+                        "failures": [
+                            {
+                                "endpoint": "/accounts",
+                                "method": "POST",
+                                "status_code": 404,
+                                "response": "Not Found",
+                                "request": "{}",
+                            }
+                        ],
+                        "schema_violations": 0,
+                    }
+                )
+            )
             evidence = ContractCollector(tmpdir).collect(contract_file)
             assert len(evidence.failures) == 1
             assert evidence.failures[0]["endpoint"] == "/accounts"

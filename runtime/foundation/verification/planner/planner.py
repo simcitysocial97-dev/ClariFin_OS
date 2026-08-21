@@ -677,9 +677,7 @@ class VerificationPlanner:
             # `contributing_units` is a tuple because the mapping is legitimately
             # many-to-one; an empty tuple means "no unit identity", surfaced downstream
             # as UNMAPPED rather than guessed.
-            contributing_units = (
-                units_for_workflow(workflow.id) if workflow else ()
-            )
+            contributing_units = units_for_workflow(workflow.id) if workflow else ()
             step = VerificationStep(
                 id=f"step-{step_id:04d}",
                 target=target,
@@ -902,7 +900,9 @@ class CrossLayerImpactPlanner:
         """Load chains from the architecture provider (or an injected fixture)."""
         if self.map_path is not None:
             if not self.map_path.exists():
-                raise FileNotFoundError(f"Injected chain fixture not found: {self.map_path}")
+                raise FileNotFoundError(
+                    f"Injected chain fixture not found: {self.map_path}"
+                )
             with open(self.map_path, encoding="utf-8") as f:
                 self._map = json.load(f)
             return
@@ -911,9 +911,7 @@ class CrossLayerImpactPlanner:
 
         self._map = get_chain_map()
 
-    def analyze_cross_layer_impact(
-        self, changed_files: list[str]
-    ) -> ImpactReport:
+    def analyze_cross_layer_impact(self, changed_files: list[str]) -> ImpactReport:
         """Analyze impact of changed files across all layers.
 
         Primary strategy: per-file chain-map lookup (fast, fixture-injectable).
@@ -999,7 +997,11 @@ class CrossLayerImpactPlanner:
                 if verif.ref not in report.affected_engines:
                     self._append_uniq(report.affected_engines, verif.ref)
 
-            if report.affected_capabilities or report.affected_components or report.affected_view_models:
+            if (
+                report.affected_capabilities
+                or report.affected_components
+                or report.affected_view_models
+            ):
                 report.verification_plan["run_frontend"] = True
                 if report.affected_endpoints or report.affected_routers:
                     report.verification_plan["run_contract"] = True
@@ -1217,9 +1219,7 @@ class CrossLayerImpactPlanner:
         # Determine which verification types are needed
         run_unit = bool(report.affected_engines or report.affected_services)
         run_contract = bool(
-            report.affected_endpoints
-            or report.affected_routers
-            or report.affected_dtos
+            report.affected_endpoints or report.affected_routers or report.affected_dtos
         )
         run_property = any("loan" in e.lower() for e in report.affected_engines)
         run_frontend = bool(
@@ -1238,9 +1238,7 @@ class CrossLayerImpactPlanner:
             "run_frontend": run_frontend,
             "run_integration": run_integration,
             "unit_paths": report.affected_tests,
-            "contract_paths": [
-                t for t in report.affected_tests if "contract" in t
-            ],
+            "contract_paths": [t for t in report.affected_tests if "contract" in t],
             "capabilities": report.affected_capabilities,
             "engines": report.affected_engines,
             "services": report.affected_services,
@@ -1283,19 +1281,25 @@ class CrossLayerImpactPlanner:
                 or report.affected_components
             )
             if has_impact:
-                chains.append({
-                    "source": source_file,
-                    "engine": report.affected_engines[0] if report.affected_engines else "unknown",
-                    "services": report.affected_services,
-                    "routers": report.affected_routers,
-                    "endpoints": report.affected_endpoints,
-                    "capabilities": report.affected_capabilities,
-                    "mappers": report.affected_mappers,
-                    "dtos": report.affected_dtos,
-                    "view_models": report.affected_view_models,
-                    "workspaces": report.affected_workspaces,
-                    "components": report.affected_components,
-                    "tests": report.affected_tests,
-                })
+                chains.append(
+                    {
+                        "source": source_file,
+                        "engine": (
+                            report.affected_engines[0]
+                            if report.affected_engines
+                            else "unknown"
+                        ),
+                        "services": report.affected_services,
+                        "routers": report.affected_routers,
+                        "endpoints": report.affected_endpoints,
+                        "capabilities": report.affected_capabilities,
+                        "mappers": report.affected_mappers,
+                        "dtos": report.affected_dtos,
+                        "view_models": report.affected_view_models,
+                        "workspaces": report.affected_workspaces,
+                        "components": report.affected_components,
+                        "tests": report.affected_tests,
+                    }
+                )
 
         return chains

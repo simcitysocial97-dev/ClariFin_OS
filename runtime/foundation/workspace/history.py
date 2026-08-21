@@ -40,7 +40,21 @@ def render_history(history: VerificationHistory) -> str:
             ]
             for e in all_events
         ]
-        lines.append(render_table(["Run ID", "Timestamp", "Env", "Profile", "Status", "Pass", "Fail", "Duration"], rows))
+        lines.append(
+            render_table(
+                [
+                    "Run ID",
+                    "Timestamp",
+                    "Env",
+                    "Profile",
+                    "Status",
+                    "Pass",
+                    "Fail",
+                    "Duration",
+                ],
+                rows,
+            )
+        )
 
     failures = [e for e in all_events if e.status == "failed"]
     if failures:
@@ -49,12 +63,18 @@ def render_history(history: VerificationHistory) -> str:
             [e.run_id[:12], e.timestamp, e.profile, str(e.failed), e.environment]
             for e in failures
         ]
-        lines.append(render_table(["Run ID", "Timestamp", "Profile", "Failed", "Env"], rows))
+        lines.append(
+            render_table(["Run ID", "Timestamp", "Profile", "Failed", "Env"], rows)
+        )
 
     if all_events:
         lines.append(render_section("Timeline"))
         rows = [
-            [e.timestamp[:19], f"{e.profile} ({e.environment})", format_status(e.status)]
+            [
+                e.timestamp[:19],
+                f"{e.profile} ({e.environment})",
+                format_status(e.status),
+            ]
             for e in all_events
         ]
         lines.append(render_table(["Timestamp", "Profile", "Status"], rows))
@@ -64,16 +84,21 @@ def render_history(history: VerificationHistory) -> str:
         passed = sum(1 for e in all_events if e.status == "passed")
         failed = sum(1 for e in all_events if e.status == "failed")
         avg_dur = sum(e.duration_seconds for e in all_events) / total if total else 0.0
-        lines.append(render_table(
-            ["Metric", "Value"],
-            [
-                ["Total Events", str(total)],
-                ["Passed", str(passed)],
-                ["Failed", str(failed)],
-                ["Success Rate", f"{(passed / total * 100.0) if total else 0.0:.1f}%"],
-                ["Avg Duration", format_duration(avg_dur)],
-            ],
-        ))
+        lines.append(
+            render_table(
+                ["Metric", "Value"],
+                [
+                    ["Total Events", str(total)],
+                    ["Passed", str(passed)],
+                    ["Failed", str(failed)],
+                    [
+                        "Success Rate",
+                        f"{(passed / total * 100.0) if total else 0.0:.1f}%",
+                    ],
+                    ["Avg Duration", format_duration(avg_dur)],
+                ],
+            )
+        )
 
     return "\n".join(lines)
 

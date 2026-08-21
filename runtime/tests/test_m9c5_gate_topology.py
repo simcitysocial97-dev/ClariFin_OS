@@ -22,7 +22,6 @@ from runtime.foundation.verification.reconciliation import (
 )
 from runtime.foundation.verification.registry.registry import get_registry
 
-
 # ---------------------------------------------------------------------------
 # Case A — Quality Gate required jobs fail -> Quality Gate fails
 # ---------------------------------------------------------------------------

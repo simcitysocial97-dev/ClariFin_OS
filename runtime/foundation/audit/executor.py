@@ -5,12 +5,26 @@ import time
 from pathlib import Path
 from typing import Any
 
-from runtime.foundation.audit.models import AuditFinding, AuditPriority, AuditSeverity, AuditStatus
+from runtime.foundation.audit.models import (
+    AuditFinding,
+    AuditPriority,
+    AuditSeverity,
+    AuditStatus,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
-def _f(check_id: str, name: str, status: str, severity: str, priority: str, message: str, details: dict[str, Any] = None, recommendation: str = "") -> AuditFinding:
+def _f(
+    check_id: str,
+    name: str,
+    status: str,
+    severity: str,
+    priority: str,
+    message: str,
+    details: dict[str, Any] = None,
+    recommendation: str = "",
+) -> AuditFinding:
     return AuditFinding(
         section="executor",
         check_id=check_id,
@@ -84,7 +98,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "info",
                 "low",
                 "Successful command returns exit code 0 with PASSED status",
-                {"exit_code": result_echo.exit_code, "status": result_echo.status.value},
+                {
+                    "exit_code": result_echo.exit_code,
+                    "status": result_echo.status.value,
+                },
             )
         )
     else:
@@ -96,7 +113,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "high",
                 "high",
                 f"Successful command returned exit code {result_echo.exit_code} with status {result_echo.status.value}",
-                {"exit_code": result_echo.exit_code, "status": result_echo.status.value},
+                {
+                    "exit_code": result_echo.exit_code,
+                    "status": result_echo.status.value,
+                },
                 "Fix execute method to return correct exit codes for successful commands",
             )
         )
@@ -111,7 +131,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "info",
                 "low",
                 "Failed command returns non-zero exit code with FAILED status",
-                {"exit_code": result_fail.exit_code, "status": result_fail.status.value},
+                {
+                    "exit_code": result_fail.exit_code,
+                    "status": result_fail.status.value,
+                },
             )
         )
     else:
@@ -123,7 +146,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "high",
                 "high",
                 f"Failed command returned exit code {result_fail.exit_code} with status {result_fail.status.value}",
-                {"exit_code": result_fail.exit_code, "status": result_fail.status.value},
+                {
+                    "exit_code": result_fail.exit_code,
+                    "status": result_fail.status.value,
+                },
                 "Fix execute method to return correct exit codes for failed commands",
             )
         )
@@ -208,7 +234,9 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
             )
         )
 
-    if "parallel" not in combined_source.lower() and not hasattr(executor, "execute_parallel"):
+    if "parallel" not in combined_source.lower() and not hasattr(
+        executor, "execute_parallel"
+    ):
         findings.append(
             _f(
                 "parallel-execution",

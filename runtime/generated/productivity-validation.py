@@ -3,6 +3,7 @@
 
 Measures practical engineering value.
 """
+
 from __future__ import annotations
 
 import json
@@ -53,7 +54,9 @@ def main() -> int:
     }
 
     out_path = REPO_ROOT / "runtime" / "generated" / "productivity-validation.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

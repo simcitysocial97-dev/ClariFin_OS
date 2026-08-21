@@ -63,7 +63,9 @@ class VerificationCache:
 
     def _save(self, data: dict[str, Any]) -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps(data, indent=2, default=str) + "\n", encoding="utf-8")
+        self.path.write_text(
+            json.dumps(data, indent=2, default=str) + "\n", encoding="utf-8"
+        )
 
     def is_valid(self, commit: str, changed_files: list[str], profile: str) -> bool:
         cache = self._load()
@@ -95,7 +97,9 @@ class VerificationCache:
             unit_statuses=tuple(raw.get("unit_statuses", [])),
         )
 
-    def replay(self, commit: str, changed_files: list[str], profile: str) -> ReplayResult:
+    def replay(
+        self, commit: str, changed_files: list[str], profile: str
+    ) -> ReplayResult:
         """Return the cache replay verdict.
 
         The ``exit_code`` is derived from the stored ``overall_status`` and
@@ -140,9 +144,11 @@ class VerificationCache:
         if profile not in cache["executed_profiles"]:
             cache["executed_profiles"].append(profile)
         cache["duration"] = duration
-        cache["timestamp"] = __import__("datetime").datetime.now(
-            tz=__import__("datetime").timezone.utc
-        ).isoformat()
+        cache["timestamp"] = (
+            __import__("datetime")
+            .datetime.now(tz=__import__("datetime").timezone.utc)
+            .isoformat()
+        )
         cache["profiles"][profile] = {
             "overall_status": verdict.overall_status,
             "passed": verdict.passed,

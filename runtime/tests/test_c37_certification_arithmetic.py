@@ -74,8 +74,7 @@ class TestTotalsModule:
             TestTotals(total=50, passed=66, failed=0, skipped=0).assert_consistent()
 
 
-_JUNIT_OK = textwrap.dedent(
-    """\
+_JUNIT_OK = textwrap.dedent("""\
     <?xml version="1.0" encoding="utf-8"?>
     <testsuites>
       <testsuite name="suite" tests="4" failures="1" errors="1" skipped="1" time="3.5">
@@ -85,11 +84,9 @@ _JUNIT_OK = textwrap.dedent(
         <testcase classname="t" name="skip_one"><skipped/></testcase>
       </testsuite>
     </testsuites>
-    """
-)
+    """)
 
-_JUNIT_LYING_COUNTERS = textwrap.dedent(
-    """\
+_JUNIT_LYING_COUNTERS = textwrap.dedent("""\
     <?xml version="1.0" encoding="utf-8"?>
     <testsuites>
       <testsuite name="suite" tests="5" failures="0" errors="0" skipped="0" time="1.0">
@@ -97,8 +94,7 @@ _JUNIT_LYING_COUNTERS = textwrap.dedent(
         <testcase classname="t" name="two"/>
       </testsuite>
     </testsuites>
-    """
-)
+    """)
 
 
 class TestJunitEnumeration:
@@ -121,9 +117,7 @@ class TestJunitEnumeration:
         t = verify_junit_consistency(p)
         assert t.total == 4
 
-    def test_collector_enumerates_and_convicts_arithmetic(
-        self, tmp_path: Path
-    ) -> None:
+    def test_collector_enumerates_and_convicts_arithmetic(self, tmp_path: Path) -> None:
         backend = tmp_path / "backend" / "tests" / "generated"
         backend.mkdir(parents=True)
         (backend / "junit.xml").write_text(_JUNIT_OK, encoding="utf-8")
@@ -135,6 +129,5 @@ class TestJunitEnumeration:
         assert evidence.skipped == 1
         # 4-way identity: every testcase enumerated into exactly one bucket
         assert (
-            evidence.passed + evidence.failed + evidence.error + evidence.skipped
-            == 4
+            evidence.passed + evidence.failed + evidence.error + evidence.skipped == 4
         )

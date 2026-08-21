@@ -225,7 +225,6 @@ def _resolve_base_ref() -> str | None:
             return mb
         return f"{gh_sha}..."
 
-
     return None
 
 
@@ -471,7 +470,9 @@ class VerificationReport:
     dependency_chains: list[dict[str, Any]]
     evidence_files: list[str]
     recommendations: list[str]
-    generated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    generated_at: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
 
     def to_markdown(self) -> str:
         lines: list[str] = []
@@ -506,7 +507,9 @@ class VerificationReport:
         lines.append(f"- **Scope:** {self.plan.scope.value}")
         lines.append(f"- **Targets:** {len(self.plan.targets)}")
         lines.append(f"- **Steps:** {len(self.plan.steps)}")
-        lines.append(f"- **Estimated Duration:** {self.plan.estimated_duration_seconds}s")
+        lines.append(
+            f"- **Estimated Duration:** {self.plan.estimated_duration_seconds}s"
+        )
         lines.append("")
 
         lines.append("## Tasks Executed")
@@ -600,7 +603,9 @@ class VerificationReport:
                     lines.append(f"- Tests: {len(tests)} affected")
                 lines.append("")
         else:
-            lines.append("No dependency chains available (Program 7A cross-layer map not loaded).")
+            lines.append(
+                "No dependency chains available (Program 7A cross-layer map not loaded)."
+            )
             lines.append("")
 
         lines.append("## Evidence Files")
@@ -930,11 +935,7 @@ class VerificationOrchestrator:
             return None
 
         manifest_path = path or (
-            self._repo_root
-            / "runtime"
-            / "generated"
-            / "evidence"
-            / "run-manifest.json"
+            self._repo_root / "runtime" / "generated" / "evidence" / "run-manifest.json"
         )
 
         steps_by_id = {}
@@ -1015,9 +1016,7 @@ class VerificationOrchestrator:
         total_duration = sum(r.duration_seconds for r in self._results)
 
         overall_status = (
-            VerificationStatus.FAILED
-            if failed > 0
-            else VerificationStatus.PASSED
+            VerificationStatus.FAILED if failed > 0 else VerificationStatus.PASSED
         )
 
         dependency_chains: list[dict[str, Any]] = []
@@ -1094,9 +1093,7 @@ class VerificationOrchestrator:
                     f"Investigate failing task: {result.command[:80]}"
                 )
         if self._cross_layer_report is not None:
-            affected_engines = getattr(
-                self._cross_layer_report, "affected_engines", []
-            )
+            affected_engines = getattr(self._cross_layer_report, "affected_engines", [])
             if affected_engines:
                 recommendations.append(
                     f"Review changes in affected engines: {', '.join(affected_engines)}"

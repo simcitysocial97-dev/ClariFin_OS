@@ -74,7 +74,10 @@ class Executor:
                     error="Command cancelled",
                 )
             last_result = self._execute_once(command, task_id)
-            if last_result.status == VerificationStatus.PASSED or attempt == attempts - 1:
+            if (
+                last_result.status == VerificationStatus.PASSED
+                or attempt == attempts - 1
+            ):
                 break
         return last_result
 
@@ -186,8 +189,12 @@ class Executor:
                 status=VerificationStatus.FAILED,
                 exit_code=-1,
                 duration_seconds=duration,
-                stdout_path=str(stdout_persistent) if stdout_persistent.exists() else "",
-                stderr_path=str(stderr_persistent) if stderr_persistent.exists() else "",
+                stdout_path=(
+                    str(stdout_persistent) if stdout_persistent.exists() else ""
+                ),
+                stderr_path=(
+                    str(stderr_persistent) if stderr_persistent.exists() else ""
+                ),
                 error=f"Command timed out after {self._per_step_timeout} seconds",
                 classification=FailureClassification.TIMEOUT,
             )
@@ -205,7 +212,9 @@ class Executor:
                 classification=FailureClassification.ENVIRONMENT_FAILURE,
             )
 
-    def retry(self, command: str, task_id: str = "", max_retries: int = 3) -> ExecutionResult:
+    def retry(
+        self, command: str, task_id: str = "", max_retries: int = 3
+    ) -> ExecutionResult:
         """Execute a command with retry logic for transient failures."""
         return self.execute(command, task_id=task_id, max_retries=max_retries)
 
@@ -249,7 +258,9 @@ class Executor:
                     )
         return results
 
-    def execute_python(self, module: str, args: list[str] | None = None) -> ExecutionResult:
+    def execute_python(
+        self, module: str, args: list[str] | None = None
+    ) -> ExecutionResult:
         """Execute a Python module command."""
         cmd = f"python3 -m {module}"
         if args:

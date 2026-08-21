@@ -28,15 +28,42 @@ class TestMetricsWorkspace:
             tmp_path / "runtime" / "generated" / "engineering-analytics.json",
             {
                 "local": {
-                    "verification": {"total_runs": 10, "passed_runs": 8, "failed_runs": 2, "skipped_runs": 0, "success_rate": 0.8, "avg_duration_seconds": 1.0, "min_duration_seconds": 0.5, "max_duration_seconds": 1.5},
+                    "verification": {
+                        "total_runs": 10,
+                        "passed_runs": 8,
+                        "failed_runs": 2,
+                        "skipped_runs": 0,
+                        "success_rate": 0.8,
+                        "avg_duration_seconds": 1.0,
+                        "min_duration_seconds": 0.5,
+                        "max_duration_seconds": 1.5,
+                    },
                     "cache": {"hit_rate": 0.5, "hits": 2, "total": 4},
                 },
                 "ci": {
-                    "verification": {"total_runs": 5, "passed_runs": 5, "failed_runs": 0, "skipped_runs": 0, "success_rate": 1.0, "avg_duration_seconds": 2.0, "min_duration_seconds": 1.0, "max_duration_seconds": 3.0},
+                    "verification": {
+                        "total_runs": 5,
+                        "passed_runs": 5,
+                        "failed_runs": 0,
+                        "skipped_runs": 0,
+                        "success_rate": 1.0,
+                        "avg_duration_seconds": 2.0,
+                        "min_duration_seconds": 1.0,
+                        "max_duration_seconds": 3.0,
+                    },
                     "cache": {"hit_rate": 0.0, "hits": 0, "total": 5},
                 },
                 "combined": {
-                    "verification": {"total_runs": 15, "passed_runs": 13, "failed_runs": 2, "skipped_runs": 0, "success_rate": 0.867, "avg_duration_seconds": 1.333, "min_duration_seconds": 0.5, "max_duration_seconds": 3.0},
+                    "verification": {
+                        "total_runs": 15,
+                        "passed_runs": 13,
+                        "failed_runs": 2,
+                        "skipped_runs": 0,
+                        "success_rate": 0.867,
+                        "avg_duration_seconds": 1.333,
+                        "min_duration_seconds": 0.5,
+                        "max_duration_seconds": 3.0,
+                    },
                     "cache": {"hit_rate": 0.133, "hits": 2, "total": 15},
                 },
             },
@@ -48,7 +75,13 @@ class TestMetricsWorkspace:
         _write_json(
             tmp_path / "runtime" / "generated" / "dependency-growth.json",
             {
-                "engines": {"category": "engines", "current_count": 4, "previous_count": 4, "delta": 0, "growth_rate": 0.0},
+                "engines": {
+                    "category": "engines",
+                    "current_count": 4,
+                    "previous_count": 4,
+                    "delta": 0,
+                    "growth_rate": 0.0,
+                },
             },
         )
         _write_json(

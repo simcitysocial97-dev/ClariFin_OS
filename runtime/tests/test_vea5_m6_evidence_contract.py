@@ -114,9 +114,7 @@ def test_m6a_load_accepts_v1_and_normalizes_to_v2(tmp_path):
         ],
     )
     p = tmp_path / "v1.json"
-    p.write_text(
-        __import__("json").dumps(v1.to_dict(), indent=2), encoding="utf-8"
-    )
+    p.write_text(__import__("json").dumps(v1.to_dict(), indent=2), encoding="utf-8")
     normalized = load_execution_evidence_any(p)
     assert normalized.to_dict()["schema"] == EVIDENCE_V2_SCHEMA
     assert normalized.units[0].unit_id == "backend-unit"
@@ -137,9 +135,7 @@ def test_m6a_every_selected_unit_has_record(tmp_path):
             exit_code=0,
         )
     }
-    ev = execution_evidence_v2_from_plan(
-        plan=plan, commit="sha", records=recs
-    )
+    ev = execution_evidence_v2_from_plan(plan=plan, commit="sha", records=recs)
     by_id = {u.unit_id: u for u in ev.units}
     assert set(by_id) == {s.unit_id for s in plan.selected}
     # Units without a supplied record are explicit 'no-evidence', not dropped.

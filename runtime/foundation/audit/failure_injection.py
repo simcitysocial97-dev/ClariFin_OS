@@ -131,8 +131,14 @@ def _inject_deleted_capability(repo_root: Path) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     synthetic_capabilities = {
-        "account_management": {"status": "active", "modules": ["backend/src/engines/account_engine"]},
-        "transfer_processing": {"status": "active", "modules": ["backend/src/engines/transfer_engine"]},
+        "account_management": {
+            "status": "active",
+            "modules": ["backend/src/engines/account_engine"],
+        },
+        "transfer_processing": {
+            "status": "active",
+            "modules": ["backend/src/engines/transfer_engine"],
+        },
     }
 
     deleted_capability = "nonexistent_capability"
@@ -182,8 +188,14 @@ def _inject_mapper_mismatch(repo_root: Path) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     synthetic_mappers = {
-        "account_mapper": {"source": "backend/src/mappers/account_mapper.py", "target": "account_engine"},
-        "transfer_mapper": {"source": "backend/src/mappers/transfer_mapper.py", "target": "transfer_engine"},
+        "account_mapper": {
+            "source": "backend/src/mappers/account_mapper.py",
+            "target": "account_engine",
+        },
+        "transfer_mapper": {
+            "source": "backend/src/mappers/transfer_mapper.py",
+            "target": "transfer_engine",
+        },
     }
 
     mismatched_mapper = {
@@ -196,7 +208,6 @@ def _inject_mapper_mismatch(repo_root: Path) -> dict[str, Any]:
 
     source_exists = False
     target_exists = False
-
 
     p = REPO_ROOT / mismatched_mapper["source"]
     source_exists = p.exists()
@@ -213,7 +224,11 @@ def _inject_mapper_mismatch(repo_root: Path) -> dict[str, Any]:
                 "pass",
                 "info",
                 f"Mapper mismatch for source '{mismatched_mapper['source']}' and target '{mismatched_mapper['target']}' handled gracefully",
-                {"mapper": mismatched_mapper, "source_exists": source_exists, "target_exists": target_exists},
+                {
+                    "mapper": mismatched_mapper,
+                    "source_exists": source_exists,
+                    "target_exists": target_exists,
+                },
                 "Ensure mapper validation catches missing source and target files",
             )
         )
@@ -226,7 +241,11 @@ def _inject_mapper_mismatch(repo_root: Path) -> dict[str, Any]:
                 "warning",
                 "medium",
                 f"Mapper mismatch source_exists={source_exists}, target_exists={target_exists}",
-                {"mapper": mismatched_mapper, "source_exists": source_exists, "target_exists": target_exists},
+                {
+                    "mapper": mismatched_mapper,
+                    "source_exists": source_exists,
+                    "target_exists": target_exists,
+                },
                 "Review mapper validation logic",
             )
         )
@@ -264,7 +283,10 @@ def _inject_workspace_missing(repo_root: Path) -> dict[str, Any]:
                 "pass",
                 "info",
                 f"System handled missing workspace '{missing_workspace}' gracefully",
-                {"workspace": missing_workspace, "workspace_load_succeeded": result is not None},
+                {
+                    "workspace": missing_workspace,
+                    "workspace_load_succeeded": result is not None,
+                },
                 "Ensure workspace loading returns appropriate defaults for missing workspaces",
             )
         )
@@ -278,8 +300,14 @@ def _inject_router_missing(repo_root: Path) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     synthetic_routers = {
-        "account_router": {"path": "backend/src/routers/account_router.py", "endpoints": ["/api/v1/accounts"]},
-        "transfer_router": {"path": "backend/src/routers/transfer_router.py", "endpoints": ["/api/v1/transfers"]},
+        "account_router": {
+            "path": "backend/src/routers/account_router.py",
+            "endpoints": ["/api/v1/accounts"],
+        },
+        "transfer_router": {
+            "path": "backend/src/routers/transfer_router.py",
+            "endpoints": ["/api/v1/transfers"],
+        },
     }
 
     missing_router = "nonexistent_router"
@@ -287,7 +315,9 @@ def _inject_router_missing(repo_root: Path) -> dict[str, Any]:
         metrics["injected_missing_router"] = missing_router
         metrics["router_map_size"] = len(synthetic_routers)
 
-        router_path = REPO_ROOT / "backend" / "src" / "routers" / "nonexistent_router.py"
+        router_path = (
+            REPO_ROOT / "backend" / "src" / "routers" / "nonexistent_router.py"
+        )
         router_exists = router_path.exists()
         metrics["router_file_exists"] = router_exists
 
@@ -327,8 +357,14 @@ def _inject_service_missing(repo_root: Path) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     synthetic_services = {
-        "AccountService": {"module": "backend/src/services/account_service.py", "status": "active"},
-        "TransferService": {"module": "backend/src/services/transfer_service.py", "status": "active"},
+        "AccountService": {
+            "module": "backend/src/services/account_service.py",
+            "status": "active",
+        },
+        "TransferService": {
+            "module": "backend/src/services/transfer_service.py",
+            "status": "active",
+        },
     }
 
     missing_service = "NonExistentService"
@@ -336,7 +372,9 @@ def _inject_service_missing(repo_root: Path) -> dict[str, Any]:
         metrics["injected_missing_service"] = missing_service
         metrics["service_map_size"] = len(synthetic_services)
 
-        service_module = REPO_ROOT / "backend" / "src" / "services" / "nonexistent_service.py"
+        service_module = (
+            REPO_ROOT / "backend" / "src" / "services" / "nonexistent_service.py"
+        )
         service_exists = service_module.exists()
         metrics["service_module_exists"] = service_exists
 
@@ -349,7 +387,10 @@ def _inject_service_missing(repo_root: Path) -> dict[str, Any]:
                     "pass",
                     "info",
                     f"Missing service '{missing_service}' module does not exist and was handled gracefully",
-                    {"service": missing_service, "service_module_exists": service_exists},
+                    {
+                        "service": missing_service,
+                        "service_module_exists": service_exists,
+                    },
                     "Ensure service resolution handles missing service modules gracefully",
                 )
             )
@@ -362,7 +403,10 @@ def _inject_service_missing(repo_root: Path) -> dict[str, Any]:
                     "warning",
                     "low",
                     f"Service module for '{missing_service}' unexpectedly exists",
-                    {"service": missing_service, "service_module_exists": service_exists},
+                    {
+                        "service": missing_service,
+                        "service_module_exists": service_exists,
+                    },
                     "Review service module discovery logic",
                 )
             )
@@ -401,8 +445,16 @@ def _inject_graph_corruption(repo_root: Path) -> dict[str, Any]:
     metrics["corrupted_graph_node_count"] = len(corrupted_graph["nodes"])
     metrics["corrupted_graph_edge_count"] = len(corrupted_graph["edges"])
 
-    null_nodes = [n for n in corrupted_graph["nodes"] if n.get("id") is None or n.get("type") is None]
-    broken_edges = [e for e in corrupted_graph["edges"] if e.get("type") is None or "nonexistent" in e.get("target", "")]
+    null_nodes = [
+        n
+        for n in corrupted_graph["nodes"]
+        if n.get("id") is None or n.get("type") is None
+    ]
+    broken_edges = [
+        e
+        for e in corrupted_graph["edges"]
+        if e.get("type") is None or "nonexistent" in e.get("target", "")
+    ]
 
     metrics["corrupted_null_nodes"] = len(null_nodes)
     metrics["corrupted_broken_edges"] = len(broken_edges)
@@ -415,7 +467,11 @@ def _inject_graph_corruption(repo_root: Path) -> dict[str, Any]:
             "pass",
             "info",
             f"Corrupted graph has {len(null_nodes)} null nodes and {len(broken_edges)} broken edges; corruption is detectable",
-            {"null_nodes": len(null_nodes), "broken_edges": len(broken_edges), "corruption_detectable": True},
+            {
+                "null_nodes": len(null_nodes),
+                "broken_edges": len(broken_edges),
+                "corruption_detectable": True,
+            },
             "Ensure graph validation catches null nodes and broken edges",
         )
     )
@@ -485,7 +541,11 @@ def _inject_workflow_failure(repo_root: Path) -> dict[str, Any]:
     }
 
     failed_workflow = "failing-workflow.yml"
-    synthetic_workflows[failed_workflow] = {"status": "failed", "duration": 0, "error": "simulated failure"}
+    synthetic_workflows[failed_workflow] = {
+        "status": "failed",
+        "duration": 0,
+        "error": "simulated failure",
+    }
 
     metrics["injected_workflow_failure"] = failed_workflow
     metrics["workflow_map_size"] = len(synthetic_workflows)
@@ -502,7 +562,11 @@ def _inject_workflow_failure(repo_root: Path) -> dict[str, Any]:
                 "pass",
                 "info",
                 f"Simulated workflow failure '{failed_workflow}' with status 'failed' was handled gracefully",
-                {"workflow": failed_workflow, "status": failed_status, "error": "simulated failure"},
+                {
+                    "workflow": failed_workflow,
+                    "status": failed_status,
+                    "error": "simulated failure",
+                },
                 "Ensure workflow execution handles failures gracefully and reports them correctly",
             )
         )
@@ -545,7 +609,11 @@ def _inject_knowledge_corruption(repo_root: Path) -> dict[str, Any]:
     metrics["corrupted_index_counts"] = corrupted_knowledge_index["counts"]
 
     null_fields = [k for k, v in corrupted_knowledge_index.items() if v is None]
-    invalid_counts = {k: v for k, v in corrupted_knowledge_index["counts"].items() if not isinstance(v, int) or v < 0}
+    invalid_counts = {
+        k: v
+        for k, v in corrupted_knowledge_index["counts"].items()
+        if not isinstance(v, int) or v < 0
+    }
 
     metrics["corrupted_null_fields"] = len(null_fields)
     metrics["corrupted_invalid_counts"] = len(invalid_counts)
@@ -558,7 +626,11 @@ def _inject_knowledge_corruption(repo_root: Path) -> dict[str, Any]:
             "pass",
             "info",
             f"Corrupted knowledge index has {len(null_fields)} null fields and {len(invalid_counts)} invalid counts; corruption is detectable",
-            {"null_fields": len(null_fields), "invalid_counts": len(invalid_counts), "corruption_detectable": True},
+            {
+                "null_fields": len(null_fields),
+                "invalid_counts": len(invalid_counts),
+                "corruption_detectable": True,
+            },
             "Ensure knowledge index validation catches null fields and invalid counts",
         )
     )
@@ -567,12 +639,16 @@ def _inject_knowledge_corruption(repo_root: Path) -> dict[str, Any]:
     return {"findings": findings, "metrics": metrics}
 
 
-def _verify_pipeline_graceful_handling(findings: list[dict[str, Any]]) -> dict[str, Any]:
+def _verify_pipeline_graceful_handling(
+    findings: list[dict[str, Any]],
+) -> dict[str, Any]:
     metrics: dict[str, Any] = {}
 
     total_injections = 10
     passed_handlings = sum(
-        1 for f in findings if f["status"] == "pass" and f["check_id"].startswith("FI-0")
+        1
+        for f in findings
+        if f["status"] == "pass" and f["check_id"].startswith("FI-0")
     )
     failed_handlings = sum(
         1 for f in findings if f["status"] == "fail" and f["check_id"].startswith("FI-")

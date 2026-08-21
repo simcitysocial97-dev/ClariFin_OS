@@ -45,7 +45,11 @@ def _verify_index_existence(index_path: Path) -> dict[str, Any]:
         "priority": "critical" if status == "fail" else "low",
         "message": message,
         "details": {"path": str(index_path), "exists": index_path.exists()},
-        "recommendation": "" if status == "pass" else "Run the repository index builder to generate index.json",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Run the repository index builder to generate index.json"
+        ),
     }
 
 
@@ -69,7 +73,9 @@ def _verify_json_validity(index_path: Path) -> dict[str, Any]:
         "priority": "critical" if status == "fail" else "low",
         "message": message,
         "details": details,
-        "recommendation": "" if status == "pass" else "Fix JSON syntax errors in index.json",
+        "recommendation": (
+            "" if status == "pass" else "Fix JSON syntax errors in index.json"
+        ),
     }
 
 
@@ -101,8 +107,15 @@ def _verify_metadata_completeness(data: dict[str, Any]) -> dict[str, Any]:
         "severity": "high" if status == "fail" else "info",
         "priority": "high" if status == "fail" else "low",
         "message": message,
-        "details": {"missing_fields": missing, "present_fields": [f for f in required_fields if f in meta]},
-        "recommendation": "" if status == "pass" else f"Add missing metadata fields: {', '.join(missing)}",
+        "details": {
+            "missing_fields": missing,
+            "present_fields": [f for f in required_fields if f in meta],
+        },
+        "recommendation": (
+            ""
+            if status == "pass"
+            else f"Add missing metadata fields: {', '.join(missing)}"
+        ),
     }
 
 
@@ -140,7 +153,9 @@ def _verify_node_count_consistency(data: dict[str, Any]) -> dict[str, Any]:
             "declared_edges": declared_edges,
             "actual_edges": actual_edges,
         },
-        "recommendation": "" if status == "pass" else "Regenerate the index to update metadata counts",
+        "recommendation": (
+            "" if status == "pass" else "Regenerate the index to update metadata counts"
+        ),
     }
 
 
@@ -169,7 +184,9 @@ def _verify_unique_node_ids(data: dict[str, Any]) -> dict[str, Any]:
         "priority": "critical" if status == "fail" else "low",
         "message": message,
         "details": {"duplicate_ids": duplicates[:50], "total_nodes": len(nodes)},
-        "recommendation": "" if status == "pass" else "Remove duplicate node entries from index.json",
+        "recommendation": (
+            "" if status == "pass" else "Remove duplicate node entries from index.json"
+        ),
     }
 
 
@@ -206,7 +223,9 @@ def _verify_edge_referential_integrity(data: dict[str, Any]) -> dict[str, Any]:
             "missing_sources": missing_sources[:50],
             "missing_targets": missing_targets[:50],
         },
-        "recommendation": "" if status == "pass" else "Remove or fix edges referencing missing nodes",
+        "recommendation": (
+            "" if status == "pass" else "Remove or fix edges referencing missing nodes"
+        ),
     }
 
 
@@ -242,7 +261,15 @@ def _verify_edge_deduplication(data: dict[str, Any]) -> dict[str, Any]:
 def _verify_ownership_comprehensiveness(data: dict[str, Any]) -> dict[str, Any]:
     graph = data.get("graph", {})
     nodes = graph.get("nodes", [])
-    valid_ownership = {"capability", "shared_infrastructure", "generated", "framework", "utility", "external", "unknown"}
+    valid_ownership = {
+        "capability",
+        "shared_infrastructure",
+        "generated",
+        "framework",
+        "utility",
+        "external",
+        "unknown",
+    }
     unknown_count = sum(1 for n in nodes if n.get("ownership", "unknown") == "unknown")
     invalid_ownership: list[str] = []
     for n in nodes:
@@ -272,10 +299,13 @@ def _verify_ownership_comprehensiveness(data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _verify_graph_build_reproducibility(repo_root: Path | None = None) -> dict[str, Any]:
+def _verify_graph_build_reproducibility(
+    repo_root: Path | None = None,
+) -> dict[str, Any]:
     repo = repo_root or REPO_ROOT
     try:
         from runtime.foundation.repository.builder.builder import RepositoryBuilder
+
         builder = RepositoryBuilder(repo_root=repo)
         builder.build()
         summary = builder.validate()
@@ -309,12 +339,15 @@ def _verify_graph_build_reproducibility(repo_root: Path | None = None) -> dict[s
         "priority": "critical" if status == "fail" else "low",
         "message": message,
         "details": details,
-        "recommendation": "" if status == "pass" else "Fix errors preventing fresh graph build",
+        "recommendation": (
+            "" if status == "pass" else "Fix errors preventing fresh graph build"
+        ),
     }
 
 
 def _verify_node_type_coverage(data: dict[str, Any]) -> dict[str, Any]:
     from runtime.foundation.repository.graph.schema import NODE_TYPES
+
     graph = data.get("graph", {})
     nodes = graph.get("nodes", [])
     expected_types = set(NODE_TYPES)
@@ -322,7 +355,9 @@ def _verify_node_type_coverage(data: dict[str, Any]) -> dict[str, Any]:
     unknown_types = actual_types - expected_types
     if unknown_types:
         status = "fail"
-        message = f"Found {len(unknown_types)} unknown node types: {sorted(unknown_types)}"
+        message = (
+            f"Found {len(unknown_types)} unknown node types: {sorted(unknown_types)}"
+        )
     else:
         status = "pass"
         message = f"All node types are valid ({len(actual_types)} types found)"
@@ -338,7 +373,11 @@ def _verify_node_type_coverage(data: dict[str, Any]) -> dict[str, Any]:
             "found_types": sorted(actual_types),
             "unknown_types": sorted(unknown_types),
         },
-        "recommendation": "" if status == "pass" else "Remove unknown node types or add them to NODE_TYPES schema",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Remove unknown node types or add them to NODE_TYPES schema"
+        ),
     }
 
 
@@ -362,17 +401,19 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
         findings.append(_verify_ownership_comprehensiveness(data))
         findings.append(_verify_node_type_coverage(data))
     else:
-        findings.append({
-            "section": "repository",
-            "check_id": "repo-index-load",
-            "name": "Index load",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": "Could not load index.json for content checks",
-            "details": {},
-            "recommendation": "Generate index.json before running repository audit",
-        })
+        findings.append(
+            {
+                "section": "repository",
+                "check_id": "repo-index-load",
+                "name": "Index load",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": "Could not load index.json for content checks",
+                "details": {},
+                "recommendation": "Generate index.json before running repository audit",
+            }
+        )
 
     findings.append(_verify_graph_build_reproducibility(repo))
 

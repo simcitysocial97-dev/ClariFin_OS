@@ -5,6 +5,7 @@ Compares repository implementation against platform knowledge.
 Detects engines without tests, services without ownership, routers without verification,
 repositories without integrity, workspaces without capabilities, undocumented execution paths.
 """
+
 from __future__ import annotations
 
 import json
@@ -16,7 +17,9 @@ sys.path.insert(0, str(REPO_ROOT))
 
 
 def main() -> int:
-    gap_analysis_path = REPO_ROOT / "runtime" / "generated" / "certification-gap-analysis.json"
+    gap_analysis_path = (
+        REPO_ROOT / "runtime" / "generated" / "certification-gap-analysis.json"
+    )
     if not gap_analysis_path.exists():
         print(f"Error: {gap_analysis_path} not found.", file=sys.stderr)
         return 1
@@ -49,12 +52,14 @@ def main() -> int:
     repo_defects = q1.get("repository_defects", [])
 
     for defect in repo_defects:
-        output["repository_findings"].append({
-            "defect": defect,
-            "category": _categorize_defect(defect),
-            "severity": "medium",
-            "evidence_source": "certification-gap-analysis.json",
-        })
+        output["repository_findings"].append(
+            {
+                "defect": defect,
+                "category": _categorize_defect(defect),
+                "severity": "medium",
+                "evidence_source": "certification-gap-analysis.json",
+            }
+        )
 
     # Map specific gaps
     for finding in repo_defects:
@@ -75,7 +80,9 @@ def main() -> int:
     output["summary"]["total_platform_gaps"] = len(output["platform_findings"])
 
     out_path = REPO_ROOT / "runtime" / "generated" / "repository-gap-analysis.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

@@ -56,6 +56,7 @@ def test_m5a_pr_plan_uses_provided_base_and_never_origin_main(monkeypatch):
         VerificationTier,
         resolve_base_ref_for_tier,
     )
+
     assert resolve_base_ref_for_tier(VerificationTier.PR, pr_base=None) is None
 
 
@@ -69,6 +70,7 @@ def test_m5a_pr_plan_rejects_missing_base(monkeypatch):
         VerificationTier,
         resolve_base_ref_for_tier,
     )
+
     assert resolve_base_ref_for_tier(VerificationTier.PR) is None
     assert resolve_base_ref_for_tier(VerificationTier.PR, pr_base=None) is None
 
@@ -110,8 +112,12 @@ def test_m5b_plan_manifest_carries_required_fields():
 
 def test_m5c_execution_evidence_roundtrip():
     units = [
-        UnitExecution("backend-unit", "pass", 0, "runtime/generated/verification-report.md"),
-        UnitExecution("mutation-run", "fail", 1, "runtime/generated/verification-report.md"),
+        UnitExecution(
+            "backend-unit", "pass", 0, "runtime/generated/verification-report.md"
+        ),
+        UnitExecution(
+            "mutation-run", "fail", 1, "runtime/generated/verification-report.md"
+        ),
     ]
     ev = execution_evidence_from_units(
         tier="pr",
@@ -251,7 +257,9 @@ def test_m5e_environment_vs_planning_distinction_preserved_in_report(tmp_path):
         commit="sha",
     )
     # No evidence -> falls through to planning divergence (unexplained unit diff).
-    assert report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
+    assert (
+        report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
+    )
     assert report.classification.planning_diverges is True
     assert report.classification.environment_diverges is False
     d = report.to_dict()

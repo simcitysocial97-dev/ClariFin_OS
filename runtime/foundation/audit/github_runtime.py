@@ -90,7 +90,15 @@ def _get_gh_run_data(repo_root: Path) -> list[dict[str, Any]]:
     runs: list[dict[str, Any]] = []
     try:
         result = subprocess.run(
-            ["gh", "run", "list", "--limit", "20", "--json", "databaseId,status,conclusion"],
+            [
+                "gh",
+                "run",
+                "list",
+                "--limit",
+                "20",
+                "--json",
+                "databaseId,status,conclusion",
+            ],
             capture_output=True,
             text=True,
             cwd=str(repo_root),
@@ -129,7 +137,11 @@ def _check_annotations_before_logs(
                     "fail",
                     "high",
                     f"GitHub run {run_id} has annotations available but log download was attempted, wasting bandwidth",
-                    {"run_id": run_id, "has_annotations": True, "has_log_download": True},
+                    {
+                        "run_id": run_id,
+                        "has_annotations": True,
+                        "has_log_download": True,
+                    },
                     "Skip log download when annotations are present; annotations contain all failure details",
                 )
             )
@@ -142,7 +154,11 @@ def _check_annotations_before_logs(
                     "pass",
                     "info",
                     f"GitHub run {run_id} correctly skips log download when annotations are available",
-                    {"run_id": run_id, "has_annotations": True, "has_log_download": False},
+                    {
+                        "run_id": run_id,
+                        "has_annotations": True,
+                        "has_log_download": False,
+                    },
                     "Continue using annotation-first pattern",
                 )
             )
@@ -206,7 +222,11 @@ def _check_log_retrieval_pattern(
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
-    log_download_patterns = ["gh run download", "gh run view --log", "actions/download-artifact"]
+    log_download_patterns = [
+        "gh run download",
+        "gh run view --log",
+        "actions/download-artifact",
+    ]
     annotation_patterns = ["annotations", "annotate"]
 
     for wf in workflow_files:
@@ -224,7 +244,11 @@ def _check_log_retrieval_pattern(
                         "fail",
                         "high",
                         f"Workflow {wf.name} downloads logs without first checking for annotations, potentially wasting bandwidth on 200MB log downloads",
-                        {"workflow": wf.name, "has_log_download": True, "has_annotation_check": False},
+                        {
+                            "workflow": wf.name,
+                            "has_log_download": True,
+                            "has_annotation_check": False,
+                        },
                         "Add annotation check step before log download; skip log download if annotations exist",
                     )
                 )
@@ -256,8 +280,18 @@ def _check_artifact_workflows(
     findings: list[dict[str, Any]] = []
     metrics: dict[str, Any] = {}
 
-    artifact_workflows = ["backend-verify", "frontend-verify", "quality", "verification-runtime"]
-    artifact_names = ["cross-layer-map", "knowledge-index", "verification-cache", "engineering-history"]
+    artifact_workflows = [
+        "backend-verify",
+        "frontend-verify",
+        "quality",
+        "verification-runtime",
+    ]
+    artifact_names = [
+        "cross-layer-map",
+        "knowledge-index",
+        "verification-cache",
+        "engineering-history",
+    ]
 
     for wf in workflow_files:
         try:
@@ -269,7 +303,11 @@ def _check_artifact_workflows(
                     if artifact in content:
                         metrics[f"{wf_name}_uploads_{artifact}"] = True
 
-                if "upload-artifact" not in content and "actions/upload-artifact" not in content and "upload-runtime" not in content:
+                if (
+                    "upload-artifact" not in content
+                    and "actions/upload-artifact" not in content
+                    and "upload-runtime" not in content
+                ):
                     findings.append(
                         _finding(
                             "github_runtime",

@@ -66,7 +66,9 @@ def classify_importer(rel: str) -> str:
 
 
 ENGINE_ROOT_NAMES = list(ENGINE_ROOTS.keys()) + list(SINGLE_FILE_ENGINES.keys())
-ENGINE_PAT = re.compile(r"engines\.(" + "|".join(re.escape(n) for n in ENGINE_ROOT_NAMES) + r")\b")
+ENGINE_PAT = re.compile(
+    r"engines\.(" + "|".join(re.escape(n) for n in ENGINE_ROOT_NAMES) + r")\b"
+)
 REPO_PAT = re.compile(r"repositories\.([a-z_]+_repository)\b")
 SERVICE_ATTR_PAT = re.compile(r"services\.([a-z_]+_service)\b")
 SERVICE_IMPORT_PAT = re.compile(r"from\s+[^ \n]*services\s+import\s+([^\n]+)")
@@ -136,7 +138,9 @@ def router_endpoints(router_rel: str):
     if not f.exists():
         return []
     text = f.read_text(encoding="utf-8", errors="ignore")
-    eps = re.findall(r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']+)["\']', text)
+    eps = re.findall(
+        r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']+)["\']', text
+    )
     out = []
     for method, path in eps:
         out.append(f"{method.upper()} {path}")
@@ -168,7 +172,10 @@ def find_tests(engine_name: str):
         except Exception:
             continue
         # match engine root name in import or in path
-        if re.search(r"engines\." + re.escape(engine_name) + r"\b", text) or engine_name in rel:
+        if (
+            re.search(r"engines\." + re.escape(engine_name) + r"\b", text)
+            or engine_name in rel
+        ):
             tests.append(rel)
     return sorted(set(tests))
 
@@ -179,7 +186,9 @@ def engine_artifacts(engine_name: str):
     gen = REPO / "runtime" / "generated"
     # test-derived artifacts that reference the engine name
     for f in gen.rglob("*"):
-        if f.is_file() and engine_name.replace("_", "") in f.name.lower().replace("_", "").replace("-", ""):
+        if f.is_file() and engine_name.replace("_", "") in f.name.lower().replace(
+            "_", ""
+        ).replace("-", ""):
             arts.append(str(f.relative_to(REPO)))
     # known explicit artifacts
     known = {
@@ -236,7 +245,9 @@ def main():
             if p.name != "__init__.py" and "__pycache__" not in str(p)
         )
         imp = importers.get(name, {})
-        services, routers, repos = compute_consumers(name, imp, service_to_routers, service_to_repos)
+        services, routers, repos = compute_consumers(
+            name, imp, service_to_routers, service_to_repos
+        )
         endpoints = sorted({e for r in routers for e in router_endpoints(r)})
         topology["engines"][name] = {
             "canonical_style": "package",
@@ -260,7 +271,9 @@ def main():
     # Single-file engines
     for name, fp in sorted(SINGLE_FILE_ENGINES.items()):
         imp = importers.get(name, {})
-        services, routers, repos = compute_consumers(name, imp, service_to_routers, service_to_repos)
+        services, routers, repos = compute_consumers(
+            name, imp, service_to_routers, service_to_repos
+        )
         endpoints = sorted({e for r in routers for e in router_endpoints(r)})
         topology["engines"][name] = {
             "canonical_style": "single_file",
@@ -379,9 +392,11 @@ def main():
     print(f"Engines discovered: {topology['engine_count']}")
     print(f"Parked facades: {len(topology['parked_facades'])}")
     for n, e in sorted(topology["engines"].items()):
-        print(f"  {n:24} style={e['canonical_style']:10} svc={len(e['services'])} "
-              f"rtr={len(e['routers'])} mods={e['implementation_module_count']} "
-              f"caps={e['capabilities']}")
+        print(
+            f"  {n:24} style={e['canonical_style']:10} svc={len(e['services'])} "
+            f"rtr={len(e['routers'])} mods={e['implementation_module_count']} "
+            f"caps={e['capabilities']}"
+        )
 
 
 if __name__ == "__main__":

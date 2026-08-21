@@ -91,7 +91,12 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
     DiscoverySource(
         "runtime/analyze_engine_topology.py",
         "Phase 2: discover canonical engines (package roots + designated single files).",
-        ("engine_discovery", "package_discovery", "router_mapping", "capability_mapping"),
+        (
+            "engine_discovery",
+            "package_discovery",
+            "router_mapping",
+            "capability_mapping",
+        ),
         NONE,
         "runtime/generated/engine-topology.json",
         STATUS_PIPELINE,
@@ -349,7 +354,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/planner.py",
         "Verification planner certification audit.",
         ("verification_planning", "certification_graph"),
-        ("Probed the planner with the phantom path `backend/src/engines/loan_engine.py`.",),
+        (
+            "Probed the planner with the phantom path `backend/src/engines/loan_engine.py`.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
         "Probes now use a canonical engine implementation module.",
@@ -387,7 +394,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/intelligence/risk.py",
         "Change risk analysis.",
         ("affected_analysis",),
-        ("Risk weighted by count of 'changed engines' that included submodules and phantoms.",),
+        (
+            "Risk weighted by count of 'changed engines' that included submodules and phantoms.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_CONSUMER,
     ),
@@ -442,7 +451,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/evidence.py",
         "Evidence aggregator certification audit.",
         ("certification_graph",),
-        ("Sample cross-layer map used the phantom key `backend/src/engines/account_engine.py`.",),
+        (
+            "Sample cross-layer map used the phantom key `backend/src/engines/account_engine.py`.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
     ),
@@ -450,7 +461,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/failure_injection.py",
         "Failure injection certification audit.",
         ("certification_graph",),
-        ("Synthetic capability registry referenced `backend/src/engines/transfer_engine` (non-existent).",),
+        (
+            "Synthetic capability registry referenced `backend/src/engines/transfer_engine` (non-existent).",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
         "Synthetic fixtures are now labelled as fixtures, not architecture.",
@@ -459,7 +472,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/audit/pipeline.py",
         "Pipeline validation audit (pipeline graph).",
         ("pipeline_graph", "certification_graph"),
-        ("Stage list hardcoded; knowledge/artifact stages validated against legacy artifacts.",),
+        (
+            "Stage list hardcoded; knowledge/artifact stages validated against legacy artifacts.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_CONSUMER,
     ),
@@ -511,7 +526,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "runtime/foundation/workspace/workspace.py",
         "Workspace cross-layer status panel.",
         ("engine_discovery",),
-        ("Counted one engine per legacy map key, so phantoms and submodules inflated the total.",),
+        (
+            "Counted one engine per legacy map key, so phantoms and submodules inflated the total.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_MIGRATED,
     ),
@@ -528,7 +545,9 @@ CATALOGUE: tuple[DiscoverySource, ...] = (
         "tools/development/mutation_discovery.py",
         "Mutation target discovery.",
         ("engine_discovery",),
-        ("Walks `backend/src/engines` and treats each `.py` as a mutation engine target.",),
+        (
+            "Walks `backend/src/engines` and treats each `.py` as a mutation engine target.",
+        ),
         CANONICAL_PROVIDER,
         STATUS_CONSUMER,
         "Operates on files for mutation purposes; makes no architectural claim.",
@@ -665,7 +684,9 @@ def build(repo_root: Path | None = None) -> dict[str, Any]:
             )
         },
         "sources": [c.to_dict(root) for c in CATALOGUE],
-        "sources_by_concern": {k: sorted(set(v)) for k, v in sorted(by_concern.items())},
+        "sources_by_concern": {
+            k: sorted(set(v)) for k, v in sorted(by_concern.items())
+        },
         "residual_legacy_signals": residual,
         "uncatalogued_runtime_signals": uncatalogued,
         "notes": [

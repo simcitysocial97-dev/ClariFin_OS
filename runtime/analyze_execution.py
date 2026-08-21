@@ -21,7 +21,9 @@ FRONTEND = REPO / "frontend"
 
 
 def load_topology():
-    return json.loads((REPO / "runtime" / "generated" / "engine-topology.json").read_text())
+    return json.loads(
+        (REPO / "runtime" / "generated" / "engine-topology.json").read_text()
+    )
 
 
 def router_endpoints(router_rel):
@@ -29,7 +31,9 @@ def router_endpoints(router_rel):
     if not f.exists():
         return []
     text = f.read_text(encoding="utf-8", errors="ignore")
-    eps = re.findall(r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']+)["\']', text)
+    eps = re.findall(
+        r'@router\.(get|post|put|delete|patch)\(\s*["\']([^"\']+)["\']', text
+    )
     return [f"{m.upper()} {p}" for m, p in eps]
 
 
@@ -42,8 +46,15 @@ def build():
         nodes[nid] = {"id": nid, "type": ntype, "label": label}
 
     def edge(frm, to, evidence, stage):
-        edges.append({"from": frm, "to": to, "relation": "executes",
-                      "evidence": evidence, "stage": stage})
+        edges.append(
+            {
+                "from": frm,
+                "to": to,
+                "relation": "executes",
+                "evidence": evidence,
+                "stage": stage,
+            }
+        )
 
     # endpoint -> router map (for all routers seen in topology)
     all_routers = set()
@@ -83,7 +94,9 @@ def build():
         services = set()
         for r in routers:
             for svc in service_imports_in_router(r):
-                if any(ename in engines for ename in service_to_engines.get(svc, set())):
+                if any(
+                    ename in engines for ename in service_to_engines.get(svc, set())
+                ):
                     services.add(svc)
         repos = set()
         modules = set()
@@ -100,7 +113,12 @@ def build():
             if rtr:
                 rid = f"router:{rtr}"
                 node(rid, "Router", rtr)
-                edge(ep_id, rid, f"{ep} is defined by @router decorator in {rtr}", "dispatch")
+                edge(
+                    ep_id,
+                    rid,
+                    f"{ep} is defined by @router decorator in {rtr}",
+                    "dispatch",
+                )
         # dispatch: routers -> services
         for r in sorted(routers):
             rid = f"router:{r}"
@@ -126,9 +144,13 @@ def build():
             for m in sorted(topo["engines"][ename]["implementation_modules"]):
                 mid = f"module:{m}"
                 node(mid, "EngineModule", m)
-                edge(eid, mid,
-                     f"{ename} entry delegates computation to {m} "
-                     f"(module is on the execution path)", "compute")
+                edge(
+                    eid,
+                    mid,
+                    f"{ename} entry delegates computation to {m} "
+                    f"(module is on the execution path)",
+                    "compute",
+                )
         # persistence: services -> repositories -> database
         dbid = "database:finance.db"
         node(dbid, "Database", "SQLite finance.db")
@@ -138,13 +160,20 @@ def build():
             for repo in sorted(repos):
                 repid = f"repository:{repo}"
                 node(repid, "Repository", repo)
-                edge(sid, repid, f"{svc} reads/writes via repositories.{repo}", "persistence")
-                edge(repid, dbid, f"{repo} opens connection to finance.db", "persistence")
+                edge(
+                    sid,
+                    repid,
+                    f"{svc} reads/writes via repositories.{repo}",
+                    "persistence",
+                )
+                edge(
+                    repid, dbid, f"{repo} opens connection to finance.db", "persistence"
+                )
 
     out = {
         "generated_at": datetime.now().isoformat(),
         "description": "Execution graph: runtime call path. Traverses implementation modules. "
-                       "Distinct from ownership graph.",
+        "Distinct from ownership graph.",
         "node_count": len(nodes),
         "edge_count": len(edges),
         "nodes": list(nodes.values()),
@@ -160,7 +189,9 @@ def build():
             "or as internal services, never as a top-level capability execution root.",
         ],
     }
-    (REPO / "runtime" / "generated" / "execution-graph.json").write_text(json.dumps(out, indent=2))
+    (REPO / "runtime" / "generated" / "execution-graph.json").write_text(
+        json.dumps(out, indent=2)
+    )
     print(f"Execution graph: {len(nodes)} nodes, {len(edges)} edges")
 
 

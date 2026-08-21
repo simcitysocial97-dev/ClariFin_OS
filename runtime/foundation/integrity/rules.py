@@ -36,9 +36,7 @@ def check_router_not_import_engine(graph: ArchitecturalGraph) -> list[Violation]
                         f"at line {imp.line_number}.  Routers must go "
                         f"through the Service layer."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the direct engine import and use the "
                         "corresponding service instead."
@@ -262,9 +260,7 @@ def check_service_not_import_router(graph: ArchitecturalGraph) -> list[Violation
                         f"at line {imp.line_number}.  Services must not "
                         f"depend on routers."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the router import.  Services should be "
                         "independent of the HTTP routing layer."
@@ -292,9 +288,7 @@ def check_dto_not_import_service(graph: ArchitecturalGraph) -> list[Violation]:
                         f"at line {imp.line_number}.  DTOs must be pure "
                         f"data definitions."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the service import.  DTOs should only "
                         "contain data type definitions."
@@ -322,9 +316,7 @@ def check_mapper_not_import_capability(graph: ArchitecturalGraph) -> list[Violat
                         f"at line {imp.line_number}.  Mappers must not "
                         f"depend on capabilities."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the capability import.  Mappers should "
                         "only depend on ViewModel types and DTO types."
@@ -352,9 +344,7 @@ def check_viewmodel_not_import_component(graph: ArchitecturalGraph) -> list[Viol
                         f"at line {imp.line_number}.  ViewModels are pure "
                         f"data contracts and must not reference components."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the component import.  ViewModels should "
                         "only contain data type definitions."
@@ -383,9 +373,7 @@ def check_workspace_not_import_mapper(graph: ArchitecturalGraph) -> list[Violati
                         f"obtain data through Capabilities, not mappers "
                         f"directly."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the direct mapper import and use the "
                         "corresponding capability hook instead."
@@ -413,9 +401,7 @@ def check_component_not_import_engine(graph: ArchitecturalGraph) -> list[Violati
                         f"at line {imp.line_number}.  Components must not "
                         f"depend on backend engine modules."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the engine import.  All computation must "
                         "flow through the API contract layer."
@@ -443,9 +429,7 @@ def check_dto_not_import_router(graph: ArchitecturalGraph) -> list[Violation]:
                         f"at line {imp.line_number}.  DTOs must be pure "
                         f"data definitions."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the router import.  DTOs should only "
                         "contain data type definitions."
@@ -473,9 +457,7 @@ def check_capability_not_import_component(graph: ArchitecturalGraph) -> list[Vio
                         f"at line {imp.line_number}.  Capabilities must not "
                         f"depend on presentational components."
                     ),
-                    details=(
-                        f"Import resolved to {imp.resolved_path or imp.module}"
-                    ),
+                    details=(f"Import resolved to {imp.resolved_path or imp.module}"),
                     suggested_action=(
                         "Remove the component import.  Capabilities should "
                         "only depend on the API layer and mappers."
@@ -523,7 +505,9 @@ def check_capability_for_every_endpoint(graph: ArchitecturalGraph) -> list[Viola
     return violations
 
 
-def check_capability_has_exactly_one_mapper(graph: ArchitecturalGraph) -> list[Violation]:
+def check_capability_has_exactly_one_mapper(
+    graph: ArchitecturalGraph,
+) -> list[Violation]:
     """ARCH-006: Every capability requires exactly one mapper."""
     violations: list[Violation] = []
     for entry_path, entry in graph.cross_layer_map.items():
@@ -547,8 +531,7 @@ def check_capability_has_exactly_one_mapper(graph: ArchitecturalGraph) -> list[V
                         f"requires exactly one mapper."
                     ),
                     suggested_action=(
-                        "Add the appropriate mapper to the cross-layer "
-                        "map entry."
+                        "Add the appropriate mapper to the cross-layer " "map entry."
                     ),
                 )
             )
@@ -727,9 +710,7 @@ def check_component_one_workspace(graph: ArchitecturalGraph) -> list[Violation]:
                         f"{', '.join(workspaces)}.  Each component must "
                         f"belong to exactly one workspace."
                     ),
-                    suggested_action=(
-                        "Reassign the component to a single workspace."
-                    ),
+                    suggested_action=("Reassign the component to a single workspace."),
                 )
             )
     return violations
@@ -811,7 +792,9 @@ def check_endpoint_in_cross_layer_map(graph: ArchitecturalGraph) -> list[Violati
     return violations
 
 
-def check_graph_renderer_owned_by_workspace(graph: ArchitecturalGraph) -> list[Violation]:
+def check_graph_renderer_owned_by_workspace(
+    graph: ArchitecturalGraph,
+) -> list[Violation]:
     """ARCH-024: Every graph renderer is owned by a workspace."""
     violations: list[Violation] = []
     for entry_path, entry in graph.cross_layer_map.items():
@@ -927,8 +910,7 @@ def check_mapper_in_cross_layer_map(graph: ArchitecturalGraph) -> list[Violation
                         f"no architectural ownership."
                     ),
                     suggested_action=(
-                        "Add this mapper to the appropriate cross-layer "
-                        "map entry."
+                        "Add this mapper to the appropriate cross-layer " "map entry."
                     ),
                 )
             )

@@ -37,7 +37,15 @@ from runtime.foundation.verification.orchestrator import VerificationOrchestrato
 from runtime.foundation.verification.profiles import get_profile
 from runtime.foundation.verification.registry import UNMAPPED
 
-PROFILES = ["quick", "backend", "frontend", "runtime", "golden", "mutation", "playwright"]
+PROFILES = [
+    "quick",
+    "backend",
+    "frontend",
+    "runtime",
+    "golden",
+    "mutation",
+    "playwright",
+]
 
 
 class _FakeExecResult:
@@ -200,9 +208,7 @@ class TestRunManifest:
         orchestrator = _planned("backend")
         _execute(orchestrator)
         manifest = self._manifest(orchestrator, tmp_path)
-        backend = next(
-            e for e in manifest["steps"] if e["workflow"] == "backend"
-        )
+        backend = next(e for e in manifest["steps"] if e["workflow"] == "backend")
         assert backend["contributing_units"] == ["backend-unit", "unit-targeted"]
 
     def test_manifest_has_top_level_unmapped_list(self, tmp_path: Path):
@@ -226,8 +232,7 @@ class TestRunManifest:
         """execute() emits the manifest without an explicit call."""
         orchestrator = _planned("runtime")
         default_path = (
-            orchestrator._repo_root
-            / "runtime/generated/evidence/run-manifest.json"
+            orchestrator._repo_root / "runtime/generated/evidence/run-manifest.json"
         )
         if default_path.exists():
             default_path.unlink()
@@ -242,9 +247,7 @@ class TestRunManifest:
 class TestUnmappedIsVisibleAndNonFatal:
     """NEGATIVE TEST — plan §M3 requires UNMAPPED to be reported, not fatal."""
 
-    def test_unmapped_step_appears_in_manifest_and_does_not_crash(
-        self, tmp_path: Path
-    ):
+    def test_unmapped_step_appears_in_manifest_and_does_not_crash(self, tmp_path: Path):
         orchestrator = _planned("backend")
         results = _execute(orchestrator)  # must not raise
         path = tmp_path / "run-manifest.json"
@@ -292,7 +295,5 @@ class TestExecutedCommandsAreUnchanged:
     @pytest.mark.parametrize("profile", PROFILES)
     def test_step_ids_remain_positional_and_contiguous(self, profile):
         steps = _planned(profile).plan.steps
-        assert [s.id for s in steps] == [
-            f"step-{i + 1:04d}" for i in range(len(steps))
-        ]
+        assert [s.id for s in steps] == [f"step-{i + 1:04d}" for i in range(len(steps))]
         assert [s.order for s in steps] == list(range(1, len(steps) + 1))

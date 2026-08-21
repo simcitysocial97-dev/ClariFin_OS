@@ -57,9 +57,19 @@ def classify(name, e):
 
 
 def build():
-    topo = json.loads((REPO / "runtime" / "generated" / "engine-topology.json").read_text())
+    topo = json.loads(
+        (REPO / "runtime" / "generated" / "engine-topology.json").read_text()
+    )
     engines = {}
-    legacy, partial, duplicate, parked, orphan, facade, impl_only = [], [], [], [], [], [], []
+    legacy, partial, duplicate, parked, orphan, facade, impl_only = (
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+    )
     impl_by_engine = defaultdict(list)
 
     for name, e in topo["engines"].items():
@@ -91,14 +101,18 @@ def build():
     # partial migration: behaviour domain has both legacy + package
     if "behaviour_engine" in topo["engines"] and "behavior_engine" in PARKED:
         engines["behaviour_engine"]["migration_status"] = "CANONICAL_PACKAGE"
-        engines["behaviour_engine"]["note"] = ("Canonical package exists; legacy "
-                                               "behavior_engine.py still present (partial migration).")
-        partial.append({
-            "domain": "behaviour",
-            "canonical": "backend/src/engines/behaviour_engine/",
-            "legacy": PARKED["behavior_engine"]["path"],
-            "evidence": "Both behaviour_engine/ package and behavior_engine.py legacy file coexist.",
-        })
+        engines["behaviour_engine"]["note"] = (
+            "Canonical package exists; legacy "
+            "behavior_engine.py still present (partial migration)."
+        )
+        partial.append(
+            {
+                "domain": "behaviour",
+                "canonical": "backend/src/engines/behaviour_engine/",
+                "legacy": PARKED["behavior_engine"]["path"],
+                "evidence": "Both behaviour_engine/ package and behavior_engine.py legacy file coexist.",
+            }
+        )
 
     # duplicate engines
     # NOTE (Program J): the behaviour duplicate was unconditional and asserted that
@@ -106,12 +120,16 @@ def build():
     # longer exists, so the duplicate is only reported if the legacy file is still
     # declared as parked.
     if "behavior_engine" in PARKED:
-        duplicate.append({
-            "domain": "behaviour",
-            "engines": ["backend/src/engines/behaviour_engine/ (package)",
-                        "backend/src/engines/behavior_engine.py (legacy single-file)"],
-            "evidence": "Same domain implemented twice: package engine + legacy single-file facade.",
-        })
+        duplicate.append(
+            {
+                "domain": "behaviour",
+                "engines": [
+                    "backend/src/engines/behaviour_engine/ (package)",
+                    "backend/src/engines/behavior_engine.py (legacy single-file)",
+                ],
+                "evidence": "Same domain implemented twice: package engine + legacy single-file facade.",
+            }
+        )
 
     # parked
     for name, info in PARKED.items():
@@ -130,14 +148,18 @@ def build():
         facade.append({"path": path, "note": note})
         engines.setdefault("engines_namespace_facade", {})
         engines["engines_namespace_facade"] = {
-            "canonical_style": "package", "legacy_style": False,
-            "migration_status": "FACADE", "entry_point": path, "note": note,
+            "canonical_style": "package",
+            "legacy_style": False,
+            "migration_status": "FACADE",
+            "entry_point": path,
+            "note": note,
         }
 
     out = {
         "generated_at": datetime.now().isoformat(),
-        "engine_count": len([k for k in engines if k not in
-                             ("engines_namespace_facade",)]),
+        "engine_count": len(
+            [k for k in engines if k not in ("engines_namespace_facade",)]
+        ),
         "canonical_architecture": "package-preferred; single-file only for small cohesive engines",
         "engines": engines,
         "report": {
@@ -164,11 +186,17 @@ def build():
             "capability owner (internal engines); they are CANONICAL_PACKAGE_INTERNAL.",
         ],
     }
-    (REPO / "runtime" / "generated" / "engine-normalization.json").write_text(json.dumps(out, indent=2))
+    (REPO / "runtime" / "generated" / "engine-normalization.json").write_text(
+        json.dumps(out, indent=2)
+    )
     print("Engine normalization audit complete.")
-    print(f"  legacy(single_file): {len(legacy)}  partial: {len(partial)}  "
-          f"duplicate: {len(duplicate)}  parked: {len(parked)}")
-    print(f"  orphan: {len(orphan)}  facade: {len(facade)}  impl_modules: {len(impl_only)}")
+    print(
+        f"  legacy(single_file): {len(legacy)}  partial: {len(partial)}  "
+        f"duplicate: {len(duplicate)}  parked: {len(parked)}"
+    )
+    print(
+        f"  orphan: {len(orphan)}  facade: {len(facade)}  impl_modules: {len(impl_only)}"
+    )
 
 
 if __name__ == "__main__":

@@ -17,7 +17,6 @@ from typing import Any
 from .event_store import EngineeringEventStore
 from .repository import RunRecord
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 ANALYTICS_PATH = REPO_ROOT / "runtime" / "generated" / "engineering-analytics.json"
 
@@ -45,7 +44,9 @@ class AnalyticsReport:
     local: dict[str, Any] = field(default_factory=dict)
     ci: dict[str, Any] = field(default_factory=dict)
     combined: dict[str, Any] = field(default_factory=dict)
-    generated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    generated_at: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -70,8 +71,12 @@ class AnalyticsEngine:
 
     def compute(self) -> AnalyticsReport:
         events = self._event_store.load_events()
-        local_events = [e for e in events if e.execution_context.get("environment") == "local"]
-        ci_events = [e for e in events if e.execution_context.get("environment") == "ci"]
+        local_events = [
+            e for e in events if e.execution_context.get("environment") == "local"
+        ]
+        ci_events = [
+            e for e in events if e.execution_context.get("environment") == "ci"
+        ]
 
         local_metrics = self._compute_for_events(local_events)
         ci_metrics = self._compute_for_events(ci_events)
@@ -235,7 +240,12 @@ class AnalyticsEngine:
 
     def _compute_blast_radius(self, records: list[RunRecord]) -> dict[str, Any]:
         if not records:
-            return {"avg_engines": 0, "avg_services": 0, "avg_endpoints": 0, "avg_components": 0}
+            return {
+                "avg_engines": 0,
+                "avg_services": 0,
+                "avg_endpoints": 0,
+                "avg_components": 0,
+            }
         total_engines = 0
         total_services = 0
         total_endpoints = 0
@@ -250,7 +260,12 @@ class AnalyticsEngine:
                 total_components += len(br.get("affected_components", []))
                 count += 1
         if count == 0:
-            return {"avg_engines": 0, "avg_services": 0, "avg_endpoints": 0, "avg_components": 0}
+            return {
+                "avg_engines": 0,
+                "avg_services": 0,
+                "avg_endpoints": 0,
+                "avg_components": 0,
+            }
         return {
             "avg_engines": round(total_engines / count, 2),
             "avg_services": round(total_services / count, 2),
@@ -270,19 +285,47 @@ class AnalyticsEngine:
 
     def _compute_trends(self, records: list[RunRecord]) -> dict[str, Any]:
         if len(records) < 2:
-            return {"duration_trend": "stable", "success_rate_trend": "stable", "data_points": len(records)}
+            return {
+                "duration_trend": "stable",
+                "success_rate_trend": "stable",
+                "data_points": len(records),
+            }
         sorted_records = sorted(records, key=lambda r: r.timestamp)
         mid = len(sorted_records) // 2
         first_half = sorted_records[:mid]
         second_half = sorted_records[mid:]
-        first_durations = [r.duration_seconds for r in first_half if r.duration_seconds > 0]
-        second_durations = [r.duration_seconds for r in second_half if r.duration_seconds > 0]
-        first_avg = sum(first_durations) / len(first_durations) if first_durations else 0.0
-        second_avg = sum(second_durations) / len(second_durations) if second_durations else 0.0
-        duration_trend = "increasing" if second_avg > first_avg * 1.1 else "decreasing" if second_avg < first_avg * 0.9 else "stable"
-        first_pass_rate = sum(1 for r in first_half if r.status == "passed") / len(first_half) if first_half else 0.0
-        second_pass_rate = sum(1 for r in second_half if r.status == "passed") / len(second_half) if second_half else 0.0
-        success_trend = "improving" if second_pass_rate > first_pass_rate else "degrading" if second_pass_rate < first_pass_rate else "stable"
+        first_durations = [
+            r.duration_seconds for r in first_half if r.duration_seconds > 0
+        ]
+        second_durations = [
+            r.duration_seconds for r in second_half if r.duration_seconds > 0
+        ]
+        first_avg = (
+            sum(first_durations) / len(first_durations) if first_durations else 0.0
+        )
+        second_avg = (
+            sum(second_durations) / len(second_durations) if second_durations else 0.0
+        )
+        duration_trend = (
+            "increasing"
+            if second_avg > first_avg * 1.1
+            else "decreasing" if second_avg < first_avg * 0.9 else "stable"
+        )
+        first_pass_rate = (
+            sum(1 for r in first_half if r.status == "passed") / len(first_half)
+            if first_half
+            else 0.0
+        )
+        second_pass_rate = (
+            sum(1 for r in second_half if r.status == "passed") / len(second_half)
+            if second_half
+            else 0.0
+        )
+        success_trend = (
+            "improving"
+            if second_pass_rate > first_pass_rate
+            else "degrading" if second_pass_rate < first_pass_rate else "stable"
+        )
         return {
             "duration_trend": duration_trend,
             "success_rate_trend": success_trend,
@@ -290,7 +333,9 @@ class AnalyticsEngine:
         }
 
 
-def generate_analytics(event_store: EngineeringEventStore | None = None) -> AnalyticsReport:
+def generate_analytics(
+    event_store: EngineeringEventStore | None = None,
+) -> AnalyticsReport:
     engine = AnalyticsEngine(event_store)
     report = engine.compute()
     report.save()

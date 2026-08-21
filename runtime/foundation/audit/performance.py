@@ -144,7 +144,11 @@ def _measure_graph_loading(repo_root: Path) -> dict[str, Any]:
 
         t0 = time.monotonic()
         graph_service = RepositoryGraphService(
-            index_path=repo_root / "runtime" / "generated" / "repository" / "index.json",
+            index_path=repo_root
+            / "runtime"
+            / "generated"
+            / "repository"
+            / "index.json",
         )
         t1 = time.monotonic()
 
@@ -182,7 +186,10 @@ def _measure_graph_loading(repo_root: Path) -> dict[str, Any]:
                     "pass",
                     "info",
                     f"Graph loaded in {load_duration:.4f}s with {stats.get('node_count', 0)} nodes",
-                    {"duration_seconds": round(load_duration, 4), "node_count": stats.get("node_count", 0)},
+                    {
+                        "duration_seconds": round(load_duration, 4),
+                        "node_count": stats.get("node_count", 0),
+                    },
                     "Continue monitoring graph loading performance",
                 )
             )
@@ -258,7 +265,10 @@ def _measure_knowledge_lookup(repo_root: Path) -> dict[str, Any]:
                     "warning",
                     "medium",
                     f"Knowledge lookups took {total_duration:.2f}s total, exceeds 2s threshold",
-                    {"total_duration_seconds": round(total_duration, 4), "threshold": 2.0},
+                    {
+                        "total_duration_seconds": round(total_duration, 4),
+                        "threshold": 2.0,
+                    },
                     "Optimize knowledge index or implement caching",
                 )
             )
@@ -386,7 +396,10 @@ def _measure_integrity_checks(repo_root: Path) -> dict[str, Any]:
                     "warning",
                     "medium",
                     f"Integrity checks took {integrity_duration:.2f}s, exceeds 30s threshold",
-                    {"duration_seconds": round(integrity_duration, 4), "threshold": 30.0},
+                    {
+                        "duration_seconds": round(integrity_duration, 4),
+                        "threshold": 30.0,
+                    },
                     "Optimize integrity rules or parallelize checks",
                 )
             )
@@ -399,7 +412,10 @@ def _measure_integrity_checks(repo_root: Path) -> dict[str, Any]:
                     "pass",
                     "info",
                     f"Integrity checks completed in {integrity_duration:.4f}s with {len(report.violations)} violations",
-                    {"duration_seconds": round(integrity_duration, 4), "violation_count": len(report.violations)},
+                    {
+                        "duration_seconds": round(integrity_duration, 4),
+                        "violation_count": len(report.violations),
+                    },
                     "Continue monitoring integrity check performance",
                 )
             )
@@ -512,17 +528,22 @@ def _measure_github_parsing(repo_root: Path) -> dict[str, Any]:
         t0 = time.monotonic()
         try:
             import yaml
+
             yaml.safe_load(wf.read_text(encoding="utf-8"))
             t1 = time.monotonic()
             parse_duration = t1 - t0
             total_parse_duration += parse_duration
-            metrics[f"github_parse_{wf.stem}_duration_seconds"] = round(parse_duration, 4)
+            metrics[f"github_parse_{wf.stem}_duration_seconds"] = round(
+                parse_duration, 4
+            )
         except ImportError:
             t1 = time.monotonic()
             parse_duration = t1 - t0
             total_parse_duration += parse_duration
             wf.read_text(encoding="utf-8")
-            metrics[f"github_parse_{wf.stem}_duration_seconds"] = round(parse_duration, 4)
+            metrics[f"github_parse_{wf.stem}_duration_seconds"] = round(
+                parse_duration, 4
+            )
         except Exception:
             t1 = time.monotonic()
             parse_duration = t1 - t0
@@ -560,9 +581,7 @@ def _measure_github_parsing(repo_root: Path) -> dict[str, Any]:
     return {"findings": findings, "metrics": metrics}
 
 
-def _execute_knowledge_query(
-    engine: Any, query_type: str, query_value: str
-) -> Any:
+def _execute_knowledge_query(engine: Any, query_type: str, query_value: str) -> Any:
     method_map = {
         "endpoint": engine.query_endpoint,
         "capability": engine.query_capability,

@@ -4,6 +4,7 @@
 Analyzes verification failures using the Engineering Intelligence Layer
 without manual repository exploration.
 """
+
 from __future__ import annotations
 
 import json
@@ -27,23 +28,26 @@ FAILED_SCRIPTS = [
     ".github/scripts/run_runtime_verification.sh",
 ]
 
+
 def build_verification_defect_changeset() -> ChangeSet:
     files = []
     for path in FAILED_SCRIPTS:
         full_path = REPO_ROOT / path
         if full_path.exists():
-            files.append(ChangedFile(
-                path=path,
-                status="modified",
-                added_lines=0,
-                removed_lines=0,
-                added_symbols=(),
-                removed_symbols=(),
-                added_imports=(),
-                removed_imports=(),
-                added_routes=(),
-                removed_routes=(),
-            ))
+            files.append(
+                ChangedFile(
+                    path=path,
+                    status="modified",
+                    added_lines=0,
+                    removed_lines=0,
+                    added_symbols=(),
+                    removed_symbols=(),
+                    added_imports=(),
+                    removed_imports=(),
+                    added_routes=(),
+                    removed_routes=(),
+                )
+            )
     return ChangeSet(
         base="HEAD",
         head="HEAD",
@@ -58,6 +62,7 @@ def main() -> int:
     changeset = build_verification_defect_changeset()
 
     from runtime.foundation.intelligence.platform.change import analyze_changes
+
     change = analyze_changes(changeset=changeset, resolver=resolver)
     blast = compute_blast_radius(change, resolver=resolver)
     plan = optimize_verification(blast, resolver=resolver)
@@ -73,7 +78,14 @@ def main() -> int:
         refs = resolver.classify_path(script)
         ownership = [r.to_dict() for r in refs] if refs else []
         if not ownership:
-            ownership = [{"ref": script, "kind": "artifact", "key": script, "owner": "runtime/foundation/verification"}]
+            ownership = [
+                {
+                    "ref": script,
+                    "kind": "artifact",
+                    "key": script,
+                    "owner": "runtime/foundation/verification",
+                }
+            ]
 
         defect = {
             "issue_id": f"verification-defect-{Path(script).stem}",
@@ -113,7 +125,11 @@ def main() -> int:
 
     output = {
         "schema": "real-defect-validation/v1",
-        "generated_at": risk.generated_at if hasattr(risk, "generated_at") else "2026-08-06T15:00:00+00:00",
+        "generated_at": (
+            risk.generated_at
+            if hasattr(risk, "generated_at")
+            else "2026-08-06T15:00:00+00:00"
+        ),
         "validation_scope": "verification_infrastructure_defects",
         "total_issues": len(defects),
         "issues_analyzed": len(defects),
@@ -132,7 +148,9 @@ def main() -> int:
     }
 
     out_path = REPO_ROOT / "runtime" / "generated" / "real-defect-validation.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

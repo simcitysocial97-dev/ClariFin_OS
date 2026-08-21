@@ -25,8 +25,7 @@ from runtime.foundation.verification.models import (
 
 # pytest short-summary line, e.g. "1 failed, 65 passed" or "2 failed, 3 error".
 _PYTEST_SUMMARY_RE = re.compile(
-    r"(?:\d+\s+(?:failed|passed|error|skipped|xfailed|xpassed|"
-    r"warning)\b[, ]*)+",
+    r"(?:\d+\s+(?:failed|passed|error|skipped|xfailed|xpassed|" r"warning)\b[, ]*)+",
     re.IGNORECASE,
 )
 
@@ -127,9 +126,7 @@ def build_failure_report(result: ExecutionResult) -> FailureReport:
 
     stdout_text = _read_artifact(result.stdout_path)
     stderr_text = _read_artifact(result.stderr_path)
-    combined = "\n".join(
-        part for part in (result.error or "", stdout_text) if part
-    )
+    combined = "\n".join(part for part in (result.error or "", stdout_text) if part)
 
     classification = result.classification
     # Honor an already-derived classification (preferred), otherwise infer from
@@ -157,9 +154,11 @@ def build_failure_report(result: ExecutionResult) -> FailureReport:
         command=result.command,
         exit_code=result.exit_code,
         failure_summary=result.failure_summary or summary,
-        test_failure_count=result.test_failure_count
-        if result.test_failure_count is not None
-        else test_failure_count,
+        test_failure_count=(
+            result.test_failure_count
+            if result.test_failure_count is not None
+            else test_failure_count
+        ),
         root_failure=result.root_failure or root_failure,
         diagnostic=diagnostic,
         evidence_path=result.stderr_path or result.stdout_path or None,
@@ -167,9 +166,7 @@ def build_failure_report(result: ExecutionResult) -> FailureReport:
     )
 
 
-def _infer_classification(
-    command: str, combined: str
-) -> FailureClassification:
+def _infer_classification(command: str, combined: str) -> FailureClassification:
     if is_pytest_command(command) or "pytest" in combined.lower():
         if is_import_failure(combined):
             return FailureClassification.IMPORT_FAILURE

@@ -162,7 +162,9 @@ def format_knowledge_report(index: KnowledgeIndex) -> str:
     if index.components:
         lines.append(_section("Components"))
         comp_headers = ["Name", "References"]
-        comp_rows = [[comp.name, str(len(comp.references))] for comp in index.components]
+        comp_rows = [
+            [comp.name, str(len(comp.references))] for comp in index.components
+        ]
         lines.append(_render_table(comp_headers, comp_rows))
         lines.append("")
 
@@ -186,11 +188,19 @@ def format_knowledge_report(index: KnowledgeIndex) -> str:
 
     # Footer
     lines.append(_TL + _H * (width - 2) + _TR)
-    total = (len(index.endpoints) + len(index.capabilities) + len(index.mappers) +
-             len(index.view_models) + len(index.workspaces) + len(index.components) +
-             len(index.graph_renderers) + len(index.verification_profiles) +
-             len(index.integrity_rules) + len(index.runtime_artifacts) +
-             len(index.documentation))
+    total = (
+        len(index.endpoints)
+        + len(index.capabilities)
+        + len(index.mappers)
+        + len(index.view_models)
+        + len(index.workspaces)
+        + len(index.components)
+        + len(index.graph_renderers)
+        + len(index.verification_profiles)
+        + len(index.integrity_rules)
+        + len(index.runtime_artifacts)
+        + len(index.documentation)
+    )
     lines.append(
         _V
         + _pad(
@@ -229,7 +239,9 @@ def format_query_result(result: QueryResult | None) -> str:
     elif hasattr(entry, "name"):
         lines.append(f"ID: {entry.id if hasattr(entry, 'id') else entry.name}")
         lines.append(f"Name: {entry.name}")
-        lines.append(f"Category: {entry.category if hasattr(entry, 'category') else 'unknown'}")
+        lines.append(
+            f"Category: {entry.category if hasattr(entry, 'category') else 'unknown'}"
+        )
     lines.append("")
 
     # Ownership
@@ -344,7 +356,14 @@ def format_relationship_chains(chains: list[RelationshipChain]) -> str:
         lines.append(_TL + _H * (width - 2) + _TR)
         return "\n".join(lines)
 
-    headers = ["Source", "Source Type", "Target", "Target Type", "Relationship", "Depth"]
+    headers = [
+        "Source",
+        "Source Type",
+        "Target",
+        "Target Type",
+        "Relationship",
+        "Depth",
+    ]
     rows = [
         [
             c.source,
@@ -381,31 +400,20 @@ def _render_table(headers: list[str], rows: list[list[Any]]) -> str:
             reduce = min(overflow // len(col_widths) + 1, max_width - 10)
             col_widths = [max(10, w - reduce) for w in col_widths]
 
-    header_line = (
-        _TL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _TR
-    )
+    header_line = _TL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _TR
     result: list[str] = [header_line]
 
-    header_cells = [
-        _pad(_truncate(h, w), w) for h, w in zip(headers, col_widths)
-    ]
+    header_cells = [_pad(_truncate(h, w), w) for h, w in zip(headers, col_widths)]
     result.append(_V + " " + " ".join(header_cells) + " " + _V)
 
-    sep = (
-        _LR + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _CR
-    )
+    sep = _LR + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _CR
     result.append(sep)
 
     for row in rows:
-        cells = [
-            _pad(_truncate(str(c), w), w)
-            for c, w in zip(row, col_widths)
-        ]
+        cells = [_pad(_truncate(str(c), w), w) for c, w in zip(row, col_widths)]
         result.append(_V + " " + " ".join(cells) + " " + _V)
 
-    footer_line = (
-        _BL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _BR
-    )
+    footer_line = _BL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _BR
     result.append(footer_line)
     return "\n".join(result)
 

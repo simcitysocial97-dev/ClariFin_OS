@@ -172,7 +172,11 @@ class EvidenceSummary:
             for engine, data in mut.items():
                 score = data.get("score_pct", 0.0)
                 status = data.get("status", "unknown")
-                emoji = "🟢" if status == "pass" else "🔴" if status == "below_target" else "🟡"
+                emoji = (
+                    "🟢"
+                    if status == "pass"
+                    else "🔴" if status == "below_target" else "🟡"
+                )
                 lines.append(f"| {engine} | {score}% | {emoji} {status} |")
             lines.append("")
 
@@ -254,9 +258,7 @@ class EvidenceAggregator:
         agg = cls(path.parent.parent if path.is_file() else path)
         return agg.aggregate(path)
 
-    def aggregate(
-        self, evidence_dir: Path
-    ) -> EvidenceSummary:
+    def aggregate(self, evidence_dir: Path) -> EvidenceSummary:
         coverage_evidence, coverage_collected = self._collect_coverage(evidence_dir)
         mutation_evidence = self._collect_mutation(evidence_dir)
         test_evidence = self._collect_test_results(evidence_dir)
@@ -311,14 +313,26 @@ class EvidenceAggregator:
                 "status": status,
             }
 
-        backend["mutation"] = backend_mutation if backend_mutation else {
-            "overall": {
-                "score_pct": mutation_evidence.score_pct,
-                "killed": mutation_evidence.killed,
-                "survived": mutation_evidence.survived,
-                "status": "not_run" if mutation_evidence.killed + mutation_evidence.survived == 0 else ("pass" if mutation_evidence.score_pct >= 60.0 else "below_target"),
+        backend["mutation"] = (
+            backend_mutation
+            if backend_mutation
+            else {
+                "overall": {
+                    "score_pct": mutation_evidence.score_pct,
+                    "killed": mutation_evidence.killed,
+                    "survived": mutation_evidence.survived,
+                    "status": (
+                        "not_run"
+                        if mutation_evidence.killed + mutation_evidence.survived == 0
+                        else (
+                            "pass"
+                            if mutation_evidence.score_pct >= 60.0
+                            else "below_target"
+                        )
+                    ),
+                }
             }
-        }
+        )
 
         attention = self._build_attention(backend, mutation_evidence, unit_provenance)
 
@@ -351,9 +365,21 @@ class EvidenceAggregator:
         evidence_collected = (
             coverage_collected
             or (mutation_evidence.killed + mutation_evidence.survived > 0)
-            or (test_evidence.passed + test_evidence.failed + test_evidence.error + test_evidence.skipped > 0)
+            or (
+                test_evidence.passed
+                + test_evidence.failed
+                + test_evidence.error
+                + test_evidence.skipped
+                > 0
+            )
             or (contract_evidence.status != "not_run")
-            or (property_evidence.passed + property_evidence.failed + property_evidence.error + property_evidence.skipped > 0)
+            or (
+                property_evidence.passed
+                + property_evidence.failed
+                + property_evidence.error
+                + property_evidence.skipped
+                > 0
+            )
             or bool(frontend)
         )
 
@@ -633,7 +659,7 @@ class EvidenceAggregator:
 
     @staticmethod
     def _canonical_chain_map(
-        cross_map: dict[str, Any] | None
+        cross_map: dict[str, Any] | None,
     ) -> dict[str, dict[str, Any]] | None:
         """Return the canonical engine->chain projection, or None if unavailable."""
         try:
@@ -729,9 +755,7 @@ class EvidenceAggregator:
                         f"(exit={phase.get('exit_code')})"
                     ),
                     "provenance": frontend_entry.get("provenance", {}),
-                    "contributing_units": frontend_entry.get(
-                        "contributing_units", []
-                    ),
+                    "contributing_units": frontend_entry.get("contributing_units", []),
                 }
             )
 
@@ -781,9 +805,7 @@ class EvidenceAggregator:
                 return candidate
         return None
 
-    def _collect_coverage(
-        self, evidence_dir: Path
-    ) -> tuple[CoverageEvidence, bool]:
+    def _collect_coverage(self, evidence_dir: Path) -> tuple[CoverageEvidence, bool]:
         coverage_dir = evidence_dir / "coverage"
         if coverage_dir.exists():
             for json_file in coverage_dir.rglob("*.json"):
@@ -792,16 +814,18 @@ class EvidenceAggregator:
                     return collector.collect(json_file), True
 
         repo_cov_dir = evidence_dir / "backend" / "tests" / "generated"
-        for json_file in sorted((repo_cov_dir).rglob("coverage.json")) if repo_cov_dir.exists() else []:
+        for json_file in (
+            sorted((repo_cov_dir).rglob("coverage.json"))
+            if repo_cov_dir.exists()
+            else []
+        ):
             collector = CoverageCollector(self.workspace_root)
             return collector.collect(json_file), True
 
         collector = CoverageCollector(self.workspace_root)
         return collector.collect(), False
 
-    def _collect_mutation(
-        self, evidence_dir: Path
-    ) -> MutationEvidence:
+    def _collect_mutation(self, evidence_dir: Path) -> MutationEvidence:
         mutation_dir = evidence_dir / "mutation"
         if mutation_dir.exists():
             for txt_file in mutation_dir.glob("*-results.txt"):
@@ -811,9 +835,7 @@ class EvidenceAggregator:
         collector = MutationCollector(self.workspace_root)
         return collector.collect()
 
-    def _collect_test_results(
-        self, evidence_dir: Path
-    ) -> TestResultEvidence:
+    def _collect_test_results(self, evidence_dir: Path) -> TestResultEvidence:
         candidate_files = []
         test_dir = evidence_dir / "test-results"
         if test_dir.exists():
@@ -833,9 +855,7 @@ class EvidenceAggregator:
         collector = TestResultCollector(self.workspace_root)
         return collector.collect()
 
-    def _collect_property_tests(
-        self, evidence_dir: Path
-    ) -> TestResultEvidence:
+    def _collect_property_tests(self, evidence_dir: Path) -> TestResultEvidence:
         candidate_files = []
         repo_test_dir = evidence_dir / "backend" / "tests" / "generated"
         if repo_test_dir.exists():
@@ -856,9 +876,7 @@ class EvidenceAggregator:
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    def _collect_contract(
-        self, evidence_dir: Path
-    ) -> ContractEvidence:
+    def _collect_contract(self, evidence_dir: Path) -> ContractEvidence:
         contract_dir = evidence_dir / "contract"
         if contract_dir.exists():
             for json_file in contract_dir.rglob("*.json"):
@@ -875,9 +893,7 @@ class EvidenceAggregator:
             return "pass"
         return "unknown"
 
-    def _avg_engine_coverage(
-        self, evidence: CoverageEvidence
-    ) -> float:
+    def _avg_engine_coverage(self, evidence: CoverageEvidence) -> float:
         if not evidence.per_engine:
             return evidence.overall_pct
         vals = list(evidence.per_engine.values())
@@ -1016,7 +1032,13 @@ class EvidenceAggregator:
             # For DTO changes, this is usually the schema layer
             suggested_layer = None
             if capabilities:
-                cap_name = capabilities[0].lower().replace("use", "").replace("capability", "").strip()
+                cap_name = (
+                    capabilities[0]
+                    .lower()
+                    .replace("use", "")
+                    .replace("capability", "")
+                    .strip()
+                )
                 suggested_layer = f"frontend/lib/schemas/{cap_name}s.ts"
 
             return {
@@ -1030,6 +1052,7 @@ class EvidenceAggregator:
 
     def _get_git_ref(self, ref: str) -> str:
         import subprocess
+
         try:
             result = subprocess.run(
                 ["git", "rev-parse", ref],
@@ -1046,6 +1069,7 @@ class EvidenceAggregator:
         if gh_ref:
             return gh_ref
         import subprocess
+
         try:
             result = subprocess.run(
                 ["git", "rev-parse", "--abbrev-ref", "HEAD"],

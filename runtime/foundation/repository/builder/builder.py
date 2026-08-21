@@ -101,8 +101,7 @@ class RepositoryBuilder:
 
         node_ids = {n.id for n in self.graph.nodes}
         self.graph.edges = [
-            e for e in self.graph.edges
-            if e.source in node_ids and e.target in node_ids
+            e for e in self.graph.edges if e.source in node_ids and e.target in node_ids
         ]
 
         # Assign ownership to all nodes (Phase 2.1)

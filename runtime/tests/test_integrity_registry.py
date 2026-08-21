@@ -93,7 +93,9 @@ class TestConstitutionalRegistry:
 
     def test_critical_rules_exist(self) -> None:
         registry = get_constitution()
-        critical = [r for r in registry.all_rules() if r.severity == ViolationSeverity.CRITICAL]
+        critical = [
+            r for r in registry.all_rules() if r.severity == ViolationSeverity.CRITICAL
+        ]
         assert len(critical) >= 1
         assert any(r.id == "ARCH-009" for r in critical)
 
@@ -107,6 +109,6 @@ class TestConstitutionalRegistry:
 
         registry = get_constitution()
         for rule in registry.all_rules():
-            assert rule.id in _RULE_CHECKS, (
-                f"Missing check function for {rule.id}: {rule.check}"
-            )
+            assert (
+                rule.id in _RULE_CHECKS
+            ), f"Missing check function for {rule.id}: {rule.check}"

@@ -37,7 +37,6 @@ from runtime.foundation.verification.models import (
     VerificationTarget,
 )
 
-
 # C11 provenance shape, as emitted by VerificationUnit.to_dict()["provenance"].
 C11_PROVENANCE = {
     "capabilities": ["capability:useLoansCapability"],
@@ -188,7 +187,9 @@ class TestImmutabilityPreserved:
         the assignment does not succeed.
         """
         instance = factory()
-        with pytest.raises((AttributeError, TypeError, dataclasses.FrozenInstanceError)):
+        with pytest.raises(
+            (AttributeError, TypeError, dataclasses.FrozenInstanceError)
+        ):
             instance.unit_ID = "typo"
         assert not hasattr(instance, "unit_ID")
 

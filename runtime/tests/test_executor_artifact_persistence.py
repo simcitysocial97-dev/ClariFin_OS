@@ -24,7 +24,9 @@ def executor(tmp_path: Path) -> Executor:
 class TestExecutorArtifactPersistence:
     """Test A — successful command."""
 
-    def test_success_persists_stdout_and_stderr(self, executor: Executor, tmp_path: Path):
+    def test_success_persists_stdout_and_stderr(
+        self, executor: Executor, tmp_path: Path
+    ):
         result = executor.execute(
             "printf 'known stdout' >&1; echo 'known stderr' >&2",
             task_id="test-a-success",
@@ -52,11 +54,10 @@ class TestExecutorArtifactPersistence:
         # The durable file must exist; there should be no leftover temp files with
         # the original random suffix pattern (verify-{prefix}-*.txt).
         import glob
+
         leftovers = glob.glob(
             str(executor._results_dir / "verify-stdout-*.txt")
-        ) + glob.glob(
-            str(executor._results_dir / "verify-stderr-*.txt")
-        )
+        ) + glob.glob(str(executor._results_dir / "verify-stderr-*.txt"))
         assert leftovers == [], f"Temp files were not cleaned up: {leftovers}"
 
 
@@ -107,7 +108,5 @@ class TestExecutorEmptyStderr:
         passed = executor.execute("echo ok", task_id="test-c-none")
         assert passed.error is None
 
-        failed_empty = executor.execute(
-            "printf out; exit 1", task_id="test-c-empty"
-        )
+        failed_empty = executor.execute("printf out; exit 1", task_id="test-c-empty")
         assert failed_empty.error == ""

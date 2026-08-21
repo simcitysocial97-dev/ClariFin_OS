@@ -89,7 +89,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "fail",
                 "critical",
                 f"Pipeline has {metrics['pipeline_stages_failed']} failing stages out of {metrics['pipeline_stages']} total",
-                {"failed_stages": metrics["pipeline_stages_failed"], "total_stages": metrics["pipeline_stages"]},
+                {
+                    "failed_stages": metrics["pipeline_stages_failed"],
+                    "total_stages": metrics["pipeline_stages"],
+                },
                 "Investigate and fix failing pipeline stages",
             )
         )
@@ -102,7 +105,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "pass",
                 "info",
                 f"All {metrics['pipeline_stages']} pipeline stages passed successfully",
-                {"total_stages": metrics["pipeline_stages"], "total_duration": metrics["pipeline_total_duration_seconds"]},
+                {
+                    "total_stages": metrics["pipeline_stages"],
+                    "total_duration": metrics["pipeline_total_duration_seconds"],
+                },
                 "Continue monitoring pipeline execution",
             )
         )
@@ -120,9 +126,7 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     }
 
 
-def _execute_stage(
-    stage_id: str, stage_name: str, repo_root: Path
-) -> dict[str, Any]:
+def _execute_stage(stage_id: str, stage_name: str, repo_root: Path) -> dict[str, Any]:
     findings: list[dict[str, Any]] = []
 
     check_map = {
@@ -213,11 +217,7 @@ def _stage_git_change(repo_root: Path) -> dict[str, Any]:
                 cwd=str(repo_root),
                 timeout=10,
             )
-            changed_files = [
-                f.strip()
-                for f in result.stdout.splitlines()
-                if f.strip()
-            ]
+            changed_files = [f.strip() for f in result.stdout.splitlines() if f.strip()]
             metrics["changed_files_count"] = len(changed_files)
             metrics["changed_files"] = changed_files[:10]
         except Exception:

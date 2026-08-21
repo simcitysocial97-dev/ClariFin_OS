@@ -34,16 +34,26 @@ DOMAIN_CAP = {v: k for k, v in CAP_DOMAIN.items()}
 
 # app/<dir> -> domain key used by capabilities
 APP_DIR_DOMAIN = {
-    "accounts": "accounts", "behaviour": "behaviour", "cashflow": "cashflow",
-    "cards": "credit-cards", "forecast": "forecast", "investments": "investments",
-    "loans": "loans", "net-worth": "net-worth", "reconciliation": "reconciliation",
-    "transactions": "transactions", "dashboard": "dashboard", "settings": "settings",
+    "accounts": "accounts",
+    "behaviour": "behaviour",
+    "cashflow": "cashflow",
+    "cards": "credit-cards",
+    "forecast": "forecast",
+    "investments": "investments",
+    "loans": "loans",
+    "net-worth": "net-worth",
+    "reconciliation": "reconciliation",
+    "transactions": "transactions",
+    "dashboard": "dashboard",
+    "settings": "settings",
     "command-center": "command-center",
 }
 
 
 def load_topology():
-    return json.loads((REPO / "runtime" / "generated" / "engine-topology.json").read_text())
+    return json.loads(
+        (REPO / "runtime" / "generated" / "engine-topology.json").read_text()
+    )
 
 
 def discover_frontend():
@@ -52,8 +62,11 @@ def discover_frontend():
     for p in (FRONTEND / "lib" / "capabilities").rglob("use-*.ts"):
         name = p.stem  # use-accounts-capability
         if name in CAP_DOMAIN:
-            caps[CAP_DOMAIN[name]] = {"capability": f"lib/capabilities/{p.name}",
-                                      "workspace": None, "mapper": None}
+            caps[CAP_DOMAIN[name]] = {
+                "capability": f"lib/capabilities/{p.name}",
+                "workspace": None,
+                "mapper": None,
+            }
     # workspaces
     for d in (FRONTEND / "app").iterdir():
         if d.is_dir() and d.name in APP_DIR_DOMAIN:
@@ -67,12 +80,20 @@ def discover_frontend():
     for p in (FRONTEND / "lib" / "mappers").glob("*-mapper.ts"):
         stem = p.stem.replace("-mapper", "")
         # map credit-cards -> credit-cards domain; accounts -> accounts
-        dom = stem.replace("creditcards", "credit-cards").replace("credit_cards", "credit-cards")
+        dom = stem.replace("creditcards", "credit-cards").replace(
+            "credit_cards", "credit-cards"
+        )
         # normalize: behaviour mapper etc.
         dom_norm = {
-            "accounts": "accounts", "behaviour": "behaviour", "cashflow": "cashflow",
-            "credit-cards": "credit-cards", "forecast": "forecast", "investments": "investments",
-            "loans": "loans", "networth": "net-worth", "reconciliation": "reconciliation",
+            "accounts": "accounts",
+            "behaviour": "behaviour",
+            "cashflow": "cashflow",
+            "credit-cards": "credit-cards",
+            "forecast": "forecast",
+            "investments": "investments",
+            "loans": "loans",
+            "networth": "net-worth",
+            "reconciliation": "reconciliation",
             "transaction": "transactions",
         }.get(dom)
         if dom_norm and dom_norm in caps:
@@ -90,8 +111,15 @@ def build():
         nodes[nid] = {"id": nid, "type": ntype, "label": label}
 
     def edge(frm, to, evidence, layer):
-        edges.append({"from": frm, "to": to, "relation": "owns",
-                      "evidence": evidence, "layer": layer})
+        edges.append(
+            {
+                "from": frm,
+                "to": to,
+                "relation": "owns",
+                "evidence": evidence,
+                "layer": layer,
+            }
+        )
 
     # ---------- FRONTEND OWNERSHIP ----------
     for dom, info in fe.items():
@@ -101,21 +129,30 @@ def build():
         if info["workspace"]:
             ws_id = f"workspace:{dom}"
             node(ws_id, "Workspace", info["workspace"])
-            edge(cap_id, ws_id,
-                 f"{info['workspace']} imports {info['capability']} (use-{dom}-capability)",
-                 "frontend")
+            edge(
+                cap_id,
+                ws_id,
+                f"{info['workspace']} imports {info['capability']} (use-{dom}-capability)",
+                "frontend",
+            )
         if info["mapper"]:
             mp_id = f"mapper:{dom}"
             node(mp_id, "Mapper", info["mapper"])
-            edge(cap_id, mp_id,
-                 f"capability {cap} consumes {info['mapper']} to map DTO->view model",
-                 "frontend")
+            edge(
+                cap_id,
+                mp_id,
+                f"capability {cap} consumes {info['mapper']} to map DTO->view model",
+                "frontend",
+            )
         # shared ViewModel (app store)
         vm_id = "viewmodel:use-app-store"
         node(vm_id, "ViewModel", "lib/store/use-app-store.ts")
-        edge(cap_id, vm_id,
-             f"workspace for {dom} binds global app store (use-app-store.ts) as its view model",
-             "frontend")
+        edge(
+            cap_id,
+            vm_id,
+            f"workspace for {dom} binds global app store (use-app-store.ts) as its view model",
+            "frontend",
+        )
 
     # ---------- BACKEND OWNERSHIP (per engine) ----------
     # capability -> engine(s)
@@ -128,20 +165,32 @@ def build():
         eng_id = f"engine:{ename}"
         node(eng_id, "Engine", ename)
         node(eng_id + ":entry", "EngineEntryPoint", e["public_entry_point"])
-        edge(eng_id, eng_id + ":entry",
-             f"public_entry_point = {e['public_entry_point']} (canonical_style={e['canonical_style']})",
-             "backend")
+        edge(
+            eng_id,
+            eng_id + ":entry",
+            f"public_entry_point = {e['public_entry_point']} (canonical_style={e['canonical_style']})",
+            "backend",
+        )
         # engine -> implementation modules
         for m in e["implementation_modules"]:
             mid = f"module:{m}"
             node(mid, "EngineModule", m)
-            edge(eng_id, mid,
-                 f"{e['public_entry_point']} re-exports symbols from {m}", "backend")
+            edge(
+                eng_id,
+                mid,
+                f"{e['public_entry_point']} re-exports symbols from {m}",
+                "backend",
+            )
         # engine -> services -> routers -> repositories
         for svc in e["services"]:
             sid = f"service:{svc}"
             node(sid, "Service", svc)
-            edge(sid, eng_id, f"{svc} imports engines.{ename} (see importer_files)", "backend")
+            edge(
+                sid,
+                eng_id,
+                f"{svc} imports engines.{ename} (see importer_files)",
+                "backend",
+            )
         for rtr in e["routers"]:
             rid = f"router:{rtr}"
             node(rid, "Router", rtr)
@@ -156,8 +205,12 @@ def build():
             # service -> repository
             for svc in e["services"]:
                 if service_imports_repo(svc, repo):
-                    edge(f"service:{svc}", repid,
-                         f"{svc} imports repositories.{repo}", "backend")
+                    edge(
+                        f"service:{svc}",
+                        repid,
+                        f"{svc} imports repositories.{repo}",
+                        "backend",
+                    )
         # engine -> tests
         for t in e["tests"]:
             tid = f"test:{t}"
@@ -173,9 +226,12 @@ def build():
     for cap, engines in cap_to_engines.items():
         cap_id = f"capability:{cap}"
         for ename in engines:
-            edge(cap_id, f"engine:{ename}",
-                 f"capability {cap} is backed by engine {ename} (engine.capabilities includes {cap})",
-                 "cross")
+            edge(
+                cap_id,
+                f"engine:{ename}",
+                f"capability {cap} is backed by engine {ename} (engine.capabilities includes {cap})",
+                "cross",
+            )
 
     # ---------- ownership trees (per capability) ----------
     trees = {}
@@ -184,21 +240,33 @@ def build():
         cap_id = f"capability:{cap}"
         tree = {"capability": cap, "owns": []}
         if dom in fe and fe[dom]["workspace"]:
-            tree["owns"].append({"node": f"workspace:{dom}", "type": "Workspace",
-                                 "owns": [{"node": "viewmodel:use-app-store", "type": "ViewModel"},
-                                          {"node": f"mapper:{dom}", "type": "Mapper"}]})
+            tree["owns"].append(
+                {
+                    "node": f"workspace:{dom}",
+                    "type": "Workspace",
+                    "owns": [
+                        {"node": "viewmodel:use-app-store", "type": "ViewModel"},
+                        {"node": f"mapper:{dom}", "type": "Mapper"},
+                    ],
+                }
+            )
         for ename in sorted(cap_to_engines.get(cap, [])):
             e = topo["engines"][ename]
-            tree["owns"].append({
-                "node": f"engine:{ename}", "type": "Engine",
-                "owns": [
-                    {"node": f"service:{s}", "type": "Service"} for s in e["services"]
-                ] + [
-                    {"node": f"router:{r}", "type": "Router"} for r in e["routers"]
-                ] + [
-                    {"node": f"repository:{r}", "type": "Repository"} for r in e["repositories"]
-                ],
-            })
+            tree["owns"].append(
+                {
+                    "node": f"engine:{ename}",
+                    "type": "Engine",
+                    "owns": [
+                        {"node": f"service:{s}", "type": "Service"}
+                        for s in e["services"]
+                    ]
+                    + [{"node": f"router:{r}", "type": "Router"} for r in e["routers"]]
+                    + [
+                        {"node": f"repository:{r}", "type": "Repository"}
+                        for r in e["repositories"]
+                    ],
+                }
+            )
         trees[cap] = tree
 
     out = {
@@ -219,7 +287,9 @@ def build():
             "they are internal/sub engines consumed by other engines or services.",
         ],
     }
-    (REPO / "runtime" / "generated" / "ownership-graph.json").write_text(json.dumps(out, indent=2))
+    (REPO / "runtime" / "generated" / "ownership-graph.json").write_text(
+        json.dumps(out, indent=2)
+    )
     print(f"Ownership graph: {len(nodes)} nodes, {len(edges)} edges")
     print(f"Capabilities with ownership trees: {len(trees)}")
 
@@ -230,7 +300,10 @@ def router_imports_service(router_rel, svc_rel):
         return False
     text = f.read_text(encoding="utf-8", errors="ignore")
     svc_base = svc_rel.split("/")[-1].replace(".py", "")
-    cls = "".join(w.capitalize() for w in svc_base.replace("_service", "").split("_")) + "Service"
+    cls = (
+        "".join(w.capitalize() for w in svc_base.replace("_service", "").split("_"))
+        + "Service"
+    )
     return (f"services.{svc_base}" in text) or (cls in text)
 
 

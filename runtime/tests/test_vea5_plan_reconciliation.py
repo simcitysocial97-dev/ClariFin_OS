@@ -125,9 +125,7 @@ def test_reconcile_environment_divergence():
     ci_res = {
         "backend-unit": UnitExecution("backend-unit", "fail", 1),
     }
-    report = reconcile(
-        local, ci, local_results=local_res, ci_results=ci_res
-    )
+    report = reconcile(local, ci, local_results=local_res, ci_results=ci_res)
     assert (
         report.classification.status
         == ReconciliationStatus.ENVIRONMENT_DIVERGENCE.value
@@ -143,8 +141,7 @@ def test_reconcile_planning_divergence_on_changed_files():
     ci = plan_for_tier("local", changed_files=["frontend/src/App.tsx"])
     report = reconcile(local, ci)
     assert (
-        report.classification.status
-        == ReconciliationStatus.PLANNING_DIVERGENCE.value
+        report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
     )
     assert report.classification.planning_diverges is True
 
@@ -180,8 +177,7 @@ def test_reconcile_planning_divergence_unexplained_unit_change():
     )
     report = reconcile(local, mutated)
     assert (
-        report.classification.status
-        == ReconciliationStatus.PLANNING_DIVERGENCE.value
+        report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
     )
     assert "backend-unit" in report.classification.diverging_units
 

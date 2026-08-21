@@ -303,9 +303,7 @@ def attribute_failures(
             )
         )
 
-    return AttributionReport(
-        attributions=tuple(results), blast_radius_paths=radius
-    )
+    return AttributionReport(attributions=tuple(results), blast_radius_paths=radius)
 
 
 def build_observed_failures(

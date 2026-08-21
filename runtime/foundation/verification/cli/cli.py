@@ -377,8 +377,12 @@ def print_plan_table(plan: VerificationPlan) -> None:
 
 @cli.command(name="backend")
 @click.option("--deep", is_flag=True, help="Run full verification by triggering CI")
-@click.option("--affected", is_flag=True, help="Run only for changed files since last commit")
-@click.option("--plan", is_flag=True, help="Show verification plan without running tests")
+@click.option(
+    "--affected", is_flag=True, help="Run only for changed files since last commit"
+)
+@click.option(
+    "--plan", is_flag=True, help="Show verification plan without running tests"
+)
 def backend_cli_cmd(
     deep: bool,
     affected: bool,
@@ -407,26 +411,42 @@ def backend_cli_cmd(
         click.echo(f"Verification Plan: {verification_plan.plan_id}")
         click.echo(f"Changed files: {len(verification_plan.changed_files)}")
         click.echo(f"Blast radius: {verification_plan.impact.blast_radius}")
-        click.echo(f"Affected engines: {', '.join(verification_plan.impact.engines) or 'none'}")
-        click.echo(f"Affected services: {', '.join(verification_plan.impact.services) or 'none'}")
-        click.echo(f"Affected routers: {', '.join(verification_plan.impact.routers) or 'none'}")
+        click.echo(
+            f"Affected engines: {', '.join(verification_plan.impact.engines) or 'none'}"
+        )
+        click.echo(
+            f"Affected services: {', '.join(verification_plan.impact.services) or 'none'}"
+        )
+        click.echo(
+            f"Affected routers: {', '.join(verification_plan.impact.routers) or 'none'}"
+        )
         click.echo()
         click.echo("What will run:")
-        click.echo(f"  Unit tests: {'YES' if verification_plan.unit_tests.run else 'no'}")
+        click.echo(
+            f"  Unit tests: {'YES' if verification_plan.unit_tests.run else 'no'}"
+        )
         if verification_plan.unit_tests.run:
             for p in verification_plan.unit_tests.paths:
                 click.echo(f"    - {p}")
-        click.echo(f"  Property tests: {'YES' if verification_plan.property_tests.run else 'no'}")
+        click.echo(
+            f"  Property tests: {'YES' if verification_plan.property_tests.run else 'no'}"
+        )
         if verification_plan.property_tests.run:
             for p in verification_plan.property_tests.paths:
                 click.echo(f"    - {p}")
-        click.echo(f"  Contract tests: {'YES' if verification_plan.contract_tests.run else 'no'}")
+        click.echo(
+            f"  Contract tests: {'YES' if verification_plan.contract_tests.run else 'no'}"
+        )
         click.echo(f"  Mutation: {'YES' if verification_plan.mutation.run else 'no'}")
         if verification_plan.mutation.run:
             for t in verification_plan.mutation.targets:
                 click.echo(f"    - {t}")
-        click.echo(f"  Integration tests: {'YES' if verification_plan.integration_tests.run else 'no'}")
-        click.echo(f"  Golden tests: {'YES' if verification_plan.golden_tests.run else 'no'}")
+        click.echo(
+            f"  Integration tests: {'YES' if verification_plan.integration_tests.run else 'no'}"
+        )
+        click.echo(
+            f"  Golden tests: {'YES' if verification_plan.golden_tests.run else 'no'}"
+        )
         return
 
     if deep:
@@ -532,7 +552,15 @@ def evidence_cli():
         shutil.rmtree(dl_dir)
 
     dl_result = subprocess.run(
-        ["gh", "run", "download", "--name", "evidence-summary*", "--dir", "evidence-download/"],
+        [
+            "gh",
+            "run",
+            "download",
+            "--name",
+            "evidence-summary*",
+            "--dir",
+            "evidence-download/",
+        ],
         capture_output=True,
         text=True,
         cwd=str(repo_root),
@@ -549,7 +577,14 @@ def evidence_cli():
             if runs:
                 run_id = runs[0]["databaseId"]
                 subprocess.run(
-                    ["gh", "run", "download", str(run_id), "--dir", "evidence-download/"],
+                    [
+                        "gh",
+                        "run",
+                        "download",
+                        str(run_id),
+                        "--dir",
+                        "evidence-download/",
+                    ],
                     cwd=str(repo_root),
                 )
 
@@ -575,10 +610,14 @@ def evidence_cli():
 
     backend = summary.get("backend", {})
     ut = backend.get("unit_tests", {})
-    click.echo(f"Unit Tests: {ut.get('status', 'N/A')} (passed={ut.get('passed', 0)}, failed={ut.get('failed', 0)})")
+    click.echo(
+        f"Unit Tests: {ut.get('status', 'N/A')} (passed={ut.get('passed', 0)}, failed={ut.get('failed', 0)})"
+    )
 
     cov = backend.get("coverage", {})
-    click.echo(f"Coverage: {cov.get('overall_pct', 0):.1f}% overall, {cov.get('engines_pct', 0):.1f}% engines")
+    click.echo(
+        f"Coverage: {cov.get('overall_pct', 0):.1f}% overall, {cov.get('engines_pct', 0):.1f}% engines"
+    )
 
     mut = backend.get("mutation", {})
     for engine, data in mut.items():
@@ -590,7 +629,9 @@ def evidence_cli():
     if attention:
         click.echo("\nAttention needed:")
         for item in attention:
-            click.echo(f"  - {item.get('type', 'unknown')}: {item.get('details', item.get('action', ''))}")
+            click.echo(
+                f"  - {item.get('type', 'unknown')}: {item.get('details', item.get('action', ''))}"
+            )
     else:
         click.echo("\nNo issues found.")
 
@@ -657,6 +698,7 @@ def _get_repo_url() -> str:
             url = url.replace(":", "/", 1).replace("git@", "https://")
         return url
     return "github.com/unknown/repo"
+
 
 if __name__ == "__main__":
     cli()

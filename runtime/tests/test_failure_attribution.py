@@ -92,12 +92,12 @@ def test_real_frontend_failures_are_attributed_outside_blast_radius():
 def test_failure_inside_blast_radius_implicates_the_change():
     """The inverse case must still work, or attribution would be useless."""
     _, blast, plan = _specimen()
-    radius = report_paths = attribute_failures(blast, [], plan.selected).blast_radius_paths
+    radius = report_paths = attribute_failures(
+        blast, [], plan.selected
+    ).blast_radius_paths
     assert radius, "loan engine change must produce a non-empty blast radius"
 
-    frontend_entity = next(
-        (p for p in report_paths if p.startswith("frontend/")), None
-    )
+    frontend_entity = next((p for p in report_paths if p.startswith("frontend/")), None)
     assert frontend_entity, "specimen must predict at least one frontend entity"
 
     report = attribute_failures(
@@ -199,7 +199,9 @@ def test_clusters_compress_cascades():
         f"{OUTSIDE_BLAST_RADIUS}:build",
         f"{OUTSIDE_BLAST_RADIUS}:lint",
     }
-    assert len(clusters[f"{OUTSIDE_BLAST_RADIUS}:build"]) == len(ACTUAL_FRONTEND_FAILURES)
+    assert len(clusters[f"{OUTSIDE_BLAST_RADIUS}:build"]) == len(
+        ACTUAL_FRONTEND_FAILURES
+    )
 
 
 def test_path_normalisation_does_not_create_false_negatives():

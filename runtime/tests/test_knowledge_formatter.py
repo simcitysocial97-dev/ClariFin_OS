@@ -35,6 +35,7 @@ class TestKnowledgeFormatter:
     def test_format_query_result_contains_result_header(self) -> None:
         index = build_index()
         from runtime.foundation.knowledge.query import query_endpoint
+
         result = query_endpoint("/api/loans/{loan_id}/schedule")
         if result:
             output = format_query_result(result)
@@ -51,6 +52,7 @@ class TestKnowledgeFormatterUnicode:
 
     def test_format_query_result_is_string(self) -> None:
         from runtime.foundation.knowledge.query import query_endpoint
+
         result = query_endpoint("/api/loans/{loan_id}/schedule")
         if result:
             output = format_query_result(result)
@@ -73,6 +75,7 @@ class TestKnowledgeFormatterStructure:
 
     def test_query_result_has_ownership_section(self) -> None:
         from runtime.foundation.knowledge.query import query_endpoint
+
         result = query_endpoint("/api/loans/{loan_id}/schedule")
         if result:
             output = format_query_result(result)
@@ -80,6 +83,7 @@ class TestKnowledgeFormatterStructure:
 
     def test_query_result_has_dependencies_section(self) -> None:
         from runtime.foundation.knowledge.query import query_endpoint
+
         result = query_endpoint("/api/loans/{loan_id}/schedule")
         if result:
             output = format_query_result(result)

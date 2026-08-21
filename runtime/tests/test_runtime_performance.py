@@ -18,7 +18,6 @@ from runtime.foundation.verification.planner import CrossLayerImpactPlanner
 from runtime.foundation.verification.orchestrator import VerificationOrchestrator
 from runtime.system.evidence.aggregator import EvidenceAggregator
 
-
 MAP_DATA = {
     "backend/src/engines/loan_engine/amortization.py": {
         "engine": "backend/src/engines/loan_engine/amortization.py",
@@ -69,12 +68,16 @@ def _make_steps(plan):
 
 def _make_mock_results(plan):
     return [
-        type("R", (), {
-            "task_id": s.id,
-            "command": s.command or "no-op",
-            "status": VerificationStatus.SKIPPED,
-            "duration_seconds": 0.0,
-        })()
+        type(
+            "R",
+            (),
+            {
+                "task_id": s.id,
+                "command": s.command or "no-op",
+                "status": VerificationStatus.SKIPPED,
+                "duration_seconds": 0.0,
+            },
+        )()
         for s in plan.steps
     ]
 
@@ -95,27 +98,37 @@ class TestRuntimePerformance:
 
     def test_orchestrator_planning_performance(self, tmp_path: Path):
         orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-        orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+        orchestrator._changed_files = [
+            "backend/src/engines/loan_engine/amortization.py"
+        ]
 
         start = time.perf_counter()
         orchestrator.generate_plan(scope=VerificationScope.BACKEND)
         orchestrator_ms = (time.perf_counter() - start) * 1000
 
-        assert orchestrator_ms < 1000, f"Orchestrator planning took {orchestrator_ms:.1f}ms"
+        assert (
+            orchestrator_ms < 1000
+        ), f"Orchestrator planning took {orchestrator_ms:.1f}ms"
 
     def test_report_generation_performance(self, tmp_path: Path):
-        with patch(
-            "runtime.foundation.verification.orchestrator._find_repo_root",
-            return_value=tmp_path,
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
-            tmp_path / "verification-report.md",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
-            tmp_path / "verification-cache.json",
+        with (
+            patch(
+                "runtime.foundation.verification.orchestrator._find_repo_root",
+                return_value=tmp_path,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
+                tmp_path / "verification-report.md",
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
+                tmp_path / "verification-cache.json",
+            ),
         ):
             orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-            orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator._changed_files = [
+                "backend/src/engines/loan_engine/amortization.py"
+            ]
             plan = orchestrator.generate_plan(scope=VerificationScope.BACKEND)
             plan = dataclasses.replace(plan, steps=_make_steps(plan))
             orchestrator._plan = plan
@@ -154,18 +167,24 @@ class TestRuntimePerformance:
         )
         planner_ms = (time.perf_counter() - start) * 1000
 
-        with patch(
-            "runtime.foundation.verification.orchestrator._find_repo_root",
-            return_value=tmp_path,
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
-            tmp_path / "verification-report.md",
-        ), patch(
-            "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
-            tmp_path / "verification-cache.json",
+        with (
+            patch(
+                "runtime.foundation.verification.orchestrator._find_repo_root",
+                return_value=tmp_path,
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_REPORT_PATH",
+                tmp_path / "verification-report.md",
+            ),
+            patch(
+                "runtime.foundation.verification.orchestrator.VERIFICATION_CACHE_PATH",
+                tmp_path / "verification-cache.json",
+            ),
         ):
             orchestrator = VerificationOrchestrator(repo_root=tmp_path)
-            orchestrator._changed_files = ["backend/src/engines/loan_engine/amortization.py"]
+            orchestrator._changed_files = [
+                "backend/src/engines/loan_engine/amortization.py"
+            ]
             start = time.perf_counter()
             plan = orchestrator.generate_plan(scope=VerificationScope.BACKEND)
             orchestrator_ms = (time.perf_counter() - start) * 1000

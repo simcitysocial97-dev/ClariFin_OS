@@ -133,9 +133,12 @@ def _baseline_seconds(profile_name: str = "full") -> int:
 
 def optimize_verification(
     blast: BlastRadius,
-    resolver: Any | None = None,  # noqa: ARG001 - kept for API symmetry with other phases
+    resolver: (
+        Any | None
+    ) = None,  # noqa: ARG001 - kept for API symmetry with other phases
 ) -> VerificationPlanIntel:
     """Derive the smallest evidence-justified verification plan."""
+
     def impacted(*kind_names: str) -> list[str]:
         out: list[str] = []
         for node in blast.all_impacted:
@@ -243,23 +246,26 @@ def optimize_verification(
 
     # --- Backend unit tests: any backend entity kind ----------------------
     backend_kinds = (
-        "engine", "engine_module", "service", "router", "dto", "mapper",
-        "model", "repository",
+        "engine",
+        "engine_module",
+        "service",
+        "router",
+        "dto",
+        "mapper",
+        "model",
+        "repository",
     )
     backend_direct = [
         n.ref.ref
         for n in blast.direct
-        if n.ref.kind in backend_kinds or (n.ref.kind == "entity" and n.ref.path.startswith("backend/"))
+        if n.ref.kind in backend_kinds
+        or (n.ref.kind == "entity" and n.ref.path.startswith("backend/"))
     ]
     backend_direct += [
-        n.ref.ref
-        for n in blast.all_impacted
-        if n.ref.kind in backend_kinds
+        n.ref.ref for n in blast.all_impacted if n.ref.kind in backend_kinds
     ]
     backend_files = [
-        n.ref.path
-        for n in blast.all_impacted
-        if n.ref.path.startswith("backend/")
+        n.ref.path for n in blast.all_impacted if n.ref.path.startswith("backend/")
     ]
     if backend_files:
         selected.append(
@@ -276,7 +282,13 @@ def optimize_verification(
                 estimated_seconds=120,
                 capabilities=all_capabilities,
                 impact_kinds=tuple(
-                    sorted(set(n.ref.kind for n in blast.all_impacted if n.ref.kind in backend_kinds))
+                    sorted(
+                        set(
+                            n.ref.kind
+                            for n in blast.all_impacted
+                            if n.ref.kind in backend_kinds
+                        )
+                    )
                 ),
                 source=cross_source,
             )
@@ -294,9 +306,7 @@ def optimize_verification(
     # --- Frontend: capabilities/workspaces/components/view models --------
     frontend = impacted("capability", "workspace", "component", "view_model", "mapper")
     frontend_files = [
-        n.ref.ref
-        for n in blast.all_impacted
-        if n.ref.path.startswith("frontend/")
+        n.ref.ref for n in blast.all_impacted if n.ref.path.startswith("frontend/")
     ]
     # MAPLEY: mapper refs can be frontend-relative (e.g. lib/mappers/...)
     # Ensure frontend mapper impact is captured as a frontend path.
@@ -315,7 +325,13 @@ def optimize_verification(
                 evidence=tuple(sorted(set(frontend_files))[:20]),
                 estimated_seconds=120,
                 capabilities=all_capabilities,
-                impact_kinds=("capability", "workspace", "component", "view_model", "mapper"),
+                impact_kinds=(
+                    "capability",
+                    "workspace",
+                    "component",
+                    "view_model",
+                    "mapper",
+                ),
                 source=cross_source,
             )
         )
@@ -348,7 +364,13 @@ def optimize_verification(
                 evidence=tuple(frontend_files[:20]),
                 estimated_seconds=90,
                 capabilities=all_capabilities,
-                impact_kinds=("capability", "workspace", "component", "view_model", "mapper"),
+                impact_kinds=(
+                    "capability",
+                    "workspace",
+                    "component",
+                    "view_model",
+                    "mapper",
+                ),
                 source=cross_source,
             )
         )

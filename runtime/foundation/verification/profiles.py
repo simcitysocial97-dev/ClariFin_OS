@@ -110,7 +110,9 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-schemathesis",
         name="Schemathesis contract tests",
         profile="backend",
-        commands=["python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"],
+        commands=[
+            "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"
+        ],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=180,
@@ -119,7 +121,9 @@ _VERIFY_BACKEND_TASKS = (
         id="backend-aggregate",
         name="Aggregate evidence",
         profile="backend",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.BACKEND,
         estimated_duration_seconds=30,
@@ -167,7 +171,9 @@ _VERIFY_FRONTEND_TASKS = (
         id="frontend-aggregate",
         name="Aggregate evidence",
         profile="frontend",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FRONTEND,
         estimated_duration_seconds=30,
@@ -179,7 +185,9 @@ _VERIFY_CONTRACTS_TASKS = (
         id="contracts-schemathesis",
         name="Schemathesis contract validation",
         profile="contracts",
-        commands=["python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"],
+        commands=[
+            "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"
+        ],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.CONTRACTS,
         estimated_duration_seconds=180,
@@ -197,7 +205,9 @@ _VERIFY_CONTRACTS_TASKS = (
         id="contracts-aggregate",
         name="Aggregate contract evidence",
         profile="contracts",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.CONTRACTS,
         estimated_duration_seconds=30,
@@ -209,7 +219,9 @@ _VERIFY_GRAPH_TASKS = (
         id="graph-integrity",
         name="Graph integrity check",
         profile="graph",
-        commands=["python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'"],
+        commands=[
+            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'"
+        ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.REPOSITORY,
         estimated_duration_seconds=30,
@@ -218,7 +230,9 @@ _VERIFY_GRAPH_TASKS = (
         id="graph-cross-layer",
         name="Cross-layer map validation",
         profile="graph",
-        commands=["python3 -c 'import json; json.load(open(\"runtime/generated/cross-layer-map.json\"))'"],
+        commands=[
+            "python3 -c 'import json; json.load(open(\"runtime/generated/cross-layer-map.json\"))'"
+        ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.REPOSITORY,
         estimated_duration_seconds=10,
@@ -227,7 +241,9 @@ _VERIFY_GRAPH_TASKS = (
         id="graph-aggregate",
         name="Aggregate graph evidence",
         profile="graph",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.REPOSITORY,
         estimated_duration_seconds=30,
@@ -275,7 +291,9 @@ _VERIFY_FULL_TASKS = (
         id="full-schemathesis",
         name="Schemathesis contract tests",
         profile="full",
-        commands=["python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"],
+        commands=[
+            "python3 -m schemathesis run --hypothesis-max-examples=50 backend/tests/contract/"
+        ],
         category=VerificationCategory.CONTRACT,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=180,
@@ -320,7 +338,9 @@ _VERIFY_FULL_TASKS = (
         id="full-graph",
         name="Graph integrity check",
         profile="full",
-        commands=["python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'"],
+        commands=[
+            "python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); s.load()'"
+        ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=30,
@@ -329,7 +349,9 @@ _VERIFY_FULL_TASKS = (
         id="full-aggregate",
         name="Aggregate evidence",
         profile="full",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.FULL,
         estimated_duration_seconds=30,
@@ -350,7 +372,9 @@ _VERIFY_MUTATION_TASKS = (
         id="mutation-aggregate",
         name="Aggregate mutation evidence",
         profile="mutation",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.MUTATION,
         scope=VerificationScope.MUTATION,
         estimated_duration_seconds=30,
@@ -371,7 +395,9 @@ _VERIFY_RUNTIME_TASKS = (
         id="runtime-aggregate",
         name="Aggregate runtime evidence",
         profile="runtime",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.ARCHITECTURAL,
         scope=VerificationScope.RUNTIME,
         estimated_duration_seconds=30,
@@ -404,7 +430,9 @@ _VERIFY_GOLDEN_TASKS = (
         id="golden-aggregate",
         name="Aggregate golden evidence",
         profile="golden",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.CAPABILITY,
         scope=VerificationScope.GOLDEN,
         estimated_duration_seconds=30,
@@ -424,7 +452,7 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         # serialised run.
         commands=[
             "cd frontend && npm run build && npx playwright test "
-            "${PLAYWRIGHT_PROJECT:+--project=\"$PLAYWRIGHT_PROJECT\"}"
+            '${PLAYWRIGHT_PROJECT:+--project="$PLAYWRIGHT_PROJECT"}'
         ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,
@@ -434,7 +462,9 @@ _VERIFY_PLAYWRIGHT_TASKS = (
         id="playwright-aggregate",
         name="Aggregate e2e evidence",
         profile="playwright",
-        commands=["python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"],
+        commands=[
+            "python3 -c 'from runtime.system.evidence.aggregator import EvidenceAggregator; EvidenceAggregator(\".\").aggregate()'"
+        ],
         category=VerificationCategory.INTEGRATION,
         scope=VerificationScope.PLAYWRIGHT,
         estimated_duration_seconds=30,

@@ -152,8 +152,11 @@ def test_pre_existing_is_never_inferred():
     """M6 req 3: absent evidence => OUTSIDE_BLAST_RADIUS, never PRE_EXISTING."""
     _, blast, plan = _specimen()
     failures = build_observed_failures(
-        [_frontend_unit_failure("frontend/lib/runtime/navigation-runtime.ts",
-                                 "frontend-typecheck-build")]
+        [
+            _frontend_unit_failure(
+                "frontend/lib/runtime/navigation-runtime.ts", "frontend-typecheck-build"
+            )
+        ]
     )
     report = attribute_failures(blast, failures, plan.selected)
     assert report.attributions[0].attribution == OUTSIDE_BLAST_RADIUS
@@ -163,8 +166,15 @@ def test_pre_existing_is_never_inferred():
 def test_adapter_performs_no_string_matching():
     """E-4 defect class is prohibited: no command/test-name inference here."""
     source = inspect.getsource(build_observed_failures)
-    forbidden = ("re.search", "re.match", "re.findall", "startswith(",
-                 "endswith(", "in command", ".find(")
+    forbidden = (
+        "re.search",
+        "re.match",
+        "re.findall",
+        "startswith(",
+        "endswith(",
+        "in command",
+        ".find(",
+    )
     for token in forbidden:
         assert token not in source, f"{token} found in build_observed_failures"
 

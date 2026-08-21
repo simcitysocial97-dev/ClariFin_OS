@@ -108,7 +108,9 @@ def _check_provider_available() -> dict[str, Any]:
             else "Canonical architecture artifacts missing; run discovery pipeline."
         ),
         "details": {"available": ok},
-        "recommendation": "" if ok else "Run `python -m runtime.foundation.architecture.discovery`",
+        "recommendation": (
+            "" if ok else "Run `python -m runtime.foundation.architecture.discovery`"
+        ),
     }
 
 
@@ -125,30 +127,34 @@ def _verify_chain_field_completeness(data: dict[str, dict[str, Any]]) -> dict[st
         missing = [f for f in CHAIN_FIELDS if f not in chain]
         if missing:
             missing_fields[chain_key] = missing
-            findings.append({
-                "section": "cross_layer",
-                "check_id": f"cl-chain-fields-{chain_key[:50]}",
-                "name": f"Chain field completeness for {chain_key}",
-                "status": "fail",
-                "severity": "high",
-                "priority": "high",
-                "message": f"Chain missing fields: {', '.join(missing)}",
-                "details": {"chain_key": chain_key, "missing_fields": missing},
-                "recommendation": f"Add missing fields to chain {chain_key}",
-            })
+            findings.append(
+                {
+                    "section": "cross_layer",
+                    "check_id": f"cl-chain-fields-{chain_key[:50]}",
+                    "name": f"Chain field completeness for {chain_key}",
+                    "status": "fail",
+                    "severity": "high",
+                    "priority": "high",
+                    "message": f"Chain missing fields: {', '.join(missing)}",
+                    "details": {"chain_key": chain_key, "missing_fields": missing},
+                    "recommendation": f"Add missing fields to chain {chain_key}",
+                }
+            )
 
     if not findings:
-        findings.append({
-            "section": "cross_layer",
-            "check_id": "cl-chain-field-completeness",
-            "name": "Chain field completeness",
-            "status": "pass",
-            "severity": "info",
-            "priority": "low",
-            "message": f"All {len(data)} chains have complete fields",
-            "details": {"chains_checked": len(data)},
-            "recommendation": "",
-        })
+        findings.append(
+            {
+                "section": "cross_layer",
+                "check_id": "cl-chain-field-completeness",
+                "name": "Chain field completeness",
+                "status": "pass",
+                "severity": "info",
+                "priority": "low",
+                "message": f"All {len(data)} chains have complete fields",
+                "details": {"chains_checked": len(data)},
+                "recommendation": "",
+            }
+        )
     return findings
 
 
@@ -158,83 +164,108 @@ def _verify_chain_field_types(data: dict[str, dict[str, Any]]) -> list[dict[str,
     for chain_key, chain in data.items():
         val = chain.get("engine")
         if val is not None and not isinstance(val, str):
-            findings.append({
-                "section": "cross_layer",
-                "check_id": f"cl-field-type-{chain_key[:30]}-engine",
-                "name": f"Field type check: {chain_key}.engine",
-                "status": "fail",
-                "severity": "high",
-                "priority": "high",
-                "message": f"Field 'engine' should be string, got {type(val).__name__}",
-                "details": {"chain_key": chain_key, "field": "engine", "actual_type": type(val).__name__},
-                "recommendation": f"Fix type of 'engine' in chain {chain_key}",
-            })
+            findings.append(
+                {
+                    "section": "cross_layer",
+                    "check_id": f"cl-field-type-{chain_key[:30]}-engine",
+                    "name": f"Field type check: {chain_key}.engine",
+                    "status": "fail",
+                    "severity": "high",
+                    "priority": "high",
+                    "message": f"Field 'engine' should be string, got {type(val).__name__}",
+                    "details": {
+                        "chain_key": chain_key,
+                        "field": "engine",
+                        "actual_type": type(val).__name__,
+                    },
+                    "recommendation": f"Fix type of 'engine' in chain {chain_key}",
+                }
+            )
         for field_name in OPTIONAL_LIST_FIELDS:
             v = chain.get(field_name)
             if v is not None and not isinstance(v, list):
-                findings.append({
-                    "section": "cross_layer",
-                    "check_id": f"cl-field-type-{chain_key[:30]}-{field_name}",
-                    "name": f"Field type check: {chain_key}.{field_name}",
-                    "status": "fail",
-                    "severity": "medium",
-                    "priority": "medium",
-                    "message": f"Field '{field_name}' should be list, got {type(v).__name__}",
-                    "details": {"chain_key": chain_key, "field": field_name, "actual_type": type(v).__name__},
-                    "recommendation": f"Fix type of '{field_name}' in chain {chain_key}",
-                })
+                findings.append(
+                    {
+                        "section": "cross_layer",
+                        "check_id": f"cl-field-type-{chain_key[:30]}-{field_name}",
+                        "name": f"Field type check: {chain_key}.{field_name}",
+                        "status": "fail",
+                        "severity": "medium",
+                        "priority": "medium",
+                        "message": f"Field '{field_name}' should be list, got {type(v).__name__}",
+                        "details": {
+                            "chain_key": chain_key,
+                            "field": field_name,
+                            "actual_type": type(v).__name__,
+                        },
+                        "recommendation": f"Fix type of '{field_name}' in chain {chain_key}",
+                    }
+                )
 
     if not findings:
-        findings.append({
-            "section": "cross_layer",
-            "check_id": "cl-field-types",
-            "name": "Chain field types",
-            "status": "pass",
-            "severity": "info",
-            "priority": "low",
-            "message": "All chain fields have correct types",
-            "details": {"chains_checked": len(data)},
-            "recommendation": "",
-        })
+        findings.append(
+            {
+                "section": "cross_layer",
+                "check_id": "cl-field-types",
+                "name": "Chain field types",
+                "status": "pass",
+                "severity": "info",
+                "priority": "low",
+                "message": "All chain fields have correct types",
+                "details": {"chains_checked": len(data)},
+                "recommendation": "",
+            }
+        )
     return findings
 
 
-def _verify_engine_file_existence(data: dict[str, dict[str, Any]], repo_root: Path) -> list[dict[str, Any]]:
+def _verify_engine_file_existence(
+    data: dict[str, dict[str, Any]], repo_root: Path
+) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     for chain_key, chain in data.items():
         engine = chain.get("engine", "")
         if not engine:
             continue
         full = repo_root / engine
-        exists = full.exists() or (engine.endswith(".py") and (repo_root / engine).with_suffix("").joinpath("__init__.py").exists())
+        exists = full.exists() or (
+            engine.endswith(".py")
+            and (repo_root / engine).with_suffix("").joinpath("__init__.py").exists()
+        )
         if not exists:
-            findings.append({
-                "section": "cross_layer",
-                "check_id": f"cl-engine-exists-{engine[:50]}",
-                "name": f"Engine file exists: {engine}",
-                "status": "fail",
-                "severity": "high",
-                "priority": "high",
-                "message": f"Engine file not found on disk: {engine}",
-                "details": {"engine": engine, "chain_key": chain_key},
-                "recommendation": f"Create or restore the engine: {engine}",
-            })
+            findings.append(
+                {
+                    "section": "cross_layer",
+                    "check_id": f"cl-engine-exists-{engine[:50]}",
+                    "name": f"Engine file exists: {engine}",
+                    "status": "fail",
+                    "severity": "high",
+                    "priority": "high",
+                    "message": f"Engine file not found on disk: {engine}",
+                    "details": {"engine": engine, "chain_key": chain_key},
+                    "recommendation": f"Create or restore the engine: {engine}",
+                }
+            )
     if not findings:
-        findings.append({
-            "section": "cross_layer",
-            "check_id": "cl-engine-existence",
-            "name": "Engine file existence",
-            "status": "pass",
-            "severity": "info",
-            "priority": "low",
-            "message": f"All {len(data)} engine files exist on disk",
-            "details": {"engines_checked": len(data)},
-            "recommendation": "",
-        })
+        findings.append(
+            {
+                "section": "cross_layer",
+                "check_id": "cl-engine-existence",
+                "name": "Engine file existence",
+                "status": "pass",
+                "severity": "info",
+                "priority": "low",
+                "message": f"All {len(data)} engine files exist on disk",
+                "details": {"engines_checked": len(data)},
+                "recommendation": "",
+            }
+        )
     return findings
 
 
-def _verify_router_file_existence(data: dict[str, dict[str, Any]], repo_root: Path) -> list[dict[str, Any]]:
+def _verify_router_file_existence(
+    data: dict[str, dict[str, Any]], repo_root: Path
+) -> list[dict[str, Any]]:
     missing_routers: list[str] = []
     for chain_key, chain in data.items():
         for router in chain.get("routers", []):
@@ -246,17 +277,26 @@ def _verify_router_file_existence(data: dict[str, dict[str, Any]], repo_root: Pa
     else:
         status = "pass"
         message = "All router files exist on disk"
-    return [{
-        "section": "cross_layer",
-        "check_id": "cl-router-existence",
-        "name": "Router file existence",
-        "status": status,
-        "severity": "high" if status == "fail" else "info",
-        "priority": "high" if status == "fail" else "low",
-        "message": message,
-        "details": {"missing_routers": missing_routers[:50], "total_routers_checked": sum(len(c.get("routers", [])) for c in data.values())},
-        "recommendation": "" if status == "pass" else "Restore missing router files",
-    }]
+    return [
+        {
+            "section": "cross_layer",
+            "check_id": "cl-router-existence",
+            "name": "Router file existence",
+            "status": status,
+            "severity": "high" if status == "fail" else "info",
+            "priority": "high" if status == "fail" else "low",
+            "message": message,
+            "details": {
+                "missing_routers": missing_routers[:50],
+                "total_routers_checked": sum(
+                    len(c.get("routers", [])) for c in data.values()
+                ),
+            },
+            "recommendation": (
+                "" if status == "pass" else "Restore missing router files"
+            ),
+        }
+    ]
 
 
 def _verify_no_duplicate_engines(data: dict[str, dict[str, Any]]) -> dict[str, Any]:
@@ -285,7 +325,11 @@ def _verify_no_duplicate_engines(data: dict[str, dict[str, Any]]) -> dict[str, A
         "priority": "high" if status == "fail" else "low",
         "message": message,
         "details": {"duplicate_engines": duplicates, "total_engines": len(engines)},
-        "recommendation": "" if status == "pass" else "Remove duplicate engine chains from cross-layer map",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Remove duplicate engine chains from cross-layer map"
+        ),
     }
 
 
@@ -306,7 +350,9 @@ def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any
 
     if not incomplete:
         status = "pass"
-        message = "All external chains are complete (engine + at least one component type)"
+        message = (
+            "All external chains are complete (engine + at least one component type)"
+        )
     else:
         status = "fail"
         message = f"Found {len(incomplete)} incomplete external chains"
@@ -319,24 +365,30 @@ def _verify_chain_completeness(data: dict[str, dict[str, Any]]) -> dict[str, Any
         "priority": "medium" if status == "fail" else "low",
         "message": message,
         "details": {"incomplete_chains": incomplete[:50], "total_chains": len(data)},
-        "recommendation": "" if status == "pass" else "Add missing components or engine to incomplete chains",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Add missing components or engine to incomplete chains"
+        ),
     }
     findings = [finding]
     if internal_engines:
-        findings.append({
-            "section": "cross_layer",
-            "check_id": "cl-internal-engines",
-            "name": "Internal engines (known architectural debt)",
-            "status": "pass",
-            "severity": "info",
-            "priority": "low",
-            "message": (
-                f"{len(internal_engines)} internal engine(s) have no HTTP surface / capability "
-                f"by design (consumed internally): {', '.join(internal_engines)}"
-            ),
-            "details": {"internal_engines": internal_engines},
-            "recommendation": "Document as architectural debt; do not flag as cross-layer failure.",
-        })
+        findings.append(
+            {
+                "section": "cross_layer",
+                "check_id": "cl-internal-engines",
+                "name": "Internal engines (known architectural debt)",
+                "status": "pass",
+                "severity": "info",
+                "priority": "low",
+                "message": (
+                    f"{len(internal_engines)} internal engine(s) have no HTTP surface / capability "
+                    f"by design (consumed internally): {', '.join(internal_engines)}"
+                ),
+                "details": {"internal_engines": internal_engines},
+                "recommendation": "Document as architectural debt; do not flag as cross-layer failure.",
+            }
+        )
     return findings
 
 
@@ -376,21 +428,27 @@ def _verify_component_ownership(data: dict[str, dict[str, Any]]) -> dict[str, An
             "chains_without_capabilities": no_cap_external[:50],
             "chains_without_routers": no_rtr_external[:50],
         },
-        "recommendation": "" if status == "pass" else "Add capability and router mappings to external chains",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Add capability and router mappings to external chains"
+        ),
     }
     findings = [finding]
     if internal_engines:
-        findings.append({
-            "section": "cross_layer",
-            "check_id": "cl-internal-ownership",
-            "name": "Internal engine ownership (known debt)",
-            "status": "pass",
-            "severity": "info",
-            "priority": "low",
-            "message": f"Internal engines exempt from capability/router ownership: {', '.join(internal_engines)}",
-            "details": {"internal_engines": internal_engines},
-            "recommendation": "Consumed internally; not a top-level API engine.",
-        })
+        findings.append(
+            {
+                "section": "cross_layer",
+                "check_id": "cl-internal-ownership",
+                "name": "Internal engine ownership (known debt)",
+                "status": "pass",
+                "severity": "info",
+                "priority": "low",
+                "message": f"Internal engines exempt from capability/router ownership: {', '.join(internal_engines)}",
+                "details": {"internal_engines": internal_engines},
+                "recommendation": "Consumed internally; not a top-level API engine.",
+            }
+        )
     return findings
 
 
@@ -407,10 +465,14 @@ def _verify_endpoint_deduplication(arch_endpoints: dict[str, Any]) -> dict[str, 
     true_duplicates = [sig for sig, rs in ep_to_routers.items() if len(rs) > 1]
     if not true_duplicates:
         status = "pass"
-        message = "Every endpoint is owned by exactly one router (shared routers permitted)"
+        message = (
+            "Every endpoint is owned by exactly one router (shared routers permitted)"
+        )
     else:
         status = "fail"
-        message = f"Found {len(true_duplicates)} endpoints registered on multiple routers"
+        message = (
+            f"Found {len(true_duplicates)} endpoints registered on multiple routers"
+        )
     return {
         "section": "cross_layer",
         "check_id": "cl-endpoint-deduplication",
@@ -423,7 +485,9 @@ def _verify_endpoint_deduplication(arch_endpoints: dict[str, Any]) -> dict[str, 
             "true_duplicate_endpoints": true_duplicates[:50],
             "total_endpoints": len(ep_to_routers),
         },
-        "recommendation": "" if status == "pass" else "Register each endpoint on a single router",
+        "recommendation": (
+            "" if status == "pass" else "Register each endpoint on a single router"
+        ),
     }
 
 
@@ -440,7 +504,11 @@ def _verify_test_mapping(data: dict[str, dict[str, Any]]) -> dict[str, Any]:
         status = "pass"
         message = f"All {len(external)} external chains have test mappings"
     else:
-        pct = (len(external) - len(chains_without_tests)) / len(external) * 100 if external else 0
+        pct = (
+            (len(external) - len(chains_without_tests)) / len(external) * 100
+            if external
+            else 0
+        )
         status = "fail" if pct < 50 else "pass"
         message = f"{len(chains_without_tests)} of {len(external)} external chains have no test mappings ({pct:.0f}% coverage)"
     return {
@@ -451,8 +519,13 @@ def _verify_test_mapping(data: dict[str, dict[str, Any]]) -> dict[str, Any]:
         "severity": "medium" if status == "fail" else "info",
         "priority": "medium" if status == "fail" else "low",
         "message": message,
-        "details": {"chains_without_tests": chains_without_tests[:50], "total_test_refs": total_test_refs},
-        "recommendation": "" if status == "pass" else "Add test mappings to chains missing coverage",
+        "details": {
+            "chains_without_tests": chains_without_tests[:50],
+            "total_test_refs": total_test_refs,
+        },
+        "recommendation": (
+            "" if status == "pass" else "Add test mappings to chains missing coverage"
+        ),
     }
 
 
@@ -470,17 +543,19 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
 
     data = _build_data_from_provider(repo)
     if not data:
-        findings.append({
-            "section": "cross_layer",
-            "check_id": "cl-map-load",
-            "name": "Cross-layer map load",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": "Could not build cross-layer chains from the canonical provider",
-            "details": {},
-            "recommendation": "Run the discovery pipeline before the cross-layer audit",
-        })
+        findings.append(
+            {
+                "section": "cross_layer",
+                "check_id": "cl-map-load",
+                "name": "Cross-layer map load",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": "Could not build cross-layer chains from the canonical provider",
+                "details": {},
+                "recommendation": "Run the discovery pipeline before the cross-layer audit",
+            }
+        )
     else:
         findings.extend(_verify_chain_field_completeness(data))
         findings.extend(_verify_chain_field_types(data))
@@ -491,7 +566,9 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
         findings.extend(_verify_component_ownership(data))
         from runtime.foundation.architecture.provider import get_architecture
 
-        findings.append(_verify_endpoint_deduplication(get_architecture(refresh=False).endpoints))
+        findings.append(
+            _verify_endpoint_deduplication(get_architecture(refresh=False).endpoints)
+        )
         findings.append(_verify_test_mapping(data))
 
     all_pass = all(f["status"] == "pass" for f in findings)
@@ -503,8 +580,12 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
         "passes": sum(1 for f in findings if f["status"] == "pass"),
     }
     if data:
-        metrics["total_endpoints"] = sum(len(c.get("endpoints", [])) for c in data.values())
-        metrics["total_components"] = sum(len(c.get("components", [])) for c in data.values())
+        metrics["total_endpoints"] = sum(
+            len(c.get("endpoints", [])) for c in data.values()
+        )
+        metrics["total_components"] = sum(
+            len(c.get("components", [])) for c in data.values()
+        )
         metrics["total_test_refs"] = sum(len(c.get("tests", [])) for c in data.values())
         metrics["internal_engines"] = sum(1 for c in data.values() if c.get("internal"))
 

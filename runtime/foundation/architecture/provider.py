@@ -138,7 +138,8 @@ class ArchitectureProvider:
     def instance(cls, generated_dir: Path | None = None) -> "ArchitectureProvider":
         with cls._lock:
             if cls._instance is None or (
-                generated_dir is not None and cls._instance.generated_dir != generated_dir
+                generated_dir is not None
+                and cls._instance.generated_dir != generated_dir
             ):
                 cls._instance = cls(generated_dir)
             return cls._instance
@@ -164,7 +165,9 @@ class ArchitectureProvider:
         ownership = _load(gen, OWNERSHIP)
         execution = _load(gen, EXECUTION)
         normalization = _load_optional(gen, NORMALIZATION)
-        artifacts_raw = _load_optional(gen, ARTIFACTS_V3) or _load_optional(gen, ARTIFACTS_V2)
+        artifacts_raw = _load_optional(gen, ARTIFACTS_V3) or _load_optional(
+            gen, ARTIFACTS_V2
+        )
 
         modules_by_path: dict[str, dict[str, Any]] = {
             m["path"]: m for m in inventory.get("modules", [])
@@ -198,7 +201,9 @@ class ArchitectureProvider:
             "Execution graph: the runtime call path. May traverse implementation "
             "modules; ownership must not.",
         )
-        dep_graph = self._build_dependency_graph(modules_by_path, engines, engine_modules, detectors)
+        dep_graph = self._build_dependency_graph(
+            modules_by_path, engines, engine_modules, detectors
+        )
 
         return Architecture(
             generated_at=datetime.now(timezone.utc).isoformat(),
@@ -364,12 +369,16 @@ class ArchitectureProvider:
                 router_engines.setdefault(r, set()).add(eng.name)
 
         routers: dict[str, Router] = {}
-        for router_path in sorted(set(endpoint_to_router.values()) | set(router_engines)):
+        for router_path in sorted(
+            set(endpoint_to_router.values()) | set(router_engines)
+        ):
             routers[router_path] = Router(
                 id=ids.router_id(router_path),
                 path=router_path,
                 endpoints=tuple(
-                    sorted(ep for ep, r in endpoint_to_router.items() if r == router_path)
+                    sorted(
+                        ep for ep, r in endpoint_to_router.items() if r == router_path
+                    )
                 ),
                 engines=tuple(sorted(router_engines.get(router_path, ()))),
             )
@@ -403,7 +412,9 @@ class ArchitectureProvider:
                     ids.local_of(dst).split(":")[0]
                 )
             elif src.startswith("router:") and dst.startswith("service:"):
-                service_routers.setdefault(ids.local_of(dst), set()).add(ids.local_of(src))
+                service_routers.setdefault(ids.local_of(dst), set()).add(
+                    ids.local_of(src)
+                )
 
         known = set(service_engines) | set(service_routers)
         for eng in engines.values():
@@ -653,7 +664,9 @@ class ArchitectureProvider:
         return linked
 
     # -- graphs ---------------------------------------------------------
-    def _graph_from_artifact(self, kind: str, data: dict[str, Any], description: str) -> Graph:
+    def _graph_from_artifact(
+        self, kind: str, data: dict[str, Any], description: str
+    ) -> Graph:
         nodes = tuple(
             GraphNode(id=n["id"], type=n.get("type", ""), label=n.get("label", n["id"]))
             for n in data.get("nodes", [])
@@ -721,7 +734,9 @@ class ArchitectureProvider:
             }
             if node_type == "Repository":
                 name = path.rsplit("/", 1)[-1].removesuffix(".py")
-                return GraphNode(id=ids.repository_id(name), type="Repository", label=name)
+                return GraphNode(
+                    id=ids.repository_id(name), type="Repository", label=name
+                )
             if node_type in mapping:
                 fn, label_type = mapping[node_type]
                 return GraphNode(id=fn(path), type=label_type, label=path)
@@ -819,7 +834,9 @@ def get_provider(generated_dir: Path | None = None) -> ArchitectureProvider:
     return ArchitectureProvider.instance(generated_dir)
 
 
-def get_architecture(refresh: bool = False, generated_dir: Path | None = None) -> Architecture:
+def get_architecture(
+    refresh: bool = False, generated_dir: Path | None = None
+) -> Architecture:
     """Return the canonical architecture. THE entry point for all subsystems."""
     return get_provider(generated_dir).architecture(refresh=refresh)
 
@@ -849,7 +866,9 @@ def export_snapshot(output_path: Path | None = None) -> Path:
         "engine_modules": {
             path: mod.to_dict() for path, mod in sorted(arch.engine_modules.items())
         },
-        "detectors": {path: det.to_dict() for path, det in sorted(arch.detectors.items())},
+        "detectors": {
+            path: det.to_dict() for path, det in sorted(arch.detectors.items())
+        },
         "facades": {path: f.to_dict() for path, f in sorted(arch.facades.items())},
         "capabilities": {n: c.to_dict() for n, c in sorted(arch.capabilities.items())},
         "routers": {p: r.to_dict() for p, r in sorted(arch.routers.items())},
@@ -880,5 +899,7 @@ def export_snapshot(output_path: Path | None = None) -> Path:
             },
         },
     }
-    target.write_text(json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    target.write_text(
+        json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8"
+    )
     return target

@@ -32,8 +32,10 @@ def main() -> int:
     legacy = {}
     for name, chain in chains.items():
         eng = chain.get("engine", "")
-        key = eng[:-len("/__init__.py")] if eng.endswith("/__init__.py") else eng
-        endpoints = sorted(set(chain.get("endpoints", []) + chain.get("ownedEndpoints", [])))
+        key = eng[: -len("/__init__.py")] if eng.endswith("/__init__.py") else eng
+        endpoints = sorted(
+            set(chain.get("endpoints", []) + chain.get("ownedEndpoints", []))
+        )
         legacy[key] = {
             "engine": key,
             "services": list(chain.get("services", [])),
@@ -47,10 +49,14 @@ def main() -> int:
             "components": list(chain.get("components", [])),
             "graphRenderers": list(chain.get("graphRenderers", [])),
             "tests": list(chain.get("tests", [])),
-            "modules": list(chain.get("implementationModules", []) or chain.get("modules", [])),
+            "modules": list(
+                chain.get("implementationModules", []) or chain.get("modules", [])
+            ),
         }
     LEGACY_PATH.parent.mkdir(parents=True, exist_ok=True)
-    LEGACY_PATH.write_text(json.dumps(legacy, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    LEGACY_PATH.write_text(
+        json.dumps(legacy, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     print(f"  Wrote legacy-compatible map: {LEGACY_PATH} ({len(legacy)} chains)")
     print("  NOTE: cross-layer-map.json is now derived from the canonical provider;")
     print("        the legacy generator is retired (Program 13.2).")

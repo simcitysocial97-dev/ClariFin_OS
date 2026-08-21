@@ -92,7 +92,11 @@ def classify_layer(file_path: str) -> ArchitectureLayer:
 
     if norm.startswith("backend/"):
         if norm.endswith(".py"):
-            rel = norm[len("backend/src/"):] if norm.startswith("backend/src/") else norm[len("backend/"):]
+            rel = (
+                norm[len("backend/src/") :]
+                if norm.startswith("backend/src/")
+                else norm[len("backend/") :]
+            )
             parts = rel.split("/")
             top = parts[0] if parts else ""
             if _is_engine_path(norm) or top in _ENGINE_ROOTS_FALLBACK:
@@ -101,7 +105,11 @@ def classify_layer(file_path: str) -> ArchitectureLayer:
                 return ArchitectureLayer.BACKEND_SERVICE
             if top in _ROUTER_DIRS:
                 return ArchitectureLayer.BACKEND_ROUTER
-            if top in _DTO_DIRS or norm.startswith("backend/src/core/dtos/") or norm.startswith("backend/src/models/"):
+            if (
+                top in _DTO_DIRS
+                or norm.startswith("backend/src/core/dtos/")
+                or norm.startswith("backend/src/models/")
+            ):
                 return ArchitectureLayer.BACKEND_DTO
             if top in _REPO_DIRS:
                 return ArchitectureLayer.BACKEND_REPOSITORY
@@ -109,7 +117,7 @@ def classify_layer(file_path: str) -> ArchitectureLayer:
         return ArchitectureLayer.UNKNOWN
 
     if norm.startswith("frontend/"):
-        rel = norm[len("frontend/"):]
+        rel = norm[len("frontend/") :]
         parts = rel.split("/") if rel else []
         top = parts[0] if parts else ""
         if top == "lib" and len(parts) > 1:
@@ -182,7 +190,7 @@ def _resolve_py_import(module: str, repo_root: Path) -> str | None:
         if (repo_root / candidate).exists():
             return candidate
     if module.startswith("backend.src."):
-        rel = module[len("backend.src."):].replace(".", "/")
+        rel = module[len("backend.src.") :].replace(".", "/")
         for ext in (".py",):
             candidate = f"backend/src/{rel}{ext}"
             if (repo_root / candidate).exists():
@@ -193,7 +201,9 @@ def _resolve_py_import(module: str, repo_root: Path) -> str | None:
     return None
 
 
-def _resolve_import_to_layer(import_path: str, file_type: str, repo_root: Path) -> tuple[str | None, ArchitectureLayer]:
+def _resolve_import_to_layer(
+    import_path: str, file_type: str, repo_root: Path
+) -> tuple[str | None, ArchitectureLayer]:
     """Resolve an import to (resolved_path, layer)."""
     if file_type == "python":
         resolved = _resolve_py_import(import_path, repo_root)
@@ -254,6 +264,7 @@ def _has_react_import(source: str) -> bool:
 # Python AST scanning
 # ---------------------------------------------------------------------------
 
+
 def _scan_py_imports(tree: ast.AST) -> list[tuple[str, int]]:
     """Extract (module, line_number) pairs from a Python AST."""
     imports: list[tuple[str, int]] = []
@@ -276,14 +287,28 @@ def _scan_py_imports(tree: ast.AST) -> list[tuple[str, int]]:
 _PY_EXTS = (".py",)
 _TS_EXTS = (".ts", ".tsx")
 
-_EXCLUDE_DIRS = frozenset({
-    "__pycache__", ".venv", "venv", "node_modules", ".next",
-    "dist", "build", ".git", "__tests__", "tests",
-})
+_EXCLUDE_DIRS = frozenset(
+    {
+        "__pycache__",
+        ".venv",
+        "venv",
+        "node_modules",
+        ".next",
+        "dist",
+        "build",
+        ".git",
+        "__tests__",
+        "tests",
+    }
+)
 
-_EXCLUDE_FILES = frozenset({
-    "__init__.py", "__main__.py", "conftest.py",
-})
+_EXCLUDE_FILES = frozenset(
+    {
+        "__init__.py",
+        "__main__.py",
+        "conftest.py",
+    }
+)
 
 
 def _should_exclude(rel_path: str) -> bool:
@@ -308,9 +333,7 @@ def discover_source_files(repo_root: Path) -> list[str]:
     results: list[str] = []
     for root, dirs, files in os_walk(repo_root):
         # Prune excluded directories in-place
-        dirs[:] = sorted(
-            d for d in dirs if d not in _EXCLUDE_DIRS
-        )
+        dirs[:] = sorted(d for d in dirs if d not in _EXCLUDE_DIRS)
         for fname in sorted(files):
             if not fname.endswith(_PY_EXTS + _TS_EXTS):
                 continue
@@ -334,9 +357,7 @@ def os_walk(repo_root: Path):
         if not base.exists():
             continue
         for root, dirs, files in os.walk(base, topdown=True):
-            dirs[:] = sorted(
-                d for d in dirs if d not in _EXCLUDE_DIRS
-            )
+            dirs[:] = sorted(d for d in dirs if d not in _EXCLUDE_DIRS)
             yield root, dirs, files
 
 
@@ -514,8 +535,7 @@ class ArchitecturalScanner:
         # accepted only as an explicit test-fixture injection seam.
         self.cross_layer_map_path = cross_layer_map_path
         self.graph_index_path = (
-            graph_index_path
-            or self.repo_root / self.DEFAULT_GRAPH_INDEX
+            graph_index_path or self.repo_root / self.DEFAULT_GRAPH_INDEX
         )
 
     def scan(self) -> ArchitecturalGraph:
@@ -583,7 +603,9 @@ class ArchitecturalScanner:
         for node in ast.walk(tree):
             if isinstance(node, ast.ClassDef):
                 class_names.append(node.name)
-            elif isinstance(node, ast.FunctionDef) or isinstance(node, ast.AsyncFunctionDef):
+            elif isinstance(node, ast.FunctionDef) or isinstance(
+                node, ast.AsyncFunctionDef
+            ):
                 function_names.append(node.name)
 
         return ScannedFile(

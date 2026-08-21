@@ -237,8 +237,9 @@ def collect_changeset(
 
     code, name_status = _git(["diff", "--name-status", ref], root)
     if code != 0:
-        return ChangeSet(base=ref, head=head, files=(), source="git",
-                         notes=("git diff failed",))
+        return ChangeSet(
+            base=ref, head=head, files=(), source="git", notes=("git diff failed",)
+        )
 
     statuses: dict[str, str] = {}
     for line in name_status.splitlines():

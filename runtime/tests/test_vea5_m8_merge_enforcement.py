@@ -56,15 +56,13 @@ def test_m81_stale_workflows_use_verification_command_pattern():
         (job,) = jobs.values()
         run_lines = [s.get("run", "") for s in job.get("steps", []) if "run" in s]
         joined = "\n".join(run_lines)
-        assert f"runtime/verify.py {expected_profiles[wf]}" in joined, (
-            f"{wf} must delegate to verify.py {expected_profiles[wf]}"
-        )
+        assert (
+            f"runtime/verify.py {expected_profiles[wf]}" in joined
+        ), f"{wf} must delegate to verify.py {expected_profiles[wf]}"
         # Appends status summary (Rule 9).
         assert "verify.py status" in joined
         # Uses bootstrap-runtime (not hand-rolled setup).
-        uses = [
-            s.get("uses", "") for s in job.get("steps", []) if "uses" in s
-        ]
+        uses = [s.get("uses", "") for s in job.get("steps", []) if "uses" in s]
         assert any("bootstrap-runtime" in u for u in uses)
 
 
@@ -89,7 +87,9 @@ def test_m81_stale_workflows_match_vea5_concurrency_and_retention():
 
 def test_m82_reconcile_job_identity_is_deterministic():
     doc = yaml.safe_load((WORKFLOWS / "verification-reconcile.yml").read_text())
-    assert "reconcile-gate" in doc["jobs"], "required-check identity must be 'reconcile-gate'"
+    assert (
+        "reconcile-gate" in doc["jobs"]
+    ), "required-check identity must be 'reconcile-gate'"
     # Exactly one job -> stable check name for branch protection.
     assert len(doc["jobs"]) == 1
 
@@ -113,12 +113,20 @@ def test_m82_planning_divergence_blocks_merge_exit_2(tmp_path):
     report = reconcile_from_artifacts(
         local_plan_path=local_p, ci_plan_path=ci_p, commit="sha"
     )
-    assert report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
+    assert (
+        report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
+    )
     # Exit mapping (mirrors verify.py reconcile).
     exit_code = (
-        2 if report.classification.status == ReconciliationStatus.PLANNING_DIVERGENCE.value
-        else 1 if report.classification.status == ReconciliationStatus.ENVIRONMENT_DIVERGENCE.value
-        else 0
+        2
+        if report.classification.status
+        == ReconciliationStatus.PLANNING_DIVERGENCE.value
+        else (
+            1
+            if report.classification.status
+            == ReconciliationStatus.ENVIRONMENT_DIVERGENCE.value
+            else 0
+        )
     )
     assert exit_code == 2
 

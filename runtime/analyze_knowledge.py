@@ -28,6 +28,7 @@ def first_docstring(rel):
         return ""
     try:
         import ast
+
         tree = ast.parse(f.read_text(encoding="utf-8", errors="ignore"))
         return (ast.get_docstring(tree) or "").strip().split("\n")[0][:160]
     except Exception:
@@ -43,21 +44,37 @@ def build():
 
     # ---- ENGINES ----
     for name, e in topo["engines"].items():
-        owner = e["capabilities"][0] if e["capabilities"] else "INTERNAL (no capability owner)"
+        owner = (
+            e["capabilities"][0]
+            if e["capabilities"]
+            else "INTERNAL (no capability owner)"
+        )
         consumers = e["services"]
-        deps = sorted(set(e["repositories"]) | {i.split("/")[-1].replace(".py", "")
-                                                for i in e["evidence"]["importer_files"]
-                                                if "engines/" in i})
+        deps = sorted(
+            set(e["repositories"])
+            | {
+                i.split("/")[-1].replace(".py", "")
+                for i in e["evidence"]["importer_files"]
+                if "engines/" in i
+            }
+        )
         knowledge["entities"][f"engine:{name}"] = {
             "type": "Engine",
-            "purpose": first_docstring(e["public_entry_point"]) or f"Deterministic computation engine: {name}",
+            "purpose": first_docstring(e["public_entry_point"])
+            or f"Deterministic computation engine: {name}",
             "owner": owner,
             "responsibilities": [
                 "Expose pure deterministic compute functions (no DB, no I/O).",
                 f"Public API via {e['public_entry_point']} "
                 f"({e['canonical_style']}).",
-            ] + ([f"Implement {e['implementation_module_count']} implementation modules."]
-                if e["implementation_module_count"] else []),
+            ]
+            + (
+                [
+                    f"Implement {e['implementation_module_count']} implementation modules."
+                ]
+                if e["implementation_module_count"]
+                else []
+            ),
             "consumers": consumers,
             "dependencies": deps,
             "verification_profiles": ["backend", "mutation", "contracts", "runtime"],
@@ -74,7 +91,9 @@ def build():
     for e in topo["engines"].values():
         cap_set.update(e["capabilities"])
     for cap in sorted(cap_set):
-        engines_for = [n for n, e in topo["engines"].items() if cap in e["capabilities"]]
+        engines_for = [
+            n for n, e in topo["engines"].items() if cap in e["capabilities"]
+        ]
         knowledge["entities"][f"capability:{cap}"] = {
             "type": "Capability",
             "purpose": f"Frontend data-fetching capability backing a workspace ({cap}).",
@@ -83,13 +102,17 @@ def build():
                 "Fetch and bind domain data for the workspace.",
                 "Map API DTOs to view models via mappers.",
             ],
-            "consumers": [f"workspace:{cap.replace('use','').replace('Capability','').lower()}"],
+            "consumers": [
+                f"workspace:{cap.replace('use','').replace('Capability','').lower()}"
+            ],
             "dependencies": [f"engine:{n}" for n in engines_for],
             "verification_profiles": ["frontend"],
             "tests": [],
             "artifacts": [],
             "generated_reports": [],
-            "documentation": [f"frontend/lib/capabilities/{cap.replace('use','').replace('Capability','').lower()}-capability.ts"],
+            "documentation": [
+                f"frontend/lib/capabilities/{cap.replace('use','').replace('Capability','').lower()}-capability.ts"
+            ],
         }
 
     # ---- SERVICES (collected) ----
@@ -106,7 +129,11 @@ def build():
                 "Coordinate repositories and engines to implement business logic.",
                 "No direct DB access (delegates to repositories).",
             ],
-            "consumers": [r for r in topo["engines"][sorted(engines)[0]]["routers"]] if engines else [],
+            "consumers": (
+                [r for r in topo["engines"][sorted(engines)[0]]["routers"]]
+                if engines
+                else []
+            ),
             "dependencies": sorted(engines),
             "verification_profiles": ["backend"],
             "tests": [],
@@ -124,7 +151,11 @@ def build():
         knowledge["entities"][f"router:{rtr}"] = {
             "type": "Router",
             "purpose": first_docstring(rtr) or f"HTTP route definitions: {rtr}",
-            "owner": f"service:{sorted(set().union(*[set(topo['engines'][x]['services']) for x in engines]))[0]}" if engines else "UNOWNED",
+            "owner": (
+                f"service:{sorted(set().union(*[set(topo['engines'][x]['services']) for x in engines]))[0]}"
+                if engines
+                else "UNOWNED"
+            ),
             "responsibilities": [
                 "Declare HTTP endpoints (no business logic).",
                 "Delegate to services.",
@@ -149,8 +180,16 @@ def build():
             "purpose": f"Persistence access for {repo}.",
             "owner": f"engine:{owners[0]}" if owners else "UNOWNED",
             "responsibilities": ["Encapsulate DB read/write for one aggregate."],
-            "consumers": [f"service:{s}" for s in
-                          set().union(*[set(topo['engines'][o]['services']) for o in owners])] if owners else [],
+            "consumers": (
+                [
+                    f"service:{s}"
+                    for s in set().union(
+                        *[set(topo["engines"][o]["services"]) for o in owners]
+                    )
+                ]
+                if owners
+                else []
+            ),
             "dependencies": ["database:finance.db"],
             "verification_profiles": ["backend"],
             "tests": [],
@@ -173,7 +212,9 @@ def build():
             "canonical engine architecture.",
         ],
     }
-    (REPO / "runtime" / "generated" / "knowledge-reconstruction.json").write_text(json.dumps(out, indent=2))
+    (REPO / "runtime" / "generated" / "knowledge-reconstruction.json").write_text(
+        json.dumps(out, indent=2)
+    )
     print(f"Knowledge reconstruction: {out['entity_count']} entities")
 
 

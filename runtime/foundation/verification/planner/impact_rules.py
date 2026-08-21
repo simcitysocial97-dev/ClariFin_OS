@@ -16,7 +16,9 @@ class ChangeClassification:
     """Classification of a file change for verification planning."""
 
     file_path: str
-    change_type: Literal["engine", "service", "router", "model", "test", "config", "other"]
+    change_type: Literal[
+        "engine", "service", "router", "model", "test", "config", "other"
+    ]
     engine_name: Optional[str] = None
     router_name: Optional[str] = None
     blast_radius: Literal["low", "medium", "high", "full"] = "low"

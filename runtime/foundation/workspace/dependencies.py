@@ -63,7 +63,9 @@ def render_dependencies(result: DependencyExplorerResult) -> str:
 
 def cmd_deps(file_path: str | None = None) -> int:
     if not file_path:
-        print("Usage: python runtime/verify.py deps <file_path>", __import__("sys").stderr)
+        print(
+            "Usage: python runtime/verify.py deps <file_path>", __import__("sys").stderr
+        )
         return 1
 
     loader = WorkspaceLoader()

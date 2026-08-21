@@ -100,9 +100,18 @@ class TestWorkspaceLoader:
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-analytics.json",
             {
-                "local": {"verification": {"success_rate": 0.8, "avg_duration_seconds": 1.0}, "cache": {"hit_rate": 0.5}},
-                "ci": {"verification": {"success_rate": 1.0, "avg_duration_seconds": 2.0}, "cache": {"hit_rate": 0.0}},
-                "combined": {"verification": {"success_rate": 0.9, "avg_duration_seconds": 1.5}, "cache": {"hit_rate": 0.25}},
+                "local": {
+                    "verification": {"success_rate": 0.8, "avg_duration_seconds": 1.0},
+                    "cache": {"hit_rate": 0.5},
+                },
+                "ci": {
+                    "verification": {"success_rate": 1.0, "avg_duration_seconds": 2.0},
+                    "cache": {"hit_rate": 0.0},
+                },
+                "combined": {
+                    "verification": {"success_rate": 0.9, "avg_duration_seconds": 1.5},
+                    "cache": {"hit_rate": 0.25},
+                },
             },
         )
         health = loader.load_engineering_health()
@@ -156,9 +165,7 @@ class TestWorkspaceLoader:
         assert cache.is_valid is True
 
     def test_load_risk_summary(self, tmp_path: Path):
-        loader = WorkspaceLoader(
-            repo_root=tmp_path, chain_map={"a.py": {}, "b.py": {}}
-        )
+        loader = WorkspaceLoader(repo_root=tmp_path, chain_map={"a.py": {}, "b.py": {}})
         risk = loader.load_risk_summary()
         assert isinstance(risk, RiskSummary)
         assert risk.total_files == 2
@@ -167,7 +174,13 @@ class TestWorkspaceLoader:
         loader = WorkspaceLoader(repo_root=tmp_path)
         _write_json(
             tmp_path / "runtime" / "generated" / "verification-cache.json",
-            {"last_commit": "abc", "changed_files": [], "executed_profiles": [], "duration": 0, "timestamp": ""},
+            {
+                "last_commit": "abc",
+                "changed_files": [],
+                "executed_profiles": [],
+                "duration": 0,
+                "timestamp": "",
+            },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-history.json",
@@ -218,11 +231,7 @@ class TestWorkspaceLoader:
         loader = WorkspaceLoader(repo_root=tmp_path)
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-analytics.json",
-            {
-                "combined": {
-                    "cache": {"hit_rate": 0.75, "hits": 15, "total": 20}
-                }
-            },
+            {"combined": {"cache": {"hit_rate": 0.75, "hits": 15, "total": 20}}},
         )
         metrics = loader.load_cache_metrics()
         assert metrics.hit_rate == 0.75
@@ -265,7 +274,13 @@ class TestWorkspaceLoader:
         _write_json(
             tmp_path / "runtime" / "generated" / "dependency-growth.json",
             {
-                "engines": {"category": "engines", "current_count": 4, "previous_count": 4, "delta": 0, "growth_rate": 0.0},
+                "engines": {
+                    "category": "engines",
+                    "current_count": 4,
+                    "previous_count": 4,
+                    "delta": 0,
+                    "growth_rate": 0.0,
+                },
             },
         )
         growth = loader.load_dependency_growth()
@@ -277,7 +292,13 @@ class TestWorkspaceLoader:
         loader = WorkspaceLoader(repo_root=tmp_path)
         _write_json(
             tmp_path / "runtime" / "generated" / "verification-cache.json",
-            {"last_commit": "abc", "changed_files": [], "executed_profiles": [], "duration": 0, "timestamp": ""},
+            {
+                "last_commit": "abc",
+                "changed_files": [],
+                "executed_profiles": [],
+                "duration": 0,
+                "timestamp": "",
+            },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-history.json",
@@ -286,9 +307,45 @@ class TestWorkspaceLoader:
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-analytics.json",
             {
-                "local": {"verification": {"total_runs": 5, "passed_runs": 4, "failed_runs": 1, "skipped_runs": 0, "success_rate": 0.8, "avg_duration_seconds": 1.0, "min_duration_seconds": 0.5, "max_duration_seconds": 1.5}, "cache": {"hit_rate": 0.5, "hits": 2, "total": 4}},
-                "ci": {"verification": {"total_runs": 3, "passed_runs": 3, "failed_runs": 0, "skipped_runs": 0, "success_rate": 1.0, "avg_duration_seconds": 2.0, "min_duration_seconds": 1.0, "max_duration_seconds": 3.0}, "cache": {"hit_rate": 0.0, "hits": 0, "total": 3}},
-                "combined": {"verification": {"total_runs": 8, "passed_runs": 7, "failed_runs": 1, "skipped_runs": 0, "success_rate": 0.875, "avg_duration_seconds": 1.375, "min_duration_seconds": 0.5, "max_duration_seconds": 3.0}, "cache": {"hit_rate": 0.25, "hits": 2, "total": 8}},
+                "local": {
+                    "verification": {
+                        "total_runs": 5,
+                        "passed_runs": 4,
+                        "failed_runs": 1,
+                        "skipped_runs": 0,
+                        "success_rate": 0.8,
+                        "avg_duration_seconds": 1.0,
+                        "min_duration_seconds": 0.5,
+                        "max_duration_seconds": 1.5,
+                    },
+                    "cache": {"hit_rate": 0.5, "hits": 2, "total": 4},
+                },
+                "ci": {
+                    "verification": {
+                        "total_runs": 3,
+                        "passed_runs": 3,
+                        "failed_runs": 0,
+                        "skipped_runs": 0,
+                        "success_rate": 1.0,
+                        "avg_duration_seconds": 2.0,
+                        "min_duration_seconds": 1.0,
+                        "max_duration_seconds": 3.0,
+                    },
+                    "cache": {"hit_rate": 0.0, "hits": 0, "total": 3},
+                },
+                "combined": {
+                    "verification": {
+                        "total_runs": 8,
+                        "passed_runs": 7,
+                        "failed_runs": 1,
+                        "skipped_runs": 0,
+                        "success_rate": 0.875,
+                        "avg_duration_seconds": 1.375,
+                        "min_duration_seconds": 0.5,
+                        "max_duration_seconds": 3.0,
+                    },
+                    "cache": {"hit_rate": 0.25, "hits": 2, "total": 8},
+                },
             },
         )
         _write_json(
@@ -378,7 +435,13 @@ class TestWorkspaceLoader:
         loader = WorkspaceLoader(repo_root=tmp_path)
         _write_json(
             tmp_path / "runtime" / "generated" / "verification-cache.json",
-            {"last_commit": "abc", "changed_files": [], "executed_profiles": [], "duration": 0, "timestamp": ""},
+            {
+                "last_commit": "abc",
+                "changed_files": [],
+                "executed_profiles": [],
+                "duration": 0,
+                "timestamp": "",
+            },
         )
         _write_json(
             tmp_path / "runtime" / "generated" / "engineering-history.json",
@@ -410,12 +473,16 @@ class TestWorkspaceLoader:
                 }
             },
         )
-        result = loader.load_dependency_chain("backend/src/engines/loan_engine/amortization.py")
+        result = loader.load_dependency_chain(
+            "backend/src/engines/loan_engine/amortization.py"
+        )
         assert result.found is True
         assert result.chain is not None
         assert result.chain.engine == "backend/src/engines/loan_engine/amortization.py"
         assert result.chain.services == ["LoanService"]
-        assert result.chain.tests == ["backend/tests/unit/engines/loan/test_amortization.py"]
+        assert result.chain.tests == [
+            "backend/tests/unit/engines/loan/test_amortization.py"
+        ]
 
     def test_load_dependency_chain_missing(self, tmp_path: Path):
         loader = WorkspaceLoader(repo_root=tmp_path, chain_map={})

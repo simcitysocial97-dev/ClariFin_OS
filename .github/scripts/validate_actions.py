@@ -15,6 +15,7 @@ rules:
   8. Every workflow ends with `python runtime/verify.py status`.
   9. Every composite action references existing scripts/commands.
 """
+
 from __future__ import annotations
 
 import sys
@@ -95,25 +96,25 @@ def validate_workflow(path: Path) -> None:
     has_pr = bool(pr)
     has_dispatch = bool(on.get("workflow_dispatch"))
     has_schedule = bool(on.get("schedule"))
-    if name not in VERIFICATION_PROFILES and not (
-        has_schedule or has_dispatch
-    ):
+    if name not in VERIFICATION_PROFILES and not (has_schedule or has_dispatch):
         warn(f"{name}: non-verification workflow has no schedule/manual trigger")
 
     # path filters for verification workflows with push/PR triggers
     if name in VERIFICATION_PROFILES and (has_push or has_pr):
         # Check push paths if push is configured
         if has_push and name != "quality.yml":
-            push_paths = push.get("paths") or (push.get("branches") and push.get("paths"))
+            push_paths = push.get("paths") or (
+                push.get("branches") and push.get("paths")
+            )
             if not push_paths:
                 warn(f"{name}: push trigger has no `paths` filter (Rule 7)")
-                
+
         # Check PR paths if PR is configured
         if has_pr and name != "quality.yml":
             pr_paths = pr.get("paths") or (pr.get("branches") and pr.get("paths"))
             if not pr_paths:
                 warn(f"{name}: pull_request trigger has no `paths` filter (Rule 7)")
-        
+
     jobs = doc.get("jobs", {})
     if not jobs:
         err(f"{name}: no jobs defined")
@@ -144,7 +145,11 @@ def validate_workflow(path: Path) -> None:
                     )
             if "upload-artifact" in uses:
                 err(f"{name}/{job_id}: inlines actions/upload-artifact (Rule 3/4)")
-            if "build_cross_layer_map" in run or "build_index" in run or "save_index" in run:
+            if (
+                "build_cross_layer_map" in run
+                or "build_index" in run
+                or "save_index" in run
+            ):
                 found_inline_gen = True
             if "python runtime/verify.py" in run:
                 prof = run.strip().split("python runtime/verify.py")[-1].split()[0]
@@ -172,7 +177,9 @@ def validate_workflow(path: Path) -> None:
     # verification workflow must run exactly one profile command
     if name in VERIFICATION_PROFILES:
         if not found_verify_profile:
-            err(f"{name}: missing required `python runtime/verify.py {VERIFICATION_PROFILES[name]}` (Rule 8)")
+            err(
+                f"{name}: missing required `python runtime/verify.py {VERIFICATION_PROFILES[name]}` (Rule 8)"
+            )
         if not found_status:
             err(f"{name}: missing `python runtime/verify.py status` summary (Rule 9)")
         if found_inline_gen:
@@ -203,7 +210,9 @@ def main() -> int:
         validate_workflow(wf)
 
     print(f"Workflows validated: {len(list(WF_DIR.glob('*.yml')))}")
-    print(f"Composite actions validated: {len([d for d in ACT_DIR.iterdir() if d.is_dir()])}")
+    print(
+        f"Composite actions validated: {len([d for d in ACT_DIR.iterdir() if d.is_dir()])}"
+    )
     print()
     if WARNINGS:
         print("WARNINGS:")

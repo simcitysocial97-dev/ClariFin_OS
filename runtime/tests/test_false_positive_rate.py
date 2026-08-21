@@ -144,7 +144,15 @@ class TestFalsePositiveRate:
         )
         data = report.to_dict()
 
-        expected_excluded = ["dashboard", "forecast", "investments", "cards", "cashflow", "behaviour", "reconciliation"]
+        expected_excluded = [
+            "dashboard",
+            "forecast",
+            "investments",
+            "cards",
+            "cashflow",
+            "behaviour",
+            "reconciliation",
+        ]
         all_affected = []
         for key in [
             "affected_engines",
@@ -163,7 +171,8 @@ class TestFalsePositiveRate:
             all_affected.extend(data.get(key, []))
 
         false_positives = [
-            item for item in all_affected
+            item
+            for item in all_affected
             if any(excluded.lower() in item.lower() for excluded in expected_excluded)
         ]
         fp_rate = len(false_positives) / max(len(all_affected), 1)

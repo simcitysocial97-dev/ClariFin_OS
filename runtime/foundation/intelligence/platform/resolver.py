@@ -144,11 +144,23 @@ class EntityResolver:
                 )
 
         for key, mod in arch.engine_modules.items():
-            self._register("engine_module", key, mod.id, name=mod.name, path=mod.path,
-                           aliases={f"module:{mod.path}"})
+            self._register(
+                "engine_module",
+                key,
+                mod.id,
+                name=mod.name,
+                path=mod.path,
+                aliases={f"module:{mod.path}"},
+            )
         for key, det in arch.detectors.items():
-            self._register("detector", key, det.id, name=det.name, path=det.path,
-                           aliases={f"module:{det.path}", f"detector:{det.path}"})
+            self._register(
+                "detector",
+                key,
+                det.id,
+                name=det.name,
+                path=det.path,
+                aliases={f"module:{det.path}", f"detector:{det.path}"},
+            )
         for key, fac in arch.facades.items():
             self._register("facade", key, fac.id, path=fac.path)
         for key, cap in arch.capabilities.items():
@@ -156,8 +168,13 @@ class EntityResolver:
         for key, rt in arch.routers.items():
             self._register("router", key, rt.id, name=rt.name, path=rt.path)
         for key, ep in arch.endpoints.items():
-            self._register("endpoint", key, ep.id, name=ep.signature,
-                           aliases={f"endpoint:{ep.signature}"})
+            self._register(
+                "endpoint",
+                key,
+                ep.id,
+                name=ep.signature,
+                aliases={f"endpoint:{ep.signature}"},
+            )
         for key, svc in arch.services.items():
             self._register("service", key, svc.id, name=svc.name, path=svc.path)
         for key, repo in arch.repositories.items():

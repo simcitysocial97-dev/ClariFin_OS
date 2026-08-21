@@ -16,19 +16,47 @@ from typing import Any
 
 from runtime.foundation.verification.api_contracts.gate import ApiContractGate
 
-
 REPO_ROOT = Path(__file__).resolve().parents[4]
 
 # Map mutation names to their source paths for restoration.
 _MUTATION_TARGETS: dict[str, Path] = {
-    "mutation_a_missing_field": REPO_ROOT / "backend" / "src" / "core" / "dtos" / "dashboard_dto.py",
-    "mutation_b_envelope_drift": REPO_ROOT / "backend" / "src" / "routers" / "transactions.py",
-    "mutation_c_endpoint_renamed": REPO_ROOT / "backend" / "src" / "routers" / "reconciliation.py",
-    "mutation_d_nullable_changed": REPO_ROOT / "backend" / "src" / "core" / "dtos" / "transaction_dto.py",
-    "mutation_e_openapi_modified": REPO_ROOT / "frontend" / "generated" / "openapi-current.json",
+    "mutation_a_missing_field": REPO_ROOT
+    / "backend"
+    / "src"
+    / "core"
+    / "dtos"
+    / "dashboard_dto.py",
+    "mutation_b_envelope_drift": REPO_ROOT
+    / "backend"
+    / "src"
+    / "routers"
+    / "transactions.py",
+    "mutation_c_endpoint_renamed": REPO_ROOT
+    / "backend"
+    / "src"
+    / "routers"
+    / "reconciliation.py",
+    "mutation_d_nullable_changed": REPO_ROOT
+    / "backend"
+    / "src"
+    / "core"
+    / "dtos"
+    / "transaction_dto.py",
+    "mutation_e_openapi_modified": REPO_ROOT
+    / "frontend"
+    / "generated"
+    / "openapi-current.json",
     "mutation_f_types_modified": REPO_ROOT / "frontend" / "types" / "api-generated.ts",
-    "mutation_g_zod_contract": REPO_ROOT / "frontend" / "lib" / "schemas" / "dashboard-metrics.ts",
-    "mutation_h_semantic_scale": REPO_ROOT / "backend" / "src" / "services" / "dashboard_service.py",
+    "mutation_g_zod_contract": REPO_ROOT
+    / "frontend"
+    / "lib"
+    / "schemas"
+    / "dashboard-metrics.ts",
+    "mutation_h_semantic_scale": REPO_ROOT
+    / "backend"
+    / "src"
+    / "services"
+    / "dashboard_service.py",
 }
 
 
@@ -102,18 +130,23 @@ class FailureInjector:
                     continue
                 # Run gate in a fresh subprocess to clear Python import cache
                 proc_result = subprocess.run(
-                    [sys.executable, "-c",
-                     "import sys, json; sys.path.insert(0,'backend');"
-                     "from runtime.foundation.verification.api_contracts.gate import ApiContractGate;"
-                     "g=ApiContractGate(); r=g.run();"
-                     "dims=[d.name for d in r.dimensions if d.status=='fail' and d.failures];"
-                     "print(json.dumps(dims))"],
-                    capture_output=True, text=True, timeout=120,
+                    [
+                        sys.executable,
+                        "-c",
+                        "import sys, json; sys.path.insert(0,'backend');"
+                        "from runtime.foundation.verification.api_contracts.gate import ApiContractGate;"
+                        "g=ApiContractGate(); r=g.run();"
+                        "dims=[d.name for d in r.dimensions if d.status=='fail' and d.failures];"
+                        "print(json.dumps(dims))",
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
                 )
                 try:
                     # Extract JSON from stdout (may be preceded by log lines)
                     stdout = proc_result.stdout.strip()
-                    json_start = stdout.rfind('[')
+                    json_start = stdout.rfind("[")
                     if json_start >= 0:
                         caught_dims = json.loads(stdout[json_start:])
                         caught_dim = caught_dims[0] if caught_dims else "NONE"
@@ -125,7 +158,10 @@ class FailureInjector:
                 except (json.JSONDecodeError, Exception):
                     caught_dim = "PARSE_ERROR"
                 if caught_dim == "NONE":
-                    results[name] = ("FAIL_NO_CATCH", "no dimension detected the mutation")
+                    results[name] = (
+                        "FAIL_NO_CATCH",
+                        "no dimension detected the mutation",
+                    )
                 else:
                     results[name] = ("PASS", caught_dim)
             except Exception as e:
@@ -140,13 +176,13 @@ def _mutate_dashboad_missing_field(content: str) -> str:
     """Mutation A: Remove financial_health_score from DashboardSummaryDTO."""
     # Match both with and without default=None
     patterns = [
-        '    financial_health_score: float | None = Field(\n'
+        "    financial_health_score: float | None = Field(\n"
         '        description="Financial health score from behavior analysis (0-100)",\n'
-        '    )',
-        '    financial_health_score: float | None = Field(\n'
-        '        default=None,\n'
+        "    )",
+        "    financial_health_score: float | None = Field(\n"
+        "        default=None,\n"
         '        description="Financial health score from behavior analysis (0-100)",\n'
-        '    )',
+        "    )",
     ]
     for pattern in patterns:
         if pattern in content:
@@ -157,8 +193,7 @@ def _mutate_dashboad_missing_field(content: str) -> str:
 def _mutate_transactions_envelope(content: str) -> str:
     """Mutation B: Change transactions response from wrapped to bare array."""
     return content.replace(
-        'response_model=TransactionListResponse',
-        'response_model=list[dict[str, Any]]'
+        "response_model=TransactionListResponse", "response_model=list[dict[str, Any]]"
     )
 
 
@@ -167,7 +202,7 @@ def _mutate_endpoint_rename(content: str) -> str:
     # Current state uses singular "/api/reconciliation"; mutate to "/api/recon"
     return content.replace(
         'router = APIRouter(prefix="/api/reconciliation"',
-        'router = APIRouter(prefix="/api/recon"'
+        'router = APIRouter(prefix="/api/recon"',
     )
 
 
@@ -176,7 +211,7 @@ def _mutate_nullable_change(content: str) -> str:
     # Current state: description is already nullable (str | None). Mutate to make bank required.
     return content.replace(
         'bank: str = Field(default="", description="Bank name")',
-        'bank: str | None = Field(default=None, description="Bank name")'
+        'bank: str | None = Field(default=None, description="Bank name")',
     )
 
 

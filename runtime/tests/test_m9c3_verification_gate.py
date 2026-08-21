@@ -38,7 +38,6 @@ from runtime.foundation.verification.orchestrator import (
     _github_pr_refs,
 )
 
-
 # ---------------------------------------------------------------------------
 # Milestones 2-4: failure reporting / classification / exit semantics
 # ---------------------------------------------------------------------------
@@ -162,7 +161,10 @@ def test_reporting_error_cannot_mask_failure() -> None:
 
 
 def test_orchestrator_failure_report_renders_classification(tmp_path: Path) -> None:
-    from runtime.foundation.verification.models import VerificationSummary, VerificationScope
+    from runtime.foundation.verification.models import (
+        VerificationSummary,
+        VerificationScope,
+    )
     from runtime.foundation.verification.orchestrator import VerificationPlan
 
     stdout = tmp_path / "verify-stdout.txt"
@@ -193,7 +195,12 @@ def test_orchestrator_failure_report_renders_classification(tmp_path: Path) -> N
         overall_status=VerificationStatus.FAILED,
     )
     plan = VerificationPlan(
-        name="runtime", id="p", scope=VerificationScope.RUNTIME, targets=[], steps=[], estimated_duration_seconds=0
+        name="runtime",
+        id="p",
+        scope=VerificationScope.RUNTIME,
+        targets=[],
+        steps=[],
+        estimated_duration_seconds=0,
     )
     report = VerificationReport(
         profile="runtime",
@@ -245,7 +252,12 @@ def test_pr_refs_read_from_event(tmp_path: Path, monkeypatch) -> None:
         "GITHUB_EVENT_PATH",
         _write_event(
             tmp_path,
-            {"pull_request": {"base": {"sha": "pr-base-sha"}, "head": {"sha": "pr-head-sha"}}},
+            {
+                "pull_request": {
+                    "base": {"sha": "pr-base-sha"},
+                    "head": {"sha": "pr-head-sha"},
+                }
+            },
         ),
     )
     base, head = _github_pr_refs()
@@ -279,7 +291,12 @@ def test_pr_boundary_uses_two_dot(monkeypatch, tmp_path: Path) -> None:
         "GITHUB_EVENT_PATH",
         _write_event(
             tmp_path,
-            {"pull_request": {"base": {"sha": "pr-base-sha"}, "head": {"sha": "pr-head-sha"}}},
+            {
+                "pull_request": {
+                    "base": {"sha": "pr-base-sha"},
+                    "head": {"sha": "pr-head-sha"},
+                }
+            },
         ),
     )
     monkeypatch.setattr(subprocess, "run", fake_run)
@@ -332,7 +349,12 @@ def test_empty_pr_diff_is_distinguished(tmp_path: Path, monkeypatch) -> None:
         "GITHUB_EVENT_PATH",
         _write_event(
             tmp_path,
-            {"pull_request": {"base": {"sha": "pr-base-sha"}, "head": {"sha": "pr-head-sha"}}},
+            {
+                "pull_request": {
+                    "base": {"sha": "pr-base-sha"},
+                    "head": {"sha": "pr-head-sha"},
+                }
+            },
         ),
     )
     monkeypatch.setattr(subprocess, "run", fake_run)

@@ -30,9 +30,7 @@ class ContractCollector(EvidenceCollector):
     def name(self) -> str:
         return "Contract Collector"
 
-    def collect(
-        self, artifact_path: Path | None = None
-    ) -> ContractEvidence:
+    def collect(self, artifact_path: Path | None = None) -> ContractEvidence:
         if artifact_path is None:
             candidates = [
                 self.workspace_root
@@ -113,8 +111,16 @@ class ContractCollector(EvidenceCollector):
         evidence = self.collect()
 
         candidates = [
-            self.workspace_root / "backend" / "tests" / "generated" / "contract-coverage.json",
-            self.workspace_root / "backend" / "tests" / "generated" / "schemathesis-report.json",
+            self.workspace_root
+            / "backend"
+            / "tests"
+            / "generated"
+            / "contract-coverage.json",
+            self.workspace_root
+            / "backend"
+            / "tests"
+            / "generated"
+            / "schemathesis-report.json",
         ]
 
         for candidate in candidates:

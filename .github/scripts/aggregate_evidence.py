@@ -1,4 +1,5 @@
 """Run evidence aggregator from CI artifact directory."""
+
 import sys
 from pathlib import Path
 

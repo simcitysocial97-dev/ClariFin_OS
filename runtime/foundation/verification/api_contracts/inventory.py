@@ -17,7 +17,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-
 REPO_ROOT = Path(__file__).resolve().parents[4]
 BACKEND_SRC = REPO_ROOT / "backend" / "src"
 FRONTEND_SRC = REPO_ROOT / "frontend"
@@ -36,8 +35,8 @@ class BackendOperation:
 
 @dataclass(frozen=True, slots=True)
 class FrontendConsumer:
-    file: str          # relative to frontend/
-    url: str           # exact URL literal
+    file: str  # relative to frontend/
+    url: str  # exact URL literal
     method: str
     schema_name: str | None  # if using safeParse(XSchema, ...)
     api_base_used: str  # full base or 'relative'
@@ -50,7 +49,7 @@ class FrontendConsumer:
 @dataclass(frozen=True, slots=True)
 class RuntimeSchema:
     name: str
-    file: str           # relative to frontend/lib/schemas/
+    file: str  # relative to frontend/lib/schemas/
     shape: dict[str, Any] = field(default_factory=dict)
     required_fields: list[str] = field(default_factory=list)
     nullable_fields: list[str] = field(default_factory=list)
@@ -71,7 +70,9 @@ class ContractInventory:
     # Backend operations — derive from live OpenAPI (authoritative source)
     # ------------------------------------------------------------------
 
-    def extract_backend_operations(self, openapi: dict[str, Any]) -> list[BackendOperation]:
+    def extract_backend_operations(
+        self, openapi: dict[str, Any]
+    ) -> list[BackendOperation]:
         """Build backend operation list directly from live OpenAPI paths."""
         ops: list[BackendOperation] = []
         paths = openapi.get("paths", {})
@@ -82,20 +83,24 @@ class ContractInventory:
                 if method not in ("get", "post", "put", "patch", "delete"):
                     continue
                 resp = spec.get("responses", {})
-                ok_resp = resp.get("200", {}).get("content", {}).get("application/json", {})
+                ok_resp = (
+                    resp.get("200", {}).get("content", {}).get("application/json", {})
+                )
                 resp_schema = ok_resp.get("schema", {})
                 model_name: str | None = None
                 if "$ref" in resp_schema:
                     model_name = resp_schema["$ref"].split("/")[-1]
                 tags = spec.get("tags", [])
                 deprecated = bool(spec.get("deprecated", False))
-                ops.append(BackendOperation(
-                    method=method.upper(),
-                    path=path,
-                    response_model=model_name,
-                    tags=tags,
-                    deprecated=deprecated,
-                ))
+                ops.append(
+                    BackendOperation(
+                        method=method.upper(),
+                        path=path,
+                        response_model=model_name,
+                        tags=tags,
+                        deprecated=deprecated,
+                    )
+                )
         self.backend_operations = ops
         return ops
 
@@ -133,7 +138,10 @@ class ContractInventory:
         for sf in schema_files:
             rel = str(sf.relative_to(FRONTEND_SRC))
             content = sf.read_text()
-            for m in re.finditer(r"export\s+const\s+(\w+)\s*=\s*z\.(enum|string|number|union|array|record|literal)", content):
+            for m in re.finditer(
+                r"export\s+const\s+(\w+)\s*=\s*z\.(enum|string|number|union|array|record|literal)",
+                content,
+            ):
                 sname = m.group(1)
                 if sname not in all_schema_imports:
                     all_schema_imports[sname] = rel
@@ -143,7 +151,9 @@ class ContractInventory:
             rel = str(src.relative_to(FRONTEND_SRC))
             content = src.read_text()
             # Find API_BASE defaults and fetch calls
-            api_base_matches = re.findall(r"(?:const|let|var)\s+API_BASE\s*=\s*(.+)", content)
+            api_base_matches = re.findall(
+                r"(?:const|let|var)\s+API_BASE\s*=\s*(.+)", content
+            )
             default_base = "http://localhost:8000"
             has_api_base = bool(api_base_matches)
             if api_base_matches:
@@ -178,12 +188,13 @@ class ContractInventory:
                 # ${...} to {param}.
                 url_clean = re.sub(
                     r"\$\{(?:API_BASE|NEXT_PUBLIC_API_URL|query|months|process\.env\.[^}]*)\}",
-                    '', url_raw
+                    "",
+                    url_raw,
                 )
-                url_clean = re.sub(r'\$\{([^}]+)\}', r'{\1}', url_clean)
+                url_clean = re.sub(r"\$\{([^}]+)\}", r"{\1}", url_clean)
                 url_clean = url_clean.strip()
                 # Remove stray query-string markers left by ${query} removal
-                url_clean = url_clean.replace('?{', '?').rstrip('?').rstrip("/")
+                url_clean = url_clean.replace("?{", "?").rstrip("?").rstrip("/")
 
                 # Extract HTTP method from options object if present
                 method = "GET"
@@ -216,13 +227,15 @@ class ContractInventory:
                 if sm:
                     schema_name = sm.group(1)
 
-                consumers.append(FrontendConsumer(
-                    file=rel,
-                    url=full_url,
-                    method=method,
-                    schema_name=schema_name,
-                    api_base_used=api_base_status,
-                ))
+                consumers.append(
+                    FrontendConsumer(
+                        file=rel,
+                        url=full_url,
+                        method=method,
+                        schema_name=schema_name,
+                        api_base_used=api_base_status,
+                    )
+                )
 
         self.frontend_consumers = consumers
         return consumers
@@ -252,13 +265,15 @@ class ContractInventory:
             info["min"] = [float(v) for v in mins] if mins else None
             info["max"] = [float(v) for v in maxs] if maxs else None
 
-        self.runtime_schemas.append(RuntimeSchema(
-            name=name,
-            file=rel_file,
-            shape=shape,
-            required_fields=req_fields,
-            nullable_fields=null_fields,
-        ))
+        self.runtime_schemas.append(
+            RuntimeSchema(
+                name=name,
+                file=rel_file,
+                shape=shape,
+                required_fields=req_fields,
+                nullable_fields=null_fields,
+            )
+        )
 
     # ------------------------------------------------------------------
     # Generated artifacts

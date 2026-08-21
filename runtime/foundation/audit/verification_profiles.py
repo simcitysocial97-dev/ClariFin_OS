@@ -41,7 +41,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "fail",
                 "high",
                 f"Expected test {test_id} is not present in any profile",
-                {"test_id": test_id, "expected_in": expected_tests[test_id].get("profile", "unknown")},
+                {
+                    "test_id": test_id,
+                    "expected_in": expected_tests[test_id].get("profile", "unknown"),
+                },
                 f"Add {test_id} to the appropriate verification profile",
             )
         )
@@ -55,7 +58,10 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 "warning",
                 "medium",
                 f"Test {test_id} exists but is not in the expected test set",
-                {"test_id": test_id, "actual_profile": actual_tests[test_id].get("profile", "unknown")},
+                {
+                    "test_id": test_id,
+                    "actual_profile": actual_tests[test_id].get("profile", "unknown"),
+                },
                 "Review whether this test should be in the expected set or remove it",
             )
         )
@@ -184,7 +190,11 @@ def _check_duration_estimates(profiles: tuple[Any, ...]) -> dict[str, Any]:
                         "fail",
                         "medium",
                         f"Task {task.id} in profile {profile.name} has estimated_duration_seconds={est}, expected > 0",
-                        {"task_id": task.id, "profile": profile.name, "estimated_duration_seconds": est},
+                        {
+                            "task_id": task.id,
+                            "profile": profile.name,
+                            "estimated_duration_seconds": est,
+                        },
                         f"Set a positive estimated duration for {task.id}",
                     )
                 )
@@ -315,7 +325,11 @@ def _check_planner_correctness(repo_root: Path) -> dict[str, Any]:
                     "pass",
                     "info",
                     f"Planner generated a valid plan with {len(plan.steps)} steps and {len(plan.targets)} targets",
-                    {"plan_id": plan.id, "step_count": len(plan.steps), "target_count": len(plan.targets)},
+                    {
+                        "plan_id": plan.id,
+                        "step_count": len(plan.steps),
+                        "target_count": len(plan.targets),
+                    },
                     "Continue monitoring planner output for correctness",
                 )
             )
@@ -403,7 +417,11 @@ def _check_duplicate_tasks(profiles: tuple[Any, ...]) -> dict[str, Any]:
                         "fail",
                         "high",
                         f"Task ID {task.id} appears in both profile {seen_ids[task.id]} and profile {profile.name}",
-                        {"task_id": task.id, "profile_1": seen_ids[task.id], "profile_2": profile.name},
+                        {
+                            "task_id": task.id,
+                            "profile_1": seen_ids[task.id],
+                            "profile_2": profile.name,
+                        },
                         f"Remove or rename the duplicate task {task.id}",
                     )
                 )

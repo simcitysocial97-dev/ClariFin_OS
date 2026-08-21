@@ -32,19 +32,15 @@ class MutationCollector(EvidenceCollector):
     def name(self) -> str:
         return "Mutation Collector"
 
-    def collect(
-        self, artifact_path: Path | None = None
-    ) -> MutationEvidence:
+    def collect(self, artifact_path: Path | None = None) -> MutationEvidence:
         if artifact_path is None:
             mutation_dir = (
-                self.workspace_root
-                / "backend"
-                / "tests"
-                / "generated"
-                / "mutation"
+                self.workspace_root / "backend" / "tests" / "generated" / "mutation"
             )
         else:
-            mutation_dir = artifact_path.parent if artifact_path.is_file() else artifact_path
+            mutation_dir = (
+                artifact_path.parent if artifact_path.is_file() else artifact_path
+            )
 
         if not mutation_dir.exists():
             return MutationEvidence(
@@ -99,7 +95,9 @@ class MutationCollector(EvidenceCollector):
             per_engine[engine_name] = {
                 "killed": killed,
                 "survived": survived,
-                "score_pct": round((killed / engine_total) * 100, 1) if engine_total > 0 else 0.0,
+                "score_pct": (
+                    round((killed / engine_total) * 100, 1) if engine_total > 0 else 0.0
+                ),
                 "surviving_diffs": surviving_diffs,
             }
 
@@ -161,8 +159,12 @@ class MutationCollector(EvidenceCollector):
         )
 
         for engine_name, engine_data in evidence.per_engine.items():
-            killed = engine_data.get("killed", 0) if isinstance(engine_data, dict) else 0
-            survived = engine_data.get("survived", 0) if isinstance(engine_data, dict) else 0
+            killed = (
+                engine_data.get("killed", 0) if isinstance(engine_data, dict) else 0
+            )
+            survived = (
+                engine_data.get("survived", 0) if isinstance(engine_data, dict) else 0
+            )
             total = killed + survived
             score = round((killed / total) * 100, 1) if total > 0 else 0.0
             artifacts.append(
@@ -178,7 +180,11 @@ class MutationCollector(EvidenceCollector):
                         "score": score,
                         "killed": killed,
                         "survived": survived,
-                        "surviving_diffs": engine_data.get("surviving_diffs", []) if isinstance(engine_data, dict) else [],
+                        "surviving_diffs": (
+                            engine_data.get("surviving_diffs", [])
+                            if isinstance(engine_data, dict)
+                            else []
+                        ),
                     },
                 )
             )

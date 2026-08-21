@@ -141,7 +141,9 @@ def get_chain_map(arch: Architecture | None = None) -> dict[str, dict[str, Any]]
     return cached
 
 
-def chain_for_path(path: str, arch: Architecture | None = None) -> dict[str, Any] | None:
+def chain_for_path(
+    path: str, arch: Architecture | None = None
+) -> dict[str, Any] | None:
     """Resolve the chain owning ``path`` via provider ownership (no heuristics)."""
     architecture = arch or get_architecture()
     engine = architecture.engine_for_path(path)

@@ -15,7 +15,6 @@ from .cost_analysis import CostAnalysis
 from .dependency_growth import DependencyGrowthIntelligence
 from .flaky_tests import FlakyTestIntelligence
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 HEALTH_REPORT_PATH = REPO_ROOT / "runtime" / "generated" / "engineering-health.md"
 
@@ -151,7 +150,9 @@ class EngineeringHealthReport:
             metrics = getattr(self._analytics, scope, {})
             planner = metrics.get("planner", {})
             lines.append(f"### {scope.title()} Planner")
-            lines.append(f"- Avg duration: {planner.get('avg_duration_seconds', 0.0):.2f}s")
+            lines.append(
+                f"- Avg duration: {planner.get('avg_duration_seconds', 0.0):.2f}s"
+            )
             lines.append(f"- Runs: {planner.get('runs', 0)}")
         lines.append("")
 
@@ -173,7 +174,9 @@ class EngineeringHealthReport:
         lines.append("| Category | Current Count | Delta |")
         lines.append("|----------|---------------|-------|")
         for record in growth.values():
-            lines.append(f"| {record.category} | {record.current_count} | {record.delta:+d} |")
+            lines.append(
+                f"| {record.category} | {record.current_count} | {record.delta:+d} |"
+            )
         lines.append("")
 
     def _append_verification_cost(self, lines: list[str]) -> None:
@@ -182,11 +185,15 @@ class EngineeringHealthReport:
             lines.append(f"### {scope.title()} Cost")
             for name, breakdown in costs.items():
                 scope_data = breakdown.to_dict().get(scope, {})
-                lines.append(f"- {name}: {scope_data.get('total_seconds', 0.0):.1f}s ({scope_data.get('runs', 0)} runs)")
+                lines.append(
+                    f"- {name}: {scope_data.get('total_seconds', 0.0):.1f}s ({scope_data.get('runs', 0)} runs)"
+                )
             lines.append("")
 
     def _append_frequently_changing_layers(self, lines: list[str]) -> None:
-        lines.append("Layer change frequency derived from execution context branch and commit data.")
+        lines.append(
+            "Layer change frequency derived from execution context branch and commit data."
+        )
         lines.append("")
 
     def _append_flaky_tests(self, lines: list[str]) -> None:
@@ -198,7 +205,9 @@ class EngineeringHealthReport:
             return
         lines.append("| Test | Failures | Successes | Failure Frequency |")
         lines.append("|------|----------|-----------|-------------------|")
-        for record in sorted(flaky, key=lambda r: r.failure_frequency, reverse=True)[:20]:
+        for record in sorted(flaky, key=lambda r: r.failure_frequency, reverse=True)[
+            :20
+        ]:
             lines.append(
                 f"| {record.test_name} | {record.failures} | {record.successes} | {record.failure_frequency:.1%} |"
             )
@@ -210,7 +219,9 @@ class EngineeringHealthReport:
             trends = metrics.get("trends", {})
             lines.append(f"### {scope.title()} Trends")
             lines.append(f"- Duration trend: {trends.get('duration_trend', 'stable')}")
-            lines.append(f"- Success rate trend: {trends.get('success_rate_trend', 'stable')}")
+            lines.append(
+                f"- Success rate trend: {trends.get('success_rate_trend', 'stable')}"
+            )
             lines.append(f"- Data points: {trends.get('data_points', 0)}")
         lines.append("")
 

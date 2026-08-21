@@ -21,11 +21,18 @@ def test_diagnose_resolves_ownership_from_provider():
 
 
 def test_diagnose_formats_change_blast_risk_repair():
-    changed = ["backend/src/engines/account_engine/balance.py",
-               "backend/src/routers/accounts.py"]
+    changed = [
+        "backend/src/engines/account_engine/balance.py",
+        "backend/src/routers/accounts.py",
+    ]
     change = analyze_changes(paths=changed)
     blast = compute_blast_radius(change)
-    risk = assess_risk(change, blast, optimize_verification(blast), memory={"recurring_ci_failures": []})
+    risk = assess_risk(
+        change,
+        blast,
+        optimize_verification(blast),
+        memory={"recurring_ci_failures": []},
+    )
     repair = build_repair_intelligence(blast)
     out = format_diagnostic(change, blast, risk, repair)
     assert "Developer Diagnostic" in out

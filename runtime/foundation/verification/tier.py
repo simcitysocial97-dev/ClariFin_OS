@@ -150,8 +150,12 @@ class TierPlan:
             "base_ref": self.base_ref,
             "head_ref": self.head_ref,
             "changed_files": sorted(self.changed_files),
-            "selected": [s.unit_id for s in sorted(self.selected, key=lambda s: s.unit_id)],
-            "excluded": [e.unit_id for e in sorted(self.excluded, key=lambda e: e.unit_id)],
+            "selected": [
+                s.unit_id for s in sorted(self.selected, key=lambda s: s.unit_id)
+            ],
+            "excluded": [
+                e.unit_id for e in sorted(self.excluded, key=lambda e: e.unit_id)
+            ],
             "estimated_seconds": self.estimated_seconds,
         }
 
@@ -251,7 +255,11 @@ def collect_working_tree_changes(repo_root: Path) -> list[str]:
     diff_head = _run_git(["diff", "--name-only", "HEAD"], repo_root)
     diff_cached = _run_git(["diff", "--cached", "--name-only", "HEAD"], repo_root)
     untracked = _run_git(["ls-files", "--others", "--exclude-standard"], repo_root)
-    files = [*diff_head.splitlines(), *diff_cached.splitlines(), *untracked.splitlines()]
+    files = [
+        *diff_head.splitlines(),
+        *diff_cached.splitlines(),
+        *untracked.splitlines(),
+    ]
     return _filter_changed_files([f.strip() for f in files if f.strip()])
 
 

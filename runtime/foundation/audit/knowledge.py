@@ -5,12 +5,26 @@ import time
 from pathlib import Path
 from typing import Any
 
-from runtime.foundation.audit.models import AuditFinding, AuditPriority, AuditSeverity, AuditStatus
+from runtime.foundation.audit.models import (
+    AuditFinding,
+    AuditPriority,
+    AuditSeverity,
+    AuditStatus,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
-def _f(check_id: str, name: str, status: str, severity: str, priority: str, message: str, details: dict[str, Any] = None, recommendation: str = "") -> AuditFinding:
+def _f(
+    check_id: str,
+    name: str,
+    status: str,
+    severity: str,
+    priority: str,
+    message: str,
+    details: dict[str, Any] = None,
+    recommendation: str = "",
+) -> AuditFinding:
     return AuditFinding(
         section="knowledge",
         check_id=check_id,
@@ -240,7 +254,13 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                 method = entry.get("method", "")
                 identifier = f"{method} {path}"
                 seen_paths.setdefault(identifier, []).append(obj_key)
-            elif obj_key in ("capabilities", "workspaces", "mappers", "view_models", "components"):
+            elif obj_key in (
+                "capabilities",
+                "workspaces",
+                "mappers",
+                "view_models",
+                "components",
+            ):
                 name = entry.get("name", "")
                 seen_names.setdefault(name, []).append(obj_key)
             elif obj_key == "integrity_rules":

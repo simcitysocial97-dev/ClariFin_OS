@@ -46,7 +46,7 @@ class VerificationImpact:
 def _strip_backend(file_path: str) -> str:
     """Convert a repo-root-relative path to a backend-relative path."""
     if file_path.startswith("backend/"):
-        return file_path[len("backend/"):]
+        return file_path[len("backend/") :]
     return file_path
 
 
@@ -109,7 +109,9 @@ class VerificationPlan:
         }
 
     @classmethod
-    def from_changed_files(cls, files: list[str], triggered_by: str = "push") -> VerificationPlan:
+    def from_changed_files(
+        cls, files: list[str], triggered_by: str = "push"
+    ) -> VerificationPlan:
         engines: list[str] = []
         services = set()
         routers = set()
@@ -177,7 +179,12 @@ class VerificationPlan:
             contract_paths.add("tests/contract/")
             integration_paths.add("tests/integration/")
             for f in files:
-                if not test_changed(f) and not config_changed(f) and f.startswith("backend/src/") and f.endswith(".py"):
+                if (
+                    not test_changed(f)
+                    and not config_changed(f)
+                    and f.startswith("backend/src/")
+                    and f.endswith(".py")
+                ):
                     mutation_targets.add(_strip_backend(f))
 
         if has_config_change:
@@ -196,9 +203,7 @@ class VerificationPlan:
             if max_blast_rank >= rank:
                 blast_radius = name
 
-        plan_id = hashlib.sha256(
-            json.dumps(sorted(files)).encode()
-        ).hexdigest()[:12]
+        plan_id = hashlib.sha256(json.dumps(sorted(files)).encode()).hexdigest()[:12]
 
         return cls(
             plan_id=plan_id,
@@ -206,7 +211,7 @@ class VerificationPlan:
             triggered_by=triggered_by,
             changed_files=files,
             impact=VerificationImpact(
-                    engines=engines,
+                engines=engines,
                 services=sorted(services),
                 routers=sorted(routers),
                 blast_radius=blast_radius,
@@ -214,43 +219,61 @@ class VerificationPlan:
             unit_tests=TestSuiteDecision(
                 run=len(unit_paths) > 0,
                 paths=sorted(unit_paths),
-                reason="Engine/service/model/config changes require unit tests"
-                if (engines or services or has_model_change or has_config_change)
-                else "No unit tests required",
+                reason=(
+                    "Engine/service/model/config changes require unit tests"
+                    if (engines or services or has_model_change or has_config_change)
+                    else "No unit tests required"
+                ),
             ),
             property_tests=TestSuiteDecision(
                 run=len(property_paths) > 0,
                 paths=sorted(property_paths),
-                reason="Engine or model changes require property tests"
-                if (engines or has_model_change)
-                else "No property tests required",
+                reason=(
+                    "Engine or model changes require property tests"
+                    if (engines or has_model_change)
+                    else "No property tests required"
+                ),
             ),
             contract_tests=TestSuiteDecision(
                 run=len(contract_paths) > 0,
                 paths=sorted(contract_paths),
                 schemathesis_tags=sorted(routers) if routers else [],
-                reason="Router changes require contract tests"
-                if routers
-                else ("Model changes require contract tests" if has_model_change else "No contract tests required"),
+                reason=(
+                    "Router changes require contract tests"
+                    if routers
+                    else (
+                        "Model changes require contract tests"
+                        if has_model_change
+                        else "No contract tests required"
+                    )
+                ),
             ),
             mutation=MutationDecision(
                 run=len(mutation_targets) > 0,
                 targets=sorted(mutation_targets),
                 test_runner_paths=sorted(unit_paths),
-                reason="Engine or model file changed directly"
-                if (engines or has_model_change)
-                else "No mutation required",
+                reason=(
+                    "Engine or model file changed directly"
+                    if (engines or has_model_change)
+                    else "No mutation required"
+                ),
             ),
             integration_tests=TestSuiteDecision(
                 run=len(integration_paths) > 0,
                 paths=sorted(integration_paths),
-                reason="Service or engine changes may affect integration tests"
-                if (services or engines or has_model_change)
-                else "No integration tests required",
+                reason=(
+                    "Service or engine changes may affect integration tests"
+                    if (services or engines or has_model_change)
+                    else "No integration tests required"
+                ),
             ),
             golden_tests=TestSuiteDecision(
                 run=len(golden_paths) > 0,
                 paths=sorted(golden_paths),
-                reason="Config change may affect golden datasets" if has_config_change else "No golden dependency",
+                reason=(
+                    "Config change may affect golden datasets"
+                    if has_config_change
+                    else "No golden dependency"
+                ),
             ),
         )

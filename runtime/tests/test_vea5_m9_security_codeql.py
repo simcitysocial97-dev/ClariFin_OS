@@ -55,7 +55,9 @@ def test_m9_analyzes_repository_languages():
     jobs = doc["jobs"]
     analyze = jobs["analyze"]
     init = next(
-        s for s in analyze["steps"] if (s.get("uses") or "").endswith("codeql-action/init@v3")
+        s
+        for s in analyze["steps"]
+        if (s.get("uses") or "").endswith("codeql-action/init@v3")
     )
     langs = {l.strip() for l in init["with"]["languages"].split(",")}
     # Exactly python + javascript; nothing else blindly enabled.
@@ -126,7 +128,9 @@ def test_m9_uploads_to_code_scanning():
     doc = _load_wf()
     analyze = doc["jobs"]["analyze"]
     analyze_step = next(
-        s for s in analyze["steps"] if (s.get("uses") or "").endswith("codeql-action/analyze@v3")
+        s
+        for s in analyze["steps"]
+        if (s.get("uses") or "").endswith("codeql-action/analyze@v3")
     )
     # github/codeql-action/analyze uploads SARIF by default; presence is the contract.
     assert analyze_step.get("uses", "").endswith("codeql-action/analyze@v3")
@@ -154,10 +158,12 @@ def test_m9_analysis_step_always_executes():
     doc = _load_wf()
     analyze = doc["jobs"]["analyze"]
     init = any(
-        (s.get("uses") or "").endswith("codeql-action/init@v3") for s in analyze["steps"]
+        (s.get("uses") or "").endswith("codeql-action/init@v3")
+        for s in analyze["steps"]
     )
     analyze_present = any(
-        (s.get("uses") or "").endswith("codeql-action/analyze@v3") for s in analyze["steps"]
+        (s.get("uses") or "").endswith("codeql-action/analyze@v3")
+        for s in analyze["steps"]
     )
     assert init and analyze_present, "CodeQL init+analyze must always run the analysis"
 
@@ -176,12 +182,12 @@ def test_m9_deep_codeql_surface_is_real_not_stub():
     surfaces = deep_surfaces_by_domain(DeepVerificationDomain.SECURITY.value)
     codeql = next(s for s in surfaces if s.surface_id == "deep-codeql")
     # Previously a stub: command="github-codeql/codeql" (not a real command).
-    assert codeql.command == "github/codeql-action/analyze", (
-        "deep-codeql command must reference the real CodeQL action, not a stub"
-    )
-    assert codeql.workflow == ".github/workflows/security-codeql.yml", (
-        "deep-codeql must associate the source-controlled workflow"
-    )
+    assert (
+        codeql.command == "github/codeql-action/analyze"
+    ), "deep-codeql command must reference the real CodeQL action, not a stub"
+    assert (
+        codeql.workflow == ".github/workflows/security-codeql.yml"
+    ), "deep-codeql must associate the source-controlled workflow"
     assert codeql.domain == "security"
     assert "codeql" in codeql.evidence_kinds
     assert "security" in codeql.evidence_kinds

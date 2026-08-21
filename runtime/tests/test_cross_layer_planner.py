@@ -30,7 +30,12 @@ class TestCrossLayerImpactPlanner:
         map_data = {
             "backend/src/engines/loan_engine/amortization.py": {
                 "engine": "backend/src/engines/loan_engine/amortization.py",
-                "services": ["LoanAnalysisService", "LoanService", "LoanSimulationService", "TransactionIntelligenceService"],
+                "services": [
+                    "LoanAnalysisService",
+                    "LoanService",
+                    "LoanSimulationService",
+                    "TransactionIntelligenceService",
+                ],
                 "routers": ["backend/src/routers/loans.py"],
                 "endpoints": [
                     "GET /api/loans",
@@ -90,7 +95,10 @@ class TestCrossLayerImpactPlanner:
         assert "LoansWorkspace" in report.affected_workspaces
         assert "AmortizationSchedule" in report.affected_components
         assert "LoansSummary" in report.affected_components
-        assert "backend/tests/unit/engines/loan/test_amortization.py" in report.affected_tests
+        assert (
+            "backend/tests/unit/engines/loan/test_amortization.py"
+            in report.affected_tests
+        )
         assert "backend/tests/contract/generated/test_loans.py" in report.affected_tests
 
         excluded = ["dashboard", "forecast", "investments", "cards"]
@@ -119,9 +127,7 @@ class TestCrossLayerImpactPlanner:
             }
         }
         planner = planner_with_map(map_data)
-        report = planner.analyze_cross_layer_impact(
-            ["backend/src/routers/loans.py"]
-        )
+        report = planner.analyze_cross_layer_impact(["backend/src/routers/loans.py"])
 
         assert "backend/src/routers/loans.py" in report.affected_routers
         assert "GET /api/loans/{loan_id}/schedule" in report.affected_endpoints

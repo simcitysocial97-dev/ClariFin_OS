@@ -35,11 +35,15 @@ def _verify(*args: str, cwd: Path = REPO) -> subprocess.CompletedProcess:
     )
 
 
-def _make_plan(path: Path, tier: str, changed: list[str], *, base: str | None = None) -> None:
+def _make_plan(
+    path: Path, tier: str, changed: list[str], *, base: str | None = None
+) -> None:
     """Emit a plan manifest via the real CLI (the CI workflow's plan step)."""
-    args = [PY, VERIFY, "plan", "--tier", tier, "--no-write", "--head", "sha"] + [
-        "--changed"
-    ] + changed
+    args = (
+        [PY, VERIFY, "plan", "--tier", tier, "--no-write", "--head", "sha"]
+        + ["--changed"]
+        + changed
+    )
     if base:
         args += ["--base", base]
     r = subprocess.run(args, cwd=str(REPO), capture_output=True, text=True)
@@ -53,14 +57,23 @@ def _make_evidence(
     """Emit an execution-evidence artifact via the real CLI (M5-C / M6-A)."""
     r = subprocess.run(
         [
-            PY, VERIFY, "exec-evidence",
-            "--plan", str(plan_path),
-            "--profile", "runtime",
-            "--status", status,
-            "--exit", str(exit_code),
-            "--duration", "0",
-            "--commit", "sha",
-            "--out", str(out_path),
+            PY,
+            VERIFY,
+            "exec-evidence",
+            "--plan",
+            str(plan_path),
+            "--profile",
+            "runtime",
+            "--status",
+            status,
+            "--exit",
+            str(exit_code),
+            "--duration",
+            "0",
+            "--commit",
+            "sha",
+            "--out",
+            str(out_path),
         ],
         cwd=str(REPO),
         capture_output=True,
@@ -84,6 +97,7 @@ def _classification(res: subprocess.CompletedProcess) -> tuple[str, str]:
 def _make_evidence_literal(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload), encoding="utf-8")
 
+
 # ---------------------------------------------------------------------------
 # Option A — CI-only gate (the verification-reconcile.yml argument shape:
 #   reconcile --plan X --evidence Y --report Z --commit S ; no --local)
@@ -103,8 +117,14 @@ def test_reconcile_ci_valid_pass_is_same_plan_exit_0(tmp_path: Path) -> None:
     _make_evidence(plan, evidence, "pass", 0)
 
     res = _run_reconcile(
-        "--plan", str(plan), "--evidence", str(evidence),
-        "--report", str(report), "--commit", "sha",
+        "--plan",
+        str(plan),
+        "--evidence",
+        str(evidence),
+        "--report",
+        str(report),
+        "--commit",
+        "sha",
     )
     status, reason = _classification(res)
     assert res.returncode == 0, f"expected exit 0, got {res.returncode}: {res.stderr}"
@@ -112,7 +132,9 @@ def test_reconcile_ci_valid_pass_is_same_plan_exit_0(tmp_path: Path) -> None:
     assert report.exists()
 
 
-def test_reconcile_ci_missing_evidence_is_explicit_no_evidence_nonzero(tmp_path: Path) -> None:
+def test_reconcile_ci_missing_evidence_is_explicit_no_evidence_nonzero(
+    tmp_path: Path,
+) -> None:
     """A selected unit with no evidence must be explicit, never a silent PASS."""
     plan = tmp_path / "plan.json"
     evidence = tmp_path / "empty-evidence.json"
@@ -121,11 +143,18 @@ def test_reconcile_ci_missing_evidence_is_explicit_no_evidence_nonzero(tmp_path:
     # fingerprint means the consistency check is defensively skipped.
     _make_evidence_literal(
         evidence,
-        {"schema": "vea5-execution-evidence/v2", "tier": "pr",
-         "plan_fingerprint": "", "commit": "sha", "units": []},
+        {
+            "schema": "vea5-execution-evidence/v2",
+            "tier": "pr",
+            "plan_fingerprint": "",
+            "commit": "sha",
+            "units": [],
+        },
     )
 
-    res = _run_reconcile("--plan", str(plan), "--evidence", str(evidence), "--commit", "sha")
+    res = _run_reconcile(
+        "--plan", str(plan), "--evidence", str(evidence), "--commit", "sha"
+    )
     status, reason = _classification(res)
     assert res.returncode != 0, "missing evidence must not PASS"
     assert ("no evidence" in reason.lower()) or ("no-evidence" in reason.lower())
@@ -139,7 +168,9 @@ def test_reconcile_ci_failed_execution_is_preserved_nonzero(tmp_path: Path) -> N
     _make_plan(plan, "pr", ENGINE_CHANGE, base="main")
     _make_evidence(plan, evidence, "fail", 1)
 
-    res = _run_reconcile("--plan", str(plan), "--evidence", str(evidence), "--commit", "sha")
+    res = _run_reconcile(
+        "--plan", str(plan), "--evidence", str(evidence), "--commit", "sha"
+    )
     status, reason = _classification(res)
     assert res.returncode != 0, "failed execution must not PASS"
     assert "failure" in reason.lower()
@@ -153,13 +184,17 @@ def test_reconcile_ci_malformed_evidence_is_rejected_nonzero(tmp_path: Path) -> 
     _make_plan(plan, "pr", ENGINE_CHANGE, base="main")
     evidence.write_text("{ not valid json", encoding="utf-8")
 
-    res = _run_reconcile("--plan", str(plan), "--evidence", str(evidence), "--commit", "sha")
+    res = _run_reconcile(
+        "--plan", str(plan), "--evidence", str(evidence), "--commit", "sha"
+    )
     assert res.returncode != 0, "malformed evidence must not PASS"
     status, reason = _classification(res)
     assert "malformed" in reason.lower() or "unreadable" in reason.lower()
 
 
-def test_reconcile_ci_wrong_fingerprint_is_planning_divergence_exit_2(tmp_path: Path) -> None:
+def test_reconcile_ci_wrong_fingerprint_is_planning_divergence_exit_2(
+    tmp_path: Path,
+) -> None:
     """Evidence recorded for a different plan must be a structural failure."""
     plan_a = tmp_path / "plan-a.json"
     plan_b = tmp_path / "plan-b.json"
@@ -169,7 +204,9 @@ def test_reconcile_ci_wrong_fingerprint_is_planning_divergence_exit_2(tmp_path: 
     _make_evidence(plan_a, evidence_a, "pass", 0)
 
     # Supply plan_b's path but evidence recorded for plan_a (different fp).
-    res = _run_reconcile("--plan", str(plan_b), "--evidence", str(evidence_a), "--commit", "sha")
+    res = _run_reconcile(
+        "--plan", str(plan_b), "--evidence", str(evidence_a), "--commit", "sha"
+    )
     status, _ = _classification(res)
     assert res.returncode == 2, f"expected exit 2, got {res.returncode}"
     assert status == "planning-divergence"
@@ -188,7 +225,9 @@ def test_reconcile_expected_tier_difference_exit_0(tmp_path: Path) -> None:
     _make_plan(local_plan, "local", ENGINE_CHANGE)
     _make_plan(ci_plan, "pr", ENGINE_CHANGE, base="main")
 
-    res = _run_reconcile("--local", str(local_plan), "--plan", str(ci_plan), "--commit", "sha")
+    res = _run_reconcile(
+        "--local", str(local_plan), "--plan", str(ci_plan), "--commit", "sha"
+    )
     status, _ = _classification(res)
     assert res.returncode == 0, f"expected exit 0, got {res.returncode}"
     assert status == "expected-tier-difference"
@@ -201,7 +240,9 @@ def test_reconcile_planning_divergence_exit_2(tmp_path: Path) -> None:
     _make_plan(local_plan, "pr", FRONTEND_CHANGE, base="main")
     _make_plan(ci_plan, "pr", ENGINE_CHANGE, base="main")
 
-    res = _run_reconcile("--local", str(local_plan), "--plan", str(ci_plan), "--commit", "sha")
+    res = _run_reconcile(
+        "--local", str(local_plan), "--plan", str(ci_plan), "--commit", "sha"
+    )
     status, _ = _classification(res)
     assert res.returncode == 2, f"expected exit 2, got {res.returncode}"
     assert status == "planning-divergence"
@@ -217,11 +258,17 @@ def test_reconcile_environment_divergence_exit_1(tmp_path: Path) -> None:
     _make_evidence(plan_path, ci_ev, "fail", 1)
 
     res = _run_reconcile(
-        "--local", str(plan_path), "--plan", str(plan_path),
-        "--local-evidence", str(local_ev), "--evidence", str(ci_ev),
-        "--commit", "sha",
+        "--local",
+        str(plan_path),
+        "--plan",
+        str(plan_path),
+        "--local-evidence",
+        str(local_ev),
+        "--evidence",
+        str(ci_ev),
+        "--commit",
+        "sha",
     )
     status, _ = _classification(res)
     assert res.returncode == 1, f"expected exit 1, got {res.returncode}"
     assert status == "environment-divergence"
-

@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEPENDENCY_GROWTH_PATH = REPO_ROOT / "runtime" / "generated" / "dependency-growth.json"
 
@@ -26,7 +25,9 @@ class DependencyGrowthRecord:
     previous_count: int = 0
     delta: int = 0
     growth_rate: float = 0.0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+    )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -102,7 +103,9 @@ class DependencyGrowthIntelligence:
             json.dump(data, f, indent=2, default=str)
 
 
-def generate_dependency_growth(cross_layer_map_path: Path | None = None) -> dict[str, Any]:
+def generate_dependency_growth(
+    cross_layer_map_path: Path | None = None,
+) -> dict[str, Any]:
     intelligence = DependencyGrowthIntelligence(cross_layer_map_path)
     intelligence.save()
     return {name: record.to_dict() for name, record in intelligence.compute().items()}

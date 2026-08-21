@@ -32,7 +32,9 @@ def _load_index(index_path: Path) -> dict[str, Any]:
 
 def _verify_graph_service_load(index_path: Path) -> dict[str, Any]:
     try:
-        from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
+        from runtime.foundation.repository.graph.graph_service import (
+            RepositoryGraphService,
+        )
 
         svc = RepositoryGraphService(index_path=index_path)
         stats = svc.statistics()
@@ -50,8 +52,14 @@ def _verify_graph_service_load(index_path: Path) -> dict[str, Any]:
         "severity": "critical" if status == "fail" else "info",
         "priority": "critical" if status == "fail" else "low",
         "message": message,
-        "details": {"statistics": stats} if stats else {"error": "Graph validation failed"},
-        "recommendation": "" if status == "pass" else "Fix index.json to be loadable by RepositoryGraphService",
+        "details": (
+            {"statistics": stats} if stats else {"error": "Graph validation failed"}
+        ),
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Fix index.json to be loadable by RepositoryGraphService"
+        ),
     }
 
 
@@ -79,7 +87,11 @@ def _verify_structural_integrity(svc) -> dict[str, Any]:
             "node_count": validation.get("node_count", 0),
             "edge_count": validation.get("edge_count", 0),
         },
-        "recommendation": "" if status == "pass" else "Fix structural errors (duplicate nodes, missing edge targets)",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Fix structural errors (duplicate nodes, missing edge targets)"
+        ),
     }
 
 
@@ -145,7 +157,9 @@ def _verify_edge_referential_integrity(data: dict[str, Any]) -> dict[str, Any]:
             "missing_sources": missing_sources[:50],
             "missing_targets": missing_targets[:50],
         },
-        "recommendation": "" if status == "pass" else "Fix edges referencing non-existent nodes",
+        "recommendation": (
+            "" if status == "pass" else "Fix edges referencing non-existent nodes"
+        ),
     }
 
 
@@ -204,8 +218,13 @@ def _verify_node_type_validity(data: dict[str, Any]) -> dict[str, Any]:
         "severity": "high" if status == "fail" else "info",
         "priority": "high" if status == "fail" else "low",
         "message": message,
-        "details": {"invalid_type_nodes": invalid[:50], "valid_types": sorted(NODE_TYPES)},
-        "recommendation": "" if status == "pass" else "Fix or remove nodes with invalid types",
+        "details": {
+            "invalid_type_nodes": invalid[:50],
+            "valid_types": sorted(NODE_TYPES),
+        },
+        "recommendation": (
+            "" if status == "pass" else "Fix or remove nodes with invalid types"
+        ),
     }
 
 
@@ -233,8 +252,15 @@ def _verify_relationship_type_validity(data: dict[str, Any]) -> dict[str, Any]:
         "severity": "high" if status == "fail" else "info",
         "priority": "high" if status == "fail" else "low",
         "message": message,
-        "details": {"invalid_relationships": invalid[:50], "valid_types": sorted(RELATIONSHIP_TYPES)},
-        "recommendation": "" if status == "pass" else "Fix or remove edges with invalid relationship types",
+        "details": {
+            "invalid_relationships": invalid[:50],
+            "valid_types": sorted(RELATIONSHIP_TYPES),
+        },
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Fix or remove edges with invalid relationship types"
+        ),
     }
 
 
@@ -262,8 +288,15 @@ def _verify_ownership_validity(data: dict[str, Any]) -> dict[str, Any]:
         "severity": "high" if status == "fail" else "info",
         "priority": "high" if status == "fail" else "low",
         "message": message,
-        "details": {"invalid_ownership_nodes": invalid[:50], "valid_classes": sorted(OWNERSHIP_CLASSES)},
-        "recommendation": "" if status == "pass" else "Fix or remove nodes with invalid ownership values",
+        "details": {
+            "invalid_ownership_nodes": invalid[:50],
+            "valid_classes": sorted(OWNERSHIP_CLASSES),
+        },
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Fix or remove nodes with invalid ownership values"
+        ),
     }
 
 
@@ -316,9 +349,15 @@ def _verify_no_cycles(svc) -> dict[str, Any]:
         "message": message,
         "details": {
             "cycles_found": cycles_found[:10],
-            "cycle_count": len(cycles_found) if isinstance(cycles_found, list) else "unknown",
+            "cycle_count": (
+                len(cycles_found) if isinstance(cycles_found, list) else "unknown"
+            ),
         },
-        "recommendation": "" if status == "pass" else "Break circular dependencies in the repository graph",
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Break circular dependencies in the repository graph"
+        ),
     }
 
 
@@ -386,7 +425,9 @@ def _verify_isolated_nodes(data: dict[str, Any]) -> dict[str, Any]:
             isolated.append(nid)
     if len(isolated) <= 5:
         status = "pass"
-        message = f"Graph is well-connected ({len(isolated)} isolated nodes, acceptable)"
+        message = (
+            f"Graph is well-connected ({len(isolated)} isolated nodes, acceptable)"
+        )
     else:
         pct = (len(nodes) - len(isolated)) / len(nodes) * 100 if nodes else 0
         if pct < 80:
@@ -394,7 +435,9 @@ def _verify_isolated_nodes(data: dict[str, Any]) -> dict[str, Any]:
             message = f"Too many isolated nodes: {len(isolated)} of {len(nodes)} ({pct:.0f}% connected)"
         else:
             status = "pass"
-            message = f"Acceptable number of isolated nodes: {len(isolated)} of {len(nodes)}"
+            message = (
+                f"Acceptable number of isolated nodes: {len(isolated)} of {len(nodes)}"
+            )
     return {
         "section": "dependency_graph",
         "check_id": "dg-isolated-nodes",
@@ -403,8 +446,16 @@ def _verify_isolated_nodes(data: dict[str, Any]) -> dict[str, Any]:
         "severity": "medium" if status == "fail" else "info",
         "priority": "medium" if status == "fail" else "low",
         "message": message,
-        "details": {"isolated_count": len(isolated), "isolated_ids": isolated[:50], "total_nodes": len(nodes)},
-        "recommendation": "" if status == "pass" else "Investigate and connect isolated nodes or mark as intentionally standalone",
+        "details": {
+            "isolated_count": len(isolated),
+            "isolated_ids": isolated[:50],
+            "total_nodes": len(nodes),
+        },
+        "recommendation": (
+            ""
+            if status == "pass"
+            else "Investigate and connect isolated nodes or mark as intentionally standalone"
+        ),
     }
 
 
@@ -435,7 +486,9 @@ def _verify_ownership_distribution(data: dict[str, Any]) -> dict[str, Any]:
         "priority": "high" if status == "fail" else "low",
         "message": message,
         "details": {"distribution": ownership_dist},
-        "recommendation": "" if status == "pass" else "Reassign nodes with invalid ownership",
+        "recommendation": (
+            "" if status == "pass" else "Reassign nodes with invalid ownership"
+        ),
     }
 
 
@@ -451,7 +504,9 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
     svc = None
 
     if data:
-        from runtime.foundation.repository.graph.graph_service import RepositoryGraphService
+        from runtime.foundation.repository.graph.graph_service import (
+            RepositoryGraphService,
+        )
 
         try:
             svc = RepositoryGraphService(index_path=index_path)
@@ -472,17 +527,19 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
             findings.append(_verify_no_cycles(svc))
             findings.append(_verify_graph_depth(svc))
     else:
-        findings.append({
-            "section": "dependency_graph",
-            "check_id": "dg-index-load",
-            "name": "Dependency graph index load",
-            "status": "fail",
-            "severity": "critical",
-            "priority": "critical",
-            "message": "Could not load index.json for dependency graph checks",
-            "details": {},
-            "recommendation": "Generate repository index before running dependency graph audit",
-        })
+        findings.append(
+            {
+                "section": "dependency_graph",
+                "check_id": "dg-index-load",
+                "name": "Dependency graph index load",
+                "status": "fail",
+                "severity": "critical",
+                "priority": "critical",
+                "message": "Could not load index.json for dependency graph checks",
+                "details": {},
+                "recommendation": "Generate repository index before running dependency graph audit",
+            }
+        )
 
     all_pass = all(f["status"] == "pass" for f in findings)
     overall_status = "pass" if all_pass else "fail"

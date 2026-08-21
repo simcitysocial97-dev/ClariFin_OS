@@ -83,7 +83,9 @@ def _chain_map() -> dict[str, dict[str, Any]]:
 def _chain_map_beta_first() -> dict[str, dict[str, Any]]:
     """Same map but with beta_engine inserted FIRST (drives the first-entry mutant)."""
     cm = _chain_map()
-    ordered = {"backend/src/engines/beta_engine": cm.pop("backend/src/engines/beta_engine")}
+    ordered = {
+        "backend/src/engines/beta_engine": cm.pop("backend/src/engines/beta_engine")
+    }
     ordered.update(cm)
     return ordered
 
@@ -107,9 +109,15 @@ def _agg() -> EvidenceAggregator:
     return EvidenceAggregator(Path("."))
 
 
-def _resolve(failure_type: str, provenance: dict[str, dict[str, Any]], chain_map: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def _resolve(
+    failure_type: str,
+    provenance: dict[str, dict[str, Any]],
+    chain_map: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
     agg = _agg()
-    with patch.object(EvidenceAggregator, "_canonical_chain_map", return_value=chain_map):
+    with patch.object(
+        EvidenceAggregator, "_canonical_chain_map", return_value=chain_map
+    ):
         return agg._resolve_chain_for_failure(failure_type, provenance, chain_map)
 
 
@@ -117,7 +125,13 @@ class TestE4Negative:
     # A. unrelated first entry ------------------------------------------------
     def test_A_unrelated_first_entry(self):
         # The map's first entry is beta_engine, but the failing unit is alpha.
-        prov = {"backend-unit": {"capabilities": ["useAlphaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"}}
+        prov = {
+            "backend-unit": {
+                "capabilities": ["useAlphaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            }
+        }
         result = _resolve("unit_tests", prov, _chain_map())
         assert "backend/src/engines/alpha_engine" in result["dependency_chain"]
         assert "backend/src/engines/beta_engine" not in result["dependency_chain"]
@@ -126,7 +140,13 @@ class TestE4Negative:
     def test_B_substring_collision(self):
         # "useBetaCapability" shares no substring logic; we ensure selecting the
         # beta unit never pulls alpha despite "eta" overlap in a naive matcher.
-        prov = {"backend-unit": {"capabilities": ["useBetaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"}}
+        prov = {
+            "backend-unit": {
+                "capabilities": ["useBetaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            }
+        }
         result = _resolve("unit_tests", prov, _chain_map())
         assert result["likely_origin"] == "backend/src/engines/beta_engine"
         assert "alpha" not in result["dependency_chain"]
@@ -135,8 +155,16 @@ class TestE4Negative:
     def test_C_same_test_name_different_unit(self):
         # Two units, both with a test named "test_shared.py" — unit_id dominates.
         prov = {
-            "unit-alpha": {"capabilities": ["useAlphaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"},
-            "unit-beta": {"capabilities": ["useBetaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"},
+            "unit-alpha": {
+                "capabilities": ["useAlphaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            },
+            "unit-beta": {
+                "capabilities": ["useBetaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            },
         }
         alpha = _resolve("unit_tests", {"unit-alpha": prov["unit-alpha"]}, _chain_map())
         beta = _resolve("unit_tests", {"unit-beta": prov["unit-beta"]}, _chain_map())
@@ -147,7 +175,13 @@ class TestE4Negative:
     # D. missing graph edge ---------------------------------------------------
     def test_D_missing_graph_edge_is_unknown(self):
         # Capability resolves to NO engine in the map -> no causality -> UNKNOWN.
-        prov = {"backend-unit": {"capabilities": ["useOrphanCapability"], "impact_kinds": ["engine"], "source": "blast-radius"}}
+        prov = {
+            "backend-unit": {
+                "capabilities": ["useOrphanCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            }
+        }
         result = _resolve("unit_tests", prov, _chain_map())
         assert result == {}
 
@@ -164,10 +198,18 @@ class TestE4Negative:
         # beta unit did not select contracts. No enumerated contract unit exists,
         # and no mapped unit carries a capability that owns contracts -> UNKNOWN,
         # never borrow the alpha unit that happens to be mapped.
-        prov = {"unit-beta": {"capabilities": ["useBetaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"}}
+        prov = {
+            "unit-beta": {
+                "capabilities": ["useBetaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            }
+        }
         result = _resolve("contract_tests", prov, _chain_map())
         # No contract-owned unit is mapped; must not cross-borrow alpha.
-        assert "backend/src/engines/alpha_engine" not in result.get("dependency_chain", [])
+        assert "backend/src/engines/alpha_engine" not in result.get(
+            "dependency_chain", []
+        )
 
     # G. first-entry mutant ---------------------------------------------------
     def test_G_first_entry_mutant_kills_a_test(self):
@@ -176,7 +218,13 @@ class TestE4Negative:
         # E-4 "first-entry" mutant and assert it DIVERGES from the correct answer
         # (it returns beta, the first inserted chain). The diverging assertion is
         # what proves the first-entry defect class is detectable by this test.
-        prov = {"backend-unit": {"capabilities": ["useAlphaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"}}
+        prov = {
+            "backend-unit": {
+                "capabilities": ["useAlphaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            }
+        }
 
         # 1) real implementation: correct, order-independent answer.
         real = _resolve("unit_tests", prov, _chain_map_beta_first())
@@ -196,10 +244,18 @@ class TestE4Negative:
                 "suggested_layer": None,
             }
 
-        with patch.object(EvidenceAggregator, "_resolve_chain_for_failure", mutant_first_entry):
+        with patch.object(
+            EvidenceAggregator, "_resolve_chain_for_failure", mutant_first_entry
+        ):
             agg = _agg()
-            with patch.object(EvidenceAggregator, "_canonical_chain_map", return_value=_chain_map_beta_first()):
-                mutated = agg._resolve_chain_for_failure("unit_tests", prov, _chain_map_beta_first())
+            with patch.object(
+                EvidenceAggregator,
+                "_canonical_chain_map",
+                return_value=_chain_map_beta_first(),
+            ):
+                mutated = agg._resolve_chain_for_failure(
+                    "unit_tests", prov, _chain_map_beta_first()
+                )
         # The mutant mis-resolves to beta (first entry); this must differ from the
         # correct alpha answer, proving the defect class is caught.
         assert mutated["likely_origin"] != real["likely_origin"]
@@ -213,7 +269,13 @@ class TestE4Negative:
         # the E-4 substring mutant and assert it DIVERGES (it mis-resolves onto
         # the decoy), proving the substring defect class is detectable.
         cm = _chain_map_decoy_first()
-        prov = {"backend-unit": {"capabilities": ["useAlphaCapability"], "impact_kinds": ["engine"], "source": "blast-radius"}}
+        prov = {
+            "backend-unit": {
+                "capabilities": ["useAlphaCapability"],
+                "impact_kinds": ["engine"],
+                "source": "blast-radius",
+            }
+        }
 
         # 1) real implementation: ownership-based, substring-independent answer.
         real = _resolve("unit_tests", prov, cm)
@@ -229,12 +291,21 @@ class TestE4Negative:
             short = cap.lower().replace("use", "").replace("capability", "").strip()
             for engine_path, chain in chain_map.items():
                 if short and short in engine_path.lower():
-                    return {"dependency_chain": [engine_path], "likely_origin": engine_path, "likely_consumer": None, "suggested_layer": None}
+                    return {
+                        "dependency_chain": [engine_path],
+                        "likely_origin": engine_path,
+                        "likely_consumer": None,
+                        "suggested_layer": None,
+                    }
             return {}
 
-        with patch.object(EvidenceAggregator, "_resolve_chain_for_failure", mutant_substring):
+        with patch.object(
+            EvidenceAggregator, "_resolve_chain_for_failure", mutant_substring
+        ):
             agg = _agg()
-            with patch.object(EvidenceAggregator, "_canonical_chain_map", return_value=cm):
+            with patch.object(
+                EvidenceAggregator, "_canonical_chain_map", return_value=cm
+            ):
                 mutated = agg._resolve_chain_for_failure("unit_tests", prov, cm)
         # The substring mutant mis-resolves onto alphabet_engine (decoy); this
         # must differ from the correct alpha_engine answer.

@@ -72,7 +72,12 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
                 "severity": "medium",
                 "priority": "medium",
                 "message": "Workflow has no schedule or workflow_dispatch trigger",
-                "details": {"has_push": has_push, "has_pr": has_pr, "has_schedule": has_schedule, "has_dispatch": has_dispatch},
+                "details": {
+                    "has_push": has_push,
+                    "has_pr": has_pr,
+                    "has_schedule": has_schedule,
+                    "has_dispatch": has_dispatch,
+                },
                 "recommendation": "Add a schedule or workflow_dispatch trigger for operational workflows",
             }
         )
@@ -152,7 +157,11 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
                     "severity": "high",
                     "priority": "high",
                     "message": f"cancel-in-progress={cancel}, expected {expected_cancel} (Rule 6 exception list)",
-                    "details": {"workflow": name, "actual": cancel, "expected": expected_cancel},
+                    "details": {
+                        "workflow": name,
+                        "actual": cancel,
+                        "expected": expected_cancel,
+                    },
                     "recommendation": f"Set cancel-in-progress to {expected_cancel} for {name}",
                 }
             )
@@ -231,7 +240,11 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
                     }
                 )
 
-            if "build_cross_layer_map" in run or "build_index" in run or "save_index" in run:
+            if (
+                "build_cross_layer_map" in run
+                or "build_index" in run
+                or "save_index" in run
+            ):
                 found_inline_gen = True
 
             if "python runtime/verify.py" in run:
@@ -254,7 +267,12 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
                                     "severity": "high",
                                     "priority": "high",
                                     "message": f"Runs `verify.py {prof}` but should be `verify.py {expected}` (Rule 8)",
-                                    "details": {"workflow": name, "job": job_id, "actual": prof, "expected": expected},
+                                    "details": {
+                                        "workflow": name,
+                                        "job": job_id,
+                                        "actual": prof,
+                                        "expected": expected,
+                                    },
                                     "recommendation": f"Change to `python runtime/verify.py {expected}`",
                                 }
                             )
@@ -279,7 +297,12 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
                             "severity": "info",
                             "priority": "low",
                             "message": f"Artifact '{name_in}' has retention-days={retention}",
-                            "details": {"workflow": name, "job": job_id, "artifact": name_in, "retention_days": retention},
+                            "details": {
+                                "workflow": name,
+                                "job": job_id,
+                                "artifact": name_in,
+                                "retention_days": retention,
+                            },
                             "recommendation": "",
                         }
                     )
@@ -296,7 +319,11 @@ def _audit_workflow(path: Path) -> list[dict[str, Any]]:
                         "severity": "info",
                         "priority": "low",
                         "message": "Cache action found with key pattern",
-                        "details": {"workflow": name, "job": job_id, "cache_key": cache_key[:80] if cache_key else ""},
+                        "details": {
+                            "workflow": name,
+                            "job": job_id,
+                            "cache_key": cache_key[:80] if cache_key else "",
+                        },
                         "recommendation": "",
                     }
                 )
@@ -451,7 +478,10 @@ def _audit_composite_action(path: Path) -> list[dict[str, Any]]:
                 "severity": "high",
                 "priority": "high",
                 "message": f"Expected runs.using=composite, got '{runs.get('using')}'",
-                "details": {"action_dir": str(action_file), "runs_using": runs.get("using")},
+                "details": {
+                    "action_dir": str(action_file),
+                    "runs_using": runs.get("using"),
+                },
                 "recommendation": "Set runs.using to 'composite' in action.yml",
             }
         )
@@ -486,8 +516,12 @@ def _audit_composite_action(path: Path) -> list[dict[str, Any]]:
     )
 
     steps = runs.get("steps", [])
-    has_setup_python = any(s.get("uses", "").endswith("setup-python-runtime") for s in steps)
-    has_setup_node = any(s.get("uses", "").endswith("setup-node-runtime") for s in steps)
+    has_setup_python = any(
+        s.get("uses", "").endswith("setup-python-runtime") for s in steps
+    )
+    has_setup_node = any(
+        s.get("uses", "").endswith("setup-node-runtime") for s in steps
+    )
     has_upload = any(s.get("uses", "").endswith("upload-runtime") for s in steps)
     has_cache = any("actions/cache" in s.get("uses", "") for s in steps)
 
@@ -550,8 +584,16 @@ def _reuse_validate_actions() -> list[dict[str, Any]]:
             "severity": "info",
             "priority": "low",
             "message": f"validate_actions.py exited with code {proc.returncode}",
-            "details": {"returncode": proc.returncode, "stdout": proc.stdout[:500], "stderr": proc.stderr[:500]},
-            "recommendation": "" if proc.returncode == 0 else "Fix validation errors reported by validate_actions.py",
+            "details": {
+                "returncode": proc.returncode,
+                "stdout": proc.stdout[:500],
+                "stderr": proc.stderr[:500],
+            },
+            "recommendation": (
+                ""
+                if proc.returncode == 0
+                else "Fix validation errors reported by validate_actions.py"
+            ),
         }
     )
 

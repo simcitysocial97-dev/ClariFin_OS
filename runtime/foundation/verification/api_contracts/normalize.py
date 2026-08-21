@@ -10,14 +10,15 @@ from __future__ import annotations
 import json
 from typing import Any
 
-
 # Keys that carry no semantic contract weight.
-VOLATILE_KEYS = frozenset({
-    "servers",  # environment-specific server URLs
-    "host",
-    "basePath",
-    "schemes",
-})
+VOLATILE_KEYS = frozenset(
+    {
+        "servers",  # environment-specific server URLs
+        "host",
+        "basePath",
+        "schemes",
+    }
+)
 
 
 def canonical_normalize(schema: dict[str, Any]) -> dict[str, Any]:
@@ -47,6 +48,7 @@ def canonical_normalize(schema: dict[str, Any]) -> dict[str, Any]:
 def hash_openapi(schema: dict[str, Any]) -> str:
     """SHA-256 digest of the canonicalized OpenAPI for fingerprinting."""
     import hashlib
+
     normalized = canonical_normalize(schema)
     raw = json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(raw).hexdigest()
@@ -74,21 +76,51 @@ def _diff_dicts(a: dict, b: dict, prefix: str, out: list) -> None:
     for k in sorted(all_keys):
         cur = f"{prefix}.{k}" if prefix else k
         if k not in a:
-            out.append({"path": cur, "kind": "MISSING_IN_LIVE", "actual": None, "expected": "<present>"})
+            out.append(
+                {
+                    "path": cur,
+                    "kind": "MISSING_IN_LIVE",
+                    "actual": None,
+                    "expected": "<present>",
+                }
+            )
         elif k not in b:
-            out.append({"path": cur, "kind": "EXTRA_IN_LIVE", "expected": None, "actual": "<present>"})
+            out.append(
+                {
+                    "path": cur,
+                    "kind": "EXTRA_IN_LIVE",
+                    "expected": None,
+                    "actual": "<present>",
+                }
+            )
         else:
             va, vb = a[k], b[k]
             if isinstance(va, dict) and isinstance(vb, dict):
                 _diff_dicts(va, vb, cur, out)
             elif isinstance(va, list) and isinstance(vb, list):
                 if len(va) != len(vb):
-                    out.append({"path": cur, "kind": "LENGTH_MISMATCH", "expected": len(vb), "actual": len(va)})
+                    out.append(
+                        {
+                            "path": cur,
+                            "kind": "LENGTH_MISMATCH",
+                            "expected": len(vb),
+                            "actual": len(va),
+                        }
+                    )
                 else:
                     for i, (xi, xj) in enumerate(zip(va, vb)):
                         if isinstance(xi, dict) and isinstance(xj, dict):
                             _diff_dicts(xi, xj, f"{cur}[{i}]", out)
                         elif xi != xj:
-                            out.append({"path": f"{cur}[{i}]", "kind": "VALUE_DRIFT", "expected": xj, "actual": xi})
+                            out.append(
+                                {
+                                    "path": f"{cur}[{i}]",
+                                    "kind": "VALUE_DRIFT",
+                                    "expected": xj,
+                                    "actual": xi,
+                                }
+                            )
             elif va != vb:
-                out.append({"path": cur, "kind": "VALUE_DRIFT", "expected": vb, "actual": va})
+                out.append(
+                    {"path": cur, "kind": "VALUE_DRIFT", "expected": vb, "actual": va}
+                )

@@ -38,7 +38,6 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any
 
-
 # ---------------------------------------------------------------------------
 # Failure classifications (one per detected defect)
 # ---------------------------------------------------------------------------
@@ -168,7 +167,9 @@ class GateReport:
 # Convenience helpers used across dimensions.
 
 
-def _classification_for_nullability(op: str, spec_nullable: bool, zod_nullable: bool) -> str:
+def _classification_for_nullability(
+    op: str, spec_nullable: bool, zod_nullable: bool
+) -> str:
     """Return the appropriate FailureClassification for nullability mismatch."""
     if spec_nullable != zod_nullable:
         return FailureClassification.NULLABILITY_DRIFT.value
@@ -177,8 +178,8 @@ def _classification_for_nullability(op: str, spec_nullable: bool, zod_nullable: 
 
 def _failure(classif: FailureClassification | str, **kwargs: Any) -> ContractFailure:
     return ContractFailure(
-        classification=FailureClassification(classif)
-        if isinstance(classif, str)
-        else classif,
+        classification=(
+            FailureClassification(classif) if isinstance(classif, str) else classif
+        ),
         **kwargs,
     )

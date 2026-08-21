@@ -14,7 +14,6 @@ from typing import Any
 
 from .event_store import EngineeringEventStore
 
-
 REPO_ROOT = Path(__file__).resolve().parents[3]
 COST_ANALYSIS_PATH = REPO_ROOT / "runtime" / "generated" / "cost-analysis.json"
 
@@ -37,17 +36,29 @@ class CostBreakdown:
             "local": {
                 "total_seconds": round(self.local_total_seconds, 2),
                 "runs": self.local_runs,
-                "avg_seconds": round(self.local_total_seconds / self.local_runs, 2) if self.local_runs else 0.0,
+                "avg_seconds": (
+                    round(self.local_total_seconds / self.local_runs, 2)
+                    if self.local_runs
+                    else 0.0
+                ),
             },
             "ci": {
                 "total_seconds": round(self.ci_total_seconds, 2),
                 "runs": self.ci_runs,
-                "avg_seconds": round(self.ci_total_seconds / self.ci_runs, 2) if self.ci_runs else 0.0,
+                "avg_seconds": (
+                    round(self.ci_total_seconds / self.ci_runs, 2)
+                    if self.ci_runs
+                    else 0.0
+                ),
             },
             "combined": {
                 "total_seconds": round(self.combined_total_seconds, 2),
                 "runs": self.combined_runs,
-                "avg_seconds": round(self.combined_total_seconds / self.combined_runs, 2) if self.combined_runs else 0.0,
+                "avg_seconds": (
+                    round(self.combined_total_seconds / self.combined_runs, 2)
+                    if self.combined_runs
+                    else 0.0
+                ),
             },
         }
 
@@ -71,8 +82,7 @@ class CostAnalysis:
     def compute(self) -> dict[str, CostBreakdown]:
         events = self._event_store.load_events()
         breakdowns: dict[str, CostBreakdown] = {
-            phase: CostBreakdown(phase=phase)
-            for phase in self.PHASE_EVENT_MAP
+            phase: CostBreakdown(phase=phase) for phase in self.PHASE_EVENT_MAP
         }
 
         for event in events:
@@ -106,7 +116,9 @@ class CostAnalysis:
             json.dump(data, f, indent=2, default=str)
 
 
-def generate_cost_analysis(event_store: EngineeringEventStore | None = None) -> dict[str, Any]:
+def generate_cost_analysis(
+    event_store: EngineeringEventStore | None = None,
+) -> dict[str, Any]:
     analysis = CostAnalysis(event_store)
     analysis.save()
     return {name: breakdown.to_dict() for name, breakdown in analysis.compute().items()}

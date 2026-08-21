@@ -222,30 +222,19 @@ def format_table(headers: list[str], rows: list[list[Any]]) -> str:
             reduce = min(overflow // len(col_widths) + 1, max_width - 10)
             col_widths = [max(10, w - reduce) for w in col_widths]
 
-    header_line = (
-        _TL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _TR
-    )
+    header_line = _TL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _TR
     lines: list[str] = [header_line]
 
-    header_cells = [
-        _pad(_truncate(h, w), w) for h, w in zip(headers, col_widths)
-    ]
+    header_cells = [_pad(_truncate(h, w), w) for h, w in zip(headers, col_widths)]
     lines.append(_V + " " + " ".join(header_cells) + " " + _V)
 
-    sep = (
-        _LR + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _CR
-    )
+    sep = _LR + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _CR
     lines.append(sep)
 
     for row in rows:
-        cells = [
-            _pad(_truncate(str(c), w), w)
-            for c, w in zip(row, col_widths)
-        ]
+        cells = [_pad(_truncate(str(c), w), w) for c, w in zip(row, col_widths)]
         lines.append(_V + " " + " ".join(cells) + " " + _V)
 
-    footer_line = (
-        _BL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _BR
-    )
+    footer_line = _BL + _H * (sum(col_widths) + (len(col_widths) - 1) * 3) + _BR
     lines.append(footer_line)
     return "\n".join(lines)

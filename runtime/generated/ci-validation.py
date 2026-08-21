@@ -3,6 +3,7 @@
 
 Validates the complete GitHub workflow lifecycle using collected CI intelligence.
 """
+
 from __future__ import annotations
 
 import json
@@ -14,14 +15,21 @@ sys.path.insert(0, str(REPO_ROOT))
 
 
 def main() -> int:
-    github_intelligence_path = REPO_ROOT / "runtime" / "generated" / "github-intelligence.json"
+    github_intelligence_path = (
+        REPO_ROOT / "runtime" / "generated" / "github-intelligence.json"
+    )
     if not github_intelligence_path.exists():
-        print(f"Error: {github_intelligence_path} not found. Run intelligence collection first.", file=sys.stderr)
+        print(
+            f"Error: {github_intelligence_path} not found. Run intelligence collection first.",
+            file=sys.stderr,
+        )
         return 1
 
     data = json.loads(github_intelligence_path.read_text(encoding="utf-8"))
 
-    failed_workflows = [run for run in data.get("runs", []) if run.get("conclusion") == "failure"]
+    failed_workflows = [
+        run for run in data.get("runs", []) if run.get("conclusion") == "failure"
+    ]
     failed_jobs = data.get("failed_jobs", [])
     annotations = data.get("annotations", [])
     artifacts = data.get("artifacts", [])
@@ -48,9 +56,7 @@ def main() -> int:
         "failed_jobs_count": len(failed_jobs),
         "failed_jobs": failed_jobs,
         "failed_steps": [
-            step
-            for job in failed_jobs
-            for step in job.get("failed_steps", [])
+            step for job in failed_jobs for step in job.get("failed_steps", [])
         ],
         "annotations_count": len(annotations),
         "annotations": annotations,
@@ -76,7 +82,9 @@ def main() -> int:
     }
 
     out_path = REPO_ROOT / "runtime" / "generated" / "ci-validation.json"
-    out_path.write_text(json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8")
+    out_path.write_text(
+        json.dumps(output, indent=2, default=str) + "\n", encoding="utf-8"
+    )
     print(f"Generated: {out_path}")
     return 0
 

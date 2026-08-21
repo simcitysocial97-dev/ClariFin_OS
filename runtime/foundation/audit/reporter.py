@@ -9,7 +9,6 @@ import json
 from pathlib import Path
 from typing import Any
 
-
 REPORT_JSON = Path("runtime/generated/engineering-platform-audit.json")
 REPORT_MD = Path("runtime/generated/engineering-platform-audit.md")
 PIPELINE_JSON = Path("runtime/generated/pipeline-validation.json")
@@ -46,7 +45,9 @@ class AuditReporter:
         paths["pipeline"].write_text(self._to_pipeline_json(), encoding="utf-8")
         paths["certification"].write_text(self._to_certification_md(), encoding="utf-8")
         paths["defects"].write_text(self._to_defects_json(), encoding="utf-8")
-        paths["github_health"].write_text(self._to_github_health_json(), encoding="utf-8")
+        paths["github_health"].write_text(
+            self._to_github_health_json(), encoding="utf-8"
+        )
         paths["artifact_ownership"].write_text(
             self._to_artifact_ownership_json(), encoding="utf-8"
         )
@@ -165,9 +166,7 @@ class AuditReporter:
         lines.append(
             "This audit validates every engineering subsystem works together in practice."
         )
-        lines.append(
-            f"Certification status: **{self._report.certification_status}**."
-        )
+        lines.append(f"Certification status: **{self._report.certification_status}**.")
         lines.append("")
 
         if self._report.critical_issues:
@@ -196,7 +195,11 @@ class AuditReporter:
         lines.append("## Section Results")
         lines.append("")
         for s in self._report.sections:
-            status_icon = "PASS" if s.status == "pass" else "FAIL" if s.status == "fail" else "WARN"
+            status_icon = (
+                "PASS"
+                if s.status == "pass"
+                else "FAIL" if s.status == "fail" else "WARN"
+            )
             lines.append(f"### {s.name}")
             lines.append(f"- **Status:** {status_icon}")
             lines.append(f"- **Duration:** {s.duration_seconds:.2f}s")
@@ -281,7 +284,8 @@ class AuditReporter:
 
     def _to_artifact_ownership_json(self) -> str:
         ao_section = next(
-            (s for s in self._report.sections if s.section == "artifact_ownership"), None
+            (s for s in self._report.sections if s.section == "artifact_ownership"),
+            None,
         )
         data = {"overall_status": "unknown", "artifacts": []}
         if ao_section:

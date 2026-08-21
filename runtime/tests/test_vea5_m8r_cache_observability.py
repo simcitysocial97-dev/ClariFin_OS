@@ -59,7 +59,9 @@ def test_cache_hit_records_cache_hit_true(tmp_path: Path) -> None:
     assert events[0]["status"] == "pass"
 
 
-def test_cache_hit_records_fail_status_when_cached_verdict_failed(tmp_path: Path) -> None:
+def test_cache_hit_records_fail_status_when_cached_verdict_failed(
+    tmp_path: Path,
+) -> None:
     """A cached FAIL is recorded as a cache hit with status fail (non-zero)."""
     event_path, _ = _make_stores(tmp_path)
     _record_verification_event(None, "runtime", 0.0, cache_hit=True, status="fail")

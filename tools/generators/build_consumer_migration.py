@@ -72,7 +72,9 @@ def _scan_consumers() -> list[dict]:
                         "module": rel,
                         "current_source": art,
                         "migration_target": PROVIDER_MODULE,
-                        "remaining_legacy_logic": "" if migrated else "reads legacy artifact directly",
+                        "remaining_legacy_logic": (
+                            "" if migrated else "reads legacy artifact directly"
+                        ),
                         "duplicated_discovery": False,
                         "migration_status": "migrated" if migrated else "review",
                     }

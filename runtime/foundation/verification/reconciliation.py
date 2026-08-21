@@ -252,10 +252,7 @@ def _only_tier_eligible_differ(
     excluded_only_local = local_exc - ci_exc
     excluded_only_ci = ci_exc - local_exc
     diff_units = (
-        selected_only_local
-        | selected_only_ci
-        | excluded_only_local
-        | excluded_only_ci
+        selected_only_local | selected_only_ci | excluded_only_local | excluded_only_ci
     )
     return bool(diff_units) and diff_units <= tier_eligible
 
@@ -486,15 +483,11 @@ class ExecutionEvidence:
         )
 
 
-def save_execution_evidence(
-    evidence: ExecutionEvidence, path: Path | str
-) -> Path:
+def save_execution_evidence(evidence: ExecutionEvidence, path: Path | str) -> Path:
     """Persist the execution-evidence artifact so reconciliation can read it."""
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(
-        json.dumps(evidence.to_dict(), indent=2) + "\n", encoding="utf-8"
-    )
+    p.write_text(json.dumps(evidence.to_dict(), indent=2) + "\n", encoding="utf-8")
     return p
 
 
@@ -544,7 +537,13 @@ def reconcile_from_artifacts(
     if ci_evidence_path is not None:
         ci_results = _unit_results_from_any_evidence(ci_evidence_path)
 
-    return reconcile(local_plan, ci_plan, local_results=local_results, ci_results=ci_results, commit=commit)
+    return reconcile(
+        local_plan,
+        ci_plan,
+        local_results=local_results,
+        ci_results=ci_results,
+        commit=commit,
+    )
 
 
 def validate_ci_artifacts(
@@ -576,7 +575,9 @@ def validate_ci_artifacts(
     if ci_evidence_path is not None:
         try:
             results = _unit_results_from_any_evidence(ci_evidence_path)
-        except Exception as exc:  # malformed / unreadable evidence -> reject, never PASS
+        except (
+            Exception
+        ) as exc:  # malformed / unreadable evidence -> reject, never PASS
             return _ci_report(
                 ReconciliationClassification(
                     status=ReconciliationStatus.ENVIRONMENT_DIVERGENCE.value,
@@ -710,15 +711,11 @@ def _load_plan_from_manifest(path: Path | str) -> TierPlan:
     )
 
 
-def save_reconciliation_report(
-    report: ReconciliationReport, path: Path | str
-) -> Path:
+def save_reconciliation_report(report: ReconciliationReport, path: Path | str) -> Path:
     """Persist the reconciliation report (M5 evidence artifact)."""
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(
-        json.dumps(report.to_dict(), indent=2) + "\n", encoding="utf-8"
-    )
+    p.write_text(json.dumps(report.to_dict(), indent=2) + "\n", encoding="utf-8")
     return p
 
 

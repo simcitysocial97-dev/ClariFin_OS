@@ -199,7 +199,8 @@ class ReferenceEngine:
             )
 
     def _follow_capabilities(
-        self, entry: KnowledgeEntry,
+        self,
+        entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
         for key, value in entry.references.items():
@@ -234,11 +235,14 @@ class ReferenceEngine:
                         depth=depth,
                     )
                 )
-                chains.extend(self._follow_view_models_from_mapper(mp.name, depth=depth + 1))
+                chains.extend(
+                    self._follow_view_models_from_mapper(mp.name, depth=depth + 1)
+                )
         return chains
 
     def _follow_mappers(
-        self, entry: KnowledgeEntry,
+        self,
+        entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
         for key, value in entry.references.items():
@@ -254,7 +258,9 @@ class ReferenceEngine:
                         depth=1,
                     )
                 )
-                chains.extend(self._follow_view_models_from_mapper(mapper_name, depth=2))
+                chains.extend(
+                    self._follow_view_models_from_mapper(mapper_name, depth=2)
+                )
         return chains
 
     def _follow_view_models_from_mapper(
@@ -273,11 +279,14 @@ class ReferenceEngine:
                         depth=depth,
                     )
                 )
-                chains.extend(self._follow_workspaces_from_viewmodel(vm.name, depth=depth + 1))
+                chains.extend(
+                    self._follow_workspaces_from_viewmodel(vm.name, depth=depth + 1)
+                )
         return chains
 
     def _follow_view_models(
-        self, entry: KnowledgeEntry,
+        self,
+        entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
         for key, value in entry.references.items():
@@ -312,11 +321,14 @@ class ReferenceEngine:
                         depth=depth,
                     )
                 )
-                chains.extend(self._follow_components_from_workspace(ws.name, depth=depth + 1))
+                chains.extend(
+                    self._follow_components_from_workspace(ws.name, depth=depth + 1)
+                )
         return chains
 
     def _follow_workspaces(
-        self, entry: KnowledgeEntry,
+        self,
+        entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
         for key, value in entry.references.items():
@@ -351,11 +363,14 @@ class ReferenceEngine:
                         depth=depth,
                     )
                 )
-                chains.extend(self._follow_tests_from_component(comp.name, depth=depth + 1))
+                chains.extend(
+                    self._follow_tests_from_component(comp.name, depth=depth + 1)
+                )
         return chains
 
     def _follow_components(
-        self, entry: KnowledgeEntry,
+        self,
+        entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         chains: list[RelationshipChain] = []
         for key, value in entry.references.items():
@@ -375,7 +390,8 @@ class ReferenceEngine:
         return chains
 
     def _follow_tests(
-        self, entry: KnowledgeEntry,
+        self,
+        entry: KnowledgeEntry,
     ) -> list[RelationshipChain]:
         """Follow tests from a component or other entity."""
         chains: list[RelationshipChain] = []

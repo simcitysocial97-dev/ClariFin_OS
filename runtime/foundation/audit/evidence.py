@@ -6,12 +6,26 @@ import time
 from pathlib import Path
 from typing import Any
 
-from runtime.foundation.audit.models import AuditFinding, AuditPriority, AuditSeverity, AuditStatus
+from runtime.foundation.audit.models import (
+    AuditFinding,
+    AuditPriority,
+    AuditSeverity,
+    AuditStatus,
+)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
-def _f(check_id: str, name: str, status: str, severity: str, priority: str, message: str, details: dict[str, Any] = None, recommendation: str = "") -> AuditFinding:
+def _f(
+    check_id: str,
+    name: str,
+    status: str,
+    severity: str,
+    priority: str,
+    message: str,
+    details: dict[str, Any] = None,
+    recommendation: str = "",
+) -> AuditFinding:
     return AuditFinding(
         section="evidence",
         check_id=check_id,
@@ -67,7 +81,9 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
                     "EvidenceAggregator correctly detected synthetic test failures",
                     {
                         "overall_status": summary.overall_status,
-                        "unit_tests_failed": summary.backend.get("unit_tests", {}).get("failed", 0),
+                        "unit_tests_failed": summary.backend.get("unit_tests", {}).get(
+                            "failed", 0
+                        ),
                     },
                 )
             )
@@ -207,7 +223,9 @@ def audit(repo_root: Path | None = None) -> dict[str, Any]:
 
         attention_items = agg._build_attention(
             {"unit_tests": {"failed": 1}, "mutation": {}},
-            type("MutationEvidence", (), {"score_pct": 0.0, "killed": 0, "survived": 0})(),
+            type(
+                "MutationEvidence", (), {"score_pct": 0.0, "killed": 0, "survived": 0}
+            )(),
         )
         has_repair = any(
             "action" in item and item["action"] for item in attention_items

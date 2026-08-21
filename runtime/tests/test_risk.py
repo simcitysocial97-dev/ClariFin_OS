@@ -13,8 +13,10 @@ from runtime.foundation.intelligence import engineering_risk, format_risk
 
 def test_risk_exposes_seven_dimensions():
     risk = engineering_risk(
-        ["backend/src/engines/account_engine/balance.py",
-         "backend/src/routers/accounts.py"]
+        [
+            "backend/src/engines/account_engine/balance.py",
+            "backend/src/routers/accounts.py",
+        ]
     )
     names = {d.name for d in risk.dimensions}
     assert names == {
@@ -30,8 +32,10 @@ def test_risk_exposes_seven_dimensions():
 
 def test_risk_never_masks_high_dimension():
     risk = engineering_risk(
-        ["backend/src/engines/account_engine/balance.py",
-         "backend/src/routers/accounts.py"]
+        [
+            "backend/src/engines/account_engine/balance.py",
+            "backend/src/routers/accounts.py",
+        ]
     )
     order = ["Low", "Medium", "High"]
     worst = max((d.level for d in risk.dimensions), key=order.index)

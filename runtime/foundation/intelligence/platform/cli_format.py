@@ -120,7 +120,9 @@ def format_diagnostic(
 def format_repair(repair: RepairPlan) -> str:
     lines: list[str] = [_bold("Repair Intelligence"), ""]
     if not repair.defects:
-        lines.append("No defects recorded (runtime-defects.json / normalized-issues.json empty).")
+        lines.append(
+            "No defects recorded (runtime-defects.json / normalized-issues.json empty)."
+        )
         return "\n".join(lines)
     for item in repair.items:
         lines.append(_cyan(item["defect_id"]))
@@ -129,7 +131,9 @@ def format_repair(repair: RepairPlan) -> str:
         if item["repair_order"]:
             lines.append("  Order:")
             for step in item["repair_order"][:5]:
-                lines.append(f"    {step['step']}. {step['target']} ({step['path'] or 'engine'})")
+                lines.append(
+                    f"    {step['step']}. {step['target']} ({step['path'] or 'engine'})"
+                )
         if item["verification_order"]:
             lines.append("  Verify:")
             for vo in item["verification_order"]:
@@ -141,11 +145,13 @@ def format_repair(repair: RepairPlan) -> str:
 def format_risk(risk: EngineeringRisk) -> str:
     lines: list[str] = [_bold("Engineering Risk"), ""]
     level_color = (
-        _green if risk.overall_level == "Low"
-        else _yellow if risk.overall_level == "Medium"
-        else _red
+        _green
+        if risk.overall_level == "Low"
+        else _yellow if risk.overall_level == "Medium" else _red
     )
-    lines.append(f"Overall: {level_color(risk.overall_level)} (score {risk.overall_score})")
+    lines.append(
+        f"Overall: {level_color(risk.overall_level)} (score {risk.overall_score})"
+    )
     lines.append(f"Confidence: {risk.confidence}")
     lines.append("")
     for dim in risk.dimensions:
@@ -178,13 +184,7 @@ def format_cross_layer_failure(
     lines.append("")
 
     lines.append(_cyan("Capability:"))
-    caps = sorted(
-        {
-            n.ref.ref
-            for n in blast.all_impacted
-            if n.ref.kind == "capability"
-        }
-    )
+    caps = sorted({n.ref.ref for n in blast.all_impacted if n.ref.kind == "capability"})
     for cap in caps or ["(none resolved)"]:
         lines.append(f"  {cap}")
     lines.append("")
@@ -196,7 +196,9 @@ def format_cross_layer_failure(
 
     lines.append(_cyan("Verification:"))
     for unit in plan.selected:
-        lines.append(f"  {_yellow(unit.id)} — source={unit.source} kinds={list(unit.impact_kinds)}")
+        lines.append(
+            f"  {_yellow(unit.id)} — source={unit.source} kinds={list(unit.impact_kinds)}"
+        )
     lines.append("")
 
     implicated = report.in_blast_radius
@@ -247,7 +249,9 @@ def format_cross_layer_failure(
             by_phase.setdefault(item.failure.phase, []).append(item.failure.path)
         for phase, paths in sorted(by_phase.items()):
             unique = sorted(set(paths))
-            lines.append(f"  {phase}: {len(paths)} diagnostic(s) across {len(unique)} file(s)")
+            lines.append(
+                f"  {phase}: {len(paths)} diagnostic(s) across {len(unique)} file(s)"
+            )
             for path in unique:
                 lines.append(f"      {path}")
         lines.append("")

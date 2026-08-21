@@ -53,8 +53,14 @@ def _verify_rule_count(expected: int = 28) -> dict[str, Any]:
         "severity": "info",
         "priority": "low",
         "message": f"Expected {expected} rules, found {actual}",
-        "details": {"expected": expected, "actual": actual, "rule_ids": registry_info["rule_ids"]},
-        "recommendation": "" if status == "pass" else f"Add missing rules to reach {expected}",
+        "details": {
+            "expected": expected,
+            "actual": actual,
+            "rule_ids": registry_info["rule_ids"],
+        },
+        "recommendation": (
+            "" if status == "pass" else f"Add missing rules to reach {expected}"
+        ),
     }
 
 
@@ -105,7 +111,11 @@ def _verify_severity_assignments() -> dict[str, Any]:
                     "severity": "critical",
                     "priority": "critical",
                     "message": f"{rule.id} has severity '{actual_sev}', expected '{expected_sev}'",
-                    "details": {"rule_id": rule.id, "actual": actual_sev, "expected": expected_sev},
+                    "details": {
+                        "rule_id": rule.id,
+                        "actual": actual_sev,
+                        "expected": expected_sev,
+                    },
                     "recommendation": f"Update {rule.id} severity to {expected_sev}",
                 }
             )
@@ -130,7 +140,10 @@ def _verify_severity_assignments() -> dict[str, Any]:
         "name": "Severity assignments",
         "status": "pass" if all_pass else "fail",
         "findings": findings,
-        "metrics": {"rules_checked": len(findings), "failures": sum(1 for f in findings if f["status"] == "fail")},
+        "metrics": {
+            "rules_checked": len(findings),
+            "failures": sum(1 for f in findings if f["status"] == "fail"),
+        },
         "duration_seconds": 0.0,
     }
 
@@ -151,9 +164,16 @@ def _verify_categories() -> dict[str, Any]:
                 "status": status,
                 "severity": "critical" if status == "fail" else "info",
                 "priority": "critical" if status == "fail" else "low",
-                "message": f"{rule.id} category is '{cat}'" + (" (valid)" if status == "pass" else " (invalid)"),
-                "details": {"rule_id": rule.id, "category": cat, "valid": cat in valid_categories},
-                "recommendation": "" if status == "pass" else f"Fix category for {rule.id}",
+                "message": f"{rule.id} category is '{cat}'"
+                + (" (valid)" if status == "pass" else " (invalid)"),
+                "details": {
+                    "rule_id": rule.id,
+                    "category": cat,
+                    "valid": cat in valid_categories,
+                },
+                "recommendation": (
+                    "" if status == "pass" else f"Fix category for {rule.id}"
+                ),
             }
         )
 
@@ -163,7 +183,10 @@ def _verify_categories() -> dict[str, Any]:
         "name": "Category assignments",
         "status": "pass" if all_pass else "fail",
         "findings": findings,
-        "metrics": {"rules_checked": len(findings), "failures": sum(1 for f in findings if f["status"] == "fail")},
+        "metrics": {
+            "rules_checked": len(findings),
+            "failures": sum(1 for f in findings if f["status"] == "fail"),
+        },
         "duration_seconds": 0.0,
     }
 
@@ -205,7 +228,10 @@ def _verify_messages() -> dict[str, Any]:
         "name": "Message completeness",
         "status": "pass" if all_pass else "fail",
         "findings": findings,
-        "metrics": {"rules_checked": len(findings), "failures": sum(1 for f in findings if f["status"] == "fail")},
+        "metrics": {
+            "rules_checked": len(findings),
+            "failures": sum(1 for f in findings if f["status"] == "fail"),
+        },
         "duration_seconds": 0.0,
     }
 
@@ -215,7 +241,11 @@ def _inject_and_verify_violations() -> dict[str, Any]:
 
     try:
         from runtime.foundation.integrity.models import ArchitectureLayer
-        from runtime.foundation.integrity.scanner import ArchitecturalGraph, ScannedFile, ImportRecord
+        from runtime.foundation.integrity.scanner import (
+            ArchitecturalGraph,
+            ScannedFile,
+            ImportRecord,
+        )
         from runtime.foundation.integrity.rules import (
             check_router_not_import_engine,
             check_component_not_api_direct,
@@ -284,7 +314,9 @@ def _inject_and_verify_violations() -> dict[str, Any]:
             "priority": "low",
             "message": f"ARCH-001 detected injected router→engine violation: {found_router_violation}",
             "details": {"violations_found": len(violations), "rule_id": "ARCH-001"},
-            "recommendation": "" if found_router_violation else "Fix ARCH-001 rule detection",
+            "recommendation": (
+                "" if found_router_violation else "Fix ARCH-001 rule detection"
+            ),
         }
     )
 
@@ -327,7 +359,9 @@ def _inject_and_verify_violations() -> dict[str, Any]:
             "priority": "low",
             "message": f"ARCH-002 detected injected component→API violation: {found_comp_violation}",
             "details": {"violations_found": len(violations), "rule_id": "ARCH-002"},
-            "recommendation": "" if found_comp_violation else "Fix ARCH-002 rule detection",
+            "recommendation": (
+                "" if found_comp_violation else "Fix ARCH-002 rule detection"
+            ),
         }
     )
 
@@ -370,7 +404,9 @@ def _inject_and_verify_violations() -> dict[str, Any]:
             "priority": "low",
             "message": f"ARCH-003 detected injected mapper→React violation: {found_mapper_violation}",
             "details": {"violations_found": len(violations), "rule_id": "ARCH-003"},
-            "recommendation": "" if found_mapper_violation else "Fix ARCH-003 rule detection",
+            "recommendation": (
+                "" if found_mapper_violation else "Fix ARCH-003 rule detection"
+            ),
         }
     )
 
@@ -406,7 +442,9 @@ def _inject_and_verify_violations() -> dict[str, Any]:
             "priority": "low",
             "message": f"ARCH-004 detected injected workspace→fetch violation: {found_ws_violation}",
             "details": {"violations_found": len(violations), "rule_id": "ARCH-004"},
-            "recommendation": "" if found_ws_violation else "Fix ARCH-004 rule detection",
+            "recommendation": (
+                "" if found_ws_violation else "Fix ARCH-004 rule detection"
+            ),
         }
     )
 
@@ -416,7 +454,10 @@ def _inject_and_verify_violations() -> dict[str, Any]:
         "name": "Violation injection and detection",
         "status": "pass" if all_pass else "fail",
         "findings": findings,
-        "metrics": {"violations_injected": 4, "detected": sum(1 for f in findings if f["status"] == "pass")},
+        "metrics": {
+            "violations_injected": 4,
+            "detected": sum(1 for f in findings if f["status"] == "pass"),
+        },
         "duration_seconds": 0.0,
     }
 
@@ -457,7 +498,12 @@ def _verify_determinism() -> dict[str, Any]:
     same_files_scanned = report1.files_scanned == report2.files_scanned
     same_cross_layer = report1.cross_layer_entries == report2.cross_layer_entries
 
-    all_deterministic = same_violations and same_rules_evaluated and same_files_scanned and same_cross_layer
+    all_deterministic = (
+        same_violations
+        and same_rules_evaluated
+        and same_files_scanned
+        and same_cross_layer
+    )
 
     findings.append(
         {
@@ -478,7 +524,11 @@ def _verify_determinism() -> dict[str, Any]:
                 "run1_cross_layer": report1.cross_layer_entries,
                 "run2_cross_layer": report2.cross_layer_entries,
             },
-            "recommendation": "" if all_deterministic else "Investigate non-deterministic behavior in the integrity engine",
+            "recommendation": (
+                ""
+                if all_deterministic
+                else "Investigate non-deterministic behavior in the integrity engine"
+            ),
         }
     )
 

@@ -42,7 +42,9 @@ class TestDependencyExplorer:
                 }
             },
         )
-        result = loader.load_dependency_chain("backend/src/engines/loan_engine/amortization.py")
+        result = loader.load_dependency_chain(
+            "backend/src/engines/loan_engine/amortization.py"
+        )
         output = render_dependencies(result)
         assert "Dependency Chain" in output
         assert "LoanService" in output

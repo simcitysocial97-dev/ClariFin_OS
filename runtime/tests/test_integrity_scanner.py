@@ -21,40 +21,76 @@ class TestClassifyLayer:
     """Tests for layer classification."""
 
     def test_backend_engine(self) -> None:
-        assert classify_layer("backend/src/engines/loan_engine/amortization.py") == ArchitectureLayer.BACKEND_ENGINE
+        assert (
+            classify_layer("backend/src/engines/loan_engine/amortization.py")
+            == ArchitectureLayer.BACKEND_ENGINE
+        )
 
     def test_backend_service(self) -> None:
-        assert classify_layer("backend/src/services/loan_service.py") == ArchitectureLayer.BACKEND_SERVICE
+        assert (
+            classify_layer("backend/src/services/loan_service.py")
+            == ArchitectureLayer.BACKEND_SERVICE
+        )
 
     def test_backend_router(self) -> None:
-        assert classify_layer("backend/src/routers/loans.py") == ArchitectureLayer.BACKEND_ROUTER
+        assert (
+            classify_layer("backend/src/routers/loans.py")
+            == ArchitectureLayer.BACKEND_ROUTER
+        )
 
     def test_backend_dto(self) -> None:
-        assert classify_layer("backend/src/core/dtos/loan_dto.py") == ArchitectureLayer.BACKEND_DTO
+        assert (
+            classify_layer("backend/src/core/dtos/loan_dto.py")
+            == ArchitectureLayer.BACKEND_DTO
+        )
 
     def test_backend_repository(self) -> None:
-        assert classify_layer("backend/src/repositories/loan_repo.py") == ArchitectureLayer.BACKEND_REPOSITORY
+        assert (
+            classify_layer("backend/src/repositories/loan_repo.py")
+            == ArchitectureLayer.BACKEND_REPOSITORY
+        )
 
     def test_frontend_api(self) -> None:
-        assert classify_layer("frontend/lib/api/client.ts") == ArchitectureLayer.FRONTEND_API
+        assert (
+            classify_layer("frontend/lib/api/client.ts")
+            == ArchitectureLayer.FRONTEND_API
+        )
 
     def test_frontend_capability(self) -> None:
-        assert classify_layer("frontend/lib/capabilities/use-loans-capability.ts") == ArchitectureLayer.FRONTEND_CAPABILITY
+        assert (
+            classify_layer("frontend/lib/capabilities/use-loans-capability.ts")
+            == ArchitectureLayer.FRONTEND_CAPABILITY
+        )
 
     def test_frontend_mapper(self) -> None:
-        assert classify_layer("frontend/lib/mappers/loans-mapper.ts") == ArchitectureLayer.FRONTEND_MAPPER
+        assert (
+            classify_layer("frontend/lib/mappers/loans-mapper.ts")
+            == ArchitectureLayer.FRONTEND_MAPPER
+        )
 
     def test_frontend_viewmodel(self) -> None:
-        assert classify_layer("frontend/types/loans-view-model.ts") == ArchitectureLayer.FRONTEND_VIEWMODEL
+        assert (
+            classify_layer("frontend/types/loans-view-model.ts")
+            == ArchitectureLayer.FRONTEND_VIEWMODEL
+        )
 
     def test_frontend_workspace(self) -> None:
-        assert classify_layer("frontend/lib/workspace/workspace-context.ts") == ArchitectureLayer.FRONTEND_WORKSPACE
+        assert (
+            classify_layer("frontend/lib/workspace/workspace-context.ts")
+            == ArchitectureLayer.FRONTEND_WORKSPACE
+        )
 
     def test_frontend_component(self) -> None:
-        assert classify_layer("frontend/components/dashboard/card.tsx") == ArchitectureLayer.FRONTEND_COMPONENT
+        assert (
+            classify_layer("frontend/components/dashboard/card.tsx")
+            == ArchitectureLayer.FRONTEND_COMPONENT
+        )
 
     def test_frontend_page(self) -> None:
-        assert classify_layer("frontend/app/loans/page.tsx") == ArchitectureLayer.FRONTEND_PAGE
+        assert (
+            classify_layer("frontend/app/loans/page.tsx")
+            == ArchitectureLayer.FRONTEND_PAGE
+        )
 
     def test_unknown_file(self) -> None:
         assert classify_layer("backend/src/config.py") == ArchitectureLayer.UNKNOWN
@@ -91,7 +127,9 @@ class TestDiscoverSourceFiles:
     def test_excludes_test_files(self, tmp_path: Path) -> None:
         (tmp_path / "backend" / "src" / "services").mkdir(parents=True)
         (tmp_path / "backend" / "src" / "services" / "loan_service.py").write_text("")
-        (tmp_path / "backend" / "src" / "services" / "test_loan_service.py").write_text("")
+        (tmp_path / "backend" / "src" / "services" / "test_loan_service.py").write_text(
+            ""
+        )
 
         files = discover_source_files(tmp_path)
         assert len(files) == 1
@@ -107,7 +145,14 @@ class TestDiscoverSourceFiles:
 
     def test_excludes_pycache(self, tmp_path: Path) -> None:
         (tmp_path / "backend" / "src" / "services" / "__pycache__").mkdir(parents=True)
-        (tmp_path / "backend" / "src" / "services" / "__pycache__" / "loan_service.cpython-312.pyc").write_text("")
+        (
+            tmp_path
+            / "backend"
+            / "src"
+            / "services"
+            / "__pycache__"
+            / "loan_service.cpython-312.pyc"
+        ).write_text("")
         (tmp_path / "backend" / "src" / "services" / "loan_service.py").write_text("")
 
         files = discover_source_files(tmp_path)

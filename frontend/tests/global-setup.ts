@@ -16,15 +16,17 @@ import { resolve } from 'path';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const MAX_RETRIES = 30;
-const BACKEND_STARTUP_TIMEOUT = 30000;
+const BACKEND_STARTUP_TIMEOUT = process.env.CI ? 120000 : 30000;
+const HEALTH_CHECK_RETRY_DELAY = 1000;
+const HEALTH_CHECK_ENDPOINT = `${API_BASE}/ready`;
 
 /**
- * Check if backend is running
+ * Check if backend is running using the /ready endpoint
  */
 async function checkBackendHealth(): Promise<boolean> {
   try {
     const context = await request.newContext();
-    const response = await context.get(`${API_BASE}/api/banks`, { timeout: 3000 });
+    const response = await context.get(HEALTH_CHECK_ENDPOINT, { timeout: 3000 });
     await context.dispose();
     return response.ok();
   } catch {
@@ -47,6 +49,37 @@ async function isPortInUse(port: number): Promise<boolean> {
 }
 
 /**
+ * Install backend dependencies
+ */
+async function installBackendDependencies(backendPath: string, pythonCmd: string): Promise<boolean> {
+  console.log('🔧 Installing backend dependencies...');
+  return new Promise((resolve) => {
+    const installProcess = spawn(pythonCmd, ['-m', 'pip', 'install', '-r', 'requirements.txt'], {
+      cwd: backendPath,
+      stdio: 'pipe',
+    });
+
+    installProcess.stdout?.on('data', (data) => {
+      console.log(`[Backend Install] ${data.toString().trim()}`);
+    });
+
+    installProcess.stderr?.on('data', (data) => {
+      console.error(`[Backend Install Error] ${data.toString().trim()}`);
+    });
+
+    installProcess.on('close', (code) => {
+      if (code === 0) {
+        console.log('✅ Backend dependencies installed successfully');
+        resolve(true);
+      } else {
+        console.log('⚠️  Failed to install backend dependencies');
+        resolve(false);
+      }
+    });
+  });
+}
+
+/**
  * Start FastAPI backend server using virtual environment
  */
 async function startBackend(): Promise<boolean> {
@@ -63,6 +96,13 @@ async function startBackend(): Promise<boolean> {
   const pythonCmd = existsSync(venvPython) ? venvPython : 'python3';
   
   console.log(`Using Python: ${pythonCmd}`);
+
+  // Install dependencies before starting the backend
+  const depsInstalled = await installBackendDependencies(backendPath, pythonCmd);
+  if (!depsInstalled) {
+    console.log('⚠️  Skipping backend startup due to dependency installation failure');
+    return false;
+  }
 
   try {
     // Use src.api:app as the entry point (src/api.py contains the FastAPI app)
@@ -84,8 +124,13 @@ async function startBackend(): Promise<boolean> {
       console.log('⚠️  Failed to start backend process:', error.message);
     });
 
+    backendProcess.on('exit', (code) => {
+      console.log(`⚠️  Backend process exited with code ${code}`);
+    });
+
     console.log('⏳ Waiting for backend to start...');
     const startTime = Date.now();
+    let retryCount = 0;
     
     while (Date.now() - startTime < BACKEND_STARTUP_TIMEOUT) {
       const isHealthy = await checkBackendHealth();
@@ -93,10 +138,12 @@ async function startBackend(): Promise<boolean> {
         console.log('✅ Backend started successfully');
         return true;
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      retryCount++;
+      const retryDelay = HEALTH_CHECK_RETRY_DELAY * Math.pow(2, retryCount); // Exponential backoff
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
     }
 
-    console.log('⚠️  Backend failed to start within timeout, continuing without backend');
+    console.log('❌ Backend failed to start within timeout');
     return false;
   } catch (error) {
     console.log('⚠️  Error starting backend:', error);
@@ -208,15 +255,15 @@ async function globalSetup(config: FullConfig) {
   if (!backendHealthy) {
     console.log('⚠️  Backend not responding. Retrying...');
     for (let i = 0; i < MAX_RETRIES; i++) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, HEALTH_CHECK_RETRY_DELAY));
       backendHealthy = await checkBackendHealth();
       if (backendHealthy) break;
     }
   }
 
   if (!backendHealthy) {
-    console.log('⚠️  Backend is not available. Tests will use localStorage fallback data.');
-    console.log('   To enable backend tests: cd backend && source venv/bin/activate && uvicorn src.api:app --reload');
+    console.log('❌ Backend is not available. Failing fast.');
+    process.exit(1); // Fail fast if backend is not available
   } else {
     console.log('✅ Backend API is healthy');
     

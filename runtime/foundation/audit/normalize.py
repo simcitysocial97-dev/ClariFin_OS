@@ -58,11 +58,17 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             root_cause=_infer_repository_root_cause(name, message, details),
             evidence=message,
             impact=_infer_repository_impact(name, message),
-            repair_plan=recommendation or "Fix repository scanner or generated artifacts",
+            repair_plan=recommendation
+            or "Fix repository scanner or generated artifacts",
             verification_command="python runtime/verify.py graph",
             regression_test="python3 -c 'from runtime.foundation.repository.builder.builder import RepositoryBuilder; b=RepositoryBuilder(); b.build(); print(b.validate().is_valid())'",
             dependencies=(),
-            estimated_complexity="high" if "referential integrity" in name.lower() or "reproducibility" in name.lower() else "medium",
+            estimated_complexity=(
+                "high"
+                if "referential integrity" in name.lower()
+                or "reproducibility" in name.lower()
+                else "medium"
+            ),
             expected_downstream_benefit="Cross-layer and dependency graph audits will pass once repository index is clean",
         )
 
@@ -76,9 +82,10 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             root_cause=_infer_cross_layer_root_cause(name, message, details),
             evidence=message,
             impact=_infer_cross_layer_impact(name, message),
-            repair_plan=recommendation or "Regenerate cross-layer map with deduplication and completeness checks",
+            repair_plan=recommendation
+            or "Regenerate cross-layer map with deduplication and completeness checks",
             verification_command="python runtime/verify.py graph",
-            regression_test="python3 -c 'import json; m=json.load(open(\"runtime/generated/cross-layer-map.json\")); print(len(m), \"chains\")'",
+            regression_test='python3 -c \'import json; m=json.load(open("runtime/generated/cross-layer-map.json")); print(len(m), "chains")\'',
             dependencies=("repository",),
             estimated_complexity="medium",
             expected_downstream_benefit="Knowledge base and diagnostics will have accurate dependency chains",
@@ -94,7 +101,8 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             root_cause=_infer_dependency_graph_root_cause(name, message, details),
             evidence=message,
             impact=_infer_dependency_graph_impact(name, message),
-            repair_plan=recommendation or "Rebuild dependency graph from clean repository index",
+            repair_plan=recommendation
+            or "Rebuild dependency graph from clean repository index",
             verification_command="python runtime/verify.py graph",
             regression_test="python3 -c 'from runtime.foundation.repository.graph.graph_service import RepositoryGraphService; s=RepositoryGraphService(); print(s.validate())'",
             dependencies=("repository", "cross_layer"),
@@ -116,7 +124,11 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             verification_command="python runtime/verify.py quick",
             regression_test="python3 -c 'from runtime.foundation.verification.executor import Executor; e=Executor(); print(e.execute(\"echo test\").status.value)'",
             dependencies=(),
-            estimated_complexity="high" if "parallel" in name.lower() or "retry" in name.lower() else "medium",
+            estimated_complexity=(
+                "high"
+                if "parallel" in name.lower() or "retry" in name.lower()
+                else "medium"
+            ),
             expected_downstream_benefit="Verification runtime will be more resilient and efficient",
         )
 
@@ -130,7 +142,8 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             root_cause=_infer_knowledge_root_cause(name, message, details),
             evidence=message,
             impact=_infer_knowledge_impact(name, message),
-            repair_plan=recommendation or "Rebuild knowledge index from valid runtime artifacts",
+            repair_plan=recommendation
+            or "Rebuild knowledge index from valid runtime artifacts",
             verification_command="python runtime/verify.py knowledge",
             regression_test="python3 -c 'from runtime.foundation.knowledge.indexer import build_index; idx=build_index(); print(idx.total_entries, \"entries\")'",
             dependencies=("cross_layer",),
@@ -148,9 +161,10 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             root_cause="Missing dashboard command implementation",
             evidence=message,
             impact="Users cannot access dashboard via CLI",
-            repair_plan=recommendation or "Implement dashboard command or remove from audit scope",
+            repair_plan=recommendation
+            or "Implement dashboard command or remove from audit scope",
             verification_command="python runtime/verify.py dashboard",
-            regression_test="python3 -c 'import sys; sys.argv=[\"verify.py\", \"dashboard\"]'",
+            regression_test='python3 -c \'import sys; sys.argv=["verify.py", "dashboard"]\'',
             dependencies=(),
             estimated_complexity="low",
             expected_downstream_benefit="CLI command coverage is complete",
@@ -184,9 +198,10 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
             root_cause="Sample artifacts exist in multiple locations causing potential overwrites",
             evidence=message,
             impact="Artifact collisions may cause data loss or incorrect reporting",
-            repair_plan=recommendation or "Consolidate sample artifacts into single canonical location",
+            repair_plan=recommendation
+            or "Consolidate sample artifacts into single canonical location",
             verification_command="python runtime/verify.py audit",
-            regression_test="python3 -c 'from pathlib import Path; files=list(Path(\"runtime/generated\").rglob(\"*\")); print(len(files), \"files\")'",
+            regression_test='python3 -c \'from pathlib import Path; files=list(Path("runtime/generated").rglob("*")); print(len(files), "files")\'',
             dependencies=(),
             estimated_complexity="low",
             expected_downstream_benefit="Artifact ownership is unambiguous",
@@ -210,9 +225,13 @@ def _normalize_finding(finding: dict[str, Any], section: str) -> NormalizedIssue
     )
 
 
-def _infer_repository_root_cause(name: str, message: str, details: dict[str, Any]) -> str:
+def _infer_repository_root_cause(
+    name: str, message: str, details: dict[str, Any]
+) -> str:
     if "referential integrity" in name.lower():
-        return "Scanner generates edges referencing nodes that do not exist in the graph"
+        return (
+            "Scanner generates edges referencing nodes that do not exist in the graph"
+        )
     if "reproducibility" in name.lower():
         return "Fresh graph build produces errors, indicating scanner or builder bugs"
     if "count consistency" in name.lower():
@@ -224,11 +243,15 @@ def _infer_repository_impact(name: str, message: str) -> str:
     if "referential integrity" in name.lower():
         return "Cross-layer map and dependency graph are unreliable; downstream audits will fail"
     if "reproducibility" in name.lower():
-        return "Repository index cannot be regenerated; platform state is non-reproducible"
+        return (
+            "Repository index cannot be regenerated; platform state is non-reproducible"
+        )
     return "Repository discovery is incomplete or incorrect"
 
 
-def _infer_cross_layer_root_cause(name: str, message: str, details: dict[str, Any]) -> str:
+def _infer_cross_layer_root_cause(
+    name: str, message: str, details: dict[str, Any]
+) -> str:
     if "duplicate" in name.lower():
         return "Cross-layer map generator does not deduplicate endpoints across chains"
     if "ownership" in name.lower():
@@ -240,11 +263,15 @@ def _infer_cross_layer_impact(name: str, message: str) -> str:
     if "duplicate" in name.lower():
         return "Diagnostics may report incorrect blast radius due to duplicate mappings"
     if "ownership" in name.lower():
-        return "Knowledge base and impact analysis have missing capability/router mappings"
+        return (
+            "Knowledge base and impact analysis have missing capability/router mappings"
+        )
     return "Cross-layer dependency tracking is unreliable"
 
 
-def _infer_dependency_graph_root_cause(name: str, message: str, details: dict[str, Any]) -> str:
+def _infer_dependency_graph_root_cause(
+    name: str, message: str, details: dict[str, Any]
+) -> str:
     if "referential integrity" in name.lower():
         return "Graph contains edges referencing non-existent nodes"
     if "structural" in name.lower():
@@ -288,7 +315,9 @@ def _infer_executor_impact(name: str, message: str) -> str:
     return "Verification execution is less reliable than expected"
 
 
-def _infer_knowledge_root_cause(name: str, message: str, details: dict[str, Any]) -> str:
+def _infer_knowledge_root_cause(
+    name: str, message: str, details: dict[str, Any]
+) -> str:
     if "broken link" in name.lower():
         return "Knowledge index contains references to files or endpoints that do not exist"
     if "indexer consistency" in name.lower():
@@ -308,27 +337,32 @@ def normalize(findings: list[dict[str, Any]], section: str) -> list[dict[str, An
     issues = []
     for f in findings:
         issue = _normalize_finding(f, section)
-        issues.append({
-            "issue_id": issue.issue_id,
-            "severity": issue.severity,
-            "subsystem": issue.subsystem,
-            "pipeline_stage": issue.pipeline_stage,
-            "owner": issue.owner,
-            "root_cause": issue.root_cause,
-            "evidence": issue.evidence,
-            "impact": issue.impact,
-            "repair_plan": issue.repair_plan,
-            "verification_command": issue.verification_command,
-            "regression_test": issue.regression_test,
-            "dependencies": list(issue.dependencies),
-            "estimated_complexity": issue.estimated_complexity,
-            "expected_downstream_benefit": issue.expected_downstream_benefit,
-        })
+        issues.append(
+            {
+                "issue_id": issue.issue_id,
+                "severity": issue.severity,
+                "subsystem": issue.subsystem,
+                "pipeline_stage": issue.pipeline_stage,
+                "owner": issue.owner,
+                "root_cause": issue.root_cause,
+                "evidence": issue.evidence,
+                "impact": issue.impact,
+                "repair_plan": issue.repair_plan,
+                "verification_command": issue.verification_command,
+                "regression_test": issue.regression_test,
+                "dependencies": list(issue.dependencies),
+                "estimated_complexity": issue.estimated_complexity,
+                "expected_downstream_benefit": issue.expected_downstream_benefit,
+            }
+        )
     return issues
 
 
 def run_normalization() -> dict[str, Any]:
-    with open(REPO_ROOT / "runtime" / "generated" / "engineering-platform-audit.json", encoding="utf-8") as f:
+    with open(
+        REPO_ROOT / "runtime" / "generated" / "engineering-platform-audit.json",
+        encoding="utf-8",
+    ) as f:
         audit_data = json.load(f)
 
     all_issues = []
@@ -366,4 +400,6 @@ def run_normalization() -> dict[str, Any]:
 if __name__ == "__main__":
     result = run_normalization()
     print(f"Normalized {result['total_issues']} issues")
-    print(f"Critical: {result['critical_count']}, High: {result['high_count']}, Medium: {result['medium_count']}, Low: {result['low_count']}")
+    print(
+        f"Critical: {result['critical_count']}, High: {result['high_count']}, Medium: {result['medium_count']}, Low: {result['low_count']}"
+    )

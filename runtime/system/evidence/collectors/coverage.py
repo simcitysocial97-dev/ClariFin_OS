@@ -30,9 +30,7 @@ class CoverageCollector(EvidenceCollector):
     def name(self) -> str:
         return "Coverage Collector"
 
-    def collect(
-        self, artifact_path: Path | None = None
-    ) -> CoverageEvidence:
+    def collect(self, artifact_path: Path | None = None) -> CoverageEvidence:
         if artifact_path is None:
             artifact_path = (
                 self.workspace_root
@@ -68,9 +66,7 @@ class CoverageCollector(EvidenceCollector):
         covered_branches = totals.get("covered_branches", 0)
         num_branches = totals.get("num_branches", 0)
         branch_pct = (
-            round(covered_branches / num_branches * 100, 2)
-            if num_branches > 0
-            else 0.0
+            round(covered_branches / num_branches * 100, 2) if num_branches > 0 else 0.0
         )
 
         files_data = data.get("files", {})

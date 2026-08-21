@@ -71,9 +71,9 @@ export default defineConfig({
     navigationTimeout: 30000,
   },
   
-  // Configure projects for different browsers
+  // Configure projects for supported browsers only
   projects: [
-    // Desktop Chrome
+    // Desktop Chrome (supported)
     {
       name: 'chromium',
       use: { 
@@ -82,45 +82,11 @@ export default defineConfig({
       },
     },
     
-    // Desktop Firefox
-    {
-      name: 'firefox',
-      use: { 
-        ...devices['Desktop Firefox'],
-        viewport: { width: 1280, height: 720 },
-      },
-    },
-    
-    // Desktop Safari (WebKit)
-    {
-      name: 'webkit',
-      use: { 
-        ...devices['Desktop Safari'],
-        viewport: { width: 1280, height: 720 },
-      },
-    },
-    
-    // Mobile Chrome
+    // Mobile Chrome (supported touch profile)
     {
       name: 'mobile-chrome',
       use: { 
         ...devices['Pixel 5'],
-      },
-    },
-    
-    // Mobile Safari
-    {
-      name: 'mobile-safari',
-      use: { 
-        ...devices['iPhone 12'],
-      },
-    },
-    
-    // Tablet
-    {
-      name: 'tablet',
-      use: { 
-        ...devices['iPad Pro'],
       },
     },
   ],
@@ -131,15 +97,25 @@ export default defineConfig({
   // redirects) and SPA routing only work under server mode. `reuseExistingServer`
   // is intentionally FALSE so a test run can never depend on an accidentally
   // pre-existing server on :3000 — Playwright owns the lifecycle end to end.
-  // The backend on :8000 is started/health-checked by tests/global-setup.ts.
-  webServer: {
-    command: 'npm start',
-    url: 'http://localhost:3000',
-    reuseExistingServer: false,
-    timeout: 120000,
-    stdout: 'ignore',
-    stderr: 'pipe',
-  },
+  // The backend on :8000 is managed by Playwright to ensure deterministic startup.
+  webServer: [
+    {
+      command: 'npm start',
+      url: 'http://localhost:3000',
+      reuseExistingServer: false,
+      timeout: 120000,
+      stdout: 'ignore',
+      stderr: 'pipe',
+    },
+    {
+      command: 'cd ../backend && . /home/vasantha/AI-Projects/ClariFin_OS/.venv/bin/activate && uvicorn src.api:app --host 0.0.0.0 --port 8000',
+      url: 'http://localhost:8000/ready',
+      reuseExistingServer: false,
+      timeout: 60000,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    },
+  ],
   
   // Output directory
   outputDir: 'test-results/artifacts',

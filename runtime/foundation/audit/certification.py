@@ -53,27 +53,31 @@ def record_progress(snapshot: CertificationSnapshot) -> None:
     progress = _load_progress()
     history = _load_history()
 
-    progress.append({
-        "timestamp": snapshot.timestamp,
-        "overall_status": snapshot.overall_status,
-        "certification_status": snapshot.certification_status,
-        "critical_count": snapshot.critical_count,
-        "high_count": snapshot.high_count,
-        "medium_count": snapshot.medium_count,
-        "low_count": snapshot.low_count,
-        "sections_passed": snapshot.sections_passed,
-        "sections_total": snapshot.sections_total,
-        "duration_seconds": snapshot.duration_seconds,
-    })
+    progress.append(
+        {
+            "timestamp": snapshot.timestamp,
+            "overall_status": snapshot.overall_status,
+            "certification_status": snapshot.certification_status,
+            "critical_count": snapshot.critical_count,
+            "high_count": snapshot.high_count,
+            "medium_count": snapshot.medium_count,
+            "low_count": snapshot.low_count,
+            "sections_passed": snapshot.sections_passed,
+            "sections_total": snapshot.sections_total,
+            "duration_seconds": snapshot.duration_seconds,
+        }
+    )
 
-    history.append({
-        "timestamp": snapshot.timestamp,
-        "event": "certification_audit",
-        "critical_count": snapshot.critical_count,
-        "high_count": snapshot.high_count,
-        "overall_status": snapshot.overall_status,
-        "certification_status": snapshot.certification_status,
-    })
+    history.append(
+        {
+            "timestamp": snapshot.timestamp,
+            "event": "certification_audit",
+            "critical_count": snapshot.critical_count,
+            "high_count": snapshot.high_count,
+            "overall_status": snapshot.overall_status,
+            "certification_status": snapshot.certification_status,
+        }
+    )
 
     PROGRESS_PATH.write_text(json.dumps(progress, indent=2), encoding="utf-8")
     HISTORY_PATH.write_text(json.dumps(history, indent=2), encoding="utf-8")
@@ -109,7 +113,15 @@ def generate_dashboard() -> dict[str, Any]:
         "progress": {
             "critical_delta": critical_delta,
             "high_delta": high_delta,
-            "trend": "improving" if (critical_delta > 0 or high_delta > 0) else "stable" if (critical_delta == 0 and high_delta == 0) else "regressing",
+            "trend": (
+                "improving"
+                if (critical_delta > 0 or high_delta > 0)
+                else (
+                    "stable"
+                    if (critical_delta == 0 and high_delta == 0)
+                    else "regressing"
+                )
+            ),
         },
         "total_audits": len(progress),
     }

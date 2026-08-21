@@ -30,7 +30,9 @@ from runtime.foundation.integrity.rules import (
 )
 
 
-def _make_graph(files: list[ScannedFile], cross_layer_map: dict = None) -> ArchitecturalGraph:
+def _make_graph(
+    files: list[ScannedFile], cross_layer_map: dict = None
+) -> ArchitecturalGraph:
     return ArchitecturalGraph(
         files=tuple(files),
         cross_layer_map=cross_layer_map or {},
@@ -491,6 +493,6 @@ class TestAllRuleChecksExist:
 
         registry = get_constitution()
         for rule in registry.all_rules():
-            assert rule.id in _RULE_CHECKS, (
-                f"Missing check function for {rule.id}: {rule.check}"
-            )
+            assert (
+                rule.id in _RULE_CHECKS
+            ), f"Missing check function for {rule.id}: {rule.check}"

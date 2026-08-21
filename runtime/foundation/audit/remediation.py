@@ -88,7 +88,7 @@ def _generate_remediation() -> str:
                 "CrossLayerImpactPlanner.analyze_cross_layer_impact()",
             ],
             "tests": [
-                "python3 -c 'import json; m=json.load(open(\"runtime/generated/cross-layer-map.json\")); print(len(m), \"chains\")'",
+                'python3 -c \'import json; m=json.load(open("runtime/generated/cross-layer-map.json")); print(len(m), "chains")\'',
             ],
             "verification": "python runtime/verify.py graph",
             "expected_result": "All chains have unique endpoints and complete ownership fields",
@@ -279,7 +279,7 @@ def _generate_remediation() -> str:
             ],
             "functions": [],
             "tests": [
-                "python3 -c 'from pathlib import Path; files=list(Path(\"runtime/generated\").rglob(\"loan-results.txt\")); print(len(files), \"loan-results.txt files\")'",
+                'python3 -c \'from pathlib import Path; files=list(Path("runtime/generated").rglob("loan-results.txt")); print(len(files), "loan-results.txt files")\'',
             ],
             "verification": "python runtime/verify.py audit",
             "expected_result": "No duplicate artifact names in runtime/generated/",
@@ -336,7 +336,9 @@ def _generate_remediation() -> str:
     lines.append("")
     lines.append("The platform is certified when:")
     lines.append("")
-    lines.append("- [ ] `python runtime/verify.py audit` exits 0 with zero critical and high findings")
+    lines.append(
+        "- [ ] `python runtime/verify.py audit` exits 0 with zero critical and high findings"
+    )
     lines.append("- [ ] `python runtime/verify.py graph` exits 0")
     lines.append("- [ ] `python runtime/verify.py knowledge` exits 0")
     lines.append("- [ ] `python runtime/verify.py quick` exits 0")
