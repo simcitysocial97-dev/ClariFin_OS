@@ -29,7 +29,7 @@ from src.startup import run_startup_validation
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> None:
+async def lifespan(app: FastAPI):
     # Ensure the SQLite schema exists/is current before serving requests.
     # Delegates to the canonical startup-validation owner (src/startup.py),
     # which now performs idempotent schema initialization.

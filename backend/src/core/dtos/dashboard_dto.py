@@ -46,7 +46,7 @@ class DashboardSummaryDTO(BaseModel):
     )
 
     class Config:
-        json_schema_extra = {
+        json_schema_extra: dict[str, Any] = {
             "example": {
                 "net_cash_flow_paise": 2500000,  # ₹25,000.00
                 "net_cash_flow_rupees": None,  # DEPRECATED - always null post Phase 2

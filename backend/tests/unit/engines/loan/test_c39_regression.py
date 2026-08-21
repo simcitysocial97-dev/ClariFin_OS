@@ -14,8 +14,6 @@ tail we verify new_total <= original_total + tolerance. If not, we increment
 the EMI by 1 and regenerate until the condition holds (typically 1-2 iterations
 since each +1 changes total by ~annuity_factor, hundreds of thousands of paise).
 """
-import pytest
-from datetime import date
 
 from src.engines.loan_engine.amortization import generate_schedule
 from src.engines.loan_engine.models import PrepaymentMode
@@ -34,8 +32,11 @@ class TestC39ReduceEmiRegression:
         schedule = generate_schedule(principal, rate, tenure, start_date)
 
         new_schedule, result = apply_prepayment_at_month(
-            schedule, prepayment_month=1, prepayment_paise=10_000,
-            annual_rate_bps=rate, mode=PrepaymentMode.REDUCE_EMI,
+            schedule,
+            prepayment_month=1,
+            prepayment_paise=10_000,
+            annual_rate_bps=rate,
+            mode=PrepaymentMode.REDUCE_EMI,
         )
 
         orig_total = sum(r.emi_paise for r in schedule)
@@ -44,9 +45,9 @@ class TestC39ReduceEmiRegression:
 
         assert result.new_remaining_months == tenure
         assert result.new_emi_paise <= result.original_emi_paise + 10
-        assert new_total <= orig_total + tol, (
-            f"new_total={new_total} > orig_total={orig_total}+tol={tol}"
-        )
+        assert (
+            new_total <= orig_total + tol
+        ), f"new_total={new_total} > orig_total={orig_total}+tol={tol}"
 
     def test_various_prepayment_months_same_loan(self):
         """Same loan at different prepayment months — invariant must hold everywhere."""
@@ -59,8 +60,11 @@ class TestC39ReduceEmiRegression:
 
         for month in [1, 50, 100, 200, 300, tenure]:
             new_schedule, result = apply_prepayment_at_month(
-                schedule, prepayment_month=month, prepayment_paise=10_000,
-                annual_rate_bps=rate, mode=PrepaymentMode.REDUCE_EMI,
+                schedule,
+                prepayment_month=month,
+                prepayment_paise=10_000,
+                annual_rate_bps=rate,
+                mode=PrepaymentMode.REDUCE_EMI,
             )
             orig_rem = len(schedule) - month + 1
             if result.loan_closed:
@@ -69,9 +73,9 @@ class TestC39ReduceEmiRegression:
             assert result.new_remaining_months == orig_rem
             new_total = sum(r.emi_paise for r in new_schedule)
             tol = orig_rem * 10 + 1000
-            assert new_total <= orig_total + tol, (
-                f"month={month}: new_total={new_total} > orig_total={orig_total}+tol={tol}"
-            )
+            assert (
+                new_total <= orig_total + tol
+            ), f"month={month}: new_total={new_total} > orig_total={orig_total}+tol={tol}"
 
     def test_high_rate_low_principal_long_tenure(self):
         """Another extreme: high rate (33.4%), moderate principal, 330 months."""
@@ -83,16 +87,19 @@ class TestC39ReduceEmiRegression:
         orig_total = sum(r.emi_paise for r in schedule)
 
         new_schedule, result = apply_prepayment_at_month(
-            schedule, prepayment_month=1, prepayment_paise=10_000,
-            annual_rate_bps=rate, mode=PrepaymentMode.REDUCE_EMI,
+            schedule,
+            prepayment_month=1,
+            prepayment_paise=10_000,
+            annual_rate_bps=rate,
+            mode=PrepaymentMode.REDUCE_EMI,
         )
 
         assert result.new_remaining_months == tenure
         new_total = sum(r.emi_paise for r in new_schedule)
         tol = tenure * 10 + 1000
-        assert new_total <= orig_total + tol, (
-            f"new_total={new_total} > orig_total={orig_total}+tol={tol}"
-        )
+        assert (
+            new_total <= orig_total + tol
+        ), f"new_total={new_total} > orig_total={orig_total}+tol={tol}"
         assert result.interest_saved_paise > 0
 
     def test_reduce_tenure_unchanged_by_fix(self):
@@ -103,8 +110,11 @@ class TestC39ReduceEmiRegression:
         schedule = generate_schedule(principal, rate, tenure, "2000-01-01")
 
         new_schedule, result = apply_prepayment_at_month(
-            schedule, prepayment_month=1, prepayment_paise=10_000,
-            annual_rate_bps=rate, mode=PrepaymentMode.REDUCE_TENURE,
+            schedule,
+            prepayment_month=1,
+            prepayment_paise=10_000,
+            annual_rate_bps=rate,
+            mode=PrepaymentMode.REDUCE_TENURE,
         )
 
         assert result.new_emi_paise == result.original_emi_paise
@@ -122,12 +132,15 @@ class TestC39ReduceEmiRegression:
         orig_interest = schedule[-1].cumulative_interest_paise
 
         new_schedule, result = apply_prepayment_at_month(
-            schedule, prepayment_month=1, prepayment_paise=10_000,
-            annual_rate_bps=rate, mode=PrepaymentMode.REDUCE_EMI,
+            schedule,
+            prepayment_month=1,
+            prepayment_paise=10_000,
+            annual_rate_bps=rate,
+            mode=PrepaymentMode.REDUCE_EMI,
         )
         new_interest = new_schedule[-1].cumulative_interest_paise
 
-        assert new_interest <= orig_interest, (
-            f"interest increased: {new_interest} > {orig_interest}"
-        )
+        assert (
+            new_interest <= orig_interest
+        ), f"interest increased: {new_interest} > {orig_interest}"
         assert result.interest_saved_paise >= 0

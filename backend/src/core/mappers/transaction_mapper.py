@@ -73,7 +73,7 @@ class TransactionMapper:
             type=type,
             category=category,
             subcategory=subcategory,
-            bank=bank,
+            bank=bank or "",
             member=member,
             statement_file=statement_file,
         )
@@ -127,7 +127,7 @@ class TransactionMapper:
                 type=type_val,
                 category=category,
                 subcategory=subcategory,
-                bank=bank,
+                bank=bank or "",
                 member=member,
                 statement_file=statement_file,
             )
