@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 from hypothesis.strategies import DrawFn, composite
 
@@ -175,7 +175,11 @@ def event_list_strategy(draw: DrawFn, max_events: int = 10) -> list[dict[str, An
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_graph_acyclic(events: list[dict[str, Any]]) -> None:
     """Property: Lineage graph must be acyclic (no circular references)."""
     proposal = walk_lineage(events)
@@ -211,7 +215,11 @@ def test_lineage_graph_acyclic(events: list[dict[str, Any]]) -> None:
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_deterministic_output(events: list[dict[str, Any]]) -> None:
     """Property: Same input must always produce the same lineage path."""
     # Sort events by ID to ensure consistent input order
@@ -245,7 +253,11 @@ def test_lineage_deterministic_output(events: list[dict[str, Any]]) -> None:
 
 
 @given(event_list_strategy(max_events=10))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_no_duplicate_events(events: list[dict[str, Any]]) -> None:
     """Property: No duplicate events in the lineage graph."""
     proposal = walk_lineage(events)
@@ -272,7 +284,11 @@ def test_lineage_no_duplicate_events(events: list[dict[str, Any]]) -> None:
 
 
 @given(event_list_strategy(max_events=10))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_temporal_ordering(events: list[dict[str, Any]]) -> None:
     """Property: Events must be ordered by timestamp (oldest → newest)."""
     # The walk_lineage function sorts advances by date descending and takes the most recent
@@ -295,7 +311,11 @@ def test_lineage_temporal_ordering(events: list[dict[str, Any]]) -> None:
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_input_validation_duplicate_ids(events: list[dict[str, Any]]) -> None:
     """Property: Reject invalid inputs (e.g., duplicate event IDs)."""
     # Create a list with duplicate IDs
@@ -311,7 +331,11 @@ def test_lineage_input_validation_duplicate_ids(events: list[dict[str, Any]]) ->
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_input_validation_future_timestamps(
     events: list[dict[str, Any]],
 ) -> None:
@@ -330,7 +354,11 @@ def test_lineage_input_validation_future_timestamps(
 
 
 @given(st.lists(financial_event_strategy(), min_size=0, max_size=1))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_edge_case_single_event(events: list[dict[str, Any]]) -> None:
     """Property: Handle edge case of a single event."""
     proposal = walk_lineage(events)
@@ -340,7 +368,11 @@ def test_lineage_edge_case_single_event(events: list[dict[str, Any]]) -> None:
 
 
 @given(st.lists(financial_event_strategy(), min_size=0, max_size=0))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_lineage_edge_case_zero_events(events: list[dict[str, Any]]) -> None:
     """Property: Handle edge case of zero events."""
     proposal = walk_lineage(events)

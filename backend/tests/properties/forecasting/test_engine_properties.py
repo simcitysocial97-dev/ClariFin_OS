@@ -5,7 +5,7 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
-from hypothesis import assume, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
 from src.engines.financial_intelligence.forecasting import (
@@ -25,7 +25,7 @@ class TestForecastEngineProperties:
         income_paise=st.integers(min_value=100000, max_value=2000000),
         expense_paise=st.integers(min_value=50000, max_value=1500000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_forecast_cashflow_returns_dict(
         self,
         income_paise: int,
@@ -62,7 +62,7 @@ class TestForecastEngineProperties:
         income_paise=st.integers(min_value=100000, max_value=2000000),
         expense_paise=st.integers(min_value=50000, max_value=1500000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_forecast_confidence_in_range(
         self,
         income_paise: int,
@@ -101,7 +101,7 @@ class TestForecastEngineProperties:
             max_size=12,
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_forecast_result_invariants(self, month_data: list[dict[str, Any]]) -> None:
         """Forecast output must satisfy invariants."""
 
@@ -118,7 +118,7 @@ class TestForecastEngineProperties:
         ),
         threshold_paise=st.integers(min_value=1000000, max_value=50000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_liquidity_forecast_with_funding(
         self,
         current_liquidity_paise: int,
@@ -147,7 +147,7 @@ class TestForecastEngineProperties:
         ),
         threshold_paise=st.integers(min_value=0, max_value=50000000),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_liquidity_projection_monotonicity(
         self,
         current_liquidity_paise: int,
@@ -183,7 +183,7 @@ class TestForecastEngineProperties:
         ),
         threshold_paise=st.integers(min_value=1000000, max_value=50000000),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_shortfall_detection_monotonicity(
         self,
         current_liquidity_paise: int,
@@ -244,7 +244,7 @@ class TestForecastEngineProperties:
         ),
         allocation_ratio=st.decimals(min_value=0.1, max_value=1.0),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_goal_achievability_deterministic(
         self,
         target_amount_paise: int,
@@ -296,7 +296,7 @@ class TestForecastEngineProperties:
             max_size=12,
         ),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_credit_utilization_bounded(
         self,
         financial_events: list[dict[str, Any]],
@@ -319,7 +319,7 @@ class TestForecastEngineProperties:
             max_size=12,
         ),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_invalid_input_rejection(
         self,
         current_liquidity_paise: int,

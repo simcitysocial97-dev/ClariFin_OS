@@ -9,7 +9,7 @@ import calendar
 from datetime import date, timedelta
 from decimal import Decimal
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from src.engines.credit_card_engine.billing import (
@@ -47,7 +47,11 @@ def date_strategy(draw):
 
 
 @given(date_strategy(), st.integers(min_value=0, max_value=60))  # 0-60 days offset
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_due_date_invariants(statement_date, due_day_offset):
     """Property: compute_due_date must satisfy all invariants."""
     due_date = compute_due_date(statement_date, due_day_offset)
@@ -69,7 +73,11 @@ def test_compute_due_date_invariants(statement_date, due_day_offset):
     date_strategy(),  # Reference date
     st.booleans(),  # Whether to provide last statement date
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_next_statement_date_invariants(
     billing_day, reference_date, has_last_statement
 ):
@@ -114,7 +122,11 @@ def test_compute_next_statement_date_invariants(
     date_strategy(),  # Reference date
     st.booleans(),  # Whether to provide last statement date
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_statement_dates_invariants(
     billing_day, due_day_offset, reference_date, has_last_statement
 ):
@@ -154,7 +166,11 @@ def test_compute_statement_dates_invariants(
     st.integers(min_value=MIN_MIN_DUE_PCT_BPS, max_value=MAX_MIN_DUE_PCT_BPS),
     st.integers(min_value=MIN_FLOOR_PAISE, max_value=MAX_FLOOR_PAISE),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_minimum_due_invariants(total_outstanding, min_due_pct, floor_paise):
     """Property: compute_minimum_due must satisfy all invariants."""
     min_due = compute_minimum_due(total_outstanding, min_due_pct, floor_paise)
@@ -185,7 +201,11 @@ def test_compute_minimum_due_invariants(total_outstanding, min_due_pct, floor_pa
     st.integers(min_value=MIN_MIN_DUE_PCT_BPS, max_value=MAX_MIN_DUE_PCT_BPS),
     st.integers(min_value=MIN_FLOOR_PAISE, max_value=MAX_FLOOR_PAISE),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_minimum_due_math_accuracy(total_outstanding, min_due_pct, floor_paise):
     """Property: compute_minimum_due math must be accurate."""
     min_due = compute_minimum_due(total_outstanding, min_due_pct, floor_paise)
@@ -206,7 +226,11 @@ def test_compute_minimum_due_math_accuracy(total_outstanding, min_due_pct, floor
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_MIN_DUE_PCT_BPS, max_value=MAX_MIN_DUE_PCT_BPS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_minimum_due_proportionality(total_outstanding, min_due_pct):
     """Property: Minimum due is proportional to outstanding balance."""
     pct_amount = int(
@@ -233,7 +257,11 @@ def test_minimum_due_proportionality(total_outstanding, min_due_pct):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_FLOOR_PAISE, max_value=MAX_FLOOR_PAISE),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_minimum_due_floor_effects(total_outstanding, floor_paise):
     """Property: Minimum due respects floor amount."""
     min_due = compute_minimum_due(total_outstanding, 100, floor_paise)
@@ -248,7 +276,11 @@ def test_minimum_due_floor_effects(total_outstanding, floor_paise):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_MIN_DUE_PCT_BPS, max_value=MAX_MIN_DUE_PCT_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_minimum_due_percentage_effects(total_outstanding, min_due_pct):
     """Property: Minimum due respects percentage amount."""
     min_due = compute_minimum_due(total_outstanding, min_due_pct, 1000)
@@ -264,7 +296,11 @@ def test_minimum_due_percentage_effects(total_outstanding, min_due_pct):
 
 
 @given(date_strategy(), st.integers(min_value=1, max_value=31))  # Billing day
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_statement_date_month_end_safety(reference_date, billing_day):
     """Property: Statement dates handle month-end correctly."""
     next_statement = compute_next_statement_date(billing_day, reference_date)
@@ -279,7 +315,11 @@ def test_statement_date_month_end_safety(reference_date, billing_day):
 
 
 @given(date_strategy(), st.integers(min_value=0, max_value=60))  # Due day offset
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_due_date_cross_month_boundary(statement_date, due_day_offset):
     """Property: Due dates handle month boundaries correctly."""
     due_date = compute_due_date(statement_date, due_day_offset)
@@ -297,7 +337,11 @@ def test_due_date_cross_month_boundary(statement_date, due_day_offset):
     st.integers(min_value=MIN_BALANCE_PAISE, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=MIN_MIN_DUE_PCT_BPS, max_value=MAX_MIN_DUE_PCT_BPS),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_minimum_due_edge_cases(total_outstanding, min_due_pct):
     """Property: Minimum due handles edge cases correctly."""
     assert compute_minimum_due(0, min_due_pct, 10000) == 0
@@ -330,7 +374,11 @@ MAX_INTEREST_PAID_PAISE = 1_000_000_00  # ₹1 lakh
     st.integers(min_value=MIN_RATE_BPS, max_value=MAX_RATE_BPS),  # annual_rate
     st.integers(min_value=0, max_value=MAX_INTEREST_PAID_PAISE),  # interest_paid
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_financial_metrics_invariants(
     outstanding, credit_limit, annual_rate, interest_paid
 ):
@@ -368,7 +416,11 @@ def test_compute_financial_metrics_invariants(
     st.integers(min_value=MIN_CREDIT_LIMIT_PAISE, max_value=MAX_CREDIT_LIMIT_PAISE),
     st.integers(min_value=MIN_RATE_BPS, max_value=MAX_RATE_BPS),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_financial_metrics_utilization_boundary(
     outstanding, credit_limit, annual_rate
 ):
@@ -405,7 +457,11 @@ def test_compute_financial_metrics_utilization_boundary(
     st.integers(min_value=MIN_CREDIT_LIMIT_PAISE, max_value=MAX_CREDIT_LIMIT_PAISE),
     st.integers(min_value=MIN_RATE_BPS, max_value=MAX_RATE_BPS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_financial_metrics_available_credit(
     outstanding, credit_limit, annual_rate
 ):
@@ -434,7 +490,11 @@ def test_compute_financial_metrics_available_credit(
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_outstanding_invariants(spend, emi, fees, payments):
     """Property: compute_outstanding must satisfy all invariants."""
     outstanding = compute_outstanding(
@@ -468,7 +528,11 @@ def test_compute_outstanding_invariants(spend, emi, fees, payments):
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_outstanding_zero_payment_edge_case(spend, emi, fees, payments):
     """Property: Zero payments handled correctly."""
     outstanding = compute_outstanding(spend, emi, fees, payments)
@@ -484,7 +548,11 @@ def test_compute_outstanding_zero_payment_edge_case(spend, emi, fees, payments):
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_outstanding_math_accuracy(spend, emi, fees, payments):
     """Property: compute_outstanding math is accurate."""
     outstanding = compute_outstanding(spend, emi, fees, payments)
@@ -503,7 +571,11 @@ def test_compute_outstanding_math_accuracy(spend, emi, fees, payments):
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=0, max_value=MAX_CREDIT_LIMIT_PAISE),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_utilization_invariants(outstanding, credit_limit):
     """Property: compute_utilization must satisfy all invariants."""
     util = compute_utilization(outstanding, credit_limit)
@@ -526,7 +598,11 @@ def test_compute_utilization_invariants(outstanding, credit_limit):
     st.integers(min_value=1, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=1, max_value=MAX_CREDIT_LIMIT_PAISE),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_utilization_math_accuracy(outstanding, credit_limit):
     """Property: compute_utilization math is accurate."""
     util = compute_utilization(outstanding, credit_limit)
@@ -546,7 +622,11 @@ def test_compute_utilization_math_accuracy(outstanding, credit_limit):
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=0, max_value=MAX_CREDIT_LIMIT_PAISE),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_available_credit_invariants(credit_limit, outstanding):
     """Property: compute_available_credit must satisfy all invariants."""
     available = compute_available_credit(credit_limit, outstanding)
@@ -571,7 +651,11 @@ def test_compute_available_credit_invariants(credit_limit, outstanding):
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),
     st.integers(min_value=0, max_value=MAX_CREDIT_LIMIT_PAISE),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_available_credit_math_accuracy(credit_limit, outstanding):
     """Property: compute_available_credit math is accurate."""
     available = compute_available_credit(credit_limit, outstanding)

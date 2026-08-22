@@ -7,7 +7,7 @@ calculations using property-based testing techniques.
 
 from datetime import date
 
-from hypothesis import assume, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
@@ -119,7 +119,11 @@ def test_compute_tenure_from_emi_edge_cases():
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=10_000, max_value=100_000),  # EMI
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_tenure_from_emi_always_positive(principal, rate, emi):
     """Property: _compute_tenure_from_emi always returns positive number."""
     result = _compute_tenure_from_emi(principal, rate, emi)
@@ -131,7 +135,11 @@ def test_compute_tenure_from_emi_always_positive(principal, rate, emi):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_remaining_months_consistency(principal, rate, tenure):
     """Property: compute_remaining_months is consistent with _compute_tenure_from_emi."""
     from src.engines.loan_engine.emi import compute_emi_fixed
@@ -144,7 +152,11 @@ def test_compute_remaining_months_consistency(principal, rate, tenure):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_prepayment_at_month_invariants(schedule_params):
     """Property: apply_prepayment_at_month must satisfy all invariants."""
     schedule, rate, prepayment_amount, prepayment_month, start_date = schedule_params
@@ -184,7 +196,11 @@ def test_apply_prepayment_at_month_invariants(schedule_params):
 
 
 @given(prepayment_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_prepayment_invariants(prepayment_params):
     """Property: apply_prepayment must satisfy all invariants."""
     principal, rate, tenure, prepayment_amount, prepayment_month, start_date = (
@@ -222,7 +238,11 @@ def test_apply_prepayment_invariants(prepayment_params):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_prepayment_at_month_math_accuracy(schedule_params):
     """Property: apply_prepayment_at_month math must be accurate."""
     schedule, rate, prepayment_amount, prepayment_month, start_date = schedule_params
@@ -242,7 +262,11 @@ def test_apply_prepayment_at_month_math_accuracy(schedule_params):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_prepayment_at_month_loan_closure(schedule_params):
     """Property: Large prepayments close the loan."""
     schedule, rate, _, prepayment_month, start_date = schedule_params
@@ -264,7 +288,11 @@ def test_apply_prepayment_at_month_loan_closure(schedule_params):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_prepayment_at_month_reduce_emi_mode(schedule_params):
     """Property: reduce_emi mode keeps tenure but reduces EMI."""
     schedule, rate, prepayment_amount, prepayment_month, start_date = schedule_params
@@ -305,7 +333,11 @@ def test_apply_prepayment_at_month_reduce_emi_mode(schedule_params):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_prepayment_at_month_reduce_tenure_mode(schedule_params):
     """Property: reduce_tenure mode keeps EMI but reduces tenure."""
     schedule, rate, prepayment_amount, prepayment_month, start_date = schedule_params
@@ -338,7 +370,11 @@ def test_apply_prepayment_at_month_reduce_tenure_mode(schedule_params):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_multiple_prepayments_invariants(schedule_params):
     """Property: apply_multiple_prepayments must satisfy all invariants."""
     schedule, rate, _, _, start_date = schedule_params
@@ -375,7 +411,11 @@ def test_apply_multiple_prepayments_invariants(schedule_params):
 
 
 @given(schedule_with_prepayment())
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_regenerate_schedule_invariants(schedule_params):
     """Property: regenerate_schedule must satisfy all invariants."""
     schedule, rate, _, prepayment_month, start_date = schedule_params
@@ -420,7 +460,11 @@ def test_regenerate_schedule_invariants(schedule_params):
         lambda d: d.isoformat()
     ),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_regenerate_schedule_math_accuracy(principal, rate, tenure, start_date):
     """Property: regenerate_schedule math must be accurate."""
     # Generate original schedule

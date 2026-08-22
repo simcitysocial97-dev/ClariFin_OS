@@ -7,7 +7,7 @@ calculations using property-based testing techniques.
 
 from datetime import date
 
-from hypothesis import assume, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
@@ -86,7 +86,11 @@ def two_schedules(draw):
 
 
 @given(loan_parameters())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_loan_metrics_invariants(loan_params):
     """Property: compute_loan_metrics must satisfy all invariants."""
     principal, rate, tenure, start_date = loan_params
@@ -123,7 +127,11 @@ def test_compute_loan_metrics_invariants(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_loan_metrics_edge_cases(loan_params):
     """Property: compute_loan_metrics handles edge cases correctly."""
     principal, rate, tenure, start_date = loan_params
@@ -146,7 +154,11 @@ def test_compute_loan_metrics_edge_cases(loan_params):
 
 
 @given(two_schedules())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_calculate_interest_saved_invariants(schedule_params):
     """Property: calculate_interest_saved must satisfy all invariants."""
     original_schedule, new_schedule, prepayment_amount = schedule_params
@@ -170,7 +182,11 @@ def test_calculate_interest_saved_invariants(schedule_params):
 
 
 @given(two_schedules())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_calculate_tenure_saved_invariants(schedule_params):
     """Property: calculate_tenure_saved must satisfy all invariants."""
     original_schedule, new_schedule, _ = schedule_params
@@ -195,7 +211,11 @@ def test_calculate_tenure_saved_invariants(schedule_params):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_get_interest_component_invariants(principal, rate, tenure):
     """Property: get_interest_component must satisfy all invariants."""
     # Interest monotonicity with rate holds for the supported rate domain.
@@ -226,7 +246,11 @@ def test_get_interest_component_invariants(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_get_emi_component_invariants(principal, rate, tenure):
     """Property: get_emi_component must satisfy all invariants."""
     from src.engines.loan_engine.emi import compute_emi_fixed
@@ -253,7 +277,11 @@ def test_get_emi_component_invariants(principal, rate, tenure):
 
 
 @given(loan_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_loan_metrics_math_accuracy(loan_params):
     """Property: Loan metrics math must be accurate."""
     principal, rate, tenure, start_date = loan_params
@@ -289,7 +317,11 @@ def test_loan_metrics_math_accuracy(loan_params):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_zero_interest_loan_metrics(principal, rate, tenure):
     """Property: Zero interest loan produces correct metrics."""
     # Test with 0% interest
@@ -317,7 +349,11 @@ def test_zero_interest_loan_metrics(principal, rate, tenure):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_full_tenure_loan_metrics(principal, rate, tenure):
     """Property: Full tenure loan produces correct metrics."""
     start_date = "2025-01-01"
@@ -346,7 +382,11 @@ def test_full_tenure_loan_metrics(principal, rate, tenure):
     st.integers(min_value=12, max_value=60),  # Tenure
     st.integers(min_value=1, max_value=11),  # Months elapsed
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_partial_tenure_loan_metrics(principal, rate, tenure, months_elapsed):
     """Property: Partial tenure loan produces correct metrics."""
     if months_elapsed >= tenure:

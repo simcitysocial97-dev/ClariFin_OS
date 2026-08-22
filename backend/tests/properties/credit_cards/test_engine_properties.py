@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from tests.invariants import (
@@ -18,7 +18,7 @@ class TestCreditCardStatementProperties:
         tenure_months=st.integers(min_value=3, max_value=60),
         rate_bps=st.integers(min_value=1800, max_value=4800),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_emi_conversion_invariants(
         self, amount_paise: int, tenure_months: int, rate_bps: int
     ) -> None:
@@ -34,7 +34,7 @@ class TestCreditCardStatementProperties:
         total_spend_paise=st.integers(min_value=1000, max_value=5000000),
         total_payments_paise=st.integers(min_value=0, max_value=5000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_outstanding_non_negative(
         self, total_spend_paise: int, total_payments_paise: int
     ) -> None:
@@ -60,7 +60,7 @@ class TestStatementDetectionProperties:
         amount_paise=st.integers(min_value=1000, max_value=100000),
         description=st.text(min_size=5, max_size=50),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_emi_detection_returns_none_for_random(
         self, amount_paise: int, description: str
     ) -> None:
@@ -88,7 +88,7 @@ class TestCreditEngineProperties:
         annual_rate_bps=st.integers(min_value=1800, max_value=4800),
         tenure_months=st.sampled_from([3, 6, 9, 12, 18, 24]),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_emi_conversion_properties(
         self,
         amount_paise: int,
@@ -110,7 +110,7 @@ class TestCreditEngineProperties:
         outstanding_paise=st.integers(min_value=0, max_value=50000000),
         credit_limit_paise=st.integers(min_value=100000, max_value=10000000),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_utilization_bps_bounds(
         self,
         outstanding_paise: int,
@@ -130,7 +130,7 @@ class TestCreditCardInterestProperties:
         outstanding_paise=st.integers(min_value=0, max_value=100000000),
         annual_rate_bps=st.integers(min_value=0, max_value=4800),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_daily_interest_non_negative(
         self, outstanding_paise: int, annual_rate_bps: int
     ) -> None:
@@ -144,7 +144,7 @@ class TestCreditCardInterestProperties:
         outstanding_paise=st.integers(min_value=0, max_value=100000000),
         annual_rate_bps=st.integers(min_value=0, max_value=4800),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_daily_interest_rounding_precision(
         self, outstanding_paise: int, annual_rate_bps: int
     ) -> None:
@@ -161,7 +161,11 @@ class TestCreditCardInterestProperties:
         annual_rate_bps=st.integers(min_value=100, max_value=4800),
         multiplier=st.integers(min_value=1, max_value=10),
     )
-    @settings(max_examples=50, deadline=None)
+    @settings(
+        max_examples=50,
+        deadline=None,
+        suppress_health_check=[HealthCheck.differing_executors],
+    )
     def test_daily_interest_proportionality(
         self, outstanding_paise: int, annual_rate_bps: int, multiplier: int
     ) -> None:
@@ -190,7 +194,7 @@ class TestCreditCardInterestProperties:
         outstanding_paise=st.integers(min_value=0, max_value=100000000),
         annual_rate_bps=st.integers(min_value=0, max_value=4800),
     )
-    @settings(max_examples=50)
+    @settings(max_examples=50, suppress_health_check=[HealthCheck.differing_executors])
     def test_daily_interest_sign_invariance(
         self, outstanding_paise: int, annual_rate_bps: int
     ) -> None:
@@ -208,7 +212,7 @@ class TestCreditCardInterestProperties:
         ),
         annual_rate_bps=st.integers(min_value=0, max_value=4800),
     )
-    @settings(max_examples=30)
+    @settings(max_examples=30, suppress_health_check=[HealthCheck.differing_executors])
     def test_monthly_interest_non_negative(
         self, daily_balances: list[tuple[str, int]], annual_rate_bps: int
     ) -> None:
@@ -225,7 +229,7 @@ class TestCreditCardInterestProperties:
         annual_rate_bps=st.integers(min_value=0, max_value=4800),
         days_in_cycle=st.integers(min_value=1, max_value=31),
     )
-    @settings(max_examples=30)
+    @settings(max_examples=30, suppress_health_check=[HealthCheck.differing_executors])
     def test_monthly_interest_simple_non_negative(
         self,
         average_daily_balance_paise: int,
@@ -246,7 +250,7 @@ class TestCreditCardInterestProperties:
         outstanding_paise=st.integers(min_value=-100000000, max_value=-1),
         annual_rate_bps=st.integers(min_value=-4800, max_value=-1),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_daily_interest_rejects_invalid_inputs(
         self, outstanding_paise: int, annual_rate_bps: int
     ) -> None:
@@ -266,7 +270,7 @@ class TestCreditCardInterestProperties:
         annual_rate_bps=st.integers(min_value=-4800, max_value=-1),
         days_in_cycle=st.integers(min_value=-31, max_value=0),
     )
-    @settings(max_examples=20)
+    @settings(max_examples=20, suppress_health_check=[HealthCheck.differing_executors])
     def test_monthly_interest_simple_rejects_invalid_inputs(
         self,
         average_daily_balance_paise: int,

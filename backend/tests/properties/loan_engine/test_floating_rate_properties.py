@@ -8,7 +8,7 @@ calculations using property-based testing techniques.
 from datetime import date
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
@@ -90,7 +90,11 @@ def multiple_rate_changes(draw):
 
 
 @given(schedule_with_rate_change())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_floating_rate_change_invariants(schedule_params):
     """Property: apply_floating_rate_change must satisfy all invariants."""
     schedule, initial_rate, change_month, new_rate, mode, start_date = schedule_params
@@ -146,7 +150,11 @@ def test_apply_floating_rate_change_invariants(schedule_params):
 
 
 @given(schedule_with_rate_change())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_floating_rate_change_math_accuracy(schedule_params):
     """Property: apply_floating_rate_change math must be accurate."""
     schedule, initial_rate, change_month, new_rate, mode, start_date = schedule_params
@@ -189,7 +197,11 @@ def test_apply_floating_rate_change_math_accuracy(schedule_params):
 
 
 @given(schedule_with_rate_change())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 @pytest.mark.xfail(
     reason="Pre-existing flaky test: adjust_emi and adjust_tenure modes can produce identical schedules due to integer paise rounding edge cases"
 )
@@ -234,7 +246,11 @@ def test_apply_floating_rate_change_modes(schedule_params):
 
 
 @given(multiple_rate_changes())
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_simulate_floating_rate_schedule_invariants(rate_change_params):
     """Property: simulate_floating_rate_schedule must satisfy all invariants."""
     principal, initial_rate, tenure, rate_changes, start_date = rate_change_params
@@ -271,7 +287,11 @@ def test_simulate_floating_rate_schedule_invariants(rate_change_params):
 
 
 @given(multiple_rate_changes())
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
     """Property: Rate changes are applied correctly."""
     principal, initial_rate, tenure, rate_changes, start_date = rate_change_params
@@ -305,7 +325,11 @@ def test_simulate_floating_rate_schedule_rate_application(rate_change_params):
         lambda d: d.isoformat()
     ),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_simulate_floating_rate_schedule_no_changes(
     principal, initial_rate, tenure, start_date
 ):
@@ -332,7 +356,11 @@ def test_simulate_floating_rate_schedule_no_changes(
 
 
 @given(schedule_with_rate_change())
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_apply_floating_rate_change_edge_cases(schedule_params):
     """Property: apply_floating_rate_change handles edge cases correctly."""
     schedule, initial_rate, change_month, new_rate, mode, start_date = schedule_params
@@ -376,7 +404,11 @@ def test_apply_floating_rate_change_edge_cases(schedule_params):
         lambda d: d.isoformat()
     ),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_floating_rate_change_math_consistency(
     principal, initial_rate, tenure, start_date
 ):
@@ -426,7 +458,11 @@ def test_floating_rate_change_math_consistency(
         lambda d: d.isoformat()
     ),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_floating_rate_change_zero_rate(principal, initial_rate, tenure, start_date):
     """Property: Zero rate produces correct schedule."""
     # Generate schedule

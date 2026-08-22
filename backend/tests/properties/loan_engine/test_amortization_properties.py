@@ -9,7 +9,7 @@ schedule generation using property-based testing techniques.
 from datetime import date
 from decimal import Decimal
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.amortization import (
@@ -51,7 +51,11 @@ def loan_parameters(draw):
 
 
 @given(loan_parameters())
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_generate_schedule_invariants(loan_params):
     """Property: generate_schedule must satisfy all invariants."""
     principal, rate, tenure, start_date = loan_params
@@ -96,7 +100,11 @@ def test_generate_schedule_invariants(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_generate_schedule_fixed_invariants(loan_params):
     """Property: generate_schedule_fixed must satisfy all invariants."""
     principal, rate, tenure, start_date = loan_params
@@ -123,7 +131,11 @@ def test_generate_schedule_fixed_invariants(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_generate_schedule_floating_invariants(loan_params):
     """Property: generate_schedule_floating must satisfy all invariants."""
     principal, rate, tenure, start_date = loan_params
@@ -145,7 +157,11 @@ def test_generate_schedule_floating_invariants(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_generate_schedule_math_accuracy(loan_params):
     """Property: generate_schedule math must be accurate."""
     principal, rate, tenure, start_date = loan_params
@@ -182,7 +198,11 @@ def test_generate_schedule_math_accuracy(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_total_interest_paise_invariants(loan_params):
     """Property: total_interest_paise must satisfy all invariants."""
     principal, rate, tenure, start_date = loan_params
@@ -202,7 +222,11 @@ def test_total_interest_paise_invariants(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_total_principal_paise_invariants(loan_params):
     """Property: total_principal_paise must satisfy all invariants."""
     principal, rate, tenure, start_date = loan_params
@@ -222,7 +246,11 @@ def test_total_principal_paise_invariants(loan_params):
 
 
 @given(loan_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_zero_interest_schedule(loan_params):
     """Property: Zero interest produces correct schedule."""
     principal, _, tenure, start_date = loan_params
@@ -253,7 +281,11 @@ def test_zero_interest_schedule(loan_params):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=1, max_value=10),  # Short tenure
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_short_tenure_schedule(principal, rate, tenure):
     """Property: Short tenure produces correct schedule."""
     start_date = "2025-01-01"
@@ -277,7 +309,11 @@ def test_short_tenure_schedule(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=120, max_value=360),  # Long tenure
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_long_tenure_schedule(principal, rate, tenure):
     """Property: Long tenure produces correct schedule."""
     start_date = "2025-01-01"
@@ -306,7 +342,11 @@ def test_long_tenure_schedule(principal, rate, tenure):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_schedule_consistency(principal, rate, tenure):
     """Property: Fixed and default schedules are consistent."""
     start_date = "2025-01-01"
@@ -334,7 +374,11 @@ def test_schedule_consistency(principal, rate, tenure):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_cumulative_interest_accuracy(principal, rate, tenure):
     """Property: Cumulative interest is calculated correctly."""
     start_date = "2025-01-01"
@@ -354,7 +398,11 @@ def test_cumulative_interest_accuracy(principal, rate, tenure):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_date_progression(principal, rate, tenure):
     """Property: Payment dates progress correctly."""
     start_date = "2025-01-01"
@@ -379,7 +427,11 @@ def test_date_progression(principal, rate, tenure):
     st.integers(min_value=500, max_value=2000),  # Rate (5-20%)
     st.integers(min_value=12, max_value=60),  # Tenure
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_principal_interest_progression(principal, rate, tenure):
     """Property: Principal component is non-decreasing (except possibly last row due to rounding)."""
     start_date = "2025-01-01"
@@ -416,7 +468,11 @@ def test_principal_interest_progression(principal, rate, tenure):
     st.integers(min_value=2000, max_value=5000),  # High rate (20-50%)
     st.integers(min_value=120, max_value=360),  # Long tenure (10-30 years)
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_ill_conditioned_loan_detection(principal, rate, tenure):
     """Property: Ill-conditioned loans (high rate, small principal, long tenure) trigger re-anchoring."""
     from src.engines.loan_engine.amortization import generate_schedule
@@ -444,7 +500,11 @@ def test_ill_conditioned_loan_detection(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_last_month_settlement(principal, rate, tenure):
     """Property: Last month correctly settles exact remaining balance (absorbs drift)."""
     from src.engines.loan_engine.amortization import generate_schedule
@@ -471,7 +531,11 @@ def test_last_month_settlement(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_interest_rounding_half_even(principal, rate, tenure):
     """Property: Interest rounding uses ROUND_HALF_EVEN (banker's rounding)."""
 
@@ -504,7 +568,11 @@ def test_interest_rounding_half_even(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_principal_component_bounds(principal, rate, tenure):
     """Property: Principal component is always bounded [0, emi_paise]."""
     from src.engines.loan_engine.amortization import generate_schedule
@@ -528,7 +596,11 @@ def test_principal_component_bounds(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_cumulative_interest_monotonic_non_decreasing(principal, rate, tenure):
     """Property: Cumulative interest is monotonically non-decreasing."""
     from src.engines.loan_engine.amortization import generate_schedule
@@ -552,7 +624,11 @@ def test_cumulative_interest_monotonic_non_decreasing(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_balance_strictly_decreasing(principal, rate, tenure):
     """Property: Balance strictly decreases until zero."""
     from src.engines.loan_engine.amortization import generate_schedule

@@ -7,7 +7,7 @@ calculations using property-based testing techniques.
 
 from decimal import Decimal
 
-from hypothesis import assume, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.emi import (
@@ -32,7 +32,11 @@ MIN_PRINCIPAL_PAISE = 100_000  # ₹1,000
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_emi_fixed_invariants(principal, rate, tenure):
     """Property: compute_emi_fixed must satisfy all invariants."""
     emi = compute_emi_fixed(principal, rate, tenure)
@@ -53,7 +57,11 @@ def test_compute_emi_fixed_invariants(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_emi_fixed_math_accuracy(principal, rate, tenure):
     """Property: compute_emi_fixed math must be accurate (allow 1 paise tolerance)."""
     emi = compute_emi_fixed(principal, rate, tenure)
@@ -74,7 +82,11 @@ def test_compute_emi_fixed_math_accuracy(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_principal_from_emi_invariants(principal, rate, tenure):
     """Property: compute_principal_from_emi must satisfy all invariants."""
     assume(principal >= 1_000_000)
@@ -97,7 +109,11 @@ def test_compute_principal_from_emi_invariants(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_principal_from_emi_math_accuracy(principal, rate, tenure):
     """Property: compute_principal_from_emi math must be accurate."""
     emi = compute_emi_fixed(principal, rate, tenure)
@@ -119,7 +135,11 @@ def test_compute_principal_from_emi_math_accuracy(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=10_000, max_value=500_000),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_tenure_from_emi_invariants(principal, rate, emi):
     """Property: compute_tenure_from_emi must satisfy all invariants."""
     monthly_rate = bps_to_monthly_rate(rate)
@@ -135,7 +155,11 @@ def test_compute_tenure_from_emi_invariants(principal, rate, emi):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=12, max_value=60),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_tenure_from_emi_consistency(principal, rate, tenure):
     """Property: compute_tenure_from_emi is consistent with compute_emi_fixed."""
     emi = compute_emi_fixed(principal, rate, tenure)
@@ -148,7 +172,11 @@ def test_compute_tenure_from_emi_consistency(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_emi_floating_invariants(principal, rate, tenure):
     """Property: compute_emi_floating must satisfy all invariants."""
     emi = compute_emi_floating(principal, rate, tenure)
@@ -162,7 +190,11 @@ def test_compute_emi_floating_invariants(principal, rate, tenure):
     st.integers(min_value=0, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_zero_interest_emi(principal, rate, tenure):
     """Property: Zero interest produces correct EMI."""
     emi = compute_emi_fixed(principal, 0, tenure)
@@ -182,7 +214,11 @@ def test_zero_interest_emi(principal, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=120, max_value=360),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_long_tenure_emi(principal, rate, tenure):
     """Property: Long tenure produces correct EMI."""
     emi = compute_emi_fixed(principal, rate, tenure)

@@ -8,7 +8,7 @@ EMI calculations using property-based testing techniques.
 from decimal import Decimal
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from src.engines.credit_card_engine.emi import compute_emi_conversion
@@ -27,7 +27,11 @@ MIN_AMOUNT_PAISE = 10_000  # ₹100
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=50, deadline=None)
+@settings(
+    max_examples=50,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_emi_conversion_invariants(amount, rate, tenure):
     """Property: compute_emi_conversion must satisfy all invariants."""
     # Compute EMI conversion
@@ -70,7 +74,11 @@ def test_compute_emi_conversion_invariants(amount, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_emi_conversion_math_accuracy(amount, rate, tenure):
     """Property: compute_emi_conversion math must be accurate."""
     # Compute EMI conversion
@@ -115,7 +123,11 @@ def test_compute_emi_conversion_math_accuracy(amount, rate, tenure):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_emi_proportionality(amount, rate, tenure):
     """Property: EMI is proportional to amount and rate."""
     # Compute base EMI
@@ -146,7 +158,11 @@ def test_emi_proportionality(amount, rate, tenure):
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_emi_tenure_effects(amount, rate):
     """Property: EMI decreases with longer tenure."""
     # Compute EMI for different tenures
@@ -167,7 +183,11 @@ def test_emi_tenure_effects(amount, rate):
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_zero_interest_emi(amount, tenure):
     """Property: Zero interest produces correct EMI."""
     result = compute_emi_conversion(amount, 0, tenure)
@@ -184,7 +204,11 @@ def test_zero_interest_emi(amount, tenure):
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_short_tenure_emi(amount, rate):
     """Property: Short tenure produces correct EMI."""
     # Test with minimum tenure
@@ -202,7 +226,11 @@ def test_short_tenure_emi(amount, rate):
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_long_tenure_emi(amount, rate):
     """Property: Long tenure produces correct EMI."""
     # Test with maximum tenure
@@ -223,7 +251,11 @@ def test_long_tenure_emi(amount, rate):
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_emi_consistency(amount, rate, tenure):
     """Property: EMI components are consistent."""
     # Compute EMI conversion
@@ -244,7 +276,11 @@ def test_emi_consistency(amount, rate, tenure):
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_INTEREST_RATE_BPS, max_value=MAX_INTEREST_RATE_BPS),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_emi_edge_cases(amount, rate):
     """Property: EMI handles edge cases correctly."""
     # Test with zero amount
@@ -271,7 +307,11 @@ def test_emi_edge_cases(amount, rate):
     st.integers(min_value=MIN_AMOUNT_PAISE, max_value=MAX_AMOUNT_PAISE),
     st.integers(min_value=MIN_TENURE_MONTHS, max_value=MAX_TENURE_MONTHS),
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_emi_rounding_consistency(amount, tenure):
     """Property: EMI rounding is consistent and monotonic with respect to interest."""
     result = compute_emi_conversion(amount, 0, tenure)

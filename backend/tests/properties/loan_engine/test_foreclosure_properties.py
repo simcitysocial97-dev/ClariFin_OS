@@ -8,7 +8,7 @@ calculations using property-based testing techniques.
 from datetime import date
 from decimal import ROUND_HALF_EVEN, Decimal
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from src.engines.loan_engine.amortization import generate_schedule, total_interest_paise
@@ -82,7 +82,11 @@ def loan_parameters(draw):
 
 
 @given(foreclosure_parameters())
-@settings(max_examples=30, deadline=None)
+@settings(
+    max_examples=30,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_foreclosure_amount_invariants(foreclosure_params):
     """Property: compute_foreclosure_amount must satisfy all invariants."""
     principal, rate, tenure, months_paid, penalty, start_date = foreclosure_params
@@ -134,7 +138,11 @@ def test_compute_foreclosure_amount_invariants(foreclosure_params):
 
 
 @given(foreclosure_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_foreclosure_amount_math_accuracy(foreclosure_params):
     """Property: compute_foreclosure_amount math must be accurate."""
     principal, rate, tenure, months_paid, penalty, start_date = foreclosure_params
@@ -178,7 +186,11 @@ def test_compute_foreclosure_amount_math_accuracy(foreclosure_params):
 
 
 @given(foreclosure_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_prepayment_breakup_invariants(foreclosure_params):
     """Property: compute_prepayment_breakup must satisfy all invariants."""
     principal, rate, tenure, months_elapsed, penalty, start_date = foreclosure_params
@@ -223,7 +235,11 @@ def test_compute_prepayment_breakup_invariants(foreclosure_params):
 
 
 @given(foreclosure_parameters())
-@settings(max_examples=20, deadline=None)
+@settings(
+    max_examples=20,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_compute_prepayment_breakup_math_accuracy(foreclosure_params):
     """Property: compute_prepayment_breakup math must be accurate."""
     principal, rate, tenure, months_elapsed, penalty, start_date = foreclosure_params
@@ -280,7 +296,11 @@ def test_compute_prepayment_breakup_math_accuracy(foreclosure_params):
 
 
 @given(foreclosure_parameters())
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_foreclosure_edge_cases(foreclosure_params):
     """Property: Foreclosure functions handle edge cases correctly."""
     principal, rate, tenure, months_paid, penalty, start_date = foreclosure_params
@@ -322,7 +342,11 @@ def test_foreclosure_edge_cases(foreclosure_params):
     st.integers(min_value=12, max_value=60),  # Tenure
     st.integers(min_value=0, max_value=500),  # Penalty
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_foreclosure_penalty_calculation(principal, rate, tenure, penalty):
     """Property: Penalty calculation is accurate."""
     start_date = "2025-01-01"
@@ -359,7 +383,11 @@ def test_foreclosure_penalty_calculation(principal, rate, tenure, penalty):
     st.integers(min_value=12, max_value=60),  # Tenure
     st.integers(min_value=0, max_value=59),  # Months paid (tenure max is 60)
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_foreclosure_zero_interest(principal, rate, tenure, months_paid):
     """Property: Zero interest loan produces correct foreclosure amounts."""
     start_date = "2025-01-01"
@@ -399,7 +427,11 @@ def test_foreclosure_zero_interest(principal, rate, tenure, months_paid):
     st.integers(min_value=12, max_value=60),  # Tenure
     st.integers(min_value=0, max_value=500),  # Penalty
 )
-@settings(max_examples=10, deadline=None)
+@settings(
+    max_examples=10,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_foreclosure_consistency(principal, rate, tenure, penalty):
     """Property: Foreclosure and prepayment breakup are consistent."""
     start_date = "2025-01-01"

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
 from src.engines.financial_events.lineage_walker import (
@@ -144,7 +144,11 @@ def event_list_strategy(draw, max_events=20):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_returns_valid_proposal(events):
     """Property: walk_lineage always returns a valid LineageProposal."""
     proposal = walk_lineage(events)
@@ -155,7 +159,11 @@ def test_walk_lineage_returns_valid_proposal(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_no_duplicate_links(events):
     """Property: walk_lineage never creates duplicate links in a single run."""
     proposal = walk_lineage(events)
@@ -167,7 +175,11 @@ def test_walk_lineage_no_duplicate_links(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_repayment_earlier_than_advance(events):
     """Property: A repayment can only settle advances with earlier IDs."""
     proposal = walk_lineage(events)
@@ -178,7 +190,11 @@ def test_walk_lineage_repayment_earlier_than_advance(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_settled_outstanding_non_negative(events):
     """Property: After settlement, outstanding is never negative."""
     proposal = walk_lineage(events)
@@ -189,7 +205,11 @@ def test_walk_lineage_settled_outstanding_non_negative(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_link_count_matches_updates(events):
     """Property: Number of proposed links equals number of lifecycle updates."""
     proposal = walk_lineage(events)
@@ -199,7 +219,11 @@ def test_walk_lineage_link_count_matches_updates(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_all_events_same_account_isolated(events):
     """Property: Repayments only match advances on the same account."""
     proposal = walk_lineage(events)
@@ -218,7 +242,11 @@ def test_walk_lineage_all_events_same_account_isolated(events):
         financial_event_strategy(), min_size=0, max_size=30, unique_by=lambda e: e["id"]
     )
 )
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_repayment_state_filter(events):
     """Property: Only open/partially_settled repayments generate links."""
     proposal = walk_lineage(events)
@@ -237,7 +265,11 @@ def test_walk_lineage_repayment_state_filter(events):
         financial_event_strategy(), min_size=0, max_size=30, unique_by=lambda e: e["id"]
     )
 )
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_advance_state_filter(events):
     """Property: Only open/partially_settled advances are settled."""
     proposal = walk_lineage(events)
@@ -252,7 +284,11 @@ def test_walk_lineage_advance_state_filter(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_walk_lineage_monotonic_outstanding(events):
     """Property: Settlement reduces or maintains outstanding monotonically."""
     proposal = walk_lineage(events)
@@ -273,7 +309,11 @@ def test_walk_lineage_monotonic_outstanding(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_detect_rollover_returns_valid_proposal(events):
     """Property: detect_rollover_scenarios always returns a valid LineageProposal."""
     proposal = detect_rollover_scenarios(events)
@@ -289,7 +329,11 @@ def test_detect_rollover_returns_valid_proposal(events):
     ),
     st.integers(min_value=1, max_value=365),
 )
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_detect_rollover_lookback_respected(events, lookback_days):
     """Property: Rolls_over links are only created within the lookback window."""
     proposal = detect_rollover_scenarios(events, lookback_days=lookback_days)
@@ -307,7 +351,11 @@ def test_detect_rollover_lookback_respected(events, lookback_days):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_detect_rollover_only_open_advances(events):
     """Property: Only open advances generate rollover links."""
     proposal = detect_rollover_scenarios(events)
@@ -324,7 +372,11 @@ def test_detect_rollover_only_open_advances(events):
     st.integers(min_value=0, max_value=100000000),
     st.integers(min_value=0, max_value=100000000),
 )
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_detect_rollover_requires_positive_liability_change(liability_a, liability_b):
     """Property: Rollover sources must have positive liability_change_paise."""
     events = [
@@ -360,7 +412,11 @@ def test_detect_rollover_requires_positive_liability_change(liability_a, liabili
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_detect_rollover_target_after_source(events):
     """Property: Rollover target event must be after source event."""
     proposal = detect_rollover_scenarios(events)
@@ -380,7 +436,11 @@ def test_detect_rollover_target_after_source(events):
 
 
 @given(event_list_strategy(max_events=20))
-@settings(max_examples=5, deadline=None)
+@settings(
+    max_examples=5,
+    deadline=None,
+    suppress_health_check=[HealthCheck.differing_executors],
+)
 def test_both_functions_return_valid_structure(events):
     """Property: Both lineage functions return structurally valid proposals."""
     proposal1 = walk_lineage(events)
