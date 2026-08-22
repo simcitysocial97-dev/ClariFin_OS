@@ -103,7 +103,7 @@ jobs:
             EXIT_CODE=$(jq -r '.mutmut_rc' backend/tests/generated/mutation/mutation-summary.json)
             SCORE=$(jq -r '.score_percent' backend/tests/generated/mutation/mutation-summary.json)
             THRESHOLD=$(jq -r '.threshold_percent' backend/tests/generated/mutation/mutation-summary.json)
-            KILLED=$(jq -r '.killed' backend/tests/generated/mutation/mutation-summary-summary.json)
+            KILLED=$(jq -r '.killed' backend/tests/generated/mutation/mutation-summary.json)
             SURVIVED=$(jq -r '.survived' backend/tests/generated/mutation/mutation-summary.json)
             TIMEOUT=$(jq -r '.timeout' backend/tests/generated/mutation/mutation-summary.json)
             echo "mutation_exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
