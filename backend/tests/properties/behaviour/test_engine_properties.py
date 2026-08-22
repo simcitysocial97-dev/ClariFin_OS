@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
+
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
@@ -65,7 +67,9 @@ class TestBehaviourEngineProperties:
         incomes = monthly_incomes[:n]
 
         stability = compute_income_stability(incomes)
-        assert 0 <= stability <= 1
+        # Defensive: ensure result is Decimal and in valid range
+        assert isinstance(stability, Decimal), f"Expected Decimal, got {type(stability)}"
+        assert 0 <= stability <= 1, f"Stability {stability} not in [0, 1] for incomes={incomes}"
 
     @given(
         credit_advances_count=st.integers(min_value=0, max_value=10),
