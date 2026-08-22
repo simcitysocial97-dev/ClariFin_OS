@@ -155,7 +155,7 @@ def main() -> int:
     print(f"  No Tests    : {stats['no_tests']}")
     print(f"  Total       : {stats['total']}")
     print(f"  Score       : {score:.1f}%")
-    print(f"  Threshold   : 80%")
+    print("  Threshold   : 80%")
     print(f"  Met         : {'YES' if score >= 80 else 'NO'}")
     print(f"  Exit Code   : {exit_code}")
     print()
