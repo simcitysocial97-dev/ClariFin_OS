@@ -624,8 +624,18 @@ def test_generate_explanation_window_match():
 
 def test_generate_explanation_amount_in_rupees():
     """Amount in paise correctly converted to rupees with 2 decimal places."""
-    debit_txn = {"id": 1, "account_id": "A", "date_iso": "2025-01-01", "description": "T"}
-    credit_txn = {"id": 2, "account_id": "B", "date_iso": "2025-01-01", "description": "T"}
+    debit_txn = {
+        "id": 1,
+        "account_id": "A",
+        "date_iso": "2025-01-01",
+        "description": "T",
+    }
+    credit_txn = {
+        "id": 2,
+        "account_id": "B",
+        "date_iso": "2025-01-01",
+        "description": "T",
+    }
 
     # Test various paise amounts - uses simple float formatting
     explanation = _generate_explanation(debit_txn, credit_txn, 1, 0)

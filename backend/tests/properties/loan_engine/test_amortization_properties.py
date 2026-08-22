@@ -410,7 +410,9 @@ def test_principal_interest_progression(principal, rate, tenure):
 
 
 @given(
-    st.integers(min_value=100_000, max_value=10_000_000),  # Small principal (₹1K - ₹100K)
+    st.integers(
+        min_value=100_000, max_value=10_000_000
+    ),  # Small principal (₹1K - ₹100K)
     st.integers(min_value=2000, max_value=5000),  # High rate (20-50%)
     st.integers(min_value=120, max_value=360),  # Long tenure (10-30 years)
 )
@@ -472,13 +474,11 @@ def test_last_month_settlement(principal, rate, tenure):
 @settings(max_examples=30, deadline=None)
 def test_interest_rounding_half_even(principal, rate, tenure):
     """Property: Interest rounding uses ROUND_HALF_EVEN (banker's rounding)."""
+
     from src.engines.loan_engine.amortization import generate_schedule
-    from decimal import Decimal, ROUND_HALF_EVEN
 
     start_date = "2025-01-01"
     schedule = generate_schedule(principal, rate, tenure, start_date)
-
-    monthly_rate = Decimal(rate) / Decimal(120000)
 
     for i, row in enumerate(schedule):
         if i == len(schedule) - 1:
@@ -542,7 +542,9 @@ def test_cumulative_interest_monotonic_non_decreasing(principal, rate, tenure):
         prev = row.cumulative_interest_paise
 
     # Final cumulative should equal total interest
-    assert schedule[-1].cumulative_interest_paise == sum(row.interest_paise for row in schedule)
+    assert schedule[-1].cumulative_interest_paise == sum(
+        row.interest_paise for row in schedule
+    )
 
 
 @given(

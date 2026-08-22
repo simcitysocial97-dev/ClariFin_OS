@@ -8,19 +8,20 @@ Covers all 6 integrity constraints and tamper detection.
 Run: python -m pytest backend/tests/unit/engines/ledger_audit_engine.py -v
 """
 
-import pytest
 import hashlib
 
+import pytest
+
 from src.engines.ledger_audit_engine import (
+    run_full_audit,
     validate_ledger_integrity,
     verify_hash_signatures,
-    run_full_audit,
 )
-
 
 # ============================================================
 # Fixtures
 # ============================================================
+
 
 @pytest.fixture
 def clean_db(temp_db: str) -> str:
@@ -118,6 +119,7 @@ def db_with_tampered_hashes(temp_db: str) -> str:
 # validate_ledger_integrity Tests
 # ============================================================
 
+
 class TestValidateLedgerIntegrity:
     """Integration tests for ledger integrity validation."""
 
@@ -134,7 +136,9 @@ class TestValidateLedgerIntegrity:
         result = validate_ledger_integrity(db_with_violations)
 
         assert result["status"] == "FAIL"
-        null_account_violations = [v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"]
+        null_account_violations = [
+            v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"
+        ]
         assert len(null_account_violations) >= 1
         v = null_account_violations[0]
         assert "transaction_id" in v
@@ -144,7 +148,11 @@ class TestValidateLedgerIntegrity:
         """Empty account_id returns FAIL with NULL_ACCOUNT_ID violation."""
         result = validate_ledger_integrity(db_with_violations)
 
-        empty_account_violations = [v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID" and "empty" in v["message"].lower()]
+        empty_account_violations = [
+            v
+            for v in result["violations"]
+            if v["type"] == "NULL_ACCOUNT_ID" and "empty" in v["message"].lower()
+        ]
         assert len(empty_account_violations) >= 1
 
     # NOTE: The following violations cannot be created through normal INSERTs
@@ -159,20 +167,29 @@ class TestValidateLedgerIntegrity:
         """NULL hash_signature returns FAIL with NULL_HASH violation."""
         result = validate_ledger_integrity(db_with_violations)
 
-        null_hash_violations = [v for v in result["violations"] if v["type"] == "NULL_HASH" and "null" in v["message"].lower()]
+        null_hash_violations = [
+            v
+            for v in result["violations"]
+            if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
+        ]
         assert len(null_hash_violations) >= 1
 
     def test_validate_ledger_integrity_empty_hash(self, db_with_violations):
         """Empty hash_signature returns FAIL with NULL_HASH violation."""
         result = validate_ledger_integrity(db_with_violations)
 
-        empty_hash_violations = [v for v in result["violations"] if v["type"] == "NULL_HASH" and "empty" in v["message"].lower()]
+        empty_hash_violations = [
+            v
+            for v in result["violations"]
+            if v["type"] == "NULL_HASH" and "empty" in v["message"].lower()
+        ]
         assert len(empty_hash_violations) >= 1
 
 
 # ============================================================
 # verify_hash_signatures Tests
 # ============================================================
+
 
 class TestVerifyHashSignatures:
     """Integration tests for hash signature verification."""
@@ -233,6 +250,7 @@ class TestVerifyHashSignatures:
 # ============================================================
 # run_full_audit Tests
 # ============================================================
+
 
 class TestRunFullAudit:
     """Integration tests for combined audit execution."""

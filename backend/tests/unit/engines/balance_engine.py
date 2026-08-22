@@ -10,23 +10,21 @@ Run: python -m pytest backend/tests/unit/engines/balance_engine.py -v
 """
 
 import pytest
-from datetime import date
-from decimal import Decimal
 
 from src.engines.balance_engine import (
-    _parse_date_to_ymd,
-    _parse_date_for_sort,
-    compute_running_balance,
-    compute_account_balance,
-    validate_statement_balance,
-    get_accounts_list,
     _format_paise,
+    _parse_date_for_sort,
+    _parse_date_to_ymd,
+    compute_account_balance,
+    compute_running_balance,
+    get_accounts_list,
+    validate_statement_balance,
 )
-
 
 # ============================================================
 # Fixtures
 # ============================================================
+
 
 @pytest.fixture
 def temp_db_with_data(temp_db: str) -> str:
@@ -62,27 +60,31 @@ def temp_db_with_data(temp_db: str) -> str:
 # _parse_date_to_ymd Tests
 # ============================================================
 
+
 class TestParseDateToYmd:
     """Tests for _parse_date_to_ymd - all supported Indian date formats."""
 
-    @pytest.mark.parametrize("input_date,expected_ymd", [
-        ("01/01/2025", "2025-01-01"),
-        ("31/12/2024", "2024-12-31"),
-        ("01-01-2025", "2025-01-01"),
-        ("31-12-2024", "2024-12-31"),
-        ("01/01/25", "2025-01-01"),
-        ("31/12/24", "2024-12-31"),
-        ("01-01-25", "2025-01-01"),
-        ("31-12-24", "2024-12-31"),
-        ("01 Jan 2025", "2025-01-01"),
-        ("31 Dec 2024", "2024-12-31"),
-        ("01 Jan 25", "2025-01-01"),
-        ("31 Dec 24", "2024-12-31"),
-        ("01-Jan-2025", "2025-01-01"),
-        ("31-Dec-2024", "2024-12-31"),
-        ("XX01-Jan-25XX", "2025-01-01"),
-        ("2025-01-01", "2025-01-01"),
-    ])
+    @pytest.mark.parametrize(
+        "input_date,expected_ymd",
+        [
+            ("01/01/2025", "2025-01-01"),
+            ("31/12/2024", "2024-12-31"),
+            ("01-01-2025", "2025-01-01"),
+            ("31-12-2024", "2024-12-31"),
+            ("01/01/25", "2025-01-01"),
+            ("31/12/24", "2024-12-31"),
+            ("01-01-25", "2025-01-01"),
+            ("31-12-24", "2024-12-31"),
+            ("01 Jan 2025", "2025-01-01"),
+            ("31 Dec 2024", "2024-12-31"),
+            ("01 Jan 25", "2025-01-01"),
+            ("31 Dec 24", "2024-12-31"),
+            ("01-Jan-2025", "2025-01-01"),
+            ("31-Dec-2024", "2024-12-31"),
+            ("XX01-Jan-25XX", "2025-01-01"),
+            ("2025-01-01", "2025-01-01"),
+        ],
+    )
     def test_parse_date_to_ymd_all_formats(self, input_date, expected_ymd):
         """All supported formats produce valid YYYY-MM-DD."""
         result = _parse_date_to_ymd(input_date)
@@ -113,6 +115,7 @@ class TestParseDateToYmd:
 # _parse_date_for_sort Tests
 # ============================================================
 
+
 class TestParseDateForSort:
     """Tests for _parse_date_for_sort - sorting key generation."""
 
@@ -138,12 +141,15 @@ class TestParseDateForSort:
 # compute_running_balance Tests
 # ============================================================
 
+
 class TestComputeRunningBalance:
     """Integration tests for running balance computation."""
 
     def test_compute_running_balance_basic(self, temp_db_with_data):
         """Running balance = starting + sum(credit - debit) in SQL order."""
-        results = compute_running_balance(temp_db_with_data, "HDFC", starting_balance_paise=100000)
+        results = compute_running_balance(
+            temp_db_with_data, "HDFC", starting_balance_paise=100000
+        )
 
         assert len(results) == 4
         # Transaction 1: +5000000 -> 5100000
@@ -188,10 +194,14 @@ class TestComputeRunningBalance:
 
     def test_compute_running_balance_starting_balance(self, temp_db_with_data):
         """Starting balance added to first transaction."""
-        results_zero = compute_running_balance(temp_db_with_data, "HDFC", starting_balance_paise=0)
-        results_custom = compute_running_balance(temp_db_with_data, "HDFC", starting_balance_paise=100000)
+        results_zero = compute_running_balance(
+            temp_db_with_data, "HDFC", starting_balance_paise=0
+        )
+        results_custom = compute_running_balance(
+            temp_db_with_data, "HDFC", starting_balance_paise=100000
+        )
 
-        for r_zero, r_custom in zip(results_zero, results_custom):
+        for r_zero, r_custom in zip(results_zero, results_custom, strict=True):
             assert r_custom["balance_paise"] == r_zero["balance_paise"] + 100000
 
     def test_compute_running_balance_output_fields(self, temp_db_with_data):
@@ -212,6 +222,7 @@ class TestComputeRunningBalance:
 # ============================================================
 # compute_account_balance Tests
 # ============================================================
+
 
 class TestComputeAccountBalance:
     """Integration tests for single account balance."""
@@ -238,7 +249,9 @@ class TestComputeAccountBalance:
         from src.core.db.connection import get_connection
 
         conn = get_connection(temp_db_with_data)
-        conn.execute("INSERT INTO statements (id, bank, file_name) VALUES (4, 'EMPTY_BANK', 'empty.pdf')")
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (4, 'EMPTY_BANK', 'empty.pdf')"
+        )
         conn.commit()
         conn.close()
 
@@ -252,6 +265,7 @@ class TestComputeAccountBalance:
 # ============================================================
 # validate_statement_balance Tests
 # ============================================================
+
 
 class TestValidateStatementBalance:
     """Integration tests for statement balance validation."""
@@ -295,6 +309,7 @@ class TestValidateStatementBalance:
 # get_accounts_list Tests
 # ============================================================
 
+
 class TestGetAccountsList:
     """Integration tests for listing all accounts."""
 
@@ -319,7 +334,9 @@ class TestGetAccountsList:
         from src.core.db.connection import get_connection
 
         conn = get_connection(temp_db_with_data)
-        conn.execute("INSERT INTO statements (id, bank, file_name) VALUES (4, 'EMPTY_BANK', 'empty.pdf')")
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (4, 'EMPTY_BANK', 'empty.pdf')"
+        )
         conn.commit()
         conn.close()
 
@@ -341,24 +358,28 @@ class TestGetAccountsList:
 # _format_paise Tests
 # ============================================================
 
+
 class TestFormatPaise:
     """Tests for Indian rupee formatting with lakh/crores grouping."""
 
-    @pytest.mark.parametrize("paise,expected", [
-        (0, "₹0.00"),
-        (1, "₹0.01"),
-        (99, "₹0.99"),
-        (100, "₹1.00"),
-        (123, "₹1.23"),
-        (10000, "₹100.00"),
-        (100000, "₹1,000.00"),
-        (1000000, "₹10,000.00"),
-        (10000000, "₹1,00,000.00"),
-        (100000000, "₹10,00,000.00"),
-        (1000000000, "₹1,00,00,000.00"),
-        (123456789, "₹12,34,567.89"),
-        (999999999, "₹99,99,999.99"),
-    ])
+    @pytest.mark.parametrize(
+        "paise,expected",
+        [
+            (0, "₹0.00"),
+            (1, "₹0.01"),
+            (99, "₹0.99"),
+            (100, "₹1.00"),
+            (123, "₹1.23"),
+            (10000, "₹100.00"),
+            (100000, "₹1,000.00"),
+            (1000000, "₹10,000.00"),
+            (10000000, "₹1,00,000.00"),
+            (100000000, "₹10,00,000.00"),
+            (1000000000, "₹1,00,00,000.00"),
+            (123456789, "₹12,34,567.89"),
+            (999999999, "₹99,99,999.99"),
+        ],
+    )
     def test_format_paise_indian_grouping(self, paise, expected):
         """Indian grouping: 3 digits, then 2-2-2... (lakhs, crores)."""
         assert _format_paise(paise) == expected

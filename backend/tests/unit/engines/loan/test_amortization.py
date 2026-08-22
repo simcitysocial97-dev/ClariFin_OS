@@ -274,10 +274,16 @@ class TestValidateSchedule:
 
         # Valid schedule should pass
         schedule = generate_schedule(**sample_loan)
-        assert validate_schedule(schedule, sample_loan["principal_paise"], sample_loan["tenure_months"]) is True
+        assert (
+            validate_schedule(
+                schedule, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is True
+        )
 
         # Create schedule with inconsistent EMI (modify row 2)
         from src.engines.loan_engine.models import AmortizationRow
+
         bad_schedule = list(schedule)
         bad_schedule[1] = AmortizationRow(
             month_number=2,
@@ -288,25 +294,54 @@ class TestValidateSchedule:
             balance_paise=schedule[1].balance_paise,
             cumulative_interest_paise=schedule[1].cumulative_interest_paise,
         )
-        assert validate_schedule(bad_schedule, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        assert (
+            validate_schedule(
+                bad_schedule,
+                sample_loan["principal_paise"],
+                sample_loan["tenure_months"],
+            )
+            is False
+        )
 
         # debug_mode=True should raise
         with pytest.raises(ValueError, match="EMI inconsistency"):
-            validate_schedule(bad_schedule, sample_loan["principal_paise"], sample_loan["tenure_months"], debug_mode=True)
+            validate_schedule(
+                bad_schedule,
+                sample_loan["principal_paise"],
+                sample_loan["tenure_months"],
+                debug_mode=True,
+            )
 
     def test_validate_schedule_tenure_length(self, sample_loan):
         """Schedule length != original_tenure_months returns False/raises."""
         from src.engines.loan_engine.amortization import validate_schedule
 
         schedule = generate_schedule(**sample_loan)
-        assert validate_schedule(schedule, sample_loan["principal_paise"], sample_loan["tenure_months"]) is True
+        assert (
+            validate_schedule(
+                schedule, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is True
+        )
 
         # Remove last row
         short_schedule = schedule[:-1]
-        assert validate_schedule(short_schedule, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        assert (
+            validate_schedule(
+                short_schedule,
+                sample_loan["principal_paise"],
+                sample_loan["tenure_months"],
+            )
+            is False
+        )
 
         with pytest.raises(ValueError, match="Schedule length"):
-            validate_schedule(short_schedule, sample_loan["principal_paise"], sample_loan["tenure_months"], debug_mode=True)
+            validate_schedule(
+                short_schedule,
+                sample_loan["principal_paise"],
+                sample_loan["tenure_months"],
+                debug_mode=True,
+            )
 
     def test_validate_schedule_debug_mode_raises(self, sample_loan):
         """debug_mode=True raises ValueError with all violations; debug_mode=False returns False."""
@@ -351,7 +386,15 @@ class TestValidateSchedule:
 
         # Valid schedule passes all
         schedule = generate_schedule(**sample_loan)
-        assert validate_schedule(schedule, sample_loan["principal_paise"], sample_loan["tenure_months"], debug_mode=True) is True
+        assert (
+            validate_schedule(
+                schedule,
+                sample_loan["principal_paise"],
+                sample_loan["tenure_months"],
+                debug_mode=True,
+            )
+            is True
+        )
 
         # Test each invariant individually by creating targeted violations
         from src.engines.loan_engine.models import AmortizationRow
@@ -359,31 +402,78 @@ class TestValidateSchedule:
         # 1. Balance never negative
         bad = list(schedule)
         bad[0] = AmortizationRow(**{**schedule[0].model_dump(), "balance_paise": -1})
-        assert validate_schedule(bad, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        assert (
+            validate_schedule(
+                bad, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is False
+        )
 
         # 2. Principal paid never exceeds original
         bad = list(schedule)
-        bad[0] = AmortizationRow(**{**schedule[0].model_dump(), "principal_paise": sample_loan["principal_paise"] + 1})
-        assert validate_schedule(bad, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        bad[0] = AmortizationRow(
+            **{
+                **schedule[0].model_dump(),
+                "principal_paise": sample_loan["principal_paise"] + 1,
+            }
+        )
+        assert (
+            validate_schedule(
+                bad, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is False
+        )
 
         # 3. Final balance reaches zero (tested by tenure_length check)
 
         # 4. Sum(principal payments) == principal amount
         bad = list(schedule)
-        bad[0] = AmortizationRow(**{**schedule[0].model_dump(), "principal_paise": sample_loan["principal_paise"] + 1000})
-        assert validate_schedule(bad, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        bad[0] = AmortizationRow(
+            **{
+                **schedule[0].model_dump(),
+                "principal_paise": sample_loan["principal_paise"] + 1000,
+            }
+        )
+        assert (
+            validate_schedule(
+                bad, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is False
+        )
 
         # 5. EMI consistency (all but last equal)
         bad = list(schedule)
-        bad[1] = AmortizationRow(**{**schedule[1].model_dump(), "emi_paise": schedule[1].emi_paise + 1})
-        assert validate_schedule(bad, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        bad[1] = AmortizationRow(
+            **{**schedule[1].model_dump(), "emi_paise": schedule[1].emi_paise + 1}
+        )
+        assert (
+            validate_schedule(
+                bad, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is False
+        )
 
         # 6. Cumulative interest monotonic non-decreasing
         bad = list(schedule)
-        bad[2] = AmortizationRow(**{**schedule[2].model_dump(), "cumulative_interest_paise": schedule[1].cumulative_interest_paise - 1})
-        assert validate_schedule(bad, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        bad[2] = AmortizationRow(
+            **{
+                **schedule[2].model_dump(),
+                "cumulative_interest_paise": schedule[1].cumulative_interest_paise - 1,
+            }
+        )
+        assert (
+            validate_schedule(
+                bad, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is False
+        )
 
         # 7. Month numbers sequential
         bad = list(schedule)
         bad[2] = AmortizationRow(**{**schedule[2].model_dump(), "month_number": 5})
-        assert validate_schedule(bad, sample_loan["principal_paise"], sample_loan["tenure_months"]) is False
+        assert (
+            validate_schedule(
+                bad, sample_loan["principal_paise"], sample_loan["tenure_months"]
+            )
+            is False
+        )

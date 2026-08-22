@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from hypothesis import given, settings
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
-from hypothesis import HealthCheck
 
 from src.engines.reconciliation_engine import (
     _calculate_confidence,
@@ -281,10 +280,18 @@ def test_confidence_desc_sim_boundary_07(description_similarity):
 @st.composite
 def desc_with_keyword(draw):
     """Generate a description that contains at least one keyword."""
-    keyword = draw(st.sampled_from(["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"]))
-    prefix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
-    suffix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
-    case_variant = draw(st.sampled_from([str.lower, str.upper, str.capitalize, lambda x: x]))
+    keyword = draw(
+        st.sampled_from(["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"])
+    )
+    prefix = draw(
+        st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20)
+    )
+    suffix = draw(
+        st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20)
+    )
+    case_variant = draw(
+        st.sampled_from([str.lower, str.upper, str.capitalize, lambda x: x])
+    )
     keyword = case_variant(keyword)
     return f"{prefix}{keyword}{suffix}"
 
@@ -292,19 +299,52 @@ def desc_with_keyword(draw):
 @st.composite
 def desc_without_keyword(draw):
     """Generate a description with NO keywords."""
-    return draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=1, max_size=50).filter(
-        lambda x: not any(kw in x.lower() for kw in ["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"])
-    ))
+    return draw(
+        st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=1, max_size=50).filter(
+            lambda x: not any(
+                kw in x.lower()
+                for kw in ["transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay"]
+            )
+        )
+    )
 
 
 @st.composite
 def desc_with_keyword_mixed_case(draw):
     """Generate a description with keyword in mixed case."""
-    keyword = draw(st.sampled_from(["TRANSFER", "NEFT", "IMPS", "RTGS", "UPI", "PAYTM", "GPAY",
-                                     "transfer", "neft", "imps", "rtgs", "upi", "paytm", "gpay",
-                                     "Transfer", "Neft", "Imps", "Rtgs", "Upi", "Paytm", "Gpay"]))
-    prefix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
-    suffix = draw(st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20))
+    keyword = draw(
+        st.sampled_from(
+            [
+                "TRANSFER",
+                "NEFT",
+                "IMPS",
+                "RTGS",
+                "UPI",
+                "PAYTM",
+                "GPAY",
+                "transfer",
+                "neft",
+                "imps",
+                "rtgs",
+                "upi",
+                "paytm",
+                "gpay",
+                "Transfer",
+                "Neft",
+                "Imps",
+                "Rtgs",
+                "Upi",
+                "Paytm",
+                "Gpay",
+            ]
+        )
+    )
+    prefix = draw(
+        st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20)
+    )
+    suffix = draw(
+        st.text(alphabet="abcdefghijklmnopqrstuvwxyz ", min_size=0, max_size=20)
+    )
     return f"{prefix}{keyword}{suffix}"
 
 

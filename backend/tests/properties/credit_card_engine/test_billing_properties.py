@@ -20,7 +20,10 @@ from src.engines.credit_card_engine.billing import (
 )
 from src.engines.credit_card_engine.metrics import compute_financial_metrics
 from src.engines.credit_card_engine.outstanding import compute_outstanding
-from src.engines.credit_card_engine.utilization import compute_utilization, compute_available_credit
+from src.engines.credit_card_engine.utilization import (
+    compute_available_credit,
+    compute_utilization,
+)
 
 # Constants for testing
 MAX_BALANCE_PAISE = 10_000_000_00  # ₹10 lakh
@@ -321,12 +324,16 @@ MAX_INTEREST_PAID_PAISE = 1_000_000_00  # ₹1 lakh
 
 @given(
     st.integers(min_value=0, max_value=MAX_BALANCE_PAISE),  # outstanding
-    st.integers(min_value=MIN_CREDIT_LIMIT_PAISE, max_value=MAX_CREDIT_LIMIT_PAISE),  # credit_limit
+    st.integers(
+        min_value=MIN_CREDIT_LIMIT_PAISE, max_value=MAX_CREDIT_LIMIT_PAISE
+    ),  # credit_limit
     st.integers(min_value=MIN_RATE_BPS, max_value=MAX_RATE_BPS),  # annual_rate
     st.integers(min_value=0, max_value=MAX_INTEREST_PAID_PAISE),  # interest_paid
 )
 @settings(max_examples=50, deadline=None)
-def test_compute_financial_metrics_invariants(outstanding, credit_limit, annual_rate, interest_paid):
+def test_compute_financial_metrics_invariants(
+    outstanding, credit_limit, annual_rate, interest_paid
+):
     """Property: compute_financial_metrics must satisfy all invariants."""
     metrics = compute_financial_metrics(
         outstanding_paise=outstanding,
@@ -362,7 +369,9 @@ def test_compute_financial_metrics_invariants(outstanding, credit_limit, annual_
     st.integers(min_value=MIN_RATE_BPS, max_value=MAX_RATE_BPS),
 )
 @settings(max_examples=50, deadline=None)
-def test_compute_financial_metrics_utilization_boundary(outstanding, credit_limit, annual_rate):
+def test_compute_financial_metrics_utilization_boundary(
+    outstanding, credit_limit, annual_rate
+):
     """Property: Utilization boundary conditions."""
     metrics = compute_financial_metrics(
         outstanding_paise=outstanding,
@@ -380,7 +389,8 @@ def test_compute_financial_metrics_utilization_boundary(outstanding, credit_limi
 
     # Utilization calculation: outstanding / credit_limit * 10000 (ROUND_HALF_EVEN)
     if outstanding > 0 and credit_limit > 0:
-        from decimal import Decimal, ROUND_HALF_EVEN
+        from decimal import ROUND_HALF_EVEN, Decimal
+
         expected_util = int(
             (Decimal(outstanding) * Decimal(10000) / Decimal(credit_limit)).quantize(
                 Decimal(1), rounding=ROUND_HALF_EVEN
@@ -396,7 +406,9 @@ def test_compute_financial_metrics_utilization_boundary(outstanding, credit_limi
     st.integers(min_value=MIN_RATE_BPS, max_value=MAX_RATE_BPS),
 )
 @settings(max_examples=30, deadline=None)
-def test_compute_financial_metrics_available_credit(outstanding, credit_limit, annual_rate):
+def test_compute_financial_metrics_available_credit(
+    outstanding, credit_limit, annual_rate
+):
     """Property: Available credit correctly computed."""
     metrics = compute_financial_metrics(
         outstanding_paise=outstanding,
@@ -519,7 +531,8 @@ def test_compute_utilization_math_accuracy(outstanding, credit_limit):
     """Property: compute_utilization math is accurate."""
     util = compute_utilization(outstanding, credit_limit)
 
-    from decimal import Decimal, ROUND_HALF_EVEN
+    from decimal import ROUND_HALF_EVEN, Decimal
+
     expected = int(
         (Decimal(outstanding) * Decimal(10000) / Decimal(credit_limit)).quantize(
             Decimal(1), rounding=ROUND_HALF_EVEN
