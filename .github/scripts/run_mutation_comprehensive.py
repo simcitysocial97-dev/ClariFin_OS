@@ -11,7 +11,7 @@ import os
 from pathlib import Path
 from datetime import datetime, timezone
 
-BACKEND_DIR = Path(__file__).parent.parent / "backend"
+BACKEND_DIR = Path(__file__).resolve().parent.parent.parent / "backend"
 MUTATION_OUTPUT_DIR = BACKEND_DIR / "tests" / "generated" / "mutation"
 MUTATION_SUMMARY = MUTATION_OUTPUT_DIR / "mutation-summary.json"
 
@@ -22,7 +22,7 @@ def run_mutmut() -> tuple[int, str]:
     try:
         result = subprocess.run(
             ["python3", "-m", "mutmut", "run"],
-            cwd=BACKEND_DIR,
+            cwd=str(BACKEND_DIR),
             capture_output=True,
             text=True,
             env=env,
