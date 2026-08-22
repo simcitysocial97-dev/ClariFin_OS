@@ -20,10 +20,10 @@
 # Allow partial results on infrastructure failures
 set -eo pipefail
 
-# Save original directory for later use
-ORIGINAL_DIR="$(pwd)"
-
-BACKEND_DIR="${1:-backend}"
+# Get absolute paths
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BACKEND_DIR="${1:-$REPO_ROOT/backend}"
 TARGET_PATH="${2:-src/engines/}"
 
 echo "================================================"
@@ -154,8 +154,6 @@ echo "  Classification: $RESULT"
 echo "================================================"
 
 # ── Generate aggregate report ───────────────────────────────────────────────
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 python3 "$SCRIPT_DIR/generate_mutation_report.py" || echo "Mutation report generation skipped"
 
 echo ""
