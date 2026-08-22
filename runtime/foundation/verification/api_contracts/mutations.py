@@ -14,7 +14,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from runtime.foundation.verification.api_contracts.gate import ApiContractGate
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 

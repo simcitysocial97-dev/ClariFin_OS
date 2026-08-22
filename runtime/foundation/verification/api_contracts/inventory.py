@@ -10,8 +10,6 @@ endpoint registry is maintained — everything is derived.
 
 from __future__ import annotations
 
-import ast
-import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path

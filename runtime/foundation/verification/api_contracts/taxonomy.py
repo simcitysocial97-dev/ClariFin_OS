@@ -35,7 +35,7 @@ Semantic checks operate on live wire responses with deterministic fixture data.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum, auto
+from enum import Enum
 from typing import Any
 
 # ---------------------------------------------------------------------------

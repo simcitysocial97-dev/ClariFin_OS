@@ -11,7 +11,7 @@ Usage:
   cd frontend && PLAYWRIGHT_API_URL=http://localhost:8000 npx playwright test
 """
 
-import sys, os, json
+import sys
 from pathlib import Path
 
 # Ensure backend is importable

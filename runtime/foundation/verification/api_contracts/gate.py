@@ -18,7 +18,6 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 # Add backend to path
 BACKEND_DIR = Path(__file__).resolve().parents[4] / "backend"
@@ -30,7 +29,6 @@ from runtime.foundation.verification.api_contracts.inventory import (
     REPO_ROOT,
 )
 from runtime.foundation.verification.api_contracts.normalize import (
-    canonical_normalize,
     diff_openapi,
     hash_openapi,
 )
@@ -99,7 +97,7 @@ class ApiContractGate:
                         path=rel_path,
                         method="",
                         source="freshness",
-                        expected=f"committed artifact matching live OpenAPI",
+                        expected="committed artifact matching live OpenAPI",
                         actual="artifact missing",
                         details=f"{label} artifact not found at {rel_path}",
                     )
@@ -115,7 +113,7 @@ class ApiContractGate:
                         path=rel_path,
                         method="",
                         source="freshness",
-                        expected=f"non-empty JSON artifact",
+                        expected="non-empty JSON artifact",
                         actual="artifact is 0 bytes",
                         details=f"{label} artifact is empty",
                     )
@@ -132,7 +130,7 @@ class ApiContractGate:
                         path=rel_path,
                         method="",
                         source="freshness",
-                        expected=f"valid JSON artifact",
+                        expected="valid JSON artifact",
                         actual=f"parse error: {e}",
                         details=f"{label} artifact is malformed",
                     )
@@ -146,7 +144,7 @@ class ApiContractGate:
                         path=rel_path,
                         method="",
                         source="freshness",
-                        expected=f"OpenAPI dict with 'paths' key",
+                        expected="OpenAPI dict with 'paths' key",
                         actual=f"structure: {type(committed).__name__}, keys={list(committed.keys())[:5] if isinstance(committed, dict) else 'N/A'}",
                         details=f"{label} artifact is not a valid OpenAPI document",
                     )
@@ -267,7 +265,7 @@ class ApiContractGate:
                             path="frontend/types/api-generated.ts",
                             method="",
                             source="generated_types",
-                            expected=f"types reproducible from live OpenAPI (no diff)",
+                            expected="types reproducible from live OpenAPI (no diff)",
                             actual=f"differences detected starting line {diff_line}",
                             details="Run `npm run gen:types` while backend is running to regenerate.",
                         )
@@ -619,7 +617,8 @@ class ApiContractGate:
 
         # Set up isolated test DB
         from src.config import settings
-        import tempfile, os
+        import tempfile
+        import os
 
         with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as tmp:
             tmp_db_path = tmp.name

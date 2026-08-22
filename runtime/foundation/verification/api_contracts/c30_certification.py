@@ -19,8 +19,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
-import tempfile
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -608,7 +607,6 @@ class MutationAttacker:
 
     def _run_single_mut(self, name: str, mutator: Any) -> dict[str, Any]:
         """Apply mutation, run gate, restore, report."""
-        from runtime.foundation.verification.api_contracts.gate import ApiContractGate
 
         # Snapshot originals
         snapshots: dict[str, str] = {}
