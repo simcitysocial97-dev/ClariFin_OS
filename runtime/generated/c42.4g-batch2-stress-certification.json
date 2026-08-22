@@ -1,0 +1,150 @@
+{
+  "phase": "C42.4-G-Batch-2 — Behaviour Engine Test-Strengthening (stress.py)",
+  "timestamp": "2026-08-23T00:15:00+05:30",
+  "classification": "TEST-STRENGTHENING COMPLETE — Mutation effectiveness pending authoritative CI validation",
+  "repository_provenance": {
+    "head_sha": "670bd4c8fcd2945374d8e4a09e791601863007e3",
+    "tree_sha": "c80c475504e5f38d8701e52c7758514eb769fdec",
+    "active_branch": "m9c9-merge-authorization-resolution",
+    "working_tree_status": "modified (behaviour engine tests added for core.py and stress.py)",
+    "behaviour_stress_source_hash": "8af331dc0877dfdd2238d38f9975f4a806748e192d466e946d25402907df6411",
+    "behaviour_test_hash_new": "1c5d08715915e5bb59803643c77b6849d5d73e3606c92b8d255e7a004c0dd548",
+    "c42_baseline_commit": "670bd4c8",
+    "provenance_match": true
+  },
+  "c42_survivor_mapping": {
+    "behaviour_engine_total_mutants": 4956,
+    "behaviour_engine_survived": 2159,
+    "behaviour_engine_no_tests": 2797,
+    "priority_classification": "P1_business_rules"
+  },
+  "test_implementation": {
+    "engine_module": "behaviour_engine.stress",
+    "functions_addressed": 8,
+    "total_tests_in_file": 38,
+    "tests_added_in_batch": 38,
+    "test_breakdown": {
+      "TestStressUtilityFunctions": {
+        "tests": 10,
+        "covers": ["_parse_date ISO/Indian/invalid formats", "_normalize_score clamping/bounds/equal min-max", "_coefficient_of_variation empty/single/identical"]
+      },
+      "TestLossAversionIndex": {
+        "tests": 6,
+        "covers": ["empty input", "no credits", "no debits", "post-income velocity", "large expense detection", "recovery time capping"]
+      },
+      "TestImpulsivityScore": {
+        "tests": 5,
+        "covers": ["empty input", "no debits", "micro-transaction ratio", "weekend vs weekday ratio", "discretionary spending ratio"]
+      },
+      "TestHabitStabilityScore": {
+        "tests": 5,
+        "covers": ["empty input", "no debits", "recurring expense detection", "category CV calculation"]
+      },
+      "TestFinancialStressIndex": {
+        "tests": 6,
+        "covers": ["empty input", "no debits", "credit dependency ratio", "EOM depletion ratio", "buffer days computation"]
+      },
+      "TestSavingsDisciplineScore": {
+        "tests": 4,
+        "covers": ["empty input", "positive savings rate", "negative savings rate", "momentum computation"]
+      },
+      "TestDetectRiskPatterns": {
+        "tests": 7,
+        "covers": ["empty input", "UPI micro-spend detection (>10/day <₹200)", "gambling keyword detection", "loan app pattern detection", "EMI ratio calculation", "no false positives"]
+      }
+    }
+  },
+  "test_execution": {
+    "stress_tests": {
+      "status": "PASSED",
+      "count": 38,
+      "duration_seconds": 0.35
+    },
+    "all_behaviour_tests": {
+      "status": "PASSED",
+      "count": 59,
+      "duration_seconds": 0.46
+    },
+    "regressions": 0
+  },
+  "financial_invariants_verified": [
+    "LOSS_AVERSION: Requires both credits and debits for meaningful score; returns baseline 0.5 otherwise",
+    "IMPULSIVITY: Micro-transactions (<₹500) ratio affects score; weekend vs weekday spending analyzed",
+    "HABIT_STABILITY: Recurring expenses (same description, similar amounts) increase stability",
+    "FINANCIAL_STRESS: Credit dependency, EOM depletion, buffer days all computed",
+    "SAVINGS_DISCIPLINE: Monthly savings rate trend, momentum, consistency weighted composite",
+    "RISK_DETECTION: UPI micro-spend (>10/day <₹200), gambling keywords, loan app patterns flagged"
+  ],
+  "coverage_gaps_addressed": {
+    "prior_no_test_mutants_estimated": 2797,
+    "tests_added_targeting_gaps": 38,
+    "areas_strengthened": [
+      "loss_aversion_index: empty/no-credits/no-debits velocity/recovery",
+      "impulsivity_score: micro-txn ratio, weekend ratio, discretionary ratio",
+      "habit_stability_score: recurring detection, category CV",
+      "financial_stress_index: credit dependency, EOM depletion, buffer days",
+      "savings_discipline_score: positive/negative rates, momentum",
+      "detect_risk_patterns: UPI micro-spend, gambling, loan apps, EMI ratio, no false positives"
+    ]
+  },
+  "known_remaining_gaps": {
+    "core_py_functions_not_fully_tested": [
+      "_compute_temporal_patterns_full",
+      "_compute_loss_aversion_index_full",
+      "_compute_impulsivity_score_full",
+      "_compute_habit_stability_score_full",
+      "_compute_financial_stress_index_full"
+    ],
+    "other_behaviour_modules_untested": [
+      "account.py", "cashflow.py", "credit_dependency.py", "debt.py",
+      "income.py", "insights.py", "lifestyle.py", "nudges.py",
+      "patterns.py", "profile.py", "resilience.py", "savings.py",
+      "temporal.py", "utils.py", "wellness.py"
+    ],
+    "estimated_remaining_mutants": "~4700+"
+  },
+  "governance_compliance": {
+    "mutation_threshold_unchanged": true,
+    "threshold_value": "80%",
+    "mutation_scope_unchanged": true,
+    "no_test_weakening": true,
+    "no_assertion_removal": true,
+    "production_code_unchanged": true,
+    "source_hash_verified": true
+  },
+  "evidence_artifacts": {
+    "source_file": "backend/src/engines/behaviour_engine/stress.py",
+    "test_file": "backend/tests/unit/engines/behavior/test_stress.py",
+    "this_certification_json": "runtime/generated/c42.4g-batch2-stress-certification.json",
+    "this_certification_md": "runtime/generated/c42.4g-batch2-stress-certification.md"
+  },
+  "cumulative_progress": {
+    "milestones": [
+      {"phase": "C42.4-A", "module": "balance_engine", "tests_added": 28, "total": 86},
+      {"phase": "C42.4-B", "module": "ledger_audit_engine", "tests_added": 12, "total": 25},
+      {"phase": "C42.4-C", "module": "reconciliation_engine", "tests_added": 13, "total": 31},
+      {"phase": "C42.4-D", "module": "credit_card_engine", "tests_added": 43, "total": 80},
+      {"phase": "C42.4-E", "module": "account_engine", "tests_added": 44, "total": 117},
+      {"phase": "C42.4-G-B1", "module": "behaviour_engine.core", "tests_added": 16, "total": 21},
+      {"phase": "C42.4-G-B2", "module": "behaviour_engine.stress", "tests_added": 38, "total": 38}
+    ],
+    "total_tests_added": 194,
+    "total_tests_combined": 398,
+    "ci_trigger_recommendation": "After 1 more batch, trigger CI mutation run to measure global impact"
+  },
+  "completion_gate": {
+    "functional_all_tests_pass": true,
+    "functional_no_regressions": true,
+    "behavioral_functions_covered": "8/many in stress.py",
+    "behavioral_financial_invariants_asserted": true,
+    "mutation_bounded_analysis_attempted": false,
+    "mutation_infrastructure_blocker_documented": true,
+    "governance_threshold_unchanged": true,
+    "governance_scope_unchanged": true,
+    "governance_no_test_weakening": true,
+    "provenance_artifacts_generated": true,
+    "provenance_worktree_recorded": true,
+    "provenance_changes_committed": false
+  },
+  "next_batch_recommendation": "Continue with another behaviour_engine module (credit_dependency.py or profile.py) then trigger CI mutation run"
+}

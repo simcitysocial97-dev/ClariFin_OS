@@ -26,6 +26,9 @@ from src.engines.reconciliation_engine import (
     _check_match,
     _date_difference_days,
     _generate_explanation,
+    _parse_date_iso,
+    _simple_description_similarity,
+    find_matches_for_transaction,
     find_potential_matches,
 )
 
@@ -652,8 +655,222 @@ def test_generate_explanation_amount_in_rupees():
 
 
 # ============================================================
-# Run Tests
+# Additional Tests for Gaps Identified by C42 Forensics
 # ============================================================
 
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
+
+def test_parse_date_iso_valid():
+    """Valid ISO date strings parse correctly."""
+    from src.engines.reconciliation_engine import _parse_date_iso
+
+    result = _parse_date_iso("2025-01-01")
+    assert result is not None
+    assert result.year == 2025
+    assert result.month == 1
+    assert result.day == 1
+
+    result = _parse_date_iso("2024-12-31")
+    assert result.year == 2024
+    assert result.month == 12
+    assert result.day == 31
+
+
+def test_parse_date_iso_invalid():
+    """Invalid or empty date strings return None."""
+    from src.engines.reconciliation_engine import _parse_date_iso
+
+    assert _parse_date_iso("") is None
+    assert _parse_date_iso(None) is None  # type: ignore
+    assert _parse_date_iso("invalid") is None
+    assert _parse_date_iso("2025-13-01") is None  # Invalid month
+
+
+def test_simple_description_similarity_with_keywords():
+    """Descriptions containing transfer keywords return similarity 1.0."""
+    from src.engines.reconciliation_engine import _simple_description_similarity
+
+    assert _simple_description_similarity("NEFT Transfer", "Transfer via NEFT") == 1.0
+    assert _simple_description_similarity("IMPS payment", "Received via IMPS") == 1.0
+    assert _simple_description_similarity("UPI transfer", "Payment via UPI") == 1.0
+    assert _simple_description_similarity("RTGS credit", "RTGS debit") == 1.0
+    assert _simple_description_similarity("Paytm transfer", "Transfer from Paytm") == 1.0
+    assert _simple_description_similarity("GPay payment", "Payment via GPay") == 1.0
+
+
+def test_simple_description_similarity_no_keywords():
+    """Descriptions without transfer keywords return similarity 0.0."""
+    from src.engines.reconciliation_engine import _simple_description_similarity
+
+    assert _simple_description_similarity("Salary Credit", "Bank Fee") == 0.0
+    assert _simple_description_similarity("Grocery Purchase", "Restaurant Bill") == 0.0
+    assert _simple_description_similarity("", "Transfer") == 0.0
+    assert _simple_description_similarity("Transfer", "") == 0.0
+    assert _simple_description_similarity("", "") == 0.0
+
+
+def test_calculate_confidence_caps_at_one():
+    """Confidence cannot exceed 1.0 even with all factors maxed."""
+    from src.engines.reconciliation_engine import _calculate_confidence
+
+    # All factors present: date_diff=0 (+0.4), amount_exact (+0.4), sim>0.7 (+0.2) = 1.0
+    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=1.0)
+    assert conf == 1.0
+
+    # Edge case: slight above threshold still caps
+    conf = _calculate_confidence(date_diff_days=0, amount_exact=True, description_similarity=0.99)
+    assert conf == 1.0
+
+
+def test_calculate_confidence_rounds_to_four_decimals():
+    """Confidence is rounded to exactly 4 decimal places."""
+    from src.engines.reconciliation_engine import _calculate_confidence
+
+    # Base confidence should have at most 4 decimal places
+    conf = _calculate_confidence(date_diff_days=0, amount_exact=True)
+    assert conf == round(conf, 4)
+    assert str(conf).count('.') <= 1
+    if '.' in str(conf):
+        assert len(str(conf).split('.')[1]) <= 4
+
+
+def test_check_match_with_description_similarity():
+    """Match includes description similarity factor in confidence."""
+    from src.engines.reconciliation_engine import _check_match
+
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "NEFT Transfer",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-01",
+        "description": "IMPS Credit",
+    }
+
+    result = _check_match(txn_a, txn_b)
+    assert result is not None
+    # Should have higher confidence due to description keywords
+    assert result["match_confidence"] >= 1.0  # 0.4 + 0.4 + 0.2 = 1.0
+
+
+def test_check_match_no_description_similarity():
+    """Match without description keywords has lower confidence."""
+    from src.engines.reconciliation_engine import _check_match
+
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Payment",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-01",
+        "description": "Credit",
+    }
+
+    result = _check_match(txn_a, txn_b)
+    assert result is not None
+    # No description similarity: 0.4 + 0.4 = 0.8
+    assert result["match_confidence"] == 0.8
+
+
+def test_check_match_missing_dates():
+    """Match returns None when either transaction has missing date."""
+    from src.engines.reconciliation_engine import _check_match
+
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "",
+        "description": "Transfer",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-01",
+        "description": "Transfer",
+    }
+
+    result = _check_match(txn_a, txn_b)
+    assert result is None
+
+
+def test_check_match_credit_first():
+    """Match works regardless of which transaction is debit vs credit."""
+    from src.engines.reconciliation_engine import _check_match
+
+    # txn_a has credit, txn_b has debit
+    txn_a = {
+        "id": 1,
+        "account_id": "Account_A",
+        "debit": 0,
+        "credit": 100000,
+        "date_iso": "2025-01-01",
+        "description": "Credit",
+    }
+    txn_b = {
+        "id": 2,
+        "account_id": "Account_B",
+        "debit": 100000,
+        "credit": 0,
+        "date_iso": "2025-01-01",
+        "description": "Debit",
+    }
+
+    result = _check_match(txn_a, txn_b)
+    assert result is not None
+    assert result["match_type"] == "exact"
+    assert result["amount"] == 1000.00
+
+
+def test_generate_explanation_edge_cases():
+    """Explanation handles missing or empty fields gracefully."""
+    from src.engines.reconciliation_engine import _generate_explanation
+
+    debit_txn = {"id": 1, "account_id": "", "date_iso": "", "description": ""}
+    credit_txn = {"id": 2, "account_id": "", "date_iso": "", "description": ""}
+
+    explanation = _generate_explanation(debit_txn, credit_txn, 100000, 0)
+    assert "Exact match" in explanation
+    # Empty account/date fields produce empty strings in output
+    assert "1000.00" in explanation
+
+    explanation = _generate_explanation(debit_txn, credit_txn, 100000, 5)
+    assert "Window match" in explanation
+    assert "5 days apart" in explanation
+
+
+def test_find_matches_for_transaction_existing(populated_db):
+    """find_matches_for_transaction returns matches for valid transaction ID."""
+    from src.engines.reconciliation_engine import find_matches_for_transaction
+
+    matches = find_matches_for_transaction(populated_db, 1)
+    # Transaction 1 is debit in Account_A, should match transaction 5 (credit in Account_B)
+    assert isinstance(matches, list)
+    # At least one match expected
+    assert len(matches) >= 1
+
+
+def test_find_matches_for_transaction_not_found(populated_db):
+    """find_matches_for_transaction returns empty list for non-existent transaction ID."""
+    from src.engines.reconciliation_engine import find_matches_for_transaction
+
+    matches = find_matches_for_transaction(populated_db, 99999)
+    assert matches == []

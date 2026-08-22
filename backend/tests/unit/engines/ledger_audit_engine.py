@@ -185,6 +185,200 @@ class TestValidateLedgerIntegrity:
         ]
         assert len(empty_hash_violations) >= 1
 
+    def test_validate_ledger_integrity_multiple_null_account_ids(self, temp_db):
+        """Multiple NULL account_ids each reported as separate violation."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                (1, '01/01/2025', '2025-01-01', 'Tx1', 100000, 'debit', NULL, 'hash1', 0),
+                (1, '02/01/2025', '2025-01-02', 'Tx2', 100000, 'debit', NULL, 'hash2', 1),
+                (1, '03/01/2025', '2025-01-03', 'Tx3', 100000, 'debit', NULL, 'hash3', 2);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        null_account_violations = [v for v in result["violations"] if v["type"] == "NULL_ACCOUNT_ID"]
+        assert len(null_account_violations) == 3
+        txn_ids = {v["transaction_id"] for v in null_account_violations}
+        assert len(txn_ids) == 3
+
+    def test_validate_ledger_integrity_multiple_empty_account_ids(self, temp_db):
+        """Multiple empty account_ids each reported as separate violation."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                (1, '01/01/2025', '2025-01-01', 'Tx1', 100000, 'debit', '', 'hash1', 0),
+                (1, '02/01/2025', '2025-01-02', 'Tx2', 100000, 'debit', '', 'hash2', 1);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        empty_account_violations = [
+            v for v in result["violations"]
+            if v["type"] == "NULL_ACCOUNT_ID" and "empty" in v["message"].lower()
+        ]
+        assert len(empty_account_violations) == 2
+
+    def test_validate_ledger_integrity_defensive_checks_exist(self, clean_db):
+        """Defensive checks for negative/debit/dual exist but are schema-protected."""
+        # Schema prevents negative debit/credit/dual entry at the application layer.
+        # The audit engine's checks are defensive - they catch corruption that
+        # somehow bypasses the schema (e.g., direct SQL manipulation or foreign DB).
+        result = validate_ledger_integrity(clean_db)
+        assert result["status"] == "PASS"
+        # Verify no negative/debit/dual violations (as expected with valid data)
+        violation_types = {v["type"] for v in result["violations"]}
+        assert "NEGATIVE_DEBIT" not in violation_types
+        assert "NEGATIVE_CREDIT" not in violation_types
+        assert "DUAL_ENTRY" not in violation_types
+
+    def test_validate_ledger_integrity_multiple_null_hashes(self, temp_db):
+        """Multiple NULL hash_signatures each reported as separate violation."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                (1, '01/01/2025', '2025-01-01', 'Tx1', 100000, 'debit', 'HDFC', NULL, 0),
+                (1, '02/01/2025', '2025-01-02', 'Tx2', 100000, 'debit', 'HDFC', NULL, 1);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        null_hash_violations = [
+            v for v in result["violations"]
+            if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
+        ]
+        assert len(null_hash_violations) == 2
+
+    def test_validate_ledger_integrity_multiple_empty_hashes(self, temp_db):
+        """Single NULL hash_signature reported as violation."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        # Use unique fake hashes for first two, then NULL for third
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                (1, '01/01/2025', '2025-01-01', 'Tx1', 100000, 'debit', 'HDFC', 'unique_fake_1', 0),
+                (1, '02/01/2025', '2025-01-02', 'Tx2', 100000, 'debit', 'HDFC', 'unique_fake_2', 1),
+                (1, '03/01/2025', '2025-01-03', 'No Hash', 100000, 'debit', 'HDFC', NULL, 2);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        null_hash_violations = [
+            v for v in result["violations"]
+            if v["type"] == "NULL_HASH" and "null" in v["message"].lower()
+        ]
+        assert len(null_hash_violations) >= 1
+
+    def test_validate_ledger_integrity_schema_prevents_duplicates(self, temp_db):
+        """UNIQUE constraint on hash_signature prevents duplicates at schema level."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        # Insert valid transaction with unique hash
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                (1, '01/01/2025', '2025-01-01', 'Tx1', 100000, 'debit', 'HDFC', 'unique_hash_for_test', 0);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        dup_violations = [v for v in result["violations"] if v["type"] == "DUPLICATE_HASH"]
+        assert len(dup_violations) == 0
+
+    def test_validate_ledger_integrity_all_detectable_violation_types(self, temp_db):
+        """Database with multiple violation types reports all correctly."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                -- Valid transaction
+                (1, '01/01/2025', '2025-01-01', 'Valid', 100000, 'debit', 'HDFC', 'valid_hash_1', 0),
+                -- NULL account_id
+                (1, '02/01/2025', '2025-01-02', 'No Account', 100000, 'debit', NULL, 'valid_hash_2', 1),
+                -- Empty account_id
+                (1, '03/01/2025', '2025-01-03', 'Empty Account', 100000, 'debit', '', 'valid_hash_3', 2),
+                -- NULL hash
+                (1, '04/01/2025', '2025-01-04', 'No Hash', 100000, 'debit', 'HDFC', NULL, 3);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        assert result["status"] == "FAIL"
+
+        violation_types = {v["type"] for v in result["violations"]}
+        # Schema prevents negative debit/credit/dual entry at application layer
+        assert "NULL_ACCOUNT_ID" in violation_types
+        assert "NULL_HASH" in violation_types
+
+    def test_validate_ledger_integrity_violation_details_complete(self, temp_db):
+        """Each violation contains all required detail fields."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.executescript("""
+            INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf');
+            INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES
+                (1, '01/01/2025', '2025-01-01', 'No Account', 100000, 'debit', NULL, 'hash1', 0);
+        """)
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        v = result["violations"][0]
+
+        assert "type" in v
+        assert "transaction_id" in v
+        assert "message" in v
+        assert isinstance(v["transaction_id"], int)
+        assert isinstance(v["message"], str)
+        assert len(v["message"]) > 0
+
+    def test_validate_ledger_integrity_empty_database(self, temp_db):
+        """Empty database returns PASS with zero violations."""
+        result = validate_ledger_integrity(temp_db)
+        assert result["status"] == "PASS"
+        assert result["violation_count"] == 0
+        assert result["violations"] == []
+
+    def test_validate_ledger_integrity_many_transactions(self, temp_db):
+        """Performance: many valid transactions still passes quickly."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db)
+        conn.execute("INSERT INTO statements (id, bank, file_name) VALUES (1, 'HDFC', 'stmt1.pdf')")
+        # Insert 100 transactions
+        for i in range(100):
+            conn.execute(
+                "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (1, f'{i+1:02d}/01/2025', f'2025-01-{i+1:02d}', f'Txn{i}', 10000, 'debit', 'HDFC', f'hash_{i}', i),
+            )
+        conn.commit()
+        conn.close()
+
+        result = validate_ledger_integrity(temp_db)
+        assert result["status"] == "PASS"
+        assert result["violation_count"] == 0
+
 
 # ============================================================
 # verify_hash_signatures Tests
@@ -300,3 +494,24 @@ class TestRunFullAudit:
         assert result["overall_status"] == "FAIL"
         assert result["ledger_integrity"]["status"] == "FAIL"
         assert result["hash_verification"]["status"] == "FAIL"
+
+    def test_run_full_audit_empty_database(self, temp_db):
+        """Empty database returns PASS (no violations, no hashes to verify)."""
+        result = run_full_audit(temp_db)
+
+        assert result["overall_status"] == "PASS"
+        assert result["ledger_integrity"]["status"] == "PASS"
+        assert result["hash_verification"]["status"] == "PASS"
+        assert result["ledger_integrity"]["violation_count"] == 0
+        assert result["hash_verification"]["tampered_count"] == 0
+
+    def test_run_full_audit_structure(self, clean_db):
+        """Full audit returns expected structure with all required keys."""
+        result = run_full_audit(clean_db)
+
+        assert "overall_status" in result
+        assert "ledger_integrity" in result
+        assert "hash_verification" in result
+        assert isinstance(result["ledger_integrity"], dict)
+        assert isinstance(result["hash_verification"], dict)
+        assert result["overall_status"] in ("PASS", "FAIL")

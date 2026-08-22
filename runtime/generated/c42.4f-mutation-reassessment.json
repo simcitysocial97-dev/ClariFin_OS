@@ -1,0 +1,159 @@
+{
+  "phase": "C42.4-F — Mutation Scope Reassessment",
+  "timestamp": "2026-08-22T23:55:00+05:30",
+  "classification": "CONDITIONAL — Infrastructure Blocker Identified",
+  "summary": {
+    "test_improvements_complete": true,
+    "mutation_effectiveness_verified": false,
+    "infrastructure_blocker": "mutmut cannot execute tests against mutants locally",
+    "recommendation": "Continue incremental work with local-only certification OR fix mutmut infrastructure before CI run"
+  },
+  "test_scope_analysis": {
+    "in_scope_tests": {
+      "total": 1322,
+      "directories": {
+        "tests/unit/": 872,
+        "tests/properties/": 229,
+        "tests/invariants/": 26,
+        "tests/contract/": 161,
+        "tests/integration/": 34
+      }
+    },
+    "out_of_scope_tests": {
+      "total": 159,
+      "directories": {
+        "tests/capability/": 28,
+        "tests/golden/": 10,
+        "tests/audits/": 10,
+        "tests/architecture/": 50,
+        "tests/meta/": 61
+      }
+    }
+  },
+  "p0_engine_mutation_status": {
+    "balance_engine": {
+      "total_mutants": 285,
+      "no_tests": 285,
+      "killed": 0,
+      "survived": 0,
+      "tests_added": 28,
+      "status": "no_tests_due_to_infrastructure"
+    },
+    "ledger_audit_engine": {
+      "total_mutants": 190,
+      "no_tests": 190,
+      "killed": 0,
+      "survived": 0,
+      "tests_added": 12,
+      "status": "no_tests_due_to_infrastructure"
+    },
+    "credit_card_engine": {
+      "total_mutants": 314,
+      "no_tests": 314,
+      "killed": 0,
+      "survived": 0,
+      "tests_added": 43,
+      "status": "no_tests_due_to_infrastructure"
+    },
+    "account_engine": {
+      "total_mutants": 163,
+      "no_tests": 163,
+      "killed": 0,
+      "survived": 0,
+      "tests_added": 44,
+      "status": "no_tests_due_to_infrastructure"
+    },
+    "reconciliation_engine": {
+      "estimated_mutants": 100,
+      "no_tests": 100,
+      "killed": 0,
+      "survived": 0,
+      "tests_added": 13,
+      "status": "no_tests_due_to_infrastructure"
+    },
+    "total_p0": {
+      "mutants": 1052,
+      "no_tests": 1052,
+      "killed": 0,
+      "survived": 0,
+      "tests_added": 140,
+      "total_tests": 339
+    }
+  },
+  "infrastructure_diagnosis": {
+    "problem": "mutmut test execution returns 'no tests' for all mutants",
+    "evidence": {
+      "total_mutants_in_cache": 7439,
+      "no_tests_count": 7439,
+      "killed_count": 0,
+      "survived_count": 0
+    },
+    "possible_causes": [
+      "PYTHONPATH isolation in mutmut temp directories",
+      "Fixture setup unavailable in mutation context",
+      "pytest_add_cli_args_test_selection not respected by mutmut 3.7.0",
+      "Working directory mismatch between mutmut and test resolution"
+    ],
+    "what_works": [
+      "Direct pytest execution: 339 tests pass",
+      "mutmut mutant generation: 16427 mutants generated (prior run)",
+      "mutmut result collection: results file populated"
+    ],
+    "what_fails": [
+      "mutmut test execution against mutants: zero tests run"
+    ]
+  },
+  "decision_hierarchy": {
+    "option_a_include_excluded_suites": {
+      "feasible": true,
+      "relevant_to_blocker": false,
+      "recommendation": "Do not modify scope during this phase"
+    },
+    "option_b_targeted_local_mutation": {
+      "feasible": false,
+      "blocker": "infrastructure prevents test execution",
+      "recommendation": "Not viable until mutmut execution is fixed"
+    },
+    "option_c_proceed_next_engine": {
+      "feasible": true,
+      "condition": "document as local-only certification",
+      "recommendation": "Continue with qualified status"
+    },
+    "option_d_trigger_ci_run": {
+      "feasible": true,
+      "prerequisite": "decide whether to fix local mutmut first",
+      "recommendation": "Accept CI as authoritative or fix infra first"
+    }
+  },
+  "governance_compliance": {
+    "no_production_code_changes": true,
+    "no_threshold_reduction": true,
+    "no_scope_reduction": true,
+    "no_test_weakening": true,
+    "no_mutant_exclusion": true,
+    "no_fake_certified_claims": true
+  },
+  "recommendations": {
+    "immediate": [
+      "Continue incremental test work on remaining P0 engines",
+      "Document all certifications as 'local validation only'",
+      "Do NOT claim mutation coverage achieved"
+    ],
+    "medium_term": [
+      "Investigate mutmut test execution failure",
+      "Check also_copy and PYTHONPATH configuration",
+      "Consider creating minimal reproduction script"
+    ],
+    "long_term": [
+      "Establish mutation testing pipeline with local feedback",
+      "Consider act/shifty for local GitHub Actions emulation",
+      "Document infrastructure gap for team reference"
+    ]
+  },
+  "evidence_artifacts": {
+    "this_report_md": "runtime/generated/c42.4f-mutation-reassessment.md",
+    "this_report_json": "runtime/generated/c42.4f-mutation-reassessment.json",
+    "prior_forensics": "runtime/generated/c42-mutation-forensics-phase01.json",
+    "prior_certifications": ["c42.4a-balance-engine-certification.json", "c42.4b-ledger-audit-certification.json", "c42.4c-reconciliation-certification.json", "c42.4d-credit-card-certification.json", "c42.4e-account-certification.json"]
+  }
+}

@@ -218,6 +218,135 @@ class TestComputeRunningBalance:
         assert "balance_paise" in r and isinstance(r["balance_paise"], int)
         assert "bank" in r and isinstance(r["bank"], str)
 
+    def test_compute_running_balance_empty_account(self, temp_db_with_data):
+        """Account with no transactions returns empty list."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (4, 'EMPTY_BANK', 'empty.pdf')"
+        )
+        conn.commit()
+        conn.close()
+
+        results = compute_running_balance(temp_db_with_data, "EMPTY_BANK")
+        assert results == []
+
+    def test_compute_running_balance_zero_value_transactions(self, temp_db_with_data):
+        """Zero-value debit/credit transactions handled correctly."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (5, 'ZERO_BANK', 'zero.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (5, '01/01/2025', '2025-01-01', 'Zero Credit', 0, 'credit', 'ZERO_BANK', 'hash_z1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (5, '02/01/2025', '2025-01-02', 'Zero Debit', 0, 'debit', 'ZERO_BANK', 'hash_z2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        results = compute_running_balance(temp_db_with_data, "ZERO_BANK")
+        assert len(results) == 2
+        assert results[0]["balance_paise"] == 0
+        assert results[1]["balance_paise"] == 0
+
+    def test_compute_running_balance_negative_balance(self, temp_db_with_data):
+        """Running balance can go negative when debits exceed credits."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (6, 'NEG_BANK', 'neg.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (6, '01/01/2025', '2025-01-01', 'Large Debit', 1000000, 'debit', 'NEG_BANK', 'hash_n1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (6, '02/01/2025', '2025-01-02', 'Small Credit', 100000, 'credit', 'NEG_BANK', 'hash_n2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        results = compute_running_balance(temp_db_with_data, "NEG_BANK")
+        assert len(results) == 2
+        assert results[0]["balance_paise"] == -1000000
+        assert results[1]["balance_paise"] == -900000
+
+    def test_compute_running_balance_debit_credit_handling(self, temp_db_with_data):
+        """Debit decreases balance, credit increases balance."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (7, 'DC_BANK', 'dc.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (7, '01/01/2025', '2025-01-01', 'Credit 1000', 100000, 'credit', 'DC_BANK', 'hash_dc1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (7, '02/01/2025', '2025-01-02', 'Debit 500', 50000, 'debit', 'DC_BANK', 'hash_dc2', 1)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (7, '03/01/2025', '2025-01-03', 'Credit 200', 20000, 'credit', 'DC_BANK', 'hash_dc3', 2)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (7, '04/01/2025', '2025-01-04', 'Debit 300', 30000, 'debit', 'DC_BANK', 'hash_dc4', 3)"
+        )
+        conn.commit()
+        conn.close()
+
+        results = compute_running_balance(temp_db_with_data, "DC_BANK")
+        assert len(results) == 4
+        # 100000 - 50000 + 20000 - 30000 = 40000
+        assert results[-1]["balance_paise"] == 40000
+
+    def test_compute_running_balance_no_account_filter(self, temp_db_with_data):
+        """Running balance without account filter returns all transactions."""
+        results = compute_running_balance(temp_db_with_data)
+        # All transactions: HDFC(4) + ICICI(2) + SBI(2) = 8
+        assert len(results) == 8
+        # Note: NULL date_iso sorts first in SQL, so SBI transactions appear first
+        # The fallback parsing in Python happens after SQL ordering
+        dates = [r["date_iso"] for r in results]
+        # Verify all dates are valid (non-empty)
+        for d in dates:
+            assert d != ""
+        # Verify SBI transactions (which had NULL date_iso) get parsed dates
+        sbi_dates = [r["date_iso"] for r in results if r["bank"] == "SBI"]
+        assert "2025-01-03" in sbi_dates
+        assert "2025-01-12" in sbi_dates
+
+    def test_compute_running_balance_secondary_id_ordering(self, temp_db_with_data):
+        """Same date transactions ordered by transaction ID."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (8, 'ID_ORDER', 'id.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (8, '01/01/2025', '2025-01-01', 'First', 100000, 'credit', 'ID_ORDER', 'hash_io1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (8, '01/01/2025', '2025-01-01', 'Second', 200000, 'credit', 'ID_ORDER', 'hash_io2', 1)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (8, '01/01/2025', '2025-01-01', 'Third', 300000, 'credit', 'ID_ORDER', 'hash_io3', 2)"
+        )
+        conn.commit()
+        conn.close()
+
+        results = compute_running_balance(temp_db_with_data, "ID_ORDER")
+        assert len(results) == 3
+        # Should be ordered by id ASC (sequence_num)
+        assert results[0]["description"] == "First"
+        assert results[1]["description"] == "Second"
+        assert results[2]["description"] == "Third"
+
 
 # ============================================================
 # compute_account_balance Tests
@@ -261,6 +390,155 @@ class TestComputeAccountBalance:
         assert result["total_credit_paise"] == 0
         assert result["total_debit_paise"] == 0
 
+    def test_compute_account_balance_only_credits(self, temp_db_with_data):
+        """Account with only credit transactions."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (5, 'CREDIT_ONLY', 'credit.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (5, '01/01/2025', '2025-01-01', 'Salary', 5000000, 'credit', 'CREDIT_ONLY', 'hash_c1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (5, '15/01/2025', '2025-01-15', 'Bonus', 1000000, 'credit', 'CREDIT_ONLY', 'hash_c2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        result = compute_account_balance(temp_db_with_data, "CREDIT_ONLY")
+        assert result["balance_paise"] == 6000000
+        assert result["total_credit_paise"] == 6000000
+        assert result["total_debit_paise"] == 0
+        assert result["transaction_count"] == 2
+
+    def test_compute_account_balance_only_debits(self, temp_db_with_data):
+        """Account with only debit transactions."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (6, 'DEBIT_ONLY', 'debit.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (6, '01/01/2025', '2025-01-01', 'Rent', 1500000, 'debit', 'DEBIT_ONLY', 'hash_d1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (6, '10/01/2025', '2025-01-10', 'EMI', 300000, 'debit', 'DEBIT_ONLY', 'hash_d2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        result = compute_account_balance(temp_db_with_data, "DEBIT_ONLY")
+        assert result["balance_paise"] == -1800000
+        assert result["total_credit_paise"] == 0
+        assert result["total_debit_paise"] == 1800000
+        assert result["transaction_count"] == 2
+
+    def test_compute_account_balance_zero_values(self, temp_db_with_data):
+        """Account with zero-value transactions."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (7, 'ZERO_BANK', 'zero.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (7, '01/01/2025', '2025-01-01', 'Zero Credit', 0, 'credit', 'ZERO_BANK', 'hash_z1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (7, '02/01/2025', '2025-01-02', 'Zero Debit', 0, 'debit', 'ZERO_BANK', 'hash_z2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        result = compute_account_balance(temp_db_with_data, "ZERO_BANK")
+        assert result["balance_paise"] == 0
+        assert result["total_credit_paise"] == 0
+        assert result["total_debit_paise"] == 0
+        assert result["transaction_count"] == 2
+
+    def test_compute_account_balance_negative_result(self, temp_db_with_data):
+        """Negative resulting balance is correctly computed and displayed."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (8, 'NEG_BALANCE', 'neg.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (8, '01/01/2025', '2025-01-01', 'Large Expense', 2000000, 'debit', 'NEG_BALANCE', 'hash_n1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (8, '02/01/2025', '2025-01-02', 'Small Income', 500000, 'credit', 'NEG_BALANCE', 'hash_n2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        result = compute_account_balance(temp_db_with_data, "NEG_BALANCE")
+        assert result["balance_paise"] == -1500000
+        assert result["balance_display"] == "-₹15,000.00"
+
+    def test_compute_account_balance_starting_balance(self, temp_db_with_data):
+        """Starting balance is added to computed balance."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (9, 'START_BAL', 'start.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (9, '01/01/2025', '2025-01-01', 'Income', 1000000, 'credit', 'START_BAL', 'hash_s1', 0)"
+        )
+        conn.commit()
+        conn.close()
+
+        result_zero = compute_account_balance(temp_db_with_data, "START_BAL", starting_balance_paise=0)
+        result_custom = compute_account_balance(temp_db_with_data, "START_BAL", starting_balance_paise=500000)
+
+        assert result_custom["balance_paise"] == result_zero["balance_paise"] + 500000
+        assert result_custom["balance_display"] == _format_paise(result_custom["balance_paise"])
+
+    def test_compute_account_balance_account_isolation(self, temp_db_with_data):
+        """Account balance is isolated per account_id."""
+        hdfc_result = compute_account_balance(temp_db_with_data, "HDFC")
+        icici_result = compute_account_balance(temp_db_with_data, "ICICI")
+
+        assert hdfc_result["balance_paise"] == 4450000
+        assert icici_result["balance_paise"] == 1700000
+        assert hdfc_result["account_id"] == "HDFC"
+        assert icici_result["account_id"] == "ICICI"
+
+    def test_compute_account_balance_aggregation_correctness(self, temp_db_with_data):
+        """Aggregated totals match sum of individual transactions."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (10, 'AGG_TEST', 'agg.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (10, '01/01/2025', '2025-01-01', 'T1', 100000, 'credit', 'AGG_TEST', 'hash_a1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (10, '02/01/2025', '2025-01-02', 'T2', 200000, 'credit', 'AGG_TEST', 'hash_a2', 1)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (10, '03/01/2025', '2025-01-03', 'T3', 50000, 'debit', 'AGG_TEST', 'hash_a3', 2)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (10, '04/01/2025', '2025-01-04', 'T4', 30000, 'debit', 'AGG_TEST', 'hash_a4', 3)"
+        )
+        conn.commit()
+        conn.close()
+
+        result = compute_account_balance(temp_db_with_data, "AGG_TEST")
+        assert result["total_credit_paise"] == 300000
+        assert result["total_debit_paise"] == 80000
+        assert result["balance_paise"] == 220000
+        assert result["transaction_count"] == 4
+
 
 # ============================================================
 # validate_statement_balance Tests
@@ -303,6 +581,73 @@ class TestValidateStatementBalance:
         """Transaction count matches transactions in statement."""
         result = validate_statement_balance(temp_db_with_data, 1, 4450000)
         assert result["transaction_count"] == 4
+
+    def test_validate_statement_balance_zero_difference(self, temp_db_with_data):
+        """Zero difference returns 'match' with zero difference display."""
+        result = validate_statement_balance(temp_db_with_data, 1, 4450000)
+        assert result["status"] == "match"
+        assert result["difference_paise"] == 0
+        assert result["difference_display"] == "₹0.00"
+
+    def test_validate_statement_balance_one_paise_difference(self, temp_db_with_data):
+        """Single paise difference correctly detected."""
+        result = validate_statement_balance(temp_db_with_data, 1, 4450001)
+        assert result["status"] == "mismatch"
+        assert result["difference_paise"] == 1
+        assert result["difference_display"] == "₹0.01"
+
+    def test_validate_statement_balance_minus_one_paise(self, temp_db_with_data):
+        """Single paise under claimed balance."""
+        result = validate_statement_balance(temp_db_with_data, 1, 4449999)
+        assert result["status"] == "mismatch"
+        assert result["difference_paise"] == 1
+        assert result["difference_display"] == "₹0.01"
+
+    def test_validate_statement_balance_large_values(self, temp_db_with_data):
+        """Large balance values handled correctly."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (4, 'LARGE_BANK', 'large.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (4, '01/01/2025', '2025-01-01', 'Large Credit', 1000000000, 'credit', 'LARGE_BANK', 'hash_l1', 0)"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (4, '02/01/2025', '2025-01-02', 'Large Debit', 500000000, 'debit', 'LARGE_BANK', 'hash_l2', 1)"
+        )
+        conn.commit()
+        conn.close()
+
+        # Net: 1000000000 - 500000000 = 500000000 (₹50,00,000.00)
+        result = validate_statement_balance(temp_db_with_data, 4, 500000000)
+        assert result["status"] == "match"
+        assert result["computed_balance_paise"] == 500000000
+        assert result["difference_paise"] == 0
+
+    def test_validate_statement_balance_no_transactions(self, temp_db_with_data):
+        """Statement with no transactions validates against zero."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (5, 'EMPTY_STMT', 'empty.pdf')"
+        )
+        conn.commit()
+        conn.close()
+
+        result = validate_statement_balance(temp_db_with_data, 5, 0)
+        assert result["status"] == "match"
+        assert result["computed_balance_paise"] == 0
+        assert result["transaction_count"] == 0
+
+    def test_validate_statement_balance_display_formatting(self, temp_db_with_data):
+        """All display fields use _format_paise consistently."""
+        result = validate_statement_balance(temp_db_with_data, 1, 5000000)
+        assert result["computed_balance_display"] == _format_paise(4450000)
+        assert result["claimed_balance_display"] == _format_paise(5000000)
+        assert result["difference_display"] == _format_paise(550000)
 
 
 # ============================================================
@@ -352,6 +697,84 @@ class TestGetAccountsList:
         results = get_accounts_list(temp_db_with_data)
         banks = [r["bank"] for r in results]
         assert banks == sorted(banks)
+
+    def test_get_accounts_list_credit_debit_aggregation(self, temp_db_with_data):
+        """Credit and debit totals correctly aggregated per account."""
+        results = get_accounts_list(temp_db_with_data)
+        banks = {r["bank"]: r for r in results}
+
+        # HDFC: credits=6000000, debits=1550000
+        assert banks["HDFC"]["total_credit_paise"] == 6000000
+        assert banks["HDFC"]["total_debit_paise"] == 1550000
+
+        # ICICI: credits=2000000, debits=300000
+        assert banks["ICICI"]["total_credit_paise"] == 2000000
+        assert banks["ICICI"]["total_debit_paise"] == 300000
+
+        # SBI: credits=50000, debits=20000
+        assert banks["SBI"]["total_credit_paise"] == 50000
+        assert banks["SBI"]["total_debit_paise"] == 20000
+
+    def test_get_accounts_list_balance_calculation(self, temp_db_with_data):
+        """Balance = total_credit - total_debit (assuming 0 starting balance)."""
+        results = get_accounts_list(temp_db_with_data)
+        for r in results:
+            expected_balance = r["total_credit_paise"] - r["total_debit_paise"]
+            assert r["balance_paise"] == expected_balance
+            assert r["balance_display"] == _format_paise(expected_balance)
+
+    def test_get_accounts_list_empty_account_balance(self, temp_db_with_data):
+        """Account with statement but no transactions has zero balance."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (4, 'EMPTY_BANK', 'empty.pdf')"
+        )
+        conn.commit()
+        conn.close()
+
+        results = get_accounts_list(temp_db_with_data)
+        banks = {r["bank"]: r for r in results}
+
+        assert "EMPTY_BANK" in banks
+        assert banks["EMPTY_BANK"]["balance_paise"] == 0
+        assert banks["EMPTY_BANK"]["total_credit_paise"] == 0
+        assert banks["EMPTY_BANK"]["total_debit_paise"] == 0
+        assert banks["EMPTY_BANK"]["transaction_count"] == 0
+
+    def test_get_accounts_list_multiple_accounts_structure(self, temp_db_with_data):
+        """Each account entry has all required fields with correct types."""
+        results = get_accounts_list(temp_db_with_data)
+        for r in results:
+            assert "account_id" in r and isinstance(r["account_id"], str)
+            assert "bank" in r and isinstance(r["bank"], str)
+            assert "transaction_count" in r and isinstance(r["transaction_count"], int)
+            assert "total_debit_paise" in r and isinstance(r["total_debit_paise"], int)
+            assert "total_credit_paise" in r and isinstance(r["total_credit_paise"], int)
+            assert "balance_paise" in r and isinstance(r["balance_paise"], int)
+            assert "balance_display" in r and isinstance(r["balance_display"], str)
+
+    def test_get_accounts_list_negative_balance_display(self, temp_db_with_data):
+        """Negative balances displayed correctly in accounts list."""
+        from src.core.db.connection import get_connection
+
+        conn = get_connection(temp_db_with_data)
+        conn.execute(
+            "INSERT INTO statements (id, bank, file_name) VALUES (5, 'OVERDRAFT', 'over.pdf')"
+        )
+        conn.execute(
+            "INSERT INTO transactions (statement_id, date, date_iso, description, amount_paise, type, account_id, hash_signature, sequence_num) VALUES (5, '01/01/2025', '2025-01-01', 'Overdraft', 500000, 'debit', 'OVERDRAFT', 'hash_o1', 0)"
+        )
+        conn.commit()
+        conn.close()
+
+        results = get_accounts_list(temp_db_with_data)
+        banks = {r["bank"]: r for r in results}
+
+        assert "OVERDRAFT" in banks
+        assert banks["OVERDRAFT"]["balance_paise"] == -500000
+        assert banks["OVERDRAFT"]["balance_display"] == "-₹5,000.00"
 
 
 # ============================================================
@@ -403,3 +826,24 @@ class TestFormatPaise:
         assert len(parts) == 2
         assert len(parts[1]) == 2
         assert parts[1].isdigit()
+
+    def test_format_paise_exact_lakh_boundary(self):
+        """Exactly 1 lakh (100,000) formats correctly."""
+        assert _format_paise(10000000) == "₹1,00,000.00"
+
+    def test_format_paise_exact_crore_boundary(self):
+        """Exactly 1 crore (10,000,000) formats correctly."""
+        assert _format_paise(1000000000) == "₹1,00,00,000.00"
+
+    def test_format_paise_large_crores(self):
+        """Multiple crores format correctly."""
+        assert _format_paise(12345678900) == "₹12,34,56,789.00"
+
+    def test_format_paise_no_floating_point(self):
+        """No floating-point arithmetic used internally."""
+        # Large value that would cause float precision issues if floats were used
+        result = _format_paise(999999999)
+        assert result == "₹99,99,999.99"
+        # Verify no float rounding by checking exact integer math
+        # 1000000000000 paise = 10000000000 rupees = 10,000 crores
+        assert _format_paise(1000000000000) == "₹10,00,00,00,000.00"

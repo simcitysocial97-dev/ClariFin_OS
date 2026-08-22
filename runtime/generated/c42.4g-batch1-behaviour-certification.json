@@ -1,0 +1,197 @@
+{
+  "phase": "C42.4-G-Batch-1 — Behaviour Engine Test-Strengthening (core.py)",
+  "timestamp": "2026-08-23T00:05:00+05:30",
+  "classification": "TEST-STRENGTHENING COMPLETE — Mutation effectiveness pending authoritative CI validation",
+  "repository_provenance": {
+    "head_sha": "670bd4c8fcd2945374d8e4a09e791601863007e3",
+    "tree_sha": "c80c475504e5f38d8701e52c7758514eb769fdec",
+    "active_branch": "m9c9-merge-authorization-resolution",
+    "working_tree_status": "modified (behaviour engine tests added)",
+    "behaviour_source_hash_core_py": "0e2f48897d3f20c140fb7bc2028179cb543d0ecdd88631151c5d30579cc11365",
+    "behaviour_test_hash_prior": "83fb77cc0786591d75b0e1f0159899b72f85fd48261de560340cd416f1fc2e0c",
+    "behaviour_test_hash_new": "eebb8616d9ae5b82b3e751252a95c9f7cf6ed4c8adfbb2c3b3024151fa298abc",
+    "c42_baseline_commit": "670bd4c8",
+    "provenance_match": true
+  },
+  "c42_survivor_mapping": {
+    "behaviour_engine_total_mutants": 4956,
+    "behaviour_engine_survived": 2159,
+    "behaviour_engine_no_tests": 2797,
+    "priority_classification": "P1_business_rules",
+    "rationale": "Business rules, validation, aggregation, forecasting, financial intelligence"
+  },
+  "test_implementation": {
+    "engine_module": "behaviour_engine.core",
+    "functions_addressed": 12,
+    "total_tests": 21,
+    "tests_added": 16,
+    "original_tests": 5,
+    "test_breakdown": {
+      "normalize_score_edge_cases": {
+        "tests": 1,
+        "covers": ["negative clamping", "above-max clamping", "custom bounds", "equal min/max midpoint"]
+      },
+      "coefficient_of_variation_edge_cases": {
+        "tests": 1,
+        "covers": ["empty list", "single value", "all zeros", "identical values", "two values", "large spread"]
+      },
+      "moving_average_edge_cases": {
+        "tests": 1,
+        "covers": ["empty list", "window > data", "window=1", "single element", "negative window"]
+      },
+      "get_daily_spending_data": {
+        "tests": 1,
+        "covers": ["debit aggregation by date", "credit exclusion", "cutoff filtering"]
+      },
+      "get_monthly_category_spending": {
+        "tests": 1,
+        "covers": ["monthly grouping", "category aggregation", "credit exclusion"]
+      },
+      "get_transaction_stats": {
+        "tests": 1,
+        "covers": ["total/debit/credit counts", "micro transaction detection (<₹500)", "amount totals"]
+      },
+      "get_transactions_90_days": {
+        "tests": 1,
+        "covers": ["90-day cutoff filtering", "temporal accuracy"]
+      },
+      "get_recent_transactions": {
+        "tests": 1,
+        "covers": ["limit selection", "ascending order preservation"]
+      },
+      "compute_temporal_patterns_empty": {
+        "tests": 1,
+        "covers": ["empty input returns defaults"]
+      },
+      "compute_temporal_patterns_single_day": {
+        "tests": 1,
+        "covers": ["insufficient data for trend", "daily spending dict structure"]
+      },
+      "compute_loss_aversion_empty": {
+        "tests": 1,
+        "covers": ["empty input returns baseline score 0.5"]
+      },
+      "compute_loss_aversion_no_credits": {
+        "tests": 1,
+        "covers": ["only debits returns baseline score 0.5"]
+      },
+      "compute_impulsivity_empty": {
+        "tests": 1,
+        "covers": ["empty input returns baseline score 0.5"]
+      },
+      "compute_impulsivity_only_credits": {
+        "tests": 1,
+        "covers": ["only credits returns baseline score 0.5"]
+      },
+      "compute_habit_stability_empty": {
+        "tests": 1,
+        "covers": ["empty input returns baseline with zero CV"]
+      },
+      "compute_financial_stress_empty": {
+        "tests": 1,
+        "covers": ["empty input returns valid dict with score key"]
+      }
+    }
+  },
+  "test_execution": {
+    "behaviour_core_tests": {
+      "status": "PASSED",
+      "count": 21,
+      "duration_seconds": 0.34
+    },
+    "regressions": 0
+  },
+  "mutation_analysis": {
+    "approach": "bounded local analysis not feasible (infrastructure blocker per C42.4-F)",
+    "note": "Local mutmut cannot execute tests against mutants. All certified claims are test-strengthening only, not mutation-certified.",
+    "assumed_mutants_targeted": "~100-150 in core.py based on function count and complexity",
+    "assessment": "Tests now cover utility functions, data extraction, and behavioral index entry points with exact assertions; mutation detection expected strong once CI is used as authoritative evaluator"
+  },
+  "financial_invariants_verified": [
+    "SCORE_NORMALIZATION: values clamped to [0, 1] range",
+    "COEFFICIENT_OF_VARIATION: std/mean with empty/single-value handling",
+    "MOVING_AVERAGE: sliding window with edge case handling",
+    "DAILY_SPENDING: aggregation by date, debit-only, cutoff-based",
+    "MONTHLY_CATEGORY_SPENDING: nested aggregation by month+category",
+    "TRANSACTION_STATS: micro txn threshold <₹500, debit/credit separation",
+    "90_DAY_FILTERING: temporal accuracy for recent transaction selection",
+    "BEHAVIORAL_INDICES: baseline score 0.5 for insufficient data",
+    "LOSS_AVERSION: requires both credits and debits for meaningful score",
+    "IMPULSIVITY: requires debits for micro-transaction ratio",
+    "HABIT_STABILITY: requires debits for category CV calculation"
+  ],
+  "coverage_gaps_addressed": {
+    "prior_no_test_mutants_estimated": 2797,
+    "tests_added_targeting_gaps": 16,
+    "areas_strengthened": [
+      "_normalize_score: boundary clamping, custom bounds, equal min/max",
+      "_coefficient_of_variation: empty, single, zero-mean, two-value, large spread",
+      "_moving_average: empty, window>data, window=1, single elem, negative window",
+      "_get_daily_spending_data: debit filtering, cutoff, aggregation",
+      "_get_monthly_category_spending: monthly grouping, category keys",
+      "_get_transaction_stats: micro txn threshold, count accuracy",
+      "_get_transactions_90_days: temporal cutoff correctness",
+      "_get_recent_transactions: limit + ordering",
+      "behavioral indices: empty/single-type transaction handling"
+    ]
+  },
+  "known_remaining_gaps": {
+    "core.py_functions_not_tested": [
+      "_compute_temporal_patterns_full (trend/seasonality calculation)",
+      "_compute_loss_aversion_index_full (post-income velocity)",
+      "_compute_impulsivity_score_full (weekend ratio, discretionary ratio)",
+      "_compute_habit_stability_score_full (recurring detection, rhythm score)",
+      "_compute_financial_stress_index (full calculation)"
+    ],
+    "other_behaviour_modules_not_tested": [
+      "account.py",
+      "cashflow.py",
+      "credit_dependency.py",
+      "debt.py",
+      "income.py",
+      "insights.py",
+      "lifestyle.py",
+      "nudges.py",
+      "patterns.py",
+      "profile.py",
+      "resilience.py",
+      "savings.py",
+      "stress.py",
+      "temporal.py",
+      "utils.py",
+      "wellness.py"
+    ],
+    "estimated_remaining_mutants": "~4800+"
+  },
+  "governance_compliance": {
+    "mutation_threshold_unchanged": true,
+    "threshold_value": "80%",
+    "mutation_scope_unchanged": true,
+    "no_test_weakening": true,
+    "no_assertion_removal": true,
+    "production_code_unchanged": true,
+    "source_hash_verified": true
+  },
+  "evidence_artifacts": {
+    "source_file": "backend/src/engines/behaviour_engine/core.py",
+    "test_file": "backend/tests/unit/engines/behavior/test_behavior_engine.py",
+    "this_certification_json": "runtime/generated/c42.4g-batch1-behaviour-certification.json",
+    "this_certification_md": "runtime/generated/c42.4g-batch1-behaviour-certification.md"
+  },
+  "completion_gate": {
+    "functional_all_tests_pass": true,
+    "functional_no_regressions": true,
+    "behavioral_functions_covered": "12/many in core.py",
+    "behavioral_financial_invariants_asserted": true,
+    "mutation_bounded_analysis_attempted": false,
+    "mutation_infrastructure_blocker_documented": true,
+    "governance_threshold_unchanged": true,
+    "governance_scope_unchanged": true,
+    "governance_no_test_weakening": true,
+    "provenance_artifacts_generated": true,
+    "provenance_worktree_recorded": true,
+    "provenance_changes_committed": false
+  },
+  "next_batch_recommendation": "Continue with another high-density module (e.g., credit_dependency.py or stress.py) before triggering CI mutation run",
+  "ci_trigger_after": "2-3 batches completed"
+}
